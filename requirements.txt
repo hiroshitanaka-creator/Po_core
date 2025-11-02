@@ -1,0 +1,122 @@
+# Po_core Production Dependencies
+# Python 3.9+
+
+# ==================
+# Core Dependencies
+# ==================
+
+# Deep Learning Framework
+torch>=2.0.0
+torchvision>=0.15.0
+
+# API Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# ==================
+# Philosophical AI
+# ==================
+
+# NLP & Embeddings
+transformers>=4.35.0
+sentence-transformers>=2.2.0
+tokenizers>=0.15.0
+
+# Vector Operations
+scipy>=1.11.0
+
+# ==================
+# Logging & Tracing
+# ==================
+
+# Structured Logging
+structlog>=23.2.0
+python-json-logger>=2.0.7
+
+# Configuration
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# ==================
+# Utilities
+# ==================
+
+# Type Checking Runtime
+typeguard>=4.1.0
+
+# Date/Time
+python-dateutil>=2.8.2
+
+# Async Support
+aiofiles>=23.2.0
+httpx>=0.25.0
+
+# ==================
+# Storage & Database
+# ==================
+
+# JSON Operations
+orjson>=3.9.0
+
+# SQLite (built-in, but specifying for clarity)
+# sqlite3 is included in Python standard library
+
+# Optional: PostgreSQL support
+# psycopg2-binary>=2.9.9
+
+# ==================
+# Visualization
+# ==================
+
+# Basic Plotting
+matplotlib>=3.7.0
+seaborn>=0.13.0
+
+# Interactive Visualizations
+plotly>=5.18.0
+
+# Graph Visualization
+networkx>=3.2.0
+
+# ==================
+# CLI & UI
+# ==================
+
+# Command Line Interface
+click>=8.1.0
+rich>=13.7.0
+typer>=0.9.0
+
+# Progress Bars
+tqdm>=4.66.0
+
+# ==================
+# Validation & Schema
+# ==================
+
+# JSON Schema Validation
+jsonschema>=4.20.0
+
+# ==================
+# Performance
+# ==================
+
+# Memory Profiling (optional)
+# memory-profiler>=0.61.0
+
+# CPU Profiling (optional)
+# py-spy>=0.3.14
+
+# ==================
+# Version Compatibility
+# ==================
+
+# Python version check
+# This package requires Python 3.9+
+# Ensure your environment meets this requirement

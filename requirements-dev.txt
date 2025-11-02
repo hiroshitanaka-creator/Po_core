@@ -1,0 +1,174 @@
+# Po_core Development Dependencies
+# Install with: pip install -r requirements-dev.txt
+
+# Include production dependencies
+-r requirements.txt
+
+# ==================
+# Testing
+# ==================
+
+# Test Framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.12.0
+pytest-xdist>=3.5.0  # Parallel testing
+
+# Test Utilities
+hypothesis>=6.92.0  # Property-based testing
+faker>=20.0.0       # Test data generation
+
+# Coverage
+coverage[toml]>=7.3.0
+
+# ==================
+# Code Quality
+# ==================
+
+# Code Formatting
+black>=23.12.0
+isort>=5.13.0
+
+# Linting
+flake8>=6.1.0
+flake8-docstrings>=1.7.0
+flake8-bugbear>=23.12.0
+pylint>=3.0.0
+
+# Type Checking
+mypy>=1.7.0
+types-PyYAML>=6.0.12
+types-python-dateutil>=2.8.19
+
+# Security
+bandit>=1.7.5
+safety>=2.3.0
+
+# ==================
+# Documentation
+# ==================
+
+# Documentation Generation
+sphinx>=7.2.0
+sphinx-rtd-theme>=2.0.0
+sphinx-autodoc-typehints>=1.25.0
+myst-parser>=2.0.0  # Markdown support
+
+# API Documentation
+pdoc3>=0.10.0
+
+# ==================
+# Development Tools
+# ==================
+
+# Jupyter
+jupyter>=1.0.0
+ipython>=8.18.0
+ipykernel>=6.27.0
+nbconvert>=7.12.0
+
+# Interactive Debugging
+ipdb>=0.13.13
+pdbpp>=0.10.3
+
+# ==================
+# Pre-commit Hooks
+# ==================
+
+pre-commit>=3.5.0
+
+# ==================
+# Build & Package
+# ==================
+
+# Build Tools
+build>=1.0.0
+setuptools>=69.0.0
+wheel>=0.42.0
+twine>=4.0.0
+
+# ==================
+# Performance Monitoring
+# ==================
+
+# Profiling
+py-spy>=0.3.14
+memory-profiler>=0.61.0
+line-profiler>=4.1.0
+
+# Benchmarking
+pytest-benchmark>=4.0.0
+
+# ==================
+# Philosophical Testing
+# ==================
+
+# No specific packages, but placeholder for:
+# - Custom philosophical consistency validators
+# - Tensor validation tools
+# - Semantic similarity metrics
+
+# ==================
+# CI/CD Tools
+# ==================
+
+# GitHub Actions Local Testing
+act>=0.2.0  # Optional: test GitHub Actions locally
+
+# ==================
+# Utilities
+# ==================
+
+# Environment Management
+python-dotenv>=1.0.0
+
+# File System Watching
+watchdog>=3.0.0
+
+# ==================
+# Type Stubs
+# ==================
+
+# Additional type stubs for better mypy support
+types-requests>=2.31.0
+types-setuptools>=69.0.0
+
+# ==================
+# Philosophical AI Development
+# ==================
+
+# Text Analysis
+nltk>=3.8.0
+spacy>=3.7.0
+
+# Philosophical Concept Exploration (optional)
+# gensim>=4.3.0  # Topic modeling
+# scikit-learn>=1.3.0  # ML utilities
+
+# ==================
+# Visualization Development
+# ==================
+
+# Advanced Plotting
+bokeh>=3.3.0
+
+# 3D Visualization (optional)
+# pyvista>=0.43.0
+
+# ==================
+# Notes
+# ==================
+
+# This file includes all tools needed for:
+# - Development
+# - Testing
+# - Documentation
+# - Code quality
+# - Profiling
+# - Building/packaging
+#
+# Install everything with:
+# pip install -r requirements-dev.txt
+#
+# Or selectively install groups as needed

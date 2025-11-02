@@ -1,0 +1,312 @@
+[build-system]
+requires = ["setuptools>=69.0.0", "wheel>=0.42.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "po-core"
+version = "0.1.0-alpha"
+description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Flying Pig Project", email = "flyingpig0229+github@gmail.com"}
+]
+maintainers = [
+    {name = "Flying Pig Project", email = "flyingpig0229+github@gmail.com"}
+]
+keywords = [
+    "artificial-intelligence",
+    "philosophy",
+    "ethics",
+    "pytorch",
+    "tensors",
+    "explainable-ai",
+    "responsible-ai",
+    "phenomenology",
+    "existentialism",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Philosophy",
+    "Typing :: Typed",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "torch>=2.0.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+    "transformers>=4.35.0",
+    "sentence-transformers>=2.2.0",
+    "scipy>=1.11.0",
+    "structlog>=23.2.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "matplotlib>=3.7.0",
+    "plotly>=5.18.0",
+    "networkx>=3.2.0",
+    "click>=8.1.0",
+    "rich>=13.7.0",
+    "tqdm>=4.66.0",
+    "orjson>=3.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.12.0",
+    "isort>=5.13.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "sphinx>=7.2.0",
+    "jupyter>=1.0.0",
+    "pre-commit>=3.5.0",
+]
+docs = [
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "myst-parser>=2.0.0",
+]
+viz = [
+    "seaborn>=0.13.0",
+    "bokeh>=3.3.0",
+]
+all = [
+    "po-core[dev,docs,viz]",
+]
+
+[project.urls]
+Homepage = "https://github.com/[username]/Po_core"
+Documentation = "https://[username].github.io/Po_core/"
+Repository = "https://github.com/[username]/Po_core"
+Issues = "https://github.com/[username]/Po_core/issues"
+Discussions = "https://github.com/[username]/Po_core/discussions"
+Changelog = "https://github.com/[username]/Po_core/blob/main/CHANGELOG.md"
+
+[project.scripts]
+po-core = "po_core.cli:main"
+po-self = "po_core.po_self:cli"
+po-trace = "po_core.po_trace:cli"
+po-viewer = "po_core.po_viewer:cli"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["po_core*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+po_core = [
+    "config/*.yaml",
+    "config/philosophers/*.yaml",
+    "py.typed",
+]
+
+# ==================
+# Black Configuration
+# ==================
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+# ==================
+# isort Configuration
+# ==================
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_gitignore = true
+src_paths = ["src", "tests"]
+
+# ==================
+# Pytest Configuration
+# ==================
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=po_core",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "-ra",
+    "--verbose",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "philosophical: marks tests for philosophical consistency",
+    "unit: marks tests as unit tests",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# ==================
+# Coverage Configuration
+# ==================
+[tool.coverage.run]
+branch = true
+source = ["po_core"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# ==================
+# MyPy Configuration
+# ==================
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "normal"
+strict_equality = true
+strict_optional = true
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "transformers.*",
+    "sentence_transformers.*",
+    "torch.*",
+    "scipy.*",
+    "sklearn.*",
+    "plotly.*",
+]
+ignore_missing_imports = true
+
+# ==================
+# Pylint Configuration
+# ==================
+[tool.pylint.main]
+py-version = "3.9"
+jobs = 0
+suggestion-mode = true
+fail-under = 8.0
+
+[tool.pylint.messages_control]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-symbolic-message-instead",
+    "too-few-public-methods",  # Philosophical classes may be simple
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.design]
+max-args = 8  # Philosophical tensors may need multiple parameters
+max-attributes = 12
+
+# ==================
+# Bandit Configuration (Security)
+# ==================
+[tool.bandit]
+exclude_dirs = ["tests", "scripts"]
+skips = ["B101", "B601"]
+
+# ==================
+# Flying Pig Philosophy Metadata
+# ==================
+[tool.po_core]
+philosophy = "Flying Pig Philosophy"
+tenets = [
+    "Hypothesize Boldly",
+    "Verify Rigorously", 
+    "Revise Gracefully"
+]
+motto = "井の中の蛙、大海は知らずとも、大空を知る"
+# A frog in a well may not know the ocean, but it can know the sky
+
+[tool.po_core.project]
+status = "alpha"
+implementation_progress = 0.30
+philosophers_integrated = 0
+design_documents = 120
+started = "2024"
+
+[tool.po_core.contact]
+email = "flyingpig0229+github@gmail.com"
+github = "https://github.com/[username]/Po_core"
