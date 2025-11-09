@@ -9,18 +9,29 @@
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
 ---
-👉 Reviews welcome: https://github.com/hiroshitanaka-creator/Po_core/discussions
+> **Feedback welcome:** [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) ·
+> **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
+
+### TL;DR
+- Philosophers as interacting **tensors** → accountable LLM reasoning  
+- **Reason logs** + ethical/freedom **pressure** as measurable signals  
+- Docs-first; implementation WIP
+
+### Quick links
+[Modules](./tree/main/04_modules) ·
+[Research](./tree/main/05_research) ·
+[Reason-log spec](./blob/main/docs/specs/reason_log.md) ·
+[Viewer spec](./blob/main/docs/viewer/README.md)
 
 ## Contribution Tracks
-- 👩‍💻 AI Track: start with /04_modules and CLI. Labels: `ai-easy`, `good first issue`
-- 📚 Philosophy Track: start with /05_research and /glossary. Labels: `phil-easy`
-- 🌉 Bridge Track: translate checklists to scoring functions. Label: `bridge`
+### <a id="ai-track"></a>👩‍💻 AI Track
+Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
 
-Quick links:
-- Modules: https://github.com/hiroshitanaka-creator/Po_core/tree/main/04_modules
-- Research: https://github.com/hiroshitanaka-creator/Po_core/tree/main/05_research
-- Good first issues: https://github.com/hiroshitanaka-creator/Po_core/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
-- Discussions: https://github.com/hiroshitanaka-creator/Po_core/discussions
+### <a id="philosophy-track"></a>📚 Philosophy Track
+Start with `/05_research` and `/glossary`. Label: `phil-easy`
+
+### <a id="bridge-track"></a>🌉 Bridge Track
+Translate checklists to scoring functions. Label: `bridge`
 
 
 ## What is Po_core?
