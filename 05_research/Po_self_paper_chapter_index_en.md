@@ -1,0 +1,17 @@
+# **Po_self Paper — Chapter Index (EN)**
+
+- **00. Abstract & ToC** — Scope, motivation, and the complete outline. (`Po_self_paper_00_Abstract_and_TOC_en.md`)
+- **01. Prologue** — Freedom to speak as structural choice. (`Po_self_paper_01_Prologue_en.md`)
+- **02. Overview** — Layers, tensors, and roles. (`Po_self_paper_02_Overview_en.md`)
+- **03. Sartre** — Freedom-pressure and responsibility of silence. (`Po_self_paper_03_Sartre_en.md`)
+- **04. Philosophy Map** — 21-mapping of philosopher tensors. (`Po_self_paper_04_Philosophy_Map_en.md`)
+- **05. Viewer Interference** — Feedback tensors and reconstruction coupling. (`Po_self_paper_05_Viewer_Interference_en.md`)
+- **06. Freedom & Ethics Tensors** — Equations, loop, dynamics. (`Po_self_paper_06_Freedom_Ethics_Tensors_en.md`)
+- **07. Persona & Series** — Persona arcs, JCX chains, unconscious. (`Po_self_paper_07_Persona_Tensors_and_Series_Evolution_en.md`)
+- **08. Po_self vs LLMs** — Strengths, limits, mitigations. (`Po_self_paper_08_Po_self_vs_LLMs_en.md`)
+- **09. Applications** — Domains, compliance hooks, metrics. (`Po_self_paper_09_Applications_and_Social_Implementation_en.md`)
+- **10. Future Labels** — Responsibility labels, multi-ethics. (`Po_self_paper_10_Future_of_Philosophical_Self_en.md`)
+- **11. Full-Stack** — Layers, APIs, contracts, ops. (`Po_self_paper_11_Full_Stack_Framework_en.md`)
+- **12. Society & Networks** — Civic Viewer, risks. (`Po_self_paper_12_Society_and_Evolution_Networks_en.md`)
+- **13. Conclusion** — Summary and forward program. (`Po_self_paper_13_Conclusion_en.md`)
+- **Appendices** — A–D translated guide. (`Po_self_paper_Appendices_en.md`)
