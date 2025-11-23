@@ -92,12 +92,12 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/[username]/Po_core"
-Documentation = "https://[username].github.io/Po_core/"
-Repository = "https://github.com/[username]/Po_core"
-Issues = "https://github.com/[username]/Po_core/issues"
-Discussions = "https://github.com/[username]/Po_core/discussions"
-Changelog = "https://github.com/[username]/Po_core/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/hiroshitanaka-creator/Po_core"
+Documentation = "https://hiroshitanaka-creator.github.io/Po_core/"
+Repository = "https://github.com/hiroshitanaka-creator/Po_core"
+Issues = "https://github.com/hiroshitanaka-creator/Po_core/issues"
+Discussions = "https://github.com/hiroshitanaka-creator/Po_core/discussions"
+Changelog = "https://github.com/hiroshitanaka-creator/Po_core/blob/main/CHANGELOG.md"
 
 [project.scripts]
 po-core = "po_core.cli:main"
@@ -309,4 +309,4 @@ started = "2024"
 
 [tool.po_core.contact]
 email = "flyingpig0229+github@gmail.com"
-github = "https://github.com/[username]/Po_core"
+github = "https://github.com/hiroshitanaka-creator/Po_core"
