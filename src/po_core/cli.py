@@ -27,8 +27,7 @@ def hello() -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
     console.print("Philosophy-Driven AI System - Alpha v0.1.0")
-    console.print("\n[italic]A frog in a well may not know the ocean,")
-    console.print("but it can know the sky.[/italic]")
+    console.print("\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]")
 
 
 @main.command()
