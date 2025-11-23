@@ -12,6 +12,7 @@ from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.dewey import Dewey
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.jung import Jung
+from po_core.philosophers.nietzsche import Nietzsche
 from po_core.philosophers.sartre import Sartre
 from po_core.philosophers.watsuji import Watsuji
 from po_core.philosophers.wittgenstein import Wittgenstein
@@ -23,6 +24,7 @@ __all__ = [
     "Dewey",
     "Heidegger",
     "Derrida",
+    "Nietzsche",
     "Sartre",
     "Jung",
     "Watsuji",
