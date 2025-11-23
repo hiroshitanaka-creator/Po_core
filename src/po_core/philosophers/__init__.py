@@ -10,6 +10,7 @@ from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.jung import Jung
 from po_core.philosophers.sartre import Sartre
+from po_core.philosophers.watsuji import Watsuji
 
 __all__ = [
     "Philosopher",
@@ -17,4 +18,5 @@ __all__ = [
     "Derrida",
     "Sartre",
     "Jung",
+    "Watsuji",
 ]
