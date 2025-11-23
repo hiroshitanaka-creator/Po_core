@@ -14,6 +14,7 @@ from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.jung import Jung
 from po_core.philosophers.kierkegaard import Kierkegaard
 from po_core.philosophers.lacan import Lacan
+from po_core.philosophers.levinas import Levinas
 from po_core.philosophers.nietzsche import Nietzsche
 from po_core.philosophers.sartre import Sartre
 from po_core.philosophers.wabi_sabi import WabiSabi
@@ -29,6 +30,7 @@ __all__ = [
     "Derrida",
     "Kierkegaard",
     "Lacan",
+    "Levinas",
     "Nietzsche",
     "Sartre",
     "Jung",
