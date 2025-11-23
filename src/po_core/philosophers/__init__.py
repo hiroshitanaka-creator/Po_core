@@ -8,9 +8,11 @@ Each philosopher represents a different perspective and approach to meaning gene
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.heidegger import Heidegger
+from po_core.philosophers.sartre import Sartre
 
 __all__ = [
     "Philosopher",
     "Heidegger",
     "Derrida",
+    "Sartre",
 ]
