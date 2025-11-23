@@ -168,24 +168,63 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 
 ## Installation
 
-**⚠️ Alpha Status Notice:**  
-Po_core is in early development. The implementation is incomplete.  
-This repository currently contains the complete theoretical framework and design specifications.
+**⚠️ Alpha Status Notice:**
+Po_core is in early development. The CLI is functional, but core AI functionality is still being implemented.
 
 ```bash
 # Clone the repository
-git clone https://github.com/[your-username]/po_core.git
-cd po_core
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
 
-# Install dependencies
-pip install -r requirements.txt
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Note: Full functionality not yet implemented
-# See docs/ for complete design specifications
+# Install Po_core in development mode
+pip install -e .
+```
 
-For now, explore the design documents to understand the architecture.
-Basic Usage (Planned)
+---
 
+## Quick Start
+
+Once installed, you can use the `po-core` command:
+
+```bash
+# Welcome message
+po-core hello
+
+# Check project status
+po-core status
+
+# Show version information
+po-core version
+
+# Get help
+po-core --help
+```
+
+**Example Output:**
+
+```
+$ po-core version
+
+  🐷🎈 Po_core    v0.1.0-alpha
+  Author          Flying Pig Project
+  Email           flyingpig0229+github@gmail.com
+  Philosophy      Flying Pig - When Pigs Fly
+  Motto           井の中の蛙、大海は知らずとも、大空を知る
+
+A frog in a well may not know the ocean, but it can know the sky.
+```
+
+---
+
+## Future Usage (Planned)
+
+The full philosophical AI system is under development:
+
+```python
 from po_core import PoCore
 
 # Initialize Po_core
@@ -193,14 +232,18 @@ po = PoCore()
 
 # Generate a response
 response = po.generate(
-    prompt="Should AI have rights?",
-    include_trace=True  # Include philosophical reasoning
+    prompt="Should AI have rights?",
+    include_trace=True  # Include philosophical reasoning
 )
 
 print(response.text)
-print(response.freedom_pressure)  # Responsibility weight
-print(response.philosophers_involved)  # Which minds contributed
+print(response.freedom_pressure)  # Responsibility weight
+print(response.philosophers_involved)  # Which minds contributed
+```
 
+---
+
+## Documentation
 Documentation
 	•	📖 Manifesto — Our philosophy and motivation
 	•	📚 Design Documents — 120+ technical specifications
