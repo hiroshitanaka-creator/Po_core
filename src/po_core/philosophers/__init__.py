@@ -5,6 +5,7 @@ This module contains the philosophical reasoning engines.
 Each philosopher represents a different perspective and approach to meaning generation.
 """
 
+from po_core.philosophers.arendt import Arendt
 from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.badiou import Badiou
 from po_core.philosophers.base import Philosopher
@@ -26,6 +27,7 @@ from po_core.philosophers.wittgenstein import Wittgenstein
 
 __all__ = [
     "Philosopher",
+    "Arendt",
     "Aristotle",
     "Badiou",
     "Deleuze",
