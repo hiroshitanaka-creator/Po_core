@@ -77,8 +77,9 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 ## Key Features
 
 ### 🧠 Philosophical Ensemble
-- **10+ Philosophers Working Together**: Heidegger, Derrida, Arendt, Jung, Watsuji Tetsurō, Aristotle, Peirce, Wittgenstein, Spinoza, Sartre, and others
+- **20 Philosophers Working Together**: Western (Aristotle, Sartre, Heidegger, Nietzsche, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt) and Eastern (Watsuji Tetsurō, Wabi-Sabi, Confucius, Zhuangzi)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
+- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, and Eastern wisdom traditions
 
 ### 📊 Tensor-Based Architecture
 - **Freedom Pressure Tensor (F_P)**: Measures responsibility weight of each response

@@ -302,8 +302,8 @@ motto = "井の中の蛙、大海は知らずとも、大空を知る"
 
 [tool.po_core.project]
 status = "alpha"
-implementation_progress = 0.30
-philosophers_integrated = 0
+implementation_progress = 0.35
+philosophers_integrated = 20
 design_documents = 120
 started = "2024"
 
