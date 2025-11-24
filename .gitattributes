@@ -1,2 +1,15 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+* text=auto eol=lf
+
+# Maintain consistent handling for common data/binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg text
+
+# Ensure shell and YAML scripts use LF endings
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.py text eol=lf
