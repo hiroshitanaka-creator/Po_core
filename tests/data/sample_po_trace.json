@@ -1,0 +1,9 @@
+{
+  "session": "Sample Po_trace Session",
+  "events": [
+    {"step": 1, "philosopher": "Aristotle", "tension": 0.35, "summary": "Defined the question space."},
+    {"step": 2, "philosopher": "Confucius", "tension": 0.55, "summary": "Aligned the inquiry with harmony and ritual."},
+    {"step": 3, "philosopher": "Simone de Beauvoir", "tension": 0.75, "summary": "Challenged assumptions about freedom."},
+    {"step": 4, "philosopher": "Aristotle", "tension": 0.60, "summary": "Linked observations to causal structure."}
+  ]
+}
