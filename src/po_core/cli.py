@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core.po_trace import cli as trace_cli
 
 console = Console()
 
@@ -61,6 +62,15 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+@main.command(name="trace", context_settings={"ignore_unknown_options": True})
+@click.pass_context
+def trace_command(ctx: click.Context) -> None:
+    """Proxy to the Po_trace CLI utilities."""
+
+    # Delegate argument parsing to the trace CLI to keep option parity.
+    trace_cli.main(standalone_mode=False, args=ctx.args)
 
 
 if __name__ == "__main__":
