@@ -24,6 +24,14 @@
 [Viewer spec](./blob/main/docs/viewer/README.md)
 
 ## Contribution Tracks
+
+### 開発者向け: Makefile 主要コマンド一覧
+- `make install-dev`: 開発用依存関係をまとめてセットアップ
+- `make format`, `make lint`, `make typecheck`, `make test`: CI 相当の最小セット
+- `make coverage`: カバレッジ付きテスト（po_core を対象）
+- `make security`: bandit と safety によるセキュリティチェック
+- `make docs`: Sphinx ドキュメントを HTML ビルド
+
 ### <a id="ai-track"></a>👩‍💻 AI Track
 Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
 
