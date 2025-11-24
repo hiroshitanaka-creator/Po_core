@@ -8,7 +8,7 @@ Each philosopher represents a different perspective and approach to meaning gene
 from po_core.philosophers.arendt import Arendt
 from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.badiou import Badiou
-from po_core.philosophers.base import Philosopher
+from po_core.philosophers.base import Philosopher, PhilosopherSignal
 from po_core.philosophers.confucius import Confucius
 from po_core.philosophers.deleuze import Deleuze
 from po_core.philosophers.derrida import Derrida
@@ -49,4 +49,5 @@ __all__ = [
     "Watsuji",
     "Wittgenstein",
     "Zhuangzi",
+    "PhilosopherSignal",
 ]

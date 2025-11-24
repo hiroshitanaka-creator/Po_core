@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core.po_self import run_ensemble
 
 console = Console()
 
@@ -61,6 +62,30 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+@main.command()
+@click.option("--prompt", required=True, help="Prompt to run through the Po_self ensemble")
+def self(prompt: str) -> None:
+    """Run Po_self ensemble reasoning."""
+
+    console.print("[bold magenta]🧠 Po_self - Philosophical Ensemble[/bold magenta]")
+    result = run_ensemble(prompt)
+
+    console.print("\n[bold]Minimal Response[/bold]")
+    console.print(result.response)
+
+    console.print("\n[bold]Design Signals[/bold]")
+    console.print(
+        f"Freedom Pressure: {result.design_signals.freedom_pressure}\n"
+        f"Ethical Resonance: {result.design_signals.ethical_resonance}\n"
+        f"Responsibility Pressure: {result.design_signals.responsibility_pressure}\n"
+        f"Meaning Profile: {result.design_signals.meaning_profile}"
+    )
+
+    console.print("\n[bold]Philosopher Log[/bold]")
+    for signal in result.philosopher_signals:
+        console.print(f"- {signal.name} (w={result.weights.get(signal.name, 0):.2f}): {signal.reasoning}")
 
 
 if __name__ == "__main__":
