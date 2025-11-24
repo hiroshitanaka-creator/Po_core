@@ -6,7 +6,20 @@ Each philosopher provides a unique perspective for analyzing and generating mean
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
+
+
+@dataclass
+class PhilosopherSignal:
+    """Normalized signal returned by a philosopher module."""
+
+    name: str
+    reasoning: str
+    perspective: str
+    tensions: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    raw: Dict[str, Any] = field(default_factory=dict)
 
 
 class Philosopher(ABC):
@@ -46,6 +59,32 @@ class Philosopher(ABC):
                 - metadata: Additional reasoning metadata
         """
         pass
+
+    def analyze(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> PhilosopherSignal:
+        """Normalize the philosopher output into a common schema."""
+
+        raw = self.reason(prompt, context=context)
+        reasoning = str(raw.get("reasoning", "")).strip()
+        perspective = str(raw.get("perspective", self.description))
+
+        tensions: List[str] = []
+        raw_tension = raw.get("tension")
+        if isinstance(raw_tension, list):
+            tensions = [str(item) for item in raw_tension if item]
+        elif raw_tension:
+            tensions = [str(raw_tension)]
+
+        metadata = {"philosopher": self.name}
+        metadata.update(raw.get("metadata", {}))
+
+        return PhilosopherSignal(
+            name=self.name,
+            reasoning=reasoning,
+            perspective=perspective,
+            tensions=tensions,
+            metadata=metadata,
+            raw=raw,
+        )
 
     def __repr__(self) -> str:
         """String representation of the philosopher."""
