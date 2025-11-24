@@ -9,6 +9,8 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core.po_trace import run_trace
+from po_core.po_trace.present import render_summary
 
 console = Console()
 
@@ -22,20 +24,23 @@ def main() -> None:
     A system that integrates philosophers as dynamic tensors
     for responsible meaning generation.
     """
-    pass
 
 
 @main.command()
 def hello() -> None:
     """Say hello from Po_core"""
+
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
     console.print("Philosophy-Driven AI System - Alpha v0.1.0")
-    console.print("\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]")
+    console.print(
+        "\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]"
+    )
 
 
 @main.command()
 def status() -> None:
     """Show project status"""
+
     console.print("[bold]📊 Po_core Project Status[/bold]\n")
     console.print("✅ Philosophical Framework: 100%")
     console.print("✅ Documentation: 100%")
@@ -48,6 +53,7 @@ def status() -> None:
 @main.command()
 def version() -> None:
     """Show version information"""
+
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(style="bold cyan")
     table.add_column()
@@ -60,7 +66,19 @@ def version() -> None:
 
     console.print("\n")
     console.print(table)
-    console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+    console.print(
+        "\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]"
+    )
+
+
+@main.command()
+@click.argument("prompt")
+@click.option("--steps", default=3, show_default=True, help="Number of reasoning steps")
+def trace(prompt: str, steps: int) -> None:
+    """Run a traced Po_self inference and show the audit log."""
+
+    session = run_trace(prompt=prompt, steps=steps)
+    render_summary(console, session)
 
 
 if __name__ == "__main__":
