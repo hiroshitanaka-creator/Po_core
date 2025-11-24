@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core import po_viewer
 
 console = Console()
 
@@ -43,6 +44,21 @@ def status() -> None:
     console.print("🔄 Implementation: 30%")
     console.print("⏳ Testing: 0%")
     console.print("⏳ Visualization: 0%")
+
+
+@main.command()
+@click.option(
+    "trace_path",
+    "--trace",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, readable=True),
+    help="Path to a Po_trace JSON log",
+)
+def viewer(trace_path: str) -> None:
+    """Visualize a Po_trace log in the terminal."""
+
+    log = po_viewer.load_trace(trace_path)
+    po_viewer.render_trace(log, console=console)
 
 
 @main.command()
