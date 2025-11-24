@@ -149,8 +149,8 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 | 📖 Documentation | ✅ Complete | 100% (120+ specs) |
 | 🏗️ Architecture Design | ✅ Complete | 100% |
 | 💻 Implementation | 🔄 In Progress | 30% |
-| 🧪 Testing | ⏳ Planned | 0% |
-| 🎨 Visualization (Viewer) | ⏳ Planned | 0% |
+| 🧪 Testing | 🔄 In Progress | 30% |
+| 🎨 Visualization (Viewer) | 🔄 In Progress | 30% |
 
 **What's Working:**
 - ✅ Po_self API (basic functionality)
@@ -158,10 +158,10 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 - ✅ Complete design specifications
 
 **What's Next:**
-- 🔄 Po_trace implementation
+- 🔄 Expand Po_trace validation
 - 🔄 Complete Po_self integration
-- ⏳ Po_core Viewer development
-- ⏳ Comprehensive testing
+- 🔄 Po_core Viewer visualizations
+- 🔄 Comprehensive testing
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
 
@@ -205,6 +205,44 @@ po-core version
 po-core --help
 ```
 
+### Po_trace: Audit logging
+
+Collect reasoning events into a structured audit log.
+
+```bash
+# Log events from a JSON array into logs/trace.log
+po-trace log --input samples/trace/sample_events.json --output logs/trace.log
+```
+
+This command validates each record for `event` and `timestamp` fields, normalizes timestamps, and appends JSONL entries. A starter fixture is available under `samples/trace/sample_events.json`.
+
+### Po_viewer: Quick summaries
+
+Render simple counts from a trace log as an ASCII bar chart.
+
+```bash
+po-viewer render --source samples/trace/trace.log --format ascii --top 5
+```
+
+Example output:
+
+```
+Event Summary
+ingest_started: ## (2)
+ingest_completed: # (1)
+analysis_ready: # (1)
+```
+
+### Po_self: Mock philosophy tensor
+
+Generate a deterministic philosophical response for experimentation.
+
+```bash
+po-self synthesize --prompt "How should we audit AI systems?" --mode demo --seed 7 --output outputs/philosophy.json
+```
+
+The command emits JSON with `prompt`, `response`, and `confidence` fields and can stream to stdout when `--output` is omitted.
+
 **Example Output:**
 
 ```
@@ -217,6 +255,17 @@ $ po-core version
   Motto           井の中の蛙、大海は知らずとも、大空を知る
 
 A frog in a well may not know the ocean, but it can know the sky.
+```
+
+---
+
+## Testing
+
+Run the smoke tests locally after installing dev dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+pytest
 ```
 
 ---
