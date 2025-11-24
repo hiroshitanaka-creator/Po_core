@@ -4,9 +4,13 @@ Po_core CLI - Main Command Line Interface
 Entry point for the po-core command.
 """
 
+from pathlib import Path
+
 import click
 from rich.console import Console
 from rich.table import Table
+
+from po_core.po_viewer import load_trace, render_trace
 
 from po_core import __author__, __email__, __version__
 
@@ -61,6 +65,29 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+@main.command()
+@click.argument("trace_id")
+@click.option(
+    "--philosopher",
+    "-p",
+    help="Filter segments to a specific philosopher",
+)
+@click.option(
+    "--traces-dir",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+    help="Directory containing trace JSON files (defaults to data/traces or PO_CORE_TRACES_DIR)",
+)
+def view(trace_id: str, philosopher: str | None, traces_dir: Path | None) -> None:
+    """Render a stored trace in the console."""
+
+    try:
+        trace = load_trace(trace_id, traces_dir=traces_dir)
+    except (FileNotFoundError, ValueError) as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+
+    render_trace(trace, philosopher_filter=philosopher, console=console)
 
 
 if __name__ == "__main__":
