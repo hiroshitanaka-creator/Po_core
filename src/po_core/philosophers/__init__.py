@@ -9,6 +9,7 @@ from po_core.philosophers.arendt import Arendt
 from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.badiou import Badiou
 from po_core.philosophers.base import Philosopher
+from po_core.philosophers.confucius import Confucius
 from po_core.philosophers.deleuze import Deleuze
 from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.dewey import Dewey
@@ -24,12 +25,14 @@ from po_core.philosophers.sartre import Sartre
 from po_core.philosophers.wabi_sabi import WabiSabi
 from po_core.philosophers.watsuji import Watsuji
 from po_core.philosophers.wittgenstein import Wittgenstein
+from po_core.philosophers.zhuangzi import Zhuangzi
 
 __all__ = [
     "Philosopher",
     "Arendt",
     "Aristotle",
     "Badiou",
+    "Confucius",
     "Deleuze",
     "Dewey",
     "Heidegger",
@@ -45,4 +48,5 @@ __all__ = [
     "WabiSabi",
     "Watsuji",
     "Wittgenstein",
+    "Zhuangzi",
 ]
