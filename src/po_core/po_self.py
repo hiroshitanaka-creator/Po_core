@@ -19,6 +19,8 @@ from po_core.philosophers.base import Philosopher
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
 from po_core.tensors.semantic_profile import SemanticProfile
 from po_core.tensors.blocked_tensor import BlockedTensor, BlockedEntry
+from po_core.tensors.concept_quantifier import ConceptQuantifier
+from po_core.tensors.interaction_tensor import InteractionTensor
 from po_core.trace.tracer import ReasoningTracer, TraceLevel
 from po_core.trace.annotator import PhilosophicalAnnotator
 
@@ -65,6 +67,8 @@ class PhilosophicalEnsemble:
         self.freedom_pressure = FreedomPressureTensor()
         self.semantic_profile = SemanticProfile()
         self.blocked_tensor = BlockedTensor()
+        self.concept_quantifier = ConceptQuantifier()
+        self.interaction_tensor = InteractionTensor(num_philosophers=len(philosophers))
 
         # Interaction history
         self.interaction_history: List[Dict[str, Any]] = []
@@ -124,6 +128,12 @@ class PhilosophicalEnsemble:
         # Stage 6: Add philosophical annotations
         annotations = self._annotate_reasoning(synthesis, perspectives)
 
+        # Stage 7: Calculate philosopher interactions
+        interaction_data = self._calculate_interactions(perspectives)
+
+        # Stage 8: Quantify key philosophical concepts
+        concept_data = self._quantify_concepts(prompt, perspectives, annotations)
+
         # Complete tracing
         result = {
             "prompt": prompt,
@@ -134,6 +144,8 @@ class PhilosophicalEnsemble:
             "semantic_profile": semantic_data,
             "blocked_content": blocked_data,
             "annotations": annotations,
+            "interactions": interaction_data,
+            "concepts": concept_data,
             "metadata": self.metadata,
         }
 
@@ -403,6 +415,137 @@ class PhilosophicalEnsemble:
 
         return all_annotations
 
+    def _calculate_interactions(
+        self, perspectives: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Calculate philosopher interactions.
+
+        Args:
+            perspectives: Philosopher perspectives
+
+        Returns:
+            Interaction data including harmony, tension, and influence
+        """
+        # Compute interaction tensor
+        self.interaction_tensor.compute(perspectives)
+
+        # Extract interaction matrices
+        harmony_matrix = self.interaction_tensor.get_harmony_matrix()
+        tension_matrix = self.interaction_tensor.get_tension_matrix()
+        synthesis_potential = self.interaction_tensor.get_synthesis_potential_matrix()
+
+        # Get philosopher names
+        philosopher_names = [p.get("philosopher", "") for p in perspectives]
+
+        # Log to tracer
+        if self.tracer:
+            self.tracer.log_tensor_computation(
+                tensor_name="Interaction_Tensor",
+                tensor_data=self.interaction_tensor.data.tolist(),
+                metadata={
+                    "philosophers": philosopher_names,
+                    "average_harmony": float(np.mean(harmony_matrix)),
+                    "average_tension": float(np.mean(tension_matrix)),
+                }
+            )
+
+        # Store interaction history
+        self.interaction_history.append({
+            "philosophers": philosopher_names,
+            "harmony_matrix": harmony_matrix.tolist(),
+            "tension_matrix": tension_matrix.tolist(),
+            "synthesis_potential": synthesis_potential.tolist(),
+        })
+
+        return {
+            "philosophers": philosopher_names,
+            "harmony_matrix": harmony_matrix.tolist(),
+            "tension_matrix": tension_matrix.tolist(),
+            "synthesis_potential_matrix": synthesis_potential.tolist(),
+            "average_harmony": float(np.mean(harmony_matrix)),
+            "average_tension": float(np.mean(tension_matrix)),
+            "pairwise_interactions": [
+                interaction.to_dict()
+                for interaction in self.interaction_tensor.interactions.values()
+            ],
+        }
+
+    def _quantify_concepts(
+        self,
+        prompt: str,
+        perspectives: List[Dict[str, Any]],
+        annotations: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """
+        Quantify philosophical concepts.
+
+        Args:
+            prompt: Input prompt
+            perspectives: Philosopher perspectives
+            annotations: Philosophical annotations
+
+        Returns:
+            Quantified concept data
+        """
+        quantified_concepts = []
+
+        # Extract concepts from annotations
+        concept_names = set()
+        for annotation in annotations:
+            concept_name = annotation.get("concept", "")
+            if concept_name:
+                concept_names.add(concept_name)
+
+        # Quantify each concept for each philosopher
+        for perspective in perspectives:
+            philosopher = perspective.get("philosopher", "")
+            reasoning = perspective.get("reasoning", {})
+
+            # Extract text from reasoning
+            if isinstance(reasoning, dict):
+                text = reasoning.get("reasoning", "")
+            else:
+                text = str(reasoning)
+
+            # Quantify concepts mentioned by this philosopher
+            for concept_name in concept_names:
+                if concept_name.lower() in text.lower():
+                    # Compute quantification
+                    self.concept_quantifier.compute(
+                        concept_name=concept_name,
+                        philosopher=philosopher,
+                        text=text
+                    )
+
+                    # Get quantified concept
+                    concept = self.concept_quantifier.get_concept(concept_name, philosopher)
+                    if concept:
+                        quantified_concepts.append(concept.to_dict())
+                    else:
+                        # Create from current data
+                        quantified_concepts.append({
+                            "name": concept_name,
+                            "philosopher": philosopher,
+                            "vector": self.concept_quantifier.data.tolist(),
+                            "confidence": 0.7,
+                        })
+
+        # Log to tracer
+        if self.tracer:
+            self.tracer.log_event(
+                level=TraceLevel.INFO,
+                event="concept_quantification",
+                message=f"Quantified {len(quantified_concepts)} philosophical concepts",
+                data={"concepts": [c.get("name") for c in quantified_concepts]}
+            )
+
+        return {
+            "quantified_concepts": quantified_concepts,
+            "concept_space_dimensions": self.concept_quantifier.dimension_names,
+            "total_concepts": len(quantified_concepts),
+        }
+
     def get_interaction_history(self) -> List[Dict[str, Any]]:
         """Get history of philosopher interactions."""
         return self.interaction_history
@@ -412,6 +555,8 @@ class PhilosophicalEnsemble:
         self.freedom_pressure = FreedomPressureTensor()
         self.semantic_profile = SemanticProfile()
         self.blocked_tensor = BlockedTensor()
+        self.concept_quantifier = ConceptQuantifier()
+        self.interaction_tensor = InteractionTensor(num_philosophers=len(self.philosophers))
         self.interaction_history = []
         self.tracer = None
 
