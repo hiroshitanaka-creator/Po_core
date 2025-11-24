@@ -1,0 +1,48 @@
+{
+  "trace_id": "trace-sample-001",
+  "theme": "Socratic dialogue on courage",
+  "steps": [
+    {
+      "step": 1,
+      "tension": {
+        "Socrates": 0.32,
+        "Nietzsche": 0.76,
+        "Aristotle": 0.44
+      },
+      "contributions": [
+        {
+          "philosopher": "Socrates",
+          "summary": "Asks clarifying questions to expose assumptions.",
+          "weight": 0.4
+        },
+        {
+          "philosopher": "Nietzsche",
+          "summary": "Challenges moral premises with will-to-power lens.",
+          "weight": 0.6
+        }
+      ],
+      "note": "Initial probes introduce productive tension."
+    },
+    {
+      "step": 2,
+      "tension": {
+        "Socrates": 0.28,
+        "Nietzsche": 0.64,
+        "Aristotle": 0.58
+      },
+      "contributions": [
+        {
+          "philosopher": "Socrates",
+          "summary": "Refines the definition of courage through elenchus.",
+          "weight": 0.35
+        },
+        {
+          "philosopher": "Aristotle",
+          "summary": "Balances rashness and cowardice to locate the mean.",
+          "weight": 0.65
+        }
+      ],
+      "note": "Definition narrows; tension redistributes."
+    }
+  ]
+}
