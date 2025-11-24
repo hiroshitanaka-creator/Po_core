@@ -6,7 +6,7 @@ Each philosopher provides a unique perspective for analyzing and generating mean
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
 
 class Philosopher(ABC):
@@ -28,6 +28,20 @@ class Philosopher(ABC):
         self.name = name
         self.description = description
         self._context: Dict[str, Any] = {}
+
+    @property
+    def context(self) -> Dict[str, Any]:
+        """Return a shallow copy of the current context state."""
+        return dict(self._context)
+
+    def set_context(self, context: Optional[Mapping[str, Any]] = None) -> None:
+        """Replace the current context with provided mapping."""
+        self._context = dict(context) if context else {}
+
+    def update_context(self, context: Optional[Mapping[str, Any]] = None) -> None:
+        """Merge additional context values into the current state."""
+        if context:
+            self._context.update(dict(context))
 
     @abstractmethod
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
