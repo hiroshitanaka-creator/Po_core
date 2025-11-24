@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core import po_trace
 
 console = Console()
 
@@ -61,6 +62,10 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+# Po_trace CLI integration
+main.add_command(po_trace.cli, name="po-trace")
 
 
 if __name__ == "__main__":
