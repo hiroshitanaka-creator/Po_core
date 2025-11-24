@@ -4,11 +4,14 @@ Po_core CLI - Main Command Line Interface
 Entry point for the po-core command.
 """
 
+import json
+from typing import Iterable
+
 import click
 from rich.console import Console
 from rich.table import Table
 
-from po_core import __author__, __email__, __version__
+from po_core import __author__, __email__, __version__, run_ensemble
 
 console = Console()
 
@@ -23,6 +26,16 @@ def main() -> None:
     for responsible meaning generation.
     """
     pass
+
+
+def _format_prompt_output(data: dict, *, keys: Iterable[str]) -> str:
+    """Render a compact text view for prompt results."""
+
+    lines = []
+    for key in keys:
+        value = data.get(key, "")
+        lines.append(f"{key.capitalize()}: {value}")
+    return "\n".join(lines)
 
 
 @main.command()
@@ -61,6 +74,39 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+@main.command()
+@click.argument("prompt")
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["text", "json"], case_sensitive=False),
+    default="json",
+    help="Choose between text or JSON output.",
+)
+def prompt(prompt: str, output_format: str) -> None:
+    """Run the deterministic ensemble against a prompt."""
+
+    result = run_ensemble(prompt)
+    if output_format.lower() == "json":
+        console.print(json.dumps(result, indent=2))
+    else:
+        console.print(
+            _format_prompt_output(
+                result,
+                keys=["prompt", "philosophers"],
+            )
+        )
+
+
+@main.command()
+@click.argument("prompt")
+def log(prompt: str) -> None:
+    """Display the audit log for a deterministic ensemble run."""
+
+    run_data = run_ensemble(prompt)
+    console.print(json.dumps(run_data["log"], indent=2))
 
 
 if __name__ == "__main__":
