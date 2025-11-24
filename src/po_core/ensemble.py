@@ -1,8 +1,9 @@
 """Deterministic ensemble runner used by CLI smoke tests."""
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Dict, Iterable, List, Optional
+
+from po_core.po_trace import trace_recorder
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "nietzsche", "wittgenstein"]
 
@@ -16,31 +17,36 @@ def run_ensemble(prompt: str, *, philosophers: Optional[Iterable[str]] = None) -
     """
 
     selected = list(philosophers) if philosophers is not None else DEFAULT_PHILOSOPHERS
+    run_id = trace_recorder.start_run(prompt, selected)
     results = []
     base_confidence = 0.88
     for idx, name in enumerate(selected):
+        confidence = round(base_confidence - 0.05 * idx, 2)
+        summary = f"{name.title()} reflects on '{prompt}'."
+        trace_recorder.log_event(
+            run_id,
+            "philosopher_considered",
+            philosopher=name,
+            confidence=confidence,
+        )
+        trace_recorder.log_artifact(
+            run_id,
+            label="summary",
+            content=summary,
+            philosopher=name,
+        )
+
         results.append(
             {
                 "name": name,
-                "confidence": round(base_confidence - 0.05 * idx, 2),
-                "summary": f"{name.title()} reflects on '{prompt}'.",
+                "confidence": confidence,
+                "summary": summary,
                 "tags": ["analysis", "deterministic"],
             }
         )
 
-    log = {
-        "prompt": prompt,
-        "philosophers": selected,
-        "created_at": datetime.utcnow().isoformat() + "Z",
-        "events": [
-            {"event": "ensemble_started", "philosophers": len(selected)},
-            {
-                "event": "ensemble_completed",
-                "results_recorded": len(results),
-                "status": "ok",
-            },
-        ],
-    }
+    trace_recorder.complete_run(run_id, status="ok", results_recorded=len(results))
+    log = trace_recorder.snapshot(run_id)
 
     return {
         "prompt": prompt,
