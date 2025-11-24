@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core.po_viewer import load_po_trace, render_trace_summary
 
 console = Console()
 
@@ -61,6 +62,21 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+@main.command()
+@click.option(
+    "trace_path",
+    "--trace",
+    type=click.Path(exists=True, dir_okay=False, path_type=str),
+    required=True,
+    help="Path to a Po_trace JSON log (see examples/po_trace_sample.json)",
+)
+def viewer(trace_path: str) -> None:
+    """Render a Po_trace log in the terminal viewer."""
+
+    trace = load_po_trace(trace_path)
+    console.print(render_trace_summary(trace))
 
 
 if __name__ == "__main__":
