@@ -9,12 +9,13 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
+from po_core import po_self, po_trace, po_viewer
 
 console = Console()
 
 
 @click.group()
-@click.version_option(version="0.1.0-alpha", prog_name="po-core")
+@click.version_option(version=__version__, prog_name="po-core")
 def main() -> None:
     """
     Po_core: Philosophy-Driven AI System 🐷🎈
@@ -40,9 +41,9 @@ def status() -> None:
     console.print("✅ Philosophical Framework: 100%")
     console.print("✅ Documentation: 100%")
     console.print("✅ Architecture Design: 100%")
-    console.print("🔄 Implementation: 30%")
-    console.print("⏳ Testing: 0%")
-    console.print("⏳ Visualization: 0%")
+    console.print("🔄 Implementation: 40%")
+    console.print("⏳ Testing: 10%")
+    console.print("⏳ Visualization: 10%")
 
 
 @main.command()
@@ -61,6 +62,11 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+
+
+main.add_command(po_trace.cli, name="trace")
+main.add_command(po_self.cli, name="self")
+main.add_command(po_viewer.cli, name="view")
 
 
 if __name__ == "__main__":
