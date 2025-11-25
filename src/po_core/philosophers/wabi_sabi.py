@@ -19,7 +19,7 @@ Key Concepts:
 - Mono no aware (物の哀れ): Awareness of transience, poignant beauty of impermanence
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -116,7 +116,7 @@ class WabiSabi(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            imperfection, impermanence, simplicity, overall
+            imperfection, impermanence, simplicity, naturalness, overall
         )
 
         return {
@@ -598,6 +598,7 @@ class WabiSabi(Philosopher):
         imperfection: Dict[str, Any],
         impermanence: Dict[str, Any],
         simplicity: Dict[str, Any],
+        naturalness: Dict[str, Any],
         overall: Dict[str, Any]
     ) -> str:
         """Construct wabi-sabi aesthetic reasoning."""
@@ -605,6 +606,7 @@ class WabiSabi(Philosopher):
             f"From a wabi-sabi aesthetic perspective, imperfection: {imperfection['description']}. "
             f"Impermanence: {impermanence['description']}. "
             f"Simplicity: {simplicity['description']}. "
+            f"Naturalness: {naturalness['description']}. "
             f"Overall assessment: {overall['description']}. "
         )
 
