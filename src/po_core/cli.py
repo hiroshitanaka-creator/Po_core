@@ -5,13 +5,16 @@ Entry point for the po-core command.
 """
 
 import json
-from typing import Iterable
+from pathlib import Path
+from typing import Iterable, Optional
 
 import click
 from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__, run_ensemble
+from po_core.po_self import PoSelfEnsemble
+from po_core.po_trace import PoTraceLogger
 
 console = Console()
 
@@ -107,6 +110,64 @@ def log(prompt: str) -> None:
 
     run_data = run_ensemble(prompt)
     console.print(json.dumps(run_data["log"], indent=2))
+
+
+@main.command("po-self")
+@click.argument("prompt")
+@click.option(
+    "--show-tensors",
+    is_flag=True,
+    help="Print philosopher tensor values instead of only the composite score.",
+)
+@click.option(
+    "--log-file",
+    type=click.Path(dir_okay=False, writable=True, resolve_path=True),
+    default=None,
+    help="Optional path to write Po_trace output.",
+)
+@click.option(
+    "--ndjson/--json-log",
+    "ndjson",
+    default=True,
+    help="Choose NDJSON (default) or JSON for trace output.",
+)
+def po_self(prompt: str, show_tensors: bool, log_file: Optional[str], ndjson: bool) -> None:
+    """Run a three-philosopher Po_self inference and optional trace."""
+
+    ensemble = PoSelfEnsemble()
+    result = ensemble.infer(prompt)
+
+    logger = PoTraceLogger(path=Path(log_file) if log_file else None, ndjson=ndjson)
+    logger.record_prompt(prompt)
+    logger.record_tensors(result)
+    logger.record_contributions(
+        f"{tensor.name} -> {tensor.value}" for tensor in result.philosopher_tensors
+    )
+    log_path = logger.save()
+
+    if show_tensors:
+        table = Table(title="Po_self Tensor Outputs")
+        table.add_column("Philosopher", style="bold cyan")
+        table.add_column("Value", justify="right")
+        table.add_column("Weight", justify="right")
+        table.add_column("Notes")
+        focus_map = {tensor.name: tensor.description for tensor in result.philosopher_tensors}
+        for tensor in result.philosopher_tensors:
+            table.add_row(
+                tensor.name,
+                str(tensor.value),
+                str(tensor.metadata.get("weight", "")),
+                focus_map.get(tensor.name, ""),
+            )
+        console.print(table)
+
+    composite = result.composite_tensor
+    console.print(
+        f"[bold green]Ensemble score:[/bold green] {composite.value}"
+        if composite
+        else "No composite tensor produced"
+    )
+    console.print(f"Trace log written to: [italic]{log_path}[/italic]")
 
 
 if __name__ == "__main__":
