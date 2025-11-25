@@ -1,15 +1,10 @@
-import json
 import pytest
 
-
-@pytest.fixture()
-def sample_prompt() -> str:
-    return "What does it mean to live authentically?"
+from po_core.ensemble import DEFAULT_PHILOSOPHERS
 
 
 @pytest.fixture()
-def load_json_output():
-    def _loader(result) -> dict:
-        return json.loads(result.output.strip())
+def expected_philosophers():
+    """Default set of philosophers used in deterministic tests."""
 
-    return _loader
+    return DEFAULT_PHILOSOPHERS

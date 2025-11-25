@@ -1,12 +1,12 @@
-from po_core.ensemble import DEFAULT_PHILOSOPHERS, run_ensemble
+from po_core.ensemble import run_ensemble
 
 
-def test_run_ensemble_returns_expected_shape(sample_prompt):
+def test_run_ensemble_returns_expected_shape(sample_prompt, expected_philosophers):
     result = run_ensemble(sample_prompt)
 
     assert result["prompt"] == sample_prompt
-    assert result["philosophers"] == DEFAULT_PHILOSOPHERS
-    assert len(result["results"]) == len(DEFAULT_PHILOSOPHERS)
+    assert result["philosophers"] == expected_philosophers
+    assert len(result["results"]) == len(expected_philosophers)
 
     for entry in result["results"]:
         assert set(entry) >= {"name", "confidence", "summary", "tags"}
@@ -15,6 +15,8 @@ def test_run_ensemble_returns_expected_shape(sample_prompt):
 
     log = result["log"]
     assert log["prompt"] == sample_prompt
-    assert log["philosophers"] == DEFAULT_PHILOSOPHERS
+    assert log["philosophers"] == expected_philosophers
     assert any(event["event"] == "ensemble_started" for event in log["events"])
-    assert any(event.get("results_recorded") == len(DEFAULT_PHILOSOPHERS) for event in log["events"])
+    assert any(
+        event.get("results_recorded") == len(expected_philosophers) for event in log["events"]
+    )

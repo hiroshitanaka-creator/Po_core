@@ -149,7 +149,7 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 | 📖 Documentation | ✅ Complete | 100% (120+ specs) |
 | 🏗️ Architecture Design | ✅ Complete | 100% |
 | 💻 Implementation | 🔄 In Progress | 30% |
-| 🧪 Testing | ⏳ Planned | 0% |
+| 🧪 Testing | 🔄 In Progress | 20% |
 | 🎨 Visualization (Viewer) | ⏳ Planned | 0% |
 
 **What's Working:**
@@ -198,12 +198,15 @@ po-core hello
 # Check project status
 po-core status
 
-# Show version information
-po-core version
+  # Show version information
+  po-core version
 
-# Get help
-po-core --help
-```
+  # Get help
+  po-core --help
+
+  # Run deterministic ensemble with JSON output
+  po-core prompt "What is philosophy?" --format json
+  ```
 
 **Example Output:**
 
@@ -217,6 +220,17 @@ $ po-core version
   Motto           井の中の蛙、大海は知らずとも、大空を知る
 
 A frog in a well may not know the ocean, but it can know the sky.
+```
+
+---
+
+## Testing
+
+Install development dependencies and execute the pytest suite to generate coverage (fail-under set to 80%). See [`tests/README.md`](tests/README.md) for more details.
+
+```bash
+pip install -r requirements-dev.txt
+pytest
 ```
 
 ---

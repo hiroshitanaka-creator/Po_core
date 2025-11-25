@@ -172,6 +172,7 @@ addopts = [
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html",
     "--cov-report=xml",
+    "--cov-fail-under=80",
     "-ra",
     "--verbose",
 ]
@@ -204,6 +205,7 @@ omit = [
 precision = 2
 show_missing = true
 skip_covered = false
+fail_under = 80
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
