@@ -12,9 +12,11 @@ __author__ = "Flying Pig Project"
 __email__ = "flyingpig0229+github@gmail.com"
 
 from po_core.ensemble import run_ensemble
+from po_core.po_self import run_po_self
 
 # Core exports will be added as implementation progresses
 __all__ = [
     "__version__",
     "run_ensemble",
+    "run_po_self",
 ]
