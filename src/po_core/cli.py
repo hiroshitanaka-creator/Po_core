@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__, run_ensemble
+from po_core.po_trace import TraceLevel
 
 console = Console()
 
@@ -85,10 +86,22 @@ def version() -> None:
     default="json",
     help="Choose between text or JSON output.",
 )
-def prompt(prompt: str, output_format: str) -> None:
-    """Run the deterministic ensemble against a prompt."""
+@click.option(
+    "--trace-level",
+    type=click.Choice([member.value for member in TraceLevel]),
+    default=TraceLevel.CONCISE.value,
+    show_default=True,
+    help="Detail level for Po_trace logging.",
+)
+@click.option(
+    "--trace-output",
+    type=click.Path(dir_okay=False, writable=True, path_type=str),
+    help="Optional file path to persist the trace JSON.",
+)
+def prompt(prompt: str, output_format: str, trace_level: str, trace_output: str | None) -> None:
+    """Run the deterministic ensemble against a prompt with trace logging."""
 
-    result = run_ensemble(prompt)
+    result = run_ensemble(prompt, trace_level=trace_level, trace_output=trace_output)
     if output_format.lower() == "json":
         console.print(json.dumps(result, indent=2))
     else:
@@ -102,11 +115,23 @@ def prompt(prompt: str, output_format: str) -> None:
 
 @main.command()
 @click.argument("prompt")
-def log(prompt: str) -> None:
+@click.option(
+    "--trace-level",
+    type=click.Choice([member.value for member in TraceLevel]),
+    default=TraceLevel.VERBOSE.value,
+    show_default=True,
+    help="Detail level for Po_trace logging.",
+)
+@click.option(
+    "--trace-output",
+    type=click.Path(dir_okay=False, writable=True, path_type=str),
+    help="Optional file path to persist the trace JSON.",
+)
+def log(prompt: str, trace_level: str, trace_output: str | None) -> None:
     """Display the audit log for a deterministic ensemble run."""
 
-    run_data = run_ensemble(prompt)
-    console.print(json.dumps(run_data["log"], indent=2))
+    run_data = run_ensemble(prompt, trace_level=trace_level, trace_output=trace_output)
+    console.print(json.dumps(run_data["trace"], indent=2))
 
 
 if __name__ == "__main__":
