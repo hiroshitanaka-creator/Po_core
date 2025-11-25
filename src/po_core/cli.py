@@ -5,13 +5,14 @@ Entry point for the po-core command.
 """
 
 import json
-from typing import Iterable
+from typing import Iterable, Optional
 
 import click
 from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__, run_ensemble
+from po_core.po_trace import PoTrace, filter_trace_data
 
 console = Console()
 
@@ -107,6 +108,38 @@ def log(prompt: str) -> None:
 
     run_data = run_ensemble(prompt)
     console.print(json.dumps(run_data["log"], indent=2))
+
+
+@main.group()
+def trace() -> None:
+    """Inspect Po_trace reasoning logs."""
+
+
+@trace.command("show")
+@click.option("--philosopher", type=str, help="Filter by philosopher name.")
+@click.option("--since", type=str, help="Only include events at or after the timestamp (ISO 8601).")
+@click.option(
+    "--path",
+    "trace_path",
+    type=click.Path(path_type=str),
+    help="Path to the trace NDJSON sink (defaults to PO_TRACE_PATH or po_trace.ndjson).",
+)
+def trace_show(philosopher: Optional[str], since: Optional[str], trace_path: Optional[str]) -> None:
+    """Display the latest persisted trace with optional filters."""
+
+    trace_data = PoTrace.latest(sink_path=trace_path)
+    if not trace_data:
+        console.print("No traces recorded yet.")
+        return
+
+    if since:
+        try:
+            filter_trace_data(trace_data, since=since)
+        except ValueError as exc:  # pragma: no cover - click handles messaging
+            raise click.BadParameter(str(exc), param_hint="--since") from exc
+
+    filtered = filter_trace_data(trace_data, philosopher=philosopher, since=since)
+    console.print(json.dumps(filtered, indent=2))
 
 
 if __name__ == "__main__":
