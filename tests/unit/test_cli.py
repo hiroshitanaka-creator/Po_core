@@ -37,7 +37,7 @@ def test_cli_prompt_command_returns_json(sample_prompt):
     assert result.exit_code == 0
     payload = json.loads(result.output)
     assert payload["prompt"] == sample_prompt
-    assert payload["results"]
+    assert payload["responses"]
 
 
 def test_cli_log_command_exposes_log(sample_prompt):
@@ -48,3 +48,11 @@ def test_cli_log_command_exposes_log(sample_prompt):
     payload = json.loads(result.output)
     assert payload["prompt"] == sample_prompt
     assert "events" in payload
+
+
+def test_cli_sample_flags_show_attribution():
+    runner = CliRunner()
+    result = runner.invoke(main, ["hello", "--sample"])
+
+    assert result.exit_code == 0
+    assert "Consensus Lead" in result.output

@@ -11,9 +11,11 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from po_core import __author__, __email__, __version__, run_ensemble
+from po_core import __author__, __email__, __version__
+from po_core.po_self import PoSelf
 
 console = Console()
+SAMPLE_PROMPT = "What does it mean to live authentically?"
 
 
 @click.group()
@@ -38,16 +40,34 @@ def _format_prompt_output(data: dict, *, keys: Iterable[str]) -> str:
     return "\n".join(lines)
 
 
+def _render_sample_generation(prompt: str) -> str:
+    response = PoSelf().generate(prompt)
+    attributions = ", ".join(response.philosophers)
+    metrics = ", ".join(f"{k}={v}" for k, v in response.metrics.items())
+    leader = response.consensus_leader or "Unknown"
+    return (
+        f"Prompt: {prompt}\n"
+        f"Consensus Lead: {leader}\n"
+        f"Philosophers: {attributions}\n"
+        f"Metrics: {metrics}\n"
+    )
+
+
 @main.command()
-def hello() -> None:
+@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+def hello(sample: bool) -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
     console.print("Philosophy-Driven AI System - Alpha v0.1.0")
     console.print("\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]")
+    if sample:
+        console.print("\n[dim]Running Po_self sample...[/dim]")
+        console.print(_render_sample_generation(SAMPLE_PROMPT))
 
 
 @main.command()
-def status() -> None:
+@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+def status(sample: bool) -> None:
     """Show project status"""
     console.print("[bold]📊 Po_core Project Status[/bold]\n")
     console.print("✅ Philosophical Framework: 100%")
@@ -56,10 +76,14 @@ def status() -> None:
     console.print("🔄 Implementation: 30%")
     console.print("⏳ Testing: 0%")
     console.print("⏳ Visualization: 0%")
+    if sample:
+        console.print("\n[dim]Running Po_self sample...[/dim]")
+        console.print(_render_sample_generation(SAMPLE_PROMPT))
 
 
 @main.command()
-def version() -> None:
+@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+def version(sample: bool) -> None:
     """Show version information"""
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(style="bold cyan")
@@ -74,6 +98,9 @@ def version() -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+    if sample:
+        console.print("\n[dim]Running Po_self sample...[/dim]")
+        console.print(_render_sample_generation(SAMPLE_PROMPT))
 
 
 @main.command()
@@ -88,14 +115,14 @@ def version() -> None:
 def prompt(prompt: str, output_format: str) -> None:
     """Run the deterministic ensemble against a prompt."""
 
-    result = run_ensemble(prompt)
+    response = PoSelf().generate(prompt)
     if output_format.lower() == "json":
-        console.print(json.dumps(result, indent=2))
+        click.echo(json.dumps(response.to_dict(), indent=2))
     else:
         console.print(
             _format_prompt_output(
-                result,
-                keys=["prompt", "philosophers"],
+                response.to_dict(),
+                keys=["prompt", "text", "philosophers"],
             )
         )
 
@@ -105,8 +132,8 @@ def prompt(prompt: str, output_format: str) -> None:
 def log(prompt: str) -> None:
     """Display the audit log for a deterministic ensemble run."""
 
-    run_data = run_ensemble(prompt)
-    console.print(json.dumps(run_data["log"], indent=2))
+    run_data = PoSelf().generate(prompt)
+    click.echo(json.dumps(run_data.log, indent=2))
 
 
 if __name__ == "__main__":
