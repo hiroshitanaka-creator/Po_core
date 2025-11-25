@@ -13,6 +13,7 @@ import click
 from rich.console import Console
 
 from po_core.ensemble import DEFAULT_PHILOSOPHERS, run_ensemble
+from po_core.po_trace import PoTrace
 
 console = Console()
 
@@ -44,13 +45,34 @@ class PoSelfResponse:
 class PoSelf:
     """Coordinate philosopher tensors and expose a deterministic generate API."""
 
-    def __init__(self, *, philosophers: Optional[Iterable[str]] = None) -> None:
+    def __init__(
+        self,
+        *,
+        philosophers: Optional[Iterable[str]] = None,
+        enable_trace: bool = True,
+    ) -> None:
         self.philosophers = list(philosophers) if philosophers is not None else DEFAULT_PHILOSOPHERS
+        self.enable_trace = enable_trace
+        self.po_trace = PoTrace() if enable_trace else None
 
     def generate(self, prompt: str) -> PoSelfResponse:
         """Run the ensemble and emit a structured response."""
 
-        ensemble_result = run_ensemble(prompt, philosophers=self.philosophers)
+        # Create trace session if enabled
+        session_id = None
+        if self.po_trace:
+            session_id = self.po_trace.create_session(
+                prompt=prompt,
+                philosophers=self.philosophers,
+                metadata={"source": "po_self.generate"},
+            )
+
+        ensemble_result = run_ensemble(
+            prompt,
+            philosophers=self.philosophers,
+            po_trace=self.po_trace,
+            session_id=session_id,
+        )
         responses = ensemble_result.get("responses", [])
         aggregate = ensemble_result.get("aggregate", {})
         consensus = ensemble_result.get("consensus", {})
@@ -62,6 +84,11 @@ class PoSelf:
             "blocked_tensor": float(aggregate.get("blocked_tensor", 0.0)),
         }
 
+        # Add session_id to log
+        log = ensemble_result.get("log", {})
+        if session_id:
+            log["session_id"] = session_id
+
         return PoSelfResponse(
             prompt=prompt,
             text=text,
@@ -69,7 +96,7 @@ class PoSelf:
             philosophers=self.philosophers,
             consensus_leader=consensus.get("leader"),
             responses=responses,
-            log=ensemble_result.get("log", {}),
+            log=log,
         )
 
 
