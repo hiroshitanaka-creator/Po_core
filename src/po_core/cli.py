@@ -117,8 +117,10 @@ def prompt(prompt: str, output_format: str) -> None:
 
     response = PoSelf().generate(prompt)
     if output_format.lower() == "json":
-        click.echo(json.dumps(response.to_dict(), indent=2))
+        # 余計なprint等は一切禁止
+        click.echo(json.dumps(response.to_dict(), ensure_ascii=False))
     else:
+        # 非JSON出力の場合のみconsole.printを使用
         console.print(
             _format_prompt_output(
                 response.to_dict(),
@@ -133,7 +135,8 @@ def log(prompt: str) -> None:
     """Display the audit log for a deterministic ensemble run."""
 
     run_data = PoSelf().generate(prompt)
-    click.echo(json.dumps(run_data.log, indent=2))
+    # 余計なprint等は一切禁止
+    click.echo(json.dumps(run_data.log, ensure_ascii=False))
 
 
 if __name__ == "__main__":
