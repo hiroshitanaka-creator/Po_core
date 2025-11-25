@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__, run_ensemble
+from po_core.po_viewer import cli as viewer_cli
 
 console = Console()
 
@@ -107,6 +108,9 @@ def log(prompt: str) -> None:
 
     run_data = run_ensemble(prompt)
     console.print(json.dumps(run_data["log"], indent=2))
+
+
+main.add_command(viewer_cli, name="viewer")
 
 
 if __name__ == "__main__":
