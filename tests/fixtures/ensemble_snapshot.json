@@ -1,0 +1,109 @@
+{
+  "prompt": "What does it mean to live authentically?",
+  "philosophers": [
+    "aristotle",
+    "nietzsche",
+    "wittgenstein"
+  ],
+  "results": [
+    {
+      "key": "aristotle",
+      "name": "Aristotle",
+      "weight": 0.9,
+      "description": "Virtue ethics and golden mean perspective",
+      "confidence": 0.92,
+      "summary": "Aristotle reflects on 'What does it mean to live authentically?'.",
+      "tags": [
+        "deterministic",
+        "ensemble"
+      ]
+    },
+    {
+      "key": "nietzsche",
+      "name": "Friedrich Nietzsche",
+      "weight": 0.84,
+      "description": "Will to power and authenticity",
+      "confidence": 0.86,
+      "summary": "Friedrich Nietzsche reflects on 'What does it mean to live authentically?'.",
+      "tags": [
+        "deterministic",
+        "ensemble"
+      ]
+    },
+    {
+      "key": "wittgenstein",
+      "name": "Ludwig Wittgenstein",
+      "weight": 0.8,
+      "description": "Language games and meaning formation",
+      "confidence": 0.8,
+      "summary": "Ludwig Wittgenstein reflects on 'What does it mean to live authentically?'.",
+      "tags": [
+        "deterministic",
+        "ensemble"
+      ]
+    }
+  ],
+  "log": {
+    "prompt": "What does it mean to live authentically?",
+    "philosophers": [
+      "aristotle",
+      "nietzsche",
+      "wittgenstein"
+    ],
+    "created_at": "2024-01-01T00:00:00Z",
+    "events": [
+      {
+        "event": "ensemble_started",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "suppressed": [],
+        "decision": "Initializing deterministic philosopher scoring",
+        "metadata": {
+          "philosophers": [
+            "aristotle",
+            "nietzsche",
+            "wittgenstein"
+          ]
+        }
+      },
+      {
+        "event": "philosopher_scored",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "suppressed": [],
+        "decision": "Keyword resonance boosts confidence",
+        "metadata": {
+          "philosopher": "aristotle",
+          "confidence": 0.92
+        }
+      },
+      {
+        "event": "philosopher_scored",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "suppressed": [],
+        "decision": "Keyword resonance boosts confidence",
+        "metadata": {
+          "philosopher": "nietzsche",
+          "confidence": 0.86
+        }
+      },
+      {
+        "event": "philosopher_scored",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "suppressed": [],
+        "decision": "Baseline philosophical weight applied",
+        "metadata": {
+          "philosopher": "wittgenstein",
+          "confidence": 0.8
+        }
+      },
+      {
+        "event": "ensemble_completed",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "suppressed": [],
+        "decision": "Aggregated philosopher scores",
+        "metadata": {
+          "results_recorded": 3
+        }
+      }
+    ]
+  }
+}

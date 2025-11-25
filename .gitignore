@@ -251,6 +251,7 @@ data/processed/
 *.tsv
 *.json
 *.jsonl
+!tests/fixtures/*.json
 *.parquet
 
 # Except: Keep small example datasets

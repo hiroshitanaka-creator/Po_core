@@ -1,4 +1,6 @@
 import json
+from pathlib import Path
+
 import pytest
 
 
@@ -13,3 +15,8 @@ def load_json_output():
         return json.loads(result.output.strip())
 
     return _loader
+
+
+@pytest.fixture()
+def ensemble_snapshot() -> dict:
+    return json.loads(Path("tests/fixtures/ensemble_snapshot.json").read_text())
