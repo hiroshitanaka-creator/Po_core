@@ -13,3 +13,10 @@ def load_json_output():
         return json.loads(result.output.strip())
 
     return _loader
+
+
+@pytest.fixture()
+def trace_sink(tmp_path, monkeypatch):
+    sink = tmp_path / "trace.ndjson"
+    monkeypatch.setenv("PO_TRACE_PATH", str(sink))
+    return sink
