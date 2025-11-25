@@ -74,7 +74,7 @@ class TestBadiouEvent:
 
         event = result["event"]
         assert isinstance(event, dict)
-        assert "presence" in event
+        assert "status" in event
         assert "description" in event
 
     def test_event_detection(self):
@@ -83,7 +83,7 @@ class TestBadiouEvent:
         result = badiou.reason("Something radically new and unprecedented happens that ruptures the situation")
 
         event = result["event"]
-        assert "Event" in event["presence"] or "event" in event["description"].lower()
+        assert "Event" in event["status"] or "event" in event["description"].lower()
 
 
 class TestBadiouTruthProcedure:
@@ -96,7 +96,7 @@ class TestBadiouTruthProcedure:
 
         truth = result["truth_procedure"]
         assert isinstance(truth, dict)
-        assert "type" in truth
+        assert "procedure" in truth
         assert "description" in truth
 
     def test_truth_procedure_detection(self):
@@ -105,7 +105,7 @@ class TestBadiouTruthProcedure:
         result = badiou.reason("Through science, art, politics, and love we create truths")
 
         truth = result["truth_procedure"]
-        assert "type" in truth
+        assert "procedure" in truth
 
 
 class TestBadiouFidelity:
@@ -140,7 +140,7 @@ class TestBadiouSubject:
 
         subject = result["subject"]
         assert isinstance(subject, dict)
-        assert "formation" in subject
+        assert "status" in subject
         assert "description" in subject
 
     def test_subject_detection(self):
@@ -149,7 +149,7 @@ class TestBadiouSubject:
         result = badiou.reason("I become a subject through fidelity to truth")
 
         subject = result["subject"]
-        assert "formation" in subject
+        assert "status" in subject
 
 
 class TestBadiouVoid:
@@ -184,7 +184,7 @@ class TestBadiouSituation:
 
         situation = result["situation"]
         assert isinstance(situation, dict)
-        assert "state" in situation
+        assert "status" in situation
         assert "description" in situation
 
     def test_situation_detection(self):
@@ -193,7 +193,7 @@ class TestBadiouSituation:
         result = badiou.reason("The structured state of things as they are")
 
         situation = result["situation"]
-        assert "state" in situation
+        assert "status" in situation
 
 
 class TestBadiouGeneric:
@@ -206,7 +206,7 @@ class TestBadiouGeneric:
 
         generic = result["generic"]
         assert isinstance(generic, dict)
-        assert "presence" in generic
+        assert "status" in generic
         assert "description" in generic
 
     def test_generic_detection(self):
@@ -215,7 +215,7 @@ class TestBadiouGeneric:
         result = badiou.reason("The indiscernible and unnameable subset")
 
         generic = result["generic"]
-        assert "presence" in generic
+        assert "status" in generic
 
 
 class TestBadiouForcing:
@@ -250,7 +250,7 @@ class TestBadiouSubtraction:
 
         subtraction = result["subtraction"]
         assert isinstance(subtraction, dict)
-        assert "presence" in subtraction
+        assert "mode" in subtraction
         assert "description" in subtraction
 
     def test_subtraction_detection(self):
@@ -259,7 +259,7 @@ class TestBadiouSubtraction:
         result = badiou.reason("Subtracting from identities and representations")
 
         subtraction = result["subtraction"]
-        assert "presence" in subtraction
+        assert "mode" in subtraction
 
 
 class TestBadiouReasoningText:

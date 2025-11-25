@@ -73,7 +73,7 @@ class TestWatsujiNingenRelationality:
         relationality = result["ningen_relationality"]
         assert isinstance(relationality, dict)
         assert "level" in relationality
-        assert "description" in relationality
+        assert "status" in relationality
 
     def test_relational_detection(self):
         """Test detection of high relationality."""

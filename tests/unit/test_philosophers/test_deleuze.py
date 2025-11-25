@@ -104,7 +104,7 @@ class TestDeleuzeDifference:
 
         difference = result["difference_repetition"]
         assert isinstance(difference, dict)
-        assert "mode" in difference
+        assert "orientation" in difference
         assert "description" in difference
 
     def test_difference_in_itself_detection(self):
@@ -113,7 +113,7 @@ class TestDeleuzeDifference:
         result = deleuze.reason("Each thing differs from itself in becoming and variation")
 
         difference = result["difference_repetition"]
-        assert "mode" in difference
+        assert "orientation" in difference
 
 
 class TestDeleuzeBecoming:
@@ -126,7 +126,7 @@ class TestDeleuzeBecoming:
 
         becoming = result["becoming"]
         assert isinstance(becoming, dict)
-        assert "type" in becoming
+        assert "presence" in becoming
         assert "description" in becoming
 
     def test_becoming_detection(self):
@@ -135,7 +135,7 @@ class TestDeleuzeBecoming:
         result = deleuze.reason("I am becoming other, in flux and transformation")
 
         becoming = result["becoming"]
-        assert "Becoming" in becoming["type"] or "becoming" in becoming["description"].lower()
+        assert "Becoming" in becoming["presence"] or "becoming" in becoming["description"].lower()
 
 
 class TestDeleuzeBodyWithoutOrgans:
@@ -148,7 +148,7 @@ class TestDeleuzeBodyWithoutOrgans:
 
         bwo = result["body_without_organs"]
         assert isinstance(bwo, dict)
-        assert "presence" in bwo
+        assert "status" in bwo
         assert "description" in bwo
 
     def test_bwo_detection(self):
@@ -157,7 +157,7 @@ class TestDeleuzeBodyWithoutOrgans:
         result = deleuze.reason("Pure intensities without organization or structure")
 
         bwo = result["body_without_organs"]
-        assert "presence" in bwo
+        assert "status" in bwo
 
 
 class TestDeleuzeLinesOfFlight:
@@ -192,7 +192,7 @@ class TestDeleuzeTerritorialization:
 
         territory = result["territorialization"]
         assert isinstance(territory, dict)
-        assert "mode" in territory
+        assert "process" in territory
         assert "description" in territory
 
     def test_deterritorialization_detection(self):
@@ -201,7 +201,7 @@ class TestDeleuzeTerritorialization:
         result = deleuze.reason("Escaping and breaking down established territories")
 
         territory = result["territorialization"]
-        assert "mode" in territory
+        assert "process" in territory
 
 
 class TestDeleuzeSmoothStriated:
@@ -214,7 +214,7 @@ class TestDeleuzeSmoothStriated:
 
         space = result["smooth_striated"]
         assert isinstance(space, dict)
-        assert "space" in space
+        assert "type" in space
         assert "description" in space
 
     def test_smooth_space_detection(self):
@@ -223,7 +223,7 @@ class TestDeleuzeSmoothStriated:
         result = deleuze.reason("Open nomadic wandering without fixed paths or rules")
 
         space = result["smooth_striated"]
-        assert "space" in space
+        assert "type" in space
 
 
 class TestDeleuzeDesire:
@@ -236,7 +236,7 @@ class TestDeleuzeDesire:
 
         desire = result["desire"]
         assert isinstance(desire, dict)
-        assert "mode" in desire
+        assert "conception" in desire
         assert "description" in desire
 
     def test_productive_desire_detection(self):
@@ -245,7 +245,7 @@ class TestDeleuzeDesire:
         result = deleuze.reason("Desire produces and creates reality")
 
         desire = result["desire"]
-        assert "mode" in desire
+        assert "conception" in desire
 
 
 class TestDeleuzeVirtuality:
@@ -258,7 +258,7 @@ class TestDeleuzeVirtuality:
 
         virtuality = result["virtuality"]
         assert isinstance(virtuality, dict)
-        assert "presence" in virtuality
+        assert "status" in virtuality
         assert "description" in virtuality
 
     def test_virtual_detection(self):
@@ -267,7 +267,7 @@ class TestDeleuzeVirtuality:
         result = deleuze.reason("Potential realities waiting to actualize")
 
         virtuality = result["virtuality"]
-        assert "presence" in virtuality
+        assert "status" in virtuality
 
 
 class TestDeleuzeReasoningText:

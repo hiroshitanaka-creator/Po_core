@@ -20,7 +20,7 @@ class TestLacanBasicFunctionality:
         """Test that Lacan initializes correctly."""
         lacan = Lacan()
         assert lacan.name == "Jacques Lacan"
-        assert "psychoanalytic" in lacan.description.lower() or "psychoanalysis" in lacan.description.lower()
+        assert "psychoanalyst" in lacan.description.lower() or "psychoanalysis" in lacan.description.lower()
 
     def test_lacan_repr(self):
         """Test string representation."""
@@ -170,7 +170,7 @@ class TestLacanObjetPetitA:
 
         objet_a = result["objet_petit_a"]
         assert isinstance(objet_a, dict)
-        assert "presence" in objet_a
+        assert "status" in objet_a
         assert "description" in objet_a
 
     def test_objet_petit_a_detection(self):
@@ -179,7 +179,7 @@ class TestLacanObjetPetitA:
         result = lacan.reason("The unattainable object that causes my desire")
 
         objet_a = result["objet_petit_a"]
-        assert "presence" in objet_a
+        assert "status" in objet_a
 
 
 class TestLacanSignifier:
@@ -236,7 +236,7 @@ class TestLacanJouissance:
 
         jouissance = result["jouissance"]
         assert isinstance(jouissance, dict)
-        assert "presence" in jouissance
+        assert "type" in jouissance
         assert "description" in jouissance
 
     def test_jouissance_detection(self):
@@ -245,7 +245,7 @@ class TestLacanJouissance:
         result = lacan.reason("Beyond pleasure in painful enjoyment")
 
         jouissance = result["jouissance"]
-        assert "presence" in jouissance
+        assert "type" in jouissance
 
 
 class TestLacanDiscourse:

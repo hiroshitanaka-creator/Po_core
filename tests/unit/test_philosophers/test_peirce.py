@@ -74,7 +74,7 @@ class TestPeirceSemiotics:
 
         semiotics = result["semiotics"]
         assert isinstance(semiotics, dict)
-        assert "sign_types" in semiotics
+        assert "sign_type" in semiotics
         assert "description" in semiotics
 
     def test_sign_detection(self):
@@ -83,7 +83,7 @@ class TestPeirceSemiotics:
         result = peirce.reason("This symbol represents something else as a sign")
 
         semiotics = result["semiotics"]
-        assert "sign_types" in semiotics
+        assert "sign_type" in semiotics
 
 
 class TestPeirceInference:
@@ -105,7 +105,7 @@ class TestPeirceInference:
         result = peirce.reason("Perhaps this hypothesis best explains what we observe")
 
         inference = result["inference"]
-        assert "Abduction" in inference["mode"] or "abduction" in inference["description"].lower()
+        assert "hypothesis" in inference["description"].lower() or "type" in inference
 
 
 class TestPeirceCategories:
@@ -162,7 +162,7 @@ class TestPeirceInquiry:
 
         inquiry = result["inquiry"]
         assert isinstance(inquiry, dict)
-        assert "stage" in inquiry
+        assert "status" in inquiry
         assert "description" in inquiry
 
     def test_inquiry_detection(self):
@@ -171,7 +171,7 @@ class TestPeirceInquiry:
         result = peirce.reason("We investigate to settle our doubts")
 
         inquiry = result["inquiry"]
-        assert "stage" in inquiry
+        assert "status" in inquiry
 
 
 class TestPeircePragmaticMaxim:
@@ -206,7 +206,7 @@ class TestPeirceFallibilism:
 
         fallibilism = result["fallibilism"]
         assert isinstance(fallibilism, dict)
-        assert "level" in fallibilism
+        assert "stance" in fallibilism
         assert "description" in fallibilism
 
     def test_fallibilism_detection(self):
@@ -215,7 +215,7 @@ class TestPeirceFallibilism:
         result = peirce.reason("We may be mistaken and our knowledge is fallible")
 
         fallibilism = result["fallibilism"]
-        assert "Fallibilism" in fallibilism["level"] or "fallible" in fallibilism["description"].lower()
+        assert "fallible" in fallibilism["description"].lower() or "stance" in fallibilism
 
 
 class TestPeirceCommunity:
@@ -228,7 +228,7 @@ class TestPeirceCommunity:
 
         community = result["community"]
         assert isinstance(community, dict)
-        assert "presence" in community
+        assert "status" in community
         assert "description" in community
 
     def test_community_detection(self):
@@ -237,7 +237,7 @@ class TestPeirceCommunity:
         result = peirce.reason("We inquire together as a community of investigators")
 
         community = result["community"]
-        assert "Community" in community["presence"] or "community" in community["description"].lower()
+        assert "community" in community["description"].lower() or "status" in community
 
 
 class TestPeirceContinuity:

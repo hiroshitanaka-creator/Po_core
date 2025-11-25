@@ -112,7 +112,7 @@ class TestKierkegaardAnxiety:
 
         anxiety = result["anxiety"]
         assert isinstance(anxiety, dict)
-        assert "level" in anxiety
+        assert "intensity" in anxiety
         assert "description" in anxiety
 
     def test_anxiety_detection(self):
@@ -121,7 +121,7 @@ class TestKierkegaardAnxiety:
         result = kierkegaard.reason("I feel anxious about infinite possibilities and freedom")
 
         anxiety = result["anxiety"]
-        assert "anxiety" in anxiety["description"].lower() or "Anxiety" in anxiety["level"]
+        assert "anxiety" in anxiety["description"].lower() or "Anxiety" in anxiety["presence"]
 
 
 class TestKierkegaardDespair:
@@ -134,7 +134,7 @@ class TestKierkegaardDespair:
 
         despair = result["despair"]
         assert isinstance(despair, dict)
-        assert "level" in despair
+        assert "depth" in despair
         assert "description" in despair
 
     def test_despair_detection(self):
@@ -143,7 +143,7 @@ class TestKierkegaardDespair:
         result = kierkegaard.reason("I despair and am not myself")
 
         despair = result["despair"]
-        assert "level" in despair
+        assert "depth" in despair
 
 
 class TestKierkegaardFaith:
@@ -156,7 +156,7 @@ class TestKierkegaardFaith:
 
         faith = result["faith"]
         assert isinstance(faith, dict)
-        assert "presence" in faith
+        assert "type" in faith
         assert "description" in faith
 
     def test_faith_detection(self):
@@ -165,7 +165,7 @@ class TestKierkegaardFaith:
         result = kierkegaard.reason("I have faith and trust in what transcends reason")
 
         faith = result["faith"]
-        assert "presence" in faith
+        assert "type" in faith
 
 
 class TestKierkegaardSubjectivity:
@@ -178,7 +178,7 @@ class TestKierkegaardSubjectivity:
 
         subjectivity = result["subjectivity"]
         assert isinstance(subjectivity, dict)
-        assert "level" in subjectivity
+        assert "orientation" in subjectivity
         assert "description" in subjectivity
 
     def test_subjective_truth_detection(self):
@@ -187,7 +187,7 @@ class TestKierkegaardSubjectivity:
         result = kierkegaard.reason("Truth is subjective and personal to my existence")
 
         subjectivity = result["subjectivity"]
-        assert "level" in subjectivity
+        assert "orientation" in subjectivity
 
 
 class TestKierkegaardIndividuality:
@@ -200,7 +200,7 @@ class TestKierkegaardIndividuality:
 
         individuality = result["individuality"]
         assert isinstance(individuality, dict)
-        assert "emphasis" in individuality
+        assert "status" in individuality
         assert "description" in individuality
 
     def test_individual_emphasis_detection(self):
@@ -209,7 +209,7 @@ class TestKierkegaardIndividuality:
         result = kierkegaard.reason("I am a unique individual before God")
 
         individuality = result["individuality"]
-        assert "emphasis" in individuality
+        assert "status" in individuality
 
 
 class TestKierkegaardParadox:
@@ -244,7 +244,7 @@ class TestKierkegaardLeap:
 
         leap = result["leap"]
         assert isinstance(leap, dict)
-        assert "presence" in leap
+        assert "status" in leap
         assert "description" in leap
 
     def test_leap_detection(self):
@@ -253,7 +253,7 @@ class TestKierkegaardLeap:
         result = kierkegaard.reason("I must leap beyond reason and choose")
 
         leap = result["leap"]
-        assert "presence" in leap
+        assert "status" in leap
 
 
 class TestKierkegaardMoment:

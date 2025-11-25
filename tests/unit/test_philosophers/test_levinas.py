@@ -96,7 +96,7 @@ class TestLevinasFace:
 
         face = result["face"]
         assert isinstance(face, dict)
-        assert "encounter" in face
+        assert "status" in face
         assert "description" in face
 
     def test_face_encounter_detection(self):
@@ -105,7 +105,7 @@ class TestLevinasFace:
         result = levinas.reason("The face of the other calls out thou shalt not kill")
 
         face = result["face"]
-        assert "encounter" in face
+        assert "status" in face
 
 
 class TestLevinasResponsibility:
