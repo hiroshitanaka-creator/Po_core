@@ -148,20 +148,21 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 | 📚 Philosophical Framework | ✅ Complete | 100% |
 | 📖 Documentation | ✅ Complete | 100% (120+ specs) |
 | 🏗️ Architecture Design | ✅ Complete | 100% |
-| 💻 Implementation | 🔄 In Progress | 30% |
-| 🧪 Testing | ⏳ Planned | 0% |
-| 🎨 Visualization (Viewer) | ⏳ Planned | 0% |
+| 💻 Implementation | 🔄 In Progress | 60% (deterministic ensemble + Po_trace logging) |
+| 🧪 Testing | 🔄 In Progress | 20% (unit coverage for ensemble/CLI) |
+| 🎨 Visualization (Viewer) | ⏳ Planned | 10% (CLI stub, visuals pending) |
 
 **What's Working:**
-- ✅ Po_self API (basic functionality)
+- ✅ Po_self deterministic ensemble
+- ✅ Po_trace trace builder + JSON output
 - ✅ Philosophical tensor definitions
 - ✅ Complete design specifications
 
 **What's Next:**
-- 🔄 Po_trace implementation
-- 🔄 Complete Po_self integration
-- ⏳ Po_core Viewer development
-- ⏳ Comprehensive testing
+- 🔄 Expand Po_trace event detail + storage options
+- 🔄 Broaden Po_self integrations and CLI ergonomics
+- ⏳ Po_core Viewer visual components
+- ⏳ Broader unit and integration testing
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
 

@@ -73,9 +73,9 @@ def status(sample: bool) -> None:
     console.print("✅ Philosophical Framework: 100%")
     console.print("✅ Documentation: 100%")
     console.print("✅ Architecture Design: 100%")
-    console.print("🔄 Implementation: 30%")
-    console.print("⏳ Testing: 0%")
-    console.print("⏳ Visualization: 0%")
+    console.print("🔄 Implementation: 60% (ensemble + Po_trace)")
+    console.print("🔄 Testing: 20% (unit coverage for ensemble/CLI)")
+    console.print("⏳ Visualization: 10% (CLI stub, visuals pending)")
     if sample:
         console.print("\n[dim]Running Po_self sample...[/dim]")
         console.print(_render_sample_generation(SAMPLE_PROMPT))
