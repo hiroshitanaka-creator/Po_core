@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://hiroshitanaka-creator.github.io/Po_core/
+    about: Review project documentation for guidance before filing an issue.
+  - name: Discussions
+    url: https://github.com/hiroshitanaka-creator/Po_core/discussions
+    about: Ask questions and share ideas with the community.
