@@ -1,0 +1,209 @@
+# Po_core Examples / サンプル集
+
+Po_coreの使い方を示すサンプルコード集です。
+
+## 📚 サンプル一覧
+
+### 1. `simple_demo.py` - シンプルなデモ
+
+Po_coreの基本機能を体験できる対話型デモです。
+
+```bash
+python examples/simple_demo.py
+```
+
+**機能:**
+- 基本デモ - 単一の質問に対する哲学的推論
+- 哲学者比較デモ - 異なる哲学者グループの視点比較
+- 対話型モード - 連続的な質問応答
+
+### 2. `api_demo.py` - API使用例
+
+Po_core APIの様々な使い方を示す7つの例を含みます。
+
+```bash
+python examples/api_demo.py
+```
+
+**例の内容:**
+1. 基本的な使い方
+2. カスタム哲学者の選択
+3. JSON形式での出力
+4. ensemble関数の直接使用
+5. 各哲学者の詳細な応答
+6. トレース無効化（軽量モード）
+7. 複数の質問を連続処理
+
+## 🚀 クイックスタート
+
+### インストール
+
+```bash
+# リポジトリのルートディレクトリで
+pip install -e .
+```
+
+### 最小限のコード例
+
+```python
+from po_core.po_self import PoSelf
+
+# Po_selfインスタンスを作成
+po = PoSelf()
+
+# 質問に対して哲学的推論を実行
+response = po.generate("人生の意味とは何か？")
+
+# 結果を表示
+print(f"コンセンサスリーダー: {response.consensus_leader}")
+print(f"回答: {response.text}")
+print(f"メトリクス: {response.metrics}")
+```
+
+## 📖 詳細な使用例
+
+### カスタム哲学者の選択
+
+```python
+from po_core.po_self import PoSelf
+
+# 特定の哲学者を選択
+philosophers = ["sartre", "heidegger", "kierkegaard"]
+po = PoSelf(philosophers=philosophers)
+
+response = po.generate("実存とは何か？")
+```
+
+### JSON出力
+
+```python
+import json
+from po_core.po_self import PoSelf
+
+po = PoSelf()
+response = po.generate("倫理的決定とは？")
+
+# JSON形式に変換
+print(json.dumps(response.to_dict(), indent=2, ensure_ascii=False))
+```
+
+### ensemble関数の直接使用
+
+```python
+from po_core import run_ensemble
+
+result = run_ensemble(
+    prompt="美とは何か？",
+    philosophers=["aristotle", "nietzsche", "wabi_sabi"]
+)
+
+print(f"コンセンサスリーダー: {result['consensus']['leader']}")
+print(f"メトリクス: {result['aggregate']}")
+```
+
+## 🧠 利用可能な哲学者
+
+Po_coreでは20人の哲学者を利用できます：
+
+### 西洋哲学
+- `aristotle` - アリストテレス（徳倫理学）
+- `sartre` - サルトル（実存主義）
+- `heidegger` - ハイデガー（現象学）
+- `nietzsche` - ニーチェ（系譜学）
+- `derrida` - デリダ（脱構築）
+- `wittgenstein` - ウィトゲンシュタイン（言語哲学）
+- `jung` - ユング（分析心理学）
+- `dewey` - デューイ（プラグマティズム）
+- `deleuze` - ドゥルーズ（差異の哲学）
+- `kierkegaard` - キルケゴール（実存主義）
+- `lacan` - ラカン（精神分析）
+- `levinas` - レヴィナス（他者の倫理）
+- `badiou` - バディウ（数学的存在論）
+- `peirce` - パース（記号論）
+- `merleau_ponty` - メルロ＝ポンティ（身体の現象学）
+- `arendt` - アーレント（政治哲学）
+
+### 東洋哲学
+- `watsuji` - 和辻哲郎（間柄の倫理）
+- `wabi_sabi` - 侘び寂び（日本美学）
+- `confucius` - 孔子（儒教）
+- `zhuangzi` - 荘子（道教）
+
+## 📊 出力メトリクス
+
+Po_coreは3つの主要なテンソルメトリクスを計算します：
+
+- **Freedom Pressure (自由の圧力)**: 応答の責任重量を測定
+- **Semantic Delta (意味の変化)**: 意味の進化を追跡
+- **Blocked Tensor (ブロックされたテンソル)**: 何が言われなかったかを記録
+
+## 🎯 使用ケース
+
+### 1. 倫理的決定支援
+
+```python
+po = PoSelf(philosophers=["aristotle", "levinas", "confucius"])
+response = po.generate("この状況で正しい行動は何か？")
+```
+
+### 2. 哲学的探究
+
+```python
+po = PoSelf(philosophers=["heidegger", "sartre", "kierkegaard"])
+response = po.generate("存在とは何か？")
+```
+
+### 3. 美学的分析
+
+```python
+po = PoSelf(philosophers=["nietzsche", "wabi_sabi", "dewey"])
+response = po.generate("この作品の美しさは何か？")
+```
+
+### 4. 言語と意味の探究
+
+```python
+po = PoSelf(philosophers=["wittgenstein", "derrida", "peirce"])
+response = po.generate("この言葉の意味は何か？")
+```
+
+## 🔧 高度な使用法
+
+### トレース機能の活用
+
+```python
+from po_core.po_self import PoSelf
+
+# トレース有効でインスタンス作成（デフォルト）
+po = PoSelf(enable_trace=True)
+response = po.generate("正義とは何か？")
+
+# トレースログを確認
+print(response.log)
+```
+
+### 複数セッションの管理
+
+```python
+# セッション1: 倫理的問い
+ethical_po = PoSelf(philosophers=["aristotle", "levinas"])
+ethical_response = ethical_po.generate("善とは何か？")
+
+# セッション2: 実存的問い
+existential_po = PoSelf(philosophers=["sartre", "heidegger"])
+existential_response = existential_po.generate("自由とは何か？")
+```
+
+## 📝 ライセンス
+
+MIT License - 自由に使用、改変、配布できます。
+
+## 🤝 貢献
+
+フィードバックや改善提案は大歓迎です！
+- Issues: [GitHub Issues](https://github.com/hiroshitanaka-creator/Po_core/issues)
+- Discussions: [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
+
+---
+
+**🐷🎈 Flying Pig Philosophy**: 豚は飛べないと言われています。でも、哲学という風船をつければ飛べるかもしれません。
