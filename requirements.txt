@@ -64,11 +64,15 @@ httpx>=0.25.0
 # JSON Operations
 orjson>=3.9.0
 
+# ORM & Database
+sqlalchemy>=2.0.0
+
 # SQLite (built-in, but specifying for clarity)
 # sqlite3 is included in Python standard library
 
 # Optional: PostgreSQL support
 # psycopg2-binary>=2.9.9
+# Uncomment above for PostgreSQL support
 
 # ==================
 # Visualization
