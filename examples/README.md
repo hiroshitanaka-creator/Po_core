@@ -4,7 +4,9 @@ Po_coreの使い方を示すサンプルコード集です。
 
 ## 📚 サンプル一覧
 
-### 1. `simple_demo.py` - シンプルなデモ
+### 基本デモ（Basic Demos）
+
+#### 1. `simple_demo.py` - シンプルなデモ
 
 Po_coreの基本機能を体験できる対話型デモです。
 
@@ -17,7 +19,7 @@ python examples/simple_demo.py
 - 哲学者比較デモ - 異なる哲学者グループの視点比較
 - 対話型モード - 連続的な質問応答
 
-### 2. `api_demo.py` - API使用例
+#### 2. `api_demo.py` - API使用例
 
 Po_core APIの様々な使い方を示す7つの例を含みます。
 
@@ -33,6 +35,101 @@ python examples/api_demo.py
 5. 各哲学者の詳細な応答
 6. トレース無効化（軽量モード）
 7. 複数の質問を連続処理
+
+#### 3. `quick_test.py` - クイックテスト
+
+Po_coreの動作確認用テストスイート。
+
+```bash
+python examples/quick_test.py
+```
+
+**テスト項目:**
+- デフォルト/カスタム哲学者での推論
+- JSON形式への変換
+- メトリクスの検証
+- トレース機能
+- 連続的な質問処理
+
+### 中規模プロトタイプ（Medium-Scale Prototypes）
+
+#### 4. `web_api_server.py` - Web APIサーバー ⭐
+
+FastAPIベースのRESTful APIサーバー。Webブラウザから哲学的推論を実行できます。
+
+```bash
+# 必要な依存関係をインストール
+pip install fastapi uvicorn pydantic
+
+# サーバーを起動
+python examples/web_api_server.py
+```
+
+**アクセス:**
+- Webインターフェース: http://localhost:8000
+- API ドキュメント: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+**主要機能:**
+- 🌐 Webベースの対話インターフェース
+- 📡 RESTful API エンドポイント
+- 💾 セッション履歴の管理
+- 📊 統計情報の取得
+- 🎨 美しいUIデザイン
+
+**API エンドポイント:**
+- `POST /api/v1/prompt` - 哲学的推論を実行
+- `GET /api/v1/sessions` - セッション履歴を取得
+- `GET /api/v1/sessions/{id}` - 特定セッションの詳細
+- `GET /api/v1/philosophers` - 利用可能な哲学者リスト
+- `GET /api/v1/stats` - 統計情報
+- `DELETE /api/v1/sessions` - セッション履歴をクリア
+
+#### 5. `batch_analyzer.py` - バッチ分析ツール ⭐
+
+複数の質問を一括処理し、結果を分析・エクスポートするツール。
+
+```bash
+python examples/batch_analyzer.py
+```
+
+**機能:**
+- 📦 複数の質問を一括処理
+- 📊 統計分析とサマリー表示
+- 💾 JSON/CSV形式でのエクスポート
+- 📈 平均メトリクス計算
+- 🏆 リーダー分布の可視化
+
+**ユースケース:**
+- 大量の質問を効率的に処理
+- 哲学者の傾向分析
+- 研究データの収集
+- ベンチマークテスト
+
+#### 6. `philosopher_comparison.py` - 哲学者比較ツール ⭐
+
+同じ質問に対する異なる哲学者の視点を詳細に比較。
+
+```bash
+python examples/philosopher_comparison.py
+```
+
+**機能:**
+- 🔍 グループ比較モード - 哲学者グループ間の比較
+- 👤 個別比較モード - 個々の哲学者の詳細比較
+- 📊 メトリクス比較テーブル
+- 📝 詳細な応答分析
+
+**定義済みグループ:**
+- 実存主義、古典哲学、現代哲学
+- 倫理学、現象学、プラグマティズム
+- 精神分析、東洋哲学、西洋哲学
+- 政治哲学
+
+**ユースケース:**
+- 異なる哲学的視点の理解
+- 教育・研究目的
+- 複雑な問題の多角的分析
 
 ## 🚀 クイックスタート
 

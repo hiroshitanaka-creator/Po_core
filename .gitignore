@@ -410,3 +410,6 @@ tensor_visualizations/*.jpg
 #
 # Remember: We publish failures too! Don't hide negative results.
 # Just put them in the right place (docs/experiments/failures/)
+
+# Batch analysis results
+batch_analysis_results/
