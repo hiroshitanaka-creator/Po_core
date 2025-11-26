@@ -279,8 +279,9 @@ po_trace/evolution_history/
 viewer_temp/
 *.viewer_snapshot
 
-# Experimental outputs
-experiments/
+# Experimental outputs (results only, not scripts)
+experiments/results/
+experiments/*.json
 trials/
 sandbox/
 
