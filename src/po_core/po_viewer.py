@@ -310,6 +310,87 @@ class PoViewer:
             box=box.DOUBLE,
         )
 
+    def render_dashboard(self, limit: int = 20) -> Panel:
+        """Render comprehensive dashboard with statistics."""
+        sessions = self.po_trace.list_sessions(limit=limit)
+
+        if not sessions:
+            return Panel(
+                "[yellow]No sessions available yet.[/yellow]",
+                title="[bold magenta]📊 Dashboard[/bold magenta]",
+                border_style="magenta",
+            )
+
+        lines = []
+        lines.append("[bold magenta]Po_core Analytics Dashboard[/bold magenta]\n")
+
+        # Overall statistics
+        total_sessions = len(sessions)
+        lines.append(f"[bold cyan]Total Sessions:[/bold cyan] {total_sessions}")
+
+        # Calculate average metrics
+        all_metrics: Dict[str, List[float]] = {}
+        philosopher_usage: Dict[str, int] = {}
+        total_events = 0
+
+        for session_info in sessions:
+            session = self.po_trace.get_session(session_info["session_id"])
+            if session:
+                # Collect metrics
+                for key, value in session.metrics.items():
+                    if key not in all_metrics:
+                        all_metrics[key] = []
+                    all_metrics[key].append(value)
+
+                # Collect philosopher usage
+                for phil in session.philosophers:
+                    philosopher_usage[phil] = philosopher_usage.get(phil, 0) + 1
+
+                # Count events
+                total_events += len(session.events)
+
+        # Average metrics
+        if all_metrics:
+            lines.append("\n[bold yellow]Average Metrics:[/bold yellow]")
+            for key in sorted(all_metrics.keys()):
+                avg = sum(all_metrics[key]) / len(all_metrics[key])
+                lines.append(f"  • {key}: {avg:.3f}")
+
+        # Top philosophers
+        if philosopher_usage:
+            lines.append("\n[bold green]Top 5 Philosophers:[/bold green]")
+            sorted_phils = sorted(
+                philosopher_usage.items(), key=lambda x: x[1], reverse=True
+            )
+            for i, (phil, count) in enumerate(sorted_phils[:5], 1):
+                percentage = (count / total_sessions) * 100
+                lines.append(f"  {i}. {phil}: {count} sessions ({percentage:.1f}%)")
+
+        # Event statistics
+        lines.append(f"\n[bold cyan]Total Events Logged:[/bold cyan] {total_events}")
+        avg_events = total_events / total_sessions if total_sessions > 0 else 0
+        lines.append(f"[bold cyan]Average Events per Session:[/bold cyan] {avg_events:.1f}")
+
+        # Recent activity
+        if sessions:
+            lines.append("\n[bold magenta]Most Recent Sessions:[/bold magenta]")
+            for i, session_info in enumerate(sessions[:5], 1):
+                prompt = session_info["prompt"]
+                if len(prompt) > 40:
+                    prompt = prompt[:40] + "..."
+                lines.append(
+                    f"  {i}. {session_info['session_id'][:8]}... - {prompt}"
+                )
+
+        content = "\n".join(lines)
+
+        return Panel(
+            content,
+            title="[bold magenta]📊 Po_core Dashboard[/bold magenta]",
+            border_style="magenta",
+            box=box.DOUBLE,
+        )
+
 
 # CLI Commands
 @click.group()
@@ -410,6 +491,15 @@ def full(session_id: str) -> None:
 
     # Event flow
     console.print(viewer.render_event_flow(session_id))
+
+
+@cli.command()
+@click.option("--limit", type=int, default=20, help="Number of sessions to analyze")
+def dashboard(limit: int) -> None:
+    """Show analytics dashboard with comprehensive statistics."""
+    viewer = PoViewer()
+    panel = viewer.render_dashboard(limit=limit)
+    console.print(panel)
 
 
 if __name__ == "__main__":

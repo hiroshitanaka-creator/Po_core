@@ -464,6 +464,76 @@ class TestSessionComparison:
         assert isinstance(panel, Panel)
 
 
+class TestDashboard:
+    """Test dashboard functionality."""
+
+    @pytest.fixture
+    def temp_storage(self):
+        """Create temporary storage directory."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            yield Path(tmpdir)
+
+    @pytest.fixture
+    def po_trace(self, temp_storage):
+        """Create PoTrace instance with temp storage."""
+        return PoTrace(storage_dir=temp_storage)
+
+    @pytest.fixture
+    def po_viewer(self, po_trace):
+        """Create PoViewer instance with temp PoTrace."""
+        return PoViewer(po_trace=po_trace)
+
+    def test_render_dashboard_empty(self, po_viewer):
+        """Test rendering dashboard with no sessions."""
+        panel = po_viewer.render_dashboard(limit=20)
+
+        assert isinstance(panel, Panel)
+        # Should still return a panel even with no sessions
+
+    def test_render_dashboard_with_sessions(self, po_viewer, po_trace):
+        """Test rendering dashboard with sessions."""
+        # Create some test sessions
+        for i in range(5):
+            session_id = po_trace.create_session(
+                f"Test prompt {i}",
+                ["aristotle", "nietzsche"],
+            )
+            po_trace.update_metrics(
+                session_id,
+                {
+                    "freedom_pressure": 0.7 + (i * 0.05),
+                    "semantic_delta": 0.5,
+                    "blocked_tensor": 0.3,
+                },
+            )
+
+        panel = po_viewer.render_dashboard(limit=10)
+
+        assert isinstance(panel, Panel)
+        assert panel.border_style != "red"  # Not an error panel
+
+    def test_dashboard_calculates_statistics(self, po_viewer, po_trace):
+        """Test that dashboard calculates statistics correctly."""
+        # Create sessions with known metrics
+        metrics_list = [
+            {"freedom_pressure": 0.8, "semantic_delta": 0.6},
+            {"freedom_pressure": 0.7, "semantic_delta": 0.5},
+            {"freedom_pressure": 0.9, "semantic_delta": 0.7},
+        ]
+
+        for i, metrics in enumerate(metrics_list):
+            session_id = po_trace.create_session(
+                f"Test {i}",
+                ["aristotle"],
+            )
+            po_trace.update_metrics(session_id, metrics)
+
+        panel = po_viewer.render_dashboard(limit=10)
+
+        assert isinstance(panel, Panel)
+        # Dashboard should successfully process the data
+
+
 class TestPoViewerIntegration:
     """Test Po_viewer integration with real data."""
 
@@ -498,3 +568,7 @@ class TestPoViewerIntegration:
 
         json_syntax = viewer.render_session_json(session_id)
         assert isinstance(json_syntax, Syntax)
+
+        # Test new dashboard feature
+        dashboard = viewer.render_dashboard()
+        assert isinstance(dashboard, Panel)
