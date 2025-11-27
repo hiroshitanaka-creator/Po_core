@@ -102,6 +102,13 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 - Multiple ethical perspectives in tension
 - Explicit responsibility measurement
 
+### 🛡️ Safety System
+- **Philosopher Safety Profiles**: Three-tier classification (TRUSTED, RESTRICTED, MONITORED)
+- **W_ethics Boundaries**: Absolute ethical red lines with automatic violation detection
+- **Dangerous Pattern Detection**: Specialized mode for researching edge cases
+- **Adversarial Testing**: Comprehensive test suite validating safety mechanisms
+- See [Safety Documentation](./docs/SAFETY.md) for details
+
 ---
 
 ## Architecture

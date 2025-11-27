@@ -30,6 +30,7 @@ from rich.tree import Tree
 from po_core.po_self import PoSelf
 from po_core.po_trace_db import PoTraceDB
 from po_core.ensemble import PHILOSOPHER_REGISTRY
+from po_core.safety import validate_philosopher_group
 
 console = Console()
 
@@ -116,8 +117,49 @@ class MultiAgentReasoningSystem:
         self.tasks: Dict[str, ReasoningTask] = {}
         self.results: Dict[str, AgentResult] = {}
 
-    def register_agent(self, config: AgentConfig) -> None:
-        """Register a new agent."""
+    def register_agent(
+        self,
+        config: AgentConfig,
+        allow_restricted: bool = False,
+        dangerous_pattern_mode: bool = False,
+    ) -> None:
+        """
+        Register a new agent with safety validation.
+
+        Args:
+            config: Agent configuration
+            allow_restricted: Allow RESTRICTED tier philosophers
+            dangerous_pattern_mode: Enable dangerous pattern detection mode
+        """
+        # Validate philosopher group for safety
+        validation = validate_philosopher_group(
+            config.philosophers,
+            allow_restricted=allow_restricted,
+            dangerous_pattern_mode=dangerous_pattern_mode,
+        )
+
+        if not validation["valid"]:
+            error_msg = f"Agent {config.agent_id} validation failed:\n"
+            for restriction in validation["restrictions"]:
+                error_msg += f"  • {restriction}\n"
+
+            if validation["blocked_philosophers"]:
+                error_msg += f"\nBlocked philosophers: {', '.join(validation['blocked_philosophers'])}\n"
+                error_msg += "\nRESTRICTED philosophers are not allowed in Multi-Agent system\n"
+                error_msg += "for general reasoning. Use only TRUSTED philosophers.\n"
+
+            raise ValueError(error_msg)
+
+        # Show warnings
+        if validation["warnings"] and self.verbose:
+            for warning in validation["warnings"]:
+                console.print(f"[yellow]⚠ Agent {config.agent_id}: {warning}[/yellow]")
+
+        # Store safety metadata in config
+        config.metadata["safety_validation"] = validation
+        config.metadata["allow_restricted"] = allow_restricted
+        config.metadata["dangerous_pattern_mode"] = dangerous_pattern_mode
+
         self.agents[config.agent_id] = config
         if self.verbose:
             console.print(
@@ -162,25 +204,30 @@ class MultiAgentReasoningSystem:
                 f"({agent_config.role.value}) executing task..."
             )
 
-        # Create PoSelf instance with agent's philosophers
+        # Create PoSelf instance with agent's philosophers and safety settings
+        allow_restricted = agent_config.metadata.get("allow_restricted", False)
+        dangerous_pattern_mode = agent_config.metadata.get("dangerous_pattern_mode", False)
+
         po = PoSelf(
             philosophers=agent_config.philosophers,
             enable_trace=True,
-            trace_backend=self.trace_db,
+            allow_restricted=allow_restricted,
+            dangerous_pattern_mode=dangerous_pattern_mode,
+            enable_ethics_guardian=True,
         )
 
         # Execute reasoning
-        result = po.reason(task.prompt)
+        result = po.generate(task.prompt)
 
         # Create agent result
         agent_result = AgentResult(
             agent_id=agent_config.agent_id,
             role=agent_config.role,
-            session_id=result.get("session_id", ""),
-            text=result.get("text", ""),
-            metrics=result.get("metrics", {}),
-            confidence=self._calculate_confidence(result.get("metrics", {})),
-            insights=self._extract_insights(result.get("text", "")),
+            session_id=result.log.get("session_id", ""),
+            text=result.text,
+            metrics=result.metrics,
+            confidence=self._calculate_confidence(result.metrics),
+            insights=self._extract_insights(result.text),
         )
 
         task.status = "completed"
