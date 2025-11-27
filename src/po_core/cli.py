@@ -139,5 +139,65 @@ def log(prompt: str) -> None:
     click.echo(json.dumps(run_data.log, ensure_ascii=False))
 
 
+@main.command()
+@click.option(
+    "--theme",
+    type=str,
+    help="Philosophical theme (ethics, existence, knowledge, etc.)",
+)
+@click.option(
+    "--mood",
+    type=click.Choice(["calm", "balanced", "chaotic", "critical"], case_sensitive=False),
+    default="balanced",
+    help="Party atmosphere/mood",
+)
+@click.option(
+    "--quick",
+    is_flag=True,
+    help="Quick demo mode (non-interactive)",
+)
+def party(theme: str, mood: str, quick: bool) -> None:
+    """
+    🎉 Start an interactive philosopher party!
+
+    Automatically assembles optimal philosopher combinations based on
+    research findings. Select a theme and mood, watch philosophy come alive!
+
+    Examples:
+        po-core party --theme ethics --mood balanced
+        po-core party --quick
+        po-core party  (interactive mode)
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    # Find the po_party_demo.py script
+    demo_script = Path(__file__).parent.parent.parent / "examples" / "po_party_demo.py"
+
+    if not demo_script.exists():
+        console.print("[red]Error: po_party_demo.py not found[/red]")
+        console.print(f"[dim]Expected location: {demo_script}[/dim]")
+        return
+
+    # Build command
+    cmd = [sys.executable, str(demo_script)]
+
+    if quick:
+        cmd.append("--quick")
+    elif theme:
+        # For now, just run interactive mode
+        # Future: pass theme and mood as args
+        console.print(f"[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]")
+
+    # Run the demo
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]Error running party: {e}[/red]")
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Party interrupted. Goodbye! 👋[/yellow]")
+
+
 if __name__ == "__main__":
     main()

@@ -4,6 +4,37 @@ Po_coreの使い方を示すサンプルコード集です。
 
 ## 📚 サンプル一覧
 
+### 🎉 Po_Party - Interactive Philosopher Party Machine
+
+**The most fun way to explore Po_core!**
+
+```bash
+# Interactive mode (recommended)
+po-core party
+
+# Or directly:
+python examples/po_party_demo.py
+
+# Quick demo mode
+po-core party --quick
+```
+
+**What it does:**
+- 🎯 Choose a philosophical theme (ethics, existence, knowledge, etc.)
+- 🎭 Select party mood (calm, balanced, chaotic, critical)
+- 🤖 Auto-assembles optimal philosopher combinations from research
+- ✨ Real-time reasoning with emergence detection
+- 📊 Beautiful metrics dashboard (F_P, Semantic Delta, Blocked Tensor)
+
+**Research-powered:**
+- Based on 10,600 session analysis
+- +1975% emergence boost from dialectical tension
+- Optimal group sizes (8-14, peak at 15)
+
+**📖 Full documentation:** [PO_PARTY.md](./PO_PARTY.md)
+
+---
+
 ### 基本デモ（Basic Demos）
 
 #### 1. `simple_demo.py` - シンプルなデモ

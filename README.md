@@ -228,6 +228,9 @@ po-core status
 # Show version information
 po-core version
 
+# 🎉 NEW: Start an interactive philosopher party!
+po-core party
+
 # Get help
 po-core --help
 ```
@@ -245,6 +248,22 @@ $ po-core version
 
 A frog in a well may not know the ocean, but it can know the sky.
 ```
+
+### 🎉 Po_Party: The Most Fun Way to Explore Philosophy!
+
+**Try the interactive philosopher party machine:**
+
+```bash
+po-core party
+```
+
+Po_Party automatically assembles optimal philosopher combinations based on research findings from 10,600 session analysis:
+- **Pick a theme** (ethics, existence, knowledge, etc.)
+- **Choose a mood** (calm, balanced, chaotic, critical)
+- **Watch philosophy come alive** with real-time metrics
+- **See emergence happen** with +1975% boost from dialectical tension
+
+It's like hosting a dinner party, except the guests are philosophers and the food is ideas! 🐷🎈
 
 ---
 
