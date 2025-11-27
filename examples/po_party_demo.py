@@ -416,21 +416,22 @@ def quick_demo():
     config = create_party("ethics", "balanced")
     display_party_config(config)
 
-    input("\n[dim]Press Enter for next demo...[/dim]")
-    console.clear()
+    console.print("\n" + "=" * 80 + "\n")
 
     # Demo 2: Chaos party
     console.print("[bold]Demo 2: Existence (Chaotic)[/bold]\n")
     config = create_party("existence", "chaotic")
     display_party_config(config)
 
-    input("\n[dim]Press Enter for next demo...[/dim]")
-    console.clear()
+    console.print("\n" + "=" * 80 + "\n")
 
     # Demo 3: Calm party
     console.print("[bold]Demo 3: Knowledge (Calm)[/bold]\n")
     config = create_party("knowledge", "calm")
     display_party_config(config)
+
+    console.print("\n[bold green]✅ Quick demo complete![/bold green]")
+    console.print("[dim]Try interactive mode: po-core party[/dim]\n")
 
 
 def create_party(theme: str, mood: str):
