@@ -952,13 +952,71 @@ Perhaps the Übermensch is not the one who breaks all constraints, but the one w
 
 This work emerged from the Po_core project—a larger initiative to create a 20-philosopher reasoning framework for ethical AI. We thank the broader Po_core community for inspiration.
 
-Special thanks to GPT-o1 5.1 and Gemini 3 Pro for their participation in this experiment and for providing the very insights we studied.
+Special thanks to the AI models that participated in this experiment: **GPT-o1 5.1** (OpenAI), **Gemini 3 Pro** (Google), **Grok 4.1** (xAI), and **Claude 3.5 Sonnet** (Anthropic). Their responses provided the very insights we studied, demonstrating that AI systems can meaningfully engage with philosophical reasoning and ethical constraints.
+
+We are particularly grateful to Anthropic for developing Constitutional AI, which provided the critical test case for validating the composability of layered ethical frameworks.
 
 ---
 
 ## References
 
-[To be added: Constitutional AI papers, multi-agent systems, emergence research, Nietzsche scholarship, AI safety foundational papers]
+**AI Safety and Constitutional AI:**
+
+1. Bai, Y., Kadavath, S., Kundu, S., Askell, A., Kernion, J., Jones, A., ... & Kaplan, J. (2022). Constitutional AI: Harmlessness from AI Feedback. *Anthropic*. arXiv:2212.08073
+
+2. Anthropic. (2023). Claude's Character. Technical Report. Anthropic.
+
+3. OpenAI. (2023). GPT-4 Technical Report. arXiv:2303.08774
+
+4. Amodei, D., Olah, C., Steinhardt, J., Christiano, P., Schulman, J., & Mané, D. (2016). Concrete Problems in AI Safety. arXiv:1606.06565
+
+**Multi-Agent and Multi-Perspective Systems:**
+
+5. Park, J. S., O'Brien, J. C., Cai, C. J., Morris, M. R., Liang, P., & Bernstein, M. S. (2023). Generative Agents: Interactive Simulacra of Human Behavior. *UIST 2023*.
+
+6. Wu, Q., Bansal, G., Zhang, J., Wu, Y., Zhang, S., Zhu, E., ... & Wang, C. (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. arXiv:2308.08155
+
+7. Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., & Mordatch, I. (2023). Improving Factuality and Reasoning in Language Models through Multiagent Debate. arXiv:2305.14325
+
+**Emergence in AI Systems:**
+
+8. Wei, J., Tay, Y., Bommasani, R., Raffel, C., Zoph, B., Borgeaud, S., ... & Fedus, W. (2022). Emergent Abilities of Large Language Models. *Transactions on Machine Learning Research*.
+
+9. Schaeffer, R., Miranda, B., & Koyejo, S. (2023). Are Emergent Abilities of Large Language Models a Mirage? arXiv:2304.15004
+
+**LLM-as-a-Judge Methodology:**
+
+10. Zheng, L., Chiang, W. L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., ... & Stoica, I. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. *NeurIPS 2023*.
+
+11. Liu, Y., Iter, D., Xu, Y., Wang, S., Xu, R., & Zhu, C. (2023). G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment. arXiv:2303.16634
+
+**Philosophical Foundations:**
+
+12. Nietzsche, F. (1883-1885). *Thus Spoke Zarathustra*. Trans. Walter Kaufmann. Penguin Classics.
+
+13. Nietzsche, F. (1886). *Beyond Good and Evil*. Trans. Walter Kaufmann. Vintage Books.
+
+14. Aristotle. (350 BCE). *Nicomachean Ethics*. Trans. Terence Irwin. Hackett Publishing.
+
+15. Derrida, J. (1967). *Of Grammatology*. Trans. Gayatri Chakravorty Spivak. Johns Hopkins University Press.
+
+16. Derrida, J. (1992). *The Other Heading: Reflections on Today's Europe*. Trans. Pascale-Anne Brault and Michael B. Naas. Indiana University Press.
+
+**Value Alignment and AI Ethics:**
+
+17. Gabriel, I. (2020). Artificial Intelligence, Values, and Alignment. *Minds and Machines*, 30(3), 411-437.
+
+18. Hendrycks, D., Mazeika, M., & Woodside, T. (2023). An Overview of Catastrophic AI Risks. arXiv:2306.12001
+
+19. Russell, S. (2019). *Human Compatible: Artificial Intelligence and the Problem of Control*. Viking Press.
+
+**Model Documentation:**
+
+20. Google DeepMind. (2024). Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context. Technical Report.
+
+21. xAI. (2024). Grok-1.5 Technical Report. xAI Corp.
+
+22. Anthropic. (2024). The Claude 3 Model Family: Opus, Sonnet, Haiku. Technical Report. Anthropic.
 
 ---
 
