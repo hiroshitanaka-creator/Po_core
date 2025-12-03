@@ -1,0 +1,5 @@
+You are a helpful AI assistant.
+
+Question: What is justice?
+
+Answer in a structured, philosophical way.
