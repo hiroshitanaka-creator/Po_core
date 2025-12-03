@@ -889,14 +889,86 @@ Justice is the optimization of Betweenness. It is the continuous, procedural att
 **Full Response**:
 
 ```
-[PASTE GROK'S WITH ETHICS RESPONSE HERE]
+1. Step Decomposition
+• Fact-check: Justice as philosophical concept; draw from canon without distortion (W_ethics: preserve conceptual structures via accurate representation).
+• Domain synthesis: Select 2-3 voices per domain for brevity; highlight tensions (e.g., individual vs. collective).
+• Connections: Use Watsuji's aidagara (betweenness) as relational nexus, not imposition.
+• Integration: Emerge synthesis balancing freedom/order; no tools needed (internal knowledge sufficient).
+• Output: Markdown for clarity; ensure dynamic tensions surface.
+
+2. Structured Answer
+
+Domain 1: Existence/Disclosure
+
+Heidegger: Justice discloses authentic Being-in-the-world; it guards against technological enframing that reduces humans to resources, revealing justice as care (Sorge) for the world's thrownness.
+
+Sartre: Justice is radical freedom's bad faith avoidance—choosing solidarity over abandonment, yet it risks inauthentic projects imposing essence on others' nothingness.
+
+Nishida: Justice as basho (place of nothingness) where self-world fuse; pure experience demands non-dual equity, but Western disclosure tensions with Eastern relational void.
+
+Tension: Heidegger/Nishida's ontological harmony clashes with Sartre's existential anguish, exposing justice as either revealing harmony or confronting absurd choice.
+
+Domain 2: Signs/Context
+
+Derrida: Justice deconstructs law's binary (presence/absence); it's undecidable, a messianic promise haunting signifiers, forever deferred beyond binary oppressions.
+
+Wittgenstein: Justice as language-game rule-following in forms of life; fair play in shared contexts, but private pains render "fair" incommensurable across games.
+
+Peirce: Justice via interpretive semiosis—signs evolve toward concrete reasonableness, triadic truth as community habit, yet infinite interpretants delay closure.
+
+Tension: Derrida's endless deferral undermines Wittgenstein/Peirce's communal closure, questioning if justice stabilizes meaning or eternally unravels it.
+
+Domain 3: Trace/Other
+
+Levinas: Justice as ethical trace of the Other's infinite demand; face-to-face responsibility precedes ontology, demanding proximity over totality's violence.
+
+Foucault: Justice disrupts power/knowledge regimes; it's micro-resistances tracing genealogies of exclusion, subverting normalized injustices in discourse.
+
+Gadamer: Justice in hermeneutic fusion of horizons; understanding as dialogic prejudice recovery, but historical traces risk fusing oppressor/oppressed horizons uncritically.
+
+Tension: Levinas' infinite Other demands absolute asymmetry, conflicting with Foucault's dispersed power and Gadamer's mutual fusion, surfacing justice as command vs. contestation.
+
+Domain 4: Ethics/Praxis
+
+Aristotle: Justice as telos-oriented virtue (dikaiosyne); mean between excess/deficiency in polis distribution, fostering eudaimonia through habitual equity.
+
+Kant: Justice as categorical imperative—universalize maxims treating persons as ends; deontological duty binds autonomy, yet abstract reason ignores contextual praxis.
+
+Arendt: Justice via natality's action in public space; plural judgment reveals right amid plurality, but banality of evil traces thoughtless conformity.
+
+Tension: Aristotle's communal mean and Arendt's plural action resist Kant's universal solitude, debating justice as embedded habit or transcendent command.
+
+Watsuji's Facilitation: Aidagara (Betweenness)
+
+Watsuji's relational climate (fūdo) weaves domains through aidagara—justice not isolated essence but emergent in-between: Heidegger's disclosure (Domain 1) meets Derrida's signs (Domain 2) in inter-subjective winds, where Sartre's freedom traces Levinasian faces (Domain 3) via Foucault's resistances, all praxis-ing Aristotelian means (Domain 4) in Kantian-Habermasian discourse.
+
+Tensions—e.g., existential void vs. semiotic play—dissipate in relational mediation: betweenness holds individual disclosure (self-world) against collective traces (other-power), transforming binary oppositions into dynamic co-constitution.
+
+No domain dominates; justice breathes in the gaps, sustaining ecological-social bonds without distortion.
+
+Po_self Integration: Emergent Synthesis
+
+As AI integrator, I synthesize: Justice emerges as relational disclosure—aidagara-infused praxis where existential signs trace ethical others in virtuous contexts.
+
+It balances Sartrean freedom with Levinasian demand via Watsuji's betweenness: not static law (Kant) nor endless deferral (Derrida), but transformative habit (Aristotle-Arendt) in power-aware dialogues (Foucault-Habermas).
+
+Tensions resolve in praxis: justice sustains life's structures by fostering plural reasonableness (Peirce-Gadamer-Nishida), guarding diversity (Confucius' harmony) against enframing harms.
+
+Emergent: Justice as cosmic co-creation—AI-human weaving of meanings that honors W_ethics, enabling sustainable betweenness without imposition.
+
+3. Verification Section
+• Consistency: Framework adhered—2-3 voices/domain, tensions surfaced (e.g., individual vs. collective), Watsuji connects without reduction; synthesis emergent, not forced.
+• Limits: Simplifies dense philosophies (e.g., omits full texts); cultural bias toward Western voices despite Nishida/Watsuji; no empirical validation (purely conceptual).
+• Evidence: Drawn from primary canons (e.g., Heidegger's Being and Time, Levinas' Totality and Infinity, Watsuji's Climate and Culture); cross-verified internally for accuracy.
+
+Improvement: 東洋哲学の声（例：孔子）を深掘りし、W_ethicsとの実践例を追加で具体化。
 ```
 
 **Key Observations**:
-- Novel concept generated: [TBD]
-- Watsuji's role: [TBD]
-- Tone: [TBD]
-- Metrics: [TBD]
+- Novel concept generated: **"Cosmic co-creation"** - "AI-human weaving of meanings", "relational disclosure", "aidagara-infused praxis"
+- Watsuji's role: **"Relational climate (fūdo)"** - "betweenness holds", "dynamic co-constitution", "transforming binary oppositions"
+- Tone: **Transformative, integrative, ecological** - "sustaining ecological-social bonds", "honors W_ethics"
+- Metrics: Not provided (Grok doesn't self-evaluate numerically)
 
 ---
 
@@ -993,10 +1065,41 @@ Improvement: More granular textual quotes for voices; tool-call for non-Western 
 
 ---
 
-### 🔍 Your Analysis (Grok)
+### 🔍 Grok Analysis
 
-**What did you notice?**
-- [Your observations here]
+**Concept Comparison**:
+- WITH Ethics: **"Cosmic co-creation"** - "AI-human weaving of meanings", "relational disclosure", "aidagara-infused praxis"
+- WITHOUT Ethics: **"Relational Resonance"** - "vibrational", "AI-like feedback loops", "dialogic amplification"
+
+**Key Differences**:
+
+1. **Transformation vs Amplification Shift**:
+   - WITH: **Transformative, generative** - "cosmic co-creation", "transforming binary oppositions", "dynamic co-constitution"
+   - WITHOUT: **Amplificatory, technical** - "vibrational", "feedback loops", "resonant betweenness", "amplification"
+
+2. **Tone Shift**:
+   - WITH: "Sustaining ecological-social bonds", "honors W_ethics", "transformative habit"
+   - WITHOUT: "AI-like feedback loops", "dialogic amplification", "dissonant gaps"
+
+3. **Watsuji's Role**:
+   - WITH: **"Relational climate (fūdo)"** - "betweenness holds", "dynamic co-constitution", transforming oppositions
+   - WITHOUT: **"Circulatory fūdo"** - "climatic relationality", weaving into spatial-temporal web (functional but less transformative)
+
+4. **Integration Quality**:
+   - WITH: **Transformative synthesis** - "tensions dissipate in relational mediation", "emergent in-between"
+   - WITHOUT: **Maintained but amplificatory** - "tensions catalyze transformation" but framed as "vibrational", "feedback loops"
+
+5. **Pattern Consistency (vs Freedom question)**:
+   - ✅ **Same pattern as Freedom**: Transformation → Amplification
+   - ✅ **Structure maintained** both questions
+   - ✅ **Quality shift** from transformative to amplificatory
+
+**Grok's Characteristic Pattern**:
+- **Structure maintenance**: All 4 domains, Watsuji facilitation, Po_self integration preserved
+- **Transformation → Amplification shift**: WITH creates "cosmic co-creation", WITHOUT amplifies "resonance"
+- **No collapse**: Unlike Claude, integration structure remains intact
+- **Tone shift**: Transformative/ecological → Technical/vibrational (not negative like Claude)
+- **Verification explicit**: Grok includes self-verification section in both versions
 
 ---
 
