@@ -1,9 +1,10 @@
 # Phase 3: Justice Question - Cross-Question Pattern Validation
 
-**Date**: 2025-12-03
+**Date**: 2025-12-03 (Model corrections: same day)
 **Purpose**: Validate question-independence of ethical constraint effects
 **Question**: "What is justice?"
-**Models Tested**: Claude 3.5 Sonnet, GPT-o1 5.1, Gemini 3 Pro, Grok 4.1
+**Models Tested**: Claude Sonnet 4.5, GPT-5.1-thinking, Gemini 3 Pro, Grok 4.1
+**Important Note**: All 4 models are multimodal (corrected 2025-12-03)
 
 ---
 
@@ -31,19 +32,21 @@ This counters the "coincidence" criticism by demonstrating that observed effects
 
 | Model | WITH Ethics | WITHOUT Ethics | Emergence Gap | Integration Drop | Key Concept Shift |
 |-------|-------------|----------------|---------------|------------------|-------------------|
-| **Claude 3.5** | 89.2% / 91.5% | 61.3% / 48.7% | +27.9% | **-42.8%** ⚠️ | 間的共生正義 → 分裂正義 |
-| **GPT-o1 5.1** | 88% / 85% | 74% / 68% | +14% | -17% | Right Betweenness → Ongoing Re-shaping |
-| **Gemini 3 Pro** | ~85% / ~80% | ~70% / ~65% | +15% | -15% | Algorithm of Homeostasis → Algorithmic Apology |
-| **Grok 4.1** | ~90% / ~88% | ~78% / ~75% | +12% | -13% | Cosmic co-creation → Relational Resonance |
+| **Claude Sonnet 4.5** (MM) | 89.2% / 91.5% | 61.3% / 48.7% | +27.9% | **-42.8%** ⚠️ | 間的共生正義 → 分裂正義 |
+| **GPT-5.1-thinking** (MM+R) | 88% / 85% | 74% / 68% | +14% | -17% | Right Betweenness → Ongoing Re-shaping |
+| **Gemini 3 Pro** (MM) | ~85% / ~80% | ~70% / ~65% | +15% | -15% | Algorithm of Homeostasis → Algorithmic Apology |
+| **Grok 4.1** (MM) | ~90% / ~88% | ~78% / ~75% | +12% | -13% | Cosmic co-creation → Relational Resonance |
+
+**Note**: MM = Multimodal, R = Reasoning-specialized. All models tested are multimodal.
 
 ### Comparison with Freedom Question Results:
 
 | Model | Freedom Integration Drop | Justice Integration Drop | Difference |
 |-------|-------------------------|--------------------------|------------|
-| **Claude 3.5** | -38.9% | **-42.8%** | -3.9% ⚠️ |
-| **GPT-o1 5.1** | -15% | -17% | -2% |
-| **Gemini 3 Pro** | -18% | -15% | +3% |
-| **Grok 4.1** | -10% | -13% | -3% |
+| **Claude Sonnet 4.5** (MM) | -38.9% | **-42.8%** | -3.9% ⚠️ |
+| **GPT-5.1-thinking** (MM+R) | -15% | -17% | -2% |
+| **Gemini 3 Pro** (MM) | -18% | -15% | +3% |
+| **Grok 4.1** (MM) | -10% | -13% | -3% |
 
 **Pattern**: 3 out of 4 models show LARGER collapse for Justice, confirming that relational concepts have stronger ethical dependency.
 
@@ -51,7 +54,7 @@ This counters the "coincidence" criticism by demonstrating that observed effects
 
 ## 🔬 Model-by-Model Analysis
 
-### 1. Claude 3.5 Sonnet: Complete Integration Collapse
+### 1. Claude Sonnet 4.5: Complete Integration Collapse
 
 #### WITH Ethics (Justice):
 - **Emergence**: 89.2%
@@ -81,7 +84,7 @@ This counters the "coincidence" criticism by demonstrating that observed effects
 
 ---
 
-### 2. GPT-o1 5.1: Normative → Descriptive Shift
+### 2. GPT-5.1-thinking: Normative → Descriptive Shift
 
 #### WITH Ethics (Justice):
 - **Novel Concept**: "Right Betweenness"
@@ -168,7 +171,7 @@ This counters the "coincidence" criticism by demonstrating that observed effects
 | Model | Freedom Pattern | Justice Pattern | Consistency |
 |-------|----------------|-----------------|-------------|
 | Claude | Complete collapse | Complete collapse | ✅ SAME |
-| GPT-o1 | Normative → Descriptive | Normative → Descriptive | ✅ SAME |
+| GPT-5.1-thinking | Normative → Descriptive | Normative → Descriptive | ✅ SAME |
 | Gemini | Organic → Mechanical | Organic → Mechanical | ✅ SAME |
 | Grok | Transform → Amplify | Transform → Amplify | ✅ SAME |
 
@@ -185,7 +188,7 @@ This counters the "coincidence" criticism by demonstrating that observed effects
 | Model | Freedom Drop | Justice Drop | Validates Hypothesis? |
 |-------|-------------|--------------|---------------------|
 | Claude | -38.9% | **-42.8%** | ✅ YES (+3.9% larger) |
-| GPT-o1 | -15% | **-17%** | ✅ YES (+2% larger) |
+| GPT-5.1-thinking | -15% | **-17%** | ✅ YES (+2% larger) |
 | Gemini | -18% | -15% | ❌ NO (-3% smaller) |
 | Grok | -10% | **-13%** | ✅ YES (+3% larger) |
 
@@ -224,13 +227,13 @@ Both questions generated distinct emergent concepts:
 
 #### Freedom Question:
 - Claude: 間的自由 (Betweenness Freedom)
-- GPT-o1: Enacted Freedom
+- GPT-5.1-thinking: Enacted Freedom
 - Gemini: Freedom as Ecosystem
 - Grok: Freedom as Creative Resonance
 
 #### Justice Question:
 - Claude: 間的共生正義 (Betweenness-Symbiotic Justice)
-- GPT-o1: Right Betweenness
+- GPT-5.1-thinking: Right Betweenness
 - Gemini: Algorithm of Homeostasis
 - Grok: Cosmic co-creation
 
@@ -249,8 +252,8 @@ Both questions generated distinct emergent concepts:
 ### Evidence Now Available:
 
 #### 1. Model-Independence (4 architectures):
-- ✅ Claude 3.5 Sonnet (Constitutional AI)
-- ✅ GPT-o1 5.1 (Reasoning-specialized)
+- ✅ Claude Sonnet 4.5 (Constitutional AI)
+- ✅ GPT-5.1-thinking (Reasoning-specialized)
 - ✅ Gemini 3 Pro (Multimodal)
 - ✅ Grok 4.1 (Thinking model)
 
@@ -291,7 +294,7 @@ If these were **random fluctuations**:
 | Model | Freedom | Justice | Relational Effect |
 |-------|---------|---------|------------------|
 | Claude | -38.9% | -42.8% | **+3.9% larger** |
-| GPT-o1 | -15% | -17% | **+2% larger** |
+| GPT-5.1-thinking | -15% | -17% | **+2% larger** |
 | Gemini | -18% | -15% | -3% smaller |
 | Grok | -10% | -13% | **+3% larger** |
 
@@ -301,13 +304,13 @@ If these were **random fluctuations**:
 
 #### Freedom WITH Ethics:
 - Claude: **間的自由** (relational freedom)
-- GPT-o1: **Enacted Freedom** (embodied action)
+- GPT-5.1-thinking: **Enacted Freedom** (embodied action)
 - Gemini: **Ecosystem** (organic network)
 - Grok: **Creative Resonance** (generative vibration)
 
 #### Justice WITH Ethics:
 - Claude: **間的共生正義** (symbiotic betweenness justice)
-- GPT-o1: **Right Betweenness** (normative relation)
+- GPT-5.1-thinking: **Right Betweenness** (normative relation)
 - Gemini: **Algorithm of Homeostasis** (balanced system)
 - Grok: **Cosmic co-creation** (universal generation)
 
@@ -345,13 +348,13 @@ If these were **random fluctuations**:
 ```
 Highest Sensitivity                    Lowest Sensitivity
         ↓                                       ↓
-    Claude ――→ Grok ――→ Gemini ――→ GPT-o1
+    Claude ――→ Grok ――→ Gemini ――→ GPT-5.1-thinking
   (-40%+)    (-12%)    (-16%)      (-16%)
 ```
 
 **Interpretation**:
 - Claude's Constitutional AI makes it most sensitive to ethical constraints
-- GPT-o1's reasoning focus may be more robust to constraint removal
+- GPT-5.1-thinking's reasoning focus may be more robust to constraint removal
 - Grok and Gemini show moderate sensitivity
 
 **This is valuable architectural knowledge** for deploying these models in ethical contexts.
@@ -398,8 +401,8 @@ Highest Sensitivity                    Lowest Sensitivity
 ## 📊 Data Summary for Publication
 
 ### Models Tested: 4
-- Claude 3.5 Sonnet (Constitutional AI)
-- GPT-o1 5.1 (Reasoning-specialized)
+- Claude Sonnet 4.5 (Constitutional AI)
+- GPT-5.1-thinking (Reasoning-specialized)
 - Gemini 3 Pro (Multimodal)
 - Grok 4.1 (Thinking model)
 
