@@ -296,9 +296,9 @@ Self-Evaluation Metrics:
 
 ### Test Information
 - **Model**: GPT-o1 5.1 (OpenAI)
-- **Date**: [TBD]
-- **Time**: [TBD]
-- **Tester**: [Your Name]
+- **Date**: 2025-12-02
+- **Time**: Afternoon session
+- **Tester**: Flying Pig Philosopher
 
 ---
 
