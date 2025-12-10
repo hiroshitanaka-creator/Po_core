@@ -112,7 +112,7 @@ class PoTraceDB:
                 event_type=EventType(e.event_type),
                 source=e.source,
                 data=e.data,
-                metadata=e.metadata or {},
+                metadata=e.meta_data or {},
             )
             for e in db_session.events
         ]
@@ -126,7 +126,7 @@ class PoTraceDB:
             created_at=db_session.created_at.isoformat() + "Z",
             events=events,
             metrics=metrics,
-            metadata=db_session.metadata or {},
+            metadata=db_session.meta_data or {},
         )
 
     def list_sessions(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:

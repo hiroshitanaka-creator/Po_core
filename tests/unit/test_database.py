@@ -39,7 +39,7 @@ class TestDatabaseManager:
             assert session.session_id == "test-123"
             assert session.prompt == "What is consciousness?"
             assert len(session.philosophers) == 2
-            assert session.metadata["test"] is True
+            assert session.meta_data["test"] is True
 
     def test_add_event(self):
         """Test adding an event to a session."""

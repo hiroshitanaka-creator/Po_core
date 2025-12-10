@@ -38,7 +38,7 @@ class SessionModel(Base):
     prompt = Column(Text, nullable=False)
     philosophers = Column(JSON, nullable=False)  # List of philosopher names
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    metadata = Column(JSON, default=dict)
+    meta_data = Column(JSON, default=dict)
 
     # Relationships
     events = relationship("EventModel", back_populates="session", cascade="all, delete-orphan")
@@ -53,7 +53,7 @@ class SessionModel(Base):
             "created_at": self.created_at.isoformat() + "Z",
             "events": [event.to_dict() for event in self.events],
             "metrics": {metric.key: metric.value for metric in self.metrics},
-            "metadata": self.metadata or {},
+            "metadata": self.meta_data or {},
         }
 
 
@@ -69,7 +69,7 @@ class EventModel(Base):
     event_type = Column(String(50), nullable=False, index=True)
     source = Column(String(100), nullable=False)
     data = Column(JSON, nullable=False)
-    metadata = Column(JSON, default=dict)
+    meta_data = Column(JSON, default=dict)
 
     # Relationships
     session = relationship("SessionModel", back_populates="events")
@@ -83,7 +83,7 @@ class EventModel(Base):
             "event_type": self.event_type,
             "source": self.source,
             "data": self.data,
-            "metadata": self.metadata or {},
+            "metadata": self.meta_data or {},
         }
 
 
@@ -153,7 +153,7 @@ class DatabaseManager:
                 prompt=prompt,
                 philosophers=philosophers,
                 created_at=datetime.utcnow(),
-                metadata=metadata or {},
+                meta_data=metadata or {},
             )
             db.add(session)
             db.commit()
@@ -191,7 +191,7 @@ class DatabaseManager:
                 event_type=event_type,
                 source=source,
                 data=data,
-                metadata=metadata or {},
+                meta_data=metadata or {},
             )
             db.add(event)
             db.commit()
