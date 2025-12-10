@@ -316,6 +316,38 @@ class PoTrace:
 
         return path
 
+    def export_session(self, session_id: str, format: str = "json") -> Optional[str]:
+        """Export a session in the specified format."""
+        session = self.get_session(session_id)
+        if session is None:
+            return None
+
+        if format == "json":
+            return json.dumps(session.to_dict(), ensure_ascii=False, indent=2)
+        elif format == "text":
+            # Create human-readable text format
+            lines = [
+                f"Session: {session.session_id}",
+                f"Prompt: {session.prompt}",
+                f"Philosophers: {', '.join(session.philosophers)}",
+                f"Created: {session.created_at}",
+                "",
+                "Metrics:",
+            ]
+            for key, value in session.metrics.items():
+                lines.append(f"  {key}: {value}")
+
+            lines.append("")
+            lines.append(f"Events ({len(session.events)}):")
+            for event in session.events:
+                lines.append(f"  [{event.timestamp}] {event.event_type.value} from {event.source}")
+                if event.data:
+                    lines.append(f"    Data: {json.dumps(event.data, ensure_ascii=False)}")
+
+            return "\n".join(lines)
+        else:
+            raise ValueError(f"Unknown export format: {format}. Supported formats: json, text")
+
     def build_trace(self, response: "PoSelfResponse") -> TraceRecord:
         """PoSelfResponse から TraceRecord を構築する"""
 
