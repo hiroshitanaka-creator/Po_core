@@ -3,13 +3,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional, TYPE_CHECKING
+from typing import Dict, Iterable, List, Optional, TYPE_CHECKING, Any
 
 from po_core import philosophers
 from po_core.philosophers.base import Philosopher
 
 if TYPE_CHECKING:
     from po_core.po_trace import PoTrace, EventType
+
+# Flag to enable advanced tensor metrics (can be set via environment or config)
+USE_ADVANCED_METRICS = False
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 
@@ -49,9 +52,11 @@ class PhilosopherTensor:
     semantic_delta: float
     blocked_tensor: float
     tension: str | None = None
+    # Advanced metrics (optional, only when USE_ADVANCED_METRICS=True)
+    advanced_metrics: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, object]:
-        return {
+        result = {
             "name": self.name,
             "reasoning": self.reasoning,
             "perspective": self.perspective,
@@ -60,6 +65,9 @@ class PhilosopherTensor:
             "semantic_delta": self.semantic_delta,
             "blocked_tensor": self.blocked_tensor,
         }
+        if self.advanced_metrics:
+            result["advanced_metrics"] = self.advanced_metrics
+        return result
 
 
 @dataclass
@@ -107,6 +115,30 @@ def _compute_semantic_delta(prompt: str, reasoning: str) -> float:
 
 def _compute_blocked_tensor(freedom_pressure: float, semantic_delta: float) -> float:
     return round(max(0.0, (1 - freedom_pressure) * 0.5 + semantic_delta * 0.5), 2)
+
+
+def _compute_advanced_metrics(prompt: str, reasoning: str, philosopher_name: str) -> Dict[str, Any]:
+    """
+    Compute advanced tensor-based metrics.
+
+    Uses the tensor_metrics module for sophisticated calculations.
+    Falls back to simple metrics if tensor_metrics is unavailable.
+    """
+    try:
+        from po_core.tensor_metrics import compute_all_metrics
+        return compute_all_metrics(prompt, reasoning, philosopher_name)
+    except Exception as e:
+        # Fallback to simple metrics if advanced metrics fail
+        print(f"Warning: Advanced metrics failed for {philosopher_name}: {e}")
+        print("Falling back to simple metrics")
+        freedom_pressure = _compute_freedom_pressure(reasoning)
+        semantic_delta = _compute_semantic_delta(prompt, reasoning)
+        blocked_tensor = _compute_blocked_tensor(freedom_pressure, semantic_delta)
+        return {
+            "freedom_pressure_value": freedom_pressure,
+            "semantic_delta": semantic_delta,
+            "blocked_tensor_value": blocked_tensor,
+        }
 
 
 def _load_philosophers(names: Iterable[str]) -> List[Philosopher]:
@@ -163,9 +195,17 @@ def run_ensemble(
         perspective = str(reasoning_result.get("perspective", ""))
         tension = reasoning_result.get("tension")
 
-        freedom_pressure = _compute_freedom_pressure(reasoning_text)
-        semantic_delta = _compute_semantic_delta(prompt, reasoning_text)
-        blocked_tensor = _compute_blocked_tensor(freedom_pressure, semantic_delta)
+        # Compute metrics (simple or advanced)
+        if USE_ADVANCED_METRICS:
+            advanced_metrics = _compute_advanced_metrics(prompt, reasoning_text, thinker.name)
+            freedom_pressure = advanced_metrics["freedom_pressure_value"]
+            semantic_delta = advanced_metrics["semantic_delta"]
+            blocked_tensor = advanced_metrics["blocked_tensor_value"]
+        else:
+            advanced_metrics = None
+            freedom_pressure = _compute_freedom_pressure(reasoning_text)
+            semantic_delta = _compute_semantic_delta(prompt, reasoning_text)
+            blocked_tensor = _compute_blocked_tensor(freedom_pressure, semantic_delta)
 
         tensor = PhilosopherTensor(
             name=thinker.name,
@@ -175,6 +215,7 @@ def run_ensemble(
             freedom_pressure=freedom_pressure,
             semantic_delta=semantic_delta,
             blocked_tensor=blocked_tensor,
+            advanced_metrics=advanced_metrics,
         )
         tensors.append(tensor)
 
