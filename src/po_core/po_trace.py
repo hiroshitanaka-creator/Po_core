@@ -35,7 +35,10 @@ class EventType(str, Enum):
     CONSENSUS_FORMED = "consensus_formed"
     METRIC_UPDATE = "metric_update"
     EXECUTION = "execution"
+    STATE_CHANGE = "state_change"
     ERROR = "error"
+    USER_ACTION = "user_action"
+    SYSTEM = "system"
     INFO = "info"
 
 
@@ -63,6 +66,19 @@ class Event:
             "metadata": self.metadata,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Event":
+        """Create Event from dictionary."""
+        return cls(
+            event_id=data["event_id"],
+            session_id=data["session_id"],
+            timestamp=data["timestamp"],
+            event_type=EventType(data["event_type"]),
+            source=data["source"],
+            data=data["data"],
+            metadata=data.get("metadata", {}),
+        )
+
 
 @dataclass
 class Session:
@@ -87,6 +103,19 @@ class Session:
             "metrics": self.metrics,
             "metadata": self.metadata,
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Session":
+        """Create Session from dictionary."""
+        return cls(
+            session_id=data["session_id"],
+            prompt=data["prompt"],
+            philosophers=data["philosophers"],
+            created_at=data["created_at"],
+            events=[Event.from_dict(e) for e in data.get("events", [])],
+            metrics=data.get("metrics", {}),
+            metadata=data.get("metadata", {}),
+        )
 
 
 @dataclass
