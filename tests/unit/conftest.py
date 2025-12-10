@@ -16,6 +16,24 @@ def simple_prompt() -> str:
 
 
 @pytest.fixture()
+def existential_prompt() -> str:
+    """Existential prompt for philosopher tests."""
+    return "I stand before an abyss of choices, wondering if any path leads to authentic existence."
+
+
+@pytest.fixture()
+def ethical_prompt() -> str:
+    """Ethical prompt for philosopher tests."""
+    return "Should I act for the greater good, even if it means sacrificing my own happiness?"
+
+
+@pytest.fixture()
+def complex_prompt() -> str:
+    """Complex multi-layered prompt for philosopher tests."""
+    return "In a world where technology shapes our reality, how do we maintain our humanity while embracing progress, and what does it mean to live authentically in such a context?"
+
+
+@pytest.fixture()
 def load_json_output():
     def _loader(result) -> dict:
         return json.loads(result.output.strip())

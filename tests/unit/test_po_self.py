@@ -18,9 +18,10 @@ class TestPoSelfBasicFunctionality:
 
         assert response.prompt == sample_prompt
         assert response.consensus_leader == "Aristotle (Ἀριστοτέλης)"
-        assert response.metrics["freedom_pressure"] == 0.82
-        assert response.metrics["semantic_delta"] == 0.76
-        assert response.metrics["blocked_tensor"] == 0.47
+        # Updated values for DEFAULT_PHILOSOPHERS = ["aristotle", "confucius", "wittgenstein"]
+        assert response.metrics["freedom_pressure"] == 0.67
+        assert response.metrics["semantic_delta"] == 0.9
+        assert response.metrics["blocked_tensor"] == 0.62
         assert response.responses
         assert response.log["prompt"] == sample_prompt
 
@@ -73,7 +74,7 @@ class TestPoSelfPhilosopherSelection:
 
     def test_multiple_philosophers(self):
         """Test with multiple philosophers."""
-        philosophers = ["aristotle", "nietzsche", "wittgenstein"]
+        philosophers = ["aristotle", "confucius", "wittgenstein"]
         po = PoSelf(philosophers=philosophers)
         response = po.generate("What is truth?")
 
@@ -91,7 +92,7 @@ class TestPoSelfPhilosopherSelection:
 
     def test_mixed_philosophical_traditions(self):
         """Test mixing Western and Eastern philosophers."""
-        philosophers = ["aristotle", "confucius", "nietzsche", "watsuji"]
+        philosophers = ["aristotle", "confucius", "sartre", "watsuji"]
         po = PoSelf(philosophers=philosophers)
         response = po.generate("What is the good life?")
 
@@ -159,13 +160,13 @@ class TestPoSelfResponse:
 
     def test_consensus_leader_is_valid(self):
         """Test that consensus leader is a valid philosopher name."""
-        po = PoSelf(philosophers=["aristotle", "nietzsche", "sartre"])
+        po = PoSelf(philosophers=["aristotle", "confucius", "sartre"])
         response = po.generate("What is freedom?")
 
         # Consensus leader should be one of the full philosopher names
         expected_leaders = [
             "Aristotle (Ἀριστοτέλης)",
-            "Friedrich Nietzsche",
+            "Confucius (孔子)",
             "Jean-Paul Sartre",
         ]
         assert response.consensus_leader in expected_leaders
