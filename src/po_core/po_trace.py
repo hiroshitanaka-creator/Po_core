@@ -26,6 +26,66 @@ console = Console()
 DEFAULT_TRACE_DIR = Path("traces")
 
 
+class EventType(str, Enum):
+    """Event types for reasoning traces."""
+
+    PHILOSOPHER_RESPONSE = "philosopher_response"
+    CONSENSUS_FORMED = "consensus_formed"
+    METRIC_UPDATE = "metric_update"
+    ERROR = "error"
+    INFO = "info"
+
+
+@dataclass
+class Event:
+    """Individual event within a reasoning session."""
+
+    event_id: str
+    session_id: str
+    timestamp: str
+    event_type: EventType
+    source: str
+    data: Dict[str, Any]
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "event_id": self.event_id,
+            "session_id": self.session_id,
+            "timestamp": self.timestamp,
+            "event_type": self.event_type.value,
+            "source": self.source,
+            "data": self.data,
+            "metadata": self.metadata,
+        }
+
+
+@dataclass
+class Session:
+    """Complete reasoning session with events and metrics."""
+
+    session_id: str
+    prompt: str
+    philosophers: List[str]
+    created_at: str
+    events: List[Event] = field(default_factory=list)
+    metrics: Dict[str, float] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "session_id": self.session_id,
+            "prompt": self.prompt,
+            "philosophers": self.philosophers,
+            "created_at": self.created_at,
+            "events": [event.to_dict() for event in self.events],
+            "metrics": self.metrics,
+            "metadata": self.metadata,
+        }
+
+
 @dataclass
 class TraceHeader:
     """メタ情報：トレースの概要"""
