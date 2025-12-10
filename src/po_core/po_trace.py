@@ -12,13 +12,14 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import click
 from rich.console import Console
 from rich.table import Table
 
-from po_core.po_self import PoSelf, PoSelfResponse
+if TYPE_CHECKING:
+    from po_core.po_self import PoSelf, PoSelfResponse
 
 console = Console()
 
@@ -123,8 +124,83 @@ class PoTrace:
     def __init__(self, trace_dir: Path | str = DEFAULT_TRACE_DIR) -> None:
         self.trace_dir = Path(trace_dir)
         self.trace_dir.mkdir(parents=True, exist_ok=True)
+        self.sessions: Dict[str, Session] = {}
 
-    def build_trace(self, response: PoSelfResponse) -> TraceRecord:
+    def create_session(
+        self,
+        prompt: str,
+        philosophers: List[str],
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Create a new reasoning session and return its ID."""
+        session_id = str(uuid.uuid4())
+        created_at = datetime.utcnow().isoformat() + "Z"
+
+        session = Session(
+            session_id=session_id,
+            prompt=prompt,
+            philosophers=philosophers,
+            created_at=created_at,
+            metadata=metadata or {},
+        )
+        self.sessions[session_id] = session
+        return session_id
+
+    def log_event(
+        self,
+        session_id: str,
+        event_type: EventType,
+        source: str,
+        data: Dict[str, Any],
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Log an event to a session."""
+        if session_id not in self.sessions:
+            console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
+            return
+
+        event_id = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat() + "Z"
+
+        event = Event(
+            event_id=event_id,
+            session_id=session_id,
+            timestamp=timestamp,
+            event_type=event_type,
+            source=source,
+            data=data,
+            metadata=metadata or {},
+        )
+
+        self.sessions[session_id].events.append(event)
+
+    def update_metrics(
+        self,
+        session_id: str,
+        metrics: Dict[str, float],
+    ) -> None:
+        """Update session metrics."""
+        if session_id not in self.sessions:
+            console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
+            return
+
+        self.sessions[session_id].metrics.update(metrics)
+
+    def save_session(self, session_id: str) -> Optional[Path]:
+        """Save a session to disk."""
+        if session_id not in self.sessions:
+            console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
+            return None
+
+        session = self.sessions[session_id]
+        path = self.trace_dir / f"session_{session_id}.json"
+
+        with path.open("w", encoding="utf-8") as f:
+            json.dump(session.to_dict(), f, ensure_ascii=False, indent=2)
+
+        return path
+
+    def build_trace(self, response: "PoSelfResponse") -> TraceRecord:
         """PoSelfResponse から TraceRecord を構築する"""
 
         # trace_id はとりあえずタイムスタンプ＋簡易カウンタみたいなものにしておく
@@ -167,6 +243,8 @@ class PoTrace:
 )
 def cli(prompt: List[str], trace_dir: Path) -> None:
     """Run the Po_self ensemble and persist a reasoning trace."""
+    # Import here to avoid circular dependency
+    from po_core.po_self import PoSelf, PoSelfResponse
 
     text_prompt = " ".join(prompt).strip()
     if not text_prompt:
