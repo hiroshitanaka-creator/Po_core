@@ -1,0 +1,96 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 🐷🎈
+
+        **Flying Pig Philosophy:** We hypothesize boldly!
+
+  - type: dropdown
+    id: track
+    attributes:
+      label: Contribution Track
+      description: Which track does this feature belong to?
+      options:
+        - 👩‍💻 AI Track (Engineering & Implementation)
+        - 📚 Philosophy Track (Research & Theory)
+        - 🌉 Bridge Track (Connecting Philosophy & Code)
+        - 🎨 Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: |
+        Describe the problem or need that motivates this feature request.
+
+        Example: "Currently, Po_core lacks a way to visualize the tension between conflicting philosophical perspectives in real-time..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like to solve this problem?
+      placeholder: |
+        Describe your proposed solution in detail.
+
+        Example: "Add a real-time tension map visualization showing the degree of agreement/disagreement between philosophers..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: philosophical
+    attributes:
+      label: Philosophical Justification
+      description: (Optional) Does this feature have philosophical grounding?
+      placeholder: |
+        If this feature is philosophically motivated, explain the philosophical reasoning.
+
+        Example: "This aligns with Heidegger's concept of 'Being-with' (Mitsein), where understanding emerges through dialogue and tension..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Approaches
+      description: Have you considered any alternative solutions?
+      placeholder: Describe any alternative approaches you've considered
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or examples
+      placeholder: |
+        Add any other context about the feature request here.
+
+        - Screenshots or mockups
+        - Links to similar features in other projects
+        - Academic papers or philosophical texts
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute to this feature?
+      options:
+        - label: I would like to implement this feature
+          required: false
+        - label: I would like to help with design/planning
+          required: false
+        - label: I can provide philosophical guidance
+          required: false

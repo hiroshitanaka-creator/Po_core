@@ -1,0 +1,137 @@
+name: 🎯 Good First Issue
+description: Create a beginner-friendly task
+title: "[GOOD FIRST ISSUE] "
+labels: ["good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to Po_core! 🐷🎈
+
+        **For Contributors:** Good First Issues are perfect for newcomers!
+        **For Maintainers:** Use this template to create beginner-friendly tasks.
+
+        > *"A frog in a well may not know the ocean, but it can know the sky."*
+
+  - type: dropdown
+    id: track
+    attributes:
+      label: Track
+      description: Which track is this task for?
+      options:
+        - ai-easy (AI/Engineering - Easy)
+        - phil-easy (Philosophy - Easy)
+        - bridge (Connect Philosophy & Code)
+        - docs (Documentation)
+        - tests (Testing)
+    validations:
+      required: true
+
+  - type: textarea
+    id: task
+    attributes:
+      label: Task Description
+      description: What needs to be done?
+      placeholder: |
+        Describe the task clearly and concisely.
+
+        Example: "Add unit tests for the Heidegger philosopher module's Dasein analysis function"
+    validations:
+      required: true
+
+  - type: textarea
+    id: skills
+    attributes:
+      label: Skills Needed
+      description: What skills or knowledge are required?
+      placeholder: |
+        List the skills needed for this task.
+
+        Example:
+        - Basic Python programming
+        - Understanding of unit testing with pytest
+        - (Optional) Familiarity with Heidegger's concept of Dasein
+    validations:
+      required: true
+
+  - type: textarea
+    id: learning
+    attributes:
+      label: Learning Outcome
+      description: What will contributors learn from this task?
+      placeholder: |
+        What skills or knowledge will contributors gain?
+
+        Example:
+        - How to write unit tests for philosophical reasoning modules
+        - How Po_core integrates philosophy with code
+        - Testing practices for AI systems
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources & Guidance
+      description: Links to helpful resources, files, or documentation
+      placeholder: |
+        Provide resources to help contributors get started:
+
+        - **Relevant Files:**
+          - `04_modules/philosophers/heidegger.py`
+          - `tests/test_philosophers/test_heidegger.py` (create this file)
+
+        - **Documentation:**
+          - [Testing Guide](link)
+          - [Heidegger Module Spec](link)
+
+        - **References:**
+          - [Pytest documentation](https://docs.pytest.org/)
+          - [Heidegger's Being and Time (optional)](link)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Suggested Implementation Steps
+      description: (Optional) Break down the task into steps
+      placeholder: |
+        Help contributors get started with a suggested approach:
+
+        1. Read the existing Heidegger module code
+        2. Review the existing test examples in `tests/`
+        3. Create a new test file `test_heidegger.py`
+        4. Write tests for the main Dasein analysis functions
+        5. Run tests with `pytest tests/test_philosophers/test_heidegger.py`
+        6. Submit a PR!
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: What should contributors do before starting?
+      options:
+        - label: Read the README
+          required: false
+        - label: Set up development environment
+          required: false
+        - label: Review the contribution guidelines
+          required: false
+        - label: Join our Discussions
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other helpful information
+      placeholder: |
+        Add any other context:
+        - Expected difficulty level
+        - Estimated time to complete
+        - Who to ask for help
+    validations:
+      required: false
