@@ -63,6 +63,7 @@ dependencies = [
     "rich>=13.7.0",
     "tqdm>=4.66.0",
     "orjson>=3.9.0",
+    "sqlalchemy>=2.0.0",
 ]
 
 [project.optional-dependencies]
