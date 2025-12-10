@@ -320,7 +320,7 @@ class PoTrace:
         """Export a session in the specified format."""
         session = self.get_session(session_id)
         if session is None:
-            return None
+            raise ValueError(f"Session {session_id} not found")
 
         if format == "json":
             return json.dumps(session.to_dict(), ensure_ascii=False, indent=2)
@@ -346,7 +346,7 @@ class PoTrace:
 
             return "\n".join(lines)
         else:
-            raise ValueError(f"Unknown export format: {format}. Supported formats: json, text")
+            raise ValueError(f"Unknown format: {format}")
 
     def build_trace(self, response: "PoSelfResponse") -> TraceRecord:
         """PoSelfResponse から TraceRecord を構築する"""
