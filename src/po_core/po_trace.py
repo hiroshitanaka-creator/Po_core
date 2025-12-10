@@ -4,6 +4,15 @@ Po_trace: Reasoning Audit Log Module
 Tracks and persists the reasoning process of Po_self,
 including aggregate metrics and per-philosopher responses.
 """
+from __future__ import annotations
+
+import json
+import uuid
+from dataclasses import asdict, dataclass, field
+from datetime import datetime
+from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from __future__ import annotations
 
@@ -15,6 +24,7 @@ from typing import Any, Dict, List, Optional
 
 import click
 from rich.console import Console
+from rich.table import Table
 
 from po_core.po_self import PoSelf, PoSelfResponse
 

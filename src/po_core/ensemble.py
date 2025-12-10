@@ -3,10 +3,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, TYPE_CHECKING
 
 from po_core import philosophers
 from po_core.philosophers.base import Philosopher
+
+if TYPE_CHECKING:
+    from po_core.po_trace import PoTrace, EventType
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "nietzsche", "wittgenstein"]
 
@@ -126,11 +129,32 @@ def _aggregate_metrics(tensors: List[PhilosopherTensor]) -> EnsembleMetrics:
     return EnsembleMetrics(freedom_avg, delta_avg, blocked_avg)
 
 
-def run_ensemble(prompt: str, *, philosophers: Optional[Iterable[str]] = None) -> Dict:
+def run_ensemble(
+    prompt: str,
+    *,
+    philosophers: Optional[Iterable[str]] = None,
+    po_trace: Optional["PoTrace"] = None,
+    session_id: Optional[str] = None,
+) -> Dict:
     """Return a structured ensemble response for a given prompt."""
 
     selected = list(philosophers) if philosophers is not None else DEFAULT_PHILOSOPHERS
     thinkers = _load_philosophers(selected)
+
+    # Log ensemble start
+    if po_trace and session_id:
+        from po_core.po_trace import EventType
+
+        po_trace.log_event(
+            session_id=session_id,
+            event_type=EventType.EXECUTION,
+            source="ensemble",
+            data={
+                "message": "Ensemble reasoning started",
+                "philosophers_count": len(selected),
+                "philosophers": selected,
+            },
+        )
 
     tensors: List[PhilosopherTensor] = []
     for thinker in thinkers:
@@ -143,25 +167,63 @@ def run_ensemble(prompt: str, *, philosophers: Optional[Iterable[str]] = None) -
         semantic_delta = _compute_semantic_delta(prompt, reasoning_text)
         blocked_tensor = _compute_blocked_tensor(freedom_pressure, semantic_delta)
 
-        tensors.append(
-            PhilosopherTensor(
-                name=thinker.name,
-                reasoning=reasoning_text,
-                perspective=perspective,
-                tension=tension,
-                freedom_pressure=freedom_pressure,
-                semantic_delta=semantic_delta,
-                blocked_tensor=blocked_tensor,
-            )
+        tensor = PhilosopherTensor(
+            name=thinker.name,
+            reasoning=reasoning_text,
+            perspective=perspective,
+            tension=tension,
+            freedom_pressure=freedom_pressure,
+            semantic_delta=semantic_delta,
+            blocked_tensor=blocked_tensor,
         )
+        tensors.append(tensor)
+
+        # Log philosopher reasoning
+        if po_trace and session_id:
+            from po_core.po_trace import EventType
+
+            po_trace.log_event(
+                session_id=session_id,
+                event_type=EventType.EXECUTION,
+                source=f"philosopher.{thinker.name}",
+                data={
+                    "message": f"{thinker.name} completed reasoning",
+                    "philosopher": thinker.name,
+                    "perspective": perspective,
+                    "freedom_pressure": freedom_pressure,
+                    "semantic_delta": semantic_delta,
+                    "blocked_tensor": blocked_tensor,
+                    "reasoning_length": len(reasoning_text),
+                },
+            )
 
     aggregate = _aggregate_metrics(tensors)
     ranked = sorted(tensors, key=lambda tensor: tensor.freedom_pressure, reverse=True)
+
+    # Log ensemble completion
+    if po_trace and session_id:
+        from po_core.po_trace import EventType
+
+        po_trace.log_event(
+            session_id=session_id,
+            event_type=EventType.EXECUTION,
+            source="ensemble",
+            data={
+                "message": "Ensemble reasoning completed",
+                "results_recorded": len(tensors),
+                "consensus_leader": ranked[0].name if ranked else None,
+                "status": "ok" if tensors else "empty",
+            },
+        )
+
+        # Update session metrics
+        po_trace.update_metrics(session_id, aggregate.to_dict())
 
     log = {
         "prompt": prompt,
         "philosophers": selected,
         "created_at": datetime.utcnow().isoformat() + "Z",
+        "session_id": session_id,
         "events": [
             {"event": "ensemble_started", "philosophers": len(selected)},
             {

@@ -13,15 +13,21 @@
 > **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
 
 ### TL;DR
-- Philosophers as interacting **tensors** → accountable LLM reasoning  
-- **Reason logs** + ethical/freedom **pressure** as measurable signals  
-- Docs-first; implementation WIP
+- Philosophers as interacting **tensors** → accountable LLM reasoning
+- **Reason logs** + ethical/freedom **pressure** as measurable signals
+- ✅ **Working prototypes**: Web API, batch processing, visualization, enterprise dashboard, multi-agent system
+- ✅ **Database integration**: SQLite/PostgreSQL support with full migration tools
+- Alpha release with 20 philosophers, complete tracing, CI/CD, and 70% core implementation
 
 ### Quick links
+[Examples & Demos](./examples/README.md) ·
+[Medium-Scale Prototypes](./examples/MEDIUM_PROTOTYPES.md) ·
+[Large-Scale Prototypes](./examples/LARGE_SCALE_PROTOTYPES.md) ·
+[Database Integration](./examples/LARGE_SCALE_PROTOTYPES.md#-データベース統合) ·
 [Modules](./tree/main/04_modules) ·
 [Research](./tree/main/05_research) ·
-[Reason-log spec](./blob/main/docs/specs/reason_log.md) ·
-[Viewer spec](./blob/main/docs/viewer/README.md)
+[Po_trace spec](./blob/main/docs/specs/reason_log.md) ·
+[Po_viewer spec](./blob/main/docs/viewer/README.md)
 
 ## Contribution Tracks
 ### <a id="ai-track"></a>👩‍💻 AI Track
@@ -95,6 +101,13 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 - Not just "alignment"—but **deliberation**
 - Multiple ethical perspectives in tension
 - Explicit responsibility measurement
+
+### 🛡️ Safety System
+- **Philosopher Safety Profiles**: Three-tier classification (TRUSTED, RESTRICTED, MONITORED)
+- **W_ethics Boundaries**: Absolute ethical red lines with automatic violation detection
+- **Dangerous Pattern Detection**: Specialized mode for researching edge cases
+- **Adversarial Testing**: Comprehensive test suite validating safety mechanisms
+- See [Safety Documentation](./docs/SAFETY.md) for details
 
 ---
 
@@ -202,6 +215,9 @@ po-core status
 # Show version information
 po-core version
 
+# 🎉 NEW: Start an interactive philosopher party!
+po-core party
+
 # Get help
 po-core --help
 ```
@@ -219,6 +235,100 @@ $ po-core version
 
 A frog in a well may not know the ocean, but it can know the sky.
 ```
+
+### 🎉 Po_Party: The Most Fun Way to Explore Philosophy!
+
+**Try the interactive philosopher party machine:**
+
+```bash
+po-core party
+```
+
+Po_Party automatically assembles optimal philosopher combinations based on research findings from 10,600 session analysis:
+- **Pick a theme** (ethics, existence, knowledge, etc.)
+- **Choose a mood** (calm, balanced, chaotic, critical)
+- **Watch philosophy come alive** with real-time metrics
+- **See emergence happen** with +1975% boost from dialectical tension
+
+It's like hosting a dinner party, except the guests are philosophers and the food is ideas! 🐷🎈
+
+---
+
+## Working Prototypes & Examples
+
+Po_core includes fully functional prototypes demonstrating real-world applications:
+
+### 🌐 Web API Server
+
+FastAPI-based RESTful API server with beautiful web interface.
+
+```bash
+# Install dependencies
+pip install fastapi uvicorn pydantic
+
+# Start server
+python examples/web_api_server.py
+```
+
+**Access:**
+- Web Interface: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+**Features:**
+- 🌐 Beautiful web-based chat interface
+- 📡 RESTful API endpoints
+- 💾 Session history management
+- 📊 Statistics and analytics
+- 🎨 Responsive gradient UI
+
+### 📦 Batch Analyzer
+
+Process multiple questions efficiently and export results.
+
+```bash
+python examples/batch_analyzer.py
+```
+
+**Capabilities:**
+- Process 10+ questions in one run
+- Export to JSON/CSV formats
+- Statistical analysis (avg metrics, leader distribution)
+- Progress tracking
+- Customizable philosopher groups
+
+### 🔍 Philosopher Comparison Tool
+
+Compare different philosophical perspectives on the same question.
+
+```bash
+python examples/philosopher_comparison.py
+```
+
+**Features:**
+- Group comparison (Existentialism, Ethics, Eastern Philosophy, etc.)
+- Individual philosopher comparison
+- Metrics comparison tables
+- Detailed response analysis
+
+### 📚 Basic Demos
+
+**Simple Demo** - Interactive philosophical reasoning:
+```bash
+python examples/simple_demo.py
+```
+
+**API Demo** - 7 usage examples:
+```bash
+python examples/api_demo.py
+```
+
+**Quick Test** - Verify functionality:
+```bash
+python examples/quick_test.py
+```
+
+**📖 Full documentation:** See [examples/README.md](./examples/README.md) and [examples/MEDIUM_PROTOTYPES.md](./examples/MEDIUM_PROTOTYPES.md)
 
 ---
 
@@ -246,12 +356,15 @@ print(response.philosophers_involved)  # Which minds contributed
 ---
 
 ## Documentation
-Documentation
-	•	📖 Manifesto — Our philosophy and motivation
-	•	📚 Design Documents — 120+ technical specifications
-	•	🎓 Philosopher Guide — Understanding each philosophical module
-	•	🔧 API Reference — Complete API documentation (planned)
-	•	🎨 Viewer Guide — Visualizing Po_core’s reasoning (planned)
+
+- 📖 [**Manifesto**](./docs/MANIFESTO.md) — Our philosophy and motivation
+- 📚 [**Design Documents**](./docs/design/) — 120+ technical specifications
+- 🎓 [**Philosopher Guide**](./docs/philosophers/) — Understanding each philosophical module
+- 🚀 [**Examples & Prototypes**](./examples/README.md) — Working demos and usage examples
+- 🌐 [**Medium Prototypes Guide**](./examples/MEDIUM_PROTOTYPES.md) — Web API, Batch Analyzer, Comparison Tool
+- 🔍 [**Po_trace Specification**](./docs/specs/reason_log.md) — Audit logging system
+- 🎨 [**Po_viewer Specification**](./docs/viewer/README.md) — Visualization system
+- 🔧 **API Reference** — Complete API documentation (in progress)
 Contributing
 We welcome contributions! Whether you’re a philosopher, engineer, designer, or skeptic.
 Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
