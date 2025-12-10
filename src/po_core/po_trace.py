@@ -12,18 +12,111 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import click
 from rich.console import Console
 from rich.table import Table
 
-from po_core.po_self import PoSelf, PoSelfResponse
+# Use TYPE_CHECKING to avoid circular import
+if TYPE_CHECKING:
+    from po_core.po_self import PoSelf, PoSelfResponse
 
 console = Console()
 
 # デフォルトのログ保存先（必要なら設定で変えられるようにしてもよい）
 DEFAULT_TRACE_DIR = Path("traces")
+
+
+class EventType(str, Enum):
+    """Types of events that can be logged."""
+
+    ENSEMBLE_STARTED = "ensemble_started"
+    PHILOSOPHER_REASONING = "philosopher_reasoning"
+    AGGREGATE_COMPUTED = "aggregate_computed"
+    CONSENSUS_REACHED = "consensus_reached"
+    EXECUTION = "execution"
+    STATE_CHANGE = "state_change"
+    ERROR = "error"
+    USER_ACTION = "user_action"
+    SYSTEM = "system"
+
+
+@dataclass
+class Event:
+    """A single event in a reasoning session."""
+
+    event_id: str
+    session_id: str
+    timestamp: str
+    event_type: EventType
+    source: str
+    data: Dict[str, Any]
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "event_id": self.event_id,
+            "session_id": self.session_id,
+            "timestamp": self.timestamp,
+            "event_type": self.event_type.value,
+            "source": self.source,
+            "data": self.data,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> Event:
+        """Create Event from dictionary."""
+        return cls(
+            event_id=data["event_id"],
+            session_id=data["session_id"],
+            timestamp=data["timestamp"],
+            event_type=EventType(data["event_type"]),
+            source=data["source"],
+            data=data["data"],
+            metadata=data.get("metadata", {}),
+        )
+
+
+@dataclass
+class Session:
+    """A reasoning session with events and metrics."""
+
+    session_id: str
+    prompt: str
+    philosophers: List[str]
+    created_at: str
+    events: List[Event] = field(default_factory=list)
+    metrics: Dict[str, float] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "session_id": self.session_id,
+            "prompt": self.prompt,
+            "philosophers": self.philosophers,
+            "created_at": self.created_at,
+            "events": [event.to_dict() for event in self.events],
+            "metrics": self.metrics,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> Session:
+        """Create Session from dictionary."""
+        events = [Event.from_dict(e) for e in data.get("events", [])]
+        return cls(
+            session_id=data["session_id"],
+            prompt=data["prompt"],
+            philosophers=data["philosophers"],
+            created_at=data["created_at"],
+            events=events,
+            metrics=data.get("metrics", {}),
+            metadata=data.get("metadata", {}),
+        )
 
 
 @dataclass
@@ -119,9 +212,12 @@ def cli(prompt: List[str], trace_dir: Path) -> None:
     console.print("[bold magenta]🧠 Po_self x Po_trace[/bold magenta]")
     console.print(f"[cyan]Prompt:[/cyan] {text_prompt}")
 
+    # Import here to avoid circular dependency at module level
+    from po_core.po_self import PoSelf
+
     # 1. Po_self を実行
     po_self = PoSelf()
-    response: PoSelfResponse = po_self.generate(text_prompt)
+    response = po_self.generate(text_prompt)
 
     # 2. トレースを構築・保存
     tracer = PoTrace(trace_dir=trace_dir)
