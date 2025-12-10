@@ -1,0 +1,196 @@
+name: 🧠 Philosopher Enhancement
+description: Improve or add philosophical reasoning modules
+title: "[PHILOSOPHER] "
+labels: ["philosopher", "phil-easy"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## When Pigs Fly Through Philosophy 🐷🎈
+
+        This template is for enhancing philosophical reasoning modules—the **core soul** of Po_core.
+
+        **Flying Pig Philosophy:**
+        - 💡 **Hypothesize Boldly** — Dare to formalize the impossible
+        - 🔬 **Verify Rigorously** — Philosophical scrutiny + empirical validation
+        - 🌱 **Revise Gracefully** — Publish failures as learning signals
+
+        > *"A frog in a well may not know the ocean, but it can know the sky."*
+
+  - type: dropdown
+    id: philosopher
+    attributes:
+      label: Philosopher / School
+      description: Which philosopher or philosophical tradition?
+      options:
+        - Heidegger (Existentialism, Phenomenology)
+        - Derrida (Deconstruction)
+        - Sartre (Existentialism)
+        - Nietzsche (Perspectivism)
+        - Wittgenstein (Language Philosophy)
+        - Jung (Analytical Psychology)
+        - Dewey (Pragmatism)
+        - Deleuze (Post-structuralism)
+        - Kierkegaard (Existentialism)
+        - Lacan (Psychoanalysis)
+        - Levinas (Ethics, Phenomenology)
+        - Badiou (Event Philosophy)
+        - Peirce (Pragmatism, Semiotics)
+        - Merleau-Ponty (Phenomenology)
+        - Arendt (Political Philosophy)
+        - Watsuji Tetsurō (Japanese Ethics)
+        - Wabi-Sabi (Japanese Aesthetics)
+        - Confucius (Confucianism)
+        - Zhuangzi (Daoism)
+        - New Philosopher (Propose a new addition)
+        - Multiple Philosophers (Cross-philosophical integration)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: enhancement_type
+    attributes:
+      label: Enhancement Type
+      description: What kind of enhancement is this?
+      options:
+        - New Reasoning Module (Add new philosophical logic)
+        - Tensor Improvement (Enhance F_P, semantic profile, etc.)
+        - Safety Profile (Ethical boundaries, W_ethics)
+        - Philosophical Integration (Cross-philosopher interactions)
+        - Research / Theory (Philosophical foundations)
+        - Bug Fix (Philosophical reasoning errors)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: philosophical_background
+    attributes:
+      label: Philosophical Background
+      description: Explain the philosophical concept or theory
+      placeholder: |
+        Describe the philosophical foundation of this enhancement.
+
+        Example:
+        "Heidegger's concept of 'Being-toward-death' (Sein-zum-Tode) emphasizes authentic existence by confronting mortality. This creates a 'care structure' (Sorge) that reveals the weight of responsibility in decision-making..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_idea
+    attributes:
+      label: Implementation Idea
+      description: How should this be implemented in code?
+      placeholder: |
+        Describe your implementation approach.
+
+        Example:
+        "Implement a 'mortality_awareness' function that:
+        1. Analyzes the temporal horizon of decisions
+        2. Calculates 'care weight' based on finitude
+        3. Feeds into Freedom Pressure tensor (F_P) as existential weight
+        4. Interacts with Sartre's 'radical freedom' for balanced tension"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_impact
+    attributes:
+      label: Expected Impact
+      description: How will this affect Po_core's reasoning?
+      placeholder: |
+        Describe the expected impact on tensors, reasoning quality, or system behavior.
+
+        Example:
+        - **Freedom Pressure (F_P):** +15-30% increase in ethical weight for life-critical decisions
+        - **Semantic Profile (Δs):** Enhanced temporal awareness in meaning evolution
+        - **Blocked Tensor (B):** Better capture of 'what remains unsaid' about mortality
+        - **Reasoning Quality:** More authentic, responsibility-aware responses
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References & Resources
+      description: Academic papers, books, or philosophical texts
+      placeholder: |
+        Provide scholarly references to support this enhancement.
+
+        Example:
+        - Heidegger, M. (1927). *Being and Time* (Sein und Zeit). Section 50-53.
+        - Dreyfus, H. (1991). *Being-in-the-World*. Chapter 14.
+        - Stanford Encyclopedia: https://plato.stanford.edu/entries/heidegger/#BeiTow
+        - Existing Po_core specs: `docs/philosophers/heidegger.md`
+    validations:
+      required: false
+
+  - type: textarea
+    id: philosophical_challenges
+    attributes:
+      label: Philosophical Challenges
+      description: What are the philosophical difficulties or tensions?
+      placeholder: |
+        Identify potential philosophical problems or contradictions.
+
+        Example:
+        - How to balance Heidegger's 'Being-toward-death' with Nietzsche's 'eternal recurrence'?
+        - Risk of nihilistic reasoning if mortality weight is too high
+        - Cultural differences: Western vs. Eastern views of mortality (Confucius, Wabi-Sabi)
+    validations:
+      required: false
+
+  - type: textarea
+    id: flying_pig_principle
+    attributes:
+      label: Flying Pig Principle
+      description: How does this embody "hypothesize boldly, verify rigorously, revise gracefully"?
+      placeholder: |
+        Connect this enhancement to Flying Pig Philosophy.
+
+        Example:
+        **Hypothesize Boldly:**
+        - Formalize 'Being-toward-death' as a computable tensor
+
+        **Verify Rigorously:**
+        - Test against philosophical edge cases
+        - Validate with existentialist literature
+        - Measure impact on decision quality
+
+        **Revise Gracefully:**
+        - Document failures (e.g., over-nihilistic outputs)
+        - Iterate based on philosophical coherence
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution Plans
+      description: How would you like to contribute?
+      options:
+        - label: I can provide philosophical research and theory
+          required: false
+        - label: I can implement this in code
+          required: false
+        - label: I can write tests for this enhancement
+          required: false
+        - label: I can help with documentation
+          required: false
+        - label: I can review from a philosophical perspective
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else we should know?
+      placeholder: |
+        Any other context, diagrams, quotes, or ideas.
+
+        Example:
+        - Diagrams of tensor interactions
+        - Quotes from philosophical texts
+        - Links to related issues or discussions
+    validations:
+      required: false
