@@ -203,6 +203,10 @@ pip install -e .
 
 ## Quick Start
 
+**New to Po_core? Start here:**
+- 🚀 [Quick Start Guide (English)](./QUICKSTART_EN.md) | [日本語版](./QUICKSTART.md)
+- 📖 [Step-by-Step Tutorial](./docs/TUTORIAL.md) - Build your first philosophy-driven AI!
+
 Once installed, you can use the `po-core` command:
 
 ```bash
@@ -357,18 +361,39 @@ print(response.philosophers_involved)  # Which minds contributed
 
 ## Documentation
 
+### Getting Started
+- 🚀 [**Quick Start**](./QUICKSTART_EN.md) | [日本語版](./QUICKSTART.md) — Get up and running in 30 seconds
+- 📖 [**Tutorial**](./docs/TUTORIAL.md) — Hands-on guide to building your first philosophy-driven AI
+- 🎉 [**Po_Party Guide**](./examples/PO_PARTY.md) — Interactive philosopher party machine
+
+### Core Documentation
 - 📖 [**Manifesto**](./docs/MANIFESTO.md) — Our philosophy and motivation
 - 📚 [**Design Documents**](./docs/design/) — 120+ technical specifications
 - 🎓 [**Philosopher Guide**](./docs/philosophers/) — Understanding each philosophical module
+
+### Examples & Tools
 - 🚀 [**Examples & Prototypes**](./examples/README.md) — Working demos and usage examples
 - 🌐 [**Medium Prototypes Guide**](./examples/MEDIUM_PROTOTYPES.md) — Web API, Batch Analyzer, Comparison Tool
+- 📊 [**Large-Scale Prototypes**](./examples/LARGE_SCALE_PROTOTYPES.md) — Enterprise dashboard, database integration
+
+### Technical Specifications
 - 🔍 [**Po_trace Specification**](./docs/specs/reason_log.md) — Audit logging system
 - 🎨 [**Po_viewer Specification**](./docs/viewer/README.md) — Visualization system
+- 🛡️ [**Safety Documentation**](./docs/SAFETY.md) — Safety systems and adversarial testing
 - 🔧 **API Reference** — Complete API documentation (in progress)
-Contributing
-We welcome contributions! Whether you’re a philosopher, engineer, designer, or skeptic.
+## Contributing
+
+We welcome contributions! Whether you're a philosopher, engineer, designer, or skeptic.
+
 Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
-See CONTRIBUTING.md for guidelines (coming soon).
+
+**📖 See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guidelines.**
+
+### Quick Contribution Tracks
+
+- **👩‍💻 AI Track**: Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
+- **📚 Philosophy Track**: Start with `/05_research` and `/glossary`. Label: `phil-easy`
+- **🌉 Bridge Track**: Translate checklists to scoring functions. Label: `bridge`
 Research & Papers
 This project is documented in:
 	•	“Philosophical Tensor-Based AI Architecture” (in preparation)

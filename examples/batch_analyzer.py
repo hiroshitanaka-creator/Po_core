@@ -3,7 +3,19 @@
 Po_core Batch Analyzer
 ======================
 
+Batch processing tool for analyzing multiple questions and comparing philosopher responses.
+
 複数の質問を一括処理し、哲学者の応答を比較分析するツール
+
+Features:
+- Batch process 10+ questions
+- Export results to JSON/CSV formats
+- Statistical analysis (average metrics, leader distribution)
+- Progress tracking
+- Customizable philosopher groups
+
+Usage:
+    python examples/batch_analyzer.py
 """
 
 import json
@@ -30,7 +42,11 @@ console = Console()
 
 @dataclass
 class AnalysisResult:
-    """分析結果"""
+    """
+    Analysis result for a single prompt.
+
+    単一プロンプトの分析結果
+    """
     prompt: str
     consensus_leader: str
     metrics: Dict[str, float]
@@ -40,7 +56,11 @@ class AnalysisResult:
 
 @dataclass
 class BatchAnalysisReport:
-    """バッチ分析レポート"""
+    """
+    Comprehensive report for batch analysis.
+
+    バッチ分析の包括的レポート
+    """
     total_prompts: int
     total_philosophers_used: int
     average_metrics: Dict[str, float]
