@@ -34,6 +34,25 @@ def complex_prompt() -> str:
 
 
 @pytest.fixture()
+def empty_prompt() -> str:
+    """Empty prompt for edge case tests."""
+    return ""
+
+
+@pytest.fixture()
+def long_prompt() -> str:
+    """Long prompt for testing philosopher reasoning with extended input."""
+    return " ".join([
+        "Freedom presses on every decision we make, even when we pretend otherwise.",
+        "I was once convinced my path was fixed, but tomorrow I will choose again.",
+        "In this moment, I feel the weight of time and responsibility intertwining.",
+        "The world around me seems predetermined, yet I sense the possibility of authentic choice.",
+        "How can I navigate between social expectations and genuine self-determination?",
+        "Each moment presents a new opportunity to affirm or deny my essential freedom."
+    ])
+
+
+@pytest.fixture()
 def load_json_output():
     def _loader(result) -> dict:
         return json.loads(result.output.strip())

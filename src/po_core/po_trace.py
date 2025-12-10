@@ -152,10 +152,25 @@ class TraceRecord:
 class PoTrace:
     """Po_self の実行結果をトレースとして保存する責務を持つクラス"""
 
-    def __init__(self, trace_dir: Path | str = DEFAULT_TRACE_DIR) -> None:
-        self.trace_dir = Path(trace_dir)
+    def __init__(
+        self,
+        trace_dir: Path | str = DEFAULT_TRACE_DIR,
+        storage_dir: Optional[Path | str] = None,
+    ) -> None:
+        # Support both trace_dir and storage_dir for backward compatibility
+        dir_path = storage_dir if storage_dir is not None else trace_dir
+        self.trace_dir = Path(dir_path)
         self.trace_dir.mkdir(parents=True, exist_ok=True)
         self.sessions: Dict[str, Session] = {}
+
+    @property
+    def storage_dir(self) -> Path:
+        """Alias for trace_dir for backward compatibility."""
+        return self.trace_dir
+
+    def _session_file(self, session_id: str) -> Path:
+        """Get the file path for a session."""
+        return self.trace_dir / f"session_{session_id}.json"
 
     def create_session(
         self,
@@ -224,7 +239,7 @@ class PoTrace:
             return None
 
         session = self.sessions[session_id]
-        path = self.trace_dir / f"session_{session_id}.json"
+        path = self._session_file(session_id)
 
         with path.open("w", encoding="utf-8") as f:
             json.dump(session.to_dict(), f, ensure_ascii=False, indent=2)
