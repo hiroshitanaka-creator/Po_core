@@ -10,6 +10,12 @@ def sample_prompt() -> str:
 
 
 @pytest.fixture()
+def simple_prompt() -> str:
+    """Simple prompt for philosopher tests."""
+    return "What is the meaning of life?"
+
+
+@pytest.fixture()
 def load_json_output():
     def _loader(result) -> dict:
         return json.loads(result.output.strip())

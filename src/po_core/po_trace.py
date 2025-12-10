@@ -31,8 +31,10 @@ class EventType(str, Enum):
     """Event types for reasoning traces."""
 
     PHILOSOPHER_RESPONSE = "philosopher_response"
+    PHILOSOPHER_REASONING = "philosopher_reasoning"
     CONSENSUS_FORMED = "consensus_formed"
     METRIC_UPDATE = "metric_update"
+    EXECUTION = "execution"
     ERROR = "error"
     INFO = "info"
 
@@ -243,7 +245,7 @@ class PoTrace:
 )
 def cli(prompt: List[str], trace_dir: Path) -> None:
     """Run the Po_self ensemble and persist a reasoning trace."""
-    # Import here to avoid circular dependency
+    # Import at runtime to avoid circular import
     from po_core.po_self import PoSelf, PoSelfResponse
 
     text_prompt = " ".join(prompt).strip()

@@ -11,7 +11,7 @@ from po_core.philosophers.base import Philosopher
 if TYPE_CHECKING:
     from po_core.po_trace import PoTrace, EventType
 
-DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "nietzsche", "wittgenstein"]
+DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 
 
 PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
