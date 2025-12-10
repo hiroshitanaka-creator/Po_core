@@ -163,6 +163,11 @@ class PoTrace:
         self.trace_dir.mkdir(parents=True, exist_ok=True)
         self.sessions: Dict[str, Session] = {}
 
+        # Initialize index.json if it doesn't exist
+        self._index_file = self.trace_dir / "index.json"
+        if not self._index_file.exists():
+            self._save_index([])
+
     @property
     def storage_dir(self) -> Path:
         """Alias for trace_dir for backward compatibility."""
@@ -171,6 +176,44 @@ class PoTrace:
     def _session_file(self, session_id: str) -> Path:
         """Get the file path for a session."""
         return self.trace_dir / f"session_{session_id}.json"
+
+    def _save_index(self, session_summaries: List[Dict[str, Any]]) -> None:
+        """Save the index file with session summaries."""
+        with self._index_file.open("w", encoding="utf-8") as f:
+            json.dump({"sessions": session_summaries}, f, ensure_ascii=False, indent=2)
+
+    def _update_index(self, session: Session) -> None:
+        """Update the index file with a new or updated session."""
+        # Load existing index
+        if self._index_file.exists():
+            with self._index_file.open("r", encoding="utf-8") as f:
+                index_data = json.load(f)
+                sessions = index_data.get("sessions", [])
+        else:
+            sessions = []
+
+        # Create session summary
+        summary = {
+            "session_id": session.session_id,
+            "prompt": session.prompt,
+            "philosophers": session.philosophers,
+            "created_at": session.created_at,
+            "event_count": len(session.events),
+            "metrics": session.metrics,
+        }
+
+        # Update or append
+        existing_index = next(
+            (i for i, s in enumerate(sessions) if s["session_id"] == session.session_id),
+            None
+        )
+        if existing_index is not None:
+            sessions[existing_index] = summary
+        else:
+            sessions.append(summary)
+
+        # Save updated index
+        self._save_index(sessions)
 
     def create_session(
         self,
@@ -190,6 +233,13 @@ class PoTrace:
             metadata=metadata or {},
         )
         self.sessions[session_id] = session
+
+        # Auto-save session to disk
+        self.save_session(session_id)
+
+        # Update index
+        self._update_index(session)
+
         return session_id
 
     def log_event(
@@ -231,6 +281,26 @@ class PoTrace:
             return
 
         self.sessions[session_id].metrics.update(metrics)
+
+    def get_session(self, session_id: str) -> Optional[Session]:
+        """Get a session by ID."""
+        return self.sessions.get(session_id)
+
+    def list_sessions(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
+        """List sessions, most recent first, with optional limit."""
+        # Sort sessions by created_at in descending order (most recent first)
+        sorted_sessions = sorted(
+            self.sessions.values(),
+            key=lambda s: s.created_at,
+            reverse=True
+        )
+
+        # Apply limit if specified
+        if limit is not None:
+            sorted_sessions = sorted_sessions[:limit]
+
+        # Convert to dictionaries
+        return [session.to_dict() for session in sorted_sessions]
 
     def save_session(self, session_id: str) -> Optional[Path]:
         """Save a session to disk."""
