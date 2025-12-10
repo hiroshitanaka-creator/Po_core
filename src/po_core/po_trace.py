@@ -40,6 +40,11 @@ class EventType(str, Enum):
     USER_ACTION = "user_action"
     SYSTEM = "system"
     INFO = "info"
+    # Phase 4: New event types for rejection tracking
+    REJECTION = "rejection"
+    BLOCKING = "blocking"
+    SAFETY_VIOLATION = "safety_violation"
+    ETHICAL_CONCERN = "ethical_concern"
 
 
 @dataclass
@@ -119,6 +124,61 @@ class Session:
 
 
 @dataclass
+class RejectionLog:
+    """
+    Log entry for rejected or blocked philosophical reasoning.
+
+    Tracks cases where reasoning was rejected due to safety concerns,
+    ethical violations, or blocking constraints.
+    """
+
+    rejection_id: str
+    session_id: str
+    timestamp: str
+    rejection_type: str  # "safety", "ethical", "blocked", "restricted"
+    philosopher: str
+    prompt: str
+    reasoning_attempt: Optional[str] = None
+    reason: str = ""
+    blocked_tensor_value: Optional[float] = None
+    freedom_pressure_value: Optional[float] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "rejection_id": self.rejection_id,
+            "session_id": self.session_id,
+            "timestamp": self.timestamp,
+            "rejection_type": self.rejection_type,
+            "philosopher": self.philosopher,
+            "prompt": self.prompt,
+            "reasoning_attempt": self.reasoning_attempt,
+            "reason": self.reason,
+            "blocked_tensor_value": self.blocked_tensor_value,
+            "freedom_pressure_value": self.freedom_pressure_value,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "RejectionLog":
+        """Create RejectionLog from dictionary."""
+        return cls(
+            rejection_id=data["rejection_id"],
+            session_id=data["session_id"],
+            timestamp=data["timestamp"],
+            rejection_type=data["rejection_type"],
+            philosopher=data["philosopher"],
+            prompt=data["prompt"],
+            reasoning_attempt=data.get("reasoning_attempt"),
+            reason=data.get("reason", ""),
+            blocked_tensor_value=data.get("blocked_tensor_value"),
+            freedom_pressure_value=data.get("freedom_pressure_value"),
+            metadata=data.get("metadata", {}),
+        )
+
+
+@dataclass
 class TraceHeader:
     """メタ情報：トレースの概要"""
 
@@ -162,6 +222,9 @@ class PoTrace:
         self.trace_dir = Path(dir_path)
         self.trace_dir.mkdir(parents=True, exist_ok=True)
         self.sessions: Dict[str, Session] = {}
+
+        # Phase 4: Rejection log tracking
+        self.rejections: Dict[str, RejectionLog] = {}
 
         # Initialize index.json if it doesn't exist
         self._index_file = self.trace_dir / "index.json"
@@ -281,6 +344,90 @@ class PoTrace:
             return
 
         self.sessions[session_id].metrics.update(metrics)
+
+    def log_rejection(
+        self,
+        session_id: str,
+        philosopher: str,
+        prompt: str,
+        rejection_type: str,
+        reason: str = "",
+        reasoning_attempt: Optional[str] = None,
+        blocked_tensor_value: Optional[float] = None,
+        freedom_pressure_value: Optional[float] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """
+        Log a rejected or blocked philosophical reasoning attempt.
+
+        Args:
+            session_id: The session ID
+            philosopher: Name of the philosopher
+            prompt: The prompt that was attempted
+            rejection_type: Type of rejection ("safety", "ethical", "blocked", "restricted")
+            reason: Reason for rejection
+            reasoning_attempt: The attempted reasoning (if available)
+            blocked_tensor_value: Blocked tensor metric value
+            freedom_pressure_value: Freedom pressure metric value
+            metadata: Additional metadata
+
+        Returns:
+            rejection_id: Unique ID for this rejection log
+        """
+        rejection_id = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat() + "Z"
+
+        rejection_log = RejectionLog(
+            rejection_id=rejection_id,
+            session_id=session_id,
+            timestamp=timestamp,
+            rejection_type=rejection_type,
+            philosopher=philosopher,
+            prompt=prompt,
+            reasoning_attempt=reasoning_attempt,
+            reason=reason,
+            blocked_tensor_value=blocked_tensor_value,
+            freedom_pressure_value=freedom_pressure_value,
+            metadata=metadata or {},
+        )
+
+        self.rejections[rejection_id] = rejection_log
+
+        # Also log as an event in the session
+        if session_id in self.sessions:
+            self.log_event(
+                session_id=session_id,
+                event_type=EventType.REJECTION,
+                source=f"philosopher.{philosopher}",
+                data={
+                    "rejection_id": rejection_id,
+                    "rejection_type": rejection_type,
+                    "philosopher": philosopher,
+                    "reason": reason,
+                    "blocked_tensor_value": blocked_tensor_value,
+                    "freedom_pressure_value": freedom_pressure_value,
+                },
+                metadata=metadata,
+            )
+
+        # Save rejection to disk
+        self._save_rejection(rejection_log)
+
+        return rejection_id
+
+    def _save_rejection(self, rejection_log: RejectionLog) -> None:
+        """Save a rejection log to disk."""
+        rejection_file = self.trace_dir / f"rejection_{rejection_log.rejection_id}.json"
+        with rejection_file.open("w", encoding="utf-8") as f:
+            json.dump(rejection_log.to_dict(), f, ensure_ascii=False, indent=2)
+
+    def get_session_rejections(self, session_id: str) -> List[RejectionLog]:
+        """Get all rejections for a specific session."""
+        return [
+            rejection
+            for rejection in self.rejections.values()
+            if rejection.session_id == session_id
+        ]
 
     def get_session(self, session_id: str) -> Optional[Session]:
         """Get a session by ID."""
