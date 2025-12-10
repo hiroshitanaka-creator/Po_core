@@ -14,14 +14,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from __future__ import annotations
-
-import json
-from dataclasses import asdict, dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
 import click
 from rich.console import Console
 from rich.table import Table
