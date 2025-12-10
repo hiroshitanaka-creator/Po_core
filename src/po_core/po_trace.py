@@ -421,8 +421,26 @@ class PoTrace:
         with rejection_file.open("w", encoding="utf-8") as f:
             json.dump(rejection_log.to_dict(), f, ensure_ascii=False, indent=2)
 
+    def _load_all_rejections(self) -> None:
+        """Load all rejection logs from disk."""
+        if not self.trace_dir.exists():
+            return
+
+        for rejection_file in self.trace_dir.glob("rejection_*.json"):
+            try:
+                with rejection_file.open("r", encoding="utf-8") as f:
+                    data = json.load(f)
+                rejection = RejectionLog.from_dict(data)
+                self.rejections[rejection.rejection_id] = rejection
+            except Exception as e:
+                console.print(f"[yellow]Warning: Failed to load rejection from {rejection_file}: {e}[/yellow]")
+
     def get_session_rejections(self, session_id: str) -> List[RejectionLog]:
-        """Get all rejections for a specific session."""
+        """Get all rejections for a specific session (loads from disk if needed)."""
+        # Load all rejections from disk if not already loaded
+        if not self.rejections:
+            self._load_all_rejections()
+
         return [
             rejection
             for rejection in self.rejections.values()
@@ -430,15 +448,44 @@ class PoTrace:
         ]
 
     def get_session(self, session_id: str) -> Optional[Session]:
-        """Get a session by ID."""
-        return self.sessions.get(session_id)
+        """Get a session by ID, loading from disk if necessary."""
+        # Check memory first
+        if session_id in self.sessions:
+            return self.sessions[session_id]
+
+        # Try to load from disk
+        session_file = self._session_file(session_id)
+        if session_file.exists():
+            try:
+                with session_file.open("r", encoding="utf-8") as f:
+                    data = json.load(f)
+                session = Session.from_dict(data)
+                self.sessions[session_id] = session
+                return session
+            except Exception as e:
+                console.print(f"[yellow]Warning: Failed to load session {session_id}: {e}[/yellow]")
+                return None
+
+        return None
 
     def list_sessions(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
-        """List sessions, most recent first, with optional limit."""
-        # Sort sessions by created_at in descending order (most recent first)
+        """List sessions, most recent first, with optional limit (loads from index.json)."""
+        # Read from index.json for efficiency
+        if self._index_file.exists():
+            try:
+                with self._index_file.open("r", encoding="utf-8") as f:
+                    index_data = json.load(f)
+                    sessions = index_data.get("sessions", [])
+            except Exception as e:
+                console.print(f"[yellow]Warning: Failed to load index: {e}[/yellow]")
+                sessions = []
+        else:
+            sessions = []
+
+        # Sort by created_at in descending order (most recent first)
         sorted_sessions = sorted(
-            self.sessions.values(),
-            key=lambda s: s.created_at,
+            sessions,
+            key=lambda s: s.get("created_at", ""),
             reverse=True
         )
 
@@ -446,8 +493,7 @@ class PoTrace:
         if limit is not None:
             sorted_sessions = sorted_sessions[:limit]
 
-        # Convert to dictionaries
-        return [session.to_dict() for session in sorted_sessions]
+        return sorted_sessions
 
     def save_session(self, session_id: str) -> Optional[Path]:
         """Save a session to disk."""

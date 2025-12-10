@@ -5,6 +5,7 @@ Entry point for the po-core command.
 """
 
 import json
+from pathlib import Path
 from typing import Iterable
 
 import click
@@ -13,6 +14,7 @@ from rich.table import Table
 
 from po_core import __author__, __email__, __version__
 from po_core.po_self import PoSelf
+from po_core.po_trace import PoTrace
 
 console = Console()
 SAMPLE_PROMPT = "What does it mean to live authentically?"
@@ -137,6 +139,235 @@ def log(prompt: str) -> None:
     run_data = PoSelf().generate(prompt)
     # 余計なprint等は一切禁止
     click.echo(json.dumps(run_data.log, ensure_ascii=False))
+
+
+@main.command()
+@click.option(
+    "--limit",
+    type=int,
+    default=None,
+    help="Limit the number of sessions to display",
+)
+@click.option(
+    "--trace-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    default=None,
+    help="Custom trace directory (defaults to ~/.po_trace)",
+)
+def list(limit: int, trace_dir: Path) -> None:
+    """
+    📋 List all Po_trace sessions.
+
+    Shows session summaries sorted by most recent first.
+    Use --limit to restrict the number of sessions shown.
+
+    Examples:
+        po-core list
+        po-core list --limit 10
+        po-core list --trace-dir /custom/trace/path
+    """
+    tracer = PoTrace(trace_dir=trace_dir) if trace_dir else PoTrace()
+    sessions = tracer.list_sessions(limit=limit)
+
+    if not sessions:
+        console.print("[yellow]No sessions found.[/yellow]")
+        return
+
+    table = Table(title="Po_trace Sessions", show_header=True)
+    table.add_column("Session ID", style="cyan")
+    table.add_column("Created At", style="green")
+    table.add_column("Prompt", style="white")
+    table.add_column("Events", justify="right", style="magenta")
+
+    for session in sessions:
+        session_id = session["session_id"][:8] + "..."  # Truncate for display
+        created_at = session["created_at"][:19]  # Remove timezone
+        prompt = session["prompt"][:50] + "..." if len(session["prompt"]) > 50 else session["prompt"]
+        event_count = str(len(session.get("events", [])))
+
+        table.add_row(session_id, created_at, prompt, event_count)
+
+    console.print(table)
+    console.print(f"\n[dim]Total sessions: {len(sessions)}[/dim]")
+
+
+@main.command()
+@click.argument("session_id")
+@click.option(
+    "--trace-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    default=None,
+    help="Custom trace directory (defaults to ~/.po_trace)",
+)
+def view(session_id: str, trace_dir: Path) -> None:
+    """
+    🔍 View details of a specific Po_trace session.
+
+    Displays the full session information including all events,
+    philosopher responses, and metrics.
+
+    Examples:
+        po-core view abc123def456
+        po-core view abc123def456 --trace-dir /custom/trace/path
+    """
+    tracer = PoTrace(trace_dir=trace_dir) if trace_dir else PoTrace()
+    session = tracer.get_session(session_id)
+
+    if not session:
+        console.print(f"[red]Session not found: {session_id}[/red]")
+        return
+
+    # Display session info
+    console.print(f"[bold cyan]Session: {session.session_id}[/bold cyan]")
+    console.print(f"[dim]Created: {session.created_at}[/dim]\n")
+    console.print(f"[bold]Prompt:[/bold] {session.prompt}\n")
+    console.print(f"[bold]Philosophers:[/bold] {', '.join(session.philosophers)}\n")
+
+    # Display response text if stored in metadata
+    if "response" in session.metadata:
+        console.print(f"[bold]Response Text:[/bold]\n{session.metadata['response']}\n")
+
+    # Display metrics
+    if session.metrics:
+        console.print(f"[bold green]Metrics:[/bold green]")
+        for key, value in session.metrics.items():
+            console.print(f"  {key}: {value}")
+
+    # Display events
+    if session.events:
+        console.print(f"\n[bold yellow]Events ({len(session.events)}):[/bold yellow]")
+        for i, event in enumerate(session.events, 1):
+            console.print(f"  {i}. [{event.event_type.value}] {event.source} at {event.timestamp[:19]}")
+            if event.data:
+                console.print(f"     Data: {event.data}")
+
+    # Display metadata
+    if session.metadata:
+        console.print(f"\n[bold magenta]Metadata:[/bold magenta]")
+        console.print(json.dumps(session.metadata, indent=2))
+
+
+@main.command()
+@click.argument("session_id")
+@click.option(
+    "--format",
+    "export_format",
+    type=click.Choice(["json", "text"], case_sensitive=False),
+    default="json",
+    help="Export format (json or text)",
+)
+@click.option(
+    "--output",
+    type=click.Path(dir_okay=False, writable=True, path_type=Path),
+    default=None,
+    help="Output file path (defaults to stdout)",
+)
+@click.option(
+    "--trace-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    default=None,
+    help="Custom trace directory (defaults to ~/.po_trace)",
+)
+def export(session_id: str, export_format: str, output: Path, trace_dir: Path) -> None:
+    """
+    📤 Export a Po_trace session.
+
+    Exports session data in JSON or human-readable text format.
+    By default, outputs to stdout. Use --output to save to a file.
+
+    Examples:
+        po-core export abc123def456
+        po-core export abc123def456 --format text
+        po-core export abc123def456 --format json --output session.json
+    """
+    tracer = PoTrace(trace_dir=trace_dir) if trace_dir else PoTrace()
+
+    try:
+        exported_data = tracer.export_session(session_id, format=export_format)
+
+        if output:
+            output.write_text(exported_data, encoding="utf-8")
+            console.print(f"[green]✓ Exported to {output}[/green]")
+        else:
+            click.echo(exported_data)
+
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/red]")
+
+
+@main.command(name="show-rejections")
+@click.option(
+    "--session-id",
+    "-s",
+    type=str,
+    default=None,
+    help="Session ID to filter rejections (shows all if not specified)",
+)
+@click.option(
+    "--trace-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    default=None,
+    help="Custom trace directory (defaults to ~/.po_trace)",
+)
+def show_rejections(session_id: str, trace_dir: Path) -> None:
+    """
+    🚫 View rejection logs for a session.
+
+    Displays all rejected or blocked philosophical reasoning attempts
+    for the specified session, or all rejections if no session is specified.
+
+    Examples:
+        po-core rejections abc123def456
+        po-core rejections  # Show all rejections
+    """
+    tracer = PoTrace(trace_dir=trace_dir) if trace_dir else PoTrace()
+
+    if session_id:
+        # Show rejections for specific session
+        rejection_logs = tracer.get_session_rejections(session_id)
+        title = f"Rejections for Session {session_id[:8]}..."
+    else:
+        # Show all rejections (load from disk first)
+        tracer._load_all_rejections()
+        # Store rejections dict to avoid potential name conflicts
+        rejections_dict = tracer.rejections
+        rejection_logs = [r for r in rejections_dict.values()]
+        title = "All Rejection Logs"
+
+    if not rejection_logs:
+        console.print("[yellow]No rejections found.[/yellow]")
+        return
+
+    table = Table(title=title, show_header=True)
+    table.add_column("Rejection ID", style="red")
+    table.add_column("Philosopher", style="cyan")
+    table.add_column("Type", style="yellow")
+    table.add_column("Timestamp", style="green")
+    table.add_column("Reason", style="white")
+
+    for rejection in rejection_logs:
+        rejection_id = rejection.rejection_id[:8] + "..."
+        philosopher = rejection.philosopher
+        rejection_type = rejection.rejection_type
+        timestamp = rejection.timestamp[:19]
+        reason = rejection.reason[:40] + "..." if len(rejection.reason) > 40 else rejection.reason
+
+        table.add_row(rejection_id, philosopher, rejection_type, timestamp, reason)
+
+    console.print(table)
+    console.print(f"\n[dim]Total rejections: {len(rejection_logs)}[/dim]")
+
+    # Show detailed info for first rejection
+    if rejection_logs and len(rejection_logs) > 0:
+        console.print("\n[bold]Most Recent Rejection Details:[/bold]")
+        first = rejection_logs[0]
+        console.print(f"  Philosopher: {first.philosopher}")
+        console.print(f"  Type: {first.rejection_type}")
+        console.print(f"  Reason: {first.reason}")
+        if first.blocked_tensor_value is not None:
+            console.print(f"  Blocked Tensor: {first.blocked_tensor_value}")
+        if first.freedom_pressure_value is not None:
+            console.print(f"  Freedom Pressure: {first.freedom_pressure_value}")
 
 
 @main.command()
