@@ -518,7 +518,7 @@ class Aristotle(Philosopher):
             "note": "We become virtuous by performing virtuous acts - character follows action"
         }
 
-    def _identify_tension(self, analysis: Dict[str, Any]) -> str:
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """
         Identify Aristotelian tensions and contradictions.
 
@@ -526,39 +526,58 @@ class Aristotle(Philosopher):
             analysis: The analysis results
 
         Returns:
-            Description of identified tensions
+            Dictionary containing tension level, description, and elements
         """
-        tensions = []
+        tension_elements = []
 
         # Tension between excess and deficiency
         mean = analysis["mean"]
         if mean["status"] in ["Vicious (excess)", "Vicious (deficiency)", "Unstable"]:
-            tensions.append(f"Deviation from the golden mean: {mean['description']}")
+            tension_elements.append(f"Deviation from the golden mean: {mean['description']}")
 
         # Tension between potentiality and actuality
         potential_actual = analysis["potential_actual"]
         if "Potentiality" in potential_actual["state"]:
-            tensions.append("Unrealized potential - capacity not yet actualized")
+            tension_elements.append("Unrealized potential - capacity not yet actualized")
 
         # Tension regarding eudaimonia
         eudaimonia = analysis["eudaimonia"]
         if "Low" in eudaimonia["level"] or "No Clear" in eudaimonia["level"]:
-            tensions.append("Insufficient human flourishing - not living in accordance with virtue")
+            tension_elements.append("Insufficient human flourishing - not living in accordance with virtue")
 
         # Tension in practical wisdom
         phronesis = analysis["phronesis"]
         if "Low" in phronesis["level"] or "No Clear" in phronesis["level"]:
-            tensions.append("Lack of practical wisdom - difficulty in making right judgments")
+            tension_elements.append("Lack of practical wisdom - difficulty in making right judgments")
 
         # Tension regarding telos
         telos = analysis["telos"]
         if "No Clear" in telos["type"]:
-            tensions.append("Unclear purpose or end - lacking teleological direction")
+            tension_elements.append("Unclear purpose or end - lacking teleological direction")
 
-        if not tensions:
-            return "No significant tensions detected - reasonably aligned with Aristotelian virtues"
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions detected - reasonably aligned with Aristotelian virtues"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in Aristotelian analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between virtue ideals and current state"
+        elif tension_count == 3:
+            level = "High"
+            description = "Significant tensions across multiple Aristotelian dimensions"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial deviation from virtuous life"
 
-        return "; ".join(tensions)
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }
 
     def _construct_reasoning(
         self,

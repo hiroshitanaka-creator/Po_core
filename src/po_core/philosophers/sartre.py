@@ -45,12 +45,20 @@ class Sartre(Philosopher):
         Returns:
             Dictionary containing Sartre's existentialist analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform existentialist analysis
         analysis = self._analyze_existence(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Existentialist",
+            "tension": tension,
             "freedom_assessment": analysis["freedom"],
             "responsibility_check": analysis["responsibility"],
             "bad_faith_indicators": analysis["bad_faith"],
@@ -288,6 +296,77 @@ class Sartre(Philosopher):
             "present": present,
             "note": note,
             "sartrean_insight": "Anguish is the recognition of absolute freedom and responsibility"
+        }
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Sartrean tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension from bad faith
+        bad_faith = analysis["bad_faith"]
+        if len(bad_faith) > 0:
+            for indicator in bad_faith:
+                tension_elements.append(f"Bad faith present: {indicator}")
+
+        # Tension from denied freedom
+        freedom = analysis["freedom"]
+        if "Denied" in freedom["level"]:
+            tension_elements.append("Freedom denied - refusing to acknowledge radical freedom")
+        elif "Limited" in freedom["level"]:
+            tension_elements.append("Freedom limited - not fully recognizing absolute freedom")
+
+        # Tension from avoided responsibility
+        responsibility = analysis["responsibility"]
+        if "Avoided" in responsibility["level"]:
+            tension_elements.append("Responsibility avoided - refusing to acknowledge accountability for choices")
+        elif "Limited" in responsibility["level"]:
+            tension_elements.append("Limited responsibility - not fully accepting existential burden")
+
+        # Tension from in-itself mode of being
+        mode_of_being = analysis["mode_of_being"]
+        if "In-itself" in mode_of_being:
+            tension_elements.append("In-itself mode - reducing self to thing-like existence, denying consciousness")
+
+        # Tension from lack of engagement
+        engagement = analysis["engagement"]
+        if "Disengaged" in engagement["level"] or "Low" in engagement["level"]:
+            tension_elements.append("Lack of engagement - withdrawal from commitment and action")
+
+        # Tension from lack of anguish
+        anguish = analysis["anguish"]
+        if not anguish["present"]:
+            tension_elements.append("No anguish - may indicate bad faith or unawareness of freedom's weight")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions - authentic existence with acknowledged freedom and responsibility"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in existential analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between authentic existence and bad faith"
+        elif tension_count <= 4:
+            level = "High"
+            description = "Significant tensions - substantial flight from freedom and responsibility"
+        else:
+            level = "Very High"
+            description = "Severe tensions - dominated by bad faith and denial of existential condition"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
         }
 
     def _construct_reasoning(

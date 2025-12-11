@@ -407,7 +407,7 @@ class Arendt(Philosopher):
             "interpretation": "Text expresses political freedom - freedom realized through action in the public sphere." if political_freedom else "Freedom without strong political dimension." if has_freedom > 0 else "Limited engagement with freedom."
         }
 
-    def _identify_tension(self, analysis: Dict[str, Any]) -> str:
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """
         Identify Arendtian tensions and contradictions.
 
@@ -415,54 +415,73 @@ class Arendt(Philosopher):
             analysis: The analysis results
 
         Returns:
-            Description of identified tensions
+            Dictionary containing tension level, description, and elements
         """
-        tensions = []
+        tension_elements = []
 
         # Tension in vita activa - labor dominating over action
         vita_activa = analysis["vita_activa"]
         if vita_activa["dominant_mode"] == "labor" and vita_activa["action_present"]:
-            tensions.append("Labor dominates over action - biological necessity overshadows political freedom")
+            tension_elements.append("Labor dominates over action - biological necessity overshadows political freedom")
         elif vita_activa["dominant_mode"] == "labor" and not vita_activa["action_present"]:
-            tensions.append("Trapped in labor - no political action, reduced to mere life process")
+            tension_elements.append("Trapped in labor - no political action, reduced to mere life process")
 
         # Tension between public and private realms
         public_private = analysis["public_private"]
         if public_private["dominant_realm"] == "private" and public_private["public_score"] == 0:
-            tensions.append("Entirely private realm - no space of appearance, political action impossible")
+            tension_elements.append("Entirely private realm - no space of appearance, political action impossible")
         elif public_private["dominant_realm"] == "private" and vita_activa["action_present"]:
-            tensions.append("Tension between private emphasis and need for public action")
+            tension_elements.append("Tension between private emphasis and need for public action")
 
         # Tension regarding plurality
         plurality = analysis["plurality"]
         if not plurality["plurality_present"] and vita_activa["action_present"]:
-            tensions.append("Action without plurality - political action requires recognition of human distinctness")
+            tension_elements.append("Action without plurality - political action requires recognition of human distinctness")
 
         # Tension regarding natality
         natality = analysis["natality"]
         if not natality["natality_present"] and vita_activa["dominant_mode"] == "action":
-            tensions.append("Action present but natality absent - new beginnings not recognized")
+            tension_elements.append("Action present but natality absent - new beginnings not recognized")
 
         # Tension from totalitarian elements
         totalitarian = analysis["totalitarian"]
         if totalitarian["totalitarian_elements"]:
-            tensions.append("Totalitarian elements present - threat to plurality and public realm")
+            tension_elements.append("Totalitarian elements present - threat to plurality and public realm")
 
         # Tension regarding judgment
         judgment = analysis["judgment"]
         freedom = analysis["freedom"]
         if freedom["political_freedom"] and not judgment["judgment_present"]:
-            tensions.append("Political freedom without judgment - action without thinking what we are doing")
+            tension_elements.append("Political freedom without judgment - action without thinking what we are doing")
 
         # Tension from banality of evil
         evil_analysis = analysis["evil_analysis"]
         if evil_analysis["banality_of_evil"]:
-            tensions.append("Banality of evil present - thoughtless evil within bureaucratic systems")
+            tension_elements.append("Banality of evil present - thoughtless evil within bureaucratic systems")
 
-        if not tensions:
-            return "No significant tensions detected - text aligns with Arendtian ideals of political action and plurality"
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions detected - text aligns with Arendtian ideals of political action and plurality"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in Arendtian analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between political ideals and current state"
+        elif tension_count <= 4:
+            level = "High"
+            description = "Significant tensions across multiple Arendtian dimensions"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial deviation from political action and human condition"
 
-        return "; ".join(tensions)
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }
 
     def _construct_reasoning(
         self,

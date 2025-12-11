@@ -49,12 +49,20 @@ class Nietzsche(Philosopher):
         Returns:
             Dictionary containing Nietzsche's life-affirming analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Nietzschean analysis
         analysis = self._analyze_power(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Philosophy of Power and Affirmation",
+            "tension": tension,
             "will_to_power": analysis["will_to_power"],
             "ubermensch": analysis["ubermensch"],
             "eternal_recurrence": analysis["eternal_recurrence"],
@@ -568,6 +576,77 @@ class Nietzsche(Philosopher):
             "description": description,
             "type": type_creator,
             "principle": "We must become creators of values - beyond good and evil"
+        }
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Nietzschean tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension from passive nihilism
+        nihilism = analysis["nihilism"]
+        if "Passive" in nihilism["type"]:
+            tension_elements.append("Passive nihilism - despair and life-denial without creative destruction")
+
+        # Tension from slave morality
+        morality = analysis["morality"]
+        if "Slave" in morality["type"]:
+            tension_elements.append("Slave morality - reactive, resentment-based values instead of life-affirming creation")
+
+        # Tension from ressentiment
+        ressentiment = analysis["ressentiment"]
+        if ressentiment["present"]:
+            tension_elements.append("Ressentiment present - reactive revenge instead of active self-creation")
+
+        # Tension from weak will to power
+        will_to_power = analysis["will_to_power"]
+        if "Weak" in will_to_power["level"] or "Passive" in will_to_power["level"]:
+            tension_elements.append("Weak will to power - insufficient drive for self-overcoming and creation")
+
+        # Tension from lack of Übermensch orientation
+        ubermensch = analysis["ubermensch"]
+        if "Last Man" in ubermensch["type"] or "Herd" in ubermensch["type"]:
+            tension_elements.append("Distance from Übermensch - comfortable mediocrity instead of self-overcoming")
+
+        # Tension from lack of value creation
+        value_creation = analysis["value_creation"]
+        if "No" in value_creation["status"]:
+            tension_elements.append("No value creation - accepting inherited values instead of creating new ones")
+
+        # Tension from lack of amor fati
+        amor_fati = analysis["amor_fati"]
+        if not amor_fati["present"]:
+            tension_elements.append("Lack of amor fati - resisting fate instead of affirming life as it is")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions - life-affirming, creative, and oriented toward self-overcoming"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in Nietzschean analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between life-affirmation and reactive forces"
+        elif tension_count <= 4:
+            level = "High"
+            description = "Significant tensions - substantial distance from Nietzschean ideals"
+        else:
+            level = "Very High"
+            description = "Severe tensions - dominated by reactive forces and life-denial"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
         }
 
     def _construct_reasoning(
