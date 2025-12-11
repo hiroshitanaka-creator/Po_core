@@ -50,12 +50,20 @@ class MerleauPonty(Philosopher):
         Returns:
             Dictionary containing Merleau-Ponty's phenomenological analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Merleau-Pontian analysis
         analysis = self._analyze_embodiment(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Phenomenology of Embodiment",
+            "tension": tension,
             "lived_body": analysis["lived_body"],
             "perception": analysis["perception"],
             "flesh": analysis["flesh"],
@@ -652,3 +660,88 @@ class MerleauPonty(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Merleau-Pontian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension in lived body
+        lived_body = analysis["lived_body"]
+        if lived_body["mode"] == "Body-object":
+            tension_elements.append("Body treated as object - not lived body")
+        elif lived_body["mode"] == "None":
+            tension_elements.append("Embodiment not evident - disembodied perspective")
+
+        # Tension in perception
+        perception = analysis["perception"]
+        if perception["character"] == "Intellectualist":
+            tension_elements.append("Representational view - not direct perception")
+        elif perception["character"] == "None":
+            tension_elements.append("Perceptual dimension absent")
+
+        # Tension in flesh
+        flesh = analysis["flesh"]
+        if flesh["nature"] == "None":
+            tension_elements.append("Flesh absent - lacking sensible-sentient intertwining")
+
+        # Tension in chiasm
+        chiasm = analysis["chiasm"]
+        if chiasm["structure"] == "None":
+            tension_elements.append("No chiasmic intertwining - lacking reversibility")
+
+        # Tension in ambiguity
+        ambiguity = analysis["ambiguity"]
+        if ambiguity["character"] == "Anti-phenomenological":
+            tension_elements.append("Seeking clarity - denying fundamental ambiguity")
+
+        # Tension in being-in-world
+        being_in_world = analysis["being_in_world"]
+        if being_in_world["mode"] == "Intellectualist":
+            tension_elements.append("Detached consciousness - not being-in-the-world")
+
+        # Tension in gestalt
+        gestalt = analysis["gestalt"]
+        if gestalt["character"] == "Empiricist":
+            tension_elements.append("Atomistic view - not gestalt structures")
+
+        # Tension in reversibility
+        reversibility = analysis["reversibility"]
+        if reversibility["structure"] == "Non-reversible":
+            tension_elements.append("Unidirectional sensing - lacking reversibility")
+
+        # Tension in intersubjectivity
+        intersubjectivity = analysis["intersubjectivity"]
+        if intersubjectivity["mode"] == "Intellectualist":
+            tension_elements.append("Inferential approach - not direct embodied intersubjectivity")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Strong embodied phenomenological perspective"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in phenomenological framework"
+        elif tension_count <= 4:
+            level = "Moderate"
+            description = "Moderate tensions between embodiment and intellectualism"
+        elif tension_count <= 6:
+            level = "High"
+            description = "Significant opposition to embodied perception"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial departure from phenomenology of embodiment"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

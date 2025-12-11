@@ -51,12 +51,20 @@ class Badiou(Philosopher):
         Returns:
             Dictionary containing Badiou's analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Badiouian analysis
         analysis = self._analyze_event_truth(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Philosophy of the Event and Truth",
+            "tension": tension,
             "event": analysis["event"],
             "truth_procedure": analysis["truth_procedure"],
             "fidelity": analysis["fidelity"],
@@ -667,3 +675,71 @@ class Badiou(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Badiouian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension regarding event status
+        event = analysis["event"]
+        if event["status"] == "No Event":
+            tension_elements.append("Absence of evental rupture - stagnation in continuity")
+        elif event["status"] == "Event Unclear":
+            tension_elements.append("Uncertainty regarding event status - indeterminate rupture")
+
+        # Tension in fidelity
+        fidelity = analysis["fidelity"]
+        if fidelity["level"] in ["Betrayal", "Reactionary Stance", "No Fidelity Evident"]:
+            tension_elements.append(f"Fidelity compromised: {fidelity['description']}")
+
+        # Tension in subject constitution
+        subject = analysis["subject"]
+        if subject["status"] in ["Pre-Existing Subject", "No Subject Evident"]:
+            tension_elements.append("Subject not constituted by fidelity - pre-evental subjectivity")
+
+        # Tension regarding the void
+        void = analysis["void"]
+        if void["presence"] == "Fullness/Presence":
+            tension_elements.append("Denial of the void - fullness obscures structural emptiness")
+
+        # Tension in generic truth
+        generic = analysis["generic"]
+        if generic["status"] in ["Particular Truth", "Generic Unclear"]:
+            tension_elements.append("Truth remains particular - not yet universal singularity")
+
+        # Tension in situation
+        situation = analysis["situation"]
+        if situation["status"] in ["The Unrepresented", "No Situation Clear"]:
+            tension_elements.append(f"Situational tension: {situation['description']}")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions - evental fidelity and truth procedure aligned"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension in Badiouian framework"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between event, fidelity, and truth"
+        elif tension_count == 3:
+            level = "High"
+            description = "Significant tensions across multiple Badiouian dimensions"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial deviation from evental truth procedures"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

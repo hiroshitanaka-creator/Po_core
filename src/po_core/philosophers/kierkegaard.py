@@ -47,12 +47,20 @@ class Kierkegaard(Philosopher):
         Returns:
             Dictionary containing Kierkegaard's existential analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Kierkegaardian analysis
         analysis = self._analyze_existence(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Existential Philosophy",
+            "tension": tension,
             "life_stage": analysis["stage"],
             "anxiety": analysis["anxiety"],
             "despair": analysis["despair"],
@@ -628,3 +636,69 @@ class Kierkegaard(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Kierkegaardian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension from aesthetic stage (not yet ethical/religious)
+        stage = analysis["stage"]
+        if "Aesthetic" in stage["stage"]:
+            tension_elements.append("Aesthetic stage - trapped in immediacy and sensuous enjoyment, not yet ethical or religious")
+
+        # Tension from despair
+        despair = analysis["despair"]
+        if despair["present"]:
+            tension_elements.append(f"Despair present - {despair['type']}")
+
+        # Tension from lack of faith
+        faith = analysis["faith"]
+        if not faith["present"]:
+            tension_elements.append("Lack of faith - has not made the leap of faith into religious existence")
+
+        # Tension from lack of individuality (crowd mentality)
+        individual = analysis["individual"]
+        if not individual["individual"]:
+            tension_elements.append("Lost in the crowd - not yet an individual before God")
+
+        # Tension from lack of subjectivity
+        subjectivity = analysis["subjectivity"]
+        if not subjectivity["subjective"]:
+            tension_elements.append("Objective approach - not engaged with subjective truth and passionate inwardness")
+
+        # Tension from unresolved anxiety
+        anxiety = analysis["anxiety"]
+        if anxiety["present"] and "fleeing" in anxiety["description"].lower():
+            tension_elements.append("Fleeing from anxiety - avoiding the dizziness of freedom")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions - religious existence with faith, subjectivity, and individuality"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in Kierkegaardian analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions in existential development"
+        elif tension_count <= 4:
+            level = "High"
+            description = "Significant tensions - substantial distance from authentic existence and faith"
+        else:
+            level = "Very High"
+            description = "Severe tensions - trapped in aesthetics, despair, and the crowd"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

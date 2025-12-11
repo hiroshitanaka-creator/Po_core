@@ -47,12 +47,20 @@ class Dewey(Philosopher):
         Returns:
             Dictionary containing Dewey's pragmatist analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Deweyan analysis
         analysis = self._analyze_experience(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Pragmatism / Experimentalism",
+            "tension": tension,
             "experience_quality": analysis["experience"],
             "inquiry_stage": analysis["inquiry"],
             "growth_potential": analysis["growth"],
@@ -565,3 +573,79 @@ class Dewey(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Deweyan tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension in experience quality
+        experience = analysis["experience"]
+        if experience["type"] in ["Mis-educative", "Unclear"]:
+            tension_elements.append(f"Experience quality issue: {experience['description']}")
+
+        # Tension in inquiry
+        inquiry = analysis["inquiry"]
+        if inquiry["status"] in ["Absent", "Initial"]:
+            tension_elements.append("Inquiry underdeveloped - lacking experimental method")
+
+        # Tension in growth
+        growth = analysis["growth"]
+        if growth["orientation"] in ["Fixed", "Indeterminate"]:
+            tension_elements.append("Growth orientation weak - static rather than developmental")
+
+        # Tension in democracy
+        democracy = analysis["democracy"]
+        if democracy["mode"] in ["Non-democratic", "Neutral"]:
+            tension_elements.append(f"Democratic quality lacking: {democracy['description']}")
+
+        # Tension in reflective thinking
+        reflection = analysis["reflection"]
+        if reflection["type"] in ["Unreflective", "Indeterminate"]:
+            tension_elements.append("Lacking reflective thinking - unreflective action")
+
+        # Tension in habit formation
+        habit = analysis["habit"]
+        if habit["quality"] == "Routine/Rigid":
+            tension_elements.append("Rigid habits - lacking intelligent adaptation")
+
+        # Tension in instrumentalism
+        instrumentalism = analysis["instrumentalism"]
+        if instrumentalism["orientation"] in ["Theoretical", "Indeterminate"]:
+            tension_elements.append("Not instrumentalist - abstract rather than practical")
+
+        # Tension in continuity and interaction
+        continuity = analysis["continuity_interaction"]
+        if "Not Clear" in continuity["quality"]:
+            tension_elements.append("Experiential principles unclear - lacking continuity or interaction")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Strong alignment with Deweyan pragmatism and experimentalism"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in pragmatic framework"
+        elif tension_count <= 4:
+            level = "Moderate"
+            description = "Moderate tensions between theory and practice"
+        elif tension_count <= 6:
+            level = "High"
+            description = "Significant opposition to experimental inquiry and growth"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial departure from pragmatic method"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }
