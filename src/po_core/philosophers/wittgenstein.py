@@ -51,12 +51,20 @@ class Wittgenstein(Philosopher):
         Returns:
             Dictionary containing Wittgenstein's language analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Wittgensteinian analysis
         analysis = self._analyze_language(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Language Philosophy",
+            "tension": tension,
             "language_games": analysis["language_games"],
             "forms_of_life": analysis["forms_of_life"],
             "meaning_use": analysis["meaning_use"],
@@ -501,3 +509,69 @@ class Wittgenstein(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Wittgensteinian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension in meaning theory
+        meaning_use = analysis["meaning_use"]
+        if meaning_use["orientation"] == "Traditional":
+            tension_elements.append("Reference theory of meaning - pre-Wittgensteinian")
+
+        # Tension in family resemblance
+        family_resemblance = analysis["family_resemblance"]
+        if family_resemblance["type"] == "Traditional":
+            tension_elements.append("Essentialist thinking - seeking necessary and sufficient conditions")
+
+        # Tension in private language
+        private_language = analysis["private_language"]
+        if private_language["issue"] == "Problematic":
+            tension_elements.append("Private language tendency - lacking public criteria")
+
+        # Tension in philosophical confusion
+        confusion = analysis["confusion"]
+        if confusion["need"] == "Therapy needed":
+            tension_elements.append("Philosophical confusion - language on holiday")
+
+        # Tension in limits of language (early Wittgenstein issues)
+        limits = analysis["limits"]
+        if limits["attitude"] == "Tractarian":
+            tension_elements.append("Tractarian limits - what cannot be said")
+
+        # Tension in period (early vs late)
+        period = analysis["period"]
+        if period["period"] == "Early Wittgenstein":
+            tension_elements.append("Early Wittgenstein emphasis - logical structure and limits")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Strong alignment with Wittgensteinian language philosophy"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in language use framework"
+        elif tension_count <= 3:
+            level = "Moderate"
+            description = "Moderate tensions between ordinary language and philosophical confusion"
+        elif tension_count <= 4:
+            level = "High"
+            description = "Significant philosophical confusion - language bewitchment"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial philosophical muddles and misuse of language"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

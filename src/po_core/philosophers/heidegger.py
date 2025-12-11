@@ -41,12 +41,20 @@ class Heidegger(Philosopher):
         Returns:
             Dictionary containing Heidegger's philosophical analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Basic existential analysis
         analysis = self._analyze_being(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Phenomenological / Existential",
+            "tension": tension,
             "key_concepts": analysis["concepts"],
             "questions": analysis["questions"],
             "temporal_dimension": analysis["temporality"],
@@ -129,4 +137,60 @@ class Heidegger(Philosopher):
             "questions": questions,
             "temporality": temporality,
             "authenticity": authenticity
+        }
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Heideggerian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension from inauthenticity (Das Man)
+        authenticity = analysis["authenticity"]
+        if "Das Man" in authenticity:
+            tension_elements.append("Inauthenticity - absorbed in 'they-self' (Das Man), fleeing from ownmost Being")
+
+        # Tension from weak temporal awareness
+        temporality = analysis["temporality"]
+        if not temporality["past_awareness"] and not temporality["future_awareness"]:
+            tension_elements.append("Weak temporal awareness - lack of authentic temporality and historicity")
+
+        # Tension from forgetfulness of Being
+        concepts = analysis["concepts"]
+        if "Forgetfulness of Being" in concepts or len([c for c in concepts if "being" in c.lower()]) == 0:
+            tension_elements.append("Forgetfulness of Being - absorbed in beings without questioning Being itself")
+
+        # Tension from lack of existential questions
+        questions = analysis["questions"]
+        if len(questions) == 0:
+            tension_elements.append("No existential questioning - unquestioning stance toward existence")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "No significant tensions - authentic engagement with Being and temporality"
+        elif tension_count == 1:
+            level = "Low"
+            description = "Minor tension detected in Heideggerian analysis"
+        elif tension_count == 2:
+            level = "Moderate"
+            description = "Moderate tensions between authentic and inauthentic modes of Being"
+        elif tension_count == 3:
+            level = "High"
+            description = "Significant tensions - substantial inauthenticity and forgetfulness of Being"
+        else:
+            level = "Very High"
+            description = "Severe tensions - complete absorption in Das Man and forgetfulness of Being"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
         }

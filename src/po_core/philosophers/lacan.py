@@ -49,12 +49,20 @@ class Lacan(Philosopher):
         Returns:
             Dictionary containing Lacan's structural psychoanalytic analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Lacanian analysis
         analysis = self._analyze_structure(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Structural Psychoanalysis",
+            "tension": tension,
             "register": analysis["register"],
             "desire_structure": analysis["desire"],
             "the_other": analysis["other"],
@@ -612,3 +620,82 @@ class Lacan(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Lacanian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension in registers
+        register = analysis["register"]
+        if register["dominant"] == "Imaginary (Imaginaire)" and register["scores"]["Symbolic"] == 0:
+            tension_elements.append("Trapped in imaginary - lacking symbolic mediation")
+        elif register["dominant"] == "Real (Réel)":
+            tension_elements.append("Encounter with the Real - traumatic resistance to symbolization")
+
+        # Tension in desire
+        desire = analysis["desire"]
+        if desire["status"] in ["Not yet desire", "Indeterminate"]:
+            tension_elements.append("Desire not properly constituted - stuck at need or demand")
+
+        # Tension regarding the Other
+        other = analysis["other"]
+        if other["type"] == "Small other (autre)":
+            tension_elements.append("Imaginary other - lacking symbolic Big Other mediation")
+
+        # Tension in lack
+        lack = analysis["lack"]
+        if lack["type"] == "Denied":
+            tension_elements.append("Denial of lack - imaginary fantasy of wholeness")
+        elif lack["presence"] == "Fundamental Lack":
+            tension_elements.append("Confrontation with fundamental lack - structural impossibility")
+
+        # Tension in split subject
+        split_subject = analysis["split_subject"]
+        if split_subject["type"] == "Illusory":
+            tension_elements.append("Fantasy of unified ego - denial of subject's division")
+        elif split_subject["status"] == "Split Subject ($)":
+            tension_elements.append("Subject divided by language - irreducible split")
+
+        # Tension in jouissance
+        jouissance = analysis["jouissance"]
+        if jouissance["status"] == "Beyond law":
+            tension_elements.append("Transgressive jouissance - exceeding pleasure principle")
+
+        # Tension in discourse
+        discourse = analysis["discourse"]
+        if discourse["type"] == "Master's Discourse":
+            tension_elements.append("Master's discourse - authoritarian command structure")
+        elif discourse["type"] == "Hysteric's Discourse":
+            tension_elements.append("Hysteric's discourse - questioning the master signifier")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Minimal psychoanalytic tensions - symbolic order functioning"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in symbolic structure"
+        elif tension_count <= 4:
+            level = "Moderate"
+            description = "Moderate tensions between imaginary, symbolic, and real"
+        elif tension_count <= 6:
+            level = "High"
+            description = "Significant psychic tensions - structural conflicts"
+        else:
+            level = "Very High"
+            description = "Severe tensions - crisis in symbolic order and subject formation"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

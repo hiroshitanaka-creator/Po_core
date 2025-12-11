@@ -48,12 +48,20 @@ class Deleuze(Philosopher):
         Returns:
             Dictionary containing Deleuze's differential analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Deleuzian analysis
         analysis = self._analyze_difference(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Philosophy of Difference / Post-Structuralism",
+            "tension": tension,
             "rhizome_vs_tree": analysis["rhizome"],
             "difference_repetition": analysis["difference"],
             "becoming": analysis["becoming"],
@@ -600,3 +608,81 @@ class Deleuze(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Deleuzian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension in rhizome vs tree structure
+        rhizome = analysis["rhizome"]
+        if rhizome["structure"] == "Arborescent (Tree)":
+            tension_elements.append("Hierarchical tree structure - opposed to rhizomatic multiplicity")
+        elif rhizome["structure"] == "Unclear":
+            tension_elements.append("Structure unclear - neither rhizomatic nor arborescent")
+
+        # Tension in difference vs identity
+        difference = analysis["difference"]
+        if difference["orientation"] == "Identity-Oriented":
+            tension_elements.append("Emphasis on sameness and identity - pre-Deleuzian thinking")
+
+        # Tension in becoming vs being
+        becoming = analysis["becoming"]
+        if becoming["presence"] == "Being-Oriented":
+            tension_elements.append("Fixed states and being - opposed to Deleuzian becoming")
+
+        # Tension in body without organs
+        bwo = analysis["bwo"]
+        if bwo["status"] == "Organized Body":
+            tension_elements.append("Acceptance of fixed organization - lacking BwO resistance")
+
+        # Tension in lines of flight
+        lines = analysis["lines"]
+        if lines["presence"] == "No Lines of Flight":
+            tension_elements.append("Captured by established order - no creative escape")
+
+        # Tension in territorialization
+        territory = analysis["territory"]
+        if territory["process"] == "Territorialized":
+            tension_elements.append("Fixed in territory - no deterritorialization movement")
+
+        # Tension in smooth vs striated space
+        space = analysis["space"]
+        if space["type"] == "Striated Space":
+            tension_elements.append("Striated organization - lacking smooth nomadic space")
+
+        # Tension in desire conception
+        desire = analysis["desire"]
+        if desire["conception"] == "Lack-Based Desire":
+            tension_elements.append("Desire as lack - psychoanalytic model opposed to productive desire")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Strong alignment with Deleuzian concepts of difference and becoming"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in Deleuzian framework"
+        elif tension_count <= 4:
+            level = "Moderate"
+            description = "Moderate tensions between multiplicity and molar organization"
+        elif tension_count <= 6:
+            level = "High"
+            description = "Significant capture by arborescent and striated structures"
+        else:
+            level = "Very High"
+            description = "Severe tensions - substantial opposition to rhizomatic difference"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }

@@ -51,12 +51,20 @@ class Levinas(Philosopher):
         Returns:
             Dictionary containing Levinas's ethical analysis
         """
+        # Store context if provided
+        if context:
+            self._context.update(context)
+
         # Perform Levinasian analysis
         analysis = self._analyze_ethics(prompt)
+
+        # Identify tensions and contradictions
+        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Ethics as First Philosophy",
+            "tension": tension,
             "the_other": analysis["other"],
             "face": analysis["face"],
             "responsibility": analysis["responsibility"],
@@ -673,3 +681,78 @@ class Levinas(Philosopher):
         )
 
         return reasoning
+
+    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Identify Levinasian tensions and contradictions.
+
+        Args:
+            analysis: The analysis results
+
+        Returns:
+            Dictionary containing tension level, description, and elements
+        """
+        tension_elements = []
+
+        # Tension regarding the Other
+        other = analysis["other"]
+        if other["relation"] == "Violence":
+            tension_elements.append("Totalizing violence - attempting to reduce the Other to the Same")
+        elif other["presence"] == "No Other Evident":
+            tension_elements.append("Absence of the Other - egological solipsism")
+
+        # Tension in face encounter
+        face = analysis["face"]
+        if face["encounter_type"] == "None":
+            tension_elements.append("No face-to-face encounter - lacking ethical summons")
+
+        # Tension in responsibility
+        responsibility = analysis["responsibility"]
+        if responsibility["nature"] in ["Symmetrical", "Voluntary", "None"]:
+            tension_elements.append(f"Responsibility issue: {responsibility['description']}")
+
+        # Tension in totality vs infinity
+        totality_infinity = analysis["totality_infinity"]
+        if totality_infinity["mode"] in ["Ontological violence", "Totalizing"]:
+            tension_elements.append("Totality dominating - violence of comprehension")
+
+        # Tension in same vs other
+        same_other = analysis["same_other"]
+        if same_other["status"] == "Violent":
+            tension_elements.append("Reduction to the Same - egological violence")
+        elif same_other["status"] == "Egological":
+            tension_elements.append("Egological focus - the Other obscured by the Same")
+
+        # Tension in saying vs said
+        saying_said = analysis["saying_said"]
+        if saying_said["level"] == "Thematic":
+            tension_elements.append("Thematization dominant - saying betrayed by the said")
+
+        # Tension in il y a
+        il_y_a = analysis["il_y_a"]
+        if il_y_a["presence"] == "Il y a":
+            tension_elements.append("Horror of il y a - impersonal anonymous being")
+
+        # Determine tension level
+        tension_count = len(tension_elements)
+        if tension_count == 0:
+            level = "Very Low"
+            description = "Strong ethical relation - responsibility for the Other maintained"
+        elif tension_count <= 2:
+            level = "Low"
+            description = "Minor tensions in ethical relation"
+        elif tension_count <= 4:
+            level = "Moderate"
+            description = "Moderate tensions between totality and infinity"
+        elif tension_count <= 6:
+            level = "High"
+            description = "Significant violence toward the Other - ethical relation compromised"
+        else:
+            level = "Very High"
+            description = "Severe tensions - totalizing violence and reduction of the Other"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements
+        }
