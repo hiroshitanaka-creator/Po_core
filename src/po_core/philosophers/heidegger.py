@@ -158,7 +158,7 @@ class Heidegger(Philosopher):
 
         # Tension from weak temporal awareness
         temporality = analysis["temporality"]
-        if not temporality["past_awareness"] and not temporality["future_awareness"]:
+        if not temporality["past_present"] and not temporality["future_oriented"]:
             tension_elements.append("Weak temporal awareness - lack of authentic temporality and historicity")
 
         # Tension from forgetfulness of Being

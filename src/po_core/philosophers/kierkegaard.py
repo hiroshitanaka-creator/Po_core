@@ -656,27 +656,27 @@ class Kierkegaard(Philosopher):
 
         # Tension from despair
         despair = analysis["despair"]
-        if despair["present"]:
+        if despair["type"] != "No Despair Evident":
             tension_elements.append(f"Despair present - {despair['type']}")
 
         # Tension from lack of faith
         faith = analysis["faith"]
-        if not faith["present"]:
+        if faith["status"] in ["None", "Pre-faith", "Incomplete"]:
             tension_elements.append("Lack of faith - has not made the leap of faith into religious existence")
 
         # Tension from lack of individuality (crowd mentality)
         individual = analysis["individual"]
-        if not individual["individual"]:
+        if individual["stance"] in ["Inauthentic", "Indeterminate"]:
             tension_elements.append("Lost in the crowd - not yet an individual before God")
 
         # Tension from lack of subjectivity
         subjectivity = analysis["subjectivity"]
-        if not subjectivity["subjective"]:
+        if subjectivity["approach"] in ["Objective", "Indeterminate"]:
             tension_elements.append("Objective approach - not engaged with subjective truth and passionate inwardness")
 
         # Tension from unresolved anxiety
         anxiety = analysis["anxiety"]
-        if anxiety["present"] and "fleeing" in anxiety["description"].lower():
+        if anxiety["presence"] != "No Anxiety Evident" and "fleeing" in anxiety["description"].lower():
             tension_elements.append("Fleeing from anxiety - avoiding the dizziness of freedom")
 
         # Determine tension level
