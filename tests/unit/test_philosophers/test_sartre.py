@@ -14,6 +14,7 @@ def test_reason_returns_expected_structure(sartre_instance, philosopher_prompts)
     assert set(result.keys()) >= {
         "reasoning",
         "perspective",
+        "tension",
         "freedom_assessment",
         "responsibility_check",
         "bad_faith_indicators",
@@ -59,3 +60,61 @@ def test_long_prompt_handles_multiple_signals(sartre_instance, philosopher_promp
     assert result["freedom_assessment"]["level"] != "Low"
     assert isinstance(result["reasoning"], str)
     assert len(result["reasoning"]) > 0
+
+
+class TestSartreTensionField:
+    """Test Sartre's tension field structure and content."""
+
+    def test_tension_field_exists(self, sartre):
+        """Test that tension field is present in result."""
+        result = sartre.reason("What does it mean to be free?")
+
+        assert "tension" in result
+        assert result["tension"] is not None
+
+    def test_tension_field_is_dict(self, sartre):
+        """Test that tension field is a dictionary."""
+        result = sartre.reason("What does it mean to be free?")
+
+        assert isinstance(result["tension"], dict)
+
+    def test_tension_has_required_keys(self, sartre):
+        """Test that tension dict has all required keys."""
+        result = sartre.reason("What does it mean to be free?")
+
+        tension = result["tension"]
+        assert "level" in tension
+        assert "description" in tension
+        assert "elements" in tension
+
+    def test_tension_level_is_valid(self, sartre):
+        """Test that tension level is one of the valid values."""
+        result = sartre.reason("What does it mean to be free?")
+
+        tension = result["tension"]
+        valid_levels = ["Very Low", "Low", "Moderate", "High", "Very High"]
+        assert tension["level"] in valid_levels
+
+    def test_tension_description_is_string(self, sartre):
+        """Test that tension description is a non-empty string."""
+        result = sartre.reason("What does it mean to be free?")
+
+        tension = result["tension"]
+        assert isinstance(tension["description"], str)
+        assert len(tension["description"]) > 0
+
+    def test_tension_elements_is_list(self, sartre):
+        """Test that tension elements is a list."""
+        result = sartre.reason("What does it mean to be free?")
+
+        tension = result["tension"]
+        assert isinstance(tension["elements"], list)
+
+    def test_tension_elements_are_strings(self, sartre):
+        """Test that all tension elements are strings."""
+        result = sartre.reason("What does it mean to be free?")
+
+        tension = result["tension"]
+        for element in tension["elements"]:
+            assert isinstance(element, str)
+            assert len(element) > 0

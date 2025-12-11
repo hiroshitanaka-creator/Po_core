@@ -62,6 +62,7 @@ class TestAristotleReasonMethod:
         # Check required fields
         assert "reasoning" in result
         assert "perspective" in result
+        assert "tension" in result
         assert "virtue_assessment" in result
         assert "golden_mean" in result
         assert "eudaimonia_level" in result
@@ -454,3 +455,80 @@ class TestAristotleWithContext:
 
         result = aristotle.reason(simple_prompt)
         assert isinstance(result, dict)
+
+
+class TestAristotleTensionField:
+    """Test Aristotle's tension field structure and content."""
+
+    def test_tension_field_exists(self, simple_prompt):
+        """Test that tension field is present in result."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        assert "tension" in result
+        assert result["tension"] is not None
+
+    def test_tension_field_is_dict(self, simple_prompt):
+        """Test that tension field is a dictionary."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        assert isinstance(result["tension"], dict)
+
+    def test_tension_has_required_keys(self, simple_prompt):
+        """Test that tension dict has all required keys."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert "level" in tension
+        assert "description" in tension
+        assert "elements" in tension
+
+    def test_tension_level_is_valid(self, simple_prompt):
+        """Test that tension level is one of the valid values."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        tension = result["tension"]
+        valid_levels = ["Very Low", "Low", "Moderate", "High", "Very High"]
+        assert tension["level"] in valid_levels
+
+    def test_tension_description_is_string(self, simple_prompt):
+        """Test that tension description is a non-empty string."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert isinstance(tension["description"], str)
+        assert len(tension["description"]) > 0
+
+    def test_tension_elements_is_list(self, simple_prompt):
+        """Test that tension elements is a list."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert isinstance(tension["elements"], list)
+
+    def test_tension_elements_are_strings(self, simple_prompt):
+        """Test that all tension elements are strings."""
+        aristotle = Aristotle()
+        result = aristotle.reason(simple_prompt)
+
+        tension = result["tension"]
+        for element in tension["elements"]:
+            assert isinstance(element, str)
+            assert len(element) > 0
+
+    def test_high_tension_prompt(self):
+        """Test that a prompt with clear tensions produces high tension level."""
+        aristotle = Aristotle()
+        # Prompt with excess, lack of flourishing, unclear purpose
+        prompt = "I have too much of everything and lack purpose in my life."
+        result = aristotle.reason(prompt)
+
+        tension = result["tension"]
+        # Should detect some tensions
+        assert tension["level"] in ["Moderate", "High", "Very High"]
+        assert len(tension["elements"]) > 0
