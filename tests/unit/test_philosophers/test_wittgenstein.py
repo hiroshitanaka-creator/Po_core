@@ -51,6 +51,7 @@ class TestWittgensteinReasonMethod:
         result = wittgenstein.reason(simple_prompt)
         assert "reasoning" in result
         assert "perspective" in result
+        assert "tension" in result
         assert "language_games" in result
         assert "forms_of_life" in result
         assert "meaning_use" in result
@@ -170,3 +171,68 @@ class TestWittgensteinEdgeCases:
         wittgenstein = Wittgenstein()
         result = wittgenstein.reason(simple_prompt, context={"test": "context"})
         assert isinstance(result, dict)
+
+
+class TestWittgensteinTensionField:
+    """Test Wittgenstein's tension field structure and content."""
+
+    def test_tension_field_exists(self, simple_prompt):
+        """Test that tension field is present in result."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        assert "tension" in result
+        assert result["tension"] is not None
+
+    def test_tension_field_is_dict(self, simple_prompt):
+        """Test that tension field is a dictionary."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        assert isinstance(result["tension"], dict)
+
+    def test_tension_has_required_keys(self, simple_prompt):
+        """Test that tension dict has all required keys."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert "level" in tension
+        assert "description" in tension
+        assert "elements" in tension
+
+    def test_tension_level_is_valid(self, simple_prompt):
+        """Test that tension level is one of the valid values."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        tension = result["tension"]
+        valid_levels = ["Very Low", "Low", "Moderate", "High", "Very High"]
+        assert tension["level"] in valid_levels
+
+    def test_tension_description_is_string(self, simple_prompt):
+        """Test that tension description is a non-empty string."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert isinstance(tension["description"], str)
+        assert len(tension["description"]) > 0
+
+    def test_tension_elements_is_list(self, simple_prompt):
+        """Test that tension elements is a list."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        tension = result["tension"]
+        assert isinstance(tension["elements"], list)
+
+    def test_tension_elements_are_strings(self, simple_prompt):
+        """Test that all tension elements are strings."""
+        wittgenstein = Wittgenstein()
+        result = wittgenstein.reason(simple_prompt)
+
+        tension = result["tension"]
+        for element in tension["elements"]:
+            assert isinstance(element, str)
+            assert len(element) > 0
