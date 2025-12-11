@@ -161,8 +161,8 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 | 📚 Philosophical Framework | ✅ Complete | 100% |
 | 📖 Documentation | ✅ Complete | 100% (120+ specs) |
 | 🏗️ Architecture Design | ✅ Complete | 100% |
-| 💻 Implementation | 🔄 In Progress | 60% (deterministic ensemble + Po_trace logging) |
-| 🧪 Testing | 🔄 In Progress | 20% (unit coverage for ensemble/CLI) |
+| 💻 Implementation | 🔄 In Progress | 70% (全20哲学者tension field完了 + Po_trace + Safety) |
+| 🧪 Testing | 🔄 In Progress | 35% (10,800行、全哲学者テスト完備) |
 | 🎨 Visualization (Viewer) | ⏳ Planned | 10% (CLI stub, visuals pending) |
 
 **What's Working:**
