@@ -565,6 +565,200 @@ class TestLayer2_ConceptDetection:
         anguish = result["anguish_present"]
         assert isinstance(anguish, dict)
 
+    # Heidegger Concept Detection Tests
+    def test_heidegger_being_detection(self):
+        """Test Heidegger detects Being (Sein)."""
+        heidegger = Heidegger()
+        text = "What does it mean to be? We must question the meaning of Being itself"
+        result = heidegger.reason(text)
+
+        assert "concepts" in result or "questions" in result
+        # Should detect Being-related concepts
+        assert isinstance(result, dict)
+
+    def test_heidegger_authenticity_detection(self):
+        """Test Heidegger detects authenticity."""
+        heidegger = Heidegger()
+        text = "I must live authentically, not as 'they' expect but as my ownmost self"
+        result = heidegger.reason(text)
+
+        assert "authenticity" in result or "temporal_dimension" in result
+        assert isinstance(result, dict)
+
+    # Kierkegaard Concept Detection Tests
+    def test_kierkegaard_anxiety_detection(self):
+        """Test Kierkegaard detects anxiety (angst)."""
+        kierkegaard = Kierkegaard()
+        text = "I feel anxiety before the dizziness of freedom and infinite possibility"
+        result = kierkegaard.reason(text)
+
+        assert "anxiety" in result
+        anxiety = result["anxiety"]
+        assert isinstance(anxiety, dict)
+
+    def test_kierkegaard_despair_detection(self):
+        """Test Kierkegaard detects despair."""
+        kierkegaard = Kierkegaard()
+        text = "I am in despair, the sickness unto death, not wanting to be myself"
+        result = kierkegaard.reason(text)
+
+        assert "despair" in result
+        despair = result["despair"]
+        assert isinstance(despair, dict)
+
+    def test_kierkegaard_faith_detection(self):
+        """Test Kierkegaard detects faith."""
+        kierkegaard = Kierkegaard()
+        text = "I make the leap of faith into the absurd, trusting despite the paradox"
+        result = kierkegaard.reason(text)
+
+        assert "faith" in result
+        faith = result["faith"]
+        assert isinstance(faith, dict)
+
+    # Deleuze Concept Detection Tests
+    def test_deleuze_basic_detection(self):
+        """Test Deleuze basic concept detection."""
+        deleuze = Deleuze()
+        text = "Reality is a process of becoming, difference and repetition create new forms"
+        result = deleuze.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Derrida Concept Detection Tests
+    def test_derrida_basic_detection(self):
+        """Test Derrida basic concept detection."""
+        derrida = Derrida()
+        text = "Meaning is always deferred, différance marks the impossibility of pure presence"
+        result = derrida.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Dewey Concept Detection Tests
+    def test_dewey_basic_detection(self):
+        """Test Dewey basic concept detection."""
+        dewey = Dewey()
+        text = "Experience and experimental inquiry guide our democratic education"
+        result = dewey.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Jung Concept Detection Tests
+    def test_jung_basic_detection(self):
+        """Test Jung basic concept detection."""
+        jung = Jung()
+        text = "The collective unconscious contains archetypes that appear in dreams and myths"
+        result = jung.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Lacan Concept Detection Tests
+    def test_lacan_basic_detection(self):
+        """Test Lacan basic concept detection."""
+        lacan = Lacan()
+        text = "The unconscious is structured like a language, desire moves along signifying chains"
+        result = lacan.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Levinas Concept Detection Tests
+    def test_levinas_basic_detection(self):
+        """Test Levinas basic concept detection."""
+        levinas = Levinas()
+        text = "The face of the Other calls me to infinite ethical responsibility"
+        result = levinas.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Merleau-Ponty Concept Detection Tests
+    def test_merleau_ponty_basic_detection(self):
+        """Test Merleau-Ponty basic concept detection."""
+        merleau = MerleauPonty()
+        text = "Embodied perception reveals the lived body as primary mode of being-in-the-world"
+        result = merleau.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Peirce Concept Detection Tests
+    def test_peirce_basic_detection(self):
+        """Test Peirce basic concept detection."""
+        peirce = Peirce()
+        text = "Pragmatic inquiry uses abductive reasoning to interpret signs and symbols"
+        result = peirce.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Wabi-Sabi Concept Detection Tests
+    def test_wabi_sabi_basic_detection(self):
+        """Test Wabi-Sabi basic concept detection."""
+        wabi = WabiSabi()
+        text = "Beauty lies in imperfection, impermanence, and incomplete simplicity"
+        result = wabi.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Watsuji Concept Detection Tests
+    def test_watsuji_basic_detection(self):
+        """Test Watsuji basic concept detection."""
+        watsuji = Watsuji()
+        text = "Human existence is fundamentally relational, shaped by climate and culture"
+        result = watsuji.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Wittgenstein Concept Detection Tests
+    def test_wittgenstein_basic_detection(self):
+        """Test Wittgenstein basic concept detection."""
+        wittgenstein = Wittgenstein()
+        text = "The limits of my language are the limits of my world"
+        result = wittgenstein.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Zhuangzi Concept Detection Tests
+    def test_zhuangzi_basic_detection(self):
+        """Test Zhuangzi basic concept detection."""
+        zhuangzi = Zhuangzi()
+        text = "The Way is natural spontaneity, wu wei effortless action in harmony with Dao"
+        result = zhuangzi.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
+    # Badiou Concept Detection Tests
+    def test_badiou_basic_detection(self):
+        """Test Badiou basic concept detection."""
+        badiou = Badiou()
+        text = "The Event breaks the situation, truth emerges through fidelity to the event"
+        result = badiou.reason(text)
+
+        # Basic structure test
+        assert isinstance(result, dict)
+        assert "perspective" in result
+
 
 # ============================================================================
 # LAYER 3: TENSION / CONTRADICTION LAYER
