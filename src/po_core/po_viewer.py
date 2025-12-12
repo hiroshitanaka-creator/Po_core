@@ -7,6 +7,7 @@ and philosophical interactions.
 from __future__ import annotations
 
 from typing import Dict, List, Optional
+from pathlib import Path
 
 import click
 from rich.console import Console
@@ -20,6 +21,7 @@ from rich import box
 import json
 
 from po_core.po_trace import PoTrace, Session
+from po_core.visualizations import PoVisualizer
 
 console = Console()
 
@@ -500,6 +502,198 @@ def dashboard(limit: int) -> None:
     viewer = PoViewer()
     panel = viewer.render_dashboard(limit=limit)
     console.print(panel)
+
+
+# ==================
+# Advanced Visualization Commands
+# ==================
+
+@cli.command(name="tension-map")
+@click.argument("session_id")
+@click.option("--output", "-o", type=click.Path(), help="Output file path")
+@click.option("--format", "-f", type=click.Choice(['png', 'svg', 'pdf']), default='png',
+              help="Output format")
+def tension_map(session_id: str, output: Optional[str], format: str) -> None:
+    """Generate tension map heatmap visualization.
+
+    Shows philosophical tensions across Freedom Pressure, Semantic Delta,
+    and Blocked Tensor metrics for all philosophers in the session.
+
+    Example:
+        po-viewer tension-map abc123 -o tension.png
+    """
+    viewer = PoViewer()
+    visualizer = PoVisualizer(po_trace=viewer.po_trace)
+
+    try:
+        output_path = Path(output) if output else None
+        fig = visualizer.create_tension_map(
+            session_id=session_id,
+            output_path=output_path,
+            format=format
+        )
+
+        if output_path:
+            console.print(f"[green]✓[/green] Tension map saved to: {output_path}")
+        else:
+            console.print("[yellow]Displaying tension map...[/yellow]")
+            import matplotlib.pyplot as plt
+            plt.show()
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+
+
+@cli.command(name="timeline")
+@click.argument("session_ids", nargs=-1, required=True)
+@click.option("--output", "-o", type=click.Path(), help="Output file path")
+@click.option("--format", "-f", type=click.Choice(['html', 'png', 'svg']), default='html',
+              help="Output format")
+@click.option("--title", "-t", help="Custom plot title")
+def metrics_timeline(session_ids: tuple, output: Optional[str], format: str, title: Optional[str]) -> None:
+    """Generate metrics timeline across multiple sessions.
+
+    Shows how philosophical metrics evolve across sessions.
+    Supports multiple session IDs.
+
+    Example:
+        po-viewer timeline abc123 def456 ghi789 -o timeline.html
+    """
+    viewer = PoViewer()
+    visualizer = PoVisualizer(po_trace=viewer.po_trace)
+
+    try:
+        output_path = Path(output) if output else None
+        fig = visualizer.create_metrics_timeline(
+            session_ids=list(session_ids),
+            output_path=output_path,
+            format=format,
+            title=title
+        )
+
+        if output_path:
+            console.print(f"[green]✓[/green] Timeline saved to: {output_path}")
+        else:
+            console.print("[yellow]Opening timeline in browser...[/yellow]")
+            fig.show()
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+
+
+@cli.command(name="network")
+@click.argument("session_id")
+@click.option("--output", "-o", type=click.Path(), help="Output file path")
+@click.option("--format", "-f", type=click.Choice(['png', 'svg', 'pdf']), default='png',
+              help="Output format")
+def philosopher_network(session_id: str, output: Optional[str], format: str) -> None:
+    """Generate philosopher interaction network graph.
+
+    Shows relationships between philosophers based on their
+    tension field interactions and semantic similarities.
+
+    Example:
+        po-viewer network abc123 -o network.png
+    """
+    viewer = PoViewer()
+    visualizer = PoVisualizer(po_trace=viewer.po_trace)
+
+    try:
+        output_path = Path(output) if output else None
+        fig = visualizer.create_philosopher_network(
+            session_id=session_id,
+            output_path=output_path,
+            format=format
+        )
+
+        if output_path:
+            console.print(f"[green]✓[/green] Network graph saved to: {output_path}")
+        else:
+            console.print("[yellow]Displaying network graph...[/yellow]")
+            import matplotlib.pyplot as plt
+            plt.show()
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+
+
+@cli.command(name="viz-dashboard")
+@click.argument("session_id")
+@click.option("--output", "-o", type=click.Path(), help="Output file path")
+@click.option("--format", "-f", type=click.Choice(['html', 'png']), default='html',
+              help="Output format")
+def visual_dashboard(session_id: str, output: Optional[str], format: str) -> None:
+    """Generate comprehensive interactive dashboard.
+
+    Combines multiple visualizations into a single comprehensive view:
+    - Tension metrics by philosopher
+    - Freedom pressure distribution
+    - Semantic vs Freedom pressure scatter plot
+    - Philosopher contribution pie chart
+
+    Example:
+        po-viewer viz-dashboard abc123 -o dashboard.html
+    """
+    viewer = PoViewer()
+    visualizer = PoVisualizer(po_trace=viewer.po_trace)
+
+    try:
+        output_path = Path(output) if output else None
+        fig = visualizer.create_comprehensive_dashboard(
+            session_id=session_id,
+            output_path=output_path,
+            format=format
+        )
+
+        if output_path:
+            console.print(f"[green]✓[/green] Dashboard saved to: {output_path}")
+        else:
+            console.print("[yellow]Opening dashboard in browser...[/yellow]")
+            fig.show()
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+
+
+@cli.command(name="export-all")
+@click.argument("session_id")
+@click.option("--output-dir", "-d", type=click.Path(), default="./visualizations",
+              help="Output directory for visualizations")
+@click.option("--formats", "-f", multiple=True,
+              type=click.Choice(['png', 'svg', 'html']),
+              default=['png', 'html'],
+              help="Output formats (can specify multiple)")
+def export_all(session_id: str, output_dir: str, formats: tuple) -> None:
+    """Export all visualizations for a session.
+
+    Generates and saves:
+    - Tension map
+    - Philosopher network graph
+    - Comprehensive dashboard
+
+    Example:
+        po-viewer export-all abc123 -d ./output -f png -f html
+    """
+    viewer = PoViewer()
+    visualizer = PoVisualizer(po_trace=viewer.po_trace)
+
+    try:
+        output_path = Path(output_dir)
+        console.print(f"[cyan]Exporting visualizations to:[/cyan] {output_path}")
+
+        with console.status("[bold green]Generating visualizations..."):
+            results = visualizer.export_session_visualizations(
+                session_id=session_id,
+                output_dir=output_path,
+                formats=list(formats)
+            )
+
+        console.print(f"\n[green]✓ Successfully exported {len(results)} visualizations:[/green]")
+        for name, path in results.items():
+            console.print(f"  • {name}: {path}")
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
 
 
 if __name__ == "__main__":

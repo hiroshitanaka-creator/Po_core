@@ -16,14 +16,16 @@
 - Philosophers as interacting **tensors** → accountable LLM reasoning
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
 - ✅ **Working prototypes**: Web API, batch processing, visualization, enterprise dashboard, multi-agent system
+- ✅ **Advanced visualizations**: Tension maps, network graphs, interactive dashboards, metrics timelines
 - ✅ **Database integration**: SQLite/PostgreSQL support with full migration tools
-- Alpha release with 20 philosophers, complete tracing, CI/CD, and 70% core implementation
+- Alpha release with 20 philosophers, complete tracing, CI/CD, and 80% visualization implementation
 
 ### Quick links
 [Examples & Demos](./examples/README.md) ·
 [Medium-Scale Prototypes](./examples/MEDIUM_PROTOTYPES.md) ·
 [Large-Scale Prototypes](./examples/LARGE_SCALE_PROTOTYPES.md) ·
 [Database Integration](./examples/LARGE_SCALE_PROTOTYPES.md#-データベース統合) ·
+[Visualization Guide](./docs/VISUALIZATION_GUIDE.md) ·
 [Modules](./tree/main/04_modules) ·
 [Research](./tree/main/05_research) ·
 [Po_trace spec](./blob/main/docs/specs/reason_log.md) ·
@@ -163,18 +165,19 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 | 🏗️ Architecture Design | ✅ Complete | 100% |
 | 💻 Implementation | 🔄 In Progress | 70% (全20哲学者tension field完了 + Po_trace + Safety) |
 | 🧪 Testing | 🔄 In Progress | 35% (10,800行、全哲学者テスト完備) |
-| 🎨 Visualization (Viewer) | ⏳ Planned | 10% (CLI stub, visuals pending) |
+| 🎨 Visualization (Viewer) | ✅ Complete | 80% (Advanced graphical visualizations + CLI + Export) |
 
 **What's Working:**
 - ✅ Po_self deterministic ensemble
 - ✅ Po_trace trace builder + JSON output
 - ✅ Philosophical tensor definitions
 - ✅ Complete design specifications
+- ✅ Po_viewer advanced visualizations (tension maps, network graphs, interactive dashboards)
 
 **What's Next:**
 - 🔄 Expand Po_trace event detail + storage options
 - 🔄 Broaden Po_self integrations and CLI ergonomics
-- ⏳ Po_core Viewer visual components
+- 🔄 Additional Po_viewer visual enhancements
 - ⏳ Broader unit and integration testing
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
