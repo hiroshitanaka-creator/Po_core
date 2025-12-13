@@ -2,6 +2,26 @@
 Po_core Multi-LLM Testing Framework
 
 Compare philosophical reasoning quality across different LLMs.
+
+Usage Example:
+    from examples.multi_llm_testing import MultiLLMTester
+
+    tester = MultiLLMTester()
+
+    # Test latest models
+    llm_configs = [
+        {"name": "gpt5.2thinking", "backend": gpt_backend},
+        {"name": "opus4.5", "backend": claude_backend},
+        {"name": "grok4.1thinking", "backend": grok_backend},
+        {"name": "gemini3pro", "backend": gemini_backend},
+    ]
+
+    report = tester.compare_llms(
+        llm_configs=llm_configs,
+        test_prompts=["What is freedom?", "Should AI have rights?"]
+    )
+
+    print(report["recommendations"])
 """
 from typing import Dict, List, Optional
 import json
@@ -77,14 +97,23 @@ class MultiLLMTester:
 
     def _estimate_cost(self, llm_name: str, response_data: Dict) -> float:
         """Estimate cost based on LLM pricing."""
-        # Rough estimates (update with actual pricing)
+        # Latest model pricing (2025 estimates)
         costs = {
+            # Latest models
+            "gpt5.2thinking": 0.05,      # GPT-5.2 with thinking
+            "opus4.5": 0.015,            # Claude Opus 4.5
+            "grok4.1thinking": 0.008,    # Grok 4.1 with thinking
+            "gemini3pro": 0.002,         # Gemini 3 Pro
+
+            # Legacy models (for reference)
             "gpt-4": 0.03,
             "gpt-4o": 0.005,
             "gpt-4o-mini": 0.0003,
             "claude-3.5-sonnet": 0.003,
             "claude-3.5-haiku": 0.0008,
             "gemini-1.5-pro": 0.00125,
+
+            # Local/Free
             "ollama": 0.0,  # Free (local)
             "mock": 0.0,
         }
