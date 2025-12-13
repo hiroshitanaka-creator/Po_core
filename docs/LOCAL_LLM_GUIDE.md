@@ -293,8 +293,10 @@ response = generator(
 
 | Method | Hardware | Speed | Cost/Hour |
 |--------|----------|-------|-----------|
-| OpenAI GPT-4 | Cloud | ★★★★★ | $0.03-0.12 |
-| Claude Sonnet | Cloud | ★★★★★ | $0.003-0.015 |
+| GPT5.2thinking | Cloud | ★★★★★ | $0.05+ |
+| opus4.5 | Cloud | ★★★★★ | $0.015+ |
+| grok4.1thinking | Cloud | ★★★★☆ | $0.008+ |
+| gemini3pro | Cloud | ★★★★★ | $0.002+ |
 | **Ollama (GPU)** | RTX 3090 | ★★★★☆ | $0.00 |
 | **llama.cpp (GPU)** | RTX 3090 | ★★★★★ | $0.00 |
 | HuggingFace (GPU) | RTX 3090 | ★★★☆☆ | $0.00 |
@@ -304,8 +306,10 @@ response = generator(
 
 | Method | Quality | Deterministic |
 |--------|---------|---------------|
-| GPT-4 | ★★★★★ | ❌ |
-| Claude Sonnet | ★★★★★ | ❌ |
+| GPT5.2thinking | ★★★★★ | ❌ |
+| opus4.5 | ★★★★★ | ❌ |
+| grok4.1thinking | ★★★★☆ | ❌ |
+| gemini3pro | ★★★★★ | ❌ |
 | Ollama (qwen2.5:14b) | ★★★★☆ | ✅ (with seed) |
 | llama.cpp | ★★★★☆ | ✅ (with seed) |
 | **Mock** | ★☆☆☆☆ | ✅ |
