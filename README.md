@@ -33,22 +33,22 @@ Po_core（Philosophy Core）は、10人以上の哲学者（アリストテレ�
 厳格な倫理的制約（W_ethics）を推論の**前提条件**として組み込むことで、カオスになりがちな哲学的議論を、建設的かつ高度な「意味生成（Meaning Generation）」へと導きます。
 
 ### ✨ Key Discovery: The "River and Banks" Theory
-(start_span)本プロジェクトの研究論文 *"Solar Will: Ethical Constraints as Emergence Catalysts"*(end_span) において、以下の現象が確認されました：
+本プロジェクトの研究論文 *"Solar Will: Ethical Constraints as Emergence Catalysts"* において、以下の現象が確認されました：
 
-* **(start_span)倫理制約なし:** 議論は発散し、ニーチェは「破壊」や「深淵」といった暴力的メタファーを使用(end_span)。
-* **(start_span)(start_span)倫理制約あり:** 議論は収束・昇華され、メタファーは「ジャズの即興」や「太陽の放射」へと変容(end_span)。
-* **(start_span)結果:** 創発性スコア（Emergence Score）が **+7.8% 向上**(end_span)。
+* **倫理制約なし:** 議論は発散し、ニーチェは「破壊」や「深淵」といった暴力的メタファーを使用。
+* **倫理制約あり:** 議論は収束・昇華され、メタファーは「ジャズの即興」や「太陽の放射」へと変容。
+* **結果:** 創発性スコア（Emergence Score）が **+7.8% 向上**。
 
-> *(start_span)"川に土手がなければ、それはただの沼だ。土手（倫理）があるからこそ、水は力強い流れ（創造）になる。"*[span_5](end_span)
+> *"川に土手がなければ、それはただの沼だ。土手（倫理）があるからこそ、水は力強い流れ（創造）になる。"*
 
 ---
 
 ## 🛠️ Architecture & Modules
 
-(start_span)(start_span)Po_coreは「責任ある言語応答」を構造的に保証するために、以下のモジュールで構成されています(end_span)(end_span)。
+Po_coreは「責任ある言語応答」を構造的に保証するために、以下のモジュールで構成されています。
 
 ### 1. Mist Detection & Reconstruction
-(start_span)(start_span)入力文に含まれる論理的・事実的誤りを検知（Mist Flags）し、修正ステップ（Reconstruction Steps）を積み上げることで、応答を再構成します(end_span)(end_span)。
+入力文に含まれる論理的・事実的誤りを検知（Mist Flags）し、修正ステップ（Reconstruction Steps）を積み上げることで、応答を再構成します。
 
 ### 2. W_ethics Guardian (The "Banks")
 システムの中核となる倫理エンジンです。
@@ -56,7 +56,7 @@ Po_core（Philosophy Core）は、10人以上の哲学者（アリストテレ�
 * **Safety Tiers:** 哲学者を `TRUSTED`, `MONITORED`, `RESTRICTED` に分類し、危険な思想パターン（ニーチェの暴走など）を高度な文脈理解で制御します。
 
 ### 3. Traceability Tensor
-[span_10](start_span)[span_11](start_span)「なぜその結論に至ったか」を、使用された哲学者の思考プロセス、検証手法（Validation Method）、修正履歴とともに完全に記録します[span_10](end_span)[span_11](end_span)。
+「なぜその結論に至ったか」を、使用された哲学者の思考プロセス、検証手法（Validation Method）、修正履歴とともに完全に記録します。
 
 ---
 
@@ -65,7 +65,7 @@ Po_core（Philosophy Core）は、10人以上の哲学者（アリストテレ�
 私たちは現在、以下のモデルを用いて手動および自動テストを行っています。
 * Gemini 3 Pro
 * GPT-5.2 Thinking
-* [span_12](start_span)Claude 4.5 opus(Constitutional AI validation)[span_12](end_span)
+* Claude 4.5 opus(Constitutional AI validation)
 * Grok 4.1 thinking
 
 実験データは `/experiments` ディレクトリにアーカイブされています。「AIに倫理を持たせるとつまらなくなる」という定説を覆すデータをご覧ください。
