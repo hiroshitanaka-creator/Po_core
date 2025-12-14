@@ -52,9 +52,13 @@ class Nietzsche(Philosopher):
         # Perform Nietzschean analysis
         analysis = self._analyze_power(prompt)
 
+        # Calculate tension
+        tension = self._calculate_tension(analysis)
+
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Philosophy of Power and Affirmation",
+            "tension": tension,
             "will_to_power": analysis["will_to_power"],
             "ubermensch": analysis["ubermensch"],
             "eternal_recurrence": analysis["eternal_recurrence"],
@@ -568,6 +572,87 @@ class Nietzsche(Philosopher):
             "description": description,
             "type": type_creator,
             "principle": "We must become creators of values - beyond good and evil"
+        }
+
+    def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate philosophical tension based on Nietzschean analysis.
+
+        Tensions arise from:
+        - Weak will to power (life-denying)
+        - Last Man orientation (opposed to Übermensch)
+        - Failing eternal recurrence test
+        - Passive nihilism
+        - Slave morality
+        - Ressentiment
+        - Rejection of fate (opposed to amor fati)
+        """
+        tension_score = 0
+        tension_elements = []
+
+        # Check will to power
+        will_to_power = analysis["will_to_power"]
+        if "Weak Will" in will_to_power["presence"] or "Life-denying" in will_to_power["type"]:
+            tension_score += 2
+            tension_elements.append("Weak will to power - life-denying")
+
+        # Check Übermensch orientation
+        ubermensch = analysis["ubermensch"]
+        if "Last Man" in ubermensch["orientation"]:
+            tension_score += 2
+            tension_elements.append("Last Man - comfortable mediocrity")
+
+        # Check eternal recurrence
+        eternal_recurrence = analysis["eternal_recurrence"]
+        if "Fails" in eternal_recurrence["test_result"]:
+            tension_score += 1
+            tension_elements.append("Fails eternal recurrence test")
+
+        # Check nihilism
+        nihilism = analysis["nihilism"]
+        if "Passive Nihilism" in nihilism["type"]:
+            tension_score += 2
+            tension_elements.append("Passive nihilism - despair")
+
+        # Check morality
+        morality = analysis["morality"]
+        if "Slave Morality" in morality["type"]:
+            tension_score += 1
+            tension_elements.append("Slave morality - resentment-based")
+
+        # Check ressentiment
+        ressentiment = analysis["ressentiment"]
+        if ressentiment["level"] in ["High", "Medium"]:
+            tension_score += 1
+            tension_elements.append(f"Ressentiment present: {ressentiment['presence']}")
+
+        # Check amor fati
+        amor_fati = analysis["amor_fati"]
+        if "Rejection" in amor_fati["presence"]:
+            tension_score += 1
+            tension_elements.append("Rejection of fate")
+
+        # Determine tension level
+        if tension_score >= 6:
+            level = "Very High"
+            description = "Severe life-denial and nihilistic despair"
+        elif tension_score >= 4:
+            level = "High"
+            description = "Significant tensions - slave morality and weak will"
+        elif tension_score >= 2:
+            level = "Moderate"
+            description = "Some tensions in life affirmation"
+        elif tension_score >= 1:
+            level = "Low"
+            description = "Minor tensions, generally life-affirming"
+        else:
+            level = "Very Low"
+            description = "Aligned with Übermensch and life affirmation"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements if tension_elements else ["No significant tensions"]
         }
 
     def _construct_reasoning(
