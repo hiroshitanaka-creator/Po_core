@@ -42,20 +42,12 @@ class Derrida(Philosopher):
         Returns:
             Dictionary containing Derrida's deconstructive analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         # Perform deconstructive analysis
         analysis = self._deconstruct(prompt)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Deconstructionist",
-            "tension": tension,
             "binary_oppositions": analysis["binaries"],
             "traces": analysis["traces"],
             "differance": analysis["differance"],
@@ -291,67 +283,3 @@ class Derrida(Philosopher):
         )
 
         return reasoning
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Derridean tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tensions in binary oppositions
-        binaries = analysis["binaries"]
-        for binary in binaries:
-            if "Hierarchical opposition detected" in binary["note"]:
-                tension_elements.append(f"Binary opposition tension: {binary['opposition']}")
-
-        # Tensions in différance (deferred meaning)
-        differance = analysis["differance"]
-        if differance["temporal_deferral"] and differance["spatial_difference"]:
-            tension_elements.append("Meaning fully deferred - instability through différance")
-
-        # Tensions in contradictions
-        contradictions = analysis["contradictions"]
-        for contradiction in contradictions:
-            if "Latent" not in contradiction:
-                tension_elements.append(f"Internal contradiction: {contradiction}")
-
-        # Tensions in excluded elements
-        excluded = analysis["excluded"]
-        if len(excluded) > 0:
-            for exclusion in excluded[:2]:  # Take first 2 to avoid too many
-                tension_elements.append(f"Exclusion tension: {exclusion}")
-
-        # Tension from traces (what is absent but shapes present)
-        traces = analysis["traces"]
-        if len(traces) > 0:
-            tension_elements.append(f"Trace tension: {traces[0]}")
-
-        # Determine tension level based on deconstruction
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "Minimal deconstructible tensions - relatively stable meaning"
-        elif tension_count <= 2:
-            level = "Low"
-            description = "Minor tensions and contradictions in the text"
-        elif tension_count <= 4:
-            level = "Moderate"
-            description = "Moderate instability - binary oppositions and contradictions present"
-        elif tension_count <= 6:
-            level = "High"
-            description = "Significant tensions - text undermines its own stability"
-        else:
-            level = "Very High"
-            description = "Severe tensions - text caught in multiple contradictions and aporias"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }

@@ -104,7 +104,7 @@ Changelog = "https://github.com/hiroshitanaka-creator/Po_core/blob/main/CHANGELO
 po-core = "po_core.cli:main"
 po-self = "po_core.po_self:cli"
 po-trace = "po_core.po_trace:cli"
-po-viewer = "po_core.po_viewer:cli"
+po-interactive = "po_core.cli.interactive:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

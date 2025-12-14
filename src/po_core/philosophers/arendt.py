@@ -27,7 +27,7 @@ Key Concepts:
 8. Freedom - Freedom realized through action in the public realm
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from po_core.philosophers.base import Philosopher
 
@@ -59,85 +59,32 @@ class Arendt(Philosopher):
         Returns:
             Dictionary containing Arendtian analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
-        # Perform Arendtian analysis
-        analysis = self._analyze_political_action(text)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
-
-        return {
-            "reasoning": analysis["reasoning"],
-            "perspective": "Political Philosophy / Human Condition",
-            "tension": tension,
-            "vita_activa": analysis["vita_activa"],
-            "natality": analysis["natality"],
-            "public_private_realm": analysis["public_private"],
-            "plurality": analysis["plurality"],
-            "evil_analysis": analysis["evil_analysis"],
-            "totalitarian_elements": analysis["totalitarian"],
-            "political_judgment": analysis["judgment"],
-            "freedom": analysis["freedom"],
-            "metadata": {
-                "philosopher": self.name,
-                "approach": "Analysis of action, natality, and the public sphere",
-                "focus": "Vita activa, plurality, and political freedom"
-            }
-        }
-
-    def _analyze_political_action(self, text: str) -> Dict[str, Any]:
-        """
-        Perform Arendtian political analysis.
-
-        Args:
-            text: The text to analyze
-
-        Returns:
-            Analysis results
-        """
-        # Analyze vita activa
         vita_activa = self._analyze_vita_activa(text)
-
-        # Assess natality
         natality = self._assess_natality(text)
-
-        # Detect public/private realm
         public_private = self._detect_public_private(text)
-
-        # Evaluate plurality
         plurality = self._evaluate_plurality(text)
-
-        # Analyze evil
         evil_analysis = self._analyze_evil(text)
-
-        # Detect totalitarian elements
         totalitarian = self._detect_totalitarian(text)
-
-        # Assess judgment
         judgment = self._assess_judgment(text)
-
-        # Evaluate freedom
         freedom = self._evaluate_freedom(text)
 
-        # Construct reasoning
-        reasoning = self._construct_reasoning(
-            vita_activa, natality, public_private, plurality,
-            evil_analysis, totalitarian, judgment, freedom
-        )
-
         return {
-            "reasoning": reasoning,
-            "vita_activa": vita_activa,
-            "natality": natality,
-            "public_private": public_private,
-            "plurality": plurality,
-            "evil_analysis": evil_analysis,
-            "totalitarian": totalitarian,
-            "judgment": judgment,
-            "freedom": freedom
+            "philosopher": self.name,
+            "description": self.description,
+            "analysis": {
+                "vita_activa": vita_activa,
+                "natality": natality,
+                "public_private_realm": public_private,
+                "plurality": plurality,
+                "evil_analysis": evil_analysis,
+                "totalitarian_elements": totalitarian,
+                "political_judgment": judgment,
+                "freedom": freedom
+            },
+            "summary": self._generate_summary(
+                vita_activa, natality, public_private, plurality,
+                evil_analysis, totalitarian, judgment, freedom
+            )
         }
 
     def _analyze_vita_activa(self, text: str) -> Dict[str, Any]:
@@ -407,83 +354,7 @@ class Arendt(Philosopher):
             "interpretation": "Text expresses political freedom - freedom realized through action in the public sphere." if political_freedom else "Freedom without strong political dimension." if has_freedom > 0 else "Limited engagement with freedom."
         }
 
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Arendtian tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension in vita activa - labor dominating over action
-        vita_activa = analysis["vita_activa"]
-        if vita_activa["dominant_mode"] == "labor" and vita_activa["action_present"]:
-            tension_elements.append("Labor dominates over action - biological necessity overshadows political freedom")
-        elif vita_activa["dominant_mode"] == "labor" and not vita_activa["action_present"]:
-            tension_elements.append("Trapped in labor - no political action, reduced to mere life process")
-
-        # Tension between public and private realms
-        public_private = analysis["public_private"]
-        if public_private["dominant_realm"] == "private" and public_private["public_score"] == 0:
-            tension_elements.append("Entirely private realm - no space of appearance, political action impossible")
-        elif public_private["dominant_realm"] == "private" and vita_activa["action_present"]:
-            tension_elements.append("Tension between private emphasis and need for public action")
-
-        # Tension regarding plurality
-        plurality = analysis["plurality"]
-        if not plurality["plurality_present"] and vita_activa["action_present"]:
-            tension_elements.append("Action without plurality - political action requires recognition of human distinctness")
-
-        # Tension regarding natality
-        natality = analysis["natality"]
-        if not natality["natality_present"] and vita_activa["dominant_mode"] == "action":
-            tension_elements.append("Action present but natality absent - new beginnings not recognized")
-
-        # Tension from totalitarian elements
-        totalitarian = analysis["totalitarian"]
-        if totalitarian["totalitarian_elements"]:
-            tension_elements.append("Totalitarian elements present - threat to plurality and public realm")
-
-        # Tension regarding judgment
-        judgment = analysis["judgment"]
-        freedom = analysis["freedom"]
-        if freedom["political_freedom"] and not judgment["judgment_present"]:
-            tension_elements.append("Political freedom without judgment - action without thinking what we are doing")
-
-        # Tension from banality of evil
-        evil_analysis = analysis["evil_analysis"]
-        if evil_analysis["banality_of_evil"]:
-            tension_elements.append("Banality of evil present - thoughtless evil within bureaucratic systems")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "No significant tensions detected - text aligns with Arendtian ideals of political action and plurality"
-        elif tension_count == 1:
-            level = "Low"
-            description = "Minor tension detected in Arendtian analysis"
-        elif tension_count == 2:
-            level = "Moderate"
-            description = "Moderate tensions between political ideals and current state"
-        elif tension_count <= 4:
-            level = "High"
-            description = "Significant tensions across multiple Arendtian dimensions"
-        else:
-            level = "Very High"
-            description = "Severe tensions - substantial deviation from political action and human condition"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }
-
-    def _construct_reasoning(
+    def _generate_summary(
         self,
         vita_activa: Dict[str, Any],
         natality: Dict[str, Any],
@@ -494,43 +365,30 @@ class Arendt(Philosopher):
         judgment: Dict[str, Any],
         freedom: Dict[str, Any]
     ) -> str:
-        """Construct Arendtian reasoning."""
-        reasoning = (
-            f"From Arendt's perspective, this text emphasizes {vita_activa['dominant_mode']} within the vita activa. "
-            f"{vita_activa['interpretation']} "
-        )
+        """Generate an Arendtian summary of the analysis."""
+        parts = []
 
-        # Add public/private realm analysis
-        reasoning += f"The {public_private['dominant_realm']} realm is emphasized. "
+        parts.append(f"The text emphasizes {vita_activa['dominant_mode']} within the vita activa.")
 
-        # Add natality if present
         if natality["natality_present"]:
-            reasoning += "Natality - the capacity for new beginnings - is present. "
+            parts.append("It expresses natality - the human capacity for new beginnings.")
 
-        # Add plurality if present
+        if public_private["dominant_realm"] != "balanced":
+            parts.append(f"The {public_private['dominant_realm']} realm dominates.")
+
         if plurality["plurality_present"]:
-            reasoning += "Human plurality is recognized - the condition of living together as distinct beings. "
+            parts.append("It acknowledges human plurality - living together as distinct beings.")
 
-        # Add judgment
-        if judgment["judgment_present"]:
-            reasoning += "Political judgment is engaged - thinking what we are doing. "
-
-        # Add freedom
-        if freedom["political_freedom"]:
-            reasoning += "Political freedom is expressed - freedom through action in the public sphere. "
-
-        # Add totalitarian warning if present
-        if totalitarian["totalitarian_elements"]:
-            reasoning += "Warning: totalitarian elements threaten plurality and the public realm. "
-
-        # Add banality of evil if present
         if evil_analysis["banality_of_evil"]:
-            reasoning += "The banality of evil appears - thoughtless wrongdoing within systems. "
+            parts.append("It suggests the banality of evil - thoughtless, ordinary wrongdoing.")
 
-        # Conclude with Arendtian principle
-        reasoning += (
-            "For Arendt, true human freedom is realized through political action in the public sphere, "
-            "where we reveal who we are through speech and deeds among our equals."
-        )
+        if totalitarian["totalitarian_elements"]:
+            parts.append("Totalitarian elements present - domination destroying plurality.")
 
-        return reasoning
+        if judgment["judgment_present"]:
+            parts.append("It engages political judgment - thinking what we are doing.")
+
+        if freedom["political_freedom"]:
+            parts.append("It expresses political freedom - freedom through action in the public sphere.")
+
+        return " ".join(parts)

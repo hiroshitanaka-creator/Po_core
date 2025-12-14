@@ -19,7 +19,7 @@ Key Concepts:
 - Mono no aware (物の哀れ): Awareness of transience, poignant beauty of impermanence
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -49,20 +49,12 @@ class WabiSabi(Philosopher):
         Returns:
             Dictionary containing Wabi-Sabi aesthetic analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         # Perform Wabi-Sabi analysis
         analysis = self._analyze_aesthetic(prompt)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Japanese Aesthetic Philosophy",
-            "tension": tension,
             "imperfection": analysis["imperfection"],
             "impermanence": analysis["impermanence"],
             "simplicity": analysis["simplicity"],
@@ -124,7 +116,7 @@ class WabiSabi(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            imperfection, impermanence, simplicity, naturalness, overall
+            imperfection, impermanence, simplicity, overall
         )
 
         return {
@@ -606,7 +598,6 @@ class WabiSabi(Philosopher):
         imperfection: Dict[str, Any],
         impermanence: Dict[str, Any],
         simplicity: Dict[str, Any],
-        naturalness: Dict[str, Any],
         overall: Dict[str, Any]
     ) -> str:
         """Construct wabi-sabi aesthetic reasoning."""
@@ -614,7 +605,6 @@ class WabiSabi(Philosopher):
             f"From a wabi-sabi aesthetic perspective, imperfection: {imperfection['description']}. "
             f"Impermanence: {impermanence['description']}. "
             f"Simplicity: {simplicity['description']}. "
-            f"Naturalness: {naturalness['description']}. "
             f"Overall assessment: {overall['description']}. "
         )
 
@@ -625,79 +615,3 @@ class WabiSabi(Philosopher):
         )
 
         return reasoning
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Wabi-Sabi tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension in imperfection
-        imperfection = analysis["imperfection"]
-        if imperfection["quality"] == "Not wabi-sabi":
-            tension_elements.append("Seeking perfection - opposed to wabi-sabi acceptance of imperfection")
-
-        # Tension in impermanence
-        impermanence = analysis["impermanence"]
-        if impermanence["quality"] == "Not wabi-sabi":
-            tension_elements.append("Seeking permanence - denying transience and change")
-
-        # Tension in simplicity
-        simplicity = analysis["simplicity"]
-        if simplicity["quality"] == "Not wabi-sabi":
-            tension_elements.append("Complexity and ornamentation - opposed to simple austerity")
-
-        # Tension in naturalness
-        naturalness = analysis["naturalness"]
-        if naturalness["quality"] == "Not wabi-sabi":
-            tension_elements.append("Artificiality - lacking natural authenticity")
-
-        # Tension in asymmetry
-        asymmetry = analysis["asymmetry"]
-        if asymmetry["quality"] == "Not wabi-sabi":
-            tension_elements.append("Symmetry seeking - opposed to irregular beauty")
-
-        # Tension in intimacy
-        intimacy = analysis["intimacy"]
-        if intimacy["quality"] == "Not wabi-sabi":
-            tension_elements.append("Grandiosity - opposed to modest humility")
-
-        # Tension in yugen
-        yugen = analysis["yugen"]
-        if yugen["quality"] == "Not yugen":
-            tension_elements.append("Explicitness - lacking profound subtlety")
-
-        # Tension in ma
-        ma = analysis["ma"]
-        if ma["quality"] == "Not ma":
-            tension_elements.append("Fullness and crowding - lacking negative space")
-
-        # Determine tension level based on overall assessment
-        overall = analysis["overall"]
-        if overall["level"] == "Absent":
-            level = "Very High"
-            description = "Fundamentally opposed to wabi-sabi - seeking perfection, permanence, complexity"
-        elif overall["level"] == "Indeterminate":
-            level = "Moderate"
-            description = "Unclear relationship to wabi-sabi principles"
-        elif overall["level"] == "Nascent":
-            level = "Low"
-            description = "Emerging wabi-sabi awareness with minor tensions"
-        elif overall["level"] == "Present":
-            level = "Very Low"
-            description = "Clear wabi-sabi qualities with minimal tensions"
-        else:  # Profound
-            level = "Very Low"
-            description = "Deep embodiment of wabi-sabi with no significant tensions"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }

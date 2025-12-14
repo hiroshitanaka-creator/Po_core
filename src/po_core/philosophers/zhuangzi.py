@@ -57,10 +57,6 @@ class Zhuangzi(Philosopher):
         Returns:
             Dictionary containing Daoist analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         dao = self._assess_dao(text)
         wu_wei = self._assess_wu_wei(text)
         ziran = self._assess_ziran(text)
@@ -71,27 +67,9 @@ class Zhuangzi(Philosopher):
         transformation = self._assess_transformation(text)
         uselessness = self._assess_uselessness(text)
 
-        # Collect analysis for tension identification
-        analysis = {
-            "dao": dao,
-            "wu_wei": wu_wei,
-            "ziran": ziran,
-            "qi": qi,
-            "xiaoyaoyou": xiaoyaoyou,
-            "qiwulun": qiwulun,
-            "dream": dream,
-            "transformation": transformation,
-            "uselessness": uselessness
-        }
-
-        # Identify tensions
-        tension = self._identify_tension(analysis)
-
         return {
             "philosopher": self.name,
             "description": self.description,
-            "perspective": "Daoist Philosophy",
-            "tension": tension,
             "analysis": {
                 "dao_the_way": dao,
                 "wu_wei_non_action": wu_wei,
@@ -383,71 +361,3 @@ class Zhuangzi(Philosopher):
             parts.append("Text shows limited engagement with core Daoist themes.")
 
         return " ".join(parts)
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Daoist tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension regarding Dao
-        if not analysis["dao"]["dao_present"]:
-            tension_elements.append("Limited connection to Dao - lacking natural Way")
-
-        # Tension in wu wei
-        if not analysis["wu_wei"]["wu_wei_present"]:
-            tension_elements.append("Absence of wu wei - forcing and striving rather than effortless action")
-
-        # Tension in ziran (naturalness)
-        if not analysis["ziran"]["ziran_present"]:
-            tension_elements.append("Lacking naturalness - artifice and contrivance")
-
-        # Tension in qi (vital energy)
-        if not analysis["qi"]["qi_present"]:
-            tension_elements.append("No vital energy - disconnected from life force")
-
-        # Tension in xiaoyaoyou (freedom)
-        if not analysis["xiaoyaoyou"]["xiaoyaoyou_present"]:
-            tension_elements.append("Lacking spiritual freedom - constrained wandering")
-
-        # Tension in qiwulun (relativity)
-        if not analysis["qiwulun"]["qiwulun_present"]:
-            tension_elements.append("Fixed distinctions - lacking relativity of perspectives")
-
-        # Tension in dream/reality
-        if not analysis["dream"]["dream_reality_present"]:
-            tension_elements.append("No questioning of reality - accepting appearances as absolute")
-
-        # Tension in transformation
-        if not analysis["transformation"]["transformation_present"]:
-            tension_elements.append("Resistance to change - opposing natural transformation")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "Strong alignment with Daoist principles of naturalness and spontaneity"
-        elif tension_count <= 2:
-            level = "Low"
-            description = "Minor tensions in Daoist framework"
-        elif tension_count <= 4:
-            level = "Moderate"
-            description = "Moderate tensions between naturalness and artifice"
-        elif tension_count <= 6:
-            level = "High"
-            description = "Significant opposition to Daoist principles - forcing and fixation"
-        else:
-            level = "Very High"
-            description = "Severe tensions - substantial departure from the Way"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }
