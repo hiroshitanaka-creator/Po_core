@@ -50,9 +50,13 @@ class Kierkegaard(Philosopher):
         # Perform Kierkegaardian analysis
         analysis = self._analyze_existence(prompt)
 
+        # Calculate tension
+        tension = self._calculate_tension(analysis)
+
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Existential Philosophy",
+            "tension": tension,
             "life_stage": analysis["stage"],
             "anxiety": analysis["anxiety"],
             "despair": analysis["despair"],
@@ -628,3 +632,76 @@ class Kierkegaard(Philosopher):
         )
 
         return reasoning
+
+    def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate philosophical tension based on Kierkegaardian analysis.
+
+        Tensions arise from:
+        - Despair (sickness unto death)
+        - High anxiety without faith
+        - Lost in the crowd (not an individual)
+        - Aesthetic stage (lowest stage)
+        - Lack of faith or leap
+        """
+        tension_score = 0
+        tension_elements = []
+
+        # Check despair
+        despair = analysis["despair"]
+        if "Despair" in despair["type"] and "No Despair" not in despair["type"]:
+            tension_score += 2
+            tension_elements.append(f"Despair present: {despair['type']}")
+
+        # Check anxiety
+        anxiety = analysis["anxiety"]
+        if anxiety["intensity"] in ["High", "Profound"]:
+            tension_score += 1
+            tension_elements.append(f"Existential anxiety: {anxiety['presence']}")
+
+        # Check faith
+        faith = analysis["faith"]
+        if "No Faith" in faith["type"] or "Doubt" in faith["type"]:
+            tension_score += 1
+            tension_elements.append("Lack of faith")
+
+        # Check individuality
+        individual = analysis["individual"]
+        if "Lost in the Crowd" in individual["status"]:
+            tension_score += 2
+            tension_elements.append("Lost in the crowd - not an individual")
+
+        # Check life stage
+        stage = analysis["stage"]
+        if stage["stage"] == "Aesthetic Stage":
+            tension_score += 1
+            tension_elements.append("Aesthetic existence (lowest stage)")
+
+        # Check leap
+        leap = analysis["leap"]
+        if "Evasion" in leap["mode"] or "Indeterminate" in leap["mode"]:
+            tension_score += 1
+            tension_elements.append("Avoiding the leap of faith")
+
+        # Determine tension level
+        if tension_score >= 5:
+            level = "Very High"
+            description = "Deep existential crisis - despair and inauthenticity"
+        elif tension_score >= 3:
+            level = "High"
+            description = "Significant existential tensions"
+        elif tension_score >= 2:
+            level = "Moderate"
+            description = "Some existential struggles present"
+        elif tension_score >= 1:
+            level = "Low"
+            description = "Minor tensions in existence"
+        else:
+            level = "Very Low"
+            description = "Aligned with authentic individual existence"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements if tension_elements else ["No significant tensions"]
+        }

@@ -44,9 +44,13 @@ class Heidegger(Philosopher):
         # Basic existential analysis
         analysis = self._analyze_being(prompt)
 
+        # Calculate tension
+        tension = self._calculate_tension(analysis)
+
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Phenomenological / Existential",
+            "tension": tension,
             "key_concepts": analysis["concepts"],
             "questions": analysis["questions"],
             "temporal_dimension": analysis["temporality"],
@@ -129,4 +133,61 @@ class Heidegger(Philosopher):
             "questions": questions,
             "temporality": temporality,
             "authenticity": authenticity
+        }
+
+    def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate philosophical tension based on Heideggerian analysis.
+
+        Tensions arise from:
+        - Inauthenticity (Das Man / they-self)
+        - Single-temporal awareness
+        - Lack of existential concepts
+        - Being-in-the-world not properly understood
+        """
+        tension_score = 0
+        tension_elements = []
+
+        # Check authenticity
+        authenticity = analysis["authenticity"]
+        if "Das Man" in authenticity:
+            tension_score += 2
+            tension_elements.append("Inauthentic mode of being (Das Man)")
+        elif "Neutral" in authenticity:
+            tension_score += 1
+            tension_elements.append("Unclear authentic/inauthentic status")
+
+        # Check temporal awareness
+        temporality = analysis["temporality"]
+        if temporality["temporal_awareness"] == "Single-temporal":
+            tension_score += 1
+            tension_elements.append("Limited temporal awareness")
+
+        # Check for meaningful existential concepts
+        concepts = analysis["concepts"]
+        if len(concepts) <= 1 and "Being-in-the-world" in concepts:
+            tension_score += 1
+            tension_elements.append("Limited existential understanding")
+
+        # Determine tension level
+        if tension_score >= 4:
+            level = "Very High"
+            description = "Significant disconnection from authentic being"
+        elif tension_score >= 3:
+            level = "High"
+            description = "Notable tensions in existence and temporality"
+        elif tension_score >= 2:
+            level = "Moderate"
+            description = "Some tensions in authentic being"
+        elif tension_score >= 1:
+            level = "Low"
+            description = "Minor tensions, generally authentic"
+        else:
+            level = "Very Low"
+            description = "Aligned with authentic Dasein"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements if tension_elements else ["No significant tensions"]
         }

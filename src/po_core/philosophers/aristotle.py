@@ -49,9 +49,13 @@ class Aristotle(Philosopher):
         # Perform Aristotelian analysis
         analysis = self._analyze_virtue(prompt)
 
+        # Calculate tension
+        tension = self._calculate_tension(analysis)
+
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Virtue Ethics / Teleology",
+            "tension": tension,
             "virtue_assessment": analysis["virtue"],
             "golden_mean": analysis["mean"],
             "eudaimonia_level": analysis["eudaimonia"],
@@ -508,6 +512,77 @@ class Aristotle(Philosopher):
             "formation": formation,
             "description": description,
             "note": "We become virtuous by performing virtuous acts - character follows action"
+        }
+
+    def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate philosophical tension based on Aristotelian analysis.
+
+        Tensions arise from:
+        - Deviation from the golden mean (excess or deficiency)
+        - Low eudaimonia
+        - Unclear telos
+        - Lack of virtue
+        - Low practical wisdom
+        """
+        tension_score = 0
+        tension_elements = []
+
+        # Check golden mean status
+        mean_status = analysis["mean"]["status"]
+        if mean_status in ["Vicious (excess)", "Vicious (deficiency)"]:
+            tension_score += 2
+            tension_elements.append(f"Deviation from mean: {analysis['mean']['position']}")
+        elif mean_status == "Unstable":
+            tension_score += 1
+            tension_elements.append("Oscillating between excess and deficiency")
+
+        # Check eudaimonia level
+        eudaimonia_level = analysis["eudaimonia"]["level"]
+        if "No Clear" in eudaimonia_level:
+            tension_score += 2
+            tension_elements.append("Lack of human flourishing (eudaimonia)")
+        elif "Low" in eudaimonia_level:
+            tension_score += 1
+            tension_elements.append("Limited eudaimonia")
+
+        # Check telos clarity
+        if "No Clear" in analysis["telos"]["type"]:
+            tension_score += 1
+            tension_elements.append("Unclear purpose (telos)")
+
+        # Check virtue presence
+        if analysis["virtue"]["count"] == 0:
+            tension_score += 1
+            tension_elements.append("No virtues identified")
+
+        # Check practical wisdom
+        phronesis_level = analysis["phronesis"]["level"]
+        if "No Clear" in phronesis_level or "Low" in phronesis_level:
+            tension_score += 1
+            tension_elements.append("Limited practical wisdom (phronesis)")
+
+        # Determine tension level
+        if tension_score >= 5:
+            level = "Very High"
+            description = "Significant deviation from Aristotelian virtue and flourishing"
+        elif tension_score >= 3:
+            level = "High"
+            description = "Notable tensions in virtue and eudaimonia"
+        elif tension_score >= 2:
+            level = "Moderate"
+            description = "Some tensions present in ethical living"
+        elif tension_score >= 1:
+            level = "Low"
+            description = "Minor tensions, generally aligned with virtue"
+        else:
+            level = "Very Low"
+            description = "Well-aligned with Aristotelian virtue ethics"
+
+        return {
+            "level": level,
+            "description": description,
+            "elements": tension_elements if tension_elements else ["No significant tensions"]
         }
 
     def _construct_reasoning(
