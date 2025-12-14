@@ -49,20 +49,12 @@ class Peirce(Philosopher):
         Returns:
             Dictionary containing Peirce's pragmatic analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         # Perform Peircean analysis
         analysis = self._analyze_pragmatic(prompt)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Pragmatism and Semiotics",
-            "tension": tension,
             "semiotics": analysis["semiotics"],
             "inference": analysis["inference"],
             "categories": analysis["categories"],
@@ -665,83 +657,3 @@ class Peirce(Philosopher):
         )
 
         return reasoning
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Peircean tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension in semiotics
-        semiotics = analysis["semiotics"]
-        if semiotics["structure"] == "None":
-            tension_elements.append("No semiotic relation - lacking sign-object-interpretant structure")
-        elif semiotics["structure"] == "Monadic":
-            tension_elements.append("Incomplete semiosis - not yet triadic relation")
-
-        # Tension in inference
-        inference = analysis["inference"]
-        if inference["mode"] == "None":
-            tension_elements.append("No clear inference - lacking reasoning structure")
-
-        # Tension in belief-doubt
-        belief_doubt = analysis["belief_doubt"]
-        if belief_doubt["mode"] == "Indeterminate":
-            tension_elements.append("Belief-doubt status unclear - inquiry direction uncertain")
-
-        # Tension in inquiry
-        inquiry = analysis["inquiry"]
-        if inquiry["approach"] == "None":
-            tension_elements.append("Absence of inquiry - no investigation present")
-
-        # Tension in pragmatic maxim
-        pragmatic_maxim = analysis["pragmatic_maxim"]
-        if pragmatic_maxim["mode"] == "Non-pragmatic":
-            tension_elements.append("Abstract without practical grounding - violates pragmatic maxim")
-        elif pragmatic_maxim["mode"] == "Indeterminate":
-            tension_elements.append("Pragmatic application unclear - meaning not tied to effects")
-
-        # Tension in fallibilism
-        fallibilism = analysis["fallibilism"]
-        if fallibilism["attitude"] == "Dogmatic":
-            tension_elements.append("Infallibilist stance - claiming absolute certainty")
-
-        # Tension in community
-        community = analysis["community"]
-        if community["nature"] == "Isolated":
-            tension_elements.append("Individual inquiry - lacking community of investigators")
-
-        # Tension in continuity
-        continuity = analysis["continuity"]
-        if continuity["character"] == "Discrete":
-            tension_elements.append("Discontinuity emphasis - opposed to synechism")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "Strong alignment with Peircean pragmatism and semiotics"
-        elif tension_count <= 2:
-            level = "Low"
-            description = "Minor tensions in pragmatic framework"
-        elif tension_count <= 4:
-            level = "Moderate"
-            description = "Moderate tensions in semiotic and pragmatic structure"
-        elif tension_count <= 6:
-            level = "High"
-            description = "Significant opposition to pragmatic inquiry and fallibilism"
-        else:
-            level = "Very High"
-            description = "Severe tensions - substantial departure from Peircean philosophy"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }

@@ -4,18 +4,13 @@ Po_core CLI - Main Command Line Interface
 Entry point for the po-core command.
 """
 
-import json
-from typing import Iterable
-
 import click
 from rich.console import Console
 from rich.table import Table
 
 from po_core import __author__, __email__, __version__
-from po_core.po_self import PoSelf
 
 console = Console()
-SAMPLE_PROMPT = "What does it mean to live authentically?"
 
 
 @click.group()
@@ -30,60 +25,28 @@ def main() -> None:
     pass
 
 
-def _format_prompt_output(data: dict, *, keys: Iterable[str]) -> str:
-    """Render a compact text view for prompt results."""
-
-    lines = []
-    for key in keys:
-        value = data.get(key, "")
-        lines.append(f"{key.capitalize()}: {value}")
-    return "\n".join(lines)
-
-
-def _render_sample_generation(prompt: str) -> str:
-    response = PoSelf().generate(prompt)
-    attributions = ", ".join(response.philosophers)
-    metrics = ", ".join(f"{k}={v}" for k, v in response.metrics.items())
-    leader = response.consensus_leader or "Unknown"
-    return (
-        f"Prompt: {prompt}\n"
-        f"Consensus Lead: {leader}\n"
-        f"Philosophers: {attributions}\n"
-        f"Metrics: {metrics}\n"
-    )
-
-
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
-def hello(sample: bool) -> None:
+def hello() -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
     console.print("Philosophy-Driven AI System - Alpha v0.1.0")
     console.print("\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]")
-    if sample:
-        console.print("\n[dim]Running Po_self sample...[/dim]")
-        console.print(_render_sample_generation(SAMPLE_PROMPT))
 
 
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
-def status(sample: bool) -> None:
+def status() -> None:
     """Show project status"""
     console.print("[bold]📊 Po_core Project Status[/bold]\n")
     console.print("✅ Philosophical Framework: 100%")
     console.print("✅ Documentation: 100%")
     console.print("✅ Architecture Design: 100%")
-    console.print("🔄 Implementation: 60% (ensemble + Po_trace)")
-    console.print("🔄 Testing: 20% (unit coverage for ensemble/CLI)")
-    console.print("⏳ Visualization: 10% (CLI stub, visuals pending)")
-    if sample:
-        console.print("\n[dim]Running Po_self sample...[/dim]")
-        console.print(_render_sample_generation(SAMPLE_PROMPT))
+    console.print("🔄 Implementation: 30%")
+    console.print("⏳ Testing: 0%")
+    console.print("⏳ Visualization: 0%")
 
 
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
-def version(sample: bool) -> None:
+def version() -> None:
     """Show version information"""
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(style="bold cyan")
@@ -98,105 +61,6 @@ def version(sample: bool) -> None:
     console.print("\n")
     console.print(table)
     console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
-    if sample:
-        console.print("\n[dim]Running Po_self sample...[/dim]")
-        console.print(_render_sample_generation(SAMPLE_PROMPT))
-
-
-@main.command()
-@click.argument("prompt")
-@click.option(
-    "--format",
-    "output_format",
-    type=click.Choice(["text", "json"], case_sensitive=False),
-    default="json",
-    help="Choose between text or JSON output.",
-)
-def prompt(prompt: str, output_format: str) -> None:
-    """Run the deterministic ensemble against a prompt."""
-
-    response = PoSelf().generate(prompt)
-    if output_format.lower() == "json":
-        # 余計なprint等は一切禁止
-        click.echo(json.dumps(response.to_dict(), ensure_ascii=False))
-    else:
-        # 非JSON出力の場合のみconsole.printを使用
-        console.print(
-            _format_prompt_output(
-                response.to_dict(),
-                keys=["prompt", "text", "philosophers"],
-            )
-        )
-
-
-@main.command()
-@click.argument("prompt")
-def log(prompt: str) -> None:
-    """Display the audit log for a deterministic ensemble run."""
-
-    run_data = PoSelf().generate(prompt)
-    # 余計なprint等は一切禁止
-    click.echo(json.dumps(run_data.log, ensure_ascii=False))
-
-
-@main.command()
-@click.option(
-    "--theme",
-    type=str,
-    help="Philosophical theme (ethics, existence, knowledge, etc.)",
-)
-@click.option(
-    "--mood",
-    type=click.Choice(["calm", "balanced", "chaotic", "critical"], case_sensitive=False),
-    default="balanced",
-    help="Party atmosphere/mood",
-)
-@click.option(
-    "--quick",
-    is_flag=True,
-    help="Quick demo mode (non-interactive)",
-)
-def party(theme: str, mood: str, quick: bool) -> None:
-    """
-    🎉 Start an interactive philosopher party!
-
-    Automatically assembles optimal philosopher combinations based on
-    research findings. Select a theme and mood, watch philosophy come alive!
-
-    Examples:
-        po-core party --theme ethics --mood balanced
-        po-core party --quick
-        po-core party  (interactive mode)
-    """
-    import subprocess
-    import sys
-    from pathlib import Path
-
-    # Find the po_party_demo.py script
-    demo_script = Path(__file__).parent.parent.parent / "examples" / "po_party_demo.py"
-
-    if not demo_script.exists():
-        console.print("[red]Error: po_party_demo.py not found[/red]")
-        console.print(f"[dim]Expected location: {demo_script}[/dim]")
-        return
-
-    # Build command
-    cmd = [sys.executable, str(demo_script)]
-
-    if quick:
-        cmd.append("--quick")
-    elif theme:
-        # For now, just run interactive mode
-        # Future: pass theme and mood as args
-        console.print(f"[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]")
-
-    # Run the demo
-    try:
-        subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError as e:
-        console.print(f"[red]Error running party: {e}[/red]")
-    except KeyboardInterrupt:
-        console.print("\n[yellow]Party interrupted. Goodbye! 👋[/yellow]")
 
 
 if __name__ == "__main__":

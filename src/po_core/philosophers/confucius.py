@@ -56,10 +56,6 @@ class Confucius(Philosopher):
         Returns:
             Dictionary containing Confucian analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         ren = self._assess_ren(text)
         li = self._assess_li(text)
         yi = self._assess_yi(text)
@@ -70,27 +66,9 @@ class Confucius(Philosopher):
         tianming = self._assess_tianming(text)
         learning = self._assess_learning(text)
 
-        # Collect analysis for tension identification
-        analysis = {
-            "ren": ren,
-            "li": li,
-            "yi": yi,
-            "xiao": xiao,
-            "junzi": junzi,
-            "zhong_shu": zhong_shu,
-            "de": de,
-            "tianming": tianming,
-            "learning": learning
-        }
-
-        # Identify tensions
-        tension = self._identify_tension(analysis)
-
         return {
             "philosopher": self.name,
             "description": self.description,
-            "perspective": "Confucian Ethics",
-            "tension": tension,
             "analysis": {
                 "ren_benevolence": ren,
                 "li_ritual_propriety": li,
@@ -393,72 +371,3 @@ class Confucius(Philosopher):
             parts.append("Text shows limited engagement with core Confucian values.")
 
         return " ".join(parts)
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Confucian tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension in ren (benevolence)
-        if not analysis["ren"]["ren_present"]:
-            tension_elements.append("Lack of ren - insufficient benevolence and humaneness")
-
-        # Tension in li (ritual propriety)
-        if not analysis["li"]["li_present"]:
-            tension_elements.append("Absence of li - improper conduct or disregard for ritual propriety")
-
-        # Tension in yi (righteousness)
-        if not analysis["yi"]["yi_present"]:
-            tension_elements.append("Deficiency in yi - weak moral commitment to what is right")
-
-        # Tension in xiao (filial piety)
-        if not analysis["xiao"]["xiao_present"]:
-            tension_elements.append("Lack of xiao - insufficient filial piety and family reverence")
-
-        # Tension in junzi (exemplary person)
-        if not analysis["junzi"]["junzi_present"]:
-            tension_elements.append("Distance from junzi ideal - limited moral cultivation")
-
-        # Tension in zhong and shu (loyalty and reciprocity)
-        zhong_shu = analysis["zhong_shu"]
-        if not zhong_shu["zhong_loyalty_present"] and not zhong_shu["shu_reciprocity_present"]:
-            tension_elements.append("Absence of both zhong and shu - lacking loyalty and reciprocity")
-
-        # Tension in de (virtue)
-        if not analysis["de"]["de_present"]:
-            tension_elements.append("Weak de - insufficient virtue and moral character")
-
-        # Tension in learning and cultivation
-        if not analysis["learning"]["learning_present"]:
-            tension_elements.append("Neglect of learning - limited self-cultivation and study")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "Strong alignment with Confucian virtues and principles"
-        elif tension_count <= 2:
-            level = "Low"
-            description = "Minor gaps in Confucian virtue cultivation"
-        elif tension_count <= 4:
-            level = "Moderate"
-            description = "Moderate tensions in embodying Confucian ideals"
-        elif tension_count <= 6:
-            level = "High"
-            description = "Significant deficiencies across multiple Confucian virtues"
-        else:
-            level = "Very High"
-            description = "Severe tensions - substantial departure from Confucian way of life"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }

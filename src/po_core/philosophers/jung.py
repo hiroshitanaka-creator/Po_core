@@ -44,20 +44,12 @@ class Jung(Philosopher):
         Returns:
             Dictionary containing Jung's psychological analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         # Perform Jungian analysis
         analysis = self._analyze_psyche(prompt)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Analytical Psychology",
-            "tension": tension,
             "archetypes_detected": analysis["archetypes"],
             "collective_unconscious_themes": analysis["collective_themes"],
             "individuation_stage": analysis["individuation"],
@@ -487,62 +479,3 @@ class Jung(Philosopher):
         )
 
         return reasoning
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Jungian tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension from shadow denial or projection
-        shadow = analysis["shadow"]
-        if "Denying" in shadow["status"]:
-            tension_elements.append("Shadow denial - actively repressing dark aspects of personality")
-        elif "Projecting" in shadow["status"]:
-            tension_elements.append("Shadow projection - disowning traits and projecting them onto others")
-        elif "Unconscious" in shadow["status"]:
-            tension_elements.append("Shadow unconscious - latent shadow material not yet confronted")
-
-        # Tension from early individuation stage
-        individuation = analysis["individuation"]
-        if "Persona Identification" in individuation["stage"]:
-            tension_elements.append("Persona identification - stuck in social mask, not yet individuating")
-        elif "Unconscious" in individuation["stage"] or "Pre-individuation" in individuation["stage"]:
-            tension_elements.append("Pre-individuation - development largely unconscious, Self not yet engaged")
-
-        # Tension from fragmented self-realization
-        self_realization = analysis["self_realization"]
-        if "Fragmented" in self_realization["level"]:
-            tension_elements.append("Psychic fragmentation - divided and conflicted, distant from Self")
-        elif "Ego-consciousness" in self_realization["level"]:
-            tension_elements.append("Ego-centered - identified with ego rather than integrated Self")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "No significant tensions - active shadow integration and individuation toward Self"
-        elif tension_count == 1:
-            level = "Low"
-            description = "Minor tension detected in Jungian analysis"
-        elif tension_count == 2:
-            level = "Moderate"
-            description = "Moderate tensions in psychological development and integration"
-        elif tension_count == 3:
-            level = "High"
-            description = "Significant tensions - substantial distance from individuation and wholeness"
-        else:
-            level = "Very High"
-            description = "Severe tensions - psychic fragmentation and shadow denial dominate"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }
