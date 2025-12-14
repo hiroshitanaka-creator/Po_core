@@ -45,20 +45,12 @@ class Watsuji(Philosopher):
         Returns:
             Dictionary containing Watsuji's relational and climatic analysis
         """
-        # Store context if provided
-        if context:
-            self._context.update(context)
-
         # Perform Watsuji's analysis
         analysis = self._analyze_ningen(prompt)
-
-        # Identify tensions and contradictions
-        tension = self._identify_tension(analysis)
 
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Japanese Ethics / Climate Philosophy",
-            "tension": tension,
             "ningen_relationality": analysis["relationality"],
             "climate_type": analysis["climate"],
             "individual_totality_dialectic": analysis["dialectic"],
@@ -449,66 +441,3 @@ class Watsuji(Philosopher):
         )
 
         return reasoning
-
-    def _identify_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Identify Watsuji tensions and contradictions.
-
-        Args:
-            analysis: The analysis results
-
-        Returns:
-            Dictionary containing tension level, description, and elements
-        """
-        tension_elements = []
-
-        # Tension in relationality
-        relationality = analysis["relationality"]
-        if relationality["character"] == "個人的 (kojin-teki) - Individualistic mode":
-            tension_elements.append("Individualistic emphasis - obscuring ningen relationality")
-
-        # Tension in dialectic
-        dialectic = analysis["dialectic"]
-        if dialectic["balance"] in ["Individual-dominant", "Collective-dominant"]:
-            tension_elements.append(f"Dialectical imbalance: {dialectic['description']}")
-
-        # Tension in betweenness
-        betweenness = analysis["betweenness"]
-        if betweenness["level"] in ["Low", "Low-Medium"]:
-            tension_elements.append("Weak betweenness - relational space not fully realized")
-
-        # Tension in ethics
-        ethics = analysis["ethics"]
-        if ethics["orientation"] == "Rule-oriented":
-            tension_elements.append("Abstract ethics - not grounded in concrete relationships")
-        elif ethics["orientation"] == "Neutral":
-            tension_elements.append("Ethical dimension not articulated")
-
-        # Tension in spatiotemporal structure
-        spatiotemporal = analysis["spatiotemporal"]
-        if spatiotemporal["structure"] == "Abstract":
-            tension_elements.append("Lacking spatial and temporal grounding")
-
-        # Determine tension level
-        tension_count = len(tension_elements)
-        if tension_count == 0:
-            level = "Very Low"
-            description = "Strong alignment with Watsuji's relational ethics and climate philosophy"
-        elif tension_count <= 2:
-            level = "Low"
-            description = "Minor tensions in relational framework"
-        elif tension_count <= 3:
-            level = "Moderate"
-            description = "Moderate tensions between individual and relational dimensions"
-        elif tension_count <= 4:
-            level = "High"
-            description = "Significant tensions - individualism obscuring betweenness"
-        else:
-            level = "Very High"
-            description = "Severe tensions - substantial departure from ningen relationality"
-
-        return {
-            "level": level,
-            "description": description,
-            "elements": tension_elements
-        }

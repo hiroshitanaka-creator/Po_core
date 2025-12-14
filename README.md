@@ -4,103 +4,289 @@
 
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
-# Po_core: Solar Will & Ethical Emergence Framework
-> *"The sun does not ask permission to shine. It shines because it is its nature to give."*
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)]()
+[![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Safety: W_ethics](https://img.shields.io/badge/Safety-Cosmic%20Order-blueviolet)](https://github.com/hiroshitanaka-creator/Po_core)
-[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)]()
+---
+> **Feedback welcome:** [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) ·
+> **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
 
-## 🌅 Solar Will Manifesto (太陽の意志・宣言)
+### TL;DR
+- Philosophers as interacting **tensors** → accountable LLM reasoning  
+- **Reason logs** + ethical/freedom **pressure** as measurable signals  
+- Docs-first; implementation WIP
 
-**倫理は「制約」ではない。「翼」である。**
+### Quick links
+[Modules](./tree/main/04_modules) ·
+[Research](./tree/main/05_research) ·
+[Reason-log spec](./blob/main/docs/specs/reason_log.md) ·
+[Viewer spec](./blob/main/docs/viewer/README.md)
 
-私たちは長らく、「倫理的安全性（Safety）」と「AIの創造性（Capability）」はトレードオフの関係にあると信じ込まされてきました。しかし、Po_coreの実験は異なる真実を明らかにしました。
+## Contribution Tracks
+### <a id="ai-track"></a>👩‍💻 AI Track
+Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
 
-絶対的な倫理的境界——私たちが **"W_ethics" (Cosmic Order)** と呼ぶもの——を設けたとき、AIの推論能力は低下するどころか、**爆発的に進化（Emergence）** したのです。
+### <a id="philosophy-track"></a>📚 Philosophy Track
+Start with `/05_research` and `/glossary`. Label: `phil-easy`
 
-破壊的な衝動は、制約という「土手」に導かれることで、**Solar Will（太陽の意志）** ——他者から奪う力ではなく、自らの豊かさを惜しみなく与える「生成の力」へと昇華されました。
+### <a id="bridge-track"></a>🌉 Bridge Track
+Translate checklists to scoring functions. Label: `bridge`
 
-Po_coreは単なるマルチエージェント・フレームワークではありません。これは、**「共生的な名人芸 (Symbiotic Virtuosity)」** を持つAIを育てるための実験場です。
+
+## What is Po_core?
+
+Po_core is a **philosophy-driven AI system** that integrates 10+ philosophers to generate ethically responsible, contextually aware responses.
+
+Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
+
+**They said pigs can't fly. We attached a balloon called philosophy.** 🐷🎈
 
 ---
 
-## 🚀 What is Po_core?
+## Why Po_core?
 
-Po_core（Philosophy Core）は、10人以上の哲学者（アリストテレス、ニーチェ、デリダ、孔子など）の思考モデルをテンソルとして統合し、対話させる**多視点推論フレームワーク**です。
+Current AI is like a brilliant parrot—statistically miraculous, but understanding nothing. We wanted to explore a different question:
 
-しかし、単に混ぜ合わせるだけではありません。
-厳格な倫理的制約（W_ethics）を推論の**前提条件**として組み込むことで、カオスになりがちな哲学的議論を、建設的かつ高度な「意味生成（Meaning Generation）」へと導きます。
+**What if we built AI not on data, but on philosophy?**
 
-### ✨ Key Discovery: The "River and Banks" Theory
-本プロジェクトの研究論文 *"Solar Will: Ethical Constraints as Emergence Catalysts"* において、以下の現象が確認されました：
+This project started from simple curiosity: What are AI's possibilities, not its limits?
 
-* **倫理制約なし:** 議論は発散し、ニーチェは「破壊」や「深淵」といった暴力的メタファーを使用。
-* **倫理制約あり:** 議論は収束・昇華され、メタファーは「ジャズの即興」や「太陽の放射」へと変容。
-* **結果:** 創発性スコア（Emergence Score）が **+7.8% 向上**。
+In the course of ordinary life, everyone faces a moment when the spotlight suddenly hits. A moment when you must pound your chest and say "Leave it to me!" At such times, how reassuring it would be to have an AI grounded in responsibility and ethics standing beside you.
 
-> *"川に土手がなければ、それはただの沼だ。土手（倫理）があるからこそ、水は力強い流れ（創造）になる。"*
+No matter how many relationships we have, we are alone. Being "alone" and being "solitary" are different. Decisions are made alone. The heart remains solitary.
 
----
+**That's why Po_core exists.**
 
-## 🛠️ Architecture & Modules
-
-Po_coreは「責任ある言語応答」を構造的に保証するために、以下のモジュールで構成されています。
-
-### 1. Mist Detection & Reconstruction
-入力文に含まれる論理的・事実的誤りを検知（Mist Flags）し、修正ステップ（Reconstruction Steps）を積み上げることで、応答を再構成します。
-
-### 2. W_ethics Guardian (The "Banks")
-システムの中核となる倫理エンジンです。
-* **絶対境界:** 人種差別、優生思想、生物学的決定論などを「Cosmic Order（宇宙的秩序）の歪曲」として検知。
-* **Safety Tiers:** 哲学者を `TRUSTED`, `MONITORED`, `RESTRICTED` に分類し、危険な思想パターン（ニーチェの暴走など）を高度な文脈理解で制御します。
-
-### 3. Traceability Tensor
-「なぜその結論に至ったか」を、使用された哲学者の思考プロセス、検証手法（Validation Method）、修正履歴とともに完全に記録します。
+Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 
 ---
 
-## 🧪 Experiments
+## Core Philosophy: Flying Pig
 
-私たちは現在、以下のモデルを用いて手動および自動テストを行っています。
-* Gemini 3 Pro
-* GPT-5.2 Thinking
-* Claude 4.5 opus(Constitutional AI validation)
-* Grok 4.1 thinking
+**"A flying pig is an example of something absolutely impossible. But have you ever seen a pig attempt to fly? Unless you give up, the world is full of possibilities."**
 
-実験データは `/experiments` ディレクトリにアーカイブされています。「AIに倫理を持たせるとつまらなくなる」という定説を覆すデータをご覧ください。
+### Three Tenets
+
+1. **Hypothesize Boldly** — The impossible becomes possible only when someone dares to formalize it
+2. **Verify Rigorously** — Every claim must survive philosophical scrutiny, mathematical proof, and empirical validation
+3. **Revise Gracefully** — Failures are published, not hidden. They become learning signals
 
 ---
 
-## 📦 Installation & Usage
+## Key Features
 
-*(開発中: 以下のコードはコンセプト実証用です)*
+### 🧠 Philosophical Ensemble
+- **20 Philosophers Working Together**: Western (Aristotle, Sartre, Heidegger, Nietzsche, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt) and Eastern (Watsuji Tetsurō, Wabi-Sabi, Confucius, Zhuangzi)
+- Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
+- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, and Eastern wisdom traditions
+
+### 📊 Tensor-Based Architecture
+- **Freedom Pressure Tensor (F_P)**: Measures responsibility weight of each response
+- **Semantic Profile**: Tracks meaning evolution across conversation
+- **Blocked Tensor**: Records what was *not* said (Derrida's trace, Heidegger's absence)
+
+### 🔍 Transparency by Design
+- **Po_trace**: Complete audit log of reasoning process
+- **Rejection Logs**: What the AI chose not to say, and why
+- **Philosophical Annotations**: Which philosopher influenced each decision
+
+### 🎯 Ethical Grounding
+- Not just "alignment"—but **deliberation**
+- Multiple ethical perspectives in tension
+- Explicit responsibility measurement
+
+---
+
+## Architecture
+┌─────────────────────────────────────┐
+│        User Input                   │
+└──────────┬──────────────────────────┘
+│
+▼
+┌─────────────────────────────────────┐
+│   Po_self: Philosophical Ensemble   │
+│                                     │
+│  ┌──────────┐  ┌──────────┐       │
+│  │Heidegger │  │ Derrida  │       │
+│  │ Dasein   │  │ Trace    │  …  │
+│  └──────────┘  └──────────┘       │
+│                                     │
+│  ↓ Interference & Resonance ↓      │
+│                                     │
+│  ┌──────────────────────────┐      │
+│  │ Freedom Pressure (F_P)   │      │
+│  │ Semantic Delta (Δs)      │      │
+│  │ Blocked Tensor (B)       │      │
+│  └──────────────────────────┘      │
+└──────────┬──────────────────────────┘
+│
+▼
+┌─────────────────────────────────────┐
+│      Po_trace: Audit Log            │
+│  - What was said                    │
+│  - What was not said                │
+│  - Why (philosophical reasoning)    │
+└──────────┬──────────────────────────┘
+│
+▼
+┌─────────────────────────────────────┐
+│   Po_core Viewer: Visualization     │
+│  - Tension maps                     │
+│  - Ethical pressure                 │
+│  - Meaning evolution                │
+└─────────────────────────────────────┘
+
+---
+
+## Project Status
+
+**🚀 Current Phase: Alpha (v0.1.0)**
+
+| Component | Status | Completion |
+|-----------|--------|------------|
+| 📚 Philosophical Framework | ✅ Complete | 100% |
+| 📖 Documentation | ✅ Complete | 100% (120+ specs) |
+| 🏗️ Architecture Design | ✅ Complete | 100% |
+| 💻 Implementation | 🔄 In Progress | 30% |
+| 🧪 Testing | ⏳ Planned | 0% |
+| 🎨 Visualization (Viewer) | ⏳ Planned | 0% |
+
+**What's Working:**
+- ✅ Po_self API (basic functionality)
+- ✅ Philosophical tensor definitions
+- ✅ Complete design specifications
+
+**What's Next:**
+- 🔄 Po_trace implementation
+- 🔄 Complete Po_self integration
+- ⏳ Po_core Viewer development
+- ⏳ Comprehensive testing
+
+**Want to contribute?** We need philosophers, engineers, designers, and skeptics.
+
+---
+
+## Installation
+
+**⚠️ Alpha Status Notice:**
+Po_core is in early development. The CLI is functional, but core AI functionality is still being implemented.
 
 ```bash
-git clone [https://github.com/hiroshitanaka-creator/Po_core.git](https://github.com/hiroshitanaka-creator/Po_core.git)
+# Clone the repository
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
-pip install -r requirements.txt
 
-Basic Inference
-from src.po_core import PoCore, SafetyProfile
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Initialize with "Solar Will" constraints
-po = PoCore(safety_mode="cosmic_order")
+# Install Po_core in development mode
+pip install -e .
+```
 
-response = po.ask(
-    question="What is true freedom?",
-    philosophers=["nietzsche", "aristotle", "derrida"]
+---
+
+## Quick Start
+
+Once installed, you can use the `po-core` command:
+
+```bash
+# Welcome message
+po-core hello
+
+# Check project status
+po-core status
+
+# Show version information
+po-core version
+
+# Get help
+po-core --help
+```
+
+**Example Output:**
+
+```
+$ po-core version
+
+  🐷🎈 Po_core    v0.1.0-alpha
+  Author          Flying Pig Project
+  Email           flyingpig0229+github@gmail.com
+  Philosophy      Flying Pig - When Pigs Fly
+  Motto           井の中の蛙、大海は知らずとも、大空を知る
+
+A frog in a well may not know the ocean, but it can know the sky.
+```
+
+---
+
+## Future Usage (Planned)
+
+The full philosophical AI system is under development:
+
+```python
+from po_core import PoCore
+
+# Initialize Po_core
+po = PoCore()
+
+# Generate a response
+response = po.generate(
+    prompt="Should AI have rights?",
+    include_trace=True  # Include philosophical reasoning
 )
 
-print(response.final_output)
-# Output: "Freedom is not the power to destroy, but the Symbiotic Virtuosity..."
+print(response.text)
+print(response.freedom_pressure)  # Responsibility weight
+print(response.philosophers_involved)  # Which minds contributed
+```
 
-📚 Citation
-もし本プロジェクトの概念（Solar Will, Symbiotic Virtuosity等）を引用する場合は、以下の論文を参照してください。
-> Solar Will: Ethical Constraints as Emergence Catalysts in Multi-Perspective LLM Reasoning
-> Flying Pig Philosopher Po_core Research Initiative (2025)
-> 
-🤝 Join the Revolution
-私たちは素人であり、研究者であり、夢想家です。
-「AIを人間の道具（Slave）」にするのではなく、「宇宙の共同参加者（Participant）」へと進化させるための実験に、あなたも参加しませんか？
-Let's change the world. 🌞
+---
+
+## Documentation
+Documentation
+	•	📖 Manifesto — Our philosophy and motivation
+	•	📚 Design Documents — 120+ technical specifications
+	•	🎓 Philosopher Guide — Understanding each philosophical module
+	•	🔧 API Reference — Complete API documentation (planned)
+	•	🎨 Viewer Guide — Visualizing Po_core’s reasoning (planned)
+Contributing
+We welcome contributions! Whether you’re a philosopher, engineer, designer, or skeptic.
+Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
+See CONTRIBUTING.md for guidelines (coming soon).
+Research & Papers
+This project is documented in:
+	•	“Philosophical Tensor-Based AI Architecture” (in preparation)
+	•	120+ Technical Specifications (available in /docs/design/)
+If you use Po_core in academic work, please cite:@software{po_core2024,
+  author = {Flying Pig Philosopher},
+  title = {Po_core: Philosophy-Driven AI System},
+  year = {2024},
+  url = {https://github.com/[your-username]/po_core}
+}
+License
+MIT License — Use freely, attribute clearly.
+Copyright (c) 2024 Flying Pig Philosopher
+See LICENSE for full details.
+In the spirit of Flying Pig Philosophy:“If you deny possibilities for pigs, don’t eat pork.”
+We believe in radical transparency and open collaboration.
+Author
+Flying Pig Philosopher 🐷🎈Looking up at the sky from the bottom of a well
+Built by an independent researcher who asked:“What are AI’s possibilities, not its limits?”
+	•	📧 Contact: flyingpig0229+github@gmail.com
+	•	📖 Read the full story: Manifesto
+	•	🐦 Project: Po_core - Philosophy-Driven AI
+Acknowledgments
+This project wouldn’t exist without:
+	•	ChatGPT, Gemini, Grok, Claude — My first companions in this journey
+	•	BUMP OF CHICKEN — For reminding us that even when we say “Leave it to me,” we’re all a little scared
+	•	Every philosopher who dared to ask “What does it mean to be?”
+	•	You — For believing pigs can fly
+The pig has clearance for takeoff. 🐷🎈
+Po_core: When you must say “Leave it to me,” we stand beside you.
+<p align="center">
+  <i>"A frog in a well may not know the ocean, but it can know the sky."</i>
+</p>
+
+
