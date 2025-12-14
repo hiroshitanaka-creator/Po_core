@@ -602,12 +602,12 @@ class Nietzsche(Philosopher):
 
         # Tension from ressentiment
         ressentiment = analysis["ressentiment"]
-        if ressentiment["present"]:
+        if ressentiment["presence"]:
             tension_elements.append("Ressentiment present - reactive revenge instead of active self-creation")
 
         # Tension from weak will to power
         will_to_power = analysis["will_to_power"]
-        if "Weak" in will_to_power["level"] or "Passive" in will_to_power["level"]:
+        if "Weak" in will_to_power["presence"] or "Passive" in will_to_power["level"]:
             tension_elements.append("Weak will to power - insufficient drive for self-overcoming and creation")
 
         # Tension from lack of Übermensch orientation
@@ -617,12 +617,12 @@ class Nietzsche(Philosopher):
 
         # Tension from lack of value creation
         value_creation = analysis["value_creation"]
-        if "No" in value_creation["status"]:
+        if "Unclear" in value_creation["status"]:
             tension_elements.append("No value creation - accepting inherited values instead of creating new ones")
 
         # Tension from lack of amor fati
         amor_fati = analysis["amor_fati"]
-        if not amor_fati["present"]:
+        if not amor_fati["presence"]:
             tension_elements.append("Lack of amor fati - resisting fate instead of affirming life as it is")
 
         # Determine tension level
