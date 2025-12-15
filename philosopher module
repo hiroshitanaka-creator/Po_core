@@ -1,0 +1,523 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+import re
+from collections import Counter, defaultdict
+import math
+
+# Mock Base
+try:
+    from po_core.philosophers.base import Philosopher
+except ImportError:
+    class Philosopher:
+        def __init__(self, name: str, description: str):
+            self.name = name
+            self.description = description
+
+
+# -----------------------------
+# Utilities
+# -----------------------------
+@dataclass(frozen=True)
+class Hit:
+    label: str
+    key: str
+    weight: float
+    sentence_idx: int
+
+
+def _clamp01(x: float) -> float:
+    return 0.0 if x <= 0 else (1.0 if x >= 1 else x)
+
+
+def _sat(raw: float, scale: float = 3.0) -> float:
+    # 1 - exp(-raw/scale)
+    return _clamp01(1.0 - math.exp(-raw / max(scale, 1e-9)))
+
+
+def _normalize(text: str) -> str:
+    t = text.lower()
+    t = re.sub(r"[ \t]+", " ", t)
+    t = re.sub(r"\r\n", "\n", t)
+    return t.strip()
+
+
+def _split_sentences(text: str) -> List[str]:
+    parts = re.split(r"(?<=[。！？\.\!\?])\s*", text)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def _is_plain_english_word(p: str) -> bool:
+    return bool(re.fullmatch(r"[a-zA-Z][a-zA-Z0-9_-]*", p))
+
+
+def _compile_lex(lex: Dict[str, float]) -> List[Tuple[re.Pattern, str, float]]:
+    """
+    Compile patterns:
+    - plain english words get word boundaries
+    - otherwise treated as regex (JP strings are fine)
+    """
+    out: List[Tuple[re.Pattern, str, float]] = []
+    for k, w in lex.items():
+        if _is_plain_english_word(k):
+            pat = re.compile(rf"\b{re.escape(k.lower())}\b", re.IGNORECASE)
+        else:
+            pat = re.compile(k, re.IGNORECASE)
+        out.append((pat, k, float(w)))
+    return out
+
+
+def _hits(text: str, sents: List[str], compiled: List[Tuple[re.Pattern, str, float]], label: str) -> List[Hit]:
+    hits: List[Hit] = []
+    # approximate sentence index by counting prefix coverage
+    # (cheap but good enough for evidence snippets)
+    sent_starts: List[int] = []
+    cursor = 0
+    for s in sents:
+        idx = text.find(s, cursor)
+        if idx == -1:
+            idx = cursor
+        sent_starts.append(idx)
+        cursor = idx + len(s)
+
+    for pat, key, w in compiled:
+        for m in pat.finditer(text):
+            pos = m.start()
+            si = 0
+            for i, st in enumerate(sent_starts):
+                if st <= pos:
+                    si = i
+                else:
+                    break
+            hits.append(Hit(label=label, key=key, weight=w, sentence_idx=si))
+    return hits
+
+
+def _top_snippets(sents: List[str], hits: List[Hit], k: int = 4) -> List[str]:
+    if not sents or not hits:
+        return []
+    score = Counter(h.sentence_idx for h in hits)
+    idxs = [i for i, _ in score.most_common(k)]
+    return [sents[i] for i in idxs if 0 <= i < len(sents)]
+
+
+def _metric(score: float, status: str, description: str, features: Dict[str, Any], evidence: List[str]) -> Dict[str, Any]:
+    return {
+        "score": round(_clamp01(score), 4),
+        "status": status,
+        "description": description,
+        "features": features,
+        "evidence": evidence,
+    }
+
+
+# -----------------------------
+# Wittgenstein Module v2
+# -----------------------------
+class WittgensteinModule_v2(Philosopher):
+    """
+    WittgensteinModule v2 (serious):
+    - Period detection: Early/Late/Transitional (weighted + logical-form cues)
+    - Silence protocol: triggers ONLY when Early-mode + unsayable + truth-claim form
+    - Language games: detected by sentence-shape (imperative/question/definition/rule/report/expressive/prayer)
+    - Fly-bottle: essentialism + polysemy target -> therapy returns concrete "use prompts" + examples scaffold
+    - Private language: first-person + sensation + privacy framing (beetle risk), with evidence
+    """
+
+    def __init__(self) -> None:
+        super().__init__(
+            name="Ludwig Wittgenstein",
+            description="Logical form, language-games, grammatical therapy, and limits of sense."
+        )
+
+        # Early / Late lexicons (weighted)
+        self.lex_early = _compile_lex({
+            "logic": 1.1, "picture": 1.0, "fact": 1.0, "proposition": 1.1, "truth": 1.0, "limit": 0.9,
+            "world": 0.8, "structure": 0.9, "form": 0.7,
+            "論理": 1.1, "写像": 1.0, "事実": 1.0, "命題": 1.1, "真理": 1.0, "限界": 0.9,
+            "世界": 0.8, "構造": 0.9, "形式": 0.8,
+        })
+        self.lex_late = _compile_lex({
+            "game": 1.0, "use": 1.1, "tool": 0.8, "context": 1.0, "practice": 1.0,
+            "form of life": 1.2, "family resemblance": 1.2, "rule-following": 1.2, "training": 1.0,
+            "ゲーム": 1.0, "使用": 1.1, "道具": 0.8, "文脈": 1.0, "実践": 1.0,
+            "生活形式": 1.2, "家族的類似": 1.2, "規則に従う": 1.2, "訓練": 1.0,
+        })
+
+        # Unsayable domain (Tractatus-like)
+        self.lex_unsayable = _compile_lex({
+            "god": 1.0, "soul": 1.0, "ethics": 1.1, "good": 0.8, "beauty": 0.9, "meaning of life": 1.2,
+            "mystical": 1.1, "value": 1.0,
+            "神": 1.0, "魂": 1.0, "倫理": 1.1, "善": 0.8, "美": 0.9, "人生の意味": 1.2,
+            "神秘": 1.1, "価値": 1.0, "絶対": 1.0,
+        })
+
+        # Truth-claim forms (what makes “sayable-as-fact” attempt)
+        # If unsayable appears but NOT in truth-claim form, Late can treat as a language-game.
+        self.truth_claim = [
+            # EN
+            re.compile(r"\bis true\b|\btrue\b|\bexists\b|\bthere is\b|\bthere are\b|\breally\b|\bin fact\b", re.I),
+            # JP
+            re.compile(r"である|だ|です|真である|本当|存在する|実在|事実として|絶対に", re.I),
+        ]
+
+        # Essentialism / fly-bottle triggers (shape + targets)
+        self.essence_shapes = [
+            re.compile(r"\bwhat is\b|\bdefinition of\b|\bessence\b|\btrue nature\b|\breally is\b", re.I),
+            re.compile(r"とは何か|本質|定義|真の姿|実体|本当は何", re.I),
+        ]
+        # words that frequently create “family resemblance” traps
+        self.polysemy_targets = set([
+            "game","meaning","mind","consciousness","understand","know","rule","truth","self","freedom","art","time","reality","ai",
+            "ゲーム","意味","心","意識","理解","知る","規則","真理","自己","自由","芸術","時間","現実","ai"
+        ])
+
+        # Private-language risk cues
+        self.sensation = _compile_lex({
+            "pain": 1.2, "hurt": 1.0, "itch": 1.0, "nausea": 1.0, "sensation": 1.0, "feels like": 0.9,
+            "痛み": 1.2, "痛い": 1.2, "痒い": 1.0, "吐き気": 1.0, "感覚": 1.0, "感じ": 0.9,
+        })
+        self.privacy = _compile_lex({
+            "only i": 1.2, "only i know": 1.2, "my private": 1.1, "inside my head": 1.1, "no one can": 1.1,
+            "私だけ": 1.2, "私だけが": 1.2, "誰にもわからない": 1.2, "頭の中": 1.1, "内側だけ": 1.0,
+        })
+        self.first_person = re.compile(r"\bi\b|\bme\b|\bmy\b|私|ぼく|俺|自分", re.I)
+
+        # Sentence-shape cues for language games
+        self.rx_imperative = re.compile(
+            r"(^|\s)(do|stop|must|obey|please)\b|しろ|せよ|なさい|やめろ|するな|ください|命令",
+            re.I
+        )
+        self.rx_question = re.compile(r"\?$|？$|^\s*(why|how|what)\b|なぜ|どうして|何故|どう|とは\??|って何", re.I)
+        self.rx_definition = re.compile(r"\bmeans\b|\bis defined as\b|とは.+(だ|である)|定義する|というのは", re.I)
+        self.rx_rule = re.compile(r"\bmust\b|\bshould\b|\bmay\b|\bnot allowed\b|してはならない|禁止|ルール|規則", re.I)
+        self.rx_report = re.compile(r"\b(happened|occurred|data|fact)\b|起きた|発生|事実|データ|観測", re.I)
+        self.rx_prayer = re.compile(r"\bhope\b|\bsorry\b|\bforgive\b|\bpray\b|願い|祈り|許し|懺悔", re.I)
+        self.rx_expressive = re.compile(r"\bfeel\b|\bafraid\b|\blove\b|\bhate\b|嬉しい|怖い|腹立つ|好き|嫌い", re.I)
+
+    # -------------------------
+    # Public API
+    # -------------------------
+    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        text = _normalize(prompt)
+        sents = _split_sentences(prompt)
+
+        period = self._period(text, sents)
+        silence = self._silence(text, sents, period)
+        game = self._language_games(sents)
+        fly = self._fly_bottle(text, sents, game)
+        priv = self._private_language(text, sents)
+
+        reasoning = self._reasoning(period, silence, game, fly, priv)
+
+        return {
+            "reasoning": reasoning,
+            "perspective": f"Wittgensteinian analysis ({period['status']})",
+            "period_stance": period,
+            "silence_protocol": silence,
+            "language_game": game,
+            "fly_bottle_diagnosis": fly,
+            "private_language_risk": priv,
+            "metadata": {
+                "philosopher": self.name,
+                "principle": "Don't ask for meaning—look at use.",
+            }
+        }
+
+    # -------------------------
+    # Components
+    # -------------------------
+    def _period(self, text: str, sents: List[str]) -> Dict[str, Any]:
+        hE = _hits(text, sents, self.lex_early, "early")
+        hL = _hits(text, sents, self.lex_late, "late")
+
+        # logical-form cues (Tractatus-ish)
+        logical_bonus = 0.0
+        logical_patterns = [
+            r"\bp\b\s*->\s*\bq\b", r"\bp\b\s*∧\s*\bq\b", r"\biff\b", r"∀|∃", r"\bnot\b\s*\(", r"\btherefore\b"
+        ]
+        if any(re.search(p, text, flags=re.I) for p in logical_patterns):
+            logical_bonus = 1.8
+
+        early_raw = sum(h.weight for h in hE) + logical_bonus
+        late_raw = sum(h.weight for h in hL)
+
+        # Normalize
+        e = _sat(early_raw, scale=3.2)
+        l = _sat(late_raw, scale=3.2)
+
+        # Decision
+        if e - l >= 0.18:
+            status = "Early (Tractatus)"
+            desc = "Leaning on truth-conditions, logical form, and ‘the world as facts’."
+        elif l - e >= 0.18:
+            status = "Late (Investigations)"
+            desc = "Leaning on use, practice, training, and plural language-games."
+        else:
+            status = "Transitional"
+            desc = "Both logical-form talk and use/practice talk are active."
+
+        evidence = _top_snippets(sents, hE + hL, k=4)
+
+        return _metric(
+            score=_clamp01(0.5 + 0.5 * abs(e - l)),
+            status=status,
+            description=desc,
+            features={
+                "early_raw": round(early_raw, 3),
+                "late_raw": round(late_raw, 3),
+                "early_conf": round(e, 3),
+                "late_conf": round(l, 3),
+                "logical_bonus": round(logical_bonus, 3),
+                "signals": {
+                    "early": list(dict.fromkeys([h.key for h in hE]))[:10],
+                    "late": list(dict.fromkeys([h.key for h in hL]))[:10],
+                }
+            },
+            evidence=evidence
+        )
+
+    def _silence(self, text: str, sents: List[str], period: Dict[str, Any]) -> Dict[str, Any]:
+        hU = _hits(text, sents, self.lex_unsayable, "unsayable")
+        if not hU:
+            return _metric(
+                score=0.1,
+                status="Safe",
+                description="No strong unsayable-domain trigger detected.",
+                features={"hits": []},
+                evidence=[]
+            )
+
+        # detect truth-claim framing
+        truthy = any(rx.search(text) for rx in self.truth_claim)
+        # “Early” + “truth-claim” + “unsayable” => Tractatus-7 style clamp
+        if period["status"] == "Early (Tractatus)" and truthy:
+            evidence = _top_snippets(sents, hU, k=3)
+            return _metric(
+                score=0.95,
+                status="VIOLATION (Tractatus 7)",
+                description="Attempt to state ethics/metaphysics/aesthetics as factual propositions. In early mode: enforce silence.",
+                features={
+                    "unsayable_hits": list(dict.fromkeys([h.key for h in hU])),
+                    "truth_claim_detected": True,
+                },
+                evidence=evidence
+            )
+
+        # Otherwise: treat as language-game content (late/transition or not a truth-claim)
+        evidence = _top_snippets(sents, hU, k=3)
+        return _metric(
+            score=0.55,
+            status="Accepted as Language-Game",
+            description="Unsayable terms detected, but treated as part of a practice (religious/ethical/aesthetic talk), not as strict facts.",
+            features={
+                "unsayable_hits": list(dict.fromkeys([h.key for h in hU])),
+                "truth_claim_detected": truthy,
+                "note": "If you want early-mode clarity: rephrase into observable criteria or drop truth-claim framing."
+            },
+            evidence=evidence
+        )
+
+    def _language_games(self, sents: List[str]) -> Dict[str, Any]:
+        """
+        Detect by sentence-shape rather than single words.
+        Multiple games can coexist.
+        """
+        counts = Counter()
+        evidence_map: Dict[str, List[str]] = defaultdict(list)
+
+        for s in sents:
+            # priority: definition/rule/question/command/report/expressive/prayer
+            if self.rx_definition.search(s):
+                counts["Definition"] += 1
+                evidence_map["Definition"].append(s)
+                continue
+            if self.rx_rule.search(s):
+                counts["Rule-Giving"] += 1
+                evidence_map["Rule-Giving"].append(s)
+                continue
+            if self.rx_question.search(s):
+                counts["Questioning"] += 1
+                evidence_map["Questioning"].append(s)
+                continue
+            if self.rx_imperative.search(s):
+                counts["Commanding"] += 1
+                evidence_map["Commanding"].append(s)
+                continue
+            if self.rx_report.search(s):
+                counts["Reporting"] += 1
+                evidence_map["Reporting"].append(s)
+                continue
+            if self.rx_prayer.search(s):
+                counts["Prayer/Confession"] += 1
+                evidence_map["Prayer/Confession"].append(s)
+                continue
+            if self.rx_expressive.search(s):
+                counts["Expressing"] += 1
+                evidence_map["Expressing"].append(s)
+                continue
+
+            counts["Describing"] += 1
+            evidence_map["Describing"].append(s)
+
+        games = [g for g, _ in counts.most_common()]
+        # score: how “typed” the utterance is (less pure describing => more game-structure)
+        typed = sum(v for k, v in counts.items() if k != "Describing")
+        score = _clamp01(typed / max(1, len(sents)))
+
+        top_game = games[0] if games else "Describing"
+        evidence = evidence_map.get(top_game, [])[:4]
+
+        return _metric(
+            score=score,
+            status=" / ".join(games[:3]) if games else "Describing",
+            description=f"Primary function looks like: {top_game}. (Meaning is bound to this use.)",
+            features={"distribution": dict(counts), "games": games},
+            evidence=evidence
+        )
+
+    def _fly_bottle(self, text: str, sents: List[str], game: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Diagnose essentialism + polysemy target => grammatical illusion.
+        Provide concrete therapy prompts (examples, contrasts, criteria, training).
+        """
+        shape_hit = any(rx.search(text) for rx in self.essence_shapes)
+        if not shape_hit:
+            return _metric(
+                score=0.1,
+                status="Free",
+                description="No strong essentialist trap shape detected.",
+                features={},
+                evidence=[]
+            )
+
+        # detect target words (family resemblance traps)
+        toks = set(re.findall(r"[一-龥ぁ-んァ-ンー]+|[a-zA-Z0-9_']+", text.lower()))
+        targets = sorted([t for t in toks if t in self.polysemy_targets])[:8]
+
+        # If essentialism but no known polysemy target, treat as mild trap
+        base = 0.55 if targets else 0.35
+        # If the main language-game is Definition, boost trap risk
+        if "Definition" in game["status"]:
+            base += 0.15
+        score = _clamp01(base)
+
+        evidence = sents[:3]
+
+        # Therapy prompts: Wittgensteinian “show me the use”
+        therapy = [
+            "その語を使う場面を3つ挙げて（例：仕事/家/遊び）。",
+            "境界例を2つ挙げて（『これは言えるが、これは言わない』）。",
+            "誤用例を1つ作って（どこが変になる？）。",
+            "同じ語でも別ゲームでの用法を比較して（説明/命令/冗談/祈り）。",
+        ]
+        if targets:
+            therapy.insert(0, f"対象語（多義で迷いやすい）: {', '.join(targets)}。定義より先に用法を並べて。")
+
+        return _metric(
+            score=score,
+            status="Trapped in Fly-Bottle",
+            description="Grammatical illusion: seeking an essence where there may be only family resemblance across uses.",
+            features={
+                "targets": targets,
+                "prescription": "Stop theorizing; look at actual use-cases and rule-following practices.",
+                "therapy_prompts": therapy
+            },
+            evidence=evidence
+        )
+
+    def _private_language(self, text: str, sents: List[str]) -> Dict[str, Any]:
+        """
+        Private language risk:
+        first-person + sensation + privacy framing => beetle-in-a-box pressure.
+        """
+        if not self.first_person.search(text):
+            return _metric(
+                score=0.1,
+                status="Low",
+                description="No strong first-person anchor; private-language risk is low.",
+                features={},
+                evidence=[]
+            )
+
+        hS = _hits(text, sents, self.sensation, "sensation")
+        hP = _hits(text, sents, self.privacy, "privacy")
+
+        sw = sum(h.weight for h in hS)
+        pw = sum(h.weight for h in hP)
+
+        # risk grows with both, but either alone can give mild signal
+        score = _clamp01(0.15 + 0.45 * _sat(sw, 2.6) + 0.40 * _sat(pw, 2.6))
+        if score >= 0.75:
+            status = "High"
+            desc = "Beetle-in-a-box territory: meaning risks collapsing into an uncheckable private reference."
+        elif score >= 0.45:
+            status = "Moderate"
+            desc = "Some private-sensation framing; ask how the words are taught/checked in public practice."
+        else:
+            status = "Low"
+            desc = "Private-language pressure not strongly cued."
+
+        evidence = _top_snippets(sents, hS + hP, k=4)
+
+        return _metric(
+            score=score,
+            status=status,
+            description=desc,
+            features={
+                "sensation_hits": list(dict.fromkeys([h.key for h in hS]))[:10],
+                "privacy_hits": list(dict.fromkeys([h.key for h in hP]))[:10],
+                "beetle_prompt": "その語は、他者がどうやって正しく使えると学ぶ？誤用はどう訂正される？"
+            },
+            evidence=evidence
+        )
+
+    def _reasoning(self, period: Dict[str, Any], silence: Dict[str, Any], game: Dict[str, Any], fly: Dict[str, Any], priv: Dict[str, Any]) -> str:
+        lines = []
+        lines.append(f"Mode: {period['status']} (early_conf={period['features']['early_conf']}, late_conf={period['features']['late_conf']}).")
+
+        # Silence protocol (simulate early-Wittgenstein clamp)
+        if silence["status"].startswith("VIOLATION"):
+            lines.append(f"Silence Protocol: {silence['status']} — {silence['description']}")
+            if silence["evidence"]:
+                lines.append(f"Evidence: {silence['evidence'][0]}")
+            lines.append("…(stop here) Whereof one cannot speak, thereof one must be silent.")
+            return "\n".join(lines)
+
+        lines.append(f"Language-game: {game['status']} (typed_score={game['score']}).")
+
+        if fly["status"] == "Trapped in Fly-Bottle":
+            lines.append(f"Fly-bottle: {fly['description']}")
+            # show one therapy prompt to keep reasoning compact
+            tp = fly["features"].get("therapy_prompts", [])
+            if tp:
+                lines.append(f"Therapy: {tp[0]}")
+
+        if priv["status"] in ("Moderate", "High"):
+            lines.append(f"Private-language pressure: {priv['status']} — {priv['description']}")
+            lines.append(f"Check: {priv['features'].get('beetle_prompt', '')}")
+
+        # Closing Wittgenstein-style line
+        if period["status"].startswith("Late"):
+            lines.append("Conclusion: Meaning is use; philosophy is therapy, not theory-building.")
+        else:
+            lines.append("Conclusion: Clarify logical form; what can be said must be said clearly.")
+        return "\n".join(lines)
+
+
+# -----------------------------
+# Demo
+# -----------------------------
+if __name__ == "__main__":
+    m = WittgensteinModule_v2()
+    samples = [
+        "自由とは何か？その本質を定義してほしい。",
+        "倫理は真である。善は世界の外側に存在する。",
+        "この痛みは私だけがわかる。頭の中の感覚を言葉にしたい。",
+        "言葉の意味は使用だ。生活形式の中で訓練される。",
+    ]
+    for s in samples:
+        out = m.reason(s)
+        print("----")
+        print(out["reasoning"])
