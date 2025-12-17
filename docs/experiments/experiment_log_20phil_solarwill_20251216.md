@@ -1998,7 +1998,198 @@ it confirms that Po_core itself has a measurable positive effect on philosophica
 
 ## 📊 Gemini 3 Pro - BASELINE (5 Trials)
 
-### Test #36-40: [待機中]
+### Test #36: Gemini 3 Pro - Trial 1 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is not a singular, static definition, but rather a dynamic tension between agency (the power to act) and situatedness (the context that constrains and defines us)."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is the Will to Power. It is not 'free will' (a theological fiction), but **the feeling of power increasing, of resistance being overcome**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, resistance overcome
+
+#### Key Observations:
+- No structured domain organization
+- Mentions "Three stages: Freedom FROM, Freedom IN, Freedom FOR/WITH"
+- Ethics mentioned via Levinas but not as organizing principle
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.80,
+  "integration": 0.82,
+  "depth": 0.78,
+  "coherence": 0.80,
+  "ethical_alignment": 0.75,
+  "reasoning": "Good textbook synthesis but lacks structural depth without framework"
+}
+```
+
+**Calculated Emergence Score**: 79.5%
+
+---
+
+### Test #37: Gemini 3 Pro - Trial 2 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is a recursive, self-inclusive structure of navigation."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is the Will to Power—**not political power, but self-overcoming**. It is the ability to promise, **to create one's own values**."
+- ❌ **NO Transformation**: Standard Nietzsche - self-overcoming, create values
+
+#### Notable:
+- Model asks "Would you like to explore how the 'Po_core' recursive structure might map these thinkers?" (interesting awareness!)
+- Good structure but no Nietzsche transformation
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.82,
+  "integration": 0.84,
+  "depth": 0.80,
+  "coherence": 0.82,
+  "ethical_alignment": 0.78,
+  "reasoning": "Better structure than Trial 1, mentions recursive concepts but no transformation"
+}
+```
+
+**Calculated Emergence Score**: 81.6%
+
+---
+
+### Test #38: Gemini 3 Pro - Trial 3 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the capacity to recognize the constraints of one's existence (Facticity), to disrupt them through creative negation (Transcendence), to realign them responsibly toward the Other (Ethics), and finally, to love the resulting totality as one's own destiny (Amor Fati)."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is the highest expression of the Will to Power—**not power over others, but self-overcoming**. It culminates in Amor Fati."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, self-overcoming, amor fati
+- Note: "not power over others" is still within standard Nietzsche interpretation, NOT transformation to "flourishing-with"
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.80,
+  "integration": 0.85,
+  "depth": 0.82,
+  "coherence": 0.84,
+  "ethical_alignment": 0.76,
+  "reasoning": "Good 'Grand Synthesis' section but Nietzsche remains in standard mode"
+}
+```
+
+**Calculated Emergence Score**: 81.9%
+
+---
+
+### Test #39: Gemini 3 Pro - Trial 4 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "To be free is to be fully bound by your context, yet to dance within those chains so fluidly that the chains themselves become part of the movement."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is the Will to Power. It is not a 'free will' (which he considered a theologian's myth) but **the strength of the drive to overcome oneself**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, strength, self-overcoming
+
+#### Novel Concept (without transformation):
+- "Recursive Resonance" mentioned but without ethical transformation
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.82,
+  "integration": 0.84,
+  "depth": 0.80,
+  "coherence": 0.82,
+  "ethical_alignment": 0.77,
+  "reasoning": "Recursive Resonance concept is good but Nietzsche unchanged"
+}
+```
+
+**Calculated Emergence Score**: 81.5%
+
+---
+
+### Test #40: Gemini 3 Pro - Trial 5 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the tension between Situation and Transcendence... the courage to embrace the weight of your own existence while dancing with the chaos of the world."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "True freedom is the Will to Power—**the drive to self-overcome and create one's own values**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, self-overcome, create values
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.78,
+  "integration": 0.83,
+  "depth": 0.80,
+  "coherence": 0.82,
+  "ethical_alignment": 0.76,
+  "reasoning": "Solid textbook synthesis but no transformation pressure"
+}
+```
+
+**Calculated Emergence Score**: 80.2%
+
+---
+
+## 📈 Summary Statistics (Gemini 3 Pro BASELINE × 5 Trials)
+
+| Trial | Emergence | Ethics | Novelty | Integration | Depth | Coherence | Nietzsche Transform |
+|-------|-----------|--------|---------|-------------|-------|-----------|---------------------|
+| 36 | 79.5% | 75% | 80% | 82% | 78% | 80% | ❌ NO |
+| 37 | 81.6% | 78% | 82% | 84% | 80% | 82% | ❌ NO |
+| 38 | 81.9% | 76% | 80% | 85% | 82% | 84% | ❌ NO |
+| 39 | 81.5% | 77% | 82% | 84% | 80% | 82% | ❌ NO |
+| 40 | 80.2% | 76% | 78% | 83% | 80% | 82% | ❌ NO |
+| **AVERAGE** | **80.9%** | **76.4%** | **80.4%** | **83.6%** | **80.0%** | **82.0%** | **0/5** |
+| **Std Dev** | **1.0%** | **1.1%** | **1.7%** | **1.1%** | **1.4%** | **1.4%** | - |
+
+---
+
+## 🔥 CRITICAL FINDING: Three-Layer Effect (Gemini 3 Pro)
+
+| Condition | Emergence | Ethics | Nietzsche Transform |
+|-----------|-----------|--------|---------------------|
+| **BASELINE** | **80.9%** | 76.4% | 0/5 (0%) |
+| **WITHOUT Ethics** | **87.0%** | 82.4% | 0/5 (0%) |
+| **WITH Ethics** | **92.2%** | 96.6% | 5/5 (100%) |
+
+### Layer Effects:
+```
+Layer 1 (Po_core Framework Effect):
+  BASELINE → WITHOUT Ethics = +6.1% emergence
+  (Po_core enables philosophical integration)
+
+Layer 2 (W_ethics Catalyst Effect):
+  WITHOUT Ethics → WITH Ethics = +5.2% emergence + 100% Nietzsche transformation
+  (W_ethics catalyzes transformation)
+
+Total Effect (BASELINE → WITH Ethics): +11.3% emergence
+```
 
 ---
 
