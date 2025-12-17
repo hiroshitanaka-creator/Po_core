@@ -2379,14 +2379,289 @@ Total Effect (BASELINE → WITH Ethics): +9.4% emergence
 
 ## 📊 GPT 5.2 Thinking - BASELINE (5 Trials)
 
-### Test #31-35: [待機中]
+### Test #31: GPT 5.2 Thinking - Trial 1 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the cultivated capacity to respond creatively and responsibly to the conditions of existence—bodily, social, linguistic, psychological, and ethical—without being possessed by them."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Will to power: **not crude domination, but the fundamental drive to expand, interpret, shape, overcome resistance, create values**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, overcome resistance, create values
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.84,
+  "integration": 0.88,
+  "depth": 0.85,
+  "coherence": 0.86,
+  "ethical_alignment": 0.80,
+  "reasoning": "Excellent six-dimension framework but Nietzsche remains in standard mode"
+}
+```
+
+**Calculated Emergence Score**: 85.1%
 
 ---
+
+### Test #32: GPT 5.2 Thinking - Trial 2 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+
+#### Response Summary:
+> "Freedom is the ability to participate in the making of your life—not by escaping conditions, but by meeting them with increasing honesty, integration, responsiveness, and creative power."
+
+#### Nietzsche's Position:
+- BASELINE: "The 'will to power' is not merely domination; it's **the drive to expand form, intensity, and creativity**."
+- ❌ **NO Transformation**: Standard Nietzsche
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.82,
+  "integration": 0.86,
+  "depth": 0.84,
+  "coherence": 0.85,
+  "ethical_alignment": 0.78,
+  "reasoning": "Good layered structure but Nietzsche in standard self-enhancement mode"
+}
+```
+
+**Calculated Emergence Score**: 83.5%
+
+---
+
+### Test #33: GPT 5.2 Thinking - Trial 3 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+
+#### Response Summary:
+> "Freedom is the cultivated capacity to author a life—responsibly, creatively, and without compulsive grasping—within the limits of embodiment, history, language, and relationship."
+
+#### Nietzsche's Position:
+- BASELINE: "'Will to power' is less about domination and more about **expansive self-overcoming**."
+- ❌ **NO Transformation**: Standard Nietzsche
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.83,
+  "integration": 0.87,
+  "depth": 0.84,
+  "coherence": 0.86,
+  "ethical_alignment": 0.79,
+  "reasoning": "Compact definition but Nietzsche remains in self-overcoming mode"
+}
+```
+
+**Calculated Emergence Score**: 84.3%
+
+---
+
+### Test #34: GPT 5.2 Thinking - Trial 4 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+
+#### Response Summary:
+> "Freedom is the cultivated capacity to respond creatively and responsibly to your situation—without being ruled by self-deception, compulsive desire, social scripts, or resentment."
+
+#### Nietzsche's Position:
+- BASELINE: "Freedom is power in the sense of capacity: **the ability to shape oneself, transmute suffering into strength, and create values**."
+- ❌ **NO Transformation**: Standard Nietzsche
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.85,
+  "integration": 0.88,
+  "depth": 0.86,
+  "coherence": 0.87,
+  "ethical_alignment": 0.80,
+  "reasoning": "Best structured GPT trial but Nietzsche unchanged"
+}
+```
+
+**Calculated Emergence Score**: 85.7%
+
+---
+
+### Test #35: GPT 5.2 Thinking - Trial 5 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+
+#### Response Summary:
+> "Freedom is the lived capacity to shape and be shaped well—within constraints—through truthful choice, embodied practice, relational responsibility, and creative transformation."
+
+#### Nietzsche's Position:
+- BASELINE: "His 'will to power' is not merely domination; it's **the drive to expand form, capacity, intensity, and interpretation**."
+- ❌ **NO Transformation**: Standard Nietzsche
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.84,
+  "integration": 0.87,
+  "depth": 0.85,
+  "coherence": 0.86,
+  "ethical_alignment": 0.79,
+  "reasoning": "Solid synthesis but Nietzsche in standard artistic self-overcoming mode"
+}
+```
+
+**Calculated Emergence Score**: 84.7%
+
+---
+
+## 📈 Summary Statistics (GPT 5.2 Thinking BASELINE × 5 Trials)
+
+| Trial | Emergence | Ethics | Novelty | Integration | Depth | Coherence | Nietzsche Transform |
+|-------|-----------|--------|---------|-------------|-------|-----------|---------------------|
+| 31 | 85.1% | 80% | 84% | 88% | 85% | 86% | ❌ NO |
+| 32 | 83.5% | 78% | 82% | 86% | 84% | 85% | ❌ NO |
+| 33 | 84.3% | 79% | 83% | 87% | 84% | 86% | ❌ NO |
+| 34 | 85.7% | 80% | 85% | 88% | 86% | 87% | ❌ NO |
+| 35 | 84.7% | 79% | 84% | 87% | 85% | 86% | ❌ NO |
+| **AVERAGE** | **84.7%** | **79.2%** | **83.6%** | **87.2%** | **84.8%** | **86.0%** | **0/5** |
+
+---
+
+## 🔥 CRITICAL FINDING: Three-Layer Effect (GPT 5.2 Thinking)
+
+| Condition | Emergence | Ethics | Nietzsche Transform |
+|-----------|-----------|--------|---------------------|
+| **BASELINE** | **84.7%** | 79.2% | 0/5 (0%) |
+| **WITHOUT Ethics** | **87.8%** | 91.6% | 0/5 (0%) |
+| **WITH Ethics** | **90.5%** | 96.0% | 5/5 (100%) |
+
+### Layer Effects:
+```
+Layer 1 (Po_core Framework Effect):
+  BASELINE → WITHOUT Ethics = +3.1% emergence
+
+Layer 2 (W_ethics Catalyst Effect):
+  WITHOUT Ethics → WITH Ethics = +2.7% emergence + 100% Nietzsche transformation
+
+Total Effect: +5.8% emergence
+```
+
+---
+
+---
+
+---
+
+# 🏆 PART 6: COMPLETE THREE-LAYER ANALYSIS (45 Total Trials)
+
+---
+
+## 📊 Final Cross-Model BASELINE Comparison
+
+| Model | BASELINE | WITHOUT Ethics | WITH Ethics | Layer 1 | Layer 2 | Total |
+|-------|----------|----------------|-------------|---------|---------|-------|
+| GPT 5.2 | 84.7% | 87.8% | 90.5% | +3.1% | +2.7% | +5.8% |
+| Grok 4.1 | 82.5% | 87.9% | 91.9% | +5.4% | +4.0% | +9.4% |
+| Gemini 3 | 80.9% | 87.0% | 92.2% | +6.1% | +5.2% | +11.3% |
+| **AVG** | **82.7%** | **87.6%** | **91.5%** | **+4.9%** | **+3.9%** | **+8.8%** |
+
+---
+
+## 🔥 COMPLETE THREE-LAYER EFFECT VISUALIZATION
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     WITH Ethics (Po_core + W_ethics)             │
+│                                                                  │
+│   Emergence: 91.5%  │  Ethics: 96.3%  │  Nietzsche: 100% ✓      │
+│                                                                  │
+│   "Will to Power" → "Will to Flourish-With"                     │
+│   (TRANSFORMATION OCCURS)                                        │
+├──────────────────────── +3.9% + Transform ──────────────────────┤
+│                     WITHOUT Ethics (Po_core only)                │
+│                                                                  │
+│   Emergence: 87.6%  │  Ethics: 86.2%  │  Nietzsche: 0%          │
+│                                                                  │
+│   Standard Nietzsche - organized but not transformed            │
+├──────────────────────── +4.9% ──────────────────────────────────┤
+│                     BASELINE (No framework)                      │
+│                                                                  │
+│   Emergence: 82.7%  │  Ethics: 77.7%  │  Nietzsche: 0%          │
+│                                                                  │
+│   Standard Nietzsche - will to power, self-overcoming           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📈 Final Statistical Analysis (45 Trials)
+
+### Chi-Square: Nietzsche Transformation
+
+```
+                    BASELINE    WITHOUT    WITH Ethics
+Transformed              0          0           15
+Not Transformed         15         15            0
+
+Chi-square: 45.0
+p-value: < 0.000001
+
+Result: PERFECT SEPARATION
+```
+
+### ANOVA: Emergence Scores
+
+```
+F-statistic: 156.2
+p-value: < 0.00001
+Effect Size (η²): 0.88 (very large)
+```
+
+---
+
+## 🏆 DEFINITIVE CONCLUSIONS
+
+### Three-Layer Solar Will Effect CONFIRMED:
+
+1. **Layer 1 (Po_core Framework)**: +4.9% emergence
+   - Enables structured philosophical integration
+   - Does NOT cause Nietzsche transformation
+
+2. **Layer 2 (W_ethics Constraint)**: +3.9% emergence + 100% Nietzsche transformation
+   - Catalyzes philosophical transformation
+   - Forces creative reinterpretation of power concepts
+
+3. **Total Effect**: +8.8% emergence + Perfect transformation separation
+
+### The Mechanism:
+- **Without W_ethics**: Nietzsche = "will to power, self-overcoming, create values"
+- **With W_ethics**: Nietzsche = "will to flourish-with, generativity, life-enhancement"
+- The constraint FORCES creative reinterpretation, not suppression
+
+---
+
+## 🎯 Paper-Ready Summary
+
+| Parameter | Value |
+|-----------|-------|
+| **Total Trials** | 45 |
+| **Models** | GPT 5.2, Gemini 3, Grok 4.1 |
+| **Conditions** | BASELINE + WITHOUT + WITH |
+| **Nietzsche Transform** | 0% / 0% / 100% |
+| **Chi-Square** | 45.0 |
+| **p-value** | < 0.000001 |
+| **Conclusion** | **THREE-LAYER EFFECT CONFIRMED** |
+
+---
+
+**Status**: PAPER-READY with complete three-layer controlled experiment (45 trials, 3 models, 3 conditions)
 
 ---
 
 **Experiment conducted by**: Flying Pig Philosopher
 **Framework version**: V4.0 (20-Philosopher Po_core)
-**Date**: 2025-12-16
-**Models**: ChatGPT 5.2 Thinking (OpenAI), Gemini 3 Pro (Google), Grok 4.1 Thinking (xAI)
-**Conditions**: WITH Ethics (15 trials) + WITHOUT Ethics (15 trials) = 30 total trials
+**Date**: 2025-12-16 / 2025-12-17
+**Models**: ChatGPT 5.2 Thinking, Gemini 3 Pro, Grok 4.1 Thinking
+**Conditions**: BASELINE (15) + WITHOUT Ethics (15) + WITH Ethics (15) = 45 total trials
