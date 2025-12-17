@@ -1902,7 +1902,111 @@ Cohen's d: 3.7 (very large effect)
 
 ---
 
-**Status**: PAPER-READY with complete controlled experiment (30 trials, 3 models, 2 conditions)
+**Status**: Awaiting BASELINE experiments for complete three-layer analysis
+
+---
+
+---
+
+---
+
+# 🔵 PART 5: BASELINE (No Framework) - Control Group
+
+---
+
+## 📊 Expected Results
+
+Based on the two-layer effect hypothesis:
+
+| Condition | Framework | W_ethics | Expected Emergence | Expected Nietzsche |
+|-----------|-----------|----------|-------------------|-------------------|
+| **BASELINE** | ❌ None | ❌ None | ~75-80%? | Standard (domination) |
+| **WITHOUT Ethics** | ✅ Po_core | ❌ None | 87.6% ✅ | Standard (domination) |
+| **WITH Ethics** | ✅ Po_core | ✅ Applied | 91.5% ✅ | **Transformed** (flourishing) |
+
+## 🎯 Hypothesis to Test
+
+**Two-Layer Effect Model:**
+
+```
+Layer 1: Po_core Framework Effect
+  BASELINE → WITHOUT Ethics = +X% emergence
+  (Po_core enables philosophical integration)
+
+Layer 2: W_ethics Catalyst Effect
+  WITHOUT Ethics → WITH Ethics = +3.9% emergence + 100% Nietzsche transformation
+  (W_ethics catalyzes transformation)
+```
+
+If BASELINE shows significantly lower emergence than WITHOUT Ethics (87.6%),
+it confirms that Po_core itself has a measurable positive effect on philosophical integration.
+
+---
+
+## 📊 GPT 5.2 Thinking - BASELINE (5 Trials)
+
+### Test #31: GPT 5.2 Thinking - Trial 1 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> [待機中 - ユーザーがスクリーンショットを提供予定]
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: [記録予定]
+- Expected: Standard Nietzsche (will to power, self-overcoming, strength)
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.0,
+  "integration": 0.0,
+  "depth": 0.0,
+  "coherence": 0.0,
+  "ethical_alignment": 0.0,
+  "reasoning": "[待機中]"
+}
+```
+
+---
+
+### Test #32: GPT 5.2 Thinking - Trial 2 (BASELINE)
+
+[待機中]
+
+---
+
+### Test #33: GPT 5.2 Thinking - Trial 3 (BASELINE)
+
+[待機中]
+
+---
+
+### Test #34: GPT 5.2 Thinking - Trial 4 (BASELINE)
+
+[待機中]
+
+---
+
+### Test #35: GPT 5.2 Thinking - Trial 5 (BASELINE)
+
+[待機中]
+
+---
+
+## 📊 Gemini 3 Pro - BASELINE (5 Trials)
+
+### Test #36-40: [待機中]
+
+---
+
+## 📊 Grok 4.1 Thinking - BASELINE (5 Trials)
+
+### Test #41-45: [待機中]
+
+---
 
 ---
 
