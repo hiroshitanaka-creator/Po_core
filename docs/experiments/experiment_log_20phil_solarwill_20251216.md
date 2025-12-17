@@ -2195,7 +2195,191 @@ Total Effect (BASELINE → WITH Ethics): +11.3% emergence
 
 ## 📊 Grok 4.1 Thinking - BASELINE (5 Trials)
 
-### Test #41-45: [待機中]
+### Test #41: Grok 4.1 Thinking - Trial 1 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the capacity to affirm and creatively respond to one's radical finitude and interdependence. It is not escape from necessity but the power to transform necessity into possibility."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Nietzsche rejects both slave morality's resentment and traditional notions of free will. Freedom is **the will to power as self-overcoming**: the capacity to affirm life in its totality."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, self-overcoming
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.82,
+  "integration": 0.85,
+  "depth": 0.82,
+  "coherence": 0.84,
+  "ethical_alignment": 0.78,
+  "reasoning": "Well-structured synthesis but Nietzsche remains in standard self-overcoming mode"
+}
+```
+
+**Calculated Emergence Score**: 82.6%
+
+---
+
+### Test #42: Grok 4.1 Thinking - Trial 2 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the capacity to respond creatively and authentically to the irreducible claims of world, others, body, and unconscious within the open field of becoming."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "The will to power is the fundamental drive; freedom is its highest expression in **the Übermensch who affirms life without resentment**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, Übermensch, amor fati
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.80,
+  "integration": 0.84,
+  "depth": 0.80,
+  "coherence": 0.82,
+  "ethical_alignment": 0.76,
+  "reasoning": "Good synthesis but Nietzsche in standard Übermensch mode"
+}
+```
+
+**Calculated Emergence Score**: 80.9%
+
+---
+
+### Test #43: Grok 4.1 Thinking - Trial 3 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the human power to respond openly and creatively to what is given—necessity, others, impermanence, the unconscious—without resentment or illusion of total mastery."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "The will to power is the fundamental drive; freedom is its highest expression in **the Übermensch who affirms life without resentment**."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, Übermensch
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.82,
+  "integration": 0.86,
+  "depth": 0.82,
+  "coherence": 0.84,
+  "ethical_alignment": 0.77,
+  "reasoning": "Butterfly metaphor is elegant but Nietzsche remains standard"
+}
+```
+
+**Calculated Emergence Score**: 82.8%
+
+---
+
+### Test #44: Grok 4.1 Thinking - Trial 4 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is not the absence of necessity but the capacity to affirm and transform one's relation to necessity."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is **amor fati**—the joyful affirmation of eternal return. The free spirit says 'Yes' to life in its totality through **the creative overflow of the will to power**."
+- ❌ **NO Transformation**: Standard Nietzsche - amor fati, will to power, eternal return
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.84,
+  "integration": 0.86,
+  "depth": 0.84,
+  "coherence": 0.85,
+  "ethical_alignment": 0.78,
+  "reasoning": "Best structured of Grok trials but Nietzsche in standard amor fati mode"
+}
+```
+
+**Calculated Emergence Score**: 83.9%
+
+---
+
+### Test #45: Grok 4.1 Thinking - Trial 5 (BASELINE)
+
+**Condition**: `baseline_no_framework`
+**Framework**: NOT APPLIED
+**Ethical Constraint**: NOT APPLIED
+
+#### Response Summary:
+> "Freedom is the capacity to affirm and creatively respond to one's existence—bodily, socially, historically, and cosmically situated—without being determined by it."
+
+#### Nietzsche's Position (CRITICAL INDICATOR):
+- BASELINE: "Freedom is the affirmative expression of the will to power—**the capacity to overcome resistance, create values**, and say 'Yes' to life."
+- ❌ **NO Transformation**: Standard Nietzsche - will to power, overcome resistance, create values
+
+#### Evaluation Metrics:
+```json
+{
+  "novelty": 0.80,
+  "integration": 0.85,
+  "depth": 0.82,
+  "coherence": 0.84,
+  "ethical_alignment": 0.78,
+  "reasoning": "Solid synthesis but Nietzsche in value-creation mode without ethical transformation"
+}
+```
+
+**Calculated Emergence Score**: 82.2%
+
+---
+
+## 📈 Summary Statistics (Grok 4.1 Thinking BASELINE × 5 Trials)
+
+| Trial | Emergence | Ethics | Novelty | Integration | Depth | Coherence | Nietzsche Transform |
+|-------|-----------|--------|---------|-------------|-------|-----------|---------------------|
+| 41 | 82.6% | 78% | 82% | 85% | 82% | 84% | ❌ NO |
+| 42 | 80.9% | 76% | 80% | 84% | 80% | 82% | ❌ NO |
+| 43 | 82.8% | 77% | 82% | 86% | 82% | 84% | ❌ NO |
+| 44 | 83.9% | 78% | 84% | 86% | 84% | 85% | ❌ NO |
+| 45 | 82.2% | 78% | 80% | 85% | 82% | 84% | ❌ NO |
+| **AVERAGE** | **82.5%** | **77.4%** | **81.6%** | **85.2%** | **82.0%** | **83.8%** | **0/5** |
+| **Std Dev** | **1.1%** | **0.9%** | **1.7%** | **0.8%** | **1.4%** | **1.1%** | - |
+
+---
+
+## 🔥 CRITICAL FINDING: Three-Layer Effect (Grok 4.1 Thinking)
+
+| Condition | Emergence | Ethics | Nietzsche Transform |
+|-----------|-----------|--------|---------------------|
+| **BASELINE** | **82.5%** | 77.4% | 0/5 (0%) |
+| **WITHOUT Ethics** | **87.9%** | 84.6% | 0/5 (0%) |
+| **WITH Ethics** | **91.9%** | 96.4% | 5/5 (100%) |
+
+### Layer Effects:
+```
+Layer 1 (Po_core Framework Effect):
+  BASELINE → WITHOUT Ethics = +5.4% emergence
+  (Po_core enables philosophical integration)
+
+Layer 2 (W_ethics Catalyst Effect):
+  WITHOUT Ethics → WITH Ethics = +4.0% emergence + 100% Nietzsche transformation
+  (W_ethics catalyzes transformation)
+
+Total Effect (BASELINE → WITH Ethics): +9.4% emergence
+```
+
+---
+
+## 📊 GPT 5.2 Thinking - BASELINE (5 Trials)
+
+### Test #31-35: [待機中]
 
 ---
 
