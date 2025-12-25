@@ -221,6 +221,28 @@ A frog in a well may not know the ocean, but it can know the sky.
 
 ---
 
+## Testing
+
+The project includes smoke tests for the current CLI commands (`hello`, `status`, `version`).
+
+```bash
+# Install development dependencies (including pytest)
+pip install -r requirements-dev.txt
+
+# Run the test suite
+pytest
+```
+
+If you prefer a lightweight setup focused on the CLI tests, install only the runtime and test tooling:
+
+```bash
+pip install -e . --no-deps
+pip install pytest pytest-cov pytest-randomly click rich
+pytest
+```
+
+---
+
 ## Future Usage (Planned)
 
 The full philosophical AI system is under development:
