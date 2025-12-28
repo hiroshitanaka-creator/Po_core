@@ -7,6 +7,7 @@ from typing import Dict, Iterable, List, Optional, TYPE_CHECKING, Any
 
 from po_core import philosophers
 from po_core.philosophers.base import Philosopher
+from po_core.trace.tracer import ReasoningTracer, TraceLevel
 
 if TYPE_CHECKING:
     from po_core.po_trace import PoTrace, EventType
@@ -186,14 +187,44 @@ def run_ensemble(
     philosophers: Optional[Iterable[str]] = None,
     po_trace: Optional["PoTrace"] = None,
     session_id: Optional[str] = None,
+    enable_tracer: bool = True,
 ) -> Dict:
-    """Return a structured ensemble response for a given prompt."""
+    """
+    Return a structured ensemble response for a given prompt.
+
+    Args:
+        prompt: The input prompt to reason about
+        philosophers: Optional list of philosopher names to use
+        po_trace: Optional PoTrace instance for persistent logging
+        session_id: Session ID for PoTrace
+        enable_tracer: Whether to enable ReasoningTracer (default: True)
+
+    Returns:
+        Dictionary with ensemble response
+    """
 
     selected = list(philosophers) if philosophers is not None else DEFAULT_PHILOSOPHERS
     thinkers = _load_philosophers(selected)
 
+    # Create ReasoningTracer with PoTrace integration
+    tracer: Optional[ReasoningTracer] = None
+    if enable_tracer:
+        tracer = ReasoningTracer(
+            prompt=prompt,
+            metadata={"philosophers": selected, "session_id": session_id},
+            po_trace=po_trace,
+            session_id=session_id,
+        )
+
     # Log ensemble start
-    if po_trace and session_id:
+    if tracer:
+        tracer.log_event(
+            level=TraceLevel.INFO,
+            event="ensemble_started",
+            message=f"Ensemble reasoning started with {len(selected)} philosophers",
+            data={"philosophers_count": len(selected), "philosophers": selected},
+        )
+    elif po_trace and session_id:
         from po_core.po_trace import EventType
 
         po_trace.log_event(
@@ -238,8 +269,32 @@ def run_ensemble(
         )
         tensors.append(tensor)
 
-        # Log philosopher reasoning
-        if po_trace and session_id:
+        # Log philosopher reasoning via tracer
+        if tracer:
+            tracer.log_philosopher_reasoning(
+                philosopher=thinker.name,
+                reasoning={
+                    "perspective": perspective,
+                    "tension": tension,
+                    "reasoning_length": len(reasoning_text),
+                },
+                metadata={
+                    "freedom_pressure": freedom_pressure,
+                    "semantic_delta": semantic_delta,
+                    "blocked_tensor": blocked_tensor,
+                },
+            )
+
+            # Log tensor computation
+            tracer.log_tensor_computation(
+                tensor_name=f"{thinker.name}_tensor",
+                tensor_data={
+                    "freedom_pressure": freedom_pressure,
+                    "semantic_delta": semantic_delta,
+                    "blocked_tensor": blocked_tensor,
+                },
+            )
+        elif po_trace and session_id:
             from po_core.po_trace import EventType
 
             po_trace.log_event(
@@ -261,7 +316,14 @@ def run_ensemble(
     ranked = sorted(tensors, key=lambda tensor: tensor.freedom_pressure, reverse=True)
 
     # Log ensemble completion
-    if po_trace and session_id:
+    if tracer:
+        tracer.log_decision(
+            decision=f"Consensus leader: {ranked[0].name}" if ranked else "No consensus",
+            reasoning="Selected philosopher with highest freedom pressure",
+            alternatives=[t.name for t in ranked[1:3]] if len(ranked) > 1 else [],
+        )
+        tracer.complete(result={"consensus_leader": ranked[0].name if ranked else None})
+    elif po_trace and session_id:
         from po_core.po_trace import EventType
 
         po_trace.log_event(
@@ -293,6 +355,14 @@ def run_ensemble(
             },
         ],
     }
+
+    # Include tracer timeline in log if available
+    if tracer:
+        log["trace"] = {
+            "trace_id": tracer.trace_id,
+            "statistics": tracer.stats,
+            "timeline": tracer.get_timeline(),
+        }
 
     consensus_text = ranked[0].reasoning if ranked else ""
 
