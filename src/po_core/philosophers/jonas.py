@@ -34,22 +34,23 @@ class Jonas(Philosopher):
     def __init__(self):
         super().__init__(
             name="Hans Jonas",
-            tradition="Phenomenology / Ethics of Responsibility",
-            key_concepts=[
-                "imperative of responsibility",
-                "future generations",
-                "heuristics of fear",
-                "technology ethics",
-                "life and organism",
-                "metabolism",
-                "being and ought",
-                "vulnerability",
-                "ecological ethics",
-                "precautionary principle",
-                "human dignity",
-                "preservation",
-            ],
+            description="Philosopher of responsibility ethics and technology critique",
         )
+        self.tradition = "Phenomenology / Ethics of Responsibility"
+        self.key_concepts = [
+            "imperative of responsibility",
+            "future generations",
+            "heuristics of fear",
+            "technology ethics",
+            "life and organism",
+            "metabolism",
+            "being and ought",
+            "vulnerability",
+            "ecological ethics",
+            "precautionary principle",
+            "human dignity",
+            "preservation",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

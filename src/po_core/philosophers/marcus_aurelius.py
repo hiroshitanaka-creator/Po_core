@@ -34,22 +34,23 @@ class MarcusAurelius(Philosopher):
     def __init__(self):
         super().__init__(
             name="Marcus Aurelius",
-            tradition="Stoicism",
-            key_concepts=[
-                "virtue",
-                "logos",
-                "prohairesis",
-                "dichotomy of control",
-                "amor fati",
-                "cosmopolitanism",
-                "memento mori",
-                "present moment",
-                "indifferents",
-                "ataraxia",
-                "duty",
-                "nature",
-            ],
+            description="Roman Emperor and Stoic philosopher, author of Meditations",
         )
+        self.tradition = "Stoicism"
+        self.key_concepts = [
+            "virtue",
+            "logos",
+            "prohairesis",
+            "dichotomy of control",
+            "amor fati",
+            "cosmopolitanism",
+            "memento mori",
+            "present moment",
+            "indifferents",
+            "ataraxia",
+            "duty",
+            "nature",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

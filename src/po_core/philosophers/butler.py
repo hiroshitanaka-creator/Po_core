@@ -36,22 +36,23 @@ class Butler(Philosopher):
     def __init__(self):
         super().__init__(
             name="Judith Butler",
-            tradition="Post-structuralism / Feminist Theory",
-            key_concepts=[
-                "performativity",
-                "gender trouble",
-                "bodies that matter",
-                "heteronormative matrix",
-                "precarity",
-                "grievability",
-                "ethical violence",
-                "recognition",
-                "subversion",
-                "undoing gender",
-                "subjection",
-                "citation",
-            ],
+            description="Post-structuralist and feminist philosopher known for work on gender performativity",
         )
+        self.tradition = "Post-structuralism / Feminist Theory"
+        self.key_concepts = [
+            "performativity",
+            "gender trouble",
+            "bodies that matter",
+            "heteronormative matrix",
+            "precarity",
+            "grievability",
+            "ethical violence",
+            "recognition",
+            "subversion",
+            "undoing gender",
+            "subjection",
+            "citation",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
