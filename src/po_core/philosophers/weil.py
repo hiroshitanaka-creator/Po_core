@@ -35,22 +35,23 @@ class Weil(Philosopher):
     def __init__(self):
         super().__init__(
             name="Simone Weil",
-            tradition="Mysticism / Existentialism",
-            key_concepts=[
-                "attention",
-                "affliction",
-                "decreation",
-                "grace",
-                "gravity and grace",
-                "the void",
-                "beauty",
-                "justice",
-                "labor",
-                "rootedness",
-                "waiting",
-                "the good",
-            ],
+            description="Philosopher and mystic known for her work on attention, affliction, and grace",
         )
+        self.tradition = "Mysticism / Existentialism"
+        self.key_concepts = [
+            "attention",
+            "affliction",
+            "decreation",
+            "grace",
+            "gravity and grace",
+            "the void",
+            "beauty",
+            "justice",
+            "labor",
+            "rootedness",
+            "waiting",
+            "the good",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

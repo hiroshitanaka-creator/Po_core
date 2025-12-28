@@ -35,22 +35,23 @@ class Parmenides(Philosopher):
     def __init__(self):
         super().__init__(
             name="Parmenides",
-            tradition="Pre-Socratic / Eleatic School",
-            key_concepts=[
-                "being",
-                "non-being",
-                "the way of truth",
-                "the way of opinion",
-                "monism",
-                "immutability",
-                "completeness",
-                "rational inquiry",
-                "appearance and reality",
-                "necessity",
-                "eternity",
-                "unity",
-            ],
+            description="Pre-Socratic philosopher who established foundational questions of Western metaphysics",
         )
+        self.tradition = "Pre-Socratic / Eleatic School"
+        self.key_concepts = [
+            "being",
+            "non-being",
+            "the way of truth",
+            "the way of opinion",
+            "monism",
+            "immutability",
+            "completeness",
+            "rational inquiry",
+            "appearance and reality",
+            "necessity",
+            "eternity",
+            "unity",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

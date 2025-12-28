@@ -34,22 +34,23 @@ class Epicurus(Philosopher):
     def __init__(self):
         super().__init__(
             name="Epicurus",
-            tradition="Epicureanism",
-            key_concepts=[
-                "ataraxia",
-                "aponia",
-                "pleasure",
-                "tetrapharmakos",
-                "katastematic pleasure",
-                "kinetic pleasure",
-                "natural desires",
-                "atomism",
-                "mortality",
-                "friendship",
-                "the garden",
-                "prudence",
-            ],
+            description="Greek philosopher who founded Epicureanism, teaching pleasure as the highest good",
         )
+        self.tradition = "Epicureanism"
+        self.key_concepts = [
+            "ataraxia",
+            "aponia",
+            "pleasure",
+            "tetrapharmakos",
+            "katastematic pleasure",
+            "kinetic pleasure",
+            "natural desires",
+            "atomism",
+            "mortality",
+            "friendship",
+            "the garden",
+            "prudence",
+        ]
 
     def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
