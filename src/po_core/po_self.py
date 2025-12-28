@@ -12,6 +12,7 @@ This module orchestrates:
 - Blocked content logging
 """
 
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import numpy as np
 
@@ -23,6 +24,186 @@ from po_core.tensors.concept_quantifier import ConceptQuantifier
 from po_core.tensors.interaction_tensor import InteractionTensor
 from po_core.trace.tracer import ReasoningTracer, TraceLevel
 from po_core.trace.annotator import PhilosophicalAnnotator
+
+
+@dataclass
+class PoSelfResponse:
+    """
+    Response from PoSelf generation.
+
+    Contains the generated text, philosopher attributions, metrics,
+    and full audit log for transparency.
+    """
+
+    prompt: str
+    text: str
+    philosophers: List[str]
+    metrics: Dict[str, float]
+    responses: List[Dict[str, Any]]
+    log: Dict[str, Any]
+    consensus_leader: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format."""
+        return {
+            "prompt": self.prompt,
+            "text": self.text,
+            "philosophers": self.philosophers,
+            "metrics": self.metrics,
+            "responses": self.responses,
+            "log": self.log,
+            "consensus_leader": self.consensus_leader,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "PoSelfResponse":
+        """Create PoSelfResponse from dictionary."""
+        return cls(
+            prompt=data.get("prompt", ""),
+            text=data.get("text", ""),
+            philosophers=data.get("philosophers", []),
+            metrics=data.get("metrics", {}),
+            responses=data.get("responses", []),
+            log=data.get("log", {}),
+            consensus_leader=data.get("consensus_leader"),
+            metadata=data.get("metadata", {}),
+        )
+
+
+class PoSelf:
+    """
+    PoSelf: High-level interface for philosophical reasoning.
+
+    Wraps the ensemble system and provides a simple API for generating
+    philosophical reasoning with automatic tracing and metrics.
+
+    Usage:
+        po_self = PoSelf()
+        response = po_self.generate("What is the meaning of life?")
+        print(response.text)
+        print(response.consensus_leader)
+    """
+
+    def __init__(
+        self,
+        philosophers: Optional[List[str]] = None,
+        enable_trace: bool = True,
+        trace_dir: Optional[str] = None,
+    ) -> None:
+        """
+        Initialize PoSelf.
+
+        Args:
+            philosophers: List of philosopher keys to use (defaults to all)
+            enable_trace: Whether to enable tracing
+            trace_dir: Directory for trace files
+        """
+        self.philosophers = philosophers
+        self.enable_trace = enable_trace
+        self.trace_dir = trace_dir
+        self._trace = None
+
+    def generate(
+        self,
+        prompt: str,
+        philosophers: Optional[List[str]] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> PoSelfResponse:
+        """
+        Generate philosophical reasoning for a prompt.
+
+        Args:
+            prompt: The input prompt to reason about
+            philosophers: Optional list of specific philosophers to use
+            context: Optional context information
+
+        Returns:
+            PoSelfResponse containing the reasoning result
+        """
+        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
+
+        # Determine which philosophers to use
+        selected = philosophers or self.philosophers
+        if selected is None:
+            # Use all available philosophers
+            selected = list(PHILOSOPHER_REGISTRY.keys())
+
+        # Initialize trace if enabled
+        if self.enable_trace:
+            from po_core.po_trace import PoTrace
+            trace_dir = self.trace_dir or "traces"
+            self._trace = PoTrace(trace_dir=trace_dir)
+            session_id = self._trace.create_session(
+                prompt=prompt,
+                philosophers=selected,
+                metadata={"context": context or {}},
+            )
+        else:
+            session_id = None
+
+        # Run ensemble
+        result = run_ensemble(
+            prompt=prompt,
+            philosophers=selected,
+            po_trace=self._trace,
+            session_id=session_id,
+        )
+
+        # Extract consensus text
+        consensus_text = result.get("consensus", {}).get("text", "")
+        consensus_leader = result.get("consensus", {}).get("leader")
+
+        # Build response
+        response = PoSelfResponse(
+            prompt=prompt,
+            text=consensus_text,
+            philosophers=result.get("philosophers", selected),
+            metrics=result.get("aggregate", {}),
+            responses=result.get("responses", []),
+            log=result.get("log", {}),
+            consensus_leader=consensus_leader,
+            metadata={
+                "session_id": session_id,
+                "context": context,
+            },
+        )
+
+        # Save trace
+        if self._trace and session_id:
+            self._trace.update_metrics(session_id, response.metrics)
+            self._trace.save_session(session_id)
+
+        return response
+
+    def generate_with_subset(
+        self,
+        prompt: str,
+        philosopher_keys: List[str],
+        context: Optional[Dict[str, Any]] = None,
+    ) -> PoSelfResponse:
+        """
+        Generate reasoning with a specific subset of philosophers.
+
+        Args:
+            prompt: The input prompt
+            philosopher_keys: List of philosopher keys to use
+            context: Optional context
+
+        Returns:
+            PoSelfResponse
+        """
+        return self.generate(prompt, philosophers=philosopher_keys, context=context)
+
+    def get_available_philosophers(self) -> List[str]:
+        """Get list of all available philosopher keys."""
+        from po_core.ensemble import PHILOSOPHER_REGISTRY
+        return list(PHILOSOPHER_REGISTRY.keys())
+
+    def get_trace(self):
+        """Get the current trace instance."""
+        return self._trace
 
 
 class PhilosophicalEnsemble:
