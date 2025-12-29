@@ -2,13 +2,17 @@
 Reasoning Tracer
 
 Comprehensive logging system for tracking philosophical reasoning processes.
+Integrates with PoTrace for persistent session-based logging.
 """
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from datetime import datetime
 from dataclasses import dataclass, field
 import json
+
+if TYPE_CHECKING:
+    from po_core.po_trace import PoTrace, EventType
 
 
 class TraceLevel(Enum):
@@ -21,6 +25,21 @@ class TraceLevel(Enum):
     BLOCKED = "blocked"
     WARNING = "warning"
     ERROR = "error"
+
+
+# Mapping from TraceLevel to PoTrace EventType
+def _get_event_type_for_level(level: TraceLevel) -> str:
+    """Map TraceLevel to PoTrace EventType string."""
+    mapping = {
+        TraceLevel.DEBUG: "info",
+        TraceLevel.INFO: "info",
+        TraceLevel.REASONING: "philosopher_reasoning",
+        TraceLevel.DECISION: "execution",
+        TraceLevel.BLOCKED: "blocking",
+        TraceLevel.WARNING: "info",
+        TraceLevel.ERROR: "error",
+    }
+    return mapping.get(level, "info")
 
 
 @dataclass
@@ -69,6 +88,8 @@ class ReasoningTracer:
     - Blocked/rejected content
     - Decision points
     - Semantic evolution
+
+    Optionally integrates with PoTrace for persistent session-based logging.
     """
 
     def __init__(
@@ -76,6 +97,8 @@ class ReasoningTracer:
         trace_id: Optional[str] = None,
         prompt: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        po_trace: Optional["PoTrace"] = None,
+        session_id: Optional[str] = None,
     ) -> None:
         """
         Initialize reasoning tracer.
@@ -84,10 +107,16 @@ class ReasoningTracer:
             trace_id: Unique identifier for this trace
             prompt: Input prompt being processed
             metadata: Additional metadata
+            po_trace: Optional PoTrace instance for persistent logging
+            session_id: Session ID for PoTrace (required if po_trace is provided)
         """
         self.trace_id = trace_id or self._generate_trace_id()
         self.prompt = prompt
         self.metadata = metadata or {}
+
+        # PoTrace integration
+        self._po_trace = po_trace
+        self._session_id = session_id
 
         # Trace entries
         self.entries: List[TraceEntry] = []
@@ -164,7 +193,51 @@ class ReasoningTracer:
         if level == TraceLevel.BLOCKED:
             self.stats["blocked_count"] += 1
 
+        # Forward to PoTrace if configured
+        self._forward_to_po_trace(entry)
+
         return entry
+
+    def _forward_to_po_trace(self, entry: TraceEntry) -> None:
+        """
+        Forward a trace entry to PoTrace for persistent logging.
+
+        Args:
+            entry: The trace entry to forward
+        """
+        if self._po_trace is None or self._session_id is None:
+            return
+
+        try:
+            from po_core.po_trace import EventType
+
+            # Map TraceLevel to EventType
+            event_type_str = _get_event_type_for_level(entry.level)
+            event_type = EventType(event_type_str)
+
+            # Prepare event data
+            event_data = {
+                "trace_id": self.trace_id,
+                "event": entry.event,
+                "message": entry.message,
+                **entry.data,
+            }
+
+            # Add metadata if present
+            if entry.metadata:
+                event_data["metadata"] = entry.metadata
+
+            # Log to PoTrace
+            self._po_trace.log_event(
+                session_id=self._session_id,
+                event_type=event_type,
+                source=entry.philosopher or "ReasoningTracer",
+                data=event_data,
+            )
+        except Exception:
+            # Silently fail if PoTrace logging fails
+            # We don't want tracing failures to break the main logic
+            pass
 
     def log_philosopher_reasoning(
         self,
