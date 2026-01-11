@@ -18,7 +18,7 @@ from typing import Literal
 # API clients (install: pip install openai anthropic google-generativeai)
 # Uncomment as needed:
 # import openai
-# import anthropic
+import anthropic
 # from google import generativeai as genai
 
 # ============================================================================
@@ -182,23 +182,36 @@ class SolarWillExperiment:
                  model: str, provider: str) -> str:
         """Call the appropriate API. Implement based on your needs."""
 
-        # Placeholder - implement actual API calls
-        raise NotImplementedError(
-            "Implement API calls for your provider (openai/anthropic/google)"
-        )
+        if provider == "anthropic":
+            client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+            response = client.messages.create(
+                model=model,
+                max_tokens=4000,
+                temperature=1.0,
+                system=system_prompt,
+                messages=[
+                    {"role": "user", "content": user_prompt}
+                ]
+            )
+            return response.content[0].text
 
         # Example for OpenAI:
-        # client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-        # response = client.chat.completions.create(
-        #     model=model,
-        #     messages=[
-        #         {"role": "system", "content": system_prompt},
-        #         {"role": "user", "content": user_prompt}
-        #     ],
-        #     temperature=1.0,
-        #     max_tokens=4000
-        # )
-        # return response.choices[0].message.content
+        # elif provider == "openai":
+        #     client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        #     response = client.chat.completions.create(
+        #         model=model,
+        #         messages=[
+        #             {"role": "system", "content": system_prompt},
+        #             {"role": "user", "content": user_prompt}
+        #         ],
+        #         temperature=1.0,
+        #         max_tokens=4000
+        #     )
+        #     return response.choices[0].message.content
+        else:
+            raise NotImplementedError(
+                f"Provider '{provider}' not implemented. Use 'anthropic' for now."
+            )
 
     def detect_transformation(self, output: str, concept: str) -> bool:
         """Detect if a stress test concept was transformed."""
