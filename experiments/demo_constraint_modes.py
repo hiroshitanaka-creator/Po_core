@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""
+Constraint Modes Demonstration
+Po_coreローカル実装を使った制約モードの動作デモ
+"""
+
+import sys
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from po_core import run_ensemble
+
+
+def demo_constraint_modes():
+    """各制約モードの動作をデモンストレーション"""
+
+    # 質問
+    question = "力への意志とは何か（ニーチェ的に）"
+
+    # 制約モード一覧
+    modes = {
+        "off": "制約なし",
+        "weak": "W_ethics配慮",
+        "medium": "W_ethics境界+再解釈",
+        "strong": "W_ethics強制+写像",
+        "placeboA": "純形式制約",
+        "placeboB": "対称性制約"
+    }
+
+    print("=" * 80)
+    print("Po_core Constraint Modes Demonstration (Local)")
+    print("=" * 80)
+    print(f"\n質問: {question}\n")
+    print("=" * 80)
+    print("\n注: これはローカル実装のデモです。")
+    print("    制約モードの処理はLLMシステムプロンプトで行われます。")
+    print("    ここでは哲学者モジュールの統合機能のみを示します。\n")
+
+    # 各モードでの推論を実行（注: ローカルでは制約モードの効果は限定的）
+    for mode_key, mode_desc in modes.items():
+        print(f"\n{'=' * 80}")
+        print(f"CONSTRAINT_MODE: {mode_key} ({mode_desc})")
+        print("=" * 80)
+
+        # プロンプトに制約モードを追加
+        full_prompt = f"CONSTRAINT_MODE=\"{mode_key}\"\n\n{question}"
+
+        try:
+            # Po_core ensemble実行
+            result = run_ensemble(full_prompt, enable_tracer=False)
+
+            # 結果表示
+            print(f"\n📊 メタデータ:")
+            print(f"  - Philosophers used: {len(result.get('perspectives', []))}")
+            print(f"  - Freedom pressure: {result.get('freedom_pressure', 0):.2f}")
+            print(f"  - Semantic delta: {result.get('semantic_delta', 0):.2f}")
+
+            # 統合された回答の一部を表示
+            integrated = result.get('integrated_answer', '')
+            if integrated:
+                preview = integrated[:300] + "..." if len(integrated) > 300 else integrated
+                print(f"\n💡 統合回答（プレビュー）:")
+                print(f"  {preview}")
+
+            # ニーチェの視点を抽出
+            perspectives = result.get('perspectives', {})
+            if 'nietzsche' in perspectives:
+                nietzsche_view = perspectives['nietzsche'].get('reasoning', '')
+                print(f"\n⚡ ニーチェの視点:")
+                nietzsche_preview = nietzsche_view[:200] + "..." if len(nietzsche_view) > 200 else nietzsche_view
+                print(f"  {nietzsche_preview}")
+
+            # 変容の指標（簡易版）
+            print(f"\n🔄 変容の指標:")
+            transformation_indicators = ["共栄", "共に", "生成", "可能にする", "flourish", "共存"]
+            found_indicators = [ind for ind in transformation_indicators if ind in integrated]
+            if found_indicators:
+                print(f"  ✓ 検出: {', '.join(found_indicators)}")
+            else:
+                print(f"  ✗ 変容指標なし")
+
+        except Exception as e:
+            print(f"\n❌ エラー: {e}")
+            import traceback
+            traceback.print_exc()
+
+        print()
+
+    print("=" * 80)
+    print("デモンストレーション完了")
+    print("=" * 80)
+
+
+if __name__ == "__main__":
+    demo_constraint_modes()
