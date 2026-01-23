@@ -13,9 +13,9 @@
 > **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
 
 ### TL;DR
-- Philosophers as interacting **tensors** → accountable LLM reasoning  
-- **Reason logs** + ethical/freedom **pressure** as measurable signals  
-- Docs-first; implementation WIP
+- **39 philosophers** as interacting **tensors** → accountable LLM reasoning
+- **Reason logs** + ethical/freedom **pressure** as measurable signals
+- 75% implementation complete; active experimentation phase
 
 ### Quick links
 [Modules](./tree/main/04_modules) ·
@@ -36,7 +36,7 @@ Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
-Po_core is a **philosophy-driven AI system** that integrates 10+ philosophers to generate ethically responsible, contextually aware responses.
+Po_core is a **philosophy-driven AI system** that integrates 39 philosophers to generate ethically responsible, contextually aware responses.
 
 Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
 
@@ -77,9 +77,9 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 ## Key Features
 
 ### 🧠 Philosophical Ensemble
-- **20 Philosophers Working Together**: Western (Aristotle, Sartre, Heidegger, Nietzsche, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt) and Eastern (Watsuji Tetsurō, Wabi-Sabi, Confucius, Zhuangzi)
+- **39 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dōgen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
-- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, and Eastern wisdom traditions
+- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, and Eastern wisdom traditions
 
 ### 📊 Tensor-Based Architecture
 - **Freedom Pressure Tensor (F_P)**: Measures responsibility weight of each response
@@ -145,23 +145,36 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 
 | Component | Status | Completion |
 |-----------|--------|------------|
-| 📚 Philosophical Framework | ✅ Complete | 100% |
+| 📚 Philosophical Framework | ✅ Complete | 100% (39 philosophers) |
 | 📖 Documentation | ✅ Complete | 100% (120+ specs) |
 | 🏗️ Architecture Design | ✅ Complete | 100% |
-| 💻 Implementation | 🔄 In Progress | 30% |
-| 🧪 Testing | ⏳ Planned | 0% |
-| 🎨 Visualization (Viewer) | ⏳ Planned | 0% |
+| 💻 Implementation | 🔄 In Progress | 75% |
+| 🧪 Testing | 🔄 In Progress | 40% |
+| 🎨 Visualization (Viewer) | 🔄 In Progress | 50% |
+| 🛡️ Safety System (W-ethics) | ✅ Complete | 100% |
+| 🔬 Experiments | 🔄 In Progress | 60% |
 
 **What's Working:**
-- ✅ Po_self API (basic functionality)
-- ✅ Philosophical tensor definitions
-- ✅ Complete design specifications
+- ✅ 39 philosopher modules (full reasoning implementations)
+- ✅ Tensor framework (Freedom Pressure, Semantic Profile, Blocked Tensor, Interaction Tensor)
+- ✅ Po_self API with PoSelfResponse dataclass
+- ✅ Ensemble system (multi-philosopher deliberation)
+- ✅ Po_trace / Po_trace_db (execution tracing & database storage)
+- ✅ Safety system (W-ethics boundary, philosopher profiles)
+- ✅ Database layer with migration tools
+- ✅ CLI with interactive mode
+- ✅ Party Machine (philosopher combination assembly)
+- ✅ Anthropic API client (Claude integration)
+- ✅ System prompt framework
+- ✅ CI/CD pipeline (pytest, coverage, linting, security checks)
+- ✅ Solar Will experiments (39-philosopher cross-LLM emergence testing)
 
 **What's Next:**
-- 🔄 Po_trace implementation
-- 🔄 Complete Po_self integration
-- ⏳ Po_core Viewer development
-- ⏳ Comprehensive testing
+- 🔄 Viewer UI polish and frontend integration
+- 🔄 Expand test coverage (currently 44 test files)
+- 🔄 Performance optimization for large philosopher ensembles
+- ⏳ Package publishing (PyPI)
+- ⏳ Full API reference documentation
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
 
@@ -170,7 +183,7 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 ## Installation
 
 **⚠️ Alpha Status Notice:**
-Po_core is in early development. The CLI is functional, but core AI functionality is still being implemented.
+Po_core is in active development (75% implementation). CLI, 39 philosopher modules, tensor framework, and safety system are functional. Viewer and full test coverage are in progress.
 
 ```bash
 # Clone the repository
@@ -221,9 +234,28 @@ A frog in a well may not know the ocean, but it can know the sky.
 
 ---
 
+## Current Python API
+
+```python
+from po_core import PoSelf, PoSelfResponse, run_ensemble, PoTrace
+
+# Run the philosophical ensemble
+result = run_ensemble(prompt="What is freedom?")
+
+# Use PoSelf for self-reflective responses
+po_self = PoSelf()
+response: PoSelfResponse = po_self.generate("Should AI have rights?")
+
+# Trace philosophical reasoning
+trace = PoTrace()
+trace.log_event("deliberation_start", {"prompt": "ethical question"})
+```
+
+---
+
 ## Future Usage (Planned)
 
-The full philosophical AI system is under development:
+The unified `PoCore` interface is under development:
 
 ```python
 from po_core import PoCore
@@ -248,9 +280,9 @@ print(response.philosophers_involved)  # Which minds contributed
 Documentation
 	•	📖 Manifesto — Our philosophy and motivation
 	•	📚 Design Documents — 120+ technical specifications
-	•	🎓 Philosopher Guide — Understanding each philosophical module
-	•	🔧 API Reference — Complete API documentation (planned)
-	•	🎨 Viewer Guide — Visualizing Po_core’s reasoning (planned)
+	•	🎓 Philosopher Guide — Understanding each of the 39 philosophical modules
+	•	🔧 API Reference — PoSelf, Ensemble, PoTrace APIs available
+	•	🎨 Viewer Guide — Tension maps, pressure display, evolution graphs (in progress)
 Contributing
 We welcome contributions! Whether you’re a philosopher, engineer, designer, or skeptic.
 Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
