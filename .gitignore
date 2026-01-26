@@ -280,10 +280,13 @@ viewer_temp/
 *.viewer_snapshot
 
 # Experimental outputs (results only, not scripts)
-experiments/results/
+experiments/results/*.jsonl
 experiments/*.json
 trials/
 sandbox/
+
+# Keep important experiment results
+!experiments/results/darkpattern_review/
 
 # Personal research notes (should be in Google Drive)
 notes/personal/
@@ -418,4 +421,6 @@ batch_analysis_results/
 # Personal test results
 my_llm_test_results.md
 visualization_outputs*/
-results/
+
+# Temporary experiment results (keep important ones in experiments/results/)
+# results/
