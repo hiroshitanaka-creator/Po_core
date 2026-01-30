@@ -47,9 +47,13 @@ class Jung(Philosopher):
         # Perform Jungian analysis
         analysis = self._analyze_psyche(prompt)
 
+        # Calculate tension
+        tension = self._calculate_tension(analysis)
+
         return {
             "reasoning": analysis["reasoning"],
             "perspective": "Analytical Psychology",
+            "tension": tension,
             "archetypes_detected": analysis["archetypes"],
             "collective_unconscious_themes": analysis["collective_themes"],
             "individuation_stage": analysis["individuation"],
@@ -479,3 +483,76 @@ class Jung(Philosopher):
         )
 
         return reasoning
+
+    def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate psychological tension based on Jungian analysis.
+
+        Tensions arise from:
+        - Shadow not integrated
+        - Persona identification (not individuating)
+        - Fragmentation (low self-realization)
+        - Conflicting archetypes
+        """
+        tension_score = 0
+        tension_elements = []
+
+        # Check shadow integration
+        shadow = analysis["shadow"]
+        if shadow["status"] == "Denying":
+            tension_score += 2
+            tension_elements.append("Shadow denied - active repression")
+        elif shadow["status"] == "Projecting":
+            tension_score += 2
+            tension_elements.append("Shadow projected onto others")
+        elif shadow["status"] == "Unconscious":
+            tension_score += 1
+            tension_elements.append("Shadow unconscious")
+
+        # Check individuation stage
+        individuation = analysis["individuation"]
+        if individuation["level"] == "Beginning":
+            tension_score += 1
+            tension_elements.append("Early individuation - persona identification")
+        elif individuation["level"] == "Initial":
+            tension_score += 1
+            tension_elements.append("Pre-individuation - journey not yet begun")
+
+        # Check self-realization
+        self_realization = analysis["self_realization"]
+        if "Fragmented" in self_realization["level"]:
+            tension_score += 2
+            tension_elements.append("Psychic fragmentation")
+        elif "Ego-consciousness" in self_realization["level"]:
+            tension_score += 1
+            tension_elements.append("Ego-identified - Self not yet realized")
+
+        # Check for multiple archetypes (complexity)
+        archetypes = analysis["archetypes"]
+        if len(archetypes) >= 3:
+            tension_score += 1
+            tension_elements.append("Multiple archetypal energies active")
+
+        # Determine tension level
+        if tension_score >= 5:
+            level = "Very High"
+            description = "Significant psychological tension - shadow work needed"
+        elif tension_score >= 3:
+            level = "High"
+            description = "Notable tensions in individuation process"
+        elif tension_score >= 2:
+            level = "Moderate"
+            description = "Some psychological tensions present"
+        elif tension_score >= 1:
+            level = "Low"
+            description = "Minor tensions, generally integrated"
+        else:
+            level = "Very Low"
+            description = "Psychologically balanced"
+
+        return {
+            "level": level,
+            "score": tension_score,
+            "description": description,
+            "elements": tension_elements if tension_elements else ["No significant tensions"]
+        }
