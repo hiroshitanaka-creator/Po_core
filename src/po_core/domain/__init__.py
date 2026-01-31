@@ -13,6 +13,7 @@ Dependency Direction (INVIOLABLE):
     domain/ <- tensors/
     domain/ <- safety/
     domain/ <- trace/
+    domain/ <- autonomy/
     domain/ <- ensemble.py
 
     domain/ -> NOTHING (except stdlib)
@@ -20,53 +21,39 @@ Dependency Direction (INVIOLABLE):
 This is the "ground" that all other modules stand on.
 
 Contents:
-- Context: Input context for reasoning
-- Proposal: Philosopher proposals
-- TensorSnapshot: Tensor measurement snapshots
-- SafetyVerdict: Safety gate verdicts
-- TraceEvent: Trace events for audit trail
+- Context: 意思決定1回分のコンテキスト（監査の単位）
+- Intent: SolarWillの出力（意図・目標候補）
+- Proposal: philosopher/aggregatorの成果物
+- TensorSnapshot: tensors層の出力スナップショット
+- SafetyVerdict: Gateの判定結果
+- TraceEvent: 観測可能性の単位
+- MemorySnapshot: 読み取り専用メモリビュー
 """
 
-from po_core.domain.context import (
-    Context,
-    ContextBuilder,
-)
-from po_core.domain.proposal import (
-    Proposal,
-    ProposalSource,
-    Rationale,
-)
-from po_core.domain.tensor_snapshot import (
-    TensorSnapshot,
-    TensorValue,
-)
-from po_core.domain.safety_verdict import (
-    SafetyVerdict,
-    VerdictType,
-    ViolationInfo,
-)
-from po_core.domain.trace_event import (
-    TraceEvent,
-    TraceEventType,
-)
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemoryItem, MemorySnapshot
+from po_core.domain.proposal import Proposal
+from po_core.domain.safety_verdict import Decision, SafetyVerdict
+from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.domain.trace_event import TraceEvent
 
 
 __all__ = [
     # Context
     "Context",
-    "ContextBuilder",
+    # Intent (SolarWill output)
+    "Intent",
+    # Memory
+    "MemoryItem",
+    "MemorySnapshot",
     # Proposals
     "Proposal",
-    "ProposalSource",
-    "Rationale",
     # Tensors
     "TensorSnapshot",
-    "TensorValue",
     # Safety
+    "Decision",
     "SafetyVerdict",
-    "VerdictType",
-    "ViolationInfo",
     # Trace
     "TraceEvent",
-    "TraceEventType",
 ]
