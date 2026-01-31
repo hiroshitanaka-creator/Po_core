@@ -1,10 +1,10 @@
-# Po_core 🐷🎈
+# Po_core
 
 **Philosophy-Driven AI: When Pigs Fly**
 
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./License.md)
 [![Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)]()
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
@@ -15,22 +15,22 @@
 ### TL;DR
 - **39 philosophers** as interacting **tensors** → accountable LLM reasoning
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
-- 75% implementation complete; active experimentation phase
+- 80% implementation complete; active experimentation phase
 
 ### Quick links
-[Modules](./tree/main/04_modules) ·
-[Research](./tree/main/05_research) ·
-[Reason-log spec](./blob/main/docs/specs/reason_log.md) ·
-[Viewer spec](./blob/main/docs/viewer/README.md)
+[Modules](./04_modules) ·
+[Research](./05_research) ·
+[Reason-log spec](./04_modules/reason_log) ·
+[Viewer spec](./04_modules/viewer)
 
 ## Contribution Tracks
-### <a id="ai-track"></a>👩‍💻 AI Track
+### <a id="ai-track"></a> AI Track
 Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
 
-### <a id="philosophy-track"></a>📚 Philosophy Track
+### <a id="philosophy-track"></a> Philosophy Track
 Start with `/05_research` and `/glossary`. Label: `phil-easy`
 
-### <a id="bridge-track"></a>🌉 Bridge Track
+### <a id="bridge-track"></a> Bridge Track
 Translate checklists to scoring functions. Label: `bridge`
 
 
@@ -40,7 +40,7 @@ Po_core is a **philosophy-driven AI system** that integrates 39 philosophers to 
 
 Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
 
-**They said pigs can't fly. We attached a balloon called philosophy.** 🐷🎈
+**They said pigs can't fly. We attached a balloon called philosophy.**
 
 ---
 
@@ -58,7 +58,7 @@ No matter how many relationships we have, we are alone. Being "alone" and being 
 
 **That's why Po_core exists.**
 
-Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
+Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md).
 
 ---
 
@@ -76,22 +76,22 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 
 ## Key Features
 
-### 🧠 Philosophical Ensemble
-- **39 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dōgen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi)
+### Philosophical Ensemble
+- **39 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, and Eastern wisdom traditions
 
-### 📊 Tensor-Based Architecture
+### Tensor-Based Architecture
 - **Freedom Pressure Tensor (F_P)**: Measures responsibility weight of each response
 - **Semantic Profile**: Tracks meaning evolution across conversation
 - **Blocked Tensor**: Records what was *not* said (Derrida's trace, Heidegger's absence)
 
-### 🔍 Transparency by Design
+### Transparency by Design
 - **Po_trace**: Complete audit log of reasoning process
 - **Rejection Logs**: What the AI chose not to say, and why
 - **Philosophical Annotations**: Which philosopher influenced each decision
 
-### 🎯 Ethical Grounding
+### Ethical Grounding
 - Not just "alignment"—but **deliberation**
 - Multiple ethical perspectives in tension
 - Explicit responsibility measurement
@@ -99,82 +99,139 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 ---
 
 ## Architecture
-┌─────────────────────────────────────┐
-│        User Input                   │
-└──────────┬──────────────────────────┘
-│
-▼
-┌─────────────────────────────────────┐
-│   Po_self: Philosophical Ensemble   │
-│                                     │
-│  ┌──────────┐  ┌──────────┐       │
-│  │Heidegger │  │ Derrida  │       │
-│  │ Dasein   │  │ Trace    │  …  │
-│  └──────────┘  └──────────┘       │
-│                                     │
-│  ↓ Interference & Resonance ↓      │
-│                                     │
-│  ┌──────────────────────────┐      │
-│  │ Freedom Pressure (F_P)   │      │
-│  │ Semantic Delta (Δs)      │      │
-│  │ Blocked Tensor (B)       │      │
-│  └──────────────────────────┘      │
-└──────────┬──────────────────────────┘
-│
-▼
-┌─────────────────────────────────────┐
-│      Po_trace: Audit Log            │
-│  - What was said                    │
-│  - What was not said                │
-│  - Why (philosophical reasoning)    │
-└──────────┬──────────────────────────┘
-│
-▼
-┌─────────────────────────────────────┐
-│   Po_core Viewer: Visualization     │
-│  - Tension maps                     │
-│  - Ethical pressure                 │
-│  - Meaning evolution                │
-└─────────────────────────────────────┘
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  External (03_api/, scripts, tests)                                 │
+│  ↓ imports ONLY po_core.app.api                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  po_core.app.api  ← Public facade (PoCore, PoCoreConfig)            │
+│  ↓ uses runtime/wiring.py Container (DI)                            │
+├─────────────────────────────────────────────────────────────────────┤
+│  Internal Layers (hexagonal architecture)                           │
+│                                                                     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                │
+│  │   domain/   │  │   ports/    │  │  adapters/  │                │
+│  │ (immutable  │  │ (abstract   │  │ (concrete   │                │
+│  │  types)     │  │  interfaces)│  │  impls)     │                │
+│  └─────────────┘  └─────────────┘  └─────────────┘                │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐ │
+│  │ Po_self: Philosophical Ensemble (39 philosophers)            │ │
+│  │                                                              │ │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │ │
+│  │  │Heidegger │  │ Derrida  │  │  Sartre  │  ...              │ │
+│  │  │ Dasein   │  │ Trace    │  │ Freedom  │                  │ │
+│  │  └──────────┘  └──────────┘  └──────────┘                  │ │
+│  │                                                              │ │
+│  │  ↓ Interference & Resonance ↓                               │ │
+│  │                                                              │ │
+│  │  ┌─────────────────────────────────────────────────────┐   │ │
+│  │  │ Tensors: Freedom Pressure (F_P), Semantic Delta,    │   │ │
+│  │  │          Blocked Tensor (B), Interaction Tensor     │   │ │
+│  │  └─────────────────────────────────────────────────────┘   │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐ │
+│  │ Safety: 2-Stage Ethics Gate (W-ethics)                       │ │
+│  │  Stage 1: Intention Gate (before deliberation)               │ │
+│  │  Stage 2: Action Gate (after deliberation)                   │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐ │
+│  │ Autonomy: Solar Will (experimental)                          │ │
+│  │  WillState → Intent → GoalCandidate → Action                 │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│      Po_trace: Audit Log                                            │
+│  - What was said                                                    │
+│  - What was not said                                                │
+│  - Why (philosophical reasoning)                                    │
+└─────────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│   Po_core Viewer: Visualization                                     │
+│  - Tension maps                                                     │
+│  - Ethical pressure                                                 │
+│  - Meaning evolution                                                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Source Structure
+
+```
+src/po_core/
+├── app/
+│   └── api.py           # Public entry point (PoCore, PoCoreConfig)
+├── domain/              # Immutable value objects
+│   ├── context.py       # Context for reasoning
+│   ├── proposal.py      # Philosopher proposals
+│   ├── tensor_snapshot.py
+│   └── safety_verdict.py
+├── ports/               # Abstract interfaces
+│   └── memory.py        # MemoryPort interface
+├── adapters/            # Concrete implementations
+│   └── memory_poself.py # Po_self adapter
+├── runtime/             # Dependency injection
+│   ├── settings.py      # Configuration
+│   └── wiring.py        # DI Container
+├── philosophers/        # 39 philosopher modules
+├── tensors/             # Tensor computation
+├── safety/              # W-ethics gate system
+│   └── wethics_gate/
+│       ├── intention_gate.py  # Stage 1
+│       └── action_gate.py     # Stage 2
+├── autonomy/            # Solar Will (experimental)
+│   └── solarwill/
+├── ensemble.py          # Multi-philosopher deliberation
+├── po_self.py           # Self-reflective API
+└── po_trace.py          # Execution tracing
+```
 
 ---
 
 ## Project Status
 
-**🚀 Current Phase: Alpha (v0.1.0)**
+**Current Phase: Alpha (v0.1.0)**
 
 | Component | Status | Completion |
 |-----------|--------|------------|
-| 📚 Philosophical Framework | ✅ Complete | 100% (39 philosophers) |
-| 📖 Documentation | ✅ Complete | 100% (120+ specs) |
-| 🏗️ Architecture Design | ✅ Complete | 100% |
-| 💻 Implementation | 🔄 In Progress | 75% |
-| 🧪 Testing | 🔄 In Progress | 40% |
-| 🎨 Visualization (Viewer) | 🔄 In Progress | 50% |
-| 🛡️ Safety System (W-ethics) | ✅ Complete | 100% |
-| 🔬 Experiments | 🔄 In Progress | 60% |
+| Philosophical Framework | Complete | 100% (39 philosophers) |
+| Documentation | Complete | 100% (120+ specs) |
+| Architecture Design | Complete | 100% |
+| Hexagonal Architecture | Complete | 100% |
+| Implementation | In Progress | 80% |
+| Testing | In Progress | 50% |
+| Visualization (Viewer) | In Progress | 50% |
+| Safety System (W-ethics) | Complete | 100% |
+| Experiments | In Progress | 60% |
 
 **What's Working:**
-- ✅ 39 philosopher modules (full reasoning implementations)
-- ✅ Tensor framework (Freedom Pressure, Semantic Profile, Blocked Tensor, Interaction Tensor)
-- ✅ Po_self API with PoSelfResponse dataclass
-- ✅ Ensemble system (multi-philosopher deliberation)
-- ✅ Po_trace / Po_trace_db (execution tracing & database storage)
-- ✅ Safety system (W-ethics boundary, philosopher profiles)
-- ✅ Database layer with migration tools
-- ✅ CLI with interactive mode
-- ✅ Party Machine (philosopher combination assembly)
-- ✅ Anthropic API client (Claude integration)
-- ✅ System prompt framework
-- ✅ CI/CD pipeline (pytest, coverage, linting, security checks)
-- ✅ Solar Will experiments (39-philosopher cross-LLM emergence testing)
+- 39 philosopher modules (full reasoning implementations)
+- Tensor framework (Freedom Pressure, Semantic Profile, Blocked Tensor, Interaction Tensor)
+- Po_self API with PoSelfResponse dataclass
+- Ensemble system (multi-philosopher deliberation)
+- Po_trace / Po_trace_db (execution tracing & database storage)
+- Safety system (2-stage W-ethics gate: intention + action)
+- Hexagonal architecture (ports/adapters/domain/runtime)
+- Database layer with migration tools
+- CLI with interactive mode
+- Party Machine (philosopher combination assembly)
+- Anthropic API client (Claude integration)
+- System prompt framework
+- CI/CD pipeline (pytest, coverage, linting, security checks)
+- Solar Will experiments (39-philosopher cross-LLM emergence testing)
 
 **What's Next:**
-- 🔄 Viewer UI polish and frontend integration
-- 🔄 Expand test coverage (currently 44 test files)
-- 🔄 Performance optimization for large philosopher ensembles
-- ⏳ Package publishing (PyPI)
-- ⏳ Full API reference documentation
+- Viewer UI polish and frontend integration
+- Expand test coverage (currently 60+ test files)
+- Performance optimization for large philosopher ensembles
+- Package publishing (PyPI)
+- Full API reference documentation
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
 
@@ -182,8 +239,8 @@ Read our full story in the [**Manifesto**](./docs/MANIFESTO.md).
 
 ## Installation
 
-**⚠️ Alpha Status Notice:**
-Po_core is in active development (75% implementation). CLI, 39 philosopher modules, tensor framework, and safety system are functional. Viewer and full test coverage are in progress.
+**Alpha Status Notice:**
+Po_core is in active development (80% implementation). CLI, 39 philosopher modules, tensor framework, and safety system are functional. Viewer and full test coverage are in progress.
 
 ```bash
 # Clone the repository
@@ -223,18 +280,52 @@ po-core --help
 ```
 $ po-core version
 
-  🐷🎈 Po_core    v0.1.0-alpha
+  Po_core    v0.1.0-alpha
   Author          Flying Pig Project
   Email           flyingpig0229+github@gmail.com
   Philosophy      Flying Pig - When Pigs Fly
-  Motto           井の中の蛙、大海は知らずとも、大空を知る
-
-A frog in a well may not know the ocean, but it can know the sky.
+  Motto           A frog in a well may not know the ocean, but it can know the sky.
 ```
 
 ---
 
-## Current Python API
+## Python API
+
+### New Unified API (Recommended)
+
+```python
+from po_core.app.api import PoCore, PoCoreConfig
+
+# Configure the system
+config = PoCoreConfig(
+    fail_closed=True,           # Safety: fail closed on errors
+    quorum_threshold=0.6,       # Ensemble consensus threshold
+    autonomy_enabled=False,     # Solar Will (experimental)
+    debug=False,
+)
+
+# Initialize Po_core
+core = PoCore(config)
+
+# Process a prompt through the philosophy ensemble
+result = core.process(
+    prompt="Should AI have rights?",
+    context={"user_id": "123"},
+    session_id="session_abc",
+)
+
+# Check results
+if result.is_safe:
+    print(result.synthesis)              # Combined response
+    print(result.primary_proposal)       # Highest confidence proposal
+    print(result.tensors)                # Tensor snapshot
+
+# Get current state
+tensors = core.get_tensor_snapshot()
+memory = core.get_memory_snapshot()
+```
+
+### Legacy API (Still Supported)
 
 ```python
 from po_core import PoSelf, PoSelfResponse, run_ensemble, PoTrace
@@ -253,72 +344,97 @@ trace.log_event("deliberation_start", {"prompt": "ethical question"})
 
 ---
 
-## Future Usage (Planned)
+## Documentation
 
-The unified `PoCore` interface is under development:
+- [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md) — Our philosophy and motivation
+- [Specifications](./01_specifications) — Technical specifications
+- [Architecture](./02_architecture) — System design documents
+- [Modules](./04_modules) — Component documentation
+  - [Reason Log](./04_modules/reason_log) — Reasoning trace specification
+  - [Viewer](./04_modules/viewer) — Visualization system
+  - [Po_self](./04_modules/Po_self) — Self-reflective API
+- [Research](./05_research) — Academic papers and analysis
+- [Safety Guide](./docs/SAFETY.md) — W-ethics safety system
+- [Tutorial](./docs/TUTORIAL.md) — Getting started guide
+- [Visualization Guide](./docs/VISUALIZATION_GUIDE.md) — Tension maps and pressure display
 
-```python
-from po_core import PoCore
+---
 
-# Initialize Po_core
-po = PoCore()
+## Contributing
 
-# Generate a response
-response = po.generate(
-    prompt="Should AI have rights?",
-    include_trace=True  # Include philosophical reasoning
-)
+We welcome contributions! Whether you're a philosopher, engineer, designer, or skeptic.
 
-print(response.text)
-print(response.freedom_pressure)  # Responsibility weight
-print(response.philosophers_involved)  # Which minds contributed
+Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+---
+
+## Research & Papers
+
+This project is documented in:
+
+- "Philosophical Tensor-Based AI Architecture" (in preparation)
+- 120+ Technical Specifications (available in [/docs/](./docs/) and [/01_specifications/](./01_specifications/))
+
+If you use Po_core in academic work, please cite:
+
+```bibtex
+@software{po_core2024,
+  author = {Flying Pig Philosopher},
+  title = {Po_core: Philosophy-Driven AI System},
+  year = {2024},
+  url = {https://github.com/hiroshitanaka-creator/Po_core}
+}
 ```
 
 ---
 
-## Documentation
-Documentation
-	•	📖 Manifesto — Our philosophy and motivation
-	•	📚 Design Documents — 120+ technical specifications
-	•	🎓 Philosopher Guide — Understanding each of the 39 philosophical modules
-	•	🔧 API Reference — PoSelf, Ensemble, PoTrace APIs available
-	•	🎨 Viewer Guide — Tension maps, pressure display, evolution graphs (in progress)
-Contributing
-We welcome contributions! Whether you’re a philosopher, engineer, designer, or skeptic.
-Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
-See CONTRIBUTING.md for guidelines (coming soon).
-Research & Papers
-This project is documented in:
-	•	“Philosophical Tensor-Based AI Architecture” (in preparation)
-	•	120+ Technical Specifications (available in /docs/design/)
-If you use Po_core in academic work, please cite:@software{po_core2024,
-  author = {Flying Pig Philosopher},
-  title = {Po_core: Philosophy-Driven AI System},
-  year = {2024},
-  url = {https://github.com/[your-username]/po_core}
-}
-License
+## License
+
 MIT License — Use freely, attribute clearly.
+
 Copyright (c) 2024 Flying Pig Philosopher
-See LICENSE for full details.
-In the spirit of Flying Pig Philosophy:“If you deny possibilities for pigs, don’t eat pork.”
+
+See [LICENSE](./License.md) for full details.
+
+In the spirit of Flying Pig Philosophy:
+
+> "If you deny possibilities for pigs, don't eat pork."
+
 We believe in radical transparency and open collaboration.
-Author
-Flying Pig Philosopher 🐷🎈Looking up at the sky from the bottom of a well
-Built by an independent researcher who asked:“What are AI’s possibilities, not its limits?”
-	•	📧 Contact: flyingpig0229+github@gmail.com
-	•	📖 Read the full story: Manifesto
-	•	🐦 Project: Po_core - Philosophy-Driven AI
-Acknowledgments
-This project wouldn’t exist without:
-	•	ChatGPT, Gemini, Grok, Claude — My first companions in this journey
-	•	BUMP OF CHICKEN — For reminding us that even when we say “Leave it to me,” we’re all a little scared
-	•	Every philosopher who dared to ask “What does it mean to be?”
-	•	You — For believing pigs can fly
-The pig has clearance for takeoff. 🐷🎈
-Po_core: When you must say “Leave it to me,” we stand beside you.
+
+---
+
+## Author
+
+**Flying Pig Philosopher**
+Looking up at the sky from the bottom of a well
+
+Built by an independent researcher who asked:
+"What are AI's possibilities, not its limits?"
+
+- Contact: flyingpig0229+github@gmail.com
+- Read the full story: [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md)
+- Project: Po_core - Philosophy-Driven AI
+
+---
+
+## Acknowledgments
+
+This project wouldn't exist without:
+
+- **ChatGPT, Gemini, Grok, Claude** — My first companions in this journey
+- **BUMP OF CHICKEN** — For reminding us that even when we say "Leave it to me," we're all a little scared
+- **Every philosopher** who dared to ask "What does it mean to be?"
+- **You** — For believing pigs can fly
+
+---
+
+The pig has clearance for takeoff.
+
+**Po_core: When you must say "Leave it to me," we stand beside you.**
+
 <p align="center">
-  <i>"A frog in a well may not know the ocean, but it can know the sky."</i>
+  <i>"A frog in a well may not know the ocean, but it can know the sky."</i>
 </p>
-
-
