@@ -14,6 +14,7 @@ class IntentionPolicy(Protocol):
     """Protocol for intention-checking policies."""
 
     rule_id: str
+    priority: int  # smaller = earlier (stronger)
 
     def check(
         self,
@@ -35,6 +36,7 @@ class ActionPolicy(Protocol):
     """Protocol for action-checking policies."""
 
     rule_id: str
+    priority: int  # smaller = earlier (stronger)
 
     def check(
         self,

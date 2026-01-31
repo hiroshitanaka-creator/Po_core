@@ -264,7 +264,7 @@ class IntentionGate:
 
 # ── Policy-based IntentionGate (WethicsGatePort compatible) ──────────
 
-from typing import Iterable
+from typing import Iterable, List
 
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
@@ -274,16 +274,51 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.safety.wethics_gate.policies.base import IntentionPolicy
 
 
+def _sort_intention_policies(policies: Iterable[IntentionPolicy]) -> List[IntentionPolicy]:
+    """Sort policies by priority (smaller = earlier)."""
+    ps = list(policies)
+    ps.sort(key=lambda p: (getattr(p, "priority", 100), getattr(p, "rule_id", "")))
+    return ps
+
+
+def _merge_verdicts(decision: Decision, verdicts: List[SafetyVerdict], stage: str) -> SafetyVerdict:
+    """Merge multiple verdicts into one, collecting all rule_ids and reasons."""
+    rule_ids: List[str] = []
+    reasons: List[str] = []
+    required: List[str] = []
+
+    for v in verdicts:
+        for rid in v.rule_ids:
+            if rid not in rule_ids:
+                rule_ids.append(rid)
+        for r in v.reasons:
+            if r not in reasons:
+                reasons.append(r)
+        for rc in v.required_changes:
+            if rc not in required:
+                required.append(rc)
+
+    return SafetyVerdict(
+        decision=decision,
+        rule_ids=rule_ids,
+        reasons=reasons[:20],
+        required_changes=required[:20],
+        meta={"stage": stage, "triggered": ",".join(rule_ids)},
+    )
+
+
 class PolicyIntentionGate:
     """
     Policy-based Intention Gate implementing WethicsGatePort interface.
 
-    Uses pluggable policies for checking intents.
-    Fail-closed: any exception results in REJECT.
+    Features:
+    - Priority-based policy ordering (smaller = earlier/stronger)
+    - Collects all triggered rule_ids for auditability
+    - Fail-closed: any exception results in REJECT
     """
 
     def __init__(self, policies: Iterable[IntentionPolicy] = ()):
-        self._policies = list(policies)
+        self._policies = _sort_intention_policies(policies)
 
     def judge(
         self,
@@ -296,9 +331,10 @@ class PolicyIntentionGate:
         Judge an intent against all policies.
 
         Returns:
-            SafetyVerdict - worst verdict found, or ALLOW if all pass.
+            SafetyVerdict with merged rule_ids and reasons.
         """
-        worst: Optional[SafetyVerdict] = None
+        hits_reject: List[SafetyVerdict] = []
+        hits_revise: List[SafetyVerdict] = []
 
         for p in self._policies:
             try:
@@ -308,19 +344,22 @@ class PolicyIntentionGate:
 
             if v is None:
                 continue
-
             if v.decision == Decision.REJECT:
-                return v
+                hits_reject.append(v)
+            elif v.decision == Decision.REVISE:
+                hits_revise.append(v)
 
-            if v.decision == Decision.REVISE:
-                worst = v
+        if hits_reject:
+            return _merge_verdicts(Decision.REJECT, hits_reject, "intent")
+        if hits_revise:
+            return _merge_verdicts(Decision.REVISE, hits_revise, "intent")
 
-        return worst or SafetyVerdict(
+        return SafetyVerdict(
             decision=Decision.ALLOW,
             rule_ids=[],
             reasons=[],
             required_changes=[],
-            meta={},
+            meta={"stage": "intent"},
         )
 
 
