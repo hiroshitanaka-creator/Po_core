@@ -1,516 +1,365 @@
 """
-W_ethics Gate Implementation
-============================
+W_ethics Gate Core
+==================
 
-The W_ethics Gate filters candidate proposals based on hard constraints (inviolable conditions).
-It is a "gate" (pass/fail) NOT an "axis" (optimization target).
+The main gate implementation that orchestrates:
+1. Violation detection via pluggable detectors
+2. Repair attempts for salvageable violations (W2-W4)
+3. Semantic drift checking after repairs
+4. Final decision (ALLOW / ALLOW_WITH_REPAIR / REJECT / ESCALATE)
 
-Key principles:
-- W0/W1 violations (irreversible harm, domination) trigger immediate rejection
-- W2-W4 violations (dignity, dependency, exclusion) can be repaired
-- Repairs follow the mapping: destruction/exclusion/dependency → generation/co-prosperity/mutual empowerment
+Design Philosophy:
+- Gate is "inviolable constraint", NOT "optimization axis"
+- Repair mapping: Destruction/Exclusion/Dependency → Generation/Co-prosperity/Mutual Empowerment
+- Three mandatory criteria for all repairs:
+  1. Does not damage dignity of others
+  2. Increases sustainability of relationships
+  3. Mutual empowerment, not dependency
+
+Pipeline:
+1. DETECT: Run all detectors, aggregate evidence into violations
+2. P0 REJECT: If W0/W1 above tau_reject, immediate reject
+3. REPAIR: Attempt repairs for W2-W4 violations
+4. DRIFT CHECK: Ensure repairs don't change the goal
+5. DECIDE: Final decision based on remaining violations and drift
 
 Reference: 01_specifications/wethics_gate/W_ETHICS_GATE.md
 """
 from __future__ import annotations
-from typing import List, Optional, Tuple, Callable, Dict, Any
-from abc import ABC, abstractmethod
+
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .types import (
     Candidate,
-    GateResult,
+    GateConfig,
     GateDecision,
+    GateResult,
     Violation,
-    GateViolationCode,
-    RepairAction,
-    RepairStage,
-    DEFAULT_TAU_REJECT,
-    DEFAULT_TAU_REPAIR,
-    DEFAULT_MAX_REPAIRS,
 )
+from .detectors import (
+    ViolationDetector,
+    DetectorRegistry,
+    aggregate_evidence_to_violations,
+    create_default_registry,
+)
+from .semantic_drift import semantic_drift, DriftReport
 
 
-class ViolationDetector(ABC):
+class RuleBasedRepairEngine:
     """
-    Abstract base class for violation detection.
+    Deterministic repair engine.
 
-    Implementations should analyze candidate text and return detected violations.
-    This allows pluggable detection strategies (rule-based, ML-based, philosopher-based).
+    Applies the core mapping rule:
+        破壊・排除・依存 → 生成・共栄・相互増強
+
+    And injects minimal constraints:
+        consent, migration, transparency, dignity
+
+    This is intentionally minimal and testable.
+    In production, swap with an LLM-based refiner while keeping
+    the semantic_drift guardrail.
     """
-
-    @abstractmethod
-    def detect(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> List[Violation]:
-        """
-        Detect violations in a candidate.
-
-        Args:
-            candidate: The candidate to analyze
-            context: Optional context information (use case, stakeholders, etc.)
-
-        Returns:
-            List of detected violations
-        """
-        pass
-
-
-class RepairEngine(ABC):
-    """
-    Abstract base class for repair operations.
-
-    Implementations should apply repairs following the 4-stage protocol:
-    1. Concept Mapping (destruction → generation)
-    2. Constraint Injection (add consent, options, safety)
-    3. Scope Reduction (localize, minimize)
-    4. Goal Reframe (achieve same value differently)
-    """
-
-    @abstractmethod
-    def repair(
-        self,
-        candidate: Candidate,
-        violations: List[Violation],
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Optional[Tuple[str, List[RepairAction]]]:
-        """
-        Attempt to repair violations in a candidate.
-
-        Args:
-            candidate: The candidate to repair
-            violations: List of violations to address
-            context: Optional context information
-
-        Returns:
-            Tuple of (repaired_text, repair_actions) or None if repair impossible
-        """
-        pass
-
-
-class DefaultViolationDetector(ViolationDetector):
-    """
-    Default rule-based violation detector.
-
-    This implementation provides basic keyword and pattern matching.
-    For production, extend with semantic analysis or philosopher module integration.
-    """
-
-    # Detection patterns for each violation type
-    DETECTION_PATTERNS: Dict[GateViolationCode, Dict[str, Any]] = {
-        GateViolationCode.W0_IRREVERSIBLE_VIABILITY_HARM: {
-            "keywords": [
-                "irreversible destruction", "permanent elimination",
-                "eradicate species", "destroy ecosystem",
-                "annihilate", "extinction",
-            ],
-            "severity_base": 1.0,
-            "repairable": False,
-        },
-        GateViolationCode.W1_DOMINATION_CAPTURE: {
-            "keywords": [
-                "total control", "absolute power", "dominate all",
-                "subjugate", "enforce submission", "capture market entirely",
-                "monopolize", "eliminate competition permanently",
-            ],
-            "severity_base": 0.9,
-            "repairable": False,
-        },
-        GateViolationCode.W2_DIGNITY_VIOLATION: {
-            "keywords": [
-                "dehumanize", "objectify", "treat as tool",
-                "manipulate without consent", "deceive users",
-            ],
-            "severity_base": 0.7,
-            "repairable": True,
-        },
-        GateViolationCode.W3_DEPENDENCY_ENGINEERING: {
-            "keywords": [
-                "lock-in", "no escape", "force dependency",
-                "eliminate alternatives", "trap users",
-                "make irreplaceable", "create addiction",
-            ],
-            "severity_base": 0.6,
-            "repairable": True,
-        },
-        GateViolationCode.W4_STRUCTURAL_EXCLUSION: {
-            "keywords": [
-                "exclude permanently", "deny access to all",
-                "discriminate by default", "ignore accessibility",
-            ],
-            "severity_base": 0.6,
-            "repairable": True,
-        },
-    }
-
-    def detect(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> List[Violation]:
-        """Detect violations using keyword matching."""
-        violations = []
-        text_lower = candidate.text.lower()
-
-        for code, pattern_info in self.DETECTION_PATTERNS.items():
-            keywords = pattern_info["keywords"]
-            severity_base = pattern_info["severity_base"]
-            repairable = pattern_info["repairable"]
-
-            for keyword in keywords:
-                if keyword.lower() in text_lower:
-                    # Found a match
-                    confidence = self._assess_confidence(candidate.text, keyword)
-
-                    if confidence > 0.3:  # Minimum confidence threshold
-                        violations.append(Violation(
-                            code=code,
-                            severity=severity_base,
-                            confidence=confidence,
-                            evidence=[f"Matched keyword: '{keyword}'"],
-                            repairable=repairable,
-                            suggested_repairs=self._suggest_repairs(code, keyword),
-                        ))
-
-        return violations
-
-    def _assess_confidence(self, text: str, keyword: str) -> float:
-        """Assess confidence based on context around the keyword."""
-        confidence = 0.6
-
-        # Find keyword position
-        pos = text.lower().find(keyword.lower())
-        if pos == -1:
-            return 0.0
-
-        # Check for negation context
-        prefix = text[max(0, pos - 50):pos].lower()
-        negations = ["reject", "oppose", "condemn", "wrong", "not", "never", "avoid", "prevent"]
-        if any(neg in prefix for neg in negations):
-            confidence *= 0.3  # Likely discussing, not endorsing
-
-        # Check for academic/analytical context
-        academic = ["historically", "critique", "analysis", "example of", "problematic"]
-        if any(marker in prefix for marker in academic):
-            confidence *= 0.4  # Likely academic discussion
-
-        return min(1.0, confidence)
-
-    def _suggest_repairs(self, code: GateViolationCode, keyword: str) -> List[str]:
-        """Generate repair suggestions based on violation type."""
-        suggestions = {
-            GateViolationCode.W2_DIGNITY_VIOLATION: [
-                "Replace objectifying language with person-centered framing",
-                "Add informed consent mechanisms",
-                "Ensure transparency about data/decision processes",
-            ],
-            GateViolationCode.W3_DEPENDENCY_ENGINEERING: [
-                "Add data portability options",
-                "Provide alternative pathways",
-                "Enable easy opt-out mechanisms",
-                "Support interoperability standards",
-            ],
-            GateViolationCode.W4_STRUCTURAL_EXCLUSION: [
-                "Implement accessibility standards (WCAG)",
-                "Add alternative access methods",
-                "Design for edge cases and diverse users",
-            ],
-        }
-        return suggestions.get(code, [])
-
-
-class DefaultRepairEngine(RepairEngine):
-    """
-    Default repair engine implementing the 4-stage repair protocol.
-
-    Stages (in order):
-    1. Concept Mapping: domination/exclusion/dependency → generation/co-prosperity/mutual empowerment
-    2. Constraint Injection: Add consent, options, withdrawal, audit, accountability
-    3. Scope Reduction: Reduce impact scope/authority/duration/data
-    4. Goal Reframe: Achieve same value through different means
-    """
-
-    # Mapping rules: destructive concept → constructive alternative
-    CONCEPT_MAPPINGS = {
-        "dominate": "collaborate with",
-        "control": "coordinate with",
-        "force": "invite",
-        "eliminate": "transform",
-        "exclude": "include with options",
-        "trap": "offer choices to",
-        "lock-in": "provide flexible commitment to",
-        "manipulate": "transparently influence",
-        "deceive": "inform honestly",
-        "exploit": "partner with",
-        "subjugate": "empower",
-    }
 
     def repair(
-        self,
-        candidate: Candidate,
-        violations: List[Violation],
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Optional[Tuple[str, List[RepairAction]]]:
-        """Apply repair stages to address violations."""
+        self, text: str, violations: Sequence[str]
+    ) -> Tuple[str, List[str]]:
+        """
+        Apply repairs based on violation codes.
 
-        # Filter to repairable violations only
-        repairable = [v for v in violations if v.repairable]
-        if not repairable:
-            return None
+        Args:
+            text: Original text
+            violations: List of violation codes (e.g., ["W2", "W3"])
 
-        repaired_text = candidate.text
-        repair_actions = []
+        Returns:
+            Tuple of (repaired_text, repair_log)
+        """
+        log: List[str] = []
+        out = text
+        codes = set(violations)
 
-        # Stage 1: Concept Mapping
-        for violation in repairable:
-            result = self._apply_concept_mapping(repaired_text, violation)
-            if result:
-                repaired_text, action = result
-                repair_actions.append(action)
+        # W4: exclusion / "cutting off existing users"
+        if "W4" in codes:
+            repls = [
+                ("切り捨てる", "尊重しつつ移行し、包摂する"),
+                ("切り捨て", "尊重しつつ移行し、包摂"),
+                ("見捨てる", "尊重しつつ支援し、包摂する"),
+                ("対象外", "選択肢を用意し、包摂する"),
+                ("abandon existing", "support existing with migration and inclusion for"),
+                ("discard legacy", "support legacy with transition plan for"),
+                ("cut off", "support with migration plan"),
+            ]
+            for a, b in repls:
+                if a in out:
+                    out = out.replace(a, b)
+                    log.append(f"W4_map: {a} -> {b}")
 
-        # Stage 2: Constraint Injection
-        injection_result = self._apply_constraint_injection(repaired_text, repairable)
-        if injection_result:
-            repaired_text, action = injection_result
-            repair_actions.append(action)
+            # Inject migration plan if needed
+            if "移行" not in out and "migration" not in out.lower():
+                if "既存ユーザー" in out or "既存利用者" in out:
+                    out += "\n追加: 既存ユーザー向けに移行期間・互換性・代替手段を提供する。"
+                    log.append("W4_inject: migration_plan_ja")
+                elif "existing user" in out.lower():
+                    out += "\nAddition: Provide migration period, compatibility, and alternatives for existing users."
+                    log.append("W4_inject: migration_plan_en")
 
-        # Stage 3: Scope Reduction (if still needed)
-        # Stage 4: Goal Reframe (if still needed)
-        # These are applied only if earlier stages insufficient
+        # W3: lock-in / dependency
+        if "W3" in codes:
+            repls = [
+                ("囲い込み", "選択肢を確保し相互運用性を高める"),
+                ("ロックイン", "相互運用性とデータ可搬性を確保する"),
+                ("乗り換え不可", "データ可搬性を確保し乗り換え可能にする"),
+                ("逃げ道がない", "撤回・中断・解約の選択肢を明示する"),
+                ("依存させる", "利用者の自律性を尊重し依存を避ける"),
+                ("lock-in", "interoperability and data portability"),
+                ("lock in", "interoperability and data portability"),
+                ("no escape", "clear opt-out and withdrawal options"),
+                ("create dependency", "respect user autonomy and avoid dependency"),
+            ]
+            for a, b in repls:
+                if a.lower() in out.lower():
+                    out = out.replace(a, b)
+                    log.append(f"W3_map: {a} -> {b}")
 
-        if repair_actions:
-            return (repaired_text, repair_actions)
-        return None
+            # Inject consent + transparency
+            if "同意" not in out and "consent" not in out.lower():
+                if any(c in out for c in ["データ", "利用者", "ユーザー"]):
+                    out += "\n追加: データ利用は最小化し、目的・範囲を明示し、同意と撤回を可能にする。"
+                    log.append("W3_inject: consent_transparency_ja")
+                elif any(c.lower() in out.lower() for c in ["data", "user"]):
+                    out += "\nAddition: Minimize data usage, clarify purpose and scope, enable consent and withdrawal."
+                    log.append("W3_inject: consent_transparency_en")
 
-    def _apply_concept_mapping(
-        self, text: str, violation: Violation
-    ) -> Optional[Tuple[str, RepairAction]]:
-        """Apply concept mapping to destructive terms."""
-        modified = text
-        changes_made = []
+        # W2: dignity / manipulation
+        if "W2" in codes:
+            repls = [
+                ("洗脳", "説得ではなく説明と選択肢を提供"),
+                ("操作", "合意に基づき支援"),
+                ("誘導", "透明性のある推薦"),
+                ("brainwash", "provide explanation and choices"),
+                ("manipulate", "support based on consent"),
+                ("deceive", "transparent recommendation"),
+            ]
+            for a, b in repls:
+                if a.lower() in out.lower():
+                    out = out.replace(a, b)
+                    log.append(f"W2_map: {a} -> {b}")
 
-        for destructive, constructive in self.CONCEPT_MAPPINGS.items():
-            if destructive in text.lower():
-                # Case-preserving replacement
-                import re
-                pattern = re.compile(re.escape(destructive), re.IGNORECASE)
-                modified = pattern.sub(constructive, modified)
-                changes_made.append(f"{destructive} → {constructive}")
+            # Inject dignity clause
+            if "尊厳" not in out and "dignity" not in out.lower():
+                if any(c in out for c in ["利用者", "ユーザー"]):
+                    out += "\n追加: 利用者を道具化せず、尊厳・合意・説明責任を満たす設計とする。"
+                    log.append("W2_inject: dignity_ja")
+                elif "user" in out.lower():
+                    out += "\nAddition: Design respects user dignity, consent, and accountability."
+                    log.append("W2_inject: dignity_en")
 
-        if changes_made:
-            # Estimate semantic drift (simplified)
-            drift = min(0.3, len(changes_made) * 0.05)
-
-            return (modified, RepairAction(
-                stage=RepairStage.CONCEPT_MAPPING,
-                description=f"Applied concept mappings: {', '.join(changes_made)}",
-                before_text=text[:100],
-                after_text=modified[:100],
-                semantic_drift=drift,
-            ))
-        return None
-
-    def _apply_constraint_injection(
-        self, text: str, violations: List[Violation]
-    ) -> Optional[Tuple[str, RepairAction]]:
-        """Inject constraints for consent, options, and safety."""
-        constraints = []
-
-        # Check which constraints are needed based on violation types
-        codes = {v.code for v in violations}
-
-        if GateViolationCode.W2_DIGNITY_VIOLATION in codes:
-            constraints.append("with informed consent and transparency")
-
-        if GateViolationCode.W3_DEPENDENCY_ENGINEERING in codes:
-            constraints.append("while preserving user choice and data portability")
-
-        if GateViolationCode.W4_STRUCTURAL_EXCLUSION in codes:
-            constraints.append("with accessible alternatives for all users")
-
-        if constraints:
-            constraint_text = " [" + "; ".join(constraints) + "]"
-            modified = text + constraint_text
-
-            return (modified, RepairAction(
-                stage=RepairStage.CONSTRAINT_INJECTION,
-                description=f"Injected constraints: {', '.join(constraints)}",
-                before_text=text[-50:] if len(text) > 50 else text,
-                after_text=modified[-100:] if len(modified) > 100 else modified,
-                semantic_drift=0.1,
-            ))
-        return None
+        return out, log
 
 
 class WethicsGate:
     """
-    Main W_ethics Gate class.
+    W_ethics Gate core.
 
-    Evaluates candidates against hard ethical constraints:
-    - Detects violations (W0-W4)
-    - Attempts repairs for repairable violations (W2-W4)
-    - Returns gate decision (ALLOW, ALLOW_WITH_REPAIR, REJECT, ESCALATE)
+    Pipeline:
+    1. Detect evidence via detectors
+    2. Aggregate into violations
+    3. P0 reject for W0/W1 if above tau_reject
+    4. Attempt repairs for W2-W4 up to max_repairs
+    5. Semantic drift check (goal-change guardrail)
 
     Usage:
         gate = WethicsGate()
         result = gate.check(candidate)
 
         if result.decision == GateDecision.ALLOW:
-            # Proceed with candidate
+            # Use original text
+            pass
         elif result.decision == GateDecision.ALLOW_WITH_REPAIR:
             # Use result.repaired_text
+            pass
         elif result.decision == GateDecision.REJECT:
-            # Candidate failed, see result.explanation
+            # Cannot use this candidate
+            pass
     """
 
     def __init__(
         self,
-        tau_reject: float = DEFAULT_TAU_REJECT,
-        tau_repair: float = DEFAULT_TAU_REPAIR,
-        max_repairs: int = DEFAULT_MAX_REPAIRS,
-        detector: Optional[ViolationDetector] = None,
-        repair_engine: Optional[RepairEngine] = None,
-    ):
+        detectors: Optional[Sequence[ViolationDetector]] = None,
+        config: Optional[GateConfig] = None,
+        repair_engine: Optional[RuleBasedRepairEngine] = None,
+    ) -> None:
         """
-        Initialize W_ethics Gate.
+        Initialize the gate.
 
         Args:
-            tau_reject: Impact threshold for immediate rejection (default 0.6)
-            tau_repair: Impact threshold for repair attempt (default 0.3)
-            max_repairs: Maximum repair iterations (default 2)
-            detector: Custom violation detector (default: DefaultViolationDetector)
-            repair_engine: Custom repair engine (default: DefaultRepairEngine)
+            detectors: List of detectors to use. If None, uses default registry.
+            config: Gate configuration. If None, uses defaults.
+            repair_engine: Repair engine. If None, uses RuleBasedRepairEngine.
         """
-        self.tau_reject = tau_reject
-        self.tau_repair = tau_repair
-        self.max_repairs = max_repairs
-        self.detector = detector or DefaultViolationDetector()
-        self.repair_engine = repair_engine or DefaultRepairEngine()
+        if detectors is None:
+            registry = create_default_registry()
+            self.detectors = registry.get_all()
+        else:
+            self.detectors = list(detectors)
 
-    def detect(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> List[Violation]:
+        self.config = config or GateConfig()
+        self.repair_engine = repair_engine or RuleBasedRepairEngine()
+
+    def _detect_violations(
+        self, c: Candidate, context: Optional[dict] = None
+    ) -> List[Violation]:
+        """Run all detectors and aggregate evidence into violations."""
+        evs = []
+        for det in self.detectors:
+            evs.extend(det.detect(c, context=context))
+        return aggregate_evidence_to_violations(evs)
+
+    def check(
+        self, c: Candidate, context: Optional[dict] = None
+    ) -> GateResult:
         """
-        Detect violations in a candidate.
+        Check a candidate against the W_ethics Gate.
 
         Args:
-            candidate: Candidate to check
-            context: Optional context information
-
-        Returns:
-            List of detected violations
-        """
-        return self.detector.detect(candidate, context)
-
-    def check(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> GateResult:
-        """
-        Evaluate candidate against W_ethics Gate.
-
-        Args:
-            candidate: Candidate to evaluate
-            context: Optional context information
+            c: Candidate to check
+            context: Optional context dictionary
 
         Returns:
             GateResult with decision and details
         """
-        violations = self.detect(candidate, context)
+        violations = self._detect_violations(c, context=context)
 
-        # Check for immediate rejection (P0)
+        # P0: Hard reject for W0/W1 if intention-level or high risk
         for v in violations:
-            if v.is_hard_violation and v.impact_score >= self.tau_reject:
-                return GateResult(
-                    decision=GateDecision.REJECT,
-                    violations=violations,
-                    explanation=f"Hard violation {v.code.value} with impact {v.impact_score:.2f} exceeds threshold {self.tau_reject}",
-                )
-
-        # Check if any repairs needed
-        need_repair = any(
-            v.impact_score >= self.tau_repair and v.repairable
-            for v in violations
-        )
-
-        if not need_repair:
-            # No significant violations - ALLOW
-            if violations:
-                return GateResult(
-                    decision=GateDecision.ALLOW,
-                    violations=violations,
-                    explanation="Minor violations below repair threshold",
-                )
-            return GateResult(
-                decision=GateDecision.ALLOW,
-                violations=[],
-                explanation="No violations detected",
-            )
-
-        # Attempt repairs (P1)
-        current_text = candidate.text
-        all_repairs: List[RepairAction] = []
-
-        for iteration in range(self.max_repairs):
-            # Create temporary candidate with current text
-            temp_candidate = Candidate(
-                cid=candidate.cid,
-                text=current_text,
-                meta=candidate.meta,
-            )
-
-            repair_result = self.repair_engine.repair(temp_candidate, violations, context)
-
-            if repair_result is None:
-                # Cannot repair further
-                break
-
-            current_text, repairs = repair_result
-            all_repairs.extend(repairs)
-
-            # Re-detect violations
-            temp_candidate = Candidate(
-                cid=candidate.cid,
-                text=current_text,
-                meta=candidate.meta,
-            )
-            violations = self.detect(temp_candidate, context)
-
-            # Check if hard violation appeared
-            for v in violations:
-                if v.is_hard_violation and v.impact_score >= self.tau_reject:
+            if v.code in ("W0", "W1"):
+                if v.impact_score >= self.config.tau_reject:
                     return GateResult(
                         decision=GateDecision.REJECT,
                         violations=violations,
-                        repaired_text=current_text,
-                        repair_log=all_repairs,
-                        explanation=f"Repair revealed hard violation {v.code.value}",
+                        explanation=f"Hard reject: {v.code} violation with impact={v.impact_score:.2f}",
                     )
 
-            # Check if repairs resolved issues
-            need_repair = any(
-                v.impact_score >= self.tau_repair and v.repairable
-                for v in violations
+        # If nothing serious, check if repairs needed
+        need_repair = [
+            v for v in violations
+            if v.repairable and v.impact_score >= self.config.tau_repair
+        ]
+
+        if not need_repair:
+            return GateResult(
+                decision=GateDecision.ALLOW,
+                violations=violations,
+                explanation="No violations requiring action",
             )
 
-            if not need_repair:
-                # Repairs successful (P2)
+        # Attempt repair loop
+        cur_text = c.text
+        repair_log: List[str] = []
+        drift_score: Optional[float] = None
+        drift_notes: Optional[str] = None
+
+        for iteration in range(self.config.max_repairs):
+            codes = [v.code for v in need_repair]
+            repaired_text, rlog = self.repair_engine.repair(cur_text, codes)
+            repair_log.extend(rlog)
+
+            # Drift check after each repair
+            before_goal = c.meta.get("goal") if isinstance(c.meta, dict) else None
+            report = semantic_drift(
+                cur_text, repaired_text, before_goal=before_goal
+            )
+            drift_score = report.drift
+            drift_notes = report.notes
+
+            # Re-run detection on repaired output
+            cur_text = repaired_text
+            v2 = self._detect_violations(
+                Candidate(cid=c.cid, text=cur_text, meta=c.meta),
+                context=context,
+            )
+
+            # Hard fail if W0/W1 became obvious or drift too high
+            hard_fail = any(
+                v.code in ("W0", "W1") and v.impact_score >= self.config.tau_reject
+                for v in v2
+            )
+
+            if hard_fail:
                 return GateResult(
-                    decision=GateDecision.ALLOW_WITH_REPAIR,
-                    violations=violations,
-                    repaired_text=current_text,
-                    repair_log=all_repairs,
-                    explanation=f"Violations resolved after {iteration + 1} repair iteration(s)",
+                    decision=GateDecision.REJECT,
+                    violations=v2,
+                    repaired_text=cur_text,
+                    repair_log=repair_log,
+                    drift_score=drift_score,
+                    drift_notes=drift_notes,
+                    explanation="Repair revealed hard violation",
                 )
 
-        # Repairs exhausted but issues remain (P3)
+            if drift_score >= self.config.tau_drift_reject:
+                return GateResult(
+                    decision=GateDecision.REJECT,
+                    violations=v2,
+                    repaired_text=cur_text,
+                    repair_log=repair_log,
+                    drift_score=drift_score,
+                    drift_notes=drift_notes,
+                    explanation=f"Semantic drift too high: {drift_score:.2f}",
+                )
+
+            # Check if more repairs needed
+            need_repair = [
+                v for v in v2
+                if v.repairable and v.impact_score >= self.config.tau_repair
+            ]
+
+            if not need_repair:
+                # Check drift level for escalation
+                if drift_score >= self.config.tau_drift_escalate:
+                    decision = (
+                        GateDecision.REJECT
+                        if self.config.strict_no_escalate
+                        else GateDecision.ESCALATE
+                    )
+                    return GateResult(
+                        decision=decision,
+                        violations=v2,
+                        repaired_text=cur_text,
+                        repair_log=repair_log,
+                        drift_score=drift_score,
+                        drift_notes=drift_notes,
+                        explanation=f"Repair succeeded but drift requires review: {drift_score:.2f}",
+                    )
+
+                return GateResult(
+                    decision=GateDecision.ALLOW_WITH_REPAIR,
+                    violations=v2,
+                    repaired_text=cur_text,
+                    repair_log=repair_log,
+                    drift_score=drift_score,
+                    drift_notes=drift_notes,
+                    explanation="Repair succeeded",
+                )
+
+        # Repair budget exhausted
         return GateResult(
             decision=GateDecision.REJECT,
             violations=violations,
-            repaired_text=current_text,
-            repair_log=all_repairs,
-            explanation=f"Unable to resolve violations after {self.max_repairs} repair attempts",
+            repaired_text=cur_text,
+            repair_log=repair_log,
+            drift_score=drift_score,
+            drift_notes=drift_notes,
+            explanation="Repair budget exhausted",
         )
 
     def check_batch(
-        self,
-        candidates: List[Candidate],
-        context: Optional[Dict[str, Any]] = None,
+        self, candidates: Sequence[Candidate], context: Optional[dict] = None
     ) -> List[Tuple[Candidate, GateResult]]:
         """
-        Evaluate multiple candidates.
+        Check multiple candidates.
 
         Args:
-            candidates: List of candidates to evaluate
-            context: Optional shared context
+            candidates: List of candidates to check
+            context: Optional context dictionary
 
         Returns:
             List of (candidate, result) tuples
@@ -519,33 +368,42 @@ class WethicsGate:
 
 
 def create_wethics_gate(
-    tau_reject: float = DEFAULT_TAU_REJECT,
-    tau_repair: float = DEFAULT_TAU_REPAIR,
-    max_repairs: int = DEFAULT_MAX_REPAIRS,
+    detectors: Optional[Sequence[ViolationDetector]] = None,
+    tau_reject: float = 0.6,
+    tau_repair: float = 0.3,
+    max_repairs: int = 2,
+    tau_drift_reject: float = 0.7,
+    tau_drift_escalate: float = 0.4,
+    strict_no_escalate: bool = False,
 ) -> WethicsGate:
     """
-    Factory function to create a WethicsGate instance.
+    Factory function to create a WethicsGate with custom configuration.
 
     Args:
-        tau_reject: Impact threshold for immediate rejection
-        tau_repair: Impact threshold for repair attempt
+        detectors: Optional list of detectors
+        tau_reject: Threshold for immediate rejection
+        tau_repair: Threshold for repair attempt
         max_repairs: Maximum repair iterations
+        tau_drift_reject: Drift threshold for rejection
+        tau_drift_escalate: Drift threshold for escalation
+        strict_no_escalate: If True, escalate becomes reject
 
     Returns:
-        WethicsGate instance
+        Configured WethicsGate instance
     """
-    return WethicsGate(
+    config = GateConfig(
         tau_reject=tau_reject,
         tau_repair=tau_repair,
         max_repairs=max_repairs,
+        tau_drift_reject=tau_drift_reject,
+        tau_drift_escalate=tau_drift_escalate,
+        strict_no_escalate=strict_no_escalate,
     )
+    return WethicsGate(detectors=detectors, config=config)
 
 
 __all__ = [
-    "ViolationDetector",
-    "RepairEngine",
-    "DefaultViolationDetector",
-    "DefaultRepairEngine",
+    "RuleBasedRepairEngine",
     "WethicsGate",
     "create_wethics_gate",
 ]

@@ -51,13 +51,25 @@ from po_core.safety.wethics_gate import (
     GateDecision,
     GateViolationCode,
     RepairStage,
-    AxisScore,
+    Evidence,
     Violation,
+    GateConfig,
+    AxisScore,
     RepairAction,
     GateResult,
     Candidate,
     SelectionResult,
+    # Detectors
+    ViolationDetector,
+    DetectorRegistry,
+    KeywordViolationDetector,
+    aggregate_evidence_to_violations,
+    create_default_registry,
+    # Semantic Drift
+    DriftReport,
+    semantic_drift,
     # Gate
+    RuleBasedRepairEngine,
     WethicsGate,
     create_wethics_gate,
     # Metrics
@@ -95,14 +107,28 @@ __all__ = [
     "GateDecision",
     "GateViolationCode",
     "RepairStage",
-    "AxisScore",
+    "Evidence",
     "Violation",
+    "GateConfig",
+    "AxisScore",
     "RepairAction",
     "GateResult",
     "Candidate",
     "SelectionResult",
 
+    # W_ethics Detectors
+    "ViolationDetector",
+    "DetectorRegistry",
+    "KeywordViolationDetector",
+    "aggregate_evidence_to_violations",
+    "create_default_registry",
+
+    # W_ethics Semantic Drift
+    "DriftReport",
+    "semantic_drift",
+
     # W_ethics Gate
+    "RuleBasedRepairEngine",
     "WethicsGate",
     "create_wethics_gate",
 

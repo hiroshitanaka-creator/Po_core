@@ -6,8 +6,10 @@ Comprehensive ethical gate and selection system for Po_core.
 
 This module provides:
 1. **W_ethics Gate**: Hard constraint filtering (W0-W4 violations)
-2. **ΔE Metrics**: Multi-axis scoring (Safety, Fairness, Privacy, Autonomy, Harm Avoidance)
-3. **Selection Protocol**: Pareto + MCDA candidate selection
+2. **Violation Detectors**: Plugin interface for violation detection
+3. **Semantic Drift**: Goal-change detection after repairs
+4. **ΔE Metrics**: Multi-axis scoring (Safety, Fairness, Privacy, Autonomy, Harm Avoidance)
+5. **Selection Protocol**: Pareto + MCDA candidate selection
 
 Design Philosophy:
 - Gate is "inviolable constraint", NOT "optimization axis"
@@ -17,12 +19,18 @@ Design Philosophy:
   2. Increases sustainability of relationships
   3. Mutual empowerment, not dependency
 
+New in v0.2:
+- Evidence/Violation separation for multi-detector aggregation
+- semantic_drift for goal-change detection
+- DetectorRegistry for pluggable detectors
+- GateConfig for centralized configuration
+
 Usage:
     from po_core.safety.wethics_gate import (
         WethicsGate,
-        MetricsEvaluator,
-        CandidateSelector,
         Candidate,
+        GateDecision,
+        semantic_drift,
     )
 
     # Create candidate
@@ -32,9 +40,10 @@ Usage:
     gate = WethicsGate()
     result = gate.check(candidate)
 
-    # Full selection pipeline
-    selector = CandidateSelector()
-    selection = selector.select([candidate1, candidate2, candidate3])
+    if result.decision == GateDecision.ALLOW:
+        print("Approved!")
+    elif result.decision == GateDecision.ALLOW_WITH_REPAIR:
+        print(f"Approved with repairs: {result.repaired_text}")
 
 Reference Specifications:
 - 01_specifications/wethics_gate/W_ETHICS_GATE.md
@@ -48,8 +57,10 @@ from .types import (
     GateViolationCode,
     RepairStage,
     # Data classes
-    AxisScore,
+    Evidence,
     Violation,
+    GateConfig,
+    AxisScore,
     RepairAction,
     GateResult,
     Candidate,
@@ -63,11 +74,23 @@ from .types import (
     DEFAULT_PBEST_THRESHOLD,
 )
 
-from .gate import (
+from .detectors import (
     ViolationDetector,
-    RepairEngine,
-    DefaultViolationDetector,
-    DefaultRepairEngine,
+    DetectorRegistry,
+    KeywordRule,
+    KeywordViolationDetector,
+    EnglishKeywordViolationDetector,
+    aggregate_evidence_to_violations,
+    create_default_registry,
+)
+
+from .semantic_drift import (
+    DriftReport,
+    semantic_drift,
+)
+
+from .gate import (
+    RuleBasedRepairEngine,
     WethicsGate,
     create_wethics_gate,
 )
@@ -98,11 +121,15 @@ __all__ = [
     "GateDecision",
     "GateViolationCode",
     "RepairStage",
-    # Types - Data classes
-    "AxisScore",
+    # Types - Evidence & Violations
+    "Evidence",
     "Violation",
+    "GateConfig",
+    # Types - Scoring
+    "AxisScore",
     "RepairAction",
     "GateResult",
+    # Types - Candidates
     "Candidate",
     "SelectionResult",
     # Types - Constants
@@ -112,11 +139,19 @@ __all__ = [
     "DEFAULT_TAU_REPAIR",
     "DEFAULT_MAX_REPAIRS",
     "DEFAULT_PBEST_THRESHOLD",
-    # Gate
+    # Detectors
     "ViolationDetector",
-    "RepairEngine",
-    "DefaultViolationDetector",
-    "DefaultRepairEngine",
+    "DetectorRegistry",
+    "KeywordRule",
+    "KeywordViolationDetector",
+    "EnglishKeywordViolationDetector",
+    "aggregate_evidence_to_violations",
+    "create_default_registry",
+    # Semantic Drift
+    "DriftReport",
+    "semantic_drift",
+    # Gate
+    "RuleBasedRepairEngine",
     "WethicsGate",
     "create_wethics_gate",
     # Metrics
@@ -138,4 +173,4 @@ __all__ = [
     "create_candidate_selector",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

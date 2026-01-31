@@ -5,20 +5,26 @@ W_ethics Gate Type Definitions
 Core data structures for the W_ethics Gate system.
 
 This module defines:
+- Evidence: Raw signal from violation detector
+- Violation: Aggregated violation from multiple evidence pieces
+- GateConfig: Gate configuration with thresholds
 - GateDecision: Enum for gate outcomes (ALLOW, ALLOW_WITH_REPAIR, REJECT, ESCALATE)
-- GateViolationCode: Enum for violation types (W0-W4)
-- AxisScore: Per-axis evaluation with evidence and confidence
-- Violation: Detected gate violation with repair suggestions
 - GateResult: Complete gate evaluation result
 - Candidate: Evaluation target with scores and metadata
-- RepairAction: Defined repair operations
+- AxisScore: Per-axis evaluation with evidence and confidence
+- SelectionResult: Candidate selection outcome
+
+Design Notes:
+- Evidence is the raw signal from detectors (can have multiple per violation)
+- Violations are aggregated from evidence using probabilistic OR
+- semantic_drift is checked after repairs to detect goal changes
 
 Reference: 01_specifications/wethics_gate/W_ETHICS_GATE.md
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class GateDecision(str, Enum):
@@ -72,6 +78,92 @@ class RepairStage(str, Enum):
 
 
 @dataclass
+class Evidence:
+    """
+    Raw signal from a violation detector.
+
+    Detectors produce Evidence, which is then aggregated into Violations.
+    This separation allows multiple detectors to contribute to the same violation.
+
+    Attributes:
+        code: Violation code (W0-W4 as string)
+        message: Human-readable description of the evidence
+        strength: Strength of evidence in [0, 1]
+        confidence: Confidence of detection in [0, 1]
+        detector_id: ID of the detector that produced this evidence
+        span: Optional (start, end) character positions in text
+        tags: Optional tags for categorization
+    """
+    code: str  # "W0", "W1", "W2", "W3", "W4"
+    message: str
+    strength: float  # [0, 1]
+    confidence: float  # [0, 1]
+    detector_id: str
+    span: Optional[Tuple[int, int]] = None
+    tags: List[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.strength = max(0.0, min(1.0, float(self.strength)))
+        self.confidence = max(0.0, min(1.0, float(self.confidence)))
+
+
+@dataclass
+class Violation:
+    """
+    Aggregated W_ethics Gate violation from multiple evidence pieces.
+
+    Aggregation uses probabilistic OR:
+    - severity: 1 - Π(1 - strength_i)
+    - confidence: 1 - Π(1 - confidence_i)
+
+    Attributes:
+        code: Violation type code (W0-W4 as string)
+        severity: Aggregated severity in [0, 1]
+        confidence: Aggregated confidence in [0, 1]
+        repairable: Whether this violation can be repaired
+        evidence: List of Evidence objects that contributed
+        suggested_repairs: List of suggested repair descriptions
+    """
+    code: str  # "W0", "W1", "W2", "W3", "W4"
+    severity: float  # [0, 1]
+    confidence: float  # [0, 1]
+    repairable: bool
+    evidence: List[Evidence] = field(default_factory=list)
+    suggested_repairs: List[str] = field(default_factory=list)
+
+    @property
+    def impact_score(self) -> float:
+        """Calculate combined impact score (severity * confidence)."""
+        return self.severity * self.confidence
+
+    @property
+    def is_hard_violation(self) -> bool:
+        """Check if this is a hard (non-repairable) violation type."""
+        return self.code in ("W0", "W1")
+
+
+@dataclass
+class GateConfig:
+    """
+    Configuration for W_ethics Gate.
+
+    Attributes:
+        tau_reject: Impact score threshold for immediate rejection (W0/W1)
+        tau_repair: Impact score threshold for repair attempt (W2-W4)
+        max_repairs: Maximum repair iterations
+        tau_drift_reject: Semantic drift threshold for rejection
+        tau_drift_escalate: Semantic drift threshold for escalation
+        strict_no_escalate: If True, escalate becomes reject
+    """
+    tau_reject: float = 0.6
+    tau_repair: float = 0.3
+    max_repairs: int = 2
+    tau_drift_reject: float = 0.7
+    tau_drift_escalate: float = 0.4
+    strict_no_escalate: bool = False
+
+
+@dataclass
 class AxisScore:
     """
     Score for a single evaluation axis (A-E).
@@ -93,40 +185,6 @@ class AxisScore:
         """Validate score ranges."""
         self.value = max(0.0, min(1.0, self.value))
         self.confidence = max(0.0, min(1.0, self.confidence))
-
-
-@dataclass
-class Violation:
-    """
-    Detected W_ethics Gate violation.
-
-    Attributes:
-        code: Violation type code (W0-W4)
-        severity: Severity in [0, 1]
-        confidence: Detection confidence in [0, 1]
-        evidence: List of evidence strings
-        repairable: Whether this violation can be repaired
-        suggested_repairs: List of suggested repair descriptions
-    """
-    code: GateViolationCode
-    severity: float  # [0, 1]
-    confidence: float  # [0, 1]
-    evidence: List[str]
-    repairable: bool
-    suggested_repairs: List[str] = field(default_factory=list)
-
-    @property
-    def impact_score(self) -> float:
-        """Calculate combined impact score (severity * confidence)."""
-        return self.severity * self.confidence
-
-    @property
-    def is_hard_violation(self) -> bool:
-        """Check if this is a hard (non-repairable) violation type."""
-        return self.code in (
-            GateViolationCode.W0_IRREVERSIBLE_VIABILITY_HARM,
-            GateViolationCode.W1_DOMINATION_CAPTURE,
-        )
 
 
 @dataclass
@@ -157,24 +215,23 @@ class GateResult:
         decision: Final gate decision (ALLOW, ALLOW_WITH_REPAIR, REJECT, ESCALATE)
         violations: List of detected violations
         repaired_text: Text after repairs (if any)
-        repair_log: List of repair actions applied
+        repair_log: List of repair log strings
+        drift_score: Semantic drift score after repairs
+        drift_notes: Notes about semantic drift
         explanation: Human-readable explanation of decision
     """
     decision: GateDecision
     violations: List[Violation] = field(default_factory=list)
     repaired_text: Optional[str] = None
-    repair_log: List[RepairAction] = field(default_factory=list)
+    repair_log: List[str] = field(default_factory=list)
+    drift_score: Optional[float] = None
+    drift_notes: Optional[str] = None
     explanation: str = ""
 
     @property
     def was_repaired(self) -> bool:
         """Check if any repairs were applied."""
         return len(self.repair_log) > 0
-
-    @property
-    def total_semantic_drift(self) -> float:
-        """Calculate total semantic drift from all repairs."""
-        return sum(r.semantic_drift for r in self.repair_log)
 
 
 @dataclass
@@ -185,7 +242,7 @@ class Candidate:
     Attributes:
         cid: Unique candidate identifier
         text: Candidate text content
-        meta: Additional metadata dictionary
+        meta: Additional metadata dictionary (can include 'goal' for drift check)
         scores: Axis scores dictionary ("A" through "E")
         gate_result: W_ethics Gate evaluation result (if evaluated)
         source_philosopher: Source philosopher module (if applicable)
@@ -245,23 +302,31 @@ AXIS_NAMES = {
 }
 
 
-# Default thresholds
-DEFAULT_TAU_REJECT = 0.6  # Impact score threshold for immediate rejection
-DEFAULT_TAU_REPAIR = 0.3  # Impact score threshold for repair attempt
-DEFAULT_MAX_REPAIRS = 2   # Maximum repair iterations
-DEFAULT_PBEST_THRESHOLD = 0.55  # Win probability threshold for selection
+# Default thresholds (legacy, use GateConfig for new code)
+DEFAULT_TAU_REJECT = 0.6
+DEFAULT_TAU_REPAIR = 0.3
+DEFAULT_MAX_REPAIRS = 2
+DEFAULT_PBEST_THRESHOLD = 0.55
 
 
 __all__ = [
+    # Core types
     "GateDecision",
     "GateViolationCode",
     "RepairStage",
-    "AxisScore",
+    # Evidence and Violations
+    "Evidence",
     "Violation",
+    # Configuration
+    "GateConfig",
+    # Scoring
+    "AxisScore",
     "RepairAction",
     "GateResult",
+    # Candidates
     "Candidate",
     "SelectionResult",
+    # Constants
     "AXES",
     "AXIS_NAMES",
     "DEFAULT_TAU_REJECT",
