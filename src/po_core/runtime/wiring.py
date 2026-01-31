@@ -73,6 +73,10 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
+    from po_core.safety.wethics_gate.policies.presets import (
+        default_intention_policies,
+        default_action_policies,
+    )
     from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
 
@@ -85,8 +89,8 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         tensor_engine=TensorEngine(metrics=()),
         solarwill=SolarWillEngine(),
         gate=PolicyWethicsGate(
-            intention=PolicyIntentionGate(policies=()),
-            action=PolicyActionGate(policies=()),
+            intention=PolicyIntentionGate(policies=default_intention_policies()),
+            action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=build_philosophers(),
         aggregator=WeightedVoteAggregator(),
@@ -111,6 +115,10 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
+    from po_core.safety.wethics_gate.policies.presets import (
+        default_intention_policies,
+        default_action_policies,
+    )
     from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
 
@@ -124,8 +132,8 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         tensor_engine=TensorEngine(metrics=()),
         solarwill=SolarWillEngine(),
         gate=PolicyWethicsGate(
-            intention=PolicyIntentionGate(policies=()),
-            action=PolicyActionGate(policies=()),
+            intention=PolicyIntentionGate(policies=default_intention_policies()),
+            action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=build_philosophers(),
         aggregator=WeightedVoteAggregator(),
