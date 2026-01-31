@@ -244,10 +244,60 @@ class Philosopher(ABC):
         return f"{self.name}: {self.description}"
 
 
+# ── New Protocol-based interface for hexagonal architecture ──────────
+
+from typing import Protocol as TypingProtocol, List
+
+from po_core.domain.context import Context as DomainContext
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.proposal import Proposal
+from po_core.domain.tensor_snapshot import TensorSnapshot
+
+
+@dataclass(frozen=True)
+class PhilosopherInfo:
+    """Metadata about a philosopher (new format)."""
+
+    name: str
+    version: str
+
+
+class PhilosopherProtocol(TypingProtocol):
+    """Protocol for philosopher implementations (hexagonal architecture)."""
+
+    info: PhilosopherInfo
+
+    def propose(
+        self,
+        ctx: DomainContext,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> List[Proposal]:
+        """
+        Generate proposals based on context, intent, tensors, and memory.
+
+        Args:
+            ctx: Request context (domain type)
+            intent: Current intent from SolarWill
+            tensors: Tensor snapshot
+            memory: Memory snapshot
+
+        Returns:
+            List of proposals
+        """
+        ...
+
+
 __all__ = [
+    # Legacy
     "Philosopher",
     "PhilosopherResponse",
     "PhilosopherResponseRequired",
     "Context",
     "normalize_response",
+    # New hexagonal architecture
+    "PhilosopherInfo",
+    "PhilosopherProtocol",
 ]

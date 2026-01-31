@@ -377,3 +377,175 @@ def run_ensemble(
         },
         "log": log,
     }
+
+
+# ── Hexagonal Architecture: run_turn (vertical slice) ──────────────────
+
+from typing import Sequence
+
+from po_core.domain.context import Context as DomainContext
+from po_core.domain.trace_event import TraceEvent
+from po_core.domain.safety_verdict import Decision
+from po_core.ports.aggregator import AggregatorPort
+from po_core.ports.memory_read import MemoryReadPort
+from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
+from po_core.ports.solarwill import SolarWillPort
+from po_core.ports.tensor_engine import TensorEnginePort
+from po_core.ports.trace import TracePort
+from po_core.ports.wethics_gate import WethicsGatePort
+from po_core.philosophers.base import PhilosopherProtocol
+
+
+@dataclass(frozen=True)
+class EnsembleDeps:
+    """Dependencies for run_turn (injected via wiring)."""
+
+    memory_read: MemoryReadPort
+    memory_write: MemoryWritePort
+    tracer: TracePort
+    tensors: TensorEnginePort
+    solarwill: SolarWillPort
+    gate: WethicsGatePort
+    philosophers: Sequence[PhilosopherProtocol]
+    aggregator: AggregatorPort
+
+
+def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
+    """
+    Run a single turn through the full pipeline.
+
+    Pipeline:
+    1. memory_read.snapshot()
+    2. tensors.compute() → TensorSnapshot
+    3. solarwill.compute_intent() → Intent
+    4. IntentionGate (fail-closed)
+    5. philosophers.propose()
+    6. aggregator.aggregate() → Proposal
+    7. ActionGate (fail-closed)
+    8. trace.emit() (>=5 events)
+    9. memory_write.append()
+
+    Args:
+        ctx: Request context
+        deps: Injected dependencies
+
+    Returns:
+        Result dictionary with status, proposal, or verdict
+    """
+    tracer = deps.tracer
+
+    # 1. Memory snapshot
+    memory = deps.memory_read.snapshot(ctx)
+    tracer.emit(TraceEvent.now(
+        "MemorySnapshotted",
+        ctx.request_id,
+        {"items": len(memory.items)},
+    ))
+
+    # 2. Tensor computation
+    tensors = deps.tensors.compute(ctx, memory)
+    tracer.emit(TraceEvent.now(
+        "TensorComputed",
+        ctx.request_id,
+        {"metrics": list(tensors.metrics.keys()), "version": tensors.version},
+    ))
+
+    # 3. SolarWill intent
+    intent, will_meta = deps.solarwill.compute_intent(ctx, tensors, memory)
+    tracer.emit(TraceEvent.now(
+        "IntentGenerated",
+        ctx.request_id,
+        dict(will_meta),
+    ))
+
+    # 4. Intention Gate (Stage 1)
+    v1 = deps.gate.judge_intent(ctx, intent, tensors, memory)
+    tracer.emit(TraceEvent.now(
+        "SafetyJudged:Intention",
+        ctx.request_id,
+        {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
+    ))
+    if v1.decision in (Decision.REJECT, Decision.REVISE):
+        return {
+            "request_id": ctx.request_id,
+            "status": "blocked",
+            "stage": "intention",
+            "verdict": v1.to_dict(),
+        }
+
+    # 5. Philosophers propose
+    proposals: List[Any] = []
+    for ph in deps.philosophers:
+        try:
+            ps = ph.propose(ctx, intent, tensors, memory)
+            tracer.emit(TraceEvent.now(
+                "PhilosopherProposed",
+                ctx.request_id,
+                {"name": ph.info.name, "n": len(ps)},
+            ))
+            proposals.extend(ps)
+        except Exception as e:
+            tracer.emit(TraceEvent.now(
+                "PhilosopherError",
+                ctx.request_id,
+                {"name": ph.info.name, "error": type(e).__name__},
+            ))
+
+    # 6. Aggregate
+    final = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
+    tracer.emit(TraceEvent.now(
+        "AggregateCompleted",
+        ctx.request_id,
+        {"proposal_id": final.proposal_id, "action_type": final.action_type},
+    ))
+
+    # 7. Action Gate (Stage 2)
+    v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
+    tracer.emit(TraceEvent.now(
+        "SafetyJudged:Action",
+        ctx.request_id,
+        {"decision": v2.decision.value, "rule_ids": v2.rule_ids},
+    ))
+    if v2.decision in (Decision.REJECT, Decision.REVISE):
+        return {
+            "request_id": ctx.request_id,
+            "status": "blocked",
+            "stage": "action",
+            "verdict": v2.to_dict(),
+        }
+
+    # 8. Persist decision summary (minimal)
+    deps.memory_write.append(ctx, [
+        MemoryRecord(
+            created_at=ctx.created_at,
+            kind="decision",
+            text=f"{final.action_type}:{final.content[:200]}",
+            tags=["vertex", "allowed"],
+        )
+    ])
+
+    # 9. Final trace
+    tracer.emit(TraceEvent.now(
+        "DecisionEmitted",
+        ctx.request_id,
+        {"proposal_id": final.proposal_id},
+    ))
+
+    return {
+        "request_id": ctx.request_id,
+        "status": "ok",
+        "proposal": final.compact(),
+    }
+
+
+__all__ = [
+    # Legacy
+    "run_ensemble",
+    "PHILOSOPHER_REGISTRY",
+    "DEFAULT_PHILOSOPHERS",
+    "PhilosopherTensor",
+    "EnsembleMetrics",
+    # Hexagonal architecture
+    "EnsembleDeps",
+    "run_turn",
+]

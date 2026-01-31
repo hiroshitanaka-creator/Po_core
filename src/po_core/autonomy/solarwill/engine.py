@@ -6,7 +6,7 @@ The unified engine for Solar Will operations.
 This is the main entry point for autonomous will management.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from po_core.autonomy.solarwill.model import (
     GoalCandidate,
@@ -24,6 +24,12 @@ from po_core.autonomy.solarwill.planner import (
     generate_goals,
     prioritize_goals,
 )
+
+# Import domain types for SolarWillPort implementation
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent as DomainIntent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class SolarWillEngine:
@@ -265,6 +271,38 @@ class SolarWillEngine:
         engine = cls()
         engine.update(tensor_values, {"context_id": context_id})
         return engine
+
+    # ── SolarWillPort implementation ──────────────────────────────────
+
+    def compute_intent(
+        self,
+        ctx: Context,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> Tuple[DomainIntent, Mapping[str, Any]]:
+        """
+        Compute intent from context, tensors, and memory.
+
+        This method implements the SolarWillPort interface.
+
+        Args:
+            ctx: The request context
+            tensors: Current tensor snapshot
+            memory: Memory snapshot
+
+        Returns:
+            Tuple of (Intent, metadata dict)
+        """
+        # For now, return neutral intent. Planner/scoring will be integrated later.
+        intent = DomainIntent.neutral()
+
+        meta: Dict[str, Any] = {
+            "solarwill": "v0",
+            "goals_n": len(intent.goals),
+            "constraints_n": len(intent.constraints),
+            "metrics_keys": list(tensors.metrics.keys()),
+        }
+        return intent, meta
 
 
 __all__ = ["SolarWillEngine"]

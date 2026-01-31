@@ -22,7 +22,7 @@ Architecture:
     │  ↓ ONLY imports po_core.app.api                         │
     ├─────────────────────────────────────────────────────────┤
     │  po_core.app.api  ← THIS FILE (facade)                  │
-    │  ↓ uses runtime/wiring.py                               │
+    │  ↓ uses runtime/wiring.py → ensemble.run_turn           │
     ├─────────────────────────────────────────────────────────┤
     │  Internal (philosophers, tensors, safety, autonomy)     │
     │  ↓ never imported directly from outside                 │
@@ -34,6 +34,7 @@ from __future__ import annotations
 import uuid
 
 from po_core.domain.context import Context
+from po_core.ensemble import EnsembleDeps, run_turn
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
 
@@ -55,7 +56,7 @@ def run(
         settings: Application settings (None for defaults)
 
     Returns:
-        Result dictionary with request_id, user_input, memory state, and settings
+        Result dictionary with request_id, status, and proposal or verdict
     """
     settings = settings or Settings()
 
@@ -72,18 +73,20 @@ def run(
         meta={"entry": "app.api"},
     )
 
-    # Get memory snapshot
-    mem = system.memory_read.snapshot(ctx)
+    # Build dependencies for run_turn
+    deps = EnsembleDeps(
+        memory_read=system.memory_read,
+        memory_write=system.memory_write,
+        tracer=system.tracer,
+        tensors=system.tensor_engine,
+        solarwill=system.solarwill,
+        gate=system.gate,
+        philosophers=system.philosophers,
+        aggregator=system.aggregator,
+    )
 
-    # NOTE: ここから先は次コミットで ensemble/party_machine に繋ぐ。
-    # 現時点では"入口一本化"と"配線"が目的。
-
-    return {
-        "request_id": ctx.request_id,
-        "user_input": ctx.user_input,
-        "memory_items": len(mem.items),
-        "settings": settings.to_dict(),
-    }
+    # Run the full pipeline
+    return run_turn(ctx, deps)
 
 
 __all__ = ["run"]

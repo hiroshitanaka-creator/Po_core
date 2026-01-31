@@ -38,13 +38,27 @@ class Rule:
 
 # Dependency rules (INVIOLABLE)
 DEFAULT_RULES: List[Rule] = [
+    # Core isolation
     Rule("po_core.safety", "po_core.philosophers", "safety/** must not import philosophers/**"),
     Rule("po_core.tensors", "po_core.safety", "tensors/** must not import safety/**"),
     Rule("po_core.viewer", "po_core.philosophers", "viewer/** must not import philosophers/**"),
     Rule("po_core.viewer", "po_core.tensors", "viewer/** must not import tensors/**"),
     Rule("po_core.trace", "po_core.philosophers", "trace/** must not import philosophers/**"),
     Rule("po_core.trace", "po_core.tensors", "trace/** must not import tensors/**"),
+
+    # domain は外に出ない（domain→domain は許可）
     Rule("po_core.domain", "po_core.", "domain/** must not import po_core/**"),
+
+    # ports は domain と ports 以外を見たらアウト
+    Rule("po_core.ports", "po_core.tensors", "ports/** must not import tensors/**"),
+    Rule("po_core.ports", "po_core.safety", "ports/** must not import safety/**"),
+    Rule("po_core.ports", "po_core.philosophers", "ports/** must not import philosophers/**"),
+    Rule("po_core.ports", "po_core.autonomy", "ports/** must not import autonomy/**"),
+    Rule("po_core.ports", "po_core.runtime", "ports/** must not import runtime/**"),
+    Rule("po_core.ports", "po_core.app", "ports/** must not import app/**"),
+    Rule("po_core.ports", "po_core.adapters", "ports/** must not import adapters/**"),
+    Rule("po_core.ports", "po_core.aggregator", "ports/** must not import aggregator/**"),
+    Rule("po_core.ports", "po_core.trace", "ports/** must not import trace/**"),
 ]
 
 
@@ -185,11 +199,22 @@ def check_rules(graph: Dict[str, Set[str]], rules: List[Rule]) -> List[str]:
     for src, dsts in graph.items():
         for dst in dsts:
             for r in rules:
-                if src.startswith(r.src_prefix) and dst.startswith(r.dst_prefix):
-                    # Skip self-imports within domain
-                    if r.dst_prefix == "po_core." and dst.startswith("po_core.domain"):
-                        continue
-                    violations.append(f"{r.message}: {src} -> {dst}")
+                if not (src.startswith(r.src_prefix) and dst.startswith(r.dst_prefix)):
+                    continue
+
+                # allow domain -> domain imports
+                if r.src_prefix == "po_core.domain" and dst.startswith("po_core.domain"):
+                    continue
+
+                # allow ports -> domain imports
+                if r.src_prefix == "po_core.ports" and dst.startswith("po_core.domain"):
+                    continue
+
+                # allow ports -> ports imports
+                if r.src_prefix == "po_core.ports" and dst.startswith("po_core.ports"):
+                    continue
+
+                violations.append(f"{r.message}: {src} -> {dst}")
     return violations
 
 

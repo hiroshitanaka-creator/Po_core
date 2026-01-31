@@ -22,10 +22,40 @@ USAGE:
     print(snapshot.freedom_pressure)  # 0.7
 """
 
-from typing import Any, Dict, List, Optional
+from datetime import datetime, timezone
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
+from po_core.domain.context import Context
+from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.tensor_snapshot import TensorSnapshot, TensorValue
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
+
+# Type alias for metric functions
+MetricFn = Callable[[Context, MemorySnapshot], Tuple[str, float]]
+
+
+class TensorEngine:
+    """
+    TensorEngine implements TensorEnginePort.
+
+    Computes tensor metrics from context and memory.
+    """
+
+    def __init__(self, metrics: Iterable[MetricFn] = ()):
+        self._metrics = list(metrics)
+
+    def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
+        """Compute tensors from context and memory."""
+        values: Dict[str, float] = {}
+        for fn in self._metrics:
+            k, v = fn(ctx, memory)
+            values[k] = float(v)
+
+        return TensorSnapshot(
+            computed_at=datetime.now(timezone.utc),
+            metrics=values,
+            version="v1",
+        )
 
 
 def compute_tensors(
@@ -236,6 +266,9 @@ def compute_blocked_tensor_simple(freedom_pressure: float, semantic_delta: float
 
 
 __all__ = [
+    # Port implementation
+    "TensorEngine",
+    "MetricFn",
     # Main API
     "compute_tensors",
     # Individual tensor computations
