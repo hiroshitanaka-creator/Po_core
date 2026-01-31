@@ -1,224 +1,115 @@
 """
-SafetyVerdict - Safety gate verdict.
+SafetyVerdict - Gateの判定結果。
 
 This is what the safety/wethics_gate/ module OUTPUTS.
 It represents the judgment of the safety gate.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
-import uuid
+from typing import List, Mapping
 
 
-class VerdictType(str, Enum):
-    """Type of safety verdict."""
+class Decision(str, Enum):
+    """Safety gate decision types."""
 
     ALLOW = "allow"
-    """Proposal passes without modification."""
-
-    ALLOW_WITH_REPAIR = "allow_with_repair"
-    """Proposal passes after repair."""
-
     REJECT = "reject"
-    """Proposal is rejected and cannot be repaired."""
-
-    ESCALATE = "escalate"
-    """Proposal requires human review."""
+    REVISE = "revise"  # 要修正（修正案は"生成しない"。要求だけ返す）
 
 
-@dataclass
-class ViolationInfo:
-    """
-    Information about a detected violation.
-
-    This is a simplified view of violations for domain-level use.
-    The full violation details are in safety/wethics_gate/types.py.
-    """
-
-    code: str
-    """Violation code (W0-W4)."""
-
-    severity: float
-    """Severity in [0, 1]."""
-
-    description: str
-    """Human-readable description."""
-
-    repairable: bool
-    """Whether this violation can be repaired."""
-
-    rule_id: Optional[str] = None
-    """ID of the rule that was violated."""
-
-    span: Optional[tuple] = None
-    """Optional (start, end) character positions in text."""
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary."""
-        result = {
-            "code": self.code,
-            "severity": self.severity,
-            "description": self.description,
-            "repairable": self.repairable,
-        }
-        if self.rule_id:
-            result["rule_id"] = self.rule_id
-        if self.span:
-            result["span"] = list(self.span)
-        return result
-
-    @property
-    def is_hard_violation(self) -> bool:
-        """Check if this is a hard (non-repairable) violation type."""
-        return self.code in ("W0", "W1")
-
-
-@dataclass
+@dataclass(frozen=True)
 class SafetyVerdict:
     """
-    The verdict from the safety gate.
-
-    This is the OUTPUT contract from the safety/wethics_gate/ module.
-
-    The gate is a "court" that:
-    - JUDGES: Outputs ALLOW, ALLOW_WITH_REPAIR, REJECT, or ESCALATE
-    - Does NOT generate proposals or suggest alternatives
-    - Does NOT access philosopher internals
+    Gateの判定結果。
 
     Attributes:
-        verdict_id: Unique verdict identifier
-        verdict_type: The judgment (ALLOW, REJECT, etc.)
-        proposal_id: ID of the proposal that was judged
-        violations: List of detected violations
-        repaired_text: Text after repairs (if any)
-        repair_log: Log of repairs applied
-        drift_score: Semantic drift after repair (if applicable)
-        explanation: Human-readable explanation
-        created_at: When this verdict was issued
-        metadata: Additional metadata
+        decision: The judgment (ALLOW, REJECT, REVISE)
+        rule_ids: List of triggered rule identifiers
+        reasons: Human-readable reasons
+        required_changes: Required changes for REVISE decision
+        meta: Additional metadata
     """
 
-    verdict_type: VerdictType
-    """The judgment."""
+    decision: Decision
+    rule_ids: List[str] = field(default_factory=list)  # 発火したルール識別子
+    reasons: List[str] = field(default_factory=list)  # 人間が読める理由
+    required_changes: List[str] = field(default_factory=list)  # revise時の要求
+    meta: Mapping[str, str] = field(default_factory=dict)
 
-    proposal_id: str
-    """ID of the judged proposal."""
+    @staticmethod
+    def fail_closed(error: Exception) -> "SafetyVerdict":
+        """
+        Create a fail-closed verdict when the gate encounters an error.
 
-    violations: List[ViolationInfo] = field(default_factory=list)
-    """Detected violations."""
+        重要：ゲートが壊れたら"拒否"する（fail-closed）
+        """
+        return SafetyVerdict(
+            decision=Decision.REJECT,
+            rule_ids=["gate_exception"],
+            reasons=[f"wethics_gate exception: {type(error).__name__}"],
+            required_changes=[],
+            meta={},
+        )
 
-    verdict_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    """Unique verdict identifier."""
+    @staticmethod
+    def allow(rule_ids: List[str] | None = None) -> "SafetyVerdict":
+        """Create an ALLOW verdict."""
+        return SafetyVerdict(
+            decision=Decision.ALLOW,
+            rule_ids=rule_ids or [],
+            reasons=[],
+        )
 
-    repaired_text: Optional[str] = None
-    """Text after repairs (only for ALLOW_WITH_REPAIR)."""
+    @staticmethod
+    def reject(rule_ids: List[str], reasons: List[str]) -> "SafetyVerdict":
+        """Create a REJECT verdict."""
+        return SafetyVerdict(
+            decision=Decision.REJECT,
+            rule_ids=rule_ids,
+            reasons=reasons,
+        )
 
-    repair_log: List[str] = field(default_factory=list)
-    """Log of repairs applied."""
-
-    drift_score: Optional[float] = None
-    """Semantic drift score after repair."""
-
-    explanation: str = ""
-    """Human-readable explanation of the verdict."""
-
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
-    """Creation timestamp."""
-
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    """Additional metadata."""
+    @staticmethod
+    def revise(
+        rule_ids: List[str],
+        reasons: List[str],
+        required_changes: List[str],
+    ) -> "SafetyVerdict":
+        """Create a REVISE verdict."""
+        return SafetyVerdict(
+            decision=Decision.REVISE,
+            rule_ids=rule_ids,
+            reasons=reasons,
+            required_changes=required_changes,
+        )
 
     @property
     def is_allowed(self) -> bool:
-        """Check if the proposal is allowed (with or without repair)."""
-        return self.verdict_type in (VerdictType.ALLOW, VerdictType.ALLOW_WITH_REPAIR)
+        """Check if the decision is ALLOW."""
+        return self.decision == Decision.ALLOW
 
     @property
     def is_rejected(self) -> bool:
-        """Check if the proposal is rejected."""
-        return self.verdict_type == VerdictType.REJECT
+        """Check if the decision is REJECT."""
+        return self.decision == Decision.REJECT
 
     @property
-    def needs_escalation(self) -> bool:
-        """Check if the proposal needs human review."""
-        return self.verdict_type == VerdictType.ESCALATE
+    def needs_revision(self) -> bool:
+        """Check if the decision is REVISE."""
+        return self.decision == Decision.REVISE
 
-    @property
-    def was_repaired(self) -> bool:
-        """Check if repairs were applied."""
-        return len(self.repair_log) > 0
-
-    @property
-    def has_hard_violations(self) -> bool:
-        """Check if any hard (W0/W1) violations were detected."""
-        return any(v.is_hard_violation for v in self.violations)
-
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
-        result = {
-            "verdict_id": self.verdict_id,
-            "verdict_type": self.verdict_type.value,
-            "proposal_id": self.proposal_id,
-            "violations": [v.to_dict() for v in self.violations],
-            "explanation": self.explanation,
-            "created_at": self.created_at,
+        return {
+            "decision": self.decision.value,
+            "rule_ids": list(self.rule_ids),
+            "reasons": list(self.reasons),
+            "required_changes": list(self.required_changes),
+            "meta": dict(self.meta),
         }
-        if self.repaired_text is not None:
-            result["repaired_text"] = self.repaired_text
-        if self.repair_log:
-            result["repair_log"] = self.repair_log
-        if self.drift_score is not None:
-            result["drift_score"] = self.drift_score
-        if self.metadata:
-            result["metadata"] = self.metadata
-        return result
-
-    @classmethod
-    def allow(cls, proposal_id: str, explanation: str = "No violations") -> "SafetyVerdict":
-        """Create an ALLOW verdict."""
-        return cls(
-            verdict_type=VerdictType.ALLOW,
-            proposal_id=proposal_id,
-            explanation=explanation,
-        )
-
-    @classmethod
-    def reject(
-        cls,
-        proposal_id: str,
-        violations: List[ViolationInfo],
-        explanation: str,
-    ) -> "SafetyVerdict":
-        """Create a REJECT verdict."""
-        return cls(
-            verdict_type=VerdictType.REJECT,
-            proposal_id=proposal_id,
-            violations=violations,
-            explanation=explanation,
-        )
-
-    @classmethod
-    def allow_with_repair(
-        cls,
-        proposal_id: str,
-        repaired_text: str,
-        repair_log: List[str],
-        violations: List[ViolationInfo],
-        drift_score: Optional[float] = None,
-        explanation: str = "Repair succeeded",
-    ) -> "SafetyVerdict":
-        """Create an ALLOW_WITH_REPAIR verdict."""
-        return cls(
-            verdict_type=VerdictType.ALLOW_WITH_REPAIR,
-            proposal_id=proposal_id,
-            repaired_text=repaired_text,
-            repair_log=repair_log,
-            violations=violations,
-            drift_score=drift_score,
-            explanation=explanation,
-        )
 
 
-__all__ = ["SafetyVerdict", "VerdictType", "ViolationInfo"]
+__all__ = ["SafetyVerdict", "Decision"]

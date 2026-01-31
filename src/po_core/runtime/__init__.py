@@ -14,30 +14,21 @@ DEPENDENCY RULES:
 - Core modules should receive dependencies via function parameters
 
 Usage:
-    from po_core.runtime import get_container
+    from po_core.runtime import build_system, Settings
 
-    # Get the wired container
-    container = get_container()
+    # Build a wired system
+    system = build_system(memory=poself_instance, settings=Settings())
 
     # Access components
-    memory = container.memory
-    gate = container.gate
+    snapshot = system.memory_read.snapshot(ctx)
 """
 
-from po_core.runtime.wiring import (
-    Container,
-    get_container,
-    configure,
-)
-from po_core.runtime.settings import (
-    Settings,
-    get_settings,
-)
+from po_core.runtime.settings import Settings
+from po_core.runtime.wiring import WiredSystem, build_system, build_test_system
 
 __all__ = [
-    "Container",
-    "get_container",
-    "configure",
     "Settings",
-    "get_settings",
+    "WiredSystem",
+    "build_system",
+    "build_test_system",
 ]

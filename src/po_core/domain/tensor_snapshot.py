@@ -1,42 +1,33 @@
 """
-TensorSnapshot - Immutable snapshot of tensor values.
+TensorSnapshot - tensors層の出力はこれ"だけ"。計測のスナップショット。
 
-This is what the tensors/ module OUTPUTS.
-It's a pure data transfer object with no computation logic.
+This is the OUTPUT contract from the tensor layer.
+It's immutable to ensure tensor values cannot be modified after computation.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+from datetime import datetime, timezone
+from typing import Any, Dict, Mapping, Optional
 import uuid
 
 
+# Backward compatibility: TensorValue for existing code
 @dataclass(frozen=True)
 class TensorValue:
     """
-    A single tensor value with metadata.
-
-    This represents one measured quantity (e.g., Freedom Pressure).
+    A single tensor value with metadata (backward compat).
     """
-
     name: str
-    """Name of the tensor (e.g., 'freedom_pressure')."""
-
     value: float
-    """The computed value, typically in [0, 1]."""
-
     dimensions: Optional[Dict[str, float]] = None
-    """Optional breakdown by dimension."""
-
     confidence: float = 1.0
-    """Confidence in this measurement."""
-
     source: str = "computed"
-    """How this value was obtained."""
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = {
+        result: Dict[str, Any] = {
             "name": self.name,
             "value": self.value,
             "confidence": self.confidence,
@@ -50,53 +41,58 @@ class TensorValue:
 @dataclass(frozen=True)
 class TensorSnapshot:
     """
-    Immutable snapshot of all tensor values at a point in time.
-
-    This is the OUTPUT contract from the tensors/ module.
-    It's frozen to ensure tensor values cannot be modified after computation.
-
-    The ensemble system uses this to:
-    1. Pass tensor values to philosophers as context
-    2. Include tensor values in proposals for safety evaluation
-    3. Log tensor values in trace events
+    tensors層の出力はこれ"だけ"。計測のスナップショット。
 
     Attributes:
-        snapshot_id: Unique identifier for this snapshot
-        created_at: When this snapshot was taken
-        context_id: ID of the context this was computed for
-        values: Dictionary of tensor name -> TensorValue
-        aggregate_metrics: Computed aggregate metrics
-        metadata: Additional metadata
+        computed_at: When the tensors were computed (UTC)
+        metrics: Mapping of metric name to value
+        version: Schema version for forward compatibility
+        values: Dict of TensorValue objects (backward compat)
     """
 
-    values: Dict[str, TensorValue]
-    """All tensor values in this snapshot."""
+    computed_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    metrics: Mapping[str, float] = field(default_factory=dict)
+    version: str = "v1"
 
+    # Backward compatibility fields
+    values: Dict[str, TensorValue] = field(default_factory=dict)
     snapshot_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    """Unique snapshot identifier."""
-
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
-    """Creation timestamp."""
-
     context_id: Optional[str] = None
-    """ID of the context this was computed for."""
-
     aggregate_metrics: Optional[Dict[str, float]] = None
-    """Computed aggregate metrics across all tensors."""
 
-    metadata: Optional[Dict[str, Any]] = None
-    """Additional metadata."""
+    @staticmethod
+    def empty() -> "TensorSnapshot":
+        """Create an empty snapshot."""
+        return TensorSnapshot(
+            computed_at=datetime.now(timezone.utc),
+            metrics={},
+        )
 
-    def get(self, name: str, default: float = 0.0) -> float:
-        """Get a tensor value by name."""
-        if name in self.values:
-            return self.values[name].value
+    @staticmethod
+    def now(metrics: Mapping[str, float]) -> "TensorSnapshot":
+        """Create a snapshot with current timestamp."""
+        return TensorSnapshot(
+            computed_at=datetime.now(timezone.utc),
+            metrics=dict(metrics),
+        )
+
+    def as_dict(self) -> Dict[str, float]:
+        """Return metrics as a mutable dict."""
+        if self.metrics:
+            return dict(self.metrics)
+        # Backward compat: extract from values
+        return {name: tv.value for name, tv in self.values.items()}
+
+    def get(self, key: str, default: float = 0.0) -> float:
+        """Get a metric value with default."""
+        if key in self.metrics:
+            return self.metrics.get(key, default)
+        # Backward compat: look in values
+        if key in self.values:
+            return self.values[key].value
         return default
 
-    def get_tensor(self, name: str) -> Optional[TensorValue]:
-        """Get the full TensorValue object."""
-        return self.values.get(name)
-
+    # Backward compat properties
     @property
     def freedom_pressure(self) -> float:
         """Shortcut for freedom_pressure value."""
@@ -112,42 +108,22 @@ class TensorSnapshot:
         """Shortcut for blocked_tensor value."""
         return self.get("blocked_tensor", 0.0)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
-        result = {
-            "snapshot_id": self.snapshot_id,
-            "created_at": self.created_at,
-            "values": {name: tv.to_dict() for name, tv in self.values.items()},
+        result: Dict[str, Any] = {
+            "computed_at": self.computed_at.isoformat(),
+            "metrics": dict(self.metrics) if self.metrics else self.as_dict(),
+            "version": self.version,
         }
+        if self.values:
+            result["values"] = {name: tv.to_dict() for name, tv in self.values.items()}
+        if self.snapshot_id:
+            result["snapshot_id"] = self.snapshot_id
         if self.context_id:
             result["context_id"] = self.context_id
         if self.aggregate_metrics:
             result["aggregate_metrics"] = dict(self.aggregate_metrics)
-        if self.metadata:
-            result["metadata"] = dict(self.metadata)
         return result
-
-    def to_flat_dict(self) -> Dict[str, float]:
-        """Convert to a flat dictionary of name -> value."""
-        return {name: tv.value for name, tv in self.values.items()}
-
-    @classmethod
-    def from_flat_dict(
-        cls,
-        values: Dict[str, float],
-        context_id: Optional[str] = None,
-    ) -> "TensorSnapshot":
-        """Create a snapshot from a flat dictionary of values."""
-        tensor_values = {
-            name: TensorValue(name=name, value=value)
-            for name, value in values.items()
-        }
-        return cls(values=tensor_values, context_id=context_id)
-
-    @classmethod
-    def empty(cls, context_id: Optional[str] = None) -> "TensorSnapshot":
-        """Create an empty snapshot."""
-        return cls(values={}, context_id=context_id)
 
 
 __all__ = ["TensorSnapshot", "TensorValue"]

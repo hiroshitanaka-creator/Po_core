@@ -1,0 +1,17 @@
+name: import-guard
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  import-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run import graph checks
+        run: python tools/import_graph.py --check --print

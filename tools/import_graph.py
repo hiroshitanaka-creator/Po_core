@@ -8,150 +8,188 @@ Analyzes import dependencies in src/po_core and detects:
 2. Forbidden imports (violating dependency rules)
 3. Dependency graph statistics
 
-Usage:
-    python tools/import_graph.py
+これが回れば"腸捻転"が数字で見える。
 
-Output:
-- Dependency graph (JSON)
-- Circular dependencies (if any)
-- Rule violations
+Usage:
+    python tools/import_graph.py --check --print
+
+Exit code:
+    0: No violations or cycles
+    1: Violations or cycles detected
 """
 
+from __future__ import annotations
+
+import argparse
 import ast
-import json
+import os
 import sys
-from collections import defaultdict
-from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional
+from dataclasses import dataclass
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 
-# Dependency rules: module -> list of forbidden import patterns
-FORBIDDEN_IMPORTS = {
-    "po_core.domain": [
-        "po_core.philosophers",
-        "po_core.tensors",
-        "po_core.safety",
-        "po_core.trace",
-        "po_core.viewer",
-        "po_core.ensemble",
-        "po_core.autonomy",
-    ],
-    "po_core.tensors": [
-        "po_core.philosophers",
-        "po_core.safety",
-    ],
-    "po_core.safety": [
-        "po_core.philosophers",
-    ],
-    "po_core.trace": [
-        "po_core.philosophers",
-    ],
-    "po_core.viewer": [
-        "po_core.philosophers",
-        "po_core.tensors",
-        "po_core.safety",
-    ],
-}
+@dataclass(frozen=True)
+class Rule:
+    """Forbidden import rule."""
+    src_prefix: str
+    dst_prefix: str
+    message: str
 
 
-def get_module_name(filepath: Path, base_dir: Path) -> str:
-    """Convert filepath to module name."""
-    rel_path = filepath.relative_to(base_dir)
-    parts = list(rel_path.parts)
-    if parts[-1] == "__init__.py":
-        parts = parts[:-1]
-    else:
-        parts[-1] = parts[-1].replace(".py", "")
-    return ".".join(parts)
+# Dependency rules (INVIOLABLE)
+DEFAULT_RULES: List[Rule] = [
+    Rule("po_core.safety", "po_core.philosophers", "safety/** must not import philosophers/**"),
+    Rule("po_core.tensors", "po_core.safety", "tensors/** must not import safety/**"),
+    Rule("po_core.viewer", "po_core.philosophers", "viewer/** must not import philosophers/**"),
+    Rule("po_core.viewer", "po_core.tensors", "viewer/** must not import tensors/**"),
+    Rule("po_core.trace", "po_core.philosophers", "trace/** must not import philosophers/**"),
+    Rule("po_core.trace", "po_core.tensors", "trace/** must not import tensors/**"),
+    Rule("po_core.domain", "po_core.", "domain/** must not import po_core/**"),
+]
 
 
-def get_imports_from_file(filepath: Path) -> Set[str]:
-    """Extract all po_core imports from a Python file."""
+def iter_py_files(root: str) -> Iterable[str]:
+    """Iterate over all Python files in a directory."""
+    for dirpath, _, filenames in os.walk(root):
+        for fn in filenames:
+            if fn.endswith(".py"):
+                yield os.path.join(dirpath, fn)
+
+
+def module_name_from_path(root: str, package: str, path: str) -> str:
+    """Convert a file path to a module name."""
+    rel = os.path.relpath(path, root)
+    rel = rel.replace(os.sep, "/")
+    if rel.endswith(".py"):
+        rel = rel[:-3]
+    if rel.endswith("/__init__"):
+        rel = rel[:-9]
+    rel = rel.strip("/").replace("/", ".")
+    return package if rel == "" else f"{package}.{rel}"
+
+
+def resolve_import(
+    current: str,
+    module: Optional[str],
+    level: int,
+    package: str,
+) -> Optional[str]:
+    """
+    Resolve an import to its full module path.
+
+    Args:
+        current: Current module (po_core.a.b.c)
+        module: Import target ("x.y" or None)
+        level: 0=absolute, 1=from . import..., 2=from .. import...
+        package: Base package name (po_core)
+    """
+    if level == 0:
+        if module is None:
+            return None
+        return module if module.startswith(package + ".") or module == package else None
+
+    # Relative import
+    parts = current.split(".")
+    # Drop the module leaf (current file module)
+    base = parts[:-1]
+    # Go up (level-1) packages
+    up = max(0, len(base) - (level - 1))
+    base = base[:up]
+    if not base:
+        return package if module is None else (module if module.startswith(package) else None)
+
+    prefix = ".".join(base)
+    if module is None:
+        return prefix
+    return f"{prefix}.{module}"
+
+
+def extract_deps(py_path: str, current_module: str, package: str) -> Set[str]:
+    """Extract po_core dependencies from a Python file."""
+    with open(py_path, "r", encoding="utf-8") as f:
+        src = f.read()
+
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
-        tree = ast.parse(content)
-    except (SyntaxError, UnicodeDecodeError) as e:
-        print(f"  Warning: Could not parse {filepath}: {e}", file=sys.stderr)
+        tree = ast.parse(src, filename=py_path)
+    except SyntaxError:
         return set()
 
-    imports: Set[str] = set()
+    deps: Set[str] = set()
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                if alias.name.startswith("po_core"):
-                    imports.add(alias.name)
+                name = alias.name
+                if name == package or name.startswith(package + "."):
+                    deps.add(name)
         elif isinstance(node, ast.ImportFrom):
-            if node.module and node.module.startswith("po_core"):
-                imports.add(node.module)
-    return imports
+            target = resolve_import(current_module, node.module, node.level, package)
+            if target and (target == package or target.startswith(package + ".")):
+                deps.add(target)
+
+    # Normalize: keep only package-scoped deps
+    return {d for d in deps if d == package or d.startswith(package + ".")}
 
 
-def build_dependency_graph(src_dir: Path) -> Dict[str, Set[str]]:
+def build_graph(root: str, package: str) -> Dict[str, Set[str]]:
     """Build the full dependency graph."""
-    graph: Dict[str, Set[str]] = defaultdict(set)
-
-    for py_file in src_dir.rglob("*.py"):
-        module_name = get_module_name(py_file, src_dir.parent)
-        imports = get_imports_from_file(py_file)
-        for imp in imports:
-            graph[module_name].add(imp)
-
-    return dict(graph)
+    graph: Dict[str, Set[str]] = {}
+    for fp in iter_py_files(root):
+        mod = module_name_from_path(root, package, fp)
+        deps = extract_deps(fp, mod, package)
+        graph.setdefault(mod, set()).update(deps)
+    return graph
 
 
 def find_cycles(graph: Dict[str, Set[str]]) -> List[List[str]]:
-    """Find all cycles in the dependency graph using DFS."""
+    """Find cycles in the dependency graph using DFS."""
     cycles: List[List[str]] = []
-    visited: Set[str] = set()
-    rec_stack: Set[str] = set()
-    path: List[str] = []
+    state: Dict[str, int] = {}  # 0=unseen, 1=visiting, 2=done
+    stack: List[str] = []
 
-    def dfs(node: str) -> None:
-        visited.add(node)
-        rec_stack.add(node)
-        path.append(node)
+    def dfs(n: str) -> None:
+        state[n] = 1
+        stack.append(n)
+        for m in graph.get(n, set()):
+            if m not in graph:
+                continue
+            s = state.get(m, 0)
+            if s == 0:
+                dfs(m)
+            elif s == 1:
+                # Found cycle
+                idx = stack.index(m)
+                cyc = stack[idx:] + [m]
+                cycles.append(cyc)
+        stack.pop()
+        state[n] = 2
 
-        for neighbor in graph.get(node, set()):
-            # Normalize to module level for comparison
-            neighbor_base = ".".join(neighbor.split(".")[:3])  # po_core.X.Y
-
-            if neighbor_base in rec_stack:
-                # Found a cycle
-                cycle_start = path.index(neighbor_base) if neighbor_base in path else -1
-                if cycle_start >= 0:
-                    cycle = path[cycle_start:] + [neighbor_base]
-                    # Normalize cycle to avoid duplicates
-                    min_idx = cycle.index(min(cycle))
-                    normalized = cycle[min_idx:] + cycle[:min_idx]
-                    if normalized not in cycles:
-                        cycles.append(normalized)
-            elif neighbor_base not in visited:
-                dfs(neighbor_base)
-
-        path.pop()
-        rec_stack.remove(node)
-
-    for node in graph:
-        if node not in visited:
+    for node in graph.keys():
+        if state.get(node, 0) == 0:
             dfs(node)
 
-    return cycles
+    # Canonicalize cycles to reduce duplicates
+    uniq: List[List[str]] = []
+    seen: Set[Tuple[str, ...]] = set()
+    for c in cycles:
+        key = tuple(c)
+        if key not in seen:
+            seen.add(key)
+            uniq.append(c)
+    return uniq
 
 
-def check_forbidden_imports(graph: Dict[str, Set[str]]) -> List[Tuple[str, str, str]]:
-    """Check for imports that violate dependency rules."""
-    violations: List[Tuple[str, str, str]] = []
-
-    for module, imports in graph.items():
-        # Find which rule category this module belongs to
-        for rule_prefix, forbidden_list in FORBIDDEN_IMPORTS.items():
-            if module.startswith(rule_prefix):
-                for imp in imports:
-                    for forbidden in forbidden_list:
-                        if imp.startswith(forbidden):
-                            violations.append((module, imp, f"{rule_prefix} -> {forbidden}"))
-
+def check_rules(graph: Dict[str, Set[str]], rules: List[Rule]) -> List[str]:
+    """Check for forbidden imports based on rules."""
+    violations: List[str] = []
+    for src, dsts in graph.items():
+        for dst in dsts:
+            for r in rules:
+                if src.startswith(r.src_prefix) and dst.startswith(r.dst_prefix):
+                    # Skip self-imports within domain
+                    if r.dst_prefix == "po_core." and dst.startswith("po_core.domain"):
+                        continue
+                    violations.append(f"{r.message}: {src} -> {dst}")
     return violations
 
 
@@ -165,6 +203,8 @@ def get_module_category(module: str) -> str:
 
 def analyze_graph(graph: Dict[str, Set[str]]) -> Dict:
     """Analyze the dependency graph and return statistics."""
+    from collections import defaultdict
+
     # Count modules per category
     categories: Dict[str, int] = defaultdict(int)
     for module in graph:
@@ -187,70 +227,63 @@ def analyze_graph(graph: Dict[str, Set[str]]) -> Dict:
     }
 
 
-def main():
-    # Find src directory
-    script_dir = Path(__file__).parent
-    src_dir = script_dir.parent / "src" / "po_core"
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Import graph analyzer for Po_core")
+    ap.add_argument("--root", default="src/po_core", help="Root directory to analyze")
+    ap.add_argument("--package", default="po_core", help="Package name")
+    ap.add_argument("--check", action="store_true", help="Exit non-zero if violations/cycles exist")
+    ap.add_argument("--print", dest="print_output", action="store_true", help="Print summary")
+    args = ap.parse_args()
 
-    if not src_dir.exists():
-        print(f"Error: {src_dir} not found", file=sys.stderr)
-        sys.exit(1)
+    # Resolve root path
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    root = os.path.join(project_root, args.root)
 
-    print(f"Analyzing: {src_dir}")
-    print("=" * 60)
+    if not os.path.exists(root):
+        print(f"Error: {root} not found", file=sys.stderr)
+        return 1
 
-    # Build graph
-    graph = build_dependency_graph(src_dir)
-
-    # Analyze
-    stats = analyze_graph(graph)
-    print(f"\nTotal modules: {stats['total_modules']}")
-    print(f"\nModules per category:")
-    for cat, count in sorted(stats['modules_per_category'].items()):
-        print(f"  {cat}: {count}")
-
-    print(f"\nCross-category dependencies:")
-    for src, dsts in sorted(stats['cross_category_dependencies'].items()):
-        for dst, count in sorted(dsts.items()):
-            print(f"  {src} -> {dst}: {count}")
-
-    # Check for cycles
-    print("\n" + "=" * 60)
-    print("Checking for cycles...")
+    graph = build_graph(root, args.package)
     cycles = find_cycles(graph)
-    if cycles:
-        print(f"\n⚠️  Found {len(cycles)} cycle(s):")
-        for cycle in cycles:
-            print(f"  {'  ->  '.join(cycle)}")
-    else:
-        print("\n✅ No cycles detected!")
+    violations = check_rules(graph, DEFAULT_RULES)
 
-    # Check forbidden imports
-    print("\n" + "=" * 60)
-    print("Checking forbidden imports...")
-    violations = check_forbidden_imports(graph)
-    if violations:
-        print(f"\n⚠️  Found {len(violations)} violation(s):")
-        for module, imp, rule in violations:
-            print(f"  {module}")
-            print(f"    imports: {imp}")
-            print(f"    violates: {rule}")
-            print()
-    else:
-        print("\n✅ No forbidden import violations!")
+    if args.print_output or args.check:
+        print(f"[import-graph] modules: {len(graph)}")
 
-    # Output detailed graph
-    print("\n" + "=" * 60)
-    print("Dependency details (po_core only):")
-    for module in sorted(graph.keys()):
-        po_core_imports = [i for i in graph[module] if i.startswith("po_core")]
-        if po_core_imports:
-            print(f"\n{module}:")
-            for imp in sorted(po_core_imports):
-                print(f"  -> {imp}")
+        if violations:
+            print(f"[import-graph] rule violations: {len(violations)}")
+            for v in violations[:200]:
+                print("  -", v)
+            if len(violations) > 200:
+                print(f"  ... ({len(violations) - 200} more)")
+        else:
+            print("[import-graph] rule violations: 0")
 
-    return 0 if (not cycles and not violations) else 1
+        if cycles:
+            print(f"[import-graph] cycles detected: {len(cycles)}")
+            for c in cycles[:50]:
+                print("  - cycle:", " -> ".join(c))
+            if len(cycles) > 50:
+                print(f"  ... ({len(cycles) - 50} more)")
+        else:
+            print("[import-graph] cycles detected: 0")
+
+        # Print stats
+        stats = analyze_graph(graph)
+        print(f"\nModules per category:")
+        for cat, count in sorted(stats["modules_per_category"].items()):
+            print(f"  {cat}: {count}")
+
+        print(f"\nCross-category dependencies:")
+        for src, dsts in sorted(stats["cross_category_dependencies"].items()):
+            for dst, count in sorted(dsts.items()):
+                print(f"  {src} -> {dst}: {count}")
+
+    if args.check and (violations or cycles):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())
