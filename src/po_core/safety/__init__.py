@@ -14,6 +14,12 @@ Comprehensive safety framework for philosophical reasoning:
    - Automatic violation detection
    - Session auto-stop on severe violations
 
+3. **W_ethics Gate** (wethics_gate/)
+   - Hard constraint filtering (W0-W4 violations)
+   - Multi-axis scoring (Safety, Fairness, Privacy, Autonomy, Harm Avoidance)
+   - Pareto + MCDA candidate selection
+   - Repair mechanism for salvageable proposals
+
 Purpose: Enable legitimate research while preventing misuse.
 """
 
@@ -39,6 +45,31 @@ from po_core.safety.w_ethics import (
     VIOLATION_PATTERNS,
 )
 
+# W_ethics Gate (advanced filtering and selection)
+from po_core.safety.wethics_gate import (
+    # Gate types
+    GateDecision,
+    GateViolationCode,
+    RepairStage,
+    AxisScore,
+    Violation,
+    RepairAction,
+    GateResult,
+    Candidate,
+    SelectionResult,
+    # Gate
+    WethicsGate,
+    create_wethics_gate,
+    # Metrics
+    ContextProfile,
+    MetricsEvaluator,
+    create_metrics_evaluator,
+    # Selection
+    CandidateSelector,
+    create_candidate_selector,
+    pareto_front,
+)
+
 __all__ = [
     # Philosopher profiles
     "SafetyTier",
@@ -59,4 +90,29 @@ __all__ = [
     "WEthicsGuardian",
     "create_ethics_guardian",
     "VIOLATION_PATTERNS",
+
+    # W_ethics Gate types
+    "GateDecision",
+    "GateViolationCode",
+    "RepairStage",
+    "AxisScore",
+    "Violation",
+    "RepairAction",
+    "GateResult",
+    "Candidate",
+    "SelectionResult",
+
+    # W_ethics Gate
+    "WethicsGate",
+    "create_wethics_gate",
+
+    # W_ethics Metrics
+    "ContextProfile",
+    "MetricsEvaluator",
+    "create_metrics_evaluator",
+
+    # W_ethics Selection
+    "CandidateSelector",
+    "create_candidate_selector",
+    "pareto_front",
 ]
