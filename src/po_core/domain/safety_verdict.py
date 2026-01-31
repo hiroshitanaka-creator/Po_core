@@ -112,4 +112,29 @@ class SafetyVerdict:
         }
 
 
-__all__ = ["SafetyVerdict", "Decision"]
+# ── Backward compatibility types (for legacy code) ──────────────────
+
+class VerdictType(str, Enum):
+    """Legacy verdict type enum (backward compat with action_gate.py)."""
+
+    ALLOW = "allow"
+    ALLOW_WITH_REPAIR = "allow_with_repair"
+    REJECT = "reject"
+    ESCALATE = "escalate"
+
+
+@dataclass
+class ViolationInfo:
+    """
+    Legacy violation info (backward compat with intention_gate.py).
+
+    Used by the existing gate implementations.
+    """
+
+    code: str
+    severity: float
+    description: str
+    repairable: bool = True
+
+
+__all__ = ["SafetyVerdict", "Decision", "VerdictType", "ViolationInfo"]

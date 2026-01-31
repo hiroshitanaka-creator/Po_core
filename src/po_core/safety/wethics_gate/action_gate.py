@@ -258,8 +258,74 @@ class TwoStageGate:
         }
 
 
+# ── Policy-based ActionGate (WethicsGatePort compatible) ──────────
+
+from typing import Iterable
+
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.proposal import Proposal
+from po_core.domain.safety_verdict import Decision
+from po_core.domain.safety_verdict import SafetyVerdict as DomainSafetyVerdict
+from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.safety.wethics_gate.policies.base import ActionPolicy
+
+
+class PolicyActionGate:
+    """
+    Policy-based Action Gate implementing WethicsGatePort interface.
+
+    Uses pluggable policies for checking proposals.
+    Fail-closed: any exception results in REJECT.
+    """
+
+    def __init__(self, policies: Iterable[ActionPolicy] = ()):
+        self._policies = list(policies)
+
+    def judge(
+        self,
+        ctx: Context,
+        intent: Intent,
+        proposal: Proposal,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> DomainSafetyVerdict:
+        """
+        Judge a proposal against all policies.
+
+        Returns:
+            SafetyVerdict - worst verdict found, or ALLOW if all pass.
+        """
+        worst: Optional[DomainSafetyVerdict] = None
+
+        for p in self._policies:
+            try:
+                v = p.check(ctx, intent, proposal, tensors, memory)
+            except Exception as e:
+                return DomainSafetyVerdict.fail_closed(e)
+
+            if v is None:
+                continue
+
+            if v.decision == Decision.REJECT:
+                return v
+
+            if v.decision == Decision.REVISE:
+                worst = v
+
+        return worst or DomainSafetyVerdict(
+            decision=Decision.ALLOW,
+            rule_ids=[],
+            reasons=[],
+            required_changes=[],
+            meta={},
+        )
+
+
 __all__ = [
     "ActionGate",
     "TwoStageGate",
     "check_proposal",
+    "PolicyActionGate",
 ]

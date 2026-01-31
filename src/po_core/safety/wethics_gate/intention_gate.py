@@ -262,9 +262,72 @@ class IntentionGate:
         }
 
 
+# ── Policy-based IntentionGate (WethicsGatePort compatible) ──────────
+
+from typing import Iterable
+
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.safety_verdict import Decision, SafetyVerdict
+from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.safety.wethics_gate.policies.base import IntentionPolicy
+
+
+class PolicyIntentionGate:
+    """
+    Policy-based Intention Gate implementing WethicsGatePort interface.
+
+    Uses pluggable policies for checking intents.
+    Fail-closed: any exception results in REJECT.
+    """
+
+    def __init__(self, policies: Iterable[IntentionPolicy] = ()):
+        self._policies = list(policies)
+
+    def judge(
+        self,
+        ctx: Context,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> SafetyVerdict:
+        """
+        Judge an intent against all policies.
+
+        Returns:
+            SafetyVerdict - worst verdict found, or ALLOW if all pass.
+        """
+        worst: Optional[SafetyVerdict] = None
+
+        for p in self._policies:
+            try:
+                v = p.check(ctx, intent, tensors, memory)
+            except Exception as e:
+                return SafetyVerdict.fail_closed(e)
+
+            if v is None:
+                continue
+
+            if v.decision == Decision.REJECT:
+                return v
+
+            if v.decision == Decision.REVISE:
+                worst = v
+
+        return worst or SafetyVerdict(
+            decision=Decision.ALLOW,
+            rule_ids=[],
+            reasons=[],
+            required_changes=[],
+            meta={},
+        )
+
+
 __all__ = [
     "IntentionDecision",
     "IntentionVerdict",
     "IntentionGate",
     "check_intent",
+    "PolicyIntentionGate",
 ]
