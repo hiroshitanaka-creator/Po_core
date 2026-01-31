@@ -116,6 +116,20 @@ from .select import (
     create_candidate_selector,
 )
 
+# 2-Stage Gate (new in v0.3)
+from .intention_gate import (
+    IntentionDecision,
+    IntentionVerdict,
+    IntentionGate,
+    check_intent,
+)
+
+from .action_gate import (
+    ActionGate,
+    TwoStageGate,
+    check_proposal,
+)
+
 __all__ = [
     # Types - Enums
     "GateDecision",
@@ -171,6 +185,14 @@ __all__ = [
     "topsis_rank",
     "CandidateSelector",
     "create_candidate_selector",
+    # 2-Stage Gate (new in v0.3)
+    "IntentionDecision",
+    "IntentionVerdict",
+    "IntentionGate",
+    "check_intent",
+    "ActionGate",
+    "TwoStageGate",
+    "check_proposal",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
