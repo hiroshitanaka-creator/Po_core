@@ -41,6 +41,7 @@ class Container:
     _gate: Optional["WethicsGate"] = None
     _two_stage_gate: Optional["TwoStageGate"] = None
     _solar_will: Optional["SolarWillEngine"] = None
+    _intention_gate: Optional["IntentionGate"] = None
 
     @property
     def gate(self) -> "WethicsGate":
@@ -83,6 +84,15 @@ class Container:
                 learning_rate=self.settings.solar_will.learning_rate
             )
         return self._solar_will
+
+    @property
+    def intention_gate(self) -> "IntentionGate":
+        """Get the intention gate (lazy loaded)."""
+        if self._intention_gate is None:
+            from po_core.safety.wethics_gate.intention_gate import IntentionGate
+
+            self._intention_gate = IntentionGate()
+        return self._intention_gate
 
     def run_ensemble(
         self,
@@ -182,11 +192,34 @@ def _create_memory(settings: Settings) -> MemoryPort:
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from po_core.safety.wethics_gate import WethicsGate, TwoStageGate
+    from po_core.safety.wethics_gate.intention_gate import IntentionGate
     from po_core.autonomy.solarwill import SolarWillEngine
+
+
+def create_default_container(settings: Optional[Settings] = None) -> Container:
+    """
+    Create a new container with default or provided settings.
+
+    Unlike get_container(), this always creates a fresh container
+    (no global state).
+
+    Args:
+        settings: Optional settings override
+
+    Returns:
+        New Container instance
+    """
+    settings = settings or get_settings()
+    memory = _create_memory(settings)
+    return Container(
+        settings=settings,
+        memory=memory,
+    )
 
 
 __all__ = [
     "Container",
     "get_container",
     "configure",
+    "create_default_container",
 ]
