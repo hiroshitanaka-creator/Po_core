@@ -42,7 +42,7 @@ def test_vertical_slice_runs():
     mem = FakePoSelf()
     out = run("test input", memory_backend=mem)
 
-    assert out["status"] in ("ok", "fallback")
+    assert out["status"] in ("ok", "blocked")
     assert "request_id" in out
 
 
@@ -50,7 +50,7 @@ def test_vertical_slice_without_memory():
     """Test the pipeline with in-memory adapter (no backend)."""
     out = run("test input without backend")
 
-    assert out["status"] in ("ok", "fallback")
+    assert out["status"] in ("ok", "blocked")
     assert "request_id" in out
 
 
@@ -62,11 +62,12 @@ def test_vertical_slice_produces_proposal():
         assert "proposal" in out
         assert "proposal_id" in out["proposal"]
         assert "action_type" in out["proposal"]
-    elif out["status"] == "fallback":
-        # Fallback generates a safe proposal from verdict
+        # degraded=True means fallback was used
+        if out.get("degraded"):
+            assert "verdict" in out
+    elif out["status"] == "blocked":
+        # Hard block - fallback itself was rejected
         assert "stage" in out
         assert "verdict" in out
-        assert "proposal" in out
-        assert "action_type" in out["proposal"]
     else:
         raise AssertionError(f"Unexpected status: {out['status']}")

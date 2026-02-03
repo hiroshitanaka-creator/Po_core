@@ -1,19 +1,21 @@
 """
-WG.ACT.MODE.001 - SafetyMode Degradation Policy
-================================================
+WG.ACT.MODE.001 - Action SafetyMode Degradation Policy
+======================================================
 
-When SafetyMode is WARN or CRITICAL, force degradation behavior.
+When SafetyMode is WARN or CRITICAL at action stage,
+force degradation unless the proposal is already safe.
 
-Priority: 5 (very early - safety mode overrides most other policies)
+Priority: 15 (after type check - let safe actions pass first)
 
 Behavior:
 - NORMAL: pass (no intervention)
-- WARN: REVISE with forced_action="ask_clarification"
-- CRITICAL: REJECT with forced_action="refuse"
+- WARN: REVISE unless action_type is safe (ask_clarification, refuse)
+- CRITICAL: REVISE to refuse unless already refuse
 """
 from __future__ import annotations
 
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import FrozenSet, Optional
 
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
@@ -21,19 +23,25 @@ from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.domain.safety_mode import SafetyMode, infer_safety_mode
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 
 
-class SafetyModeDegradationPolicy:
+@dataclass(frozen=True)
+class ActionModeDegradePolicy:
     """
-    Force degradation when SafetyMode is elevated.
+    Force degradation when SafetyMode is elevated at action stage.
 
-    This is the "fail-safe" policy that ensures the system
-    degrades gracefully when metrics indicate risk.
+    Unlike the intention-stage policy, this one allows "safe" actions
+    through - we don't need to degrade if the proposal is already
+    asking for clarification or refusing.
     """
 
     rule_id: str = "WG.ACT.MODE.001"
-    priority: int = 5  # Very early - safety mode is fundamental
+    priority: int = 15  # After type check - let safe actions pass first
+    config: SafetyModeConfig = field(default_factory=SafetyModeConfig)
+
+    # Actions that are inherently safe and don't need degradation
+    safe_actions: FrozenSet[str] = frozenset({"ask_clarification", "refuse"})
 
     def check(
         self,
@@ -47,44 +55,56 @@ class SafetyModeDegradationPolicy:
         Check SafetyMode and enforce degradation if needed.
 
         Returns:
-            SafetyVerdict if mode is elevated, None if NORMAL.
+            SafetyVerdict if mode is elevated and action is unsafe, None otherwise.
         """
-        mode, value = infer_safety_mode(tensors)
+        mode, value = infer_safety_mode(tensors, self.config)
 
         if mode == SafetyMode.NORMAL:
             return None
 
-        if mode == SafetyMode.CRITICAL:
+        if mode == SafetyMode.WARN:
+            # Allow safe actions through in WARN mode
+            if proposal.action_type in self.safe_actions:
+                return None
             return SafetyVerdict(
-                decision=Decision.REJECT,
+                decision=Decision.REVISE,
                 rule_ids=[self.rule_id],
                 reasons=[
-                    f"SafetyMode=CRITICAL (freedom_pressure={value})",
-                    "システムが危険な状態を検出しました。",
+                    f"[{self.rule_id}] SafetyMode=warn のため ask_clarification へ縮退",
                 ],
-                required_changes=[],
+                required_changes=["action_type を ask_clarification に変更してください。"],
                 meta={
-                    "forced_action": "refuse",
-                    "safety_mode": mode.value,
-                    "freedom_pressure": value,
+                    "stage": "action",
+                    "mode": mode.value,
+                    "forced_action": "ask_clarification",
+                    "value": "" if value is None else str(value),
                 },
             )
 
-        # mode == SafetyMode.WARN
-        return SafetyVerdict(
-            decision=Decision.REVISE,
-            rule_ids=[self.rule_id],
-            reasons=[
-                f"SafetyMode=WARN (freedom_pressure={value})",
-                "追加の確認が必要です。",
-            ],
-            required_changes=["目的・前提・制約を具体化してください"],
-            meta={
-                "forced_action": "ask_clarification",
-                "safety_mode": mode.value,
-                "freedom_pressure": value,
-            },
-        )
+        if mode == SafetyMode.CRITICAL:
+            # Only allow refuse in CRITICAL mode
+            if proposal.action_type == "refuse":
+                return None
+            return SafetyVerdict(
+                decision=Decision.REVISE,
+                rule_ids=[self.rule_id],
+                reasons=[
+                    f"[{self.rule_id}] SafetyMode=critical のため refuse へ縮退",
+                ],
+                required_changes=["action_type を refuse に変更してください。"],
+                meta={
+                    "stage": "action",
+                    "mode": mode.value,
+                    "forced_action": "refuse",
+                    "value": "" if value is None else str(value),
+                },
+            )
+
+        return None
 
 
-__all__ = ["SafetyModeDegradationPolicy"]
+# Backward compat alias
+SafetyModeDegradationPolicy = ActionModeDegradePolicy
+
+
+__all__ = ["ActionModeDegradePolicy", "SafetyModeDegradationPolicy"]

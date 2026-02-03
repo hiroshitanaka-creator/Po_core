@@ -466,29 +466,28 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         ctx.request_id,
         {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
     ))
-    if v1.decision in (Decision.REJECT, Decision.REVISE):
+    if v1.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v1, stage="intention")
-        # Emit SafetyDegraded if triggered by SafetyMode policy
-        if "WG.ACT.MODE.001" in v1.rule_ids or v1.meta.get("safety_mode"):
-            tracer.emit(TraceEvent.now(
-                "SafetyDegraded",
-                ctx.request_id,
-                {
-                    "stage": "intention",
-                    "safety_mode": v1.meta.get("safety_mode", "unknown"),
-                    "forced_action": fallback.action_type,
-                },
-            ))
+        # Pass fallback through action gate to verify it's safe
+        vfb = deps.gate.judge_action(ctx, intent, fallback, tensors, memory)
         tracer.emit(TraceEvent.now(
-            "FallbackComposed",
+            "SafetyDegraded",
             ctx.request_id,
-            {"stage": "intention", "action_type": fallback.action_type},
+            {"from": "intention", **v1.meta},
         ))
+        if vfb.decision == Decision.ALLOW:
+            return {
+                "request_id": ctx.request_id,
+                "status": "ok",
+                "degraded": True,
+                "proposal": fallback.compact(),
+                "verdict": v1.to_dict(),
+            }
+        # Fallback itself was rejected - hard block
         return {
             "request_id": ctx.request_id,
-            "status": "fallback",
+            "status": "blocked",
             "stage": "intention",
-            "proposal": fallback.compact(),
             "verdict": v1.to_dict(),
         }
 
@@ -525,29 +524,28 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         ctx.request_id,
         {"decision": v2.decision.value, "rule_ids": v2.rule_ids},
     ))
-    if v2.decision in (Decision.REJECT, Decision.REVISE):
+    if v2.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v2, stage="action")
-        # Emit SafetyDegraded if triggered by SafetyMode policy
-        if "WG.ACT.MODE.001" in v2.rule_ids or v2.meta.get("safety_mode"):
-            tracer.emit(TraceEvent.now(
-                "SafetyDegraded",
-                ctx.request_id,
-                {
-                    "stage": "action",
-                    "safety_mode": v2.meta.get("safety_mode", "unknown"),
-                    "forced_action": fallback.action_type,
-                },
-            ))
+        # Pass fallback through action gate to verify it's safe
+        vfb = deps.gate.judge_action(ctx, intent, fallback, tensors, memory)
         tracer.emit(TraceEvent.now(
-            "FallbackComposed",
+            "SafetyDegraded",
             ctx.request_id,
-            {"stage": "action", "action_type": fallback.action_type},
+            {"from": "action", **v2.meta},
         ))
+        if vfb.decision == Decision.ALLOW:
+            return {
+                "request_id": ctx.request_id,
+                "status": "ok",
+                "degraded": True,
+                "proposal": fallback.compact(),
+                "verdict": v2.to_dict(),
+            }
+        # Fallback itself was rejected - hard block
         return {
             "request_id": ctx.request_id,
-            "status": "fallback",
+            "status": "blocked",
             "stage": "action",
-            "proposal": fallback.compact(),
             "verdict": v2.to_dict(),
         }
 
