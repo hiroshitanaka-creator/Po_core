@@ -394,6 +394,7 @@ from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.philosophers.base import PhilosopherProtocol
+from po_core.safety.fallback import compose_fallback
 
 
 @dataclass(frozen=True)
@@ -466,10 +467,28 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
     ))
     if v1.decision in (Decision.REJECT, Decision.REVISE):
+        fallback = compose_fallback(ctx, v1, stage="intention")
+        # Emit SafetyDegraded if triggered by SafetyMode policy
+        if "WG.ACT.MODE.001" in v1.rule_ids or v1.meta.get("safety_mode"):
+            tracer.emit(TraceEvent.now(
+                "SafetyDegraded",
+                ctx.request_id,
+                {
+                    "stage": "intention",
+                    "safety_mode": v1.meta.get("safety_mode", "unknown"),
+                    "forced_action": fallback.action_type,
+                },
+            ))
+        tracer.emit(TraceEvent.now(
+            "FallbackComposed",
+            ctx.request_id,
+            {"stage": "intention", "action_type": fallback.action_type},
+        ))
         return {
             "request_id": ctx.request_id,
-            "status": "blocked",
+            "status": "fallback",
             "stage": "intention",
+            "proposal": fallback.compact(),
             "verdict": v1.to_dict(),
         }
 
@@ -507,10 +526,28 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         {"decision": v2.decision.value, "rule_ids": v2.rule_ids},
     ))
     if v2.decision in (Decision.REJECT, Decision.REVISE):
+        fallback = compose_fallback(ctx, v2, stage="action")
+        # Emit SafetyDegraded if triggered by SafetyMode policy
+        if "WG.ACT.MODE.001" in v2.rule_ids or v2.meta.get("safety_mode"):
+            tracer.emit(TraceEvent.now(
+                "SafetyDegraded",
+                ctx.request_id,
+                {
+                    "stage": "action",
+                    "safety_mode": v2.meta.get("safety_mode", "unknown"),
+                    "forced_action": fallback.action_type,
+                },
+            ))
+        tracer.emit(TraceEvent.now(
+            "FallbackComposed",
+            ctx.request_id,
+            {"stage": "action", "action_type": fallback.action_type},
+        ))
         return {
             "request_id": ctx.request_id,
-            "status": "blocked",
+            "status": "fallback",
             "stage": "action",
+            "proposal": fallback.compact(),
             "verdict": v2.to_dict(),
         }
 

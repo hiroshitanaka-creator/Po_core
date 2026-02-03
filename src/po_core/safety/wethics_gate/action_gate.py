@@ -280,7 +280,14 @@ def _sort_action_policies(policies: Iterable[ActionPolicy]) -> List[ActionPolicy
 
 
 def _merge_action_verdicts(decision: Decision, verdicts: List[DomainSafetyVerdict]) -> DomainSafetyVerdict:
-    """Merge multiple verdicts into one, collecting all rule_ids and reasons."""
+    """Merge multiple verdicts into one, collecting all rule_ids and reasons.
+
+    Preserves meta from the first (highest-priority) verdict so that
+    forced_action and other policy-set metadata are not lost.
+    """
+    # Preserve base_meta from first verdict (highest priority)
+    base_meta = dict(verdicts[0].meta) if verdicts else {}
+
     rule_ids: List[str] = []
     reasons: List[str] = []
     required: List[str] = []
@@ -296,12 +303,13 @@ def _merge_action_verdicts(decision: Decision, verdicts: List[DomainSafetyVerdic
             if rc not in required:
                 required.append(rc)
 
+    base_meta.update({"stage": "action", "triggered": ",".join(rule_ids)})
     return DomainSafetyVerdict(
         decision=decision,
         rule_ids=rule_ids,
         reasons=reasons[:20],
         required_changes=required[:20],
-        meta={"stage": "action", "triggered": ",".join(rule_ids)},
+        meta=base_meta,
     )
 
 
