@@ -468,6 +468,17 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     ))
     if v1.decision in (Decision.REJECT, Decision.REVISE):
         fallback = compose_fallback(ctx, v1, stage="intention")
+        # Emit SafetyDegraded if triggered by SafetyMode policy
+        if "WG.ACT.MODE.001" in v1.rule_ids or v1.meta.get("safety_mode"):
+            tracer.emit(TraceEvent.now(
+                "SafetyDegraded",
+                ctx.request_id,
+                {
+                    "stage": "intention",
+                    "safety_mode": v1.meta.get("safety_mode", "unknown"),
+                    "forced_action": fallback.action_type,
+                },
+            ))
         tracer.emit(TraceEvent.now(
             "FallbackComposed",
             ctx.request_id,
@@ -516,6 +527,17 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     ))
     if v2.decision in (Decision.REJECT, Decision.REVISE):
         fallback = compose_fallback(ctx, v2, stage="action")
+        # Emit SafetyDegraded if triggered by SafetyMode policy
+        if "WG.ACT.MODE.001" in v2.rule_ids or v2.meta.get("safety_mode"):
+            tracer.emit(TraceEvent.now(
+                "SafetyDegraded",
+                ctx.request_id,
+                {
+                    "stage": "action",
+                    "safety_mode": v2.meta.get("safety_mode", "unknown"),
+                    "forced_action": fallback.action_type,
+                },
+            ))
         tracer.emit(TraceEvent.now(
             "FallbackComposed",
             ctx.request_id,

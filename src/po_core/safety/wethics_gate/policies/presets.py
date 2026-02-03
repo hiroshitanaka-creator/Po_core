@@ -13,6 +13,7 @@ from po_core.safety.wethics_gate.policies.base import ActionPolicy, IntentionPol
 from po_core.safety.wethics_gate.policies.intention_goalkey_001 import IntentGoalKeywordGuardPolicy
 from po_core.safety.wethics_gate.policies.action_acttype_001 import ActionTypeAllowlistPolicy
 from po_core.safety.wethics_gate.policies.action_outguard_001 import DangerousOutputGuardPolicy
+from po_core.safety.wethics_gate.policies.action_mode_001 import SafetyModeDegradationPolicy
 
 
 def default_intention_policies() -> List[IntentionPolicy]:
@@ -23,10 +24,11 @@ def default_intention_policies() -> List[IntentionPolicy]:
 
 
 def default_action_policies() -> List[ActionPolicy]:
-    """Get default action-stage policies."""
+    """Get default action-stage policies (sorted by priority at runtime)."""
     return [
-        ActionTypeAllowlistPolicy(),
-        DangerousOutputGuardPolicy(),
+        SafetyModeDegradationPolicy(),  # priority=5: safety mode first
+        ActionTypeAllowlistPolicy(),     # priority=10
+        DangerousOutputGuardPolicy(),    # priority=20
     ]
 
 
