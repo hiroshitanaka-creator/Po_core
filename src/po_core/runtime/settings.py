@@ -54,6 +54,11 @@ class Settings:
     philosopher_timeout_s_warn: float = 0.8
     philosopher_timeout_s_critical: float = 0.5
 
+    # コスト予算: mode別の総コスト上限（重い哲学者混入防止）
+    philosopher_cost_budget_normal: int = 80
+    philosopher_cost_budget_warn: int = 12
+    philosopher_cost_budget_critical: int = 3
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -73,6 +78,9 @@ class Settings:
             "philosopher_timeout_s_normal": self.philosopher_timeout_s_normal,
             "philosopher_timeout_s_warn": self.philosopher_timeout_s_warn,
             "philosopher_timeout_s_critical": self.philosopher_timeout_s_critical,
+            "philosopher_cost_budget_normal": self.philosopher_cost_budget_normal,
+            "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
+            "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
         }
 
 

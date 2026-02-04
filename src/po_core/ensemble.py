@@ -395,7 +395,7 @@ from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.philosophers.base import PhilosopherProtocol
-from po_core.philosophers.registry import PhilosopherRegistry
+from po_core.philosophers.registry import PhilosopherRegistry, LoadError
 from po_core.party_machine import run_philosophers, RunResult
 from po_core.runtime.settings import Settings
 from po_core.safety.fallback import compose_fallback
@@ -516,14 +516,30 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             "verdict": v1.to_dict(),
         }
 
-    # 5. Select philosophers based on SafetyMode
-    philosophers = deps.registry.select_and_load(mode)
+    # 5. Select philosophers based on SafetyMode (編成)
+    sel = deps.registry.select(mode)
     max_workers, timeout_s = _get_swarm_params(mode, deps.settings)
     tracer.emit(TraceEvent.now(
         "PhilosophersSelected",
         ctx.request_id,
-        {"mode": mode.value, "count": len(philosophers), "workers": max_workers},
+        {
+            "mode": mode.value,
+            "n": len(sel.selected_ids),
+            "cost_total": sel.cost_total,
+            "covered_tags": sel.covered_tags,
+            "ids": sel.selected_ids,
+            "workers": max_workers,
+        },
     ))
+
+    # Load philosophers (with error recovery)
+    philosophers, load_errors = deps.registry.load(sel.selected_ids)
+    for e in load_errors:
+        tracer.emit(TraceEvent.now(
+            "PhilosopherLoadError",
+            ctx.request_id,
+            {"id": e.philosopher_id, "module": e.module, "symbol": e.symbol, "error": e.error},
+        ))
 
     # 6. Parallel philosopher execution with timeout
     from po_core.domain.proposal import Proposal as DomainProposal
@@ -534,20 +550,19 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     )
     proposals.extend(ph_proposals)
 
-    # Emit trace events for each result
+    # Emit trace events for each result (with latency)
     for result in run_results:
-        if result.ok:
-            tracer.emit(TraceEvent.now(
-                "PhilosopherProposed",
-                ctx.request_id,
-                {"name": result.philosopher_id, "ok": True},
-            ))
-        else:
-            tracer.emit(TraceEvent.now(
-                "PhilosopherError",
-                ctx.request_id,
-                {"name": result.philosopher_id, "error": result.error or "unknown"},
-            ))
+        tracer.emit(TraceEvent.now(
+            "PhilosopherResult",
+            ctx.request_id,
+            {
+                "name": result.philosopher_id,
+                "n": result.n,
+                "timed_out": result.timed_out,
+                "error": "" if result.error is None else result.error[:200],
+                "latency_ms": -1 if result.latency_ms is None else result.latency_ms,
+            },
+        ))
 
     # 7. Aggregate
     final = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
