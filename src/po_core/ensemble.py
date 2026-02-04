@@ -381,12 +381,15 @@ def run_ensemble(
 
 # ── Hexagonal Architecture: run_turn (vertical slice) ──────────────────
 
-from typing import Sequence
+from typing import Mapping, Sequence
 
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.trace_event import TraceEvent
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision
+from po_core.domain.keys import (
+    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY, PARETO_DEBUG,
+)
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -399,6 +402,32 @@ from po_core.philosophers.registry import PhilosopherRegistry, LoadError
 from po_core.party_machine import run_philosophers, RunResult
 from po_core.runtime.settings import Settings
 from po_core.safety.fallback import compose_fallback
+from po_core.safety.policy_scoring import policy_score
+
+
+def _author_reliability(
+    *,
+    timed_out: bool,
+    error: Optional[str],
+    latency_ms: Optional[int],
+    timeout_s: float,
+) -> float:
+    """
+    Compute author reliability from execution trace.
+
+    Returns:
+        0.0〜1.0: 高いほど信頼性が高い
+    """
+    if timed_out:
+        return 0.0
+    if error is not None:
+        return 0.2
+    if latency_ms is None:
+        return 0.6
+    t = timeout_s * 1000.0
+    # 速いほど高い：0ms→1.0, timeout→0.4
+    r = 1.0 - 0.6 * min(1.0, float(latency_ms) / max(1.0, t))
+    return max(0.0, min(1.0, r))
 
 
 @dataclass(frozen=True)
@@ -543,12 +572,12 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
 
     # 6. Parallel philosopher execution with timeout
     from po_core.domain.proposal import Proposal as DomainProposal
-    proposals: List[DomainProposal] = []
+    raw_proposals: List[DomainProposal] = []
     ph_proposals, run_results = run_philosophers(
         philosophers, ctx, intent, tensors, memory,
         max_workers=max_workers, timeout_s=timeout_s,
     )
-    proposals.extend(ph_proposals)
+    raw_proposals.extend(ph_proposals)
 
     # Emit trace events for each result (with latency)
     for result in run_results:
@@ -564,6 +593,61 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             },
         ))
 
+    # 6.5 Enrich proposals with policy/trace/freedom signals
+    author_stat = {r.philosopher_id: r for r in run_results}
+    fp_val = tensors.metrics.get("freedom_pressure")
+    fp_str = "" if fp_val is None else f"{float(fp_val):.4f}"
+
+    enriched: List[DomainProposal] = []
+    precheck_counts: Dict[str, int] = {"allow": 0, "revise": 0, "reject": 0}
+
+    for p in raw_proposals:
+        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+        pc = dict(extra.get(PO_CORE, {}))
+        author = str(pc.get(AUTHOR, ""))
+
+        # Trace quality (author reliability)
+        r = author_stat.get(author)
+        rel = _author_reliability(
+            timed_out=(r.timed_out if r else False),
+            error=(r.error if r else None),
+            latency_ms=(r.latency_ms if r else None),
+            timeout_s=timeout_s,
+        )
+        pc[TRACEQ] = {AUTHOR_RELIABILITY: f"{rel:.3f}"}
+
+        # Policy precheck (action gate evaluation for each candidate)
+        v = deps.gate.judge_action(ctx, intent, p, tensors, memory)
+        s = policy_score(v)
+        pc[POLICY] = {
+            "decision": v.decision.value,
+            "score": f"{s:.3f}",
+            "rule_ids": v.rule_ids[:8],
+            "required_changes_n": str(len(v.required_changes)),
+        }
+        precheck_counts[v.decision.value] = precheck_counts.get(v.decision.value, 0) + 1
+
+        # FreedomPressure embed
+        pc[FREEDOM_PRESSURE] = fp_str
+
+        extra[PO_CORE] = pc
+        enriched.append(DomainProposal(
+            proposal_id=p.proposal_id,
+            action_type=p.action_type,
+            content=p.content,
+            confidence=p.confidence,
+            assumption_tags=list(p.assumption_tags),
+            risk_tags=list(p.risk_tags),
+            extra=extra,
+        ))
+
+    proposals = enriched
+    tracer.emit(TraceEvent.now(
+        "PolicyPrecheckSummary",
+        ctx.request_id,
+        precheck_counts,
+    ))
+
     # 7. Aggregate
     final = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
     tracer.emit(TraceEvent.now(
@@ -571,6 +655,27 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         ctx.request_id,
         {"proposal_id": final.proposal_id, "action_type": final.action_type},
     ))
+
+    # 7.5 Emit Pareto debug trace events (if aggregator embedded them)
+    final_extra = dict(final.extra) if isinstance(final.extra, Mapping) else {}
+    final_pc = final_extra.get(PO_CORE, {})
+    dbg = final_pc.get(PARETO_DEBUG, {})
+    if dbg:
+        tracer.emit(TraceEvent.now(
+            "ConflictSummaryComputed",
+            ctx.request_id,
+            dict(dbg.get("conflicts", {})),
+        ))
+        tracer.emit(TraceEvent.now(
+            "ParetoFrontComputed",
+            ctx.request_id,
+            {"weights": dbg.get("weights", {}), "front": dbg.get("front", [])},
+        ))
+        tracer.emit(TraceEvent.now(
+            "ParetoWinnerSelected",
+            ctx.request_id,
+            {"winner": dbg.get("winner", {})},
+        ))
 
     # 8. Action Gate (Stage 2)
     v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
