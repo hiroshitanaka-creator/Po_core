@@ -80,7 +80,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.aggregator.weighted_vote import WeightedVoteAggregator
+    from po_core.aggregator.policy_aware import PolicyAwareAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     mem = PoSelfMemoryAdapter(memory)
@@ -92,11 +92,14 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
         max_warn=settings.philosophers_max_warn,
         max_critical=settings.philosophers_max_critical,
+        budget_normal=settings.philosopher_cost_budget_normal,
+        budget_warn=settings.philosopher_cost_budget_warn,
+        budget_critical=settings.philosopher_cost_budget_critical,
     )
 
     return WiredSystem(
@@ -110,7 +113,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=WeightedVoteAggregator(),
+        aggregator=PolicyAwareAggregator(config=safety_config),
         settings=settings,
         registry=registry,
     )
@@ -138,7 +141,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.aggregator.weighted_vote import WeightedVoteAggregator
+    from po_core.aggregator.policy_aware import PolicyAwareAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     settings = settings or Settings()
@@ -151,11 +154,14 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
         max_warn=settings.philosophers_max_warn,
         max_critical=settings.philosophers_max_critical,
+        budget_normal=settings.philosopher_cost_budget_normal,
+        budget_warn=settings.philosopher_cost_budget_warn,
+        budget_critical=settings.philosopher_cost_budget_critical,
     )
 
     return WiredSystem(
@@ -169,7 +175,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=WeightedVoteAggregator(),
+        aggregator=PolicyAwareAggregator(config=safety_config),
         settings=settings,
         registry=registry,
     )

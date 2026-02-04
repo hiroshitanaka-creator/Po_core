@@ -36,6 +36,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
+from time import perf_counter
 from typing import Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -114,7 +115,10 @@ class RunResult:
 
     philosopher_id: str
     ok: bool
+    n: int = 0  # Number of proposals generated
+    timed_out: bool = False
     error: Optional[str] = None
+    latency_ms: Optional[int] = None  # Execution time in milliseconds
 
 
 def run_philosophers(
@@ -159,19 +163,22 @@ def run_philosophers(
     if not philosophers:
         return proposals, results
 
-    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], RunResult]:
-        """Run a single philosopher with error handling."""
+    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], int, Optional[str], int]:
+        """Run a single philosopher with error handling and timing.
+
+        Returns:
+            Tuple of (proposal, n_proposals, error, latency_ms)
+        """
         pid = getattr(ph, "name", ph.__class__.__name__)
+        t0 = perf_counter()
         try:
             proposal = ph.deliberate(ctx, intent, tensors, memory)
-            return proposal, RunResult(philosopher_id=pid, ok=True)
+            dt = int((perf_counter() - t0) * 1000)
+            return proposal, 1 if proposal else 0, None, dt
         except Exception as e:
+            dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            return None, RunResult(
-                philosopher_id=pid,
-                ok=False,
-                error=f"{type(e).__name__}: {e}\n{tb}",
-            )
+            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt
 
     # Parallel execution with ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -181,21 +188,34 @@ def run_philosophers(
             ph = futures[future]
             pid = getattr(ph, "name", ph.__class__.__name__)
             try:
-                proposal, result = future.result(timeout=timeout_s)
-                results.append(result)
+                proposal, n, err, dt = future.result(timeout=timeout_s)
+                results.append(RunResult(
+                    philosopher_id=pid,
+                    ok=(err is None),
+                    n=n,
+                    timed_out=False,
+                    error=err,
+                    latency_ms=dt,
+                ))
                 if proposal is not None:
                     proposals.append(proposal)
             except FuturesTimeoutError:
                 results.append(RunResult(
                     philosopher_id=pid,
                     ok=False,
+                    n=0,
+                    timed_out=True,
                     error=f"Timeout after {timeout_s}s",
+                    latency_ms=None,
                 ))
             except Exception as e:
                 results.append(RunResult(
                     philosopher_id=pid,
                     ok=False,
+                    n=0,
+                    timed_out=False,
                     error=f"{type(e).__name__}: {e}",
+                    latency_ms=None,
                 ))
 
     return proposals, results
