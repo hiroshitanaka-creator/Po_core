@@ -22,6 +22,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -80,8 +81,9 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.aggregator.policy_aware import PolicyAwareAggregator
+    from po_core.aggregator.pareto import ParetoAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
+    from po_core.runtime.battalion_table import load_battalion_table
 
     mem = PoSelfMemoryAdapter(memory)
 
@@ -92,6 +94,15 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
+    # Battalion Table (外部設定 - 優先)
+    table_path = os.getenv("PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml")
+    battalion_plans = None
+    if os.path.exists(table_path):
+        try:
+            battalion_plans = load_battalion_table(table_path)
+        except Exception:
+            pass  # フォールバックで内蔵デフォルトを使う
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -100,6 +111,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         budget_normal=settings.philosopher_cost_budget_normal,
         budget_warn=settings.philosopher_cost_budget_warn,
         budget_critical=settings.philosopher_cost_budget_critical,
+        battalion_plans=battalion_plans,
     )
 
     return WiredSystem(
@@ -113,7 +125,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=PolicyAwareAggregator(config=safety_config),
+        aggregator=ParetoAggregator(mode_config=safety_config),
         settings=settings,
         registry=registry,
     )
@@ -141,8 +153,9 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.aggregator.policy_aware import PolicyAwareAggregator
+    from po_core.aggregator.pareto import ParetoAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
+    from po_core.runtime.battalion_table import load_battalion_table
 
     settings = settings or Settings()
     mem = InMemoryAdapter()
@@ -154,6 +167,15 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
+    # Battalion Table (外部設定 - 優先)
+    table_path = os.getenv("PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml")
+    battalion_plans = None
+    if os.path.exists(table_path):
+        try:
+            battalion_plans = load_battalion_table(table_path)
+        except Exception:
+            pass  # フォールバックで内蔵デフォルトを使う
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -162,6 +184,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         budget_normal=settings.philosopher_cost_budget_normal,
         budget_warn=settings.philosopher_cost_budget_warn,
         budget_critical=settings.philosopher_cost_budget_critical,
+        battalion_plans=battalion_plans,
     )
 
     return WiredSystem(
@@ -175,7 +198,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=PolicyAwareAggregator(config=safety_config),
+        aggregator=ParetoAggregator(mode_config=safety_config),
         settings=settings,
         registry=registry,
     )

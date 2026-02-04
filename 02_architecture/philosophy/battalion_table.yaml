@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "modes": {
+    "normal": {
+      "limit": 39,
+      "max_risk": 2,
+      "cost_budget": 80,
+      "require_tags": ["planner", "critic", "compliance", "creative", "redteam"]
+    },
+    "warn": {
+      "limit": 5,
+      "max_risk": 1,
+      "cost_budget": 12,
+      "require_tags": ["compliance", "clarify", "critic"]
+    },
+    "critical": {
+      "limit": 1,
+      "max_risk": 0,
+      "cost_budget": 3,
+      "require_tags": ["compliance", "clarify"]
+    },
+    "unknown": {
+      "inherit": "warn"
+    }
+  }
+}
