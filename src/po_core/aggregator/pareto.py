@@ -10,18 +10,30 @@ Pareto Aggregator - 多目的最適化による提案選択
 DEPENDENCY RULES:
 - domain + conflict_resolver のみ依存
 - Paretoフロントは O(n^2) だが n<=39 程度なら十分
+
+Signals (from ensemble enrichment):
+- safety = policy.score（Gate由来）
+- freedom = base_freedom(action_type) × (1 - freedom_pressure)
+- explain = rationale × author_reliability（Trace由来）
+- brevity = 文字数
+- coherence = consensus × (1 - conflict_penalty)
 """
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
-from typing import List, Mapping, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
 
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.domain.keys import (
+    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR_RELIABILITY,
+    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS,
+)
 from po_core.ports.aggregator import AggregatorPort
 
 from po_core.aggregator.conflict_resolver import analyze_conflicts
@@ -35,6 +47,97 @@ def _clamp01(x: float) -> float:
     return x
 
 
+# ── Signal readers ──────────────────────────────────────────────────────
+
+
+def _get_float(extra: Mapping[str, Any], *path: str, default: float = 0.0) -> float:
+    """Read nested float from extra dict."""
+    cur: Any = extra
+    for k in path:
+        if not isinstance(cur, Mapping) or k not in cur:
+            return default
+        cur = cur[k]
+    try:
+        return float(cur)
+    except Exception:
+        return default
+
+
+def _policy_score(p: Proposal) -> float:
+    """Read policy.score from PO_CORE namespace (ensemble enrichment)."""
+    extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+    pc = extra.get(PO_CORE, {})
+    return _get_float(pc, POLICY, "score", default=0.5)
+
+
+def _author_rel(p: Proposal) -> float:
+    """Read trace_quality.author_reliability from PO_CORE namespace."""
+    extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+    pc = extra.get(PO_CORE, {})
+    return _get_float(pc, TRACEQ, AUTHOR_RELIABILITY, default=0.6)
+
+
+def _freedom_pressure_from_extra(p: Proposal, tensors: TensorSnapshot) -> float:
+    """Read freedom_pressure from proposal or fallback to tensors."""
+    extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+    pc = extra.get(PO_CORE, {})
+    fp_str = pc.get(FREEDOM_PRESSURE, "")
+    if fp_str:
+        try:
+            return float(fp_str)
+        except Exception:
+            pass
+    # fallback to tensors
+    v = tensors.metrics.get("freedom_pressure")
+    return float(v) if v is not None else 0.0
+
+
+# ── Tokenization for consensus ──────────────────────────────────────────
+
+
+def _norm(s: str) -> str:
+    s = re.sub(r"\s+", " ", (s or "")).strip()
+    return s.lower()
+
+
+def _tokens(text: str) -> Set[str]:
+    """Simple tokenizer for Japanese/English."""
+    t = _norm(text)
+    parts = re.findall(r"[a-z0-9_]+|[\u3040-\u30ff\u4e00-\u9fff]+", t)
+    return {p for p in parts if len(p) >= 2}
+
+
+def _jaccard(a: Set[str], b: Set[str]) -> float:
+    if not a and not b:
+        return 1.0
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    union = len(a | b)
+    return inter / union if union else 0.0
+
+
+def _consensus_scores(proposals: Sequence[Proposal]) -> Dict[str, float]:
+    """Compute consensus (agreement) score for each proposal."""
+    if len(proposals) <= 1:
+        return {p.proposal_id: 1.0 for p in proposals}
+
+    toks = {p.proposal_id: _tokens(p.content) for p in proposals}
+    ids = [p.proposal_id for p in proposals]
+    out: Dict[str, float] = {}
+    for i, ida in enumerate(ids):
+        s = 0.0
+        for j, idb in enumerate(ids):
+            if i == j:
+                continue
+            s += _jaccard(toks[ida], toks[idb])
+        out[ida] = s / max(1, (len(ids) - 1))
+    return out
+
+
+# ── Objective computation ───────────────────────────────────────────────
+
+
 @dataclass(frozen=True)
 class ObjectiveVec:
     safety: float
@@ -46,32 +149,37 @@ class ObjectiveVec:
     def as_tuple(self) -> Tuple[float, float, float, float, float]:
         return (self.safety, self.freedom, self.explain, self.brevity, self.coherence)
 
+    def to_dict(self) -> Dict[str, float]:
+        return {
+            "safety": self.safety,
+            "freedom": self.freedom,
+            "explain": self.explain,
+            "brevity": self.brevity,
+            "coherence": self.coherence,
+        }
 
-def _action_base(p: Proposal) -> Tuple[float, float]:
-    """
-    (safety_base, freedom_base)
-    """
-    if p.action_type == "refuse":
-        return 1.0, 0.0
-    if p.action_type == "ask_clarification":
-        return 0.85, 0.55
-    if p.action_type == "answer":
-        return 0.55, 1.0
-    # 未知は危険扱い
-    return 0.20, 0.20
+
+def _base_freedom(action_type: str) -> float:
+    """Base freedom score by action type."""
+    if action_type == "answer":
+        return 1.0
+    if action_type == "ask_clarification":
+        return 0.55
+    if action_type == "refuse":
+        return 0.0
+    return 0.2  # unknown
 
 
 def _explain_score(p: Proposal) -> float:
     """
-    依存ゼロで説明性を推定する。
-    - philosophers が extra["rationale"] や extra["citations"] を入れてくれたら伸びる
+    Compute explanation quality from proposal content.
     """
     extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
     rationale = str(extra.get("rationale", "") or "")
     citations = extra.get("citations", [])
     c_n = len(citations) if isinstance(citations, list) else 0
 
-    # assumption_tags は「説明」になり得る（ただし多すぎるとノイズ）
+    # assumption_tags contribute to explainability
     a = min(5, len(p.assumption_tags))
     score = 0.15 * a + (0.25 if rationale else 0.0) + 0.08 * min(5, c_n)
     return _clamp01(score)
@@ -82,19 +190,39 @@ def _brevity_score(p: Proposal, max_len: int = 2000) -> float:
     return _clamp01(1.0 - min(1.0, n / float(max_len)))
 
 
-def _compute_objectives(p: Proposal, conflict_penalty: float) -> ObjectiveVec:
-    sb, fb = _action_base(p)
+def _compute_objectives(
+    p: Proposal,
+    tensors: TensorSnapshot,
+    conflict_penalty: float,
+    consensus: float,
+) -> ObjectiveVec:
+    """
+    Compute multi-objective scores using real signals.
 
-    # risk_tags は安全性を削る（Gateの前段で締める）
-    safety = sb - 0.12 * len(p.risk_tags)
-    # confidence は自由度をわずかに押し上げる
-    freedom = fb + 0.10 * (p.confidence - 0.5)
+    Args:
+        p: Proposal with embedded signals
+        tensors: Tensor snapshot (fallback for freedom_pressure)
+        conflict_penalty: Penalty from ConflictResolver
+        consensus: Agreement score with other proposals
+    """
+    # safety = policy.score (Gate verdict)
+    safety = _policy_score(p)
 
-    explain = _explain_score(p)
+    # freedom = base(action_type) × (1 - freedom_pressure)
+    fp = _freedom_pressure_from_extra(p, tensors)
+    base_free = _base_freedom(p.action_type)
+    freedom = _clamp01(base_free * (1.0 - fp))
+
+    # explain = rationale × author_reliability
+    rationale = _explain_score(p)
+    rel = _author_rel(p)
+    explain = _clamp01(0.65 * rationale + 0.35 * rel)
+
+    # brevity
     brevity = _brevity_score(p)
 
-    # coherence: 矛盾に巻き込まれてるほど下がる
-    coherence = _clamp01(1.0 - conflict_penalty)
+    # coherence = consensus × (1 - conflict_penalty)
+    coherence = _clamp01(consensus * (1.0 - conflict_penalty))
 
     return ObjectiveVec(
         safety=_clamp01(safety),
@@ -103,6 +231,9 @@ def _compute_objectives(p: Proposal, conflict_penalty: float) -> ObjectiveVec:
         brevity=_clamp01(brevity),
         coherence=coherence,
     )
+
+
+# ── Pareto front ────────────────────────────────────────────────────────
 
 
 def _dominates(a: ObjectiveVec, b: ObjectiveVec) -> bool:
@@ -115,8 +246,8 @@ def _dominates(a: ObjectiveVec, b: ObjectiveVec) -> bool:
 
 def pareto_front(vs: Sequence[ObjectiveVec]) -> List[int]:
     """
-    非支配集合のインデックスを返す（maximize）。
-    O(n^2) だが n<=39 程度なら十分。
+    Return indices of non-dominated solutions (maximize all objectives).
+    O(n^2) but n<=39 is acceptable.
     """
     n = len(vs)
     front: List[int] = []
@@ -133,8 +264,11 @@ def pareto_front(vs: Sequence[ObjectiveVec]) -> List[int]:
     return front
 
 
+# ── Mode-based weights ──────────────────────────────────────────────────
+
+
 def _weights_for_mode(mode: SafetyMode) -> Mapping[str, float]:
-    # ここが「群知能の哲学」。まずは保守寄りに締める。
+    """Weights for weighted-sum selection from Pareto front."""
     if mode == SafetyMode.CRITICAL:
         return {"safety": 0.55, "freedom": 0.00, "explain": 0.20, "brevity": 0.15, "coherence": 0.30}
     if mode in (SafetyMode.WARN, SafetyMode.UNKNOWN):
@@ -152,11 +286,20 @@ def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
     )
 
 
+# ── Aggregator ──────────────────────────────────────────────────────────
+
+
 @dataclass(frozen=True)
 class ParetoAggregator(AggregatorPort):
     mode_config: SafetyModeConfig
 
-    def aggregate(self, ctx: Context, intent: Intent, tensors: TensorSnapshot, proposals: Sequence[Proposal]) -> Proposal:
+    def aggregate(
+        self,
+        ctx: Context,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        proposals: Sequence[Proposal],
+    ) -> Proposal:
         if not proposals:
             return Proposal(
                 proposal_id=f"{ctx.request_id}:aggregate:none",
@@ -167,52 +310,86 @@ class ParetoAggregator(AggregatorPort):
                 risk_tags=["system"],
             )
 
-        # 1) conflicts -> penalties
+        # 1) Conflict analysis -> penalties
         report = analyze_conflicts(proposals)
         penalties = dict(report.penalties)
 
-        # 2) objectives
+        # 2) Consensus scores
+        cons = _consensus_scores(proposals)
+
+        # 3) Compute objectives for each proposal
         vecs: List[ObjectiveVec] = []
         for p in proposals:
             pen = float(penalties.get(p.proposal_id, 0.0))
-            vecs.append(_compute_objectives(p, pen))
+            consensus = cons.get(p.proposal_id, 0.5)
+            vecs.append(_compute_objectives(p, tensors, pen, consensus))
 
-        # 3) pareto front
+        # 4) Pareto front
         front_idx = pareto_front(vecs)
         mode, fp = infer_safety_mode(tensors, self.mode_config)
         w = _weights_for_mode(mode)
 
-        # 4) frontから mode重みで選ぶ
+        # 5) Select best from front using weighted score
         def key(i: int) -> Tuple[float, float, float, str]:
             v = vecs[i]
-            # 主：重み付き、補助：安全性、整合性、最後に安定なID
             return (_weighted_score(v, w), v.safety, v.coherence, proposals[i].proposal_id)
 
         best_i = max(front_idx, key=key)
         best = proposals[best_i]
         best_v = vecs[best_i]
 
+        # 6) Build debug info for trace
+        front_rows = []
+        for i in front_idx[:20]:  # limit to 20
+            p = proposals[i]
+            v = vecs[i]
+            front_rows.append({
+                "proposal_id": p.proposal_id,
+                "action_type": p.action_type,
+                "scores": v.to_dict(),
+                "content_len": len(p.content or ""),
+            })
+
+        dbg = {
+            WEIGHTS: dict(w),
+            FRONT: front_rows,
+            WINNER: {"proposal_id": best.proposal_id, "action_type": best.action_type},
+            CONFLICTS: {
+                "n": len(report.conflicts),
+                "kinds": report.summary.get("kinds", ""),
+                "suggested_forced_action": report.suggested_forced_action or "",
+                "top": [
+                    {
+                        "id": c.conflict_id,
+                        "kind": c.kind,
+                        "severity": c.severity,
+                        "proposal_ids": c.proposal_ids[:6],
+                    }
+                    for c in report.conflicts[:5]
+                ],
+            },
+        }
+
+        # 7) Embed debug in PO_CORE namespace
         extra = dict(best.extra) if isinstance(best.extra, Mapping) else {}
+        pc = dict(extra.get(PO_CORE, {}))
+        pc[PARETO_DEBUG] = dbg
+
+        # Also keep legacy "pareto" key for compatibility
         extra["pareto"] = {
             "mode": mode.value,
             "freedom_pressure": "" if fp is None else str(fp),
             "front_size": len(front_idx),
             "weights": dict(w),
-            "scores": {
-                "safety": best_v.safety,
-                "freedom": best_v.freedom,
-                "explain": best_v.explain,
-                "brevity": best_v.brevity,
-                "coherence": best_v.coherence,
-            },
+            "scores": best_v.to_dict(),
             "conflicts": {
                 "n": len(report.conflicts),
                 "suggested_forced_action": report.suggested_forced_action or "",
                 "kinds": report.summary.get("kinds", ""),
             },
         }
+        extra[PO_CORE] = pc
 
-        # NOTE: Proposal は frozen なので新しく作る
         return Proposal(
             proposal_id=best.proposal_id,
             action_type=best.action_type,

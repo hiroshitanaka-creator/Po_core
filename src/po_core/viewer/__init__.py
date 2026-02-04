@@ -1,21 +1,11 @@
 """
-Po_core Viewer - Visualization Module
+Po_core Viewer - TraceEvent visualization
+=========================================
 
-This module provides visualization tools for philosophical reasoning:
-- Tension maps between philosophers
-- Ethical pressure displays
-- Semantic evolution graphs
-- Concept space visualizations
+Viewers consume TraceEvents and produce human-readable reports.
 """
 
-from po_core.viewer.tension_map import TensionMapVisualizer
-from po_core.viewer.pressure_display import PressureDisplayVisualizer
-from po_core.viewer.evolution_graph import EvolutionGraphVisualizer
-from po_core.viewer.visualizer import PhilosophicalVisualizer
+from po_core.viewer.decision_report_md import render_markdown
 
-__all__ = [
-    "PhilosophicalVisualizer",
-    "TensionMapVisualizer",
-    "PressureDisplayVisualizer",
-    "EvolutionGraphVisualizer",
-]
+__all__ = ["render_markdown"]
+
