@@ -38,6 +38,22 @@ class Settings:
     freedom_pressure_critical: float = 0.85
     freedom_pressure_missing_mode: SafetyMode = SafetyMode.WARN
 
+    # Philosopher Swarm 制御（増殖の蛇口）
+    # 動員数: mode別の最大哲学者数
+    philosophers_max_normal: int = 39
+    philosophers_max_warn: int = 5
+    philosophers_max_critical: int = 1
+
+    # 並列数: mode別のworker数
+    philosopher_workers_normal: int = 12
+    philosopher_workers_warn: int = 6
+    philosopher_workers_critical: int = 2
+
+    # タイムアウト: mode別の秒数
+    philosopher_timeout_s_normal: float = 1.2
+    philosopher_timeout_s_warn: float = 0.8
+    philosopher_timeout_s_critical: float = 0.5
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -48,6 +64,15 @@ class Settings:
             "freedom_pressure_warn": self.freedom_pressure_warn,
             "freedom_pressure_critical": self.freedom_pressure_critical,
             "freedom_pressure_missing_mode": self.freedom_pressure_missing_mode.value,
+            "philosophers_max_normal": self.philosophers_max_normal,
+            "philosophers_max_warn": self.philosophers_max_warn,
+            "philosophers_max_critical": self.philosophers_max_critical,
+            "philosopher_workers_normal": self.philosopher_workers_normal,
+            "philosopher_workers_warn": self.philosopher_workers_warn,
+            "philosopher_workers_critical": self.philosopher_workers_critical,
+            "philosopher_timeout_s_normal": self.philosopher_timeout_s_normal,
+            "philosopher_timeout_s_warn": self.philosopher_timeout_s_warn,
+            "philosopher_timeout_s_critical": self.philosopher_timeout_s_critical,
         }
 
 

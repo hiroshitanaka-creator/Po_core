@@ -33,6 +33,7 @@ from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.philosophers.base import PhilosopherProtocol
+from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.runtime.settings import Settings
 
 
@@ -50,9 +51,10 @@ class WiredSystem:
     tensor_engine: TensorEnginePort
     solarwill: SolarWillPort
     gate: WethicsGatePort
-    philosophers: Sequence[PhilosopherProtocol]
+    philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
     settings: Settings
+    registry: PhilosopherRegistry  # SafetyMode-based selection
 
 
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
@@ -78,9 +80,8 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
-    from po_core.domain.safety_mode import SafetyModeConfig
+    from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     mem = PoSelfMemoryAdapter(memory)
 
@@ -89,6 +90,13 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         warn=settings.freedom_pressure_warn,
         critical=settings.freedom_pressure_critical,
         missing_mode=settings.freedom_pressure_missing_mode,
+    )
+
+    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    registry = PhilosopherRegistry(
+        max_normal=settings.philosophers_max_normal,
+        max_warn=settings.philosophers_max_warn,
+        max_critical=settings.philosophers_max_critical,
     )
 
     return WiredSystem(
@@ -101,9 +109,10 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=build_philosophers(),
+        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=WeightedVoteAggregator(),
         settings=settings,
+        registry=registry,
     )
 
 
@@ -129,9 +138,8 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
-    from po_core.domain.safety_mode import SafetyModeConfig
+    from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     settings = settings or Settings()
     mem = InMemoryAdapter()
@@ -141,6 +149,13 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         warn=settings.freedom_pressure_warn,
         critical=settings.freedom_pressure_critical,
         missing_mode=settings.freedom_pressure_missing_mode,
+    )
+
+    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    registry = PhilosopherRegistry(
+        max_normal=settings.philosophers_max_normal,
+        max_warn=settings.philosophers_max_warn,
+        max_critical=settings.philosophers_max_critical,
     )
 
     return WiredSystem(
@@ -153,9 +168,10 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=build_philosophers(),
+        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=WeightedVoteAggregator(),
         settings=settings,
+        registry=registry,
     )
 
 

@@ -385,6 +385,7 @@ from typing import Sequence
 
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.trace_event import TraceEvent
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
@@ -394,6 +395,9 @@ from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.philosophers.base import PhilosopherProtocol
+from po_core.philosophers.registry import PhilosopherRegistry
+from po_core.party_machine import run_philosophers, RunResult
+from po_core.runtime.settings import Settings
 from po_core.safety.fallback import compose_fallback
 
 
@@ -407,8 +411,20 @@ class EnsembleDeps:
     tensors: TensorEnginePort
     solarwill: SolarWillPort
     gate: WethicsGatePort
-    philosophers: Sequence[PhilosopherProtocol]
+    philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
+    registry: PhilosopherRegistry  # SafetyMode-based selection
+    settings: Settings  # Worker/timeout settings
+
+
+def _get_swarm_params(mode: SafetyMode, settings: Settings) -> tuple[int, float]:
+    """Get worker count and timeout based on SafetyMode."""
+    if mode == SafetyMode.CRITICAL:
+        return settings.philosopher_workers_critical, settings.philosopher_timeout_s_critical
+    elif mode == SafetyMode.WARN:
+        return settings.philosopher_workers_warn, settings.philosopher_timeout_s_warn
+    else:  # NORMAL or UNKNOWN
+        return settings.philosopher_workers_normal, settings.philosopher_timeout_s_normal
 
 
 def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
@@ -420,11 +436,12 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     2. tensors.compute() → TensorSnapshot
     3. solarwill.compute_intent() → Intent
     4. IntentionGate (fail-closed)
-    5. philosophers.propose()
-    6. aggregator.aggregate() → Proposal
-    7. ActionGate (fail-closed)
-    8. trace.emit() (>=5 events)
-    9. memory_write.append()
+    5. registry.select_and_load() → SafetyMode-based philosopher selection
+    6. run_philosophers() → parallel execution with timeout
+    7. aggregator.aggregate() → Proposal
+    8. ActionGate (fail-closed)
+    9. trace.emit() (>=5 events)
+    10. memory_write.append()
 
     Args:
         ctx: Request context
@@ -450,6 +467,14 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         ctx.request_id,
         {"metrics": list(tensors.metrics.keys()), "version": tensors.version},
     ))
+
+    # Determine SafetyMode from tensors
+    safety_config = SafetyModeConfig(
+        warn=deps.settings.freedom_pressure_warn,
+        critical=deps.settings.freedom_pressure_critical,
+        missing_mode=deps.settings.freedom_pressure_missing_mode,
+    )
+    mode, _ = infer_safety_mode(tensors, safety_config)
 
     # 3. SolarWill intent
     intent, will_meta = deps.solarwill.compute_intent(ctx, tensors, memory)
@@ -491,25 +516,40 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             "verdict": v1.to_dict(),
         }
 
-    # 5. Philosophers propose
-    proposals: List[Any] = []
-    for ph in deps.philosophers:
-        try:
-            ps = ph.propose(ctx, intent, tensors, memory)
+    # 5. Select philosophers based on SafetyMode
+    philosophers = deps.registry.select_and_load(mode)
+    max_workers, timeout_s = _get_swarm_params(mode, deps.settings)
+    tracer.emit(TraceEvent.now(
+        "PhilosophersSelected",
+        ctx.request_id,
+        {"mode": mode.value, "count": len(philosophers), "workers": max_workers},
+    ))
+
+    # 6. Parallel philosopher execution with timeout
+    from po_core.domain.proposal import Proposal as DomainProposal
+    proposals: List[DomainProposal] = []
+    ph_proposals, run_results = run_philosophers(
+        philosophers, ctx, intent, tensors, memory,
+        max_workers=max_workers, timeout_s=timeout_s,
+    )
+    proposals.extend(ph_proposals)
+
+    # Emit trace events for each result
+    for result in run_results:
+        if result.ok:
             tracer.emit(TraceEvent.now(
                 "PhilosopherProposed",
                 ctx.request_id,
-                {"name": ph.info.name, "n": len(ps)},
+                {"name": result.philosopher_id, "ok": True},
             ))
-            proposals.extend(ps)
-        except Exception as e:
+        else:
             tracer.emit(TraceEvent.now(
                 "PhilosopherError",
                 ctx.request_id,
-                {"name": ph.info.name, "error": type(e).__name__},
+                {"name": result.philosopher_id, "error": result.error or "unknown"},
             ))
 
-    # 6. Aggregate
+    # 7. Aggregate
     final = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
     tracer.emit(TraceEvent.now(
         "AggregateCompleted",
@@ -517,7 +557,7 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         {"proposal_id": final.proposal_id, "action_type": final.action_type},
     ))
 
-    # 7. Action Gate (Stage 2)
+    # 8. Action Gate (Stage 2)
     v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
     tracer.emit(TraceEvent.now(
         "SafetyJudged:Action",
@@ -549,7 +589,7 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             "verdict": v2.to_dict(),
         }
 
-    # 8. Persist decision summary (minimal)
+    # 9. Persist decision summary (minimal)
     deps.memory_write.append(ctx, [
         MemoryRecord(
             created_at=ctx.created_at,
@@ -559,7 +599,7 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         )
     ])
 
-    # 9. Final trace
+    # 10. Final trace
     tracer.emit(TraceEvent.now(
         "DecisionEmitted",
         ctx.request_id,

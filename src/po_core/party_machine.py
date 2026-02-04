@@ -20,13 +20,31 @@ Usage:
     )
     results = party.run_party(config)
     party.visualize_results(results)
+
+Parallel Execution:
+    from po_core.party_machine import run_philosophers
+
+    proposals, results = run_philosophers(
+        philosophers, ctx, intent, tensors, memory,
+        max_workers=12, timeout_s=1.2
+    )
 """
 from __future__ import annotations
 
 import random
+import traceback
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from po_core.domain.context import Context
+    from po_core.domain.intent import Intent
+    from po_core.domain.memory_snapshot import MemorySnapshot
+    from po_core.domain.proposal import Proposal
+    from po_core.domain.tensor_snapshot import TensorSnapshot
+    from po_core.philosophers.base import PhilosopherProtocol
 
 from rich.console import Console
 from rich.panel import Panel
@@ -83,6 +101,104 @@ class PartyResults:
     emergence_detected: bool
     tension_level: float
     visualization_data: Dict = field(default_factory=dict)
+
+
+# ============================================================================
+# Parallel Execution Engine
+# ============================================================================
+
+
+@dataclass(frozen=True)
+class RunResult:
+    """Result of a single philosopher execution."""
+
+    philosopher_id: str
+    ok: bool
+    error: Optional[str] = None
+
+
+def run_philosophers(
+    philosophers: Sequence["PhilosopherProtocol"],
+    ctx: "Context",
+    intent: "Intent",
+    tensors: "TensorSnapshot",
+    memory: "MemorySnapshot",
+    *,
+    max_workers: int,
+    timeout_s: float,
+) -> Tuple[List["Proposal"], List[RunResult]]:
+    """
+    Execute philosophers in parallel with timeout and isolation.
+
+    Args:
+        philosophers: Sequence of philosopher instances to execute
+        ctx: Context for the current request
+        intent: Parsed intent from intention stage
+        tensors: Current tensor snapshot (safety metrics)
+        memory: Current memory snapshot
+        max_workers: Maximum number of parallel workers
+        timeout_s: Timeout in seconds for each philosopher
+
+    Returns:
+        Tuple of:
+        - List[Proposal]: Successfully generated proposals
+        - List[RunResult]: Execution results for each philosopher
+
+    Example:
+        proposals, results = run_philosophers(
+            philosophers, ctx, intent, tensors, memory,
+            max_workers=12, timeout_s=1.2
+        )
+        # Combine proposals in ensemble...
+    """
+    from po_core.domain.proposal import Proposal
+
+    proposals: List[Proposal] = []
+    results: List[RunResult] = []
+
+    if not philosophers:
+        return proposals, results
+
+    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], RunResult]:
+        """Run a single philosopher with error handling."""
+        pid = getattr(ph, "name", ph.__class__.__name__)
+        try:
+            proposal = ph.deliberate(ctx, intent, tensors, memory)
+            return proposal, RunResult(philosopher_id=pid, ok=True)
+        except Exception as e:
+            tb = traceback.format_exc()
+            return None, RunResult(
+                philosopher_id=pid,
+                ok=False,
+                error=f"{type(e).__name__}: {e}\n{tb}",
+            )
+
+    # Parallel execution with ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(_run_single, ph): ph for ph in philosophers}
+
+        for future in futures:
+            ph = futures[future]
+            pid = getattr(ph, "name", ph.__class__.__name__)
+            try:
+                proposal, result = future.result(timeout=timeout_s)
+                results.append(result)
+                if proposal is not None:
+                    proposals.append(proposal)
+            except FuturesTimeoutError:
+                results.append(RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    error=f"Timeout after {timeout_s}s",
+                ))
+            except Exception as e:
+                results.append(RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    error=f"{type(e).__name__}: {e}",
+                ))
+
+    return proposals, results
 
 
 # ============================================================================
@@ -436,4 +552,7 @@ __all__ = [
     "PartyMood",
     "PhilosophicalTheme",
     "create_party",
+    # Parallel execution
+    "run_philosophers",
+    "RunResult",
 ]
