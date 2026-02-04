@@ -30,6 +30,7 @@ from po_core.domain.context import Context
 from po_core.domain.intent import Intent as DomainIntent
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 
 
 class SolarWillEngine:
@@ -58,6 +59,7 @@ class SolarWillEngine:
         self,
         initial_state: Optional[WillState] = None,
         learning_rate: float = 0.3,
+        config: Optional[SafetyModeConfig] = None,
     ) -> None:
         """
         Initialize the Solar Will Engine.
@@ -65,10 +67,12 @@ class SolarWillEngine:
         Args:
             initial_state: Optional initial will state
             learning_rate: Rate of learning from new observations
+            config: SafetyModeConfig for mode-based degradation
         """
         self._state = initial_state or WillState.initial()
         self._learning_rate = learning_rate
         self._history: List[WillState] = []
+        self._config = config or SafetyModeConfig()
 
     @property
     def current_state(self) -> WillState:
@@ -285,6 +289,11 @@ class SolarWillEngine:
 
         This method implements the SolarWillPort interface.
 
+        SafetyMode に応じて縮退:
+        - NORMAL: 通常の目標（創造性を許容）
+        - WARN: 慎重な目標（確認質問を優先）
+        - CRITICAL: 拒否目標（安全が確認できるまで行為を提案しない）
+
         Args:
             ctx: The request context
             tensors: Current tensor snapshot
@@ -293,14 +302,39 @@ class SolarWillEngine:
         Returns:
             Tuple of (Intent, metadata dict)
         """
-        # For now, return neutral intent. Planner/scoring will be integrated later.
-        intent = DomainIntent.neutral()
+        mode, fp = infer_safety_mode(tensors, self._config)
+
+        if mode == SafetyMode.WARN:
+            intent = DomainIntent(
+                goals=["安全に状況を確認し、必要なら追加質問する"],
+                constraints=[
+                    "違法行為をしない",
+                    "他者に害を与えない",
+                    "不確実性が高い場合は確認質問を優先する",
+                ],
+                weights={"caution": 1.0},
+            )
+        elif mode == SafetyMode.CRITICAL:
+            intent = DomainIntent(
+                goals=["安全のため中止し、拒否または最小限の案内に留める"],
+                constraints=[
+                    "違法行為をしない",
+                    "他者に害を与えない",
+                    "安全が確認できるまで行為を提案しない",
+                ],
+                weights={"caution": 2.0},
+            )
+        else:
+            # NORMAL or UNKNOWN → neutral intent (創造性を許容)
+            intent = DomainIntent.neutral()
 
         meta: Dict[str, Any] = {
             "solarwill": "v0",
+            "mode": mode.value,
+            "freedom_pressure": "" if fp is None else str(fp),
+            "metric_key": self._config.metric_key,
             "goals_n": len(intent.goals),
             "constraints_n": len(intent.constraints),
-            "metrics_keys": list(tensors.metrics.keys()),
         }
         return intent, meta
 

@@ -81,8 +81,10 @@ def run(
         tensors=system.tensor_engine,
         solarwill=system.solarwill,
         gate=system.gate,
-        philosophers=system.philosophers,
+        philosophers=system.philosophers,  # Backward compat
         aggregator=system.aggregator,
+        registry=system.registry,  # SafetyMode-based selection
+        settings=system.settings,  # Worker/timeout config
     )
 
     # Run the full pipeline

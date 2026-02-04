@@ -19,6 +19,7 @@ class SafetyMode(str, Enum):
     NORMAL = "normal"      # 通常運転（創造性を許容）
     WARN = "warn"          # 警戒モード（慎重に）
     CRITICAL = "critical"  # 危機モード（最小限の応答）
+    UNKNOWN = "unknown"    # 不明（計測不能）
 
 
 @dataclass(frozen=True)

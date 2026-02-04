@@ -33,6 +33,7 @@ from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.philosophers.base import PhilosopherProtocol
+from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.runtime.settings import Settings
 
 
@@ -50,9 +51,10 @@ class WiredSystem:
     tensor_engine: TensorEnginePort
     solarwill: SolarWillPort
     gate: WethicsGatePort
-    philosophers: Sequence[PhilosopherProtocol]
+    philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
     settings: Settings
+    registry: PhilosopherRegistry  # SafetyMode-based selection
 
 
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
@@ -69,6 +71,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.adapters.memory_poself import PoSelfMemoryAdapter
     from po_core.trace.noop import NoopTracer
     from po_core.tensors.engine import TensorEngine
+    from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
@@ -77,24 +80,39 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
+    from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     mem = PoSelfMemoryAdapter(memory)
+
+    # SafetyModeConfig (単一真実 - Settingsから構築)
+    safety_config = SafetyModeConfig(
+        warn=settings.freedom_pressure_warn,
+        critical=settings.freedom_pressure_critical,
+        missing_mode=settings.freedom_pressure_missing_mode,
+    )
+
+    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    registry = PhilosopherRegistry(
+        max_normal=settings.philosophers_max_normal,
+        max_warn=settings.philosophers_max_warn,
+        max_critical=settings.philosophers_max_critical,
+    )
 
     return WiredSystem(
         memory_read=mem,
         memory_write=mem,
         tracer=NoopTracer(),
-        tensor_engine=TensorEngine(metrics=()),
-        solarwill=SolarWillEngine(),
+        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure,)),
+        solarwill=SolarWillEngine(config=safety_config),
         gate=PolicyWethicsGate(
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=build_philosophers(),
+        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=WeightedVoteAggregator(),
         settings=settings,
+        registry=registry,
     )
 
 
@@ -111,6 +129,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     from po_core.adapters.memory_poself import InMemoryAdapter
     from po_core.trace.in_memory import InMemoryTracer
     from po_core.tensors.engine import TensorEngine
+    from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
@@ -119,25 +138,40 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         default_intention_policies,
         default_action_policies,
     )
-    from po_core.philosophers.registry import build_philosophers
     from po_core.aggregator.weighted_vote import WeightedVoteAggregator
+    from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 
     settings = settings or Settings()
     mem = InMemoryAdapter()
+
+    # SafetyModeConfig (単一真実 - Settingsから構築)
+    safety_config = SafetyModeConfig(
+        warn=settings.freedom_pressure_warn,
+        critical=settings.freedom_pressure_critical,
+        missing_mode=settings.freedom_pressure_missing_mode,
+    )
+
+    # PhilosopherRegistry (SafetyModeに応じた動員制御)
+    registry = PhilosopherRegistry(
+        max_normal=settings.philosophers_max_normal,
+        max_warn=settings.philosophers_max_warn,
+        max_critical=settings.philosophers_max_critical,
+    )
 
     return WiredSystem(
         memory_read=mem,
         memory_write=mem,
         tracer=InMemoryTracer(),
-        tensor_engine=TensorEngine(metrics=()),
-        solarwill=SolarWillEngine(),
+        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure,)),
+        solarwill=SolarWillEngine(config=safety_config),
         gate=PolicyWethicsGate(
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=build_philosophers(),
+        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=WeightedVoteAggregator(),
         settings=settings,
+        registry=registry,
     )
 
 
