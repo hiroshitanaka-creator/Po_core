@@ -83,6 +83,7 @@ def run(
         gate=system.gate,
         philosophers=system.philosophers,  # Backward compat
         aggregator=system.aggregator,
+        aggregator_shadow=system.aggregator_shadow,  # Shadow Pareto A/B
         registry=system.registry,  # SafetyMode-based selection
         settings=system.settings,  # Worker/timeout config
     )

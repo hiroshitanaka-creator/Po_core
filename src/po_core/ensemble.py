@@ -392,6 +392,7 @@ from po_core.domain.keys import (
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.trace.decision_events import emit_decision_emitted, emit_safety_override_applied
+from po_core.trace.decision_compare import emit_decision_comparison
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -444,6 +445,7 @@ class EnsembleDeps:
     gate: WethicsGatePort
     philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
+    aggregator_shadow: Optional[AggregatorPort]  # Shadow Pareto A/B評価用
     registry: PhilosopherRegistry  # SafetyMode-based selection
     settings: Settings  # Worker/timeout settings
 
@@ -456,6 +458,87 @@ def _get_swarm_params(mode: SafetyMode, settings: Settings) -> tuple[int, float]
         return settings.philosopher_workers_warn, settings.philosopher_timeout_s_warn
     else:  # NORMAL or UNKNOWN
         return settings.philosopher_workers_normal, settings.philosopher_timeout_s_normal
+
+
+def _evaluate_candidate(
+    *,
+    ctx: DomainContext,
+    deps: EnsembleDeps,
+    intent: Any,
+    tensors: Any,
+    memory: Any,
+    candidate: Any,
+    variant: str,
+    origin: str,
+) -> Any:
+    """
+    候補（Pareto選択結果）をAction Gateで評価し、最終決定を返す。
+
+    Shadow評価とmain評価で共通のロジックを抽出。
+
+    Args:
+        ctx: Request context
+        deps: Dependencies
+        intent: Solar Will intent
+        tensors: Tensor snapshot
+        memory: Memory snapshot
+        candidate: Aggregatorが返した候補Proposal
+        variant: "main" or "shadow"
+        origin: "pareto" or "pareto_shadow"
+
+    Returns:
+        最終Proposal（ALLOWならcandidate、それ以外ならfallback）
+    """
+    tracer = deps.tracer
+
+    # Pareto debug（候補時点）
+    emit_pareto_debug_events(tracer, ctx, candidate, variant=variant)
+
+    # Action Gate evaluation
+    v = deps.gate.judge_action(ctx, intent, candidate, tensors, memory)
+
+    if v.decision == Decision.ALLOW:
+        # 正常経路：候補がそのまま最終
+        emit_decision_emitted(
+            tracer, ctx,
+            variant=variant,
+            stage="action",
+            origin=origin,
+            final=candidate,
+            candidate=candidate,
+            gate_verdict=v,
+            degraded=False,
+        )
+        return candidate
+
+    # 安全上書き：fallbackへ縮退
+    fb = compose_fallback(ctx, v, stage="action")
+
+    emit_safety_override_applied(
+        tracer, ctx,
+        variant=variant,
+        stage="action",
+        reason=f"gate_{v.decision.value}",
+        from_proposal=candidate,
+        to_proposal=fb,
+        verdict=v,
+    )
+
+    # Fallback自体もAction Gateで検証
+    vfb = deps.gate.judge_action(ctx, intent, fb, tensors, memory)
+
+    emit_decision_emitted(
+        tracer, ctx,
+        variant=variant,
+        stage="action",
+        origin=f"{origin}_fallback",
+        final=fb,
+        candidate=candidate,
+        gate_verdict=vfb,
+        degraded=True,
+    )
+
+    return fb
 
 
 def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
@@ -669,103 +752,72 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         precheck_counts,
     ))
 
-    # 7. Aggregate
-    final = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
+    # 7. Main Pareto Aggregation
+    candidate_main = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
     tracer.emit(TraceEvent.now(
         "AggregateCompleted",
         ctx.request_id,
-        {"proposal_id": final.proposal_id, "action_type": final.action_type},
+        {"proposal_id": candidate_main.proposal_id, "action_type": candidate_main.action_type},
     ))
 
-    # 7.5 Emit Pareto debug trace events (via helper)
-    emit_pareto_debug_events(tracer, ctx, final)
+    # 8. Main evaluation (Pareto debug + Action Gate)
+    final_main = _evaluate_candidate(
+        ctx=ctx,
+        deps=deps,
+        intent=intent,
+        tensors=tensors,
+        memory=memory,
+        candidate=candidate_main,
+        variant="main",
+        origin="pareto",
+    )
 
-    # 8. Action Gate (Stage 2)
-    v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
-    tracer.emit(TraceEvent.now(
-        "SafetyJudged:Action",
-        ctx.request_id,
-        {"decision": v2.decision.value, "rule_ids": v2.rule_ids},
-    ))
-    if v2.decision != Decision.ALLOW:
-        fallback = compose_fallback(ctx, v2, stage="action")
+    # 9. Shadow Pareto A/B evaluation（オプショナル）
+    if deps.aggregator_shadow is not None:
+        try:
+            # Shadow Pareto aggregation（同じproposals集合）
+            candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
 
-        # 候補→fallbackの上書きを監査ログに残す
-        emit_safety_override_applied(
-            tracer, ctx,
-            stage="action",
-            reason=f"gate_{v2.decision.value}",
-            from_proposal=final,
-            to_proposal=fallback,
-            verdict=v2,
-        )
-
-        # Pass fallback through action gate to verify it's safe
-        vfb = deps.gate.judge_action(ctx, intent, fallback, tensors, memory)
-        tracer.emit(TraceEvent.now(
-            "SafetyDegraded",
-            ctx.request_id,
-            {"from": "action", **v2.meta},
-        ))
-        if vfb.decision == Decision.ALLOW:
-            emit_decision_emitted(
-                tracer, ctx,
-                stage="action",
-                origin="safety_fallback",
-                final=fallback,
-                candidate=final,
-                gate_verdict=vfb,
-                degraded=True,
+            # Shadow evaluation
+            final_shadow = _evaluate_candidate(
+                ctx=ctx,
+                deps=deps,
+                intent=intent,
+                tensors=tensors,
+                memory=memory,
+                candidate=candidate_shadow,
+                variant="shadow",
+                origin="pareto_shadow",
             )
-            return {
-                "request_id": ctx.request_id,
-                "status": "ok",
-                "degraded": True,
-                "proposal": fallback.compact(),
-                "verdict": v2.to_dict(),
-            }
-        # Fallback itself was rejected - hard block
-        emit_decision_emitted(
-            tracer, ctx,
-            stage="action",
-            origin="safety_fallback_blocked",
-            final=fallback,
-            candidate=final,
-            gate_verdict=vfb,
-            degraded=True,
-        )
-        return {
-            "request_id": ctx.request_id,
-            "status": "blocked",
-            "stage": "action",
-            "verdict": v2.to_dict(),
-        }
 
-    # 9. Persist decision summary (minimal)
+            # Comparison event（監査ログに差分を残す）
+            emit_decision_comparison(
+                tracer,
+                ctx,
+                main_candidate=candidate_main,
+                main_final=final_main,
+                shadow_candidate=candidate_shadow,
+                shadow_final=final_shadow,
+            )
+        except Exception:
+            # Shadow失敗は無視（main は必ず返す）
+            pass
+
+    # 10. Persist decision summary (main のみ)
     deps.memory_write.append(ctx, [
         MemoryRecord(
             created_at=ctx.created_at,
             kind="decision",
-            text=f"{final.action_type}:{final.content[:200]}",
+            text=f"{final_main.action_type}:{final_main.content[:200]}",
             tags=["vertex", "allowed"],
         )
     ])
 
-    # 10. Final trace - 正常経路（Pareto勝者がそのまま最終）
-    emit_decision_emitted(
-        tracer, ctx,
-        stage="action",
-        origin="pareto",
-        final=final,
-        candidate=final,
-        gate_verdict=v2,
-        degraded=False,
-    )
-
+    # 11. Return (main のみ)
     return {
         "request_id": ctx.request_id,
         "status": "ok",
-        "proposal": final.compact(),
+        "proposal": final_main.compact(),
     }
 
 
