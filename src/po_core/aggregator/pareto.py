@@ -35,6 +35,7 @@ from po_core.domain.keys import (
     PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR_RELIABILITY,
     PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS, MODE,
 )
+from po_core.domain.pareto_config import ParetoConfig, ParetoWeights
 from po_core.ports.aggregator import AggregatorPort
 
 from po_core.aggregator.conflict_resolver import analyze_conflicts
@@ -293,6 +294,14 @@ def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
 @dataclass(frozen=True)
 class ParetoAggregator(AggregatorPort):
     mode_config: SafetyModeConfig
+    config: ParetoConfig = ParetoConfig.defaults()
+
+    def _get_weights(self, mode: SafetyMode) -> Mapping[str, float]:
+        """Get weights for mode from injected config."""
+        w = self.config.weights_by_mode.get(mode)
+        if w is None:
+            w = self.config.weights_by_mode.get(SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25))
+        return w.to_dict()
 
     def aggregate(
         self,
@@ -328,7 +337,7 @@ class ParetoAggregator(AggregatorPort):
         # 4) Pareto front
         front_idx = pareto_front(vecs)
         mode, fp = infer_safety_mode(tensors, self.mode_config)
-        w = _weights_for_mode(mode)
+        w = self._get_weights(mode)
 
         # 5) Select best from front using weighted score
         def key(i: int) -> Tuple[float, float, float, str]:
@@ -343,8 +352,9 @@ class ParetoAggregator(AggregatorPort):
         def _hash10(text: str) -> str:
             return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
 
+        front_limit = self.config.tuning.front_limit
         front_rows = []
-        for i in front_idx[:20]:  # limit to 20
+        for i in front_idx[:front_limit]:
             p = proposals[i]
             v = vecs[i]
             front_rows.append({
@@ -367,6 +377,7 @@ class ParetoAggregator(AggregatorPort):
             MODE: mode.value,
             FREEDOM_PRESSURE: "" if fp is None else str(fp),
             WEIGHTS: dict(w),
+            "config_version": str(self.config.version),
             "front_size": len(front_idx),
             FRONT: front_rows,
             WINNER: winner_payload,
