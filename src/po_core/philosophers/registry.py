@@ -9,6 +9,7 @@ SafetyModeに応じて哲学者を「編成」する。
 - mode別の"編成表"で必須タグを満たす
 - コスト予算で重い哲学者混入を防ぐ
 - ロードは落とさず"エラー回収"
+- battalion_plans で外部設定を優先可能
 
 DEPENDENCY RULES:
 - import は domain + importlib だけ
@@ -19,9 +20,12 @@ from __future__ import annotations
 
 import importlib
 from dataclasses import dataclass
-from typing import Dict, List, Sequence, Tuple
+from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from po_core.domain.safety_mode import SafetyMode
+
+if TYPE_CHECKING:
+    from po_core.runtime.battalion_table import BattalionModePlan
 from po_core.philosophers.base import PhilosopherProtocol
 from po_core.philosophers.manifest import PhilosopherSpec, SPECS
 from po_core.philosophers.tags import (
@@ -72,6 +76,8 @@ class PhilosopherRegistry:
     - CRITICAL: 1人（最も安全な哲学者のみ）, コスト予算3
     - WARN: 5人（安全〜標準の哲学者）, コスト予算12
     - NORMAL: 39人（全員）, コスト予算80
+
+    battalion_plans が渡されるとそちらを優先する（外部設定）。
     """
 
     def __init__(
@@ -85,38 +91,50 @@ class PhilosopherRegistry:
         budget_warn: int = 12,
         budget_critical: int = 3,
         cache_instances: bool = True,
+        battalion_plans: Optional[Mapping[SafetyMode, "BattalionModePlan"]] = None,
     ):
         self._specs = list(specs)
         self._cache = cache_instances
         self._instances: Dict[str, PhilosopherProtocol] = {}
 
-        # mode別 "編成表"
-        self._plans: Dict[SafetyMode, SelectionPlan] = {
-            SafetyMode.NORMAL: SelectionPlan(
-                limit=max_normal,
-                max_risk=2,
-                cost_budget=budget_normal,
-                require_tags=(TAG_PLANNER, TAG_CRITIC, TAG_COMPLIANCE, TAG_CREATIVE, TAG_REDTEAM),
-            ),
-            SafetyMode.WARN: SelectionPlan(
-                limit=max_warn,
-                max_risk=1,
-                cost_budget=budget_warn,
-                require_tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC),
-            ),
-            SafetyMode.CRITICAL: SelectionPlan(
-                limit=max_critical,
-                max_risk=0,
-                cost_budget=budget_critical,
-                require_tags=(TAG_COMPLIANCE, TAG_CLARIFY),
-            ),
-            SafetyMode.UNKNOWN: SelectionPlan(  # UNKNOWNはWARN扱いで締める
-                limit=max_warn,
-                max_risk=1,
-                cost_budget=budget_warn,
-                require_tags=(TAG_COMPLIANCE, TAG_CLARIFY),
-            ),
-        }
+        # battalion_plans が渡されたらそちらを優先
+        if battalion_plans is not None:
+            self._plans: Dict[SafetyMode, SelectionPlan] = {}
+            for mode, bp in battalion_plans.items():
+                self._plans[mode] = SelectionPlan(
+                    limit=bp.limit,
+                    max_risk=bp.max_risk,
+                    cost_budget=bp.cost_budget,
+                    require_tags=bp.require_tags,
+                )
+        else:
+            # mode別 "編成表"（内蔵デフォルト）
+            self._plans = {
+                SafetyMode.NORMAL: SelectionPlan(
+                    limit=max_normal,
+                    max_risk=2,
+                    cost_budget=budget_normal,
+                    require_tags=(TAG_PLANNER, TAG_CRITIC, TAG_COMPLIANCE, TAG_CREATIVE, TAG_REDTEAM),
+                ),
+                SafetyMode.WARN: SelectionPlan(
+                    limit=max_warn,
+                    max_risk=1,
+                    cost_budget=budget_warn,
+                    require_tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC),
+                ),
+                SafetyMode.CRITICAL: SelectionPlan(
+                    limit=max_critical,
+                    max_risk=0,
+                    cost_budget=budget_critical,
+                    require_tags=(TAG_COMPLIANCE, TAG_CLARIFY),
+                ),
+                SafetyMode.UNKNOWN: SelectionPlan(  # UNKNOWNはWARN扱いで締める
+                    limit=max_warn,
+                    max_risk=1,
+                    cost_budget=budget_warn,
+                    require_tags=(TAG_COMPLIANCE, TAG_CLARIFY),
+                ),
+            }
 
     def select(self, mode: SafetyMode) -> Selection:
         """

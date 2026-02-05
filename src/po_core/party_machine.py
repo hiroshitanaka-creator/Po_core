@@ -37,7 +37,7 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeou
 from dataclasses import dataclass, field
 from enum import Enum
 from time import perf_counter
-from typing import Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from po_core.domain.context import Context
@@ -46,6 +46,8 @@ if TYPE_CHECKING:
     from po_core.domain.proposal import Proposal
     from po_core.domain.tensor_snapshot import TensorSnapshot
     from po_core.philosophers.base import PhilosopherProtocol
+
+from po_core.domain.keys import PO_CORE, AUTHOR
 
 from rich.console import Console
 from rich.panel import Panel
@@ -163,22 +165,41 @@ def run_philosophers(
     if not philosophers:
         return proposals, results
 
-    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], int, Optional[str], int]:
+    def _embed_author(p: "Proposal", author: str) -> "Proposal":
+        """Embed author into proposal.extra[PO_CORE][AUTHOR]."""
+        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+        pc = dict(extra.get(PO_CORE, {}))
+        pc[AUTHOR] = author
+        extra[PO_CORE] = pc
+        return Proposal(
+            proposal_id=p.proposal_id,
+            action_type=p.action_type,
+            content=p.content,
+            confidence=p.confidence,
+            assumption_tags=list(p.assumption_tags),
+            risk_tags=list(p.risk_tags),
+            extra=extra,
+        )
+
+    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], int, Optional[str], int, str]:
         """Run a single philosopher with error handling and timing.
 
         Returns:
-            Tuple of (proposal, n_proposals, error, latency_ms)
+            Tuple of (proposal, n_proposals, error, latency_ms, philosopher_id)
         """
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         try:
             proposal = ph.deliberate(ctx, intent, tensors, memory)
             dt = int((perf_counter() - t0) * 1000)
-            return proposal, 1 if proposal else 0, None, dt
+            # Embed author into proposal
+            if proposal is not None:
+                proposal = _embed_author(proposal, pid)
+            return proposal, 1 if proposal else 0, None, dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt
+            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
 
     # Parallel execution with ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -188,9 +209,9 @@ def run_philosophers(
             ph = futures[future]
             pid = getattr(ph, "name", ph.__class__.__name__)
             try:
-                proposal, n, err, dt = future.result(timeout=timeout_s)
+                proposal, n, err, dt, author_id = future.result(timeout=timeout_s)
                 results.append(RunResult(
-                    philosopher_id=pid,
+                    philosopher_id=author_id,
                     ok=(err is None),
                     n=n,
                     timed_out=False,
