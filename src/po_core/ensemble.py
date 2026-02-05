@@ -388,8 +388,10 @@ from po_core.domain.trace_event import TraceEvent
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision
 from po_core.domain.keys import (
-    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY, PARETO_DEBUG,
+    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY,
 )
+from po_core.trace.pareto_events import emit_pareto_debug_events
+from po_core.trace.decision_events import emit_decision_emitted, emit_safety_override_applied
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -530,6 +532,16 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             {"from": "intention", **v1.meta},
         ))
         if vfb.decision == Decision.ALLOW:
+            # 意図段階で縮退（候補なし）
+            emit_decision_emitted(
+                tracer, ctx,
+                stage="intent",
+                origin="intent_gate_fallback",
+                final=fallback,
+                candidate=None,
+                gate_verdict=vfb,
+                degraded=True,
+            )
             return {
                 "request_id": ctx.request_id,
                 "status": "ok",
@@ -538,6 +550,15 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
                 "verdict": v1.to_dict(),
             }
         # Fallback itself was rejected - hard block
+        emit_decision_emitted(
+            tracer, ctx,
+            stage="intent",
+            origin="intent_gate_blocked",
+            final=fallback,
+            candidate=None,
+            gate_verdict=vfb,
+            degraded=True,
+        )
         return {
             "request_id": ctx.request_id,
             "status": "blocked",
@@ -656,26 +677,8 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         {"proposal_id": final.proposal_id, "action_type": final.action_type},
     ))
 
-    # 7.5 Emit Pareto debug trace events (if aggregator embedded them)
-    final_extra = dict(final.extra) if isinstance(final.extra, Mapping) else {}
-    final_pc = final_extra.get(PO_CORE, {})
-    dbg = final_pc.get(PARETO_DEBUG, {})
-    if dbg:
-        tracer.emit(TraceEvent.now(
-            "ConflictSummaryComputed",
-            ctx.request_id,
-            dict(dbg.get("conflicts", {})),
-        ))
-        tracer.emit(TraceEvent.now(
-            "ParetoFrontComputed",
-            ctx.request_id,
-            {"weights": dbg.get("weights", {}), "front": dbg.get("front", [])},
-        ))
-        tracer.emit(TraceEvent.now(
-            "ParetoWinnerSelected",
-            ctx.request_id,
-            {"winner": dbg.get("winner", {})},
-        ))
+    # 7.5 Emit Pareto debug trace events (via helper)
+    emit_pareto_debug_events(tracer, ctx, final)
 
     # 8. Action Gate (Stage 2)
     v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
@@ -686,6 +689,17 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     ))
     if v2.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v2, stage="action")
+
+        # 候補→fallbackの上書きを監査ログに残す
+        emit_safety_override_applied(
+            tracer, ctx,
+            stage="action",
+            reason=f"gate_{v2.decision.value}",
+            from_proposal=final,
+            to_proposal=fallback,
+            verdict=v2,
+        )
+
         # Pass fallback through action gate to verify it's safe
         vfb = deps.gate.judge_action(ctx, intent, fallback, tensors, memory)
         tracer.emit(TraceEvent.now(
@@ -694,6 +708,15 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             {"from": "action", **v2.meta},
         ))
         if vfb.decision == Decision.ALLOW:
+            emit_decision_emitted(
+                tracer, ctx,
+                stage="action",
+                origin="safety_fallback",
+                final=fallback,
+                candidate=final,
+                gate_verdict=vfb,
+                degraded=True,
+            )
             return {
                 "request_id": ctx.request_id,
                 "status": "ok",
@@ -702,6 +725,15 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
                 "verdict": v2.to_dict(),
             }
         # Fallback itself was rejected - hard block
+        emit_decision_emitted(
+            tracer, ctx,
+            stage="action",
+            origin="safety_fallback_blocked",
+            final=fallback,
+            candidate=final,
+            gate_verdict=vfb,
+            degraded=True,
+        )
         return {
             "request_id": ctx.request_id,
             "status": "blocked",
@@ -719,12 +751,16 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         )
     ])
 
-    # 10. Final trace
-    tracer.emit(TraceEvent.now(
-        "DecisionEmitted",
-        ctx.request_id,
-        {"proposal_id": final.proposal_id},
-    ))
+    # 10. Final trace - 正常経路（Pareto勝者がそのまま最終）
+    emit_decision_emitted(
+        tracer, ctx,
+        stage="action",
+        origin="pareto",
+        final=final,
+        candidate=final,
+        gate_verdict=v2,
+        degraded=False,
+    )
 
     return {
         "request_id": ctx.request_id,

@@ -83,7 +83,9 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     )
     from po_core.aggregator.pareto import ParetoAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
+    from po_core.domain.pareto_config import ParetoConfig
     from po_core.runtime.battalion_table import load_battalion_table
+    from po_core.runtime.pareto_table import load_pareto_table
 
     mem = PoSelfMemoryAdapter(memory)
 
@@ -102,6 +104,15 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             battalion_plans = load_battalion_table(table_path)
         except Exception:
             pass  # フォールバックで内蔵デフォルトを使う
+
+    # Pareto Table (外部設定 - 優先)
+    pareto_path = os.getenv("PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml")
+    pareto_cfg = ParetoConfig.defaults()
+    if os.path.exists(pareto_path):
+        try:
+            pareto_cfg = load_pareto_table(pareto_path)
+        except Exception:
+            pass  # フォールバックでデフォルトを使う
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
@@ -125,7 +136,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=ParetoAggregator(mode_config=safety_config),
+        aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
         settings=settings,
         registry=registry,
     )
@@ -155,7 +166,9 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     )
     from po_core.aggregator.pareto import ParetoAggregator
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
+    from po_core.domain.pareto_config import ParetoConfig
     from po_core.runtime.battalion_table import load_battalion_table
+    from po_core.runtime.pareto_table import load_pareto_table
 
     settings = settings or Settings()
     mem = InMemoryAdapter()
@@ -175,6 +188,15 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             battalion_plans = load_battalion_table(table_path)
         except Exception:
             pass  # フォールバックで内蔵デフォルトを使う
+
+    # Pareto Table (外部設定 - 優先)
+    pareto_path = os.getenv("PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml")
+    pareto_cfg = ParetoConfig.defaults()
+    if os.path.exists(pareto_path):
+        try:
+            pareto_cfg = load_pareto_table(pareto_path)
+        except Exception:
+            pass  # フォールバックでデフォルトを使う
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
@@ -198,7 +220,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             action=PolicyActionGate(policies=default_action_policies()),
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
-        aggregator=ParetoAggregator(mode_config=safety_config),
+        aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
         settings=settings,
         registry=registry,
     )

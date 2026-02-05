@@ -21,6 +21,7 @@ Signals (from ensemble enrichment):
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
@@ -32,8 +33,9 @@ from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safet
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.keys import (
     PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR_RELIABILITY,
-    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS,
+    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS, MODE,
 )
+from po_core.domain.pareto_config import ParetoConfig, ParetoWeights
 from po_core.ports.aggregator import AggregatorPort
 
 from po_core.aggregator.conflict_resolver import analyze_conflicts
@@ -195,6 +197,10 @@ def _compute_objectives(
     tensors: TensorSnapshot,
     conflict_penalty: float,
     consensus: float,
+    *,
+    brevity_max_len: int = 2000,
+    explain_rationale_weight: float = 0.65,
+    explain_author_rel_weight: float = 0.35,
 ) -> ObjectiveVec:
     """
     Compute multi-objective scores using real signals.
@@ -204,6 +210,9 @@ def _compute_objectives(
         tensors: Tensor snapshot (fallback for freedom_pressure)
         conflict_penalty: Penalty from ConflictResolver
         consensus: Agreement score with other proposals
+        brevity_max_len: Max length for brevity scoring (from config)
+        explain_rationale_weight: Weight for rationale in explain score (from config)
+        explain_author_rel_weight: Weight for author_rel in explain score (from config)
     """
     # safety = policy.score (Gate verdict)
     safety = _policy_score(p)
@@ -213,13 +222,13 @@ def _compute_objectives(
     base_free = _base_freedom(p.action_type)
     freedom = _clamp01(base_free * (1.0 - fp))
 
-    # explain = rationale × author_reliability
+    # explain = rationale × author_reliability (weights from config)
     rationale = _explain_score(p)
     rel = _author_rel(p)
-    explain = _clamp01(0.65 * rationale + 0.35 * rel)
+    explain = _clamp01(explain_rationale_weight * rationale + explain_author_rel_weight * rel)
 
-    # brevity
-    brevity = _brevity_score(p)
+    # brevity (max_len from config)
+    brevity = _brevity_score(p, max_len=brevity_max_len)
 
     # coherence = consensus × (1 - conflict_penalty)
     coherence = _clamp01(consensus * (1.0 - conflict_penalty))
@@ -292,6 +301,14 @@ def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
 @dataclass(frozen=True)
 class ParetoAggregator(AggregatorPort):
     mode_config: SafetyModeConfig
+    config: ParetoConfig = ParetoConfig.defaults()
+
+    def _get_weights(self, mode: SafetyMode) -> Mapping[str, float]:
+        """Get weights for mode from injected config."""
+        w = self.config.weights_by_mode.get(mode)
+        if w is None:
+            w = self.config.weights_by_mode.get(SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25))
+        return w.to_dict()
 
     def aggregate(
         self,
@@ -317,17 +334,23 @@ class ParetoAggregator(AggregatorPort):
         # 2) Consensus scores
         cons = _consensus_scores(proposals)
 
-        # 3) Compute objectives for each proposal
+        # 3) Compute objectives for each proposal (using config tuning)
+        tuning = self.config.tuning
         vecs: List[ObjectiveVec] = []
         for p in proposals:
             pen = float(penalties.get(p.proposal_id, 0.0))
             consensus = cons.get(p.proposal_id, 0.5)
-            vecs.append(_compute_objectives(p, tensors, pen, consensus))
+            vecs.append(_compute_objectives(
+                p, tensors, pen, consensus,
+                brevity_max_len=tuning.brevity_max_len,
+                explain_rationale_weight=tuning.explain_rationale_weight,
+                explain_author_rel_weight=tuning.explain_author_rel_weight,
+            ))
 
         # 4) Pareto front
         front_idx = pareto_front(vecs)
         mode, fp = infer_safety_mode(tensors, self.mode_config)
-        w = _weights_for_mode(mode)
+        w = self._get_weights(mode)
 
         # 5) Select best from front using weighted score
         def key(i: int) -> Tuple[float, float, float, str]:
@@ -339,8 +362,12 @@ class ParetoAggregator(AggregatorPort):
         best_v = vecs[best_i]
 
         # 6) Build debug info for trace
+        def _hash10(text: str) -> str:
+            return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
+
+        front_limit = self.config.tuning.front_limit
         front_rows = []
-        for i in front_idx[:20]:  # limit to 20
+        for i in front_idx[:front_limit]:
             p = proposals[i]
             v = vecs[i]
             front_rows.append({
@@ -348,12 +375,26 @@ class ParetoAggregator(AggregatorPort):
                 "action_type": p.action_type,
                 "scores": v.to_dict(),
                 "content_len": len(p.content or ""),
+                "content_hash": _hash10(p.content or ""),
             })
 
+        winner_payload = {
+            "proposal_id": best.proposal_id,
+            "action_type": best.action_type,
+            "scores": best_v.to_dict(),
+            "content_len": len(best.content or ""),
+            "content_hash": _hash10(best.content or ""),
+        }
+
         dbg = {
+            MODE: mode.value,
+            FREEDOM_PRESSURE: "" if fp is None else str(fp),
             WEIGHTS: dict(w),
+            "config_version": str(self.config.version),
+            "config_source": self.config.source,
+            "front_size": len(front_idx),
             FRONT: front_rows,
-            WINNER: {"proposal_id": best.proposal_id, "action_type": best.action_type},
+            WINNER: winner_payload,
             CONFLICTS: {
                 "n": len(report.conflicts),
                 "kinds": report.summary.get("kinds", ""),

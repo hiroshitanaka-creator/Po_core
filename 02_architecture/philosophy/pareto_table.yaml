@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "weights": {
+    "normal":   {"safety": 0.25, "freedom": 0.30, "explain": 0.20, "brevity": 0.10, "coherence": 0.15},
+    "warn":     {"safety": 0.40, "freedom": 0.10, "explain": 0.20, "brevity": 0.15, "coherence": 0.25},
+    "critical": {"safety": 0.55, "freedom": 0.00, "explain": 0.20, "brevity": 0.15, "coherence": 0.30},
+    "unknown":  {"inherit": "warn"}
+  },
+  "tuning": {
+    "brevity_max_len": 2000,
+    "explain_mix": {"rationale": 0.65, "author_rel": 0.35},
+    "front_limit": 20
+  }
+}
