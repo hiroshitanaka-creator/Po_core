@@ -79,6 +79,34 @@ System Specifications: ../../01_specifications/
 
 Theoretical Foundations: ../../05_research/
 
+📄 External Configuration Files
+
+This folder contains externalized configuration files for philosophical weighting:
+
+### pareto_table.yaml
+Defines Pareto optimization weights and tuning. Different weights can be set for each SafetyMode.
+
+```yaml
+{
+  "version": 1,
+  "weights": {
+    "normal":   {"safety": 0.25, "freedom": 0.30, ...},
+    "warn":     {"safety": 0.40, "freedom": 0.10, ...},
+    "critical": {"safety": 0.55, "freedom": 0.00, ...},
+    "unknown":  {"inherit": "warn"}
+  },
+  "tuning": {...}
+}
+```
+
+### battalion_table.yaml
+Defines philosopher assignments (Battalion) for each SafetyMode.
+
+**Features:**
+- JSON-in-YAML format (zero dependencies for loading)
+- Override via `PO_CORE_PARETO_TABLE` / `PO_CORE_BATTALION_TABLE` environment variables
+- `config_version` recorded in all TraceEvents for audit
+
 💡 Philosophical Principles
 Flying Pig Philosophy
 

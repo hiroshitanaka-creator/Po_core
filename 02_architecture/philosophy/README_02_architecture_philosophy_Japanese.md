@@ -55,6 +55,34 @@ Po_coreは11人の哲学者の理論を動的に統合することで、多角�
 - システム仕様: `../../01_specifications/`
 - 理論的基盤: `../../05_research/`
 
+## 📄 外部設定ファイル
+
+本フォルダには、哲学的な重み付けを外部化した設定ファイルが格納されています：
+
+### pareto_table.yaml
+Pareto最適化の重み・チューニングを定義。SafetyMode毎に異なる重みを設定可能。
+
+```yaml
+{
+  "version": 1,
+  "weights": {
+    "normal":   {"safety": 0.25, "freedom": 0.30, ...},
+    "warn":     {"safety": 0.40, "freedom": 0.10, ...},
+    "critical": {"safety": 0.55, "freedom": 0.00, ...},
+    "unknown":  {"inherit": "warn"}
+  },
+  "tuning": {...}
+}
+```
+
+### battalion_table.yaml
+SafetyMode毎の哲学者編成（Battalion）を定義。
+
+**特徴:**
+- JSON-in-YAML形式（依存ゼロで読み込み可能）
+- `PO_CORE_PARETO_TABLE` / `PO_CORE_BATTALION_TABLE` 環境変数で上書き可能
+- `config_version` が全TraceEventに記録され、監査可能
+
 ## 💡 哲学的原則
 
 ### Flying Pig Philosophy

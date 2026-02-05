@@ -170,6 +170,7 @@ src/po_core/
 ├── domain/              # Immutable value objects
 │   ├── context.py       # Context for reasoning
 │   ├── proposal.py      # Philosopher proposals
+│   ├── pareto_config.py # Pareto weights/tuning types
 │   ├── tensor_snapshot.py
 │   └── safety_verdict.py
 ├── ports/               # Abstract interfaces
@@ -178,19 +179,61 @@ src/po_core/
 │   └── memory_poself.py # Po_self adapter
 ├── runtime/             # Dependency injection
 │   ├── settings.py      # Configuration
-│   └── wiring.py        # DI Container
+│   ├── wiring.py        # DI Container
+│   ├── pareto_table.py  # Pareto config loader (JSON-in-YAML)
+│   └── battalion_table.py # Battalion config loader
+├── aggregator/          # Multi-objective optimization
+│   └── pareto.py        # ParetoAggregator (config-driven)
 ├── philosophers/        # 39 philosopher modules
 ├── tensors/             # Tensor computation
 ├── safety/              # W-ethics gate system
 │   └── wethics_gate/
 │       ├── intention_gate.py  # Stage 1
 │       └── action_gate.py     # Stage 2
+├── trace/               # Audit trail
+│   ├── pareto_events.py # Emit pareto debug TraceEvents
+│   ├── decision_events.py # Emit decision audit events
+│   └── schema.py        # TraceEvent schema validation
 ├── autonomy/            # Solar Will (experimental)
 │   └── solarwill/
 ├── ensemble.py          # Multi-philosopher deliberation
 ├── po_self.py           # Self-reflective API
 └── po_trace.py          # Execution tracing
 ```
+
+### Config-Driven Philosophy
+
+Po_core's Pareto optimization is fully externalized—**philosophy runs as config**:
+
+```
+02_architecture/philosophy/
+├── pareto_table.yaml    # Pareto weights by SafetyMode
+└── battalion_table.yaml # Philosopher assignments by SafetyMode
+```
+
+**pareto_table.yaml** (JSON-in-YAML, zero dependencies):
+```json
+{
+  "version": 1,
+  "weights": {
+    "normal":   {"safety": 0.25, "freedom": 0.30, "explain": 0.20, "brevity": 0.10, "coherence": 0.15},
+    "warn":     {"safety": 0.40, "freedom": 0.10, "explain": 0.20, "brevity": 0.15, "coherence": 0.25},
+    "critical": {"safety": 0.55, "freedom": 0.00, "explain": 0.20, "brevity": 0.15, "coherence": 0.30},
+    "unknown":  {"inherit": "warn"}
+  },
+  "tuning": {
+    "brevity_max_len": 2000,
+    "explain_mix": {"rationale": 0.65, "author_rel": 0.35},
+    "front_limit": 20
+  }
+}
+```
+
+**Benefits:**
+- Tune philosophy without code changes
+- `config_version` tracked in all TraceEvents for audit
+- Override via `PO_CORE_PARETO_TABLE` environment variable
+- Inheritance support (`unknown` inherits from `warn`)
 
 ---
 
@@ -204,8 +247,11 @@ src/po_core/
 | Documentation | Complete | 100% (120+ specs) |
 | Architecture Design | Complete | 100% |
 | Hexagonal Architecture | Complete | 100% |
-| Implementation | In Progress | 80% |
-| Testing | In Progress | 50% |
+| Pareto Optimization | Complete | 100% (config-driven) |
+| Battalion System | Complete | 100% (config-driven) |
+| Trace/Audit Contract | Complete | 100% (schema validation) |
+| Implementation | In Progress | 85% |
+| Testing | In Progress | 55% |
 | Visualization (Viewer) | In Progress | 50% |
 | Safety System (W-ethics) | Complete | 100% |
 | Experiments | In Progress | 60% |
@@ -213,6 +259,9 @@ src/po_core/
 **What's Working:**
 - 39 philosopher modules (full reasoning implementations)
 - Tensor framework (Freedom Pressure, Semantic Profile, Blocked Tensor, Interaction Tensor)
+- **Pareto optimization (config-driven via pareto_table.yaml)**
+- **Battalion system (config-driven via battalion_table.yaml)**
+- **Trace audit contract (schema validation with config_version tracking)**
 - Po_self API with PoSelfResponse dataclass
 - Ensemble system (multi-philosopher deliberation)
 - Po_trace / Po_trace_db (execution tracing & database storage)
@@ -227,6 +276,8 @@ src/po_core/
 - Solar Will experiments (39-philosopher cross-LLM emergence testing)
 
 **What's Next:**
+- **A/B testing framework** — Compare decisions across different pareto_table configs
+- **Regression audit** — Golden DecisionEmitted events for regression detection
 - Viewer UI polish and frontend integration
 - Expand test coverage (currently 60+ test files)
 - Performance optimization for large philosopher ensembles
