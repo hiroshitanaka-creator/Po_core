@@ -388,8 +388,9 @@ from po_core.domain.trace_event import TraceEvent
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision
 from po_core.domain.keys import (
-    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY, PARETO_DEBUG,
+    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY,
 )
+from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -656,26 +657,8 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         {"proposal_id": final.proposal_id, "action_type": final.action_type},
     ))
 
-    # 7.5 Emit Pareto debug trace events (if aggregator embedded them)
-    final_extra = dict(final.extra) if isinstance(final.extra, Mapping) else {}
-    final_pc = final_extra.get(PO_CORE, {})
-    dbg = final_pc.get(PARETO_DEBUG, {})
-    if dbg:
-        tracer.emit(TraceEvent.now(
-            "ConflictSummaryComputed",
-            ctx.request_id,
-            dict(dbg.get("conflicts", {})),
-        ))
-        tracer.emit(TraceEvent.now(
-            "ParetoFrontComputed",
-            ctx.request_id,
-            {"weights": dbg.get("weights", {}), "front": dbg.get("front", [])},
-        ))
-        tracer.emit(TraceEvent.now(
-            "ParetoWinnerSelected",
-            ctx.request_id,
-            {"winner": dbg.get("winner", {})},
-        ))
+    # 7.5 Emit Pareto debug trace events (via helper)
+    emit_pareto_debug_events(tracer, ctx, final)
 
     # 8. Action Gate (Stage 2)
     v2 = deps.gate.judge_action(ctx, intent, final, tensors, memory)
