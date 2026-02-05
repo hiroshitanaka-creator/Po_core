@@ -112,7 +112,7 @@ def load_pareto_table(path: str) -> ParetoConfig:
         front_limit=int(tuning.get("front_limit", 20)),
     )
 
-    return ParetoConfig(weights_by_mode=w_by_mode, tuning=t, version=ver)
+    return ParetoConfig(weights_by_mode=w_by_mode, tuning=t, version=ver, source=f"file:{path}")
 
 
 __all__ = ["load_pareto_table"]

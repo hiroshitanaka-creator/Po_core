@@ -56,6 +56,8 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
 
     mode = str(dbg.get(MODE, ""))
     fp = str(dbg.get(FREEDOM_PRESSURE, ""))
+    cfg_ver = str(dbg.get("config_version", ""))
+    cfg_src = str(dbg.get("config_source", ""))
 
     conflicts = _as_dict(dbg.get(CONFLICTS))
     front = dbg.get(FRONT, [])
@@ -71,6 +73,8 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
             {
                 MODE: mode,
                 FREEDOM_PRESSURE: fp,
+                "config_version": cfg_ver,
+                "config_source": cfg_src,
                 **conflicts,
             },
         )
@@ -84,6 +88,8 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
             {
                 MODE: mode,
                 FREEDOM_PRESSURE: fp,
+                "config_version": cfg_ver,
+                "config_source": cfg_src,
                 WEIGHTS: weights,
                 "front_size": front_size,
                 FRONT: list(front)[:20],  # payload 肥大防止
@@ -99,6 +105,8 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
             {
                 MODE: mode,
                 FREEDOM_PRESSURE: fp,
+                "config_version": cfg_ver,
+                "config_source": cfg_src,
                 WINNER: winner_payload,
             },
         )

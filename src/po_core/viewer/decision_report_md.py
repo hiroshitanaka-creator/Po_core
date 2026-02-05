@@ -107,6 +107,8 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
     if front:
         lines.append("## Pareto Front")
         f = front[-1].payload
+        lines.append(f"- config_version: `{f.get('config_version', '')}`")
+        lines.append(f"- config_source: `{f.get('config_source', '')}`")
         w = f.get("weights", {})
         lines.append(f"- weights: safety={w.get('safety', 0):.2f}, freedom={w.get('freedom', 0):.2f}, "
                      f"explain={w.get('explain', 0):.2f}, brevity={w.get('brevity', 0):.2f}, "

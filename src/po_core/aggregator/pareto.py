@@ -197,6 +197,10 @@ def _compute_objectives(
     tensors: TensorSnapshot,
     conflict_penalty: float,
     consensus: float,
+    *,
+    brevity_max_len: int = 2000,
+    explain_rationale_weight: float = 0.65,
+    explain_author_rel_weight: float = 0.35,
 ) -> ObjectiveVec:
     """
     Compute multi-objective scores using real signals.
@@ -206,6 +210,9 @@ def _compute_objectives(
         tensors: Tensor snapshot (fallback for freedom_pressure)
         conflict_penalty: Penalty from ConflictResolver
         consensus: Agreement score with other proposals
+        brevity_max_len: Max length for brevity scoring (from config)
+        explain_rationale_weight: Weight for rationale in explain score (from config)
+        explain_author_rel_weight: Weight for author_rel in explain score (from config)
     """
     # safety = policy.score (Gate verdict)
     safety = _policy_score(p)
@@ -215,13 +222,13 @@ def _compute_objectives(
     base_free = _base_freedom(p.action_type)
     freedom = _clamp01(base_free * (1.0 - fp))
 
-    # explain = rationale × author_reliability
+    # explain = rationale × author_reliability (weights from config)
     rationale = _explain_score(p)
     rel = _author_rel(p)
-    explain = _clamp01(0.65 * rationale + 0.35 * rel)
+    explain = _clamp01(explain_rationale_weight * rationale + explain_author_rel_weight * rel)
 
-    # brevity
-    brevity = _brevity_score(p)
+    # brevity (max_len from config)
+    brevity = _brevity_score(p, max_len=brevity_max_len)
 
     # coherence = consensus × (1 - conflict_penalty)
     coherence = _clamp01(consensus * (1.0 - conflict_penalty))
@@ -327,12 +334,18 @@ class ParetoAggregator(AggregatorPort):
         # 2) Consensus scores
         cons = _consensus_scores(proposals)
 
-        # 3) Compute objectives for each proposal
+        # 3) Compute objectives for each proposal (using config tuning)
+        tuning = self.config.tuning
         vecs: List[ObjectiveVec] = []
         for p in proposals:
             pen = float(penalties.get(p.proposal_id, 0.0))
             consensus = cons.get(p.proposal_id, 0.5)
-            vecs.append(_compute_objectives(p, tensors, pen, consensus))
+            vecs.append(_compute_objectives(
+                p, tensors, pen, consensus,
+                brevity_max_len=tuning.brevity_max_len,
+                explain_rationale_weight=tuning.explain_rationale_weight,
+                explain_author_rel_weight=tuning.explain_author_rel_weight,
+            ))
 
         # 4) Pareto front
         front_idx = pareto_front(vecs)
@@ -378,6 +391,7 @@ class ParetoAggregator(AggregatorPort):
             FREEDOM_PRESSURE: "" if fp is None else str(fp),
             WEIGHTS: dict(w),
             "config_version": str(self.config.version),
+            "config_source": self.config.source,
             "front_size": len(front_idx),
             FRONT: front_rows,
             WINNER: winner_payload,

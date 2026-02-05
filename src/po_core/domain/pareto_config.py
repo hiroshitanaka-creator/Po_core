@@ -55,10 +55,12 @@ class ParetoConfig:
         weights_by_mode: SafetyMode毎の重み
         tuning: チューニングパラメータ
         version: 設定バージョン（監査用）
+        source: 設定ソース（監査用: "defaults" / "file:<path>" / "env"）
     """
     weights_by_mode: Mapping[SafetyMode, ParetoWeights]
     tuning: ParetoTuning = field(default_factory=ParetoTuning)
     version: int = 1
+    source: str = "defaults"
 
     @staticmethod
     def defaults() -> "ParetoConfig":
@@ -72,6 +74,7 @@ class ParetoConfig:
             },
             tuning=ParetoTuning(),
             version=1,
+            source="defaults",
         )
 
 
