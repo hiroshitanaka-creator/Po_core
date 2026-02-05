@@ -10,7 +10,7 @@ decision_events helper のテスト:
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
-from po_core.domain.keys import PO_CORE, AUTHOR
+from po_core.domain.keys import PO_CORE, AUTHOR, PARETO_DEBUG
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.trace.decision_events import (
@@ -203,3 +203,125 @@ def test_safety_override_applied_contains_from_to():
     assert ev.payload["to"]["proposal_id"] == "p2"
     assert ev.payload["gate"]["decision"] == "reject"
     assert ev.payload["reason"] == "gate_reject"
+
+
+def test_emit_decision_emitted_variant_main():
+    """variant='main' が DecisionEmitted に含まれる"""
+    tr = DummyTracer()
+    ctx = Context("r5", datetime.now(timezone.utc), "x")
+
+    final = Proposal("p1", "answer", "回答", 0.9)
+
+    emit_decision_emitted(
+        tr, ctx,
+        variant="main",
+        stage="action",
+        origin="pareto",
+        final=final,
+        candidate=final,
+        degraded=False,
+    )
+
+    assert len(tr.events) == 1
+    ev = tr.events[0]
+    assert ev.payload["variant"] == "main"
+
+
+def test_emit_decision_emitted_variant_shadow():
+    """variant='shadow' が DecisionEmitted に含まれる"""
+    tr = DummyTracer()
+    ctx = Context("r6", datetime.now(timezone.utc), "x")
+
+    final = Proposal("p1", "answer", "回答", 0.9)
+
+    emit_decision_emitted(
+        tr, ctx,
+        variant="shadow",
+        stage="action",
+        origin="pareto_shadow",
+        final=final,
+        candidate=final,
+        degraded=False,
+    )
+
+    assert len(tr.events) == 1
+    ev = tr.events[0]
+    assert ev.payload["variant"] == "shadow"
+
+
+def test_emit_safety_override_applied_variant():
+    """variant が SafetyOverrideApplied に含まれる"""
+    tr = DummyTracer()
+    ctx = Context("r7", datetime.now(timezone.utc), "x")
+
+    from_p = Proposal("p1", "answer", "回答", 0.9)
+    to_p = Proposal("p2", "refuse", "拒否", 1.0)
+    v = SafetyVerdict(decision=Decision.REJECT, rule_ids=["R1"], reasons=[], required_changes=[], meta={})
+
+    emit_safety_override_applied(
+        tr, ctx,
+        variant="shadow",
+        stage="action",
+        reason="gate_reject",
+        from_proposal=from_p,
+        to_proposal=to_p,
+        verdict=v,
+    )
+
+    assert len(tr.events) == 1
+    ev = tr.events[0]
+    assert ev.payload["variant"] == "shadow"
+
+
+def test_proposal_fingerprint_includes_pareto_config():
+    """proposal_fingerprint に pareto_config_version/source が含まれる"""
+    p = Proposal(
+        "p1", "answer", "回答", 0.9,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    "config_version": "42",
+                    "config_source": "file:/path/to/shadow.yaml",
+                }
+            }
+        }
+    )
+
+    fp = proposal_fingerprint(p)
+
+    assert fp["pareto_config_version"] == "42"
+    assert fp["pareto_config_source"] == "file:/path/to/shadow.yaml"
+
+
+def test_emit_decision_emitted_pareto_config_from_candidate():
+    """DecisionEmitted が candidate から pareto config を抽出する"""
+    tr = DummyTracer()
+    ctx = Context("r8", datetime.now(timezone.utc), "x")
+
+    candidate = Proposal(
+        "p1", "answer", "回答", 0.9,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    "config_version": "99",
+                    "config_source": "test:source",
+                }
+            }
+        }
+    )
+    final = Proposal("p2", "answer", "最終", 1.0)
+
+    emit_decision_emitted(
+        tr, ctx,
+        variant="main",
+        stage="action",
+        origin="pareto",
+        final=final,
+        candidate=candidate,
+        degraded=False,
+    )
+
+    assert len(tr.events) == 1
+    ev = tr.events[0]
+    assert ev.payload["pareto_config_version"] == "99"
+    assert ev.payload["pareto_config_source"] == "test:source"
