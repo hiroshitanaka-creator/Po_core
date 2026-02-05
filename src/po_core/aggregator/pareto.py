@@ -21,6 +21,7 @@ Signals (from ensemble enrichment):
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
@@ -32,7 +33,7 @@ from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safet
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.keys import (
     PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR_RELIABILITY,
-    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS,
+    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS, MODE,
 )
 from po_core.ports.aggregator import AggregatorPort
 
@@ -339,6 +340,9 @@ class ParetoAggregator(AggregatorPort):
         best_v = vecs[best_i]
 
         # 6) Build debug info for trace
+        def _hash10(text: str) -> str:
+            return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
+
         front_rows = []
         for i in front_idx[:20]:  # limit to 20
             p = proposals[i]
@@ -348,12 +352,24 @@ class ParetoAggregator(AggregatorPort):
                 "action_type": p.action_type,
                 "scores": v.to_dict(),
                 "content_len": len(p.content or ""),
+                "content_hash": _hash10(p.content or ""),
             })
 
+        winner_payload = {
+            "proposal_id": best.proposal_id,
+            "action_type": best.action_type,
+            "scores": best_v.to_dict(),
+            "content_len": len(best.content or ""),
+            "content_hash": _hash10(best.content or ""),
+        }
+
         dbg = {
+            MODE: mode.value,
+            FREEDOM_PRESSURE: "" if fp is None else str(fp),
             WEIGHTS: dict(w),
+            "front_size": len(front_idx),
             FRONT: front_rows,
-            WINNER: {"proposal_id": best.proposal_id, "action_type": best.action_type},
+            WINNER: winner_payload,
             CONFLICTS: {
                 "n": len(report.conflicts),
                 "kinds": report.summary.get("kinds", ""),
