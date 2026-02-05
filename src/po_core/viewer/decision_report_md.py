@@ -141,6 +141,44 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
         lines.append(f"- action_type: `{a.get('action_type', 'unknown')}`")
         lines.append("")
 
+    # Candidate → Final (emitted decision) section
+    de = _find(ev, "DecisionEmitted")
+    ov = _find(ev, "SafetyOverrideApplied")
+
+    if de:
+        lines.append("## Candidate → Emitted（候補→最終）")
+        p = de[-1].payload
+        cand = p.get("candidate")
+        final = p.get("final")
+        gate = p.get("gate", {})
+        lines.append(f"- stage: `{p.get('stage')}`, origin: `{p.get('origin')}`, degraded: `{p.get('degraded')}`")
+        if gate:
+            lines.append(f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}")
+        lines.append("")
+
+        def _fp_row(kind: str, d: Any) -> str:
+            if not isinstance(d, dict):
+                return f"| {kind} | - | - | - | - | - | - |"
+            return (
+                f"| {kind} | {d.get('proposal_id', '')} | {d.get('action_type', '')} | "
+                f"{d.get('content_len', '')} | {d.get('content_hash', '')} | "
+                f"{d.get('policy_score', '')} | {d.get('author_reliability', '')} |"
+            )
+
+        lines.append("| kind | proposal_id | action | len | hash | policy_score | author_rel |")
+        lines.append("|---|---|---|---:|---|---|---|")
+        lines.append(_fp_row("candidate", cand))
+        lines.append(_fp_row("final", final))
+        lines.append("")
+
+    if ov:
+        lines.append("### SafetyOverrideApplied（安全上書き）")
+        o = ov[-1].payload
+        gate = o.get("gate", {})
+        lines.append(f"- reason: `{o.get('reason')}`, stage: `{o.get('stage')}`")
+        lines.append(f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}")
+        lines.append("")
+
     return "\n".join(lines)
 
 
