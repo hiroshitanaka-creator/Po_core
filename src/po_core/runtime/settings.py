@@ -29,6 +29,7 @@ class Settings:
     enable_solarwill: bool = True
     enable_intention_gate: bool = True
     enable_action_gate: bool = True
+    enable_pareto_shadow: bool = False  # Shadow Pareto A/B評価
 
     # 実験→本番の切替
     use_experimental_solarwill: bool = False
@@ -65,6 +66,7 @@ class Settings:
             "enable_solarwill": self.enable_solarwill,
             "enable_intention_gate": self.enable_intention_gate,
             "enable_action_gate": self.enable_action_gate,
+            "enable_pareto_shadow": self.enable_pareto_shadow,
             "use_experimental_solarwill": self.use_experimental_solarwill,
             "freedom_pressure_warn": self.freedom_pressure_warn,
             "freedom_pressure_critical": self.freedom_pressure_critical,
