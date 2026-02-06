@@ -448,6 +448,7 @@ class EnsembleDeps:
     aggregator_shadow: Optional[AggregatorPort]  # Shadow Pareto A/B評価用
     registry: PhilosopherRegistry  # SafetyMode-based selection
     settings: Settings  # Worker/timeout settings
+    shadow_guard: Optional[object]  # ShadowGuard (自律ブレーキ)
 
 
 def _get_swarm_params(mode: SafetyMode, settings: Settings) -> tuple[int, float]:
@@ -470,7 +471,7 @@ def _evaluate_candidate(
     candidate: Any,
     variant: str,
     origin: str,
-) -> Any:
+) -> tuple[Any, bool]:
     """
     候補（Pareto選択結果）をAction Gateで評価し、最終決定を返す。
 
@@ -487,7 +488,9 @@ def _evaluate_candidate(
         origin: "pareto" or "pareto_shadow"
 
     Returns:
-        最終Proposal（ALLOWならcandidate、それ以外ならfallback）
+        (最終Proposal, degraded: bool)
+        - ALLOWならcandidate (degraded=False)
+        - それ以外ならfallback (degraded=True)
     """
     tracer = deps.tracer
 
@@ -509,7 +512,7 @@ def _evaluate_candidate(
             gate_verdict=v,
             degraded=False,
         )
-        return candidate
+        return candidate, False
 
     # 安全上書き：fallbackへ縮退
     fb = compose_fallback(ctx, v, stage="action")
@@ -538,7 +541,7 @@ def _evaluate_candidate(
         degraded=True,
     )
 
-    return fb
+    return fb, True
 
 
 def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
@@ -761,7 +764,7 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     ))
 
     # 8. Main evaluation (Pareto debug + Action Gate)
-    final_main = _evaluate_candidate(
+    final_main, main_degraded = _evaluate_candidate(
         ctx=ctx,
         deps=deps,
         intent=intent,
@@ -775,30 +778,80 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     # 9. Shadow Pareto A/B evaluation（オプショナル）
     if deps.aggregator_shadow is not None:
         try:
-            # Shadow Pareto aggregation（同じproposals集合）
-            candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
+            # Pre-check: should run shadow? (ShadowGuard autonomous brake)
+            if deps.shadow_guard is not None:
+                run_shadow, ev = deps.shadow_guard.should_run_shadow(ctx)
+                if ev is not None:
+                    tracer.emit(ev)
+                if not run_shadow:
+                    # Shadow is disabled (cooldown) - skip shadow block
+                    # Don't emit DecisionComparisonComputed (no comparison happened)
+                    pass  # Exit shadow block
+                else:
+                    # Shadow Guard允許：実行
+                    # Shadow Pareto aggregation（同じproposals集合）
+                    candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
 
-            # Shadow evaluation
-            final_shadow = _evaluate_candidate(
-                ctx=ctx,
-                deps=deps,
-                intent=intent,
-                tensors=tensors,
-                memory=memory,
-                candidate=candidate_shadow,
-                variant="shadow",
-                origin="pareto_shadow",
-            )
+                    # Shadow evaluation
+                    final_shadow, shadow_degraded = _evaluate_candidate(
+                        ctx=ctx,
+                        deps=deps,
+                        intent=intent,
+                        tensors=tensors,
+                        memory=memory,
+                        candidate=candidate_shadow,
+                        variant="shadow",
+                        origin="pareto_shadow",
+                    )
 
-            # Comparison event（監査ログに差分を残す）
-            emit_decision_comparison(
-                tracer,
-                ctx,
-                main_candidate=candidate_main,
-                main_final=final_main,
-                shadow_candidate=candidate_shadow,
-                shadow_final=final_shadow,
-            )
+                    # Post-check: observe & maybe disable (ShadowGuard autonomous brake)
+                    ev2 = deps.shadow_guard.observe_comparison(
+                        ctx,
+                        main_candidate=candidate_main,
+                        main_final=final_main,
+                        shadow_candidate=candidate_shadow,
+                        shadow_final=final_shadow,
+                        main_degraded=main_degraded,
+                        shadow_degraded=shadow_degraded,
+                    )
+                    if ev2 is not None:
+                        tracer.emit(ev2)
+
+                    # Comparison event（監査ログに差分を残す）
+                    emit_decision_comparison(
+                        tracer,
+                        ctx,
+                        main_candidate=candidate_main,
+                        main_final=final_main,
+                        shadow_candidate=candidate_shadow,
+                        shadow_final=final_shadow,
+                    )
+            else:
+                # No guard - run shadow normally
+                # Shadow Pareto aggregation（同じproposals集合）
+                candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
+
+                # Shadow evaluation
+                final_shadow, shadow_degraded = _evaluate_candidate(
+                    ctx=ctx,
+                    deps=deps,
+                    intent=intent,
+                    tensors=tensors,
+                    memory=memory,
+                    candidate=candidate_shadow,
+                    variant="shadow",
+                    origin="pareto_shadow",
+                )
+
+                # Comparison event（監査ログに差分を残す）
+                emit_decision_comparison(
+                    tracer,
+                    ctx,
+                    main_candidate=candidate_main,
+                    main_final=final_main,
+                    shadow_candidate=candidate_shadow,
+                    shadow_final=final_shadow,
+                )
         except Exception:
             # Shadow失敗は無視（main は必ず返す）
             pass

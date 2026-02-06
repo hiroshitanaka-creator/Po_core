@@ -34,6 +34,18 @@ class Settings:
     # 実験→本番の切替
     use_experimental_solarwill: bool = False
 
+    # ---- Shadow Guard (自律ブレーキ) ----
+    enable_shadow_guard: bool = True
+    shadow_guard_state_path: str = ".po_core/shadow_guard_state.json"
+
+    shadow_guard_policy_score_drop_threshold: float = 0.15
+    shadow_guard_min_shadow_policy_score: float = 0.0
+    shadow_guard_max_bad_streak: int = 2
+    shadow_guard_cooldown_s: float = 3600.0
+
+    shadow_guard_disable_answer_to_refuse: bool = True
+    shadow_guard_disable_on_override_increase: bool = True
+
     # SafetyMode（単一真実）- SolarWillとGateが同じ閾値を見る
     freedom_pressure_warn: float = 0.60
     freedom_pressure_critical: float = 0.85
