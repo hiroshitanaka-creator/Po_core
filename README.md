@@ -15,7 +15,8 @@
 ### TL;DR
 - **39 philosophers** as interacting **tensors** → accountable LLM reasoning
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
-- 80% implementation complete; active experimentation phase
+- **A/B testing framework** for optimizing philosophy configurations with statistical rigor
+- 88% implementation complete; active experimentation phase
 
 ### Quick links
 [Modules](./04_modules) ·
@@ -95,6 +96,13 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 - Not just "alignment"—but **deliberation**
 - Multiple ethical perspectives in tension
 - Explicit responsibility measurement
+
+### Experiment Management Framework
+- **A/B Testing Pipeline**: Automatically compare multiple Pareto philosophy configurations
+- **Statistical Analysis**: t-tests, Mann-Whitney U tests, Cohen's d effect size
+- **Winner Promotion**: Automatically promote statistically superior configurations to main
+- **Safe Rollback**: Backup system for reverting to previous configurations
+- **CLI Tools**: `list`, `analyze`, `promote`, `rollback` commands
 
 ---
 
@@ -196,6 +204,11 @@ src/po_core/
 │   └── schema.py        # TraceEvent schema validation
 ├── autonomy/            # Solar Will (experimental)
 │   └── solarwill/
+├── experiments/         # A/B testing framework
+│   ├── storage.py       # Experiment persistence (JSON Lines)
+│   ├── runner.py        # Execute experiments across variants
+│   ├── analyzer.py      # Statistical analysis (t-test, effect size)
+│   └── promoter.py      # Automatic winner promotion
 ├── ensemble.py          # Multi-philosopher deliberation
 ├── po_self.py           # Self-reflective API
 └── po_trace.py          # Execution tracing
@@ -209,6 +222,12 @@ Po_core's Pareto optimization is fully externalized—**philosophy runs as confi
 02_architecture/philosophy/
 ├── pareto_table.yaml    # Pareto weights by SafetyMode
 └── battalion_table.yaml # Philosopher assignments by SafetyMode
+
+experiments/
+├── experiment_manifest.yaml  # A/B test definitions
+└── configs/                  # Variant configurations for testing
+    ├── pareto_safety_040.yaml
+    └── pareto_safety_050.yaml
 ```
 
 **pareto_table.yaml** (JSON-in-YAML, zero dependencies):
@@ -250,11 +269,11 @@ Po_core's Pareto optimization is fully externalized—**philosophy runs as confi
 | Pareto Optimization | Complete | 100% (config-driven) |
 | Battalion System | Complete | 100% (config-driven) |
 | Trace/Audit Contract | Complete | 100% (schema validation) |
-| Implementation | In Progress | 85% |
-| Testing | In Progress | 55% |
+| Implementation | In Progress | 88% |
+| Testing | In Progress | 60% |
 | Visualization (Viewer) | In Progress | 50% |
 | Safety System (W-ethics) | Complete | 100% |
-| Experiments | In Progress | 60% |
+| Experiment Management | Complete | 100% (A/B testing framework) |
 
 **What's Working:**
 - 39 philosopher modules (full reasoning implementations)
@@ -274,10 +293,11 @@ Po_core's Pareto optimization is fully externalized—**philosophy runs as confi
 - System prompt framework
 - CI/CD pipeline (pytest, coverage, linting, security checks)
 - Solar Will experiments (39-philosopher cross-LLM emergence testing)
+- **Experiment Management Framework** (A/B testing for Pareto configurations with statistical analysis)
 
 **What's Next:**
-- **A/B testing framework** — Compare decisions across different pareto_table configs
 - **Regression audit** — Golden DecisionEmitted events for regression detection
+- **Production experiment runs** — Validate statistical methods with real philosophy comparisons
 - Viewer UI polish and frontend integration
 - Expand test coverage (currently 60+ test files)
 - Performance optimization for large philosopher ensembles
@@ -337,6 +357,61 @@ $ po-core version
   Philosophy      Flying Pig - When Pigs Fly
   Motto           A frog in a well may not know the ocean, but it can know the sky.
 ```
+
+---
+
+## Running Experiments
+
+Po_core includes a complete A/B testing framework for comparing different Pareto philosophy configurations:
+
+```bash
+# List all experiments
+po-experiment list
+
+# Analyze experiment results (statistical significance testing)
+po-experiment analyze exp_001_safety_weight_sweep
+
+# Promote winning variant to main configuration
+po-experiment promote exp_001_safety_weight_sweep
+
+# Rollback to previous configuration
+po-experiment rollback
+```
+
+**Example Experiment Workflow:**
+
+1. **Define your experiment** in `experiments/experiment_manifest.yaml`:
+   ```yaml
+   experiment:
+     id: "exp_001_safety_weight_sweep"
+     description: "Compare safety weights: 0.25 → 0.40 → 0.50"
+     baseline:
+       name: "baseline"
+       config_path: "02_architecture/philosophy/pareto_table.yaml"
+     variants:
+       - name: "safety_040"
+         config_path: "experiments/configs/pareto_safety_040.yaml"
+       - name: "safety_050"
+         config_path: "experiments/configs/pareto_safety_050.yaml"
+     metrics:
+       - "final_action_changed"
+       - "degraded"
+       - "pareto_front_size"
+     sample_size: 100
+     significance_level: 0.05
+   ```
+
+2. **Run the experiment** (execute all variants on same inputs)
+
+3. **Analyze results** with statistical tests (t-test, Cohen's d effect size)
+
+4. **Auto-promote winner** if significantly better than baseline
+
+**Statistical Rigor:**
+- t-tests and Mann-Whitney U tests for significance
+- Cohen's d for effect size measurement
+- Configurable significance levels (default: α = 0.05)
+- Multiple variant support with automatic winner selection
 
 ---
 
