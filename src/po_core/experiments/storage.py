@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional
@@ -26,12 +27,17 @@ from po_core.domain.experiment import (
     ExperimentSample,
     ExperimentStatus,
     ExperimentVariant,
+    SignificanceTest,
+    VariantStatistics,
 )
 
 
 class ExperimentStorage:
     """
     実験結果の永続化を担当するクラス。
+
+    スレッドセーフ: 内部で threading.Lock を使用し、
+    複数スレッドからの同時書き込みを保護する。
 
     ファイル構造:
         experiments/
@@ -51,6 +57,7 @@ class ExperimentStorage:
         """
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(parents=True, exist_ok=True)
+        self._lock = threading.Lock()
 
     def _exp_dir(self, experiment_id: str) -> Path:
         """実験IDに対応するディレクトリパスを返す"""
@@ -66,11 +73,12 @@ class ExperimentStorage:
     # ── ExperimentDefinition ────────────────────────────────────────────
 
     def save_definition(self, definition: ExperimentDefinition) -> None:
-        """実験定義を保存"""
+        """実験定義を保存（スレッドセーフ）"""
         d = self._ensure_exp_dir(definition.id)
         path = d / "definition.json"
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(definition.to_dict(), f, indent=2, ensure_ascii=False)
+        with self._lock:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(definition.to_dict(), f, indent=2, ensure_ascii=False)
 
     def load_definition(self, experiment_id: str) -> Optional[ExperimentDefinition]:
         """実験定義を読み込み"""
@@ -122,16 +130,21 @@ class ExperimentStorage:
     # ── ExperimentSample ────────────────────────────────────────────────
 
     def append_sample(self, experiment_id: str, sample: ExperimentSample) -> None:
-        """サンプルを追加（JSON Lines形式で追記）"""
+        """サンプルを追加（JSON Lines形式で追記、スレッドセーフ）"""
         d = self._ensure_exp_dir(experiment_id)
         path = d / "samples.jsonl"
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(sample.to_dict(), ensure_ascii=False) + "\n")
+        with self._lock:
+            with open(path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(sample.to_dict(), ensure_ascii=False) + "\n")
 
     def append_samples(self, experiment_id: str, samples: Iterable[ExperimentSample]) -> None:
-        """複数のサンプルを一括追加"""
-        for s in samples:
-            self.append_sample(experiment_id, s)
+        """複数のサンプルを一括追加（スレッドセーフ）"""
+        d = self._ensure_exp_dir(experiment_id)
+        path = d / "samples.jsonl"
+        with self._lock:
+            with open(path, "a", encoding="utf-8") as f:
+                for s in samples:
+                    f.write(json.dumps(s.to_dict(), ensure_ascii=False) + "\n")
 
     def load_samples(self, experiment_id: str) -> List[ExperimentSample]:
         """全サンプルを読み込み"""
@@ -165,23 +178,25 @@ class ExperimentStorage:
     # ── ExperimentAnalysis ──────────────────────────────────────────────
 
     def save_analysis(self, analysis: ExperimentAnalysis) -> None:
-        """分析結果を保存（最新 + 履歴）"""
+        """分析結果を保存（最新 + 履歴、スレッドセーフ）"""
         d = self._ensure_exp_dir(analysis.experiment_id)
 
-        # 最新の分析結果
-        path_latest = d / "analysis.json"
-        with open(path_latest, "w", encoding="utf-8") as f:
-            json.dump(analysis.to_dict(), f, indent=2, ensure_ascii=False)
+        data = analysis.to_dict()
+        with self._lock:
+            # 最新の分析結果
+            path_latest = d / "analysis.json"
+            with open(path_latest, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
 
-        # 履歴にも保存
-        ts = analysis.analyzed_at or datetime.now()
-        ts_str = ts.strftime("%Y%m%d_%H%M%S")
-        path_history = d / "analysis_history" / f"{ts_str}.json"
-        with open(path_history, "w", encoding="utf-8") as f:
-            json.dump(analysis.to_dict(), f, indent=2, ensure_ascii=False)
+            # 履歴にも保存
+            ts = analysis.analyzed_at or datetime.now()
+            ts_str = ts.strftime("%Y%m%d_%H%M%S")
+            path_history = d / "analysis_history" / f"{ts_str}.json"
+            with open(path_history, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
 
     def load_analysis(self, experiment_id: str) -> Optional[ExperimentAnalysis]:
-        """最新の分析結果を読み込み"""
+        """最新の分析結果を読み込み（完全なドメインオブジェクトを再構築）"""
         path = self._exp_dir(experiment_id) / "analysis.json"
         if not path.exists():
             return None
@@ -189,16 +204,59 @@ class ExperimentStorage:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # Reconstruct（簡易版：完全な再構築は省略）
-        # 実際には VariantStatistics, SignificanceTest 等も復元する必要がある
-        # ここでは dict として返す（必要に応じて拡張）
-        return data  # type: ignore
+        # VariantStatistics を再構築
+        baseline_stats = _reconstruct_variant_statistics(data["baseline_stats"])
+        variant_stats = [
+            _reconstruct_variant_statistics(vs)
+            for vs in data.get("variant_stats", [])
+        ]
+
+        # SignificanceTest を再構築
+        significance_tests = [
+            SignificanceTest(
+                metric_name=t["metric_name"],
+                baseline_mean=t["baseline_mean"],
+                variant_mean=t["variant_mean"],
+                delta=t["delta"],
+                delta_percent=t["delta_percent"],
+                p_value=t["p_value"],
+                is_significant=t["is_significant"],
+                test_type=t["test_type"],
+                effect_size=t.get("effect_size"),
+            )
+            for t in data.get("significance_tests", [])
+        ]
+
+        # analyzed_at を再構築
+        analyzed_at = None
+        if data.get("analyzed_at"):
+            analyzed_at = datetime.fromisoformat(data["analyzed_at"])
+
+        return ExperimentAnalysis(
+            experiment_id=data["experiment_id"],
+            baseline_stats=baseline_stats,
+            variant_stats=variant_stats,
+            significance_tests=significance_tests,
+            winner=data.get("winner"),
+            recommendation=data.get("recommendation", "continue"),
+            analyzed_at=analyzed_at,
+            metadata=data.get("metadata", {}),
+        )
 
     def list_experiments(self) -> List[str]:
         """実験IDの一覧を返す"""
         if not self.base_dir.exists():
             return []
         return [d.name for d in self.base_dir.iterdir() if d.is_dir()]
+
+
+def _reconstruct_variant_statistics(data: Dict[str, Any]) -> VariantStatistics:
+    """JSON dict から VariantStatistics を再構築する"""
+    return VariantStatistics(
+        variant_name=data["variant_name"],
+        n=data["n"],
+        metrics={k: dict(v) for k, v in data["metrics"].items()},
+    )
 
 
 __all__ = ["ExperimentStorage"]

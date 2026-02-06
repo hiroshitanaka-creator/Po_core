@@ -17,9 +17,10 @@ from __future__ import annotations
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
-from po_core.domain.experiment import ExperimentStatus
+from po_core.domain.experiment import ExperimentAnalysis, ExperimentStatus
+from po_core.experiments.storage import ExperimentStorage
 
 
 class ExperimentPromoter:
@@ -35,10 +36,10 @@ class ExperimentPromoter:
 
     def __init__(
         self,
-        storage: Any,  # ExperimentStorage
+        storage: ExperimentStorage,
         main_config_path: str = "02_architecture/philosophy/pareto_table.yaml",
         backup_dir: str = "experiments/backups",
-    ):
+    ) -> None:
         """
         Args:
             storage: 実験結果を保存するストレージ
@@ -74,12 +75,12 @@ class ExperimentPromoter:
         if analysis is None:
             raise ValueError(f"Analysis not found for experiment {experiment_id}")
 
-        # 2. 推奨アクションを確認
-        if not force and analysis.get("recommendation") != "promote":
-            print(f"[{experiment_id}] Recommendation is '{analysis.get('recommendation')}', not 'promote'. Skipping.")
+        # 2. 推奨アクションを確認（型安全にアクセス）
+        if not force and analysis.recommendation != "promote":
+            print(f"[{experiment_id}] Recommendation is '{analysis.recommendation}', not 'promote'. Skipping.")
             return False
 
-        winner_name = analysis.get("winner")
+        winner_name = analysis.winner
         if winner_name is None:
             print(f"[{experiment_id}] No winner determined. Skipping.")
             return False
@@ -147,7 +148,7 @@ class ExperimentPromoter:
         shutil.copy2(backup_path, self.main_config_path)
         print(f"Rolled back to {backup_path}")
 
-    def list_backups(self) -> list[str]:
+    def list_backups(self) -> List[str]:
         """バックアップの一覧を返す"""
         return [b.name for b in sorted(self.backup_dir.glob("pareto_table_*.yaml"), reverse=True)]
 
