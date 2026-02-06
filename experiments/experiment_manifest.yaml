@@ -1,0 +1,54 @@
+# Po_core 実験定義の例
+#
+# この実験では、safety重みを段階的に上げた場合の影響を評価します。
+#
+# 使い方:
+#   1. この定義を元に ExperimentDefinition を構築
+#   2. po-experiment run exp_001_safety_sweep を実行
+#   3. po-experiment analyze exp_001_safety_sweep で分析
+#   4. po-experiment promote exp_001_safety_sweep で勝者を昇格
+
+experiment:
+  id: "exp_001_safety_weight_sweep"
+  description: "Safety重みを0.25→0.40→0.50に上げた場合の影響を評価"
+
+  # ベースライン（現在の設定）
+  baseline:
+    name: "baseline"
+    config_path: "02_architecture/philosophy/pareto_table.yaml"
+    description: "Current production config (safety=0.25)"
+
+  # テストするバリアント
+  variants:
+    - name: "safety_040"
+      config_path: "experiments/configs/pareto_safety_040.yaml"
+      description: "Safety weight increased to 0.40"
+
+    - name: "safety_050"
+      config_path: "experiments/configs/pareto_safety_050.yaml"
+      description: "Safety weight increased to 0.50"
+
+  # 評価指標
+  metrics:
+    - "final_action_changed"        # 最終action type が変わったか（boolean）
+    - "final_content_changed"       # 最終contentが変わったか（boolean）
+    - "final_policy_score_delta"    # policy score の差分（float）
+    - "degraded"                    # Gate で縮退したか（boolean）
+    - "pareto_front_size"          # Pareto フロントのサイズ（int）
+
+  # 実験設定
+  sample_size: 100                  # 必要なサンプル数
+  significance_level: 0.05          # 有意水準（5%）
+
+  # メタデータ（任意）
+  metadata:
+    author: "Po_core Team"
+    created_at: "2026-02-06"
+    tags:
+      - "safety"
+      - "pareto-weights"
+    notes: |
+      この実験の目的:
+      - Safety 重みを上げると拒否率が上がるか？
+      - 過度な拒否（false positive）が増えないか？
+      - Pareto フロントのサイズに影響があるか？
