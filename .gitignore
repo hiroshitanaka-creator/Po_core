@@ -282,6 +282,7 @@ viewer_temp/
 # Experimental outputs (results only, not scripts)
 experiments/results/*.jsonl
 experiments/*.json
+experiments/backups/
 trials/
 sandbox/
 
