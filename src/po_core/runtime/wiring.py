@@ -57,6 +57,7 @@ class WiredSystem:
     aggregator_shadow: AggregatorPort | None  # Shadow Pareto A/B評価用
     settings: Settings
     registry: PhilosopherRegistry  # SafetyMode-based selection
+    shadow_guard: object | None  # ShadowGuard (自律ブレーキ)
 
 
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
@@ -117,6 +118,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None
+    shadow_cfg = None
     if settings.enable_pareto_shadow:
         shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
         if shadow_path and os.path.exists(shadow_path):
@@ -125,6 +127,31 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
                 aggregator_shadow = ParetoAggregator(mode_config=safety_config, config=shadow_cfg)
             except Exception:
                 pass  # Shadow失敗は無視（main だけで動く）
+
+    # Shadow Guard (自律ブレーキ)
+    shadow_guard = None
+    if settings.enable_pareto_shadow and aggregator_shadow is not None and settings.enable_shadow_guard:
+        from po_core.runtime.shadow_guard import ShadowGuard, ShadowGuardConfig, FileShadowGuardStore
+
+        store = FileShadowGuardStore(settings.shadow_guard_state_path)
+        disable_pairs = (("answer", "refuse"),) if settings.shadow_guard_disable_answer_to_refuse else ()
+
+        guard_cfg = ShadowGuardConfig(
+            enabled=True,
+            policy_score_drop_threshold=settings.shadow_guard_policy_score_drop_threshold,
+            min_shadow_policy_score=settings.shadow_guard_min_shadow_policy_score,
+            max_bad_streak=settings.shadow_guard_max_bad_streak,
+            cooldown_s=settings.shadow_guard_cooldown_s,
+            disable_action_pairs=disable_pairs,
+            disable_on_override_increase=settings.shadow_guard_disable_on_override_increase,
+        )
+
+        shadow_guard = ShadowGuard(
+            guard_cfg,
+            store,
+            shadow_config_version=str(shadow_cfg.version) if shadow_cfg else "0",
+            shadow_config_source=str(shadow_cfg.source) if shadow_cfg else "unknown",
+        )
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
@@ -152,6 +179,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         aggregator_shadow=aggregator_shadow,
         settings=settings,
         registry=registry,
+        shadow_guard=shadow_guard,
     )
 
 
@@ -213,6 +241,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None
+    shadow_cfg = None
     if settings.enable_pareto_shadow:
         shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
         if shadow_path and os.path.exists(shadow_path):
@@ -221,6 +250,31 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
                 aggregator_shadow = ParetoAggregator(mode_config=safety_config, config=shadow_cfg)
             except Exception:
                 pass  # Shadow失敗は無視（main だけで動く）
+
+    # Shadow Guard (自律ブレーキ) - テスト用はInMemoryStore
+    shadow_guard = None
+    if settings.enable_pareto_shadow and aggregator_shadow is not None and settings.enable_shadow_guard:
+        from po_core.runtime.shadow_guard import ShadowGuard, ShadowGuardConfig, InMemoryShadowGuardStore
+
+        store = InMemoryShadowGuardStore()
+        disable_pairs = (("answer", "refuse"),) if settings.shadow_guard_disable_answer_to_refuse else ()
+
+        guard_cfg = ShadowGuardConfig(
+            enabled=True,
+            policy_score_drop_threshold=settings.shadow_guard_policy_score_drop_threshold,
+            min_shadow_policy_score=settings.shadow_guard_min_shadow_policy_score,
+            max_bad_streak=settings.shadow_guard_max_bad_streak,
+            cooldown_s=settings.shadow_guard_cooldown_s,
+            disable_action_pairs=disable_pairs,
+            disable_on_override_increase=settings.shadow_guard_disable_on_override_increase,
+        )
+
+        shadow_guard = ShadowGuard(
+            guard_cfg,
+            store,
+            shadow_config_version=str(shadow_cfg.version) if shadow_cfg else "0",
+            shadow_config_source=str(shadow_cfg.source) if shadow_cfg else "unknown",
+        )
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
@@ -248,6 +302,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         aggregator_shadow=aggregator_shadow,
         settings=settings,
         registry=registry,
+        shadow_guard=shadow_guard,
     )
 
 

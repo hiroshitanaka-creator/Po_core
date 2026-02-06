@@ -86,6 +86,7 @@ def run(
         aggregator_shadow=system.aggregator_shadow,  # Shadow Pareto A/B
         registry=system.registry,  # SafetyMode-based selection
         settings=system.settings,  # Worker/timeout config
+        shadow_guard=system.shadow_guard,  # ShadowGuard (自律ブレーキ)
     )
 
     # Run the full pipeline
