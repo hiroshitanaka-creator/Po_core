@@ -54,6 +54,7 @@ class WiredSystem:
     gate: WethicsGatePort
     philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
+    aggregator_shadow: AggregatorPort | None  # Shadow Pareto A/B評価用
     settings: Settings
     registry: PhilosopherRegistry  # SafetyMode-based selection
 
@@ -114,6 +115,17 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         except Exception:
             pass  # フォールバックでデフォルトを使う
 
+    # Shadow Pareto Table (A/B評価用 - オプショナル)
+    aggregator_shadow = None
+    if settings.enable_pareto_shadow:
+        shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
+        if shadow_path and os.path.exists(shadow_path):
+            try:
+                shadow_cfg = load_pareto_table(shadow_path)
+                aggregator_shadow = ParetoAggregator(mode_config=safety_config, config=shadow_cfg)
+            except Exception:
+                pass  # Shadow失敗は無視（main だけで動く）
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -137,6 +149,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
+        aggregator_shadow=aggregator_shadow,
         settings=settings,
         registry=registry,
     )
@@ -198,6 +211,17 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         except Exception:
             pass  # フォールバックでデフォルトを使う
 
+    # Shadow Pareto Table (A/B評価用 - オプショナル)
+    aggregator_shadow = None
+    if settings.enable_pareto_shadow:
+        shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
+        if shadow_path and os.path.exists(shadow_path):
+            try:
+                shadow_cfg = load_pareto_table(shadow_path)
+                aggregator_shadow = ParetoAggregator(mode_config=safety_config, config=shadow_cfg)
+            except Exception:
+                pass  # Shadow失敗は無視（main だけで動く）
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -221,6 +245,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         ),
         philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
         aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
+        aggregator_shadow=aggregator_shadow,
         settings=settings,
         registry=registry,
     )

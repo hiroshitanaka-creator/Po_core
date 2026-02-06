@@ -29,6 +29,7 @@ from po_core.domain.keys import (
     PO_CORE,
     POLICY,
     TRACEQ,
+    PARETO_DEBUG,
     FREEDOM_PRESSURE,
     AUTHOR,
     AUTHOR_RELIABILITY,
@@ -48,6 +49,16 @@ def _hash10(text: str) -> str:
     return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
 
 
+def _pareto_cfg_from(p: Optional[Proposal]) -> tuple[str, str]:
+    """Proposalから pareto config_version/source を抽出（なければ空文字列）"""
+    if p is None:
+        return "", ""
+    extra = _as_dict(p.extra)
+    pc = _as_dict(extra.get(PO_CORE))
+    dbg = _as_dict(pc.get(PARETO_DEBUG))
+    return str(dbg.get("config_version", "")), str(dbg.get("config_source", ""))
+
+
 def proposal_fingerprint(p: Proposal) -> dict:
     """
     監査用の最小指紋。
@@ -60,6 +71,7 @@ def proposal_fingerprint(p: Proposal) -> dict:
     pc = _as_dict(extra.get(PO_CORE))
     pol = _as_dict(pc.get(POLICY))
     tq = _as_dict(pc.get(TRACEQ))
+    dbg = _as_dict(pc.get(PARETO_DEBUG))
 
     return {
         "proposal_id": p.proposal_id,
@@ -73,6 +85,9 @@ def proposal_fingerprint(p: Proposal) -> dict:
         "policy_decision": str(pol.get("decision", "")),
         "policy_score": str(pol.get("score", "")),
         "author_reliability": str(tq.get(AUTHOR_RELIABILITY, "")),
+        # pareto config meta (A/B comparison用)
+        "pareto_config_version": str(dbg.get("config_version", "")),
+        "pareto_config_source": str(dbg.get("config_source", "")),
     }
 
 
@@ -91,6 +106,7 @@ def emit_safety_override_applied(
     tracer: "TracePort",
     ctx: Context,
     *,
+    variant: str = "main",
     stage: str,
     reason: str,
     from_proposal: Proposal,
@@ -103,6 +119,7 @@ def emit_safety_override_applied(
     Args:
         tracer: emit(TraceEvent) を持つ Tracer
         ctx: リクエストコンテキスト
+        variant: "main" or "shadow" (A/B評価用)
         stage: "intent" or "action"
         reason: 上書き理由（例: "gate_revise", "gate_reject"）
         from_proposal: 上書き前の候補
@@ -117,6 +134,7 @@ def emit_safety_override_applied(
             "SafetyOverrideApplied",
             ctx.request_id,
             {
+                "variant": variant,
                 "stage": stage,
                 "reason": reason,
                 "from": proposal_fingerprint(from_proposal),
@@ -131,6 +149,7 @@ def emit_decision_emitted(
     tracer: "TracePort",
     ctx: Context,
     *,
+    variant: str = "main",
     stage: str,
     origin: str,
     final: Proposal,
@@ -144,6 +163,7 @@ def emit_decision_emitted(
     Args:
         tracer: emit(TraceEvent) を持つ Tracer
         ctx: リクエストコンテキスト
+        variant: "main" or "shadow" (A/B評価用)
         stage: "intent" or "action"
         origin: 決定の出所（"pareto", "safety_fallback", "intent_gate_fallback" 等）
         final: 最終的に出力される提案
@@ -154,10 +174,15 @@ def emit_decision_emitted(
     Emits:
         DecisionEmitted: 最終決定の事実
     """
+    cfg_ver, cfg_src = _pareto_cfg_from(candidate)  # candidate優先（finalがfallbackでも追える）
+
     payload: dict = {
+        "variant": variant,
         "stage": stage,
         "origin": origin,
         "degraded": bool(degraded),
+        "pareto_config_version": cfg_ver,
+        "pareto_config_source": cfg_src,
         "final": proposal_fingerprint(final),
         "candidate": proposal_fingerprint(candidate) if candidate is not None else None,
     }

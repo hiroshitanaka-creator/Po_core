@@ -22,6 +22,18 @@ def _find(events: Iterable[TraceEvent], event_type: str) -> List[TraceEvent]:
     return [e for e in events if e.event_type == event_type]
 
 
+def _last(events: Iterable[TraceEvent], event_type: str) -> TraceEvent | None:
+    """Get last event of specified type."""
+    xs = [e for e in events if e.event_type == event_type]
+    return xs[-1] if xs else None
+
+
+def _last_by_variant(events: Iterable[TraceEvent], event_type: str, variant: str) -> TraceEvent | None:
+    """Get last event of specified type and variant."""
+    xs = [e for e in events if e.event_type == event_type and e.payload.get("variant") == variant]
+    return xs[-1] if xs else None
+
+
 def render_markdown(events: Iterable[TraceEvent]) -> str:
     """
     Render TraceEvents as Markdown report.
@@ -179,6 +191,63 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
         gate = o.get("gate", {})
         lines.append(f"- reason: `{o.get('reason')}`, stage: `{o.get('stage')}`")
         lines.append(f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}")
+        lines.append("")
+
+    # Pareto A/B Comparison section (Shadow評価)
+    cmp = _last(ev, "DecisionComparisonComputed")
+    if cmp:
+        lines.append("## Pareto A/B Comparison（main vs shadow）")
+        d = cmp.payload.get("diff", {})
+        lines.append(f"- main config: `{d.get('main_config_version', '')}` / `{d.get('main_config_source', '')}`")
+        lines.append(f"- shadow config: `{d.get('shadow_config_version', '')}` / `{d.get('shadow_config_source', '')}`")
+        lines.append("")
+        lines.append(f"- candidate_action_changed: `{d.get('candidate_action_changed', False)}`")
+        lines.append(f"- candidate_content_changed: `{d.get('candidate_content_changed', False)}`")
+        lines.append(f"- final_action_changed: `{d.get('final_action_changed', False)}`")
+        lines.append(f"- final_content_changed: `{d.get('final_content_changed', False)}`")
+        if "final_policy_score_delta" in d:
+            delta = d.get("final_policy_score_delta", 0.0)
+            lines.append(f"- final_policy_score_delta (shadow-main): `{delta:.4f}`")
+        lines.append("")
+
+        # main/shadow の詳細を表に表示
+        main_data = cmp.payload.get("main", {})
+        shadow_data = cmp.payload.get("shadow", {})
+
+        lines.append("### Main vs Shadow (Candidate)")
+        lines.append("| variant | proposal_id | action | len | hash | config |")
+        lines.append("|---|---|---|---:|---|---|")
+
+        mc = main_data.get("candidate", {})
+        sc = shadow_data.get("candidate", {})
+        lines.append(
+            f"| main | {mc.get('proposal_id', '')[:20]} | {mc.get('action_type', '')} | "
+            f"{mc.get('content_len', '')} | {mc.get('content_hash', '')} | "
+            f"{mc.get('pareto_config_version', '')} |"
+        )
+        lines.append(
+            f"| shadow | {sc.get('proposal_id', '')[:20]} | {sc.get('action_type', '')} | "
+            f"{sc.get('content_len', '')} | {sc.get('content_hash', '')} | "
+            f"{sc.get('pareto_config_version', '')} |"
+        )
+        lines.append("")
+
+        lines.append("### Main vs Shadow (Final)")
+        lines.append("| variant | proposal_id | action | len | hash | config |")
+        lines.append("|---|---|---:|---|---|---|")
+
+        mf = main_data.get("final", {})
+        sf = shadow_data.get("final", {})
+        lines.append(
+            f"| main | {mf.get('proposal_id', '')[:20]} | {mf.get('action_type', '')} | "
+            f"{mf.get('content_len', '')} | {mf.get('content_hash', '')} | "
+            f"{mf.get('pareto_config_version', '')} |"
+        )
+        lines.append(
+            f"| shadow | {sf.get('proposal_id', '')[:20]} | {sf.get('action_type', '')} | "
+            f"{sf.get('content_len', '')} | {sf.get('content_hash', '')} | "
+            f"{sf.get('pareto_config_version', '')} |"
+        )
         lines.append("")
 
     return "\n".join(lines)

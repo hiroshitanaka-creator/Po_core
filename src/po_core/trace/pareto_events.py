@@ -33,7 +33,7 @@ def _as_dict(x: Any) -> dict:
     return dict(x) if isinstance(x, Mapping) else {}
 
 
-def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal) -> None:
+def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal, *, variant: str = "main") -> None:
     """
     ParetoAggregator が winner.extra["_po_core"]["pareto_debug"] に入れた payload を
     TraceEventへ確実に吐く。
@@ -42,6 +42,7 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
         tracer: emit(TraceEvent) を持つ Tracer
         ctx: リクエストコンテキスト
         winner: Aggregator が返した勝者 Proposal
+        variant: "main" or "shadow" (A/B評価用)
 
     Emits:
         - ConflictSummaryComputed: コンフリクト情報
@@ -59,6 +60,14 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
     cfg_ver = str(dbg.get("config_version", ""))
     cfg_src = str(dbg.get("config_source", ""))
 
+    base = {
+        "variant": variant,
+        MODE: mode,
+        FREEDOM_PRESSURE: fp,
+        "config_version": cfg_ver,
+        "config_source": cfg_src,
+    }
+
     conflicts = _as_dict(dbg.get(CONFLICTS))
     front = dbg.get(FRONT, [])
     weights = _as_dict(dbg.get(WEIGHTS))
@@ -70,13 +79,7 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
         TraceEvent.now(
             "ConflictSummaryComputed",
             ctx.request_id,
-            {
-                MODE: mode,
-                FREEDOM_PRESSURE: fp,
-                "config_version": cfg_ver,
-                "config_source": cfg_src,
-                **conflicts,
-            },
+            {**base, **conflicts},
         )
     )
 
@@ -86,10 +89,7 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
             "ParetoFrontComputed",
             ctx.request_id,
             {
-                MODE: mode,
-                FREEDOM_PRESSURE: fp,
-                "config_version": cfg_ver,
-                "config_source": cfg_src,
+                **base,
                 WEIGHTS: weights,
                 "front_size": front_size,
                 FRONT: list(front)[:20],  # payload 肥大防止
@@ -102,13 +102,7 @@ def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal
         TraceEvent.now(
             "ParetoWinnerSelected",
             ctx.request_id,
-            {
-                MODE: mode,
-                FREEDOM_PRESSURE: fp,
-                "config_version": cfg_ver,
-                "config_source": cfg_src,
-                WINNER: winner_payload,
-            },
+            {**base, WINNER: winner_payload},
         )
     )
 

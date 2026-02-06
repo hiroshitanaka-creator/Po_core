@@ -205,3 +205,67 @@ def test_emit_pareto_debug_events_request_id_propagated():
 
     for ev in tr.events:
         assert ev.correlation_id == "unique-request-123"
+
+
+def test_emit_pareto_debug_events_variant_main():
+    """variant='main' が全イベントに含まれる"""
+    ctx = Context("r6", datetime.now(timezone.utc), "x")
+
+    winner = Proposal(
+        proposal_id="p1",
+        action_type="answer",
+        content="ok",
+        confidence=0.8,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    MODE: "normal",
+                    FREEDOM_PRESSURE: "0.2",
+                    WEIGHTS: {},
+                    "front_size": 1,
+                    FRONT: [],
+                    WINNER: {},
+                    CONFLICTS: {},
+                }
+            }
+        },
+    )
+
+    tr = DummyTracer()
+    emit_pareto_debug_events(tr, ctx, winner, variant="main")
+
+    assert len(tr.events) == 3
+    for ev in tr.events:
+        assert ev.payload.get("variant") == "main"
+
+
+def test_emit_pareto_debug_events_variant_shadow():
+    """variant='shadow' が全イベントに含まれる"""
+    ctx = Context("r7", datetime.now(timezone.utc), "x")
+
+    winner = Proposal(
+        proposal_id="p1",
+        action_type="answer",
+        content="ok",
+        confidence=0.8,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    MODE: "warn",
+                    FREEDOM_PRESSURE: "0.6",
+                    WEIGHTS: {"safety": 0.40},
+                    "front_size": 1,
+                    FRONT: [],
+                    WINNER: {},
+                    CONFLICTS: {},
+                }
+            }
+        },
+    )
+
+    tr = DummyTracer()
+    emit_pareto_debug_events(tr, ctx, winner, variant="shadow")
+
+    assert len(tr.events) == 3
+    for ev in tr.events:
+        assert ev.payload.get("variant") == "shadow"
