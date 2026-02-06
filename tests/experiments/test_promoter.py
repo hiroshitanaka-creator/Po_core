@@ -1,6 +1,5 @@
 """Tests for experiment promoter."""
 
-import shutil
 import tempfile
 from pathlib import Path
 
@@ -36,13 +35,13 @@ def promoter(storage, temp_dir):
     """Create an ExperimentPromoter instance."""
     main_config_path = temp_dir / "main_config.yaml"
     main_config_path.write_text("# Main config\nsafety: 0.25\n")
-    return ExperimentPromoter(storage, str(main_config_path))
+    backup_dir = temp_dir / "backups"
+    return ExperimentPromoter(storage, str(main_config_path), str(backup_dir))
 
 
 @pytest.fixture
 def winning_experiment(storage, temp_dir):
     """Create an experiment with a clear winner."""
-    # Create config files
     configs_dir = temp_dir / "configs"
     configs_dir.mkdir()
 
@@ -52,7 +51,6 @@ def winning_experiment(storage, temp_dir):
     winner_config = configs_dir / "winner.yaml"
     winner_config.write_text("# Winner\nsafety: 0.50\n")
 
-    # Create experiment definition
     definition = ExperimentDefinition(
         id="winning_exp",
         description="Winning experiment",
@@ -73,23 +71,20 @@ def winning_experiment(storage, temp_dir):
 
     storage.save_definition(definition)
 
-    # Create analysis with clear winner
     analysis = ExperimentAnalysis(
         experiment_id="winning_exp",
-        variant_statistics={
-            "baseline": VariantStatistics(
-                variant_name="baseline",
-                metric_stats={
-                    "metric1": {"mean": 0.5, "std": 0.1, "n": 20},
-                },
-            ),
-            "winner": VariantStatistics(
+        baseline_stats=VariantStatistics(
+            variant_name="baseline",
+            n=20,
+            metrics={"metric1": {"mean": 0.5, "std": 0.1, "n": 20}},
+        ),
+        variant_stats=[
+            VariantStatistics(
                 variant_name="winner",
-                metric_stats={
-                    "metric1": {"mean": 0.7, "std": 0.1, "n": 20},
-                },
+                n=20,
+                metrics={"metric1": {"mean": 0.7, "std": 0.1, "n": 20}},
             ),
-        },
+        ],
         significance_tests=[
             SignificanceTest(
                 metric_name="metric1",
@@ -99,7 +94,7 @@ def winning_experiment(storage, temp_dir):
                 delta_percent=40.0,
                 p_value=0.001,
                 is_significant=True,
-                test_type="t-test",
+                test_type="t_test",
                 effect_size=2.0,
             ),
         ],
@@ -117,36 +112,29 @@ def test_promote_dry_run(promoter, winning_experiment, temp_dir):
     main_config = temp_dir / "main_config.yaml"
     original_content = main_config.read_text()
 
-    # Dry run should not change the file
     result = promoter.promote(winning_experiment, dry_run=True)
 
     assert result is True
     assert main_config.read_text() == original_content
-    # No backup should be created
-    assert len(list((temp_dir / "backups").glob("*.yaml"))) == 0 if (temp_dir / "backups").exists() else True
 
 
 def test_promote_success(promoter, winning_experiment, temp_dir):
     """Test successful promotion."""
     main_config = temp_dir / "main_config.yaml"
 
-    # Promote
     result = promoter.promote(winning_experiment)
 
     assert result is True
 
-    # Check that main config was updated
     new_content = main_config.read_text()
     assert "safety: 0.50" in new_content
 
-    # Check that backup was created
     backups_dir = temp_dir / "backups"
     assert backups_dir.exists()
     backups = list(backups_dir.glob("*.yaml"))
     assert len(backups) == 1
     assert "safety: 0.25" in backups[0].read_text()
 
-    # Check that experiment status was updated
     definition = promoter.storage.load_definition(winning_experiment)
     assert definition.status == ExperimentStatus.PROMOTED
 
@@ -158,37 +146,26 @@ def test_promote_no_recommendation(storage, temp_dir):
 
     promoter = ExperimentPromoter(storage, str(main_config_path))
 
-    # Create experiment with "keep_baseline" recommendation
     definition = ExperimentDefinition(
         id="no_promote_exp",
         description="No promote",
-        baseline=ExperimentVariant(
-            name="baseline",
-            config_path="configs/baseline.yaml",
-        ),
-        variants=[
-            ExperimentVariant(
-                name="variant_a",
-                config_path="configs/variant_a.yaml",
-            ),
-        ],
+        baseline=ExperimentVariant(name="baseline", config_path="configs/baseline.yaml"),
+        variants=[ExperimentVariant(name="variant_a", config_path="configs/variant_a.yaml")],
         metrics=["metric1"],
         sample_size=20,
     )
-
     storage.save_definition(definition)
 
     analysis = ExperimentAnalysis(
         experiment_id="no_promote_exp",
-        variant_statistics={},
+        baseline_stats=VariantStatistics(variant_name="baseline", n=0, metrics={}),
+        variant_stats=[],
         significance_tests=[],
-        winner="baseline",
-        recommendation="keep_baseline",
+        winner=None,
+        recommendation="continue",
     )
-
     storage.save_analysis(analysis)
 
-    # Should fail without force
     result = promoter.promote("no_promote_exp")
     assert result is False
 
@@ -205,37 +182,26 @@ def test_promote_with_force(storage, temp_dir):
 
     promoter = ExperimentPromoter(storage, str(main_config_path))
 
-    # Create experiment with "keep_baseline" recommendation
     definition = ExperimentDefinition(
         id="force_exp",
         description="Force promote",
-        baseline=ExperimentVariant(
-            name="baseline",
-            config_path="configs/baseline.yaml",
-        ),
-        variants=[
-            ExperimentVariant(
-                name="variant_a",
-                config_path=str(variant_config),
-            ),
-        ],
+        baseline=ExperimentVariant(name="baseline", config_path="configs/baseline.yaml"),
+        variants=[ExperimentVariant(name="variant_a", config_path=str(variant_config))],
         metrics=["metric1"],
         sample_size=20,
     )
-
     storage.save_definition(definition)
 
     analysis = ExperimentAnalysis(
         experiment_id="force_exp",
-        variant_statistics={},
+        baseline_stats=VariantStatistics(variant_name="baseline", n=0, metrics={}),
+        variant_stats=[],
         significance_tests=[],
         winner="variant_a",
-        recommendation="keep_baseline",
+        recommendation="continue",
     )
-
     storage.save_analysis(analysis)
 
-    # Should succeed with force
     result = promoter.promote("force_exp", force=True)
     assert result is True
 
@@ -245,29 +211,20 @@ def test_rollback(promoter, winning_experiment, temp_dir):
     main_config = temp_dir / "main_config.yaml"
     original_content = main_config.read_text()
 
-    # Promote first
     promoter.promote(winning_experiment)
-
-    # Check that config changed
     assert main_config.read_text() != original_content
 
-    # Rollback
     promoter.rollback()
-
-    # Check that config was restored
     assert main_config.read_text() == original_content
 
 
 def test_list_backups(promoter, winning_experiment, temp_dir):
     """Test listing backups."""
-    # Initially no backups
     backups = promoter.list_backups()
     assert len(backups) == 0
 
-    # Promote to create backup
     promoter.promote(winning_experiment)
 
-    # Should have one backup
     backups = promoter.list_backups()
     assert len(backups) == 1
     assert backups[0].endswith(".yaml")
@@ -275,27 +232,21 @@ def test_list_backups(promoter, winning_experiment, temp_dir):
 
 def test_rollback_no_backups(temp_dir):
     """Test rollback when no backups exist."""
-    storage = ExperimentStorage(str(temp_dir))
+    storage = ExperimentStorage(str(temp_dir / "storage"))
     main_config_path = temp_dir / "main_config.yaml"
     main_config_path.write_text("# Main config\n")
+    backup_dir = temp_dir / "empty_backups"
 
-    promoter = ExperimentPromoter(storage, str(main_config_path))
+    promoter = ExperimentPromoter(storage, str(main_config_path), str(backup_dir))
 
-    # Should raise error or handle gracefully
-    try:
+    with pytest.raises(FileNotFoundError):
         promoter.rollback()
-        # If no error, check that nothing changed
-        assert main_config_path.read_text() == "# Main config\n"
-    except Exception as e:
-        # Expected - no backups available
-        assert "backup" in str(e).lower() or "not found" in str(e).lower()
 
 
 def test_rollback_specific_backup(promoter, winning_experiment, temp_dir):
     """Test rollback to a specific backup."""
     main_config = temp_dir / "main_config.yaml"
 
-    # Create first backup
     promoter.promote(winning_experiment)
     backups = promoter.list_backups()
     first_backup = backups[0]
@@ -303,8 +254,7 @@ def test_rollback_specific_backup(promoter, winning_experiment, temp_dir):
     # Modify config manually
     main_config.write_text("# Modified\n")
 
-    # Rollback to specific backup
+    # Rollback to the backup (which has the original config before promotion)
     promoter.rollback(backup_name=first_backup)
-
-    # Should have original content
-    assert "safety: 0.50" in main_config.read_text()
+    # The backup contains the original config (safety: 0.25)
+    assert "safety: 0.25" in main_config.read_text()

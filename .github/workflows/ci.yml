@@ -44,8 +44,7 @@ jobs:
 
     - name: Type check with mypy
       run: |
-        mypy src
-      continue-on-error: true  # Allow this to fail for now during alpha
+        mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/
 
     - name: Run tests with pytest
       run: |
@@ -77,13 +76,23 @@ jobs:
 
     - name: Security check with bandit
       run: |
-        bandit -r src/ -f json -o bandit-report.json
-      continue-on-error: true
+        bandit -r src/ -f json -o bandit-report.json || true
+        # Parse bandit report for high-severity issues
+        python -c "
+        import json, sys
+        with open('bandit-report.json') as f:
+            data = json.load(f)
+        high = [r for r in data.get('results', []) if r.get('issue_severity') == 'HIGH']
+        if high:
+            for r in high:
+                print(f\"HIGH: {r['filename']}:{r['line_number']} - {r['issue_text']}\", file=sys.stderr)
+            sys.exit(1)
+        print(f'Bandit: {len(data.get(\"results\", []))} issues, 0 HIGH severity')
+        "
 
     - name: Check dependencies with safety
       run: |
-        safety check --json
-      continue-on-error: true
+        safety check --json || true
 
   build:
     runs-on: ubuntu-latest

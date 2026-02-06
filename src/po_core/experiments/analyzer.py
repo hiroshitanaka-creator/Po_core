@@ -306,30 +306,58 @@ class ExperimentAnalyzer:
         勝者を判定する。
 
         ロジック:
+        - バリアント毎にテスト結果をグループ化
         - すべてのメトリクスで有意な改善があれば "promote"
         - 一部のメトリクスで有意な改悪があれば "reject"
+        - 複数バリアントが改善している場合、改善数が最多のものを選択
         - それ以外は "continue"（サンプル不足）
 
         Returns:
             (winner_name, recommendation)
         """
-        # バリアント毎にグループ化
-        variant_tests: Dict[str, List[SignificanceTest]] = {}
-        for v in variants:
-            variant_tests[v.name] = [t for t in tests if t.metric_name in [m for m in tests]]
+        if not variants or not tests:
+            return None, "continue"
 
-        # 簡易ロジック: 全メトリクスで改善しているバリアントを勝者とする
-        for v in variants:
-            v_tests = [t for t in tests]  # 全テスト（簡易実装）
+        # メトリクス名をバリアント数で分割して各バリアントに割り当て
+        # テストはバリアント順 × メトリクス順で格納されている
+        metric_count = len(tests) // len(variants) if variants else 0
+        if metric_count == 0:
+            return None, "continue"
 
-            # 有意な改善があるか
+        best_winner: Optional[str] = None
+        best_improvement_count = 0
+        best_total_delta = 0.0
+
+        for i, v in enumerate(variants):
+            # このバリアントに対応するテスト結果を抽出
+            start = i * metric_count
+            end = start + metric_count
+            v_tests = tests[start:end]
+
+            # 有意な改善と改悪をカウント
             improvements = [t for t in v_tests if t.is_significant and t.delta > 0]
             regressions = [t for t in v_tests if t.is_significant and t.delta < 0]
 
-            if improvements and not regressions:
-                return v.name, "promote"
+            if regressions:
+                # 改悪がある場合はこのバリアントをスキップ
+                continue
 
-        # 有意な結果がない → continue
+            if not improvements:
+                continue
+
+            # 同数の改善がある場合は合計delta_percentで比較
+            total_delta = sum(t.delta_percent for t in improvements)
+            if (len(improvements) > best_improvement_count) or (
+                len(improvements) == best_improvement_count
+                and total_delta > best_total_delta
+            ):
+                best_winner = v.name
+                best_improvement_count = len(improvements)
+                best_total_delta = total_delta
+
+        if best_winner is not None:
+            return best_winner, "promote"
+
         return None, "continue"
 
 

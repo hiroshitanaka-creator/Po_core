@@ -14,11 +14,9 @@ DEPENDENCY RULES:
 
 from __future__ import annotations
 
-import os
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Protocol
 
-from po_core.domain.context import Context
 from po_core.domain.experiment import (
     ExperimentDefinition,
     ExperimentSample,
@@ -26,6 +24,16 @@ from po_core.domain.experiment import (
 )
 from po_core.domain.trace_event import TraceEvent
 from po_core.experiments.storage import ExperimentStorage
+
+
+class RunFn(Protocol):
+    """実験実行関数のプロトコル。
+
+    config_path を引数として受け取り、結果辞書を返す。
+    結果には request_id と events を含むことが期待される。
+    """
+
+    def __call__(self, user_input: str, *, config_path: str) -> Dict[str, Any]: ...
 
 
 def _extract_metrics_from_events(
@@ -79,16 +87,19 @@ class ExperimentRunner:
     """
     実験を実行し、サンプルを収集するクラス。
 
+    スレッドセーフ: config_path は run_fn にキーワード引数として渡される。
+    os.environ による切り替えは使用しない。
+
     使い方:
         runner = ExperimentRunner(storage)
         runner.run_experiment(
             definition,
-            run_fn=lambda config_path: run_turn(...),
+            run_fn=lambda user_input, *, config_path: run_turn(user_input, config_path=config_path),
             inputs=[...],
         )
     """
 
-    def __init__(self, storage: ExperimentStorage):
+    def __init__(self, storage: ExperimentStorage) -> None:
         """
         Args:
             storage: 実験結果を保存するストレージ
@@ -98,7 +109,7 @@ class ExperimentRunner:
     def run_experiment(
         self,
         definition: ExperimentDefinition,
-        run_fn: Any,  # Callable[[str], dict]  # config_path -> result
+        run_fn: Callable[..., Dict[str, Any]],
         inputs: List[str],
         *,
         save_interval: int = 10,
@@ -108,9 +119,10 @@ class ExperimentRunner:
 
         Args:
             definition: 実験定義
-            run_fn: 単一リクエストを実行する関数（config_path を受け取る）
+            run_fn: 単一リクエストを実行する関数。
+                     シグネチャ: (user_input: str, *, config_path: str) -> dict
             inputs: 入力のリスト（user_input文字列）
-            save_interval: サンプルを保存する間隔
+            save_interval: 進捗表示の間隔
 
         実装の流れ:
         1. 実験定義を保存
@@ -187,31 +199,16 @@ class ExperimentRunner:
         variant_name: str,
         config_path: str,
         user_input: str,
-        run_fn: Any,
+        run_fn: Callable[..., Dict[str, Any]],
         metric_names: List[str],
     ) -> ExperimentSample:
         """
         単一バリアントで1回実行し、サンプルを生成する。
 
-        Args:
-            experiment_id: 実験ID
-            variant_name: バリアント名
-            config_path: Pareto設定ファイルパス
-            user_input: ユーザー入力
-            run_fn: 実行関数
-            metric_names: 収集するメトリクス名
-
-        Returns:
-            ExperimentSample
+        config_path は run_fn にキーワード引数として渡す（スレッドセーフ）。
         """
-        # 環境変数で Pareto config を切り替え
-        # （本来は run_fn に config_path を渡す設計が望ましい）
-        # ここでは簡易的に環境変数を使用
-        os.environ["PO_CORE_PARETO_TABLE"] = config_path
-
-        # 実行
-        # run_fn は { "request_id": ..., "events": [...], ... } を返す想定
-        result = run_fn(user_input)
+        # config_path を run_fn にキーワード引数として渡す
+        result = run_fn(user_input, config_path=config_path)
 
         # TraceEvent からメトリクスを抽出
         events = result.get("events", [])
