@@ -25,6 +25,7 @@ from po_core.tensors.metrics.freedom_pressure import (
 )
 from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
 from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
+from po_core.tensors.metrics.interaction_tensor import metric_interaction_tensor
 
 
 # ── Helpers ──
@@ -227,53 +228,96 @@ class TestBlockedTensor:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 4. Integration: TensorEngine with all 3 metrics
+# 4. Interaction Tensor
+# ══════════════════════════════════════════════════════════════════════════
+
+
+class TestInteractionTensor:
+    """Test philosopher-philosopher interaction potential metric."""
+
+    def test_returns_tuple(self):
+        key, val = metric_interaction_tensor(_ctx("hello"), _empty_mem())
+        assert key == "interaction_tensor"
+        assert isinstance(val, float)
+
+    def test_value_in_range(self):
+        _, val = metric_interaction_tensor(_ctx("What is justice?"), _empty_mem())
+        assert 0.0 <= val <= 1.0
+
+    def test_empty_input_zero(self):
+        _, val = metric_interaction_tensor(_ctx(""), _empty_mem())
+        assert val == 0.0
+
+    def test_single_domain_low(self):
+        """Single-domain input should have low interaction potential."""
+        _, val = metric_interaction_tensor(_ctx("What is beauty in art?"), _empty_mem())
+        assert val < 0.5, f"Single-domain should be low, got {val}"
+
+    def test_multi_domain_higher(self):
+        """Multi-domain philosophical input should have higher interaction."""
+        _, val = metric_interaction_tensor(
+            _ctx("How do truth, justice, beauty, and freedom relate to being?"),
+            _empty_mem(),
+        )
+        assert val > 0.0, f"Multi-domain should have some interaction, got {val}"
+
+    def test_tension_pairs_detected(self):
+        """Input with philosophical tension pairs should score higher."""
+        _, val_no_tension = metric_interaction_tensor(
+            _ctx("What is the weather?"), _empty_mem()
+        )
+        _, val_tension = metric_interaction_tensor(
+            _ctx("Is freedom compatible with determinism in mind and body?"),
+            _empty_mem(),
+        )
+        assert val_tension > val_no_tension
+
+    def test_memory_continuity_boost(self):
+        """More memory items should slightly increase interaction."""
+        _, val_no = metric_interaction_tensor(_ctx("What is truth?"), _empty_mem())
+        mem = _mem_with_items(*[f"item {i}" for i in range(15)])
+        _, val_with = metric_interaction_tensor(_ctx("What is truth?"), mem)
+        assert val_with >= val_no
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 5. Integration: TensorEngine with all 4 metrics
 # ══════════════════════════════════════════════════════════════════════════
 
 
 class TestTensorEngineIntegration:
-    """Test TensorEngine with all 3 real metrics registered."""
+    """Test TensorEngine with all 4 real metrics registered."""
 
-    def test_engine_computes_all_three(self):
+    def _build_engine(self):
         from po_core.tensors.engine import TensorEngine
 
-        engine = TensorEngine(metrics=(
+        return TensorEngine(metrics=(
             metric_freedom_pressure,
             metric_semantic_delta,
             metric_blocked_tensor,
+            metric_interaction_tensor,
         ))
-        snapshot = engine.compute(_ctx("What is justice?"), _empty_mem())
+
+    def test_engine_computes_all_four(self):
+        snapshot = self._build_engine().compute(_ctx("What is justice?"), _empty_mem())
         assert "freedom_pressure" in snapshot.metrics
         assert "semantic_delta" in snapshot.metrics
         assert "blocked_tensor" in snapshot.metrics
+        assert "interaction_tensor" in snapshot.metrics
 
     def test_all_values_in_range(self):
-        from po_core.tensors.engine import TensorEngine
-
-        engine = TensorEngine(metrics=(
-            metric_freedom_pressure,
-            metric_semantic_delta,
-            metric_blocked_tensor,
-        ))
-        snapshot = engine.compute(_ctx("We must decide what is right"), _empty_mem())
+        snapshot = self._build_engine().compute(_ctx("We must decide what is right"), _empty_mem())
         for key, val in snapshot.metrics.items():
             assert 0.0 <= val <= 1.0, f"{key}={val} out of range"
 
     def test_snapshot_convenience_properties(self):
-        from po_core.tensors.engine import TensorEngine
-
-        engine = TensorEngine(metrics=(
-            metric_freedom_pressure,
-            metric_semantic_delta,
-            metric_blocked_tensor,
-        ))
-        snapshot = engine.compute(_ctx("What is truth?"), _empty_mem())
+        snapshot = self._build_engine().compute(_ctx("What is truth?"), _empty_mem())
         assert isinstance(snapshot.freedom_pressure, float)
         assert isinstance(snapshot.semantic_delta, float)
         assert isinstance(snapshot.blocked_tensor, float)
 
     def test_wiring_system_has_all_metrics(self):
-        """build_test_system should produce TensorEngine with 3 metrics."""
+        """build_test_system should produce TensorEngine with 4 metrics."""
         from po_core.runtime.wiring import build_test_system
 
         system = build_test_system()
@@ -281,3 +325,4 @@ class TestTensorEngineIntegration:
         assert "freedom_pressure" in snapshot.metrics
         assert "semantic_delta" in snapshot.metrics
         assert "blocked_tensor" in snapshot.metrics
+        assert "interaction_tensor" in snapshot.metrics

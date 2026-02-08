@@ -77,6 +77,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
     from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
     from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
+    from po_core.tensors.metrics.interaction_tensor import metric_interaction_tensor
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
@@ -170,7 +171,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         memory_read=mem,
         memory_write=mem,
         tracer=NoopTracer(),
-        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure, metric_semantic_delta, metric_blocked_tensor)),
+        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure, metric_semantic_delta, metric_blocked_tensor, metric_interaction_tensor)),
         solarwill=SolarWillEngine(config=safety_config),
         gate=PolicyWethicsGate(
             intention=PolicyIntentionGate(policies=default_intention_policies()),
@@ -201,6 +202,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
     from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
     from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
+    from po_core.tensors.metrics.interaction_tensor import metric_interaction_tensor
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
@@ -295,7 +297,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         memory_read=mem,
         memory_write=mem,
         tracer=InMemoryTracer(),
-        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure, metric_semantic_delta, metric_blocked_tensor)),
+        tensor_engine=TensorEngine(metrics=(metric_freedom_pressure, metric_semantic_delta, metric_blocked_tensor, metric_interaction_tensor)),
         solarwill=SolarWillEngine(config=safety_config),
         gate=PolicyWethicsGate(
             intention=PolicyIntentionGate(policies=default_intention_policies()),
