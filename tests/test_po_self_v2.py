@@ -16,7 +16,7 @@ import pytest
 
 pytestmark = pytest.mark.pipeline
 
-from po_core.po_self import PhilosophicalEnsemble, PoSelf, PoSelfResponse
+from po_core.po_self import PoSelf, PoSelfResponse
 
 # ══════════════════════════════════════════════════════════════════════════
 # 1. Basic Functionality
@@ -272,22 +272,6 @@ class TestBackwardCompat:
             assert issubclass(w[0].category, DeprecationWarning)
             assert "deprecated" in str(w[0].message).lower()
         assert isinstance(response, PoSelfResponse)
-
-    def test_philosophical_ensemble_deprecated(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            ensemble = PhilosophicalEnsemble(philosophers=[])
-            assert len(w) == 1
-            assert issubclass(w[0].category, DeprecationWarning)
-
-    def test_philosophical_ensemble_reason_delegates(self):
-        with warnings.catch_warnings(record=True):
-            warnings.simplefilter("always")
-            ensemble = PhilosophicalEnsemble(philosophers=[])
-            result = ensemble.reason("What is truth?")
-        assert isinstance(result, dict)
-        assert "prompt" in result
-        assert "text" in result
 
     def test_po_self_response_from_dict(self):
         data = {
