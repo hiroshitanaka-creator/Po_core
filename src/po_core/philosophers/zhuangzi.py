@@ -69,7 +69,45 @@ class Zhuangzi(Philosopher):
         transformation = self._assess_transformation(text)
         uselessness = self._assess_uselessness(text)
 
+        summary = self._generate_summary(
+            dao,
+            wu_wei,
+            ziran,
+            qi,
+            xiaoyaoyou,
+            qiwulun,
+            dream,
+            transformation,
+            uselessness,
+        )
+
+        tension = self._calculate_tension(
+            dao,
+            wu_wei,
+            ziran,
+            xiaoyaoyou,
+            qiwulun,
+            dream,
+            transformation,
+        )
+
         return {
+            # Standard contract keys
+            "reasoning": summary,
+            "perspective": "Daoist Naturalism / Spiritual Freedom",
+            "tension": tension,
+            "metadata": {"philosopher": self.name},
+            # Philosopher-specific concept analyses
+            "dao_the_way": dao,
+            "wu_wei_non_action": wu_wei,
+            "ziran_naturalness": ziran,
+            "qi_vital_energy": qi,
+            "xiaoyaoyou_freedom": xiaoyaoyou,
+            "qiwulun_equality": qiwulun,
+            "dream_reality": dream,
+            "transformation": transformation,
+            "uselessness": uselessness,
+            # Backward-compat keys (used by existing tests)
             "philosopher": self.name,
             "description": self.description,
             "analysis": {
@@ -83,17 +121,7 @@ class Zhuangzi(Philosopher):
                 "transformation": transformation,
                 "uselessness": uselessness,
             },
-            "summary": self._generate_summary(
-                dao,
-                wu_wei,
-                ziran,
-                qi,
-                xiaoyaoyou,
-                qiwulun,
-                dream,
-                transformation,
-                uselessness,
-            ),
+            "summary": summary,
         }
 
     def _assess_dao(self, text: str) -> Dict[str, Any]:
@@ -530,3 +558,62 @@ class Zhuangzi(Philosopher):
             parts.append("Text shows limited engagement with core Daoist themes.")
 
         return " ".join(parts)
+
+    def _calculate_tension(
+        self,
+        dao: Dict[str, Any],
+        wu_wei: Dict[str, Any],
+        ziran: Dict[str, Any],
+        xiaoyaoyou: Dict[str, Any],
+        qiwulun: Dict[str, Any],
+        dream: Dict[str, Any],
+        transformation: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Calculate Daoist tensions in the text."""
+        elements = []
+
+        # Tension: wu wei (non-action) vs purposeful activity
+        if wu_wei["wu_wei_present"] and not ziran["ziran_present"]:
+            elements.append(
+                "Wu wei referenced but naturalness (ziran) not fully expressed"
+            )
+        # Tension: dream vs reality
+        if dream["dream_reality_present"]:
+            elements.append(
+                "Tension between dream and reality — questioning what is real"
+            )
+        # Tension: freedom (xiaoyaoyou) vs Dao's constraints
+        if xiaoyaoyou["xiaoyaoyou_present"] and dao["dao_present"]:
+            elements.append("Tension between boundless freedom and following the Dao")
+        # Tension: equality of things vs lived distinctions
+        if qiwulun["qiwulun_present"] and not transformation["transformation_present"]:
+            elements.append(
+                "Equality of things affirmed but transformative flow not embraced"
+            )
+        # Tension: transformation vs stability
+        if transformation["transformation_present"] and dao["dao_present"]:
+            elements.append(
+                "Tension between constant transformation and the enduring Dao"
+            )
+
+        n = len(elements)
+        if n >= 3:
+            level = "High"
+            desc = "Multiple Daoist tensions active — the text engages richly with paradox and transformation."
+        elif n >= 2:
+            level = "Moderate"
+            desc = "Some Daoist tensions present — navigating naturalness and freedom."
+        elif n >= 1:
+            level = "Low"
+            desc = "Mild tension within Daoist themes."
+        else:
+            level = "Very Low"
+            desc = "Minimal tension; text flows naturally or shows limited Daoist engagement."
+            elements = ["No significant Daoist tensions detected"]
+
+        return {
+            "level": level,
+            "score": n,
+            "description": desc,
+            "elements": elements,
+        }

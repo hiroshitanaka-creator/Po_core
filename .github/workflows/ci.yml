@@ -48,7 +48,7 @@ jobs:
 
     - name: Run pipeline tests (must pass)
       run: |
-        pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py tests/test_po_self_v2.py tests/test_tensor_metrics.py tests/test_golden_regression.py tests/test_smoke_pipeline.py tests/test_philosophers_pipeline.py tests/test_viewer_pipeline.py -v
+        pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py tests/test_po_self_v2.py tests/test_tensor_metrics.py tests/test_golden_regression.py tests/test_smoke_pipeline.py tests/test_philosophers_pipeline.py tests/test_viewer_pipeline.py tests/test_philosopher_contract.py -v
 
     - name: Run full test suite (best-effort)
       run: |
