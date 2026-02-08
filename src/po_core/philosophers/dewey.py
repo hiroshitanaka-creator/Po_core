@@ -33,10 +33,12 @@ class Dewey(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="John Dewey",
-            description="American pragmatist focused on experience, inquiry, democracy, and education"
+            description="American pragmatist focused on experience, inquiry, democracy, and education",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Dewey's pragmatist perspective.
 
@@ -64,8 +66,8 @@ class Dewey(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Pragmatism and experimentalism",
-                "focus": "Experience, inquiry, and democratic growth"
-            }
+                "focus": "Experience, inquiry, and democratic growth",
+            },
         }
 
     def _analyze_experience(self, prompt: str) -> Dict[str, Any]:
@@ -116,7 +118,7 @@ class Dewey(Philosopher):
             "reflection": reflection,
             "habit": habit,
             "instrumentalism": instrumentalism,
-            "continuity_interaction": continuity_interaction
+            "continuity_interaction": continuity_interaction,
         }
 
     def _assess_experience(self, text: str) -> Dict[str, Any]:
@@ -129,7 +131,15 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Active engagement indicators
-        active_words = ["do", "act", "engage", "participate", "interact", "work", "practice"]
+        active_words = [
+            "do",
+            "act",
+            "engage",
+            "participate",
+            "interact",
+            "work",
+            "practice",
+        ]
         has_active = sum(1 for word in active_words if word in text_lower)
 
         # Passive reception indicators
@@ -141,17 +151,27 @@ class Dewey(Philosopher):
         has_undergoing = sum(1 for word in undergoing_words if word in text_lower)
 
         # Environment/situation interaction
-        environment_words = ["situation", "environment", "context", "world", "surroundings"]
+        environment_words = [
+            "situation",
+            "environment",
+            "context",
+            "world",
+            "surroundings",
+        ]
         has_environment = sum(1 for word in environment_words if word in text_lower)
 
         # Determine experience quality
         if has_active >= 2 and has_undergoing >= 1:
             quality = "Rich Experience"
-            description = "Active doing combined with undergoing - genuine educative experience"
+            description = (
+                "Active doing combined with undergoing - genuine educative experience"
+            )
             type_exp = "Educative"
         elif has_active > has_passive:
             quality = "Active Experience"
-            description = "Emphasis on doing - potentially educative if reflection follows"
+            description = (
+                "Emphasis on doing - potentially educative if reflection follows"
+            )
             type_exp = "Potentially educative"
         elif has_passive >= 2:
             quality = "Passive Reception"
@@ -166,7 +186,7 @@ class Dewey(Philosopher):
             "quality": quality,
             "description": description,
             "type": type_exp,
-            "principle": "Experience is not mere sensation but interaction with environment"
+            "principle": "Experience is not mere sensation but interaction with environment",
         }
 
     def _evaluate_inquiry(self, text: str) -> Dict[str, Any]:
@@ -179,7 +199,14 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Stage 1: Felt difficulty / problem
-        problem_words = ["problem", "difficulty", "challenge", "issue", "question", "unclear"]
+        problem_words = [
+            "problem",
+            "difficulty",
+            "challenge",
+            "issue",
+            "question",
+            "unclear",
+        ]
         has_problem = any(word in text_lower for word in problem_words)
 
         # Stage 2: Intellectualization - defining the problem
@@ -187,15 +214,38 @@ class Dewey(Philosopher):
         has_definition = any(word in text_lower for word in define_words)
 
         # Stage 3: Hypothesis - suggesting solution
-        hypothesis_words = ["if", "maybe", "perhaps", "could", "might", "suppose", "hypothesis"]
+        hypothesis_words = [
+            "if",
+            "maybe",
+            "perhaps",
+            "could",
+            "might",
+            "suppose",
+            "hypothesis",
+        ]
         has_hypothesis = any(word in text_lower for word in hypothesis_words)
 
         # Stage 4: Reasoning - developing implications
-        reasoning_words = ["therefore", "because", "since", "implies", "leads to", "follows"]
+        reasoning_words = [
+            "therefore",
+            "because",
+            "since",
+            "implies",
+            "leads to",
+            "follows",
+        ]
         has_reasoning = any(word in text_lower for word in reasoning_words)
 
         # Stage 5: Testing - experimental verification
-        testing_words = ["test", "try", "experiment", "verify", "check", "see if", "find out"]
+        testing_words = [
+            "test",
+            "try",
+            "experiment",
+            "verify",
+            "check",
+            "see if",
+            "find out",
+        ]
         has_testing = any(word in text_lower for word in testing_words)
 
         # Determine inquiry stage
@@ -213,7 +263,9 @@ class Dewey(Philosopher):
 
         if len(stages_present) >= 4:
             stage = "Complete Inquiry"
-            description = "Full inquiry cycle - problem to solution through experimentation"
+            description = (
+                "Full inquiry cycle - problem to solution through experimentation"
+            )
             status = "Scientific"
         elif has_testing:
             stage = "Experimental Phase"
@@ -237,7 +289,7 @@ class Dewey(Philosopher):
             "description": description,
             "status": status,
             "stages_present": stages_present if stages_present else ["None"],
-            "principle": "Inquiry transforms indeterminate situations into determinate ones"
+            "principle": "Inquiry transforms indeterminate situations into determinate ones",
         }
 
     def _assess_growth(self, text: str) -> Dict[str, Any]:
@@ -250,19 +302,43 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Growth indicators
-        growth_words = ["grow", "develop", "learn", "improve", "progress", "advance", "evolve"]
+        growth_words = [
+            "grow",
+            "develop",
+            "learn",
+            "improve",
+            "progress",
+            "advance",
+            "evolve",
+        ]
         has_growth = sum(1 for word in growth_words if word in text_lower)
 
         # Reconstruction indicators
-        reconstruction_words = ["change", "transform", "reconstruct", "reorganize", "adapt", "modify"]
-        has_reconstruction = sum(1 for word in reconstruction_words if word in text_lower)
+        reconstruction_words = [
+            "change",
+            "transform",
+            "reconstruct",
+            "reorganize",
+            "adapt",
+            "modify",
+        ]
+        has_reconstruction = sum(
+            1 for word in reconstruction_words if word in text_lower
+        )
 
         # Future-oriented indicators
         future_words = ["will", "future", "next", "continue", "ongoing", "more"]
         has_future = sum(1 for word in future_words if word in text_lower)
 
         # Static/fixed indicators (opposed to growth)
-        static_words = ["fixed", "final", "complete", "finished", "unchanging", "permanent"]
+        static_words = [
+            "fixed",
+            "final",
+            "complete",
+            "finished",
+            "unchanging",
+            "permanent",
+        ]
         has_static = sum(1 for word in static_words if word in text_lower)
 
         # Calculate growth potential
@@ -289,7 +365,7 @@ class Dewey(Philosopher):
             "potential": potential,
             "description": description,
             "orientation": orientation,
-            "principle": "Education is growth; growth is life - there is no goal beyond growth itself"
+            "principle": "Education is growth; growth is life - there is no goal beyond growth itself",
         }
 
     def _evaluate_democracy(self, text: str) -> Dict[str, Any]:
@@ -302,31 +378,70 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Democratic participation indicators
-        participation_words = ["participate", "together", "share", "collaborate", "contribute", "engage"]
+        participation_words = [
+            "participate",
+            "together",
+            "share",
+            "collaborate",
+            "contribute",
+            "engage",
+        ]
         has_participation = sum(1 for word in participation_words if word in text_lower)
 
         # Communication/dialogue indicators
-        communication_words = ["communicate", "discuss", "dialogue", "talk", "exchange", "share ideas"]
+        communication_words = [
+            "communicate",
+            "discuss",
+            "dialogue",
+            "talk",
+            "exchange",
+            "share ideas",
+        ]
         has_communication = sum(1 for word in communication_words if word in text_lower)
 
         # Mutual respect/equality indicators
-        equality_words = ["equal", "respect", "mutual", "reciprocal", "fair", "everyone"]
+        equality_words = [
+            "equal",
+            "respect",
+            "mutual",
+            "reciprocal",
+            "fair",
+            "everyone",
+        ]
         has_equality = sum(1 for word in equality_words if word in text_lower)
 
         # Common good indicators
-        common_words = ["common", "shared", "collective", "community", "social", "public"]
+        common_words = [
+            "common",
+            "shared",
+            "collective",
+            "community",
+            "social",
+            "public",
+        ]
         has_common = sum(1 for word in common_words if word in text_lower)
 
         # Authoritarian indicators (opposed to democracy)
-        authoritarian_words = ["command", "obey", "dictate", "impose", "force", "authority"]
+        authoritarian_words = [
+            "command",
+            "obey",
+            "dictate",
+            "impose",
+            "force",
+            "authority",
+        ]
         has_authoritarian = sum(1 for word in authoritarian_words if word in text_lower)
 
         # Calculate democratic quality
-        total_democratic = has_participation + has_communication + has_equality + has_common
+        total_democratic = (
+            has_participation + has_communication + has_equality + has_common
+        )
 
         if total_democratic >= 3 and has_authoritarian == 0:
             quality = "Highly Democratic"
-            description = "Strong democratic qualities - shared experience and communication"
+            description = (
+                "Strong democratic qualities - shared experience and communication"
+            )
             mode = "Democratic way of life"
         elif total_democratic >= 1 and has_authoritarian == 0:
             quality = "Moderately Democratic"
@@ -345,7 +460,7 @@ class Dewey(Philosopher):
             "quality": quality,
             "description": description,
             "mode": mode,
-            "principle": "Democracy is a way of life, not merely a form of government"
+            "principle": "Democracy is a way of life, not merely a form of government",
         }
 
     def _check_reflective_thinking(self, text: str) -> Dict[str, Any]:
@@ -358,23 +473,56 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Reflection indicators
-        reflection_words = ["reflect", "think about", "consider", "ponder", "contemplate", "examine"]
+        reflection_words = [
+            "reflect",
+            "think about",
+            "consider",
+            "ponder",
+            "contemplate",
+            "examine",
+        ]
         has_reflection = sum(1 for word in reflection_words if word in text_lower)
 
         # Careful consideration indicators
-        careful_words = ["careful", "thorough", "systematic", "deliberate", "thoughtful"]
+        careful_words = [
+            "careful",
+            "thorough",
+            "systematic",
+            "deliberate",
+            "thoughtful",
+        ]
         has_careful = sum(1 for word in careful_words if word in text_lower)
 
         # Evidence/grounds indicators
-        evidence_words = ["because", "evidence", "reason", "grounds", "basis", "support"]
+        evidence_words = [
+            "because",
+            "evidence",
+            "reason",
+            "grounds",
+            "basis",
+            "support",
+        ]
         has_evidence = sum(1 for word in evidence_words if word in text_lower)
 
         # Learning from experience
-        learning_words = ["learn", "lesson", "insight", "understand", "realize", "discover"]
+        learning_words = [
+            "learn",
+            "lesson",
+            "insight",
+            "understand",
+            "realize",
+            "discover",
+        ]
         has_learning = sum(1 for word in learning_words if word in text_lower)
 
         # Impulsive/unreflective indicators
-        impulsive_words = ["immediately", "without thinking", "impulse", "reaction", "automatic"]
+        impulsive_words = [
+            "immediately",
+            "without thinking",
+            "impulse",
+            "reaction",
+            "automatic",
+        ]
         has_impulsive = sum(1 for word in impulsive_words if word in text_lower)
 
         total_reflective = has_reflection + has_careful + has_evidence + has_learning
@@ -400,7 +548,7 @@ class Dewey(Philosopher):
             "level": level,
             "description": description,
             "type": type_thinking,
-            "principle": "We learn from experience only when we reflect upon it"
+            "principle": "We learn from experience only when we reflect upon it",
         }
 
     def _assess_habit_formation(self, text: str) -> Dict[str, Any]:
@@ -414,20 +562,44 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Habit indicators
-        habit_words = ["habit", "custom", "routine", "regular", "always", "usually", "practice"]
+        habit_words = [
+            "habit",
+            "custom",
+            "routine",
+            "regular",
+            "always",
+            "usually",
+            "practice",
+        ]
         has_habit = sum(1 for word in habit_words if word in text_lower)
 
         # Intelligent habit indicators (flexible, adaptive)
-        intelligent_words = ["adapt", "flexible", "adjust", "modify", "responsive", "thoughtful"]
+        intelligent_words = [
+            "adapt",
+            "flexible",
+            "adjust",
+            "modify",
+            "responsive",
+            "thoughtful",
+        ]
         has_intelligent = sum(1 for word in intelligent_words if word in text_lower)
 
         # Routine habit indicators (rigid, automatic)
-        routine_words = ["automatic", "mechanical", "rigid", "fixed", "unchanging", "rote"]
+        routine_words = [
+            "automatic",
+            "mechanical",
+            "rigid",
+            "fixed",
+            "unchanging",
+            "rote",
+        ]
         has_routine = sum(1 for word in routine_words if word in text_lower)
 
         if has_intelligent >= 1 and has_habit >= 1:
             formation = "Intelligent Habits"
-            description = "Flexible, adaptive habits - intelligent adjustment to situations"
+            description = (
+                "Flexible, adaptive habits - intelligent adjustment to situations"
+            )
             quality = "Intelligent"
         elif has_routine >= 1 and has_habit >= 1:
             formation = "Routine Habits"
@@ -446,7 +618,7 @@ class Dewey(Philosopher):
             "formation": formation,
             "description": description,
             "quality": quality,
-            "principle": "Habits are tools, not chains - they should be intelligent and flexible"
+            "principle": "Habits are tools, not chains - they should be intelligent and flexible",
         }
 
     def _evaluate_instrumentalism(self, text: str) -> Dict[str, Any]:
@@ -460,19 +632,47 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Tool/instrument indicators
-        tool_words = ["tool", "use", "useful", "practical", "apply", "instrument", "means"]
+        tool_words = [
+            "tool",
+            "use",
+            "useful",
+            "practical",
+            "apply",
+            "instrument",
+            "means",
+        ]
         has_tool = sum(1 for word in tool_words if word in text_lower)
 
         # Problem-solving indicators
-        problem_solving = ["solve", "solution", "fix", "resolve", "address", "deal with"]
+        problem_solving = [
+            "solve",
+            "solution",
+            "fix",
+            "resolve",
+            "address",
+            "deal with",
+        ]
         has_problem_solving = sum(1 for word in problem_solving if word in text_lower)
 
         # Pragmatic/consequences indicators
-        pragmatic_words = ["works", "effective", "consequence", "result", "outcome", "success"]
+        pragmatic_words = [
+            "works",
+            "effective",
+            "consequence",
+            "result",
+            "outcome",
+            "success",
+        ]
         has_pragmatic = sum(1 for word in pragmatic_words if word in text_lower)
 
         # Abstract/contemplative indicators (opposed to instrumentalism)
-        abstract_words = ["abstract", "theoretical", "contemplation", "pure thought", "speculation"]
+        abstract_words = [
+            "abstract",
+            "theoretical",
+            "contemplation",
+            "pure thought",
+            "speculation",
+        ]
         has_abstract = sum(1 for word in abstract_words if word in text_lower)
 
         total_instrumental = has_tool + has_problem_solving + has_pragmatic
@@ -498,7 +698,7 @@ class Dewey(Philosopher):
             "level": level,
             "description": description,
             "orientation": orientation,
-            "principle": "Ideas are instruments for solving problems, not mirrors of reality"
+            "principle": "Ideas are instruments for solving problems, not mirrors of reality",
         }
 
     def _check_continuity_interaction(self, text: str) -> Dict[str, Any]:
@@ -511,11 +711,26 @@ class Dewey(Philosopher):
         text_lower = text.lower()
 
         # Continuity indicators
-        continuity_words = ["past", "future", "continue", "build on", "connect", "lead to", "next"]
+        continuity_words = [
+            "past",
+            "future",
+            "continue",
+            "build on",
+            "connect",
+            "lead to",
+            "next",
+        ]
         has_continuity = sum(1 for word in continuity_words if word in text_lower)
 
         # Interaction indicators
-        interaction_words = ["interact", "transaction", "between", "with", "engage", "environment"]
+        interaction_words = [
+            "interact",
+            "transaction",
+            "between",
+            "with",
+            "engage",
+            "environment",
+        ]
         has_interaction = sum(1 for word in interaction_words if word in text_lower)
 
         if has_continuity >= 2 and has_interaction >= 1:
@@ -534,7 +749,7 @@ class Dewey(Philosopher):
         return {
             "quality": quality,
             "description": description,
-            "principle": "Experience has continuity (temporal) and interaction (situational)"
+            "principle": "Experience has continuity (temporal) and interaction (situational)",
         }
 
     def _construct_reasoning(
@@ -543,7 +758,7 @@ class Dewey(Philosopher):
         inquiry: Dict[str, Any],
         growth: Dict[str, Any],
         democracy: Dict[str, Any],
-        reflection: Dict[str, Any]
+        reflection: Dict[str, Any],
     ) -> str:
         """Construct Deweyan pragmatist reasoning."""
         reasoning = (

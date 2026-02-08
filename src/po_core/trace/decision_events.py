@@ -19,21 +19,21 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Mapping, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping, Optional
 
 from po_core.domain.context import Context
-from po_core.domain.proposal import Proposal
-from po_core.domain.safety_verdict import SafetyVerdict
-from po_core.domain.trace_event import TraceEvent
 from po_core.domain.keys import (
+    AUTHOR,
+    AUTHOR_RELIABILITY,
+    FREEDOM_PRESSURE,
+    PARETO_DEBUG,
     PO_CORE,
     POLICY,
     TRACEQ,
-    PARETO_DEBUG,
-    FREEDOM_PRESSURE,
-    AUTHOR,
-    AUTHOR_RELIABILITY,
 )
+from po_core.domain.proposal import Proposal
+from po_core.domain.safety_verdict import SafetyVerdict
+from po_core.domain.trace_event import TraceEvent
 
 if TYPE_CHECKING:
     from po_core.ports.trace import TracePort
@@ -174,7 +174,9 @@ def emit_decision_emitted(
     Emits:
         DecisionEmitted: 最終決定の事実
     """
-    cfg_ver, cfg_src = _pareto_cfg_from(candidate)  # candidate優先（finalがfallbackでも追える）
+    cfg_ver, cfg_src = _pareto_cfg_from(
+        candidate
+    )  # candidate優先（finalがfallbackでも追える）
 
     payload: dict = {
         "variant": variant,

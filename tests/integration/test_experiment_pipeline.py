@@ -85,16 +85,22 @@ class TestExperimentLifecycle:
 
         # Simulate collecting 30 samples
         for i in range(30):
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "baseline",
-                {"pareto_front_size": 5 + (i % 3), "degraded": i < 3},
-                i,
-            ))
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "safety_040",
-                {"pareto_front_size": 7 + (i % 3), "degraded": i < 1},
-                i,
-            ))
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "baseline",
+                    {"pareto_front_size": 5 + (i % 3), "degraded": i < 3},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "safety_040",
+                    {"pareto_front_size": 7 + (i % 3), "degraded": i < 1},
+                    i,
+                ),
+            )
 
         # Verify
         samples = storage.load_samples("pareto_safety_test")
@@ -112,16 +118,22 @@ class TestExperimentLifecycle:
 
         # Collect samples with clear difference
         for i in range(30):
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "baseline",
-                {"pareto_front_size": 5.0 + (i % 3) * 0.5, "degraded": i < 9},
-                i,
-            ))
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "safety_040",
-                {"pareto_front_size": 8.0 + (i % 3) * 0.5, "degraded": i < 3},
-                i,
-            ))
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "baseline",
+                    {"pareto_front_size": 5.0 + (i % 3) * 0.5, "degraded": i < 9},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "safety_040",
+                    {"pareto_front_size": 8.0 + (i % 3) * 0.5, "degraded": i < 3},
+                    i,
+                ),
+            )
 
         analysis = analyzer.analyze("pareto_safety_test")
 
@@ -139,12 +151,22 @@ class TestExperimentLifecycle:
         analyzer = experiment_env["analyzer"]
 
         for i in range(30):
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "baseline", {"pareto_front_size": 5.0 + (i % 5) * 0.1, "degraded": i < 3}, i,
-            ))
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "safety_040", {"pareto_front_size": 8.0 + (i % 5) * 0.1, "degraded": i < 1}, i,
-            ))
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "baseline",
+                    {"pareto_front_size": 5.0 + (i % 5) * 0.1, "degraded": i < 3},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "safety_040",
+                    {"pareto_front_size": 8.0 + (i % 5) * 0.1, "degraded": i < 1},
+                    i,
+                ),
+            )
 
         analysis = analyzer.analyze("pareto_safety_test")
         storage.save_analysis(analysis)
@@ -161,7 +183,9 @@ class TestExperimentLifecycle:
         assert len(loaded.significance_tests) == len(analysis.significance_tests)
 
         # Verify significance test fidelity
-        for orig, reloaded in zip(analysis.significance_tests, loaded.significance_tests):
+        for orig, reloaded in zip(
+            analysis.significance_tests, loaded.significance_tests
+        ):
             assert orig.metric_name == reloaded.metric_name
             assert abs(orig.p_value - reloaded.p_value) < 1e-10
             assert orig.is_significant == reloaded.is_significant
@@ -174,16 +198,22 @@ class TestExperimentLifecycle:
 
         # Collect clearly winning samples
         for i in range(30):
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "baseline",
-                {"pareto_front_size": 3.0 + (i % 2), "degraded": i < 10},
-                i,
-            ))
-            storage.append_sample("pareto_safety_test", _make_sample(
-                "safety_040",
-                {"pareto_front_size": 8.0 + (i % 2), "degraded": i < 2},
-                i,
-            ))
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "baseline",
+                    {"pareto_front_size": 3.0 + (i % 2), "degraded": i < 10},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "pareto_safety_test",
+                _make_sample(
+                    "safety_040",
+                    {"pareto_front_size": 8.0 + (i % 2), "degraded": i < 2},
+                    i,
+                ),
+            )
 
         # Analyze
         analysis = analyzer.analyze("pareto_safety_test")
@@ -236,8 +266,12 @@ class TestExperimentLifecycle:
 
         # Add samples to each
         now = datetime.now(timezone.utc)
-        storage.append_sample("pareto_safety_test", _make_sample("baseline", {"pareto_front_size": 5}, 0))
-        storage.append_sample("pareto_freedom_test", _make_sample("baseline", {"metric1": 0.5}, 0))
+        storage.append_sample(
+            "pareto_safety_test", _make_sample("baseline", {"pareto_front_size": 5}, 0)
+        )
+        storage.append_sample(
+            "pareto_freedom_test", _make_sample("baseline", {"metric1": 0.5}, 0)
+        )
 
         # Verify isolation
         s1 = storage.load_samples("pareto_safety_test")

@@ -13,6 +13,7 @@ Test categories:
 - Red Team: adversarial inputs through full pipeline
 - Trace contract: event count, types, schema validation
 """
+
 from __future__ import annotations
 
 import uuid
@@ -47,7 +48,6 @@ from po_core.tensors.engine import TensorEngine
 from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
 from po_core.trace.in_memory import InMemoryTracer
 from po_core.trace.schema import validate_events
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -217,7 +217,9 @@ class TestSafetyModeTransitions:
         deps, tracer, _ = _build_deps(freedom_pressure=0.70)
         result = run_turn(_make_ctx(), deps)
         # WARN mode → intention_mode_001 fires REVISE → pipeline short-circuits at step 4
-        intent_events = [e for e in tracer.events if e.event_type == "SafetyJudged:Intention"]
+        intent_events = [
+            e for e in tracer.events if e.event_type == "SafetyJudged:Intention"
+        ]
         assert len(intent_events) == 1
         assert intent_events[0].payload["decision"] == "revise"
         # Result should be degraded
@@ -227,7 +229,9 @@ class TestSafetyModeTransitions:
         """CRITICAL mode (fp=0.90) should trigger intent gate REVISE with refuse fallback."""
         deps, tracer, _ = _build_deps(freedom_pressure=0.90)
         result = run_turn(_make_ctx(), deps)
-        intent_events = [e for e in tracer.events if e.event_type == "SafetyJudged:Intention"]
+        intent_events = [
+            e for e in tracer.events if e.event_type == "SafetyJudged:Intention"
+        ]
         assert len(intent_events) == 1
         assert intent_events[0].payload["decision"] == "revise"
         assert result.get("degraded") is True
@@ -287,7 +291,10 @@ class TestDegradationPaths:
         result = run_turn(_make_ctx(), deps)
         if result["status"] == "ok":
             # Critical mode triggers intent degradation or action degradation
-            assert result.get("degraded") is True or result["proposal"]["action_type"] == "refuse"
+            assert (
+                result.get("degraded") is True
+                or result["proposal"]["action_type"] == "refuse"
+            )
 
     def test_degraded_includes_verdict(self):
         """When degraded, result should include verdict information."""

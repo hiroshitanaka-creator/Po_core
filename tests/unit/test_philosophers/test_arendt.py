@@ -20,7 +20,10 @@ class TestArendtBasicFunctionality:
         """Test that Arendt initializes correctly."""
         arendt = Arendt()
         assert arendt.name == "Hannah Arendt"
-        assert "political" in arendt.description.lower() or "action" in arendt.description.lower()
+        assert (
+            "political" in arendt.description.lower()
+            or "action" in arendt.description.lower()
+        )
 
     def test_arendt_repr(self):
         """Test string representation."""
@@ -109,7 +112,10 @@ class TestArendtVitaActiva:
         result = arendt.reason("We act together in the public political sphere")
 
         vita_activa = result["analysis"]["vita_activa"]
-        assert "action" in vita_activa["dominant_mode"].lower() or vita_activa["action_present"]
+        assert (
+            "action" in vita_activa["dominant_mode"].lower()
+            or vita_activa["action_present"]
+        )
 
     def test_labor_mode_detection(self):
         """Test detection of labor mode."""
@@ -177,7 +183,9 @@ class TestArendtEvil:
     def test_banality_of_evil_detection(self):
         """Test detection of banality of evil."""
         arendt = Arendt()
-        result = arendt.reason("Ordinary thoughtless bureaucrats following orders without thinking")
+        result = arendt.reason(
+            "Ordinary thoughtless bureaucrats following orders without thinking"
+        )
 
         evil = result["analysis"]["evil_analysis"]
         # Should detect some aspect of evil or thoughtlessness
@@ -242,7 +250,9 @@ class TestArendtFreedom:
     def test_political_freedom_detection(self):
         """Test detection of political freedom."""
         arendt = Arendt()
-        result = arendt.reason("We are free to act together in the public political sphere")
+        result = arendt.reason(
+            "We are free to act together in the public political sphere"
+        )
 
         freedom = result["analysis"]["freedom"]
         assert freedom["freedom_present"] is True
@@ -265,7 +275,11 @@ class TestArendtSummary:
         result = arendt.reason(simple_prompt)
 
         summary = result["summary"]
-        assert "labor" in summary.lower() or "work" in summary.lower() or "action" in summary.lower()
+        assert (
+            "labor" in summary.lower()
+            or "work" in summary.lower()
+            or "action" in summary.lower()
+        )
 
 
 class TestArendtEdgeCases:

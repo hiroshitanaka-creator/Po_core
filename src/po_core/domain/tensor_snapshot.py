@@ -7,10 +7,10 @@ It's immutable to ensure tensor values cannot be modified after computation.
 
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, Mapping, Optional
-import uuid
 
 
 # Backward compatibility: TensorValue for existing code
@@ -19,6 +19,7 @@ class TensorValue:
     """
     A single tensor value with metadata (backward compat).
     """
+
     name: str
     value: float
     dimensions: Optional[Dict[str, float]] = None

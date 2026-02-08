@@ -146,19 +146,25 @@ def test_count_samples(storage, sample_definition):
 
     now = datetime.now(timezone.utc)
     for i in range(3):
-        storage.append_sample("test_exp", ExperimentSample(
-            request_id=f"req_{i}",
-            variant_name="baseline",
-            metrics={"metric1": 0.5},
-            timestamp=now,
-        ))
+        storage.append_sample(
+            "test_exp",
+            ExperimentSample(
+                request_id=f"req_{i}",
+                variant_name="baseline",
+                metrics={"metric1": 0.5},
+                timestamp=now,
+            ),
+        )
     for i in range(2):
-        storage.append_sample("test_exp", ExperimentSample(
-            request_id=f"req_v_{i}",
-            variant_name="variant_a",
-            metrics={"metric1": 0.6},
-            timestamp=now,
-        ))
+        storage.append_sample(
+            "test_exp",
+            ExperimentSample(
+                request_id=f"req_v_{i}",
+                variant_name="variant_a",
+                metrics={"metric1": 0.6},
+                timestamp=now,
+            ),
+        )
 
     assert storage.count_samples("test_exp") == 5
     assert storage.count_samples("test_exp", variant_name="baseline") == 3
@@ -176,7 +182,14 @@ def test_save_and_load_analysis(storage, sample_definition):
             variant_name="baseline",
             n=10,
             metrics={
-                "metric1": {"mean": 0.5, "std": 0.1, "min": 0.3, "max": 0.7, "median": 0.5, "n": 10},
+                "metric1": {
+                    "mean": 0.5,
+                    "std": 0.1,
+                    "min": 0.3,
+                    "max": 0.7,
+                    "median": 0.5,
+                    "n": 10,
+                },
             },
         ),
         variant_stats=[
@@ -184,7 +197,14 @@ def test_save_and_load_analysis(storage, sample_definition):
                 variant_name="variant_a",
                 n=10,
                 metrics={
-                    "metric1": {"mean": 0.6, "std": 0.1, "min": 0.4, "max": 0.8, "median": 0.6, "n": 10},
+                    "metric1": {
+                        "mean": 0.6,
+                        "std": 0.1,
+                        "min": 0.4,
+                        "max": 0.8,
+                        "median": 0.6,
+                        "n": 10,
+                    },
                 },
             ),
         ],
@@ -300,12 +320,15 @@ def test_thread_safe_append_samples(storage, sample_definition):
     def append_batch(variant_name, count):
         try:
             for i in range(count):
-                storage.append_sample("test_exp", ExperimentSample(
-                    request_id=f"req_{variant_name}_{i}",
-                    variant_name=variant_name,
-                    metrics={"metric1": 0.5},
-                    timestamp=now,
-                ))
+                storage.append_sample(
+                    "test_exp",
+                    ExperimentSample(
+                        request_id=f"req_{variant_name}_{i}",
+                        variant_name=variant_name,
+                        metrics={"metric1": 0.5},
+                        timestamp=now,
+                    ),
+                )
         except Exception as e:
             errors.append(e)
 

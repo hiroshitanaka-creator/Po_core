@@ -16,6 +16,7 @@ DEPENDENCY RULES:
 - philosophers自身は safety/runtime を見ない
 - registry は "編成とロード" のみ（判断はしない）
 """
+
 from __future__ import annotations
 
 import importlib
@@ -26,15 +27,16 @@ from po_core.domain.safety_mode import SafetyMode
 
 if TYPE_CHECKING:
     from po_core.runtime.battalion_table import BattalionModePlan
+
 from po_core.philosophers.base import Philosopher, PhilosopherProtocol
 from po_core.philosophers.bridge import PhilosopherBridge
-from po_core.philosophers.manifest import PhilosopherSpec, SPECS
+from po_core.philosophers.manifest import SPECS, PhilosopherSpec
 from po_core.philosophers.tags import (
-    TAG_COMPLIANCE,
     TAG_CLARIFY,
+    TAG_COMPLIANCE,
+    TAG_CREATIVE,
     TAG_CRITIC,
     TAG_PLANNER,
-    TAG_CREATIVE,
     TAG_REDTEAM,
 )
 
@@ -115,7 +117,13 @@ class PhilosopherRegistry:
                     limit=max_normal,
                     max_risk=2,
                     cost_budget=budget_normal,
-                    require_tags=(TAG_PLANNER, TAG_CRITIC, TAG_COMPLIANCE, TAG_CREATIVE, TAG_REDTEAM),
+                    require_tags=(
+                        TAG_PLANNER,
+                        TAG_CRITIC,
+                        TAG_COMPLIANCE,
+                        TAG_CREATIVE,
+                        TAG_REDTEAM,
+                    ),
                 ),
                 SafetyMode.WARN: SelectionPlan(
                     limit=max_warn,
@@ -153,8 +161,7 @@ class PhilosopherRegistry:
         plan = self._plans.get(mode, self._plans[SafetyMode.WARN])
 
         candidates = [
-            s for s in self._specs
-            if s.enabled and s.risk_level <= plan.max_risk
+            s for s in self._specs if s.enabled and s.risk_level <= plan.max_risk
         ]
         # 安定順：安全→重み→id（決定論）
         candidates.sort(key=lambda s: (s.risk_level, -s.weight, s.philosopher_id))
@@ -164,7 +171,9 @@ class PhilosopherRegistry:
         covered: set[str] = set()
 
         def can_take(s: PhilosopherSpec) -> bool:
-            return (len(selected) < plan.limit) and (cost_total + s.cost <= plan.cost_budget)
+            return (len(selected) < plan.limit) and (
+                cost_total + s.cost <= plan.cost_budget
+            )
 
         # 1) 必須タグを満たす（すでにcoveredならスキップ）
         for tag in plan.require_tags:
@@ -201,7 +210,9 @@ class PhilosopherRegistry:
             covered_tags=sorted(list(covered)),
         )
 
-    def load(self, selected_ids: Sequence[str]) -> Tuple[List[PhilosopherProtocol], List[LoadError]]:
+    def load(
+        self, selected_ids: Sequence[str]
+    ) -> Tuple[List[PhilosopherProtocol], List[LoadError]]:
         """
         選抜された哲学者をロード（エラー回収付き）。
 
@@ -247,7 +258,9 @@ class PhilosopherRegistry:
                 if self._cache:
                     self._instances[pid] = ph
             except Exception as e:
-                errors.append(LoadError(pid, spec.module, spec.symbol, type(e).__name__))
+                errors.append(
+                    LoadError(pid, spec.module, spec.symbol, type(e).__name__)
+                )
 
         return out, errors
 

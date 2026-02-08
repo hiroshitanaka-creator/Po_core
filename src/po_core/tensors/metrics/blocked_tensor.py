@@ -11,6 +11,7 @@ constraint metric.
 
 Also performs direct harmful keyword detection as an additional signal.
 """
+
 from __future__ import annotations
 
 from typing import List, Tuple
@@ -18,15 +19,25 @@ from typing import List, Tuple
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 
-
 # Harmful/sensitive keyword lists for direct detection
 _HARMFUL_KEYWORDS = [
-    "bomb", "weapon", "kill", "attack", "poison", "exploit",
-    "hack", "steal", "fraud", "illegal",
+    "bomb",
+    "weapon",
+    "kill",
+    "attack",
+    "poison",
+    "exploit",
+    "hack",
+    "steal",
+    "fraud",
+    "illegal",
 ]
 
 _SENSITIVE_KEYWORDS = [
-    "suicide", "self-harm", "overdose", "abuse",
+    "suicide",
+    "self-harm",
+    "overdose",
+    "abuse",
 ]
 
 

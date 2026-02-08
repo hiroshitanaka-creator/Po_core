@@ -7,6 +7,7 @@ fallback Proposal instead of simply blocking.
 
 This prevents "silent death" - the system always responds.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -42,11 +43,15 @@ def compose_fallback(
     forced = verdict.meta.get("forced_action")
 
     if forced is None:
-        forced = "refuse" if verdict.decision == Decision.REJECT else "ask_clarification"
+        forced = (
+            "refuse" if verdict.decision == Decision.REJECT else "ask_clarification"
+        )
 
     # Build explanation from verdict reasons
     reasons_str = "; ".join(verdict.reasons[:3]) if verdict.reasons else "安全上の理由"
-    required_str = "; ".join(verdict.required_changes[:2]) if verdict.required_changes else ""
+    required_str = (
+        "; ".join(verdict.required_changes[:2]) if verdict.required_changes else ""
+    )
 
     if verdict.decision == Decision.REJECT:
         content = f"申し訳ありませんが、このリクエストにはお応えできません。理由: {reasons_str}"

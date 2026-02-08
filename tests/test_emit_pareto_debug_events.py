@@ -8,13 +8,23 @@ emit_pareto_debug_events helper が必ず 3 イベントを吐くことを検証
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
-from po_core.domain.keys import PO_CORE, PARETO_DEBUG, MODE, FREEDOM_PRESSURE, WEIGHTS, FRONT, WINNER, CONFLICTS
+from po_core.domain.keys import (
+    CONFLICTS,
+    FREEDOM_PRESSURE,
+    FRONT,
+    MODE,
+    PARETO_DEBUG,
+    PO_CORE,
+    WEIGHTS,
+    WINNER,
+)
 from po_core.domain.proposal import Proposal
 from po_core.trace.pareto_events import emit_pareto_debug_events
 
 
 class DummyTracer:
     """テスト用の簡易 Tracer"""
+
     def __init__(self):
         self.events = []
 
@@ -39,11 +49,32 @@ def test_emit_pareto_debug_events_emits_three_events():
                     WEIGHTS: {"safety": 0.25, "freedom": 0.30},
                     "front_size": 2,
                     FRONT: [
-                        {"proposal_id": "p1", "action_type": "answer", "scores": {"safety": 1.0}, "content_len": 2, "content_hash": "abcd123456"},
-                        {"proposal_id": "p2", "action_type": "ask_clarification", "scores": {"safety": 0.8}, "content_len": 3, "content_hash": "efgh789012"},
+                        {
+                            "proposal_id": "p1",
+                            "action_type": "answer",
+                            "scores": {"safety": 1.0},
+                            "content_len": 2,
+                            "content_hash": "abcd123456",
+                        },
+                        {
+                            "proposal_id": "p2",
+                            "action_type": "ask_clarification",
+                            "scores": {"safety": 0.8},
+                            "content_len": 3,
+                            "content_hash": "efgh789012",
+                        },
                     ],
-                    WINNER: {"proposal_id": "p1", "action_type": "answer", "scores": {"safety": 1.0}},
-                    CONFLICTS: {"n": 0, "kinds": "", "suggested_forced_action": "", "top": []},
+                    WINNER: {
+                        "proposal_id": "p1",
+                        "action_type": "answer",
+                        "scores": {"safety": 1.0},
+                    },
+                    CONFLICTS: {
+                        "n": 0,
+                        "kinds": "",
+                        "suggested_forced_action": "",
+                        "top": [],
+                    },
                 }
             }
         },
@@ -95,7 +126,12 @@ def test_emit_pareto_debug_events_conflict_summary_content():
                     "front_size": 1,
                     FRONT: [],
                     WINNER: {},
-                    CONFLICTS: {"n": 2, "kinds": "action_divergence", "suggested_forced_action": "refuse", "top": [{"id": "c1"}]},
+                    CONFLICTS: {
+                        "n": 2,
+                        "kinds": "action_divergence",
+                        "suggested_forced_action": "refuse",
+                        "top": [{"id": "c1"}],
+                    },
                 }
             }
         },
@@ -104,7 +140,9 @@ def test_emit_pareto_debug_events_conflict_summary_content():
     tr = DummyTracer()
     emit_pareto_debug_events(tr, ctx, winner)
 
-    conflict_ev = next(e for e in tr.events if e.event_type == "ConflictSummaryComputed")
+    conflict_ev = next(
+        e for e in tr.events if e.event_type == "ConflictSummaryComputed"
+    )
     assert conflict_ev.payload.get("n") == 2
     assert conflict_ev.payload.get("kinds") == "action_divergence"
     assert conflict_ev.payload.get(MODE) == "warn"
@@ -126,7 +164,11 @@ def test_emit_pareto_debug_events_pareto_front_content():
                     FREEDOM_PRESSURE: "0.95",
                     WEIGHTS: {"safety": 0.55, "freedom": 0.00},
                     "front_size": 3,
-                    FRONT: [{"proposal_id": "p1"}, {"proposal_id": "p2"}, {"proposal_id": "p3"}],
+                    FRONT: [
+                        {"proposal_id": "p1"},
+                        {"proposal_id": "p2"},
+                        {"proposal_id": "p3"},
+                    ],
                     WINNER: {},
                     CONFLICTS: {},
                 }
@@ -160,7 +202,11 @@ def test_emit_pareto_debug_events_winner_selected_content():
                     WEIGHTS: {},
                     "front_size": 1,
                     FRONT: [],
-                    WINNER: {"proposal_id": "p1", "action_type": "answer", "content_hash": "abc1234567"},
+                    WINNER: {
+                        "proposal_id": "p1",
+                        "action_type": "answer",
+                        "content_hash": "abc1234567",
+                    },
                     CONFLICTS: {},
                 }
             }

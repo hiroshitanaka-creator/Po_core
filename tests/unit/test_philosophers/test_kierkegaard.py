@@ -20,7 +20,10 @@ class TestKierkegaardBasicFunctionality:
         """Test that Kierkegaard initializes correctly."""
         kierkegaard = Kierkegaard()
         assert kierkegaard.name == "Søren Kierkegaard"
-        assert "existentialist" in kierkegaard.description.lower() or "existence" in kierkegaard.description.lower()
+        assert (
+            "existentialist" in kierkegaard.description.lower()
+            or "existence" in kierkegaard.description.lower()
+        )
 
     def test_kierkegaard_repr(self):
         """Test string representation."""
@@ -84,12 +87,17 @@ class TestKierkegaardLifeStages:
         result = kierkegaard.reason("I seek pleasure and immediate enjoyment")
 
         life_stage = result["life_stage"]
-        assert "Aesthetic" in life_stage["stage"] or "aesthetic" in life_stage["description"].lower()
+        assert (
+            "Aesthetic" in life_stage["stage"]
+            or "aesthetic" in life_stage["description"].lower()
+        )
 
     def test_ethical_stage_detection(self):
         """Test detection of ethical stage."""
         kierkegaard = Kierkegaard()
-        result = kierkegaard.reason("I choose to commit to duty and moral responsibility")
+        result = kierkegaard.reason(
+            "I choose to commit to duty and moral responsibility"
+        )
 
         life_stage = result["life_stage"]
         assert "stage" in life_stage
@@ -119,10 +127,15 @@ class TestKierkegaardAnxiety:
     def test_anxiety_detection(self):
         """Test detection of anxiety."""
         kierkegaard = Kierkegaard()
-        result = kierkegaard.reason("I feel anxious about infinite possibilities and freedom")
+        result = kierkegaard.reason(
+            "I feel anxious about infinite possibilities and freedom"
+        )
 
         anxiety = result["anxiety"]
-        assert "anxiety" in anxiety["description"].lower() or "Anxiety" in anxiety["presence"]
+        assert (
+            "anxiety" in anxiety["description"].lower()
+            or "Anxiety" in anxiety["presence"]
+        )
 
 
 class TestKierkegaardDespair:
@@ -297,7 +310,11 @@ class TestKierkegaardReasoningText:
         result = kierkegaard.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Kierkegaard" in reasoning or "existence" in reasoning.lower() or "individual" in reasoning.lower()
+        assert (
+            "Kierkegaard" in reasoning
+            or "existence" in reasoning.lower()
+            or "individual" in reasoning.lower()
+        )
 
 
 class TestKierkegaardEdgeCases:

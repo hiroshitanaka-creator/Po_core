@@ -5,6 +5,7 @@ Po_core Database Layer
 SQLAlchemy-based database layer for Po_trace
 Supports SQLite (default) and PostgreSQL
 """
+
 from __future__ import annotations
 
 import json
@@ -23,7 +24,8 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker, Session as DBSession
+from sqlalchemy.orm import Session as DBSession
+from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 
@@ -41,8 +43,12 @@ class SessionModel(Base):
     meta_data = Column(JSON, default=dict)
 
     # Relationships
-    events = relationship("EventModel", back_populates="session", cascade="all, delete-orphan")
-    metrics = relationship("MetricModel", back_populates="session", cascade="all, delete-orphan")
+    events = relationship(
+        "EventModel", back_populates="session", cascade="all, delete-orphan"
+    )
+    metrics = relationship(
+        "MetricModel", back_populates="session", cascade="all, delete-orphan"
+    )
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary format."""
@@ -64,7 +70,9 @@ class EventModel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     event_id = Column(String(36), unique=True, nullable=False, index=True)
-    session_id = Column(String(36), ForeignKey("sessions.session_id"), nullable=False, index=True)
+    session_id = Column(
+        String(36), ForeignKey("sessions.session_id"), nullable=False, index=True
+    )
     timestamp = Column(DateTime, nullable=False, default=datetime.utcnow)
     event_type = Column(String(50), nullable=False, index=True)
     source = Column(String(100), nullable=False)
@@ -93,7 +101,9 @@ class MetricModel(Base):
     __tablename__ = "metrics"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    session_id = Column(String(36), ForeignKey("sessions.session_id"), nullable=False, index=True)
+    session_id = Column(
+        String(36), ForeignKey("sessions.session_id"), nullable=False, index=True
+    )
     key = Column(String(100), nullable=False)
     value = Column(Float, nullable=False)
 
@@ -240,7 +250,9 @@ class DatabaseManager:
                 _ = session.metrics  # Trigger lazy load
             return session
 
-    def list_sessions(self, limit: Optional[int] = None, offset: int = 0) -> List[Dict[str, Any]]:
+    def list_sessions(
+        self, limit: Optional[int] = None, offset: int = 0
+    ) -> List[Dict[str, Any]]:
         """
         List all sessions.
 

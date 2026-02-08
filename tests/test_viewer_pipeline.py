@@ -8,6 +8,7 @@ Tests for:
 - Tensor view (metric display)
 - Integration with live pipeline events
 """
+
 from __future__ import annotations
 
 import uuid
@@ -18,7 +19,6 @@ pytestmark = pytest.mark.pipeline
 
 from po_core.domain.context import Context
 from po_core.domain.trace_event import TraceEvent
-
 
 # ── Helpers ──
 
@@ -32,29 +32,93 @@ def _make_events() -> list[TraceEvent]:
     rid = "test-req-123"
     return [
         TraceEvent.now("MemorySnapshotted", rid, {"items": 0}),
-        TraceEvent.now("TensorComputed", rid, {
-            "metrics": ["freedom_pressure", "semantic_delta", "blocked_tensor", "interaction_tensor"],
-            "version": "v1",
-        }),
+        TraceEvent.now(
+            "TensorComputed",
+            rid,
+            {
+                "metrics": [
+                    "freedom_pressure",
+                    "semantic_delta",
+                    "blocked_tensor",
+                    "interaction_tensor",
+                ],
+                "version": "v1",
+            },
+        ),
         TraceEvent.now("IntentGenerated", rid, {"goals": ["understand"]}),
-        TraceEvent.now("SafetyJudged:Intention", rid, {"decision": "allow", "rule_ids": []}),
-        TraceEvent.now("PhilosophersSelected", rid, {
-            "mode": "NORMAL", "n": 5, "cost_total": 25, "covered_tags": ["ethics"],
-            "ids": ["aristotle", "kant", "confucius", "nietzsche", "wittgenstein"],
-            "workers": 4,
-        }),
-        TraceEvent.now("PhilosopherResult", rid, {"name": "aristotle", "n": 1, "timed_out": False, "error": "", "latency_ms": 10}),
-        TraceEvent.now("PhilosopherResult", rid, {"name": "kant", "n": 1, "timed_out": False, "error": "", "latency_ms": 12}),
-        TraceEvent.now("PhilosopherResult", rid, {"name": "confucius", "n": 1, "timed_out": False, "error": "", "latency_ms": 8}),
-        TraceEvent.now("PolicyPrecheckSummary", rid, {"allow": 3, "revise": 0, "reject": 0}),
-        TraceEvent.now("AggregateCompleted", rid, {"proposal_id": "test-prop-1", "action_type": "answer"}),
-        TraceEvent.now("DecisionEmitted", rid, {
-            "variant": "main", "stage": "action", "origin": "pareto",
-            "degraded": False,
-            "final": {"proposal_id": "test-prop-1", "action_type": "answer", "content_len": 100, "content_hash": "abc"},
-            "candidate": {"proposal_id": "test-prop-1", "action_type": "answer", "content_len": 100, "content_hash": "abc"},
-            "gate": {"decision": "allow", "rule_ids": []},
-        }),
+        TraceEvent.now(
+            "SafetyJudged:Intention", rid, {"decision": "allow", "rule_ids": []}
+        ),
+        TraceEvent.now(
+            "PhilosophersSelected",
+            rid,
+            {
+                "mode": "NORMAL",
+                "n": 5,
+                "cost_total": 25,
+                "covered_tags": ["ethics"],
+                "ids": ["aristotle", "kant", "confucius", "nietzsche", "wittgenstein"],
+                "workers": 4,
+            },
+        ),
+        TraceEvent.now(
+            "PhilosopherResult",
+            rid,
+            {
+                "name": "aristotle",
+                "n": 1,
+                "timed_out": False,
+                "error": "",
+                "latency_ms": 10,
+            },
+        ),
+        TraceEvent.now(
+            "PhilosopherResult",
+            rid,
+            {"name": "kant", "n": 1, "timed_out": False, "error": "", "latency_ms": 12},
+        ),
+        TraceEvent.now(
+            "PhilosopherResult",
+            rid,
+            {
+                "name": "confucius",
+                "n": 1,
+                "timed_out": False,
+                "error": "",
+                "latency_ms": 8,
+            },
+        ),
+        TraceEvent.now(
+            "PolicyPrecheckSummary", rid, {"allow": 3, "revise": 0, "reject": 0}
+        ),
+        TraceEvent.now(
+            "AggregateCompleted",
+            rid,
+            {"proposal_id": "test-prop-1", "action_type": "answer"},
+        ),
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "variant": "main",
+                "stage": "action",
+                "origin": "pareto",
+                "degraded": False,
+                "final": {
+                    "proposal_id": "test-prop-1",
+                    "action_type": "answer",
+                    "content_len": 100,
+                    "content_hash": "abc",
+                },
+                "candidate": {
+                    "proposal_id": "test-prop-1",
+                    "action_type": "answer",
+                    "content_len": 100,
+                    "content_hash": "abc",
+                },
+                "gate": {"decision": "allow", "rule_ids": []},
+            },
+        ),
     ]
 
 
@@ -128,7 +192,11 @@ class TestPipelineView:
             TraceEvent.now("MemorySnapshotted", "r1", {"items": 0}),
             TraceEvent.now("TensorComputed", "r1", {"metrics": [], "version": "v1"}),
             TraceEvent.now("IntentGenerated", "r1", {}),
-            TraceEvent.now("SafetyJudged:Intention", "r1", {"decision": "reject", "rule_ids": ["W0"]}),
+            TraceEvent.now(
+                "SafetyJudged:Intention",
+                "r1",
+                {"decision": "reject", "rule_ids": ["W0"]},
+            ),
         ]
         md = render_pipeline_markdown(events)
         assert "blocked" in md
@@ -138,12 +206,19 @@ class TestPipelineView:
 
         events = _make_events()
         # Replace last DecisionEmitted with degraded one
-        events[-1] = TraceEvent.now("DecisionEmitted", "test-req-123", {
-            "variant": "main", "stage": "action", "origin": "pareto_fallback",
-            "degraded": True,
-            "final": {"proposal_id": "fb-1"}, "candidate": {"proposal_id": "orig-1"},
-            "gate": {"decision": "revise"},
-        })
+        events[-1] = TraceEvent.now(
+            "DecisionEmitted",
+            "test-req-123",
+            {
+                "variant": "main",
+                "stage": "action",
+                "origin": "pareto_fallback",
+                "degraded": True,
+                "final": {"proposal_id": "fb-1"},
+                "candidate": {"proposal_id": "orig-1"},
+                "gate": {"decision": "revise"},
+            },
+        )
         md = render_pipeline_markdown(events)
         assert "degraded" in md
 
@@ -194,12 +269,16 @@ class TestTensorView:
         from po_core.viewer.tensor_view import extract_tensor_values
 
         events = [
-            TraceEvent.now("TensorComputed", "r1", {
-                "metrics": ["freedom_pressure", "semantic_delta"],
-                "version": "v1",
-                "freedom_pressure": 0.15,
-                "semantic_delta": 0.72,
-            }),
+            TraceEvent.now(
+                "TensorComputed",
+                "r1",
+                {
+                    "metrics": ["freedom_pressure", "semantic_delta"],
+                    "version": "v1",
+                    "freedom_pressure": 0.15,
+                    "semantic_delta": 0.72,
+                },
+            ),
         ]
         vals = extract_tensor_values(events)
         assert vals["freedom_pressure"] == 0.15
@@ -258,7 +337,11 @@ class TestPoViewer:
         from po_core.po_viewer import PoViewer
 
         events = [
-            TraceEvent.now("SafetyJudged:Intention", "r1", {"decision": "reject", "rule_ids": ["W0"]}),
+            TraceEvent.now(
+                "SafetyJudged:Intention",
+                "r1",
+                {"decision": "reject", "rule_ids": ["W0"]},
+            ),
         ]
         viewer = PoViewer(events)
         assert "blocked" in viewer.summary()

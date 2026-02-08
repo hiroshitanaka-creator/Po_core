@@ -6,6 +6,7 @@ Tests for the migrated PoSelf that uses the hexagonal run_turn pipeline
 internally. Validates the PoSelfResponse interface, trace integration,
 safety behavior, and backward compatibility.
 """
+
 from __future__ import annotations
 
 import json
@@ -16,7 +17,6 @@ import pytest
 pytestmark = pytest.mark.pipeline
 
 from po_core.po_self import PhilosophicalEnsemble, PoSelf, PoSelfResponse
-
 
 # ══════════════════════════════════════════════════════════════════════════
 # 1. Basic Functionality
@@ -313,10 +313,12 @@ class TestPublicAPIExport:
 
     def test_run_importable(self):
         from po_core import run
+
         assert callable(run)
 
     def test_run_returns_dict(self):
         from po_core import run
+
         result = run(user_input="What is justice?")
         assert isinstance(result, dict)
         assert "status" in result
@@ -324,6 +326,7 @@ class TestPublicAPIExport:
 
     def test_run_status_ok_for_normal_input(self):
         from po_core import run
+
         result = run(user_input="What is the meaning of life?")
         assert result["status"] == "ok"
         assert "proposal" in result

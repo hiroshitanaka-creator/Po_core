@@ -10,6 +10,7 @@ Higher value = more novel/divergent input relative to history.
 
 Uses token overlap analysis between user input and memory items.
 """
+
 from __future__ import annotations
 
 from typing import List, Set, Tuple

@@ -45,10 +45,12 @@ class Arendt(Philosopher):
     def __init__(self):
         super().__init__(
             name="Hannah Arendt",
-            description="Political philosopher analyzing action, natality, plurality, and the human condition in the public sphere"
+            description="Political philosopher analyzing action, natality, plurality, and the human condition in the public sphere",
         )
 
-    def reason(self, text: str, context: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    def reason(
+        self, text: str, context: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         Analyze text through Arendtian political philosophy.
 
@@ -79,12 +81,18 @@ class Arendt(Philosopher):
                 "evil_analysis": evil_analysis,
                 "totalitarian_elements": totalitarian,
                 "political_judgment": judgment,
-                "freedom": freedom
+                "freedom": freedom,
             },
             "summary": self._generate_summary(
-                vita_activa, natality, public_private, plurality,
-                evil_analysis, totalitarian, judgment, freedom
-            )
+                vita_activa,
+                natality,
+                public_private,
+                plurality,
+                evil_analysis,
+                totalitarian,
+                judgment,
+                freedom,
+            ),
         }
 
     def _analyze_vita_activa(self, text: str) -> Dict[str, Any]:
@@ -99,23 +107,59 @@ class Arendt(Philosopher):
 
         # Labor indicators - biological necessity, repetition, consumption
         labor_words = [
-            "labor", "work", "necessity", "biological", "survival",
-            "consumption", "eat", "sleep", "maintain", "routine",
-            "repetitive", "cycle", "metabolic", "body", "need"
+            "labor",
+            "work",
+            "necessity",
+            "biological",
+            "survival",
+            "consumption",
+            "eat",
+            "sleep",
+            "maintain",
+            "routine",
+            "repetitive",
+            "cycle",
+            "metabolic",
+            "body",
+            "need",
         ]
 
         # Work indicators - fabrication, durability, object world
         work_words = [
-            "build", "create", "make", "fabricate", "produce",
-            "artifact", "tool", "craft", "construct", "design",
-            "permanent", "durable", "world", "object", "thing"
+            "build",
+            "create",
+            "make",
+            "fabricate",
+            "produce",
+            "artifact",
+            "tool",
+            "craft",
+            "construct",
+            "design",
+            "permanent",
+            "durable",
+            "world",
+            "object",
+            "thing",
         ]
 
         # Action indicators - political activity, beginning, appearing
         action_words = [
-            "act", "action", "political", "public", "together",
-            "begin", "start", "initiative", "speech", "appear",
-            "reveal", "show", "citizen", "community", "collective"
+            "act",
+            "action",
+            "political",
+            "public",
+            "together",
+            "begin",
+            "start",
+            "initiative",
+            "speech",
+            "appear",
+            "reveal",
+            "show",
+            "citizen",
+            "community",
+            "collective",
         ]
 
         labor_score = sum(1 for word in labor_words if word in text_lower)
@@ -136,12 +180,16 @@ class Arendt(Philosopher):
             "scores": {
                 "labor": labor_score,
                 "work": work_score,
-                "action": action_score
+                "action": action_score,
             },
-            "interpretation": self._interpret_vita_activa(dominant, labor_score, work_score, action_score)
+            "interpretation": self._interpret_vita_activa(
+                dominant, labor_score, work_score, action_score
+            ),
         }
 
-    def _interpret_vita_activa(self, dominant: str, labor: int, work: int, action: int) -> str:
+    def _interpret_vita_activa(
+        self, dominant: str, labor: int, work: int, action: int
+    ) -> str:
         """Interpret the vita activa analysis."""
         if dominant == "action":
             return "Text emphasizes political action - the highest form of human activity, revealing who we are through speech and deeds in the public sphere."
@@ -161,9 +209,22 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         natality_words = [
-            "new", "begin", "beginning", "start", "birth", "born",
-            "initiative", "initiate", "novel", "create", "emerge",
-            "first", "original", "fresh", "innovation", "possibility"
+            "new",
+            "begin",
+            "beginning",
+            "start",
+            "birth",
+            "born",
+            "initiative",
+            "initiate",
+            "novel",
+            "create",
+            "emerge",
+            "first",
+            "original",
+            "fresh",
+            "innovation",
+            "possibility",
         ]
 
         has_natality = sum(1 for word in natality_words if word in text_lower)
@@ -173,7 +234,11 @@ class Arendt(Philosopher):
             "natality_present": natality_present,
             "new_beginning_capacity": natality_present,
             "score": has_natality,
-            "interpretation": "Text expresses natality - the capacity to begin something new, the miracle of action." if natality_present else "Text shows limited emphasis on new beginnings or natality."
+            "interpretation": (
+                "Text expresses natality - the capacity to begin something new, the miracle of action."
+                if natality_present
+                else "Text shows limited emphasis on new beginnings or natality."
+            ),
         }
 
     def _detect_public_private(self, text: str) -> Dict[str, Any]:
@@ -186,21 +251,49 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         public_words = [
-            "public", "political", "citizen", "community", "together",
-            "common", "shared", "collective", "society", "state",
-            "democracy", "republic", "civic", "assembly", "appearance"
+            "public",
+            "political",
+            "citizen",
+            "community",
+            "together",
+            "common",
+            "shared",
+            "collective",
+            "society",
+            "state",
+            "democracy",
+            "republic",
+            "civic",
+            "assembly",
+            "appearance",
         ]
 
         private_words = [
-            "private", "personal", "individual", "home", "family",
-            "household", "intimate", "secret", "property", "own",
-            "alone", "self", "inner", "domestic", "privacy"
+            "private",
+            "personal",
+            "individual",
+            "home",
+            "family",
+            "household",
+            "intimate",
+            "secret",
+            "property",
+            "own",
+            "alone",
+            "self",
+            "inner",
+            "domestic",
+            "privacy",
         ]
 
         public_score = sum(1 for word in public_words if word in text_lower)
         private_score = sum(1 for word in private_words if word in text_lower)
 
-        dominant_realm = "public" if public_score > private_score else "private" if private_score > public_score else "balanced"
+        dominant_realm = (
+            "public"
+            if public_score > private_score
+            else "private" if private_score > public_score else "balanced"
+        )
 
         return {
             "dominant_realm": dominant_realm,
@@ -208,7 +301,9 @@ class Arendt(Philosopher):
             "private_score": private_score,
             "public_present": public_score > 0,
             "private_present": private_score > 0,
-            "interpretation": self._interpret_realm(dominant_realm, public_score, private_score)
+            "interpretation": self._interpret_realm(
+                dominant_realm, public_score, private_score
+            ),
         }
 
     def _interpret_realm(self, dominant: str, public: int, private: int) -> str:
@@ -230,9 +325,21 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         plurality_words = [
-            "plural", "plurality", "diverse", "different", "distinct",
-            "together", "others", "multiple", "various", "many",
-            "unique", "individual", "collective", "community", "differences"
+            "plural",
+            "plurality",
+            "diverse",
+            "different",
+            "distinct",
+            "together",
+            "others",
+            "multiple",
+            "various",
+            "many",
+            "unique",
+            "individual",
+            "collective",
+            "community",
+            "differences",
         ]
 
         has_plurality = sum(1 for word in plurality_words if word in text_lower)
@@ -242,7 +349,11 @@ class Arendt(Philosopher):
             "plurality_present": plurality_present,
             "living_together": plurality_present,
             "score": has_plurality,
-            "interpretation": "Text acknowledges plurality - humans living together as distinct beings, the condition of political action." if plurality_present else "Text shows limited recognition of plurality and human distinctness."
+            "interpretation": (
+                "Text acknowledges plurality - humans living together as distinct beings, the condition of political action."
+                if plurality_present
+                else "Text shows limited recognition of plurality and human distinctness."
+            ),
         }
 
     def _analyze_evil(self, text: str) -> Dict[str, Any]:
@@ -256,9 +367,21 @@ class Arendt(Philosopher):
 
         evil_words = ["evil", "wrong", "immoral", "bad", "wicked", "harm"]
         banal_words = [
-            "banal", "ordinary", "routine", "bureaucratic", "thoughtless",
-            "unthinking", "normal", "everyday", "conventional", "system",
-            "procedure", "process", "duty", "orders", "obedience"
+            "banal",
+            "ordinary",
+            "routine",
+            "bureaucratic",
+            "thoughtless",
+            "unthinking",
+            "normal",
+            "everyday",
+            "conventional",
+            "system",
+            "procedure",
+            "process",
+            "duty",
+            "orders",
+            "obedience",
         ]
 
         has_evil = sum(1 for word in evil_words if word in text_lower)
@@ -270,7 +393,15 @@ class Arendt(Philosopher):
             "evil_present": has_evil > 0,
             "banality_of_evil": banality_of_evil,
             "thoughtlessness": has_banal >= 2,
-            "interpretation": "Text suggests the banality of evil - evil as thoughtless, ordinary behavior within systems." if banality_of_evil else "Evil as thoughtlessness not strongly present." if has_banal >= 2 else "Limited engagement with evil or its ordinary nature."
+            "interpretation": (
+                "Text suggests the banality of evil - evil as thoughtless, ordinary behavior within systems."
+                if banality_of_evil
+                else (
+                    "Evil as thoughtlessness not strongly present."
+                    if has_banal >= 2
+                    else "Limited engagement with evil or its ordinary nature."
+                )
+            ),
         }
 
     def _detect_totalitarian(self, text: str) -> Dict[str, Any]:
@@ -283,9 +414,21 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         totalitarian_words = [
-            "totalitarian", "total", "domination", "control", "terror",
-            "ideology", "propaganda", "dictator", "authoritarian", "tyranny",
-            "oppression", "surveillance", "conform", "uniform", "mass"
+            "totalitarian",
+            "total",
+            "domination",
+            "control",
+            "terror",
+            "ideology",
+            "propaganda",
+            "dictator",
+            "authoritarian",
+            "tyranny",
+            "oppression",
+            "surveillance",
+            "conform",
+            "uniform",
+            "mass",
         ]
 
         has_totalitarian = sum(1 for word in totalitarian_words if word in text_lower)
@@ -294,7 +437,11 @@ class Arendt(Philosopher):
         return {
             "totalitarian_elements": totalitarian_present,
             "score": has_totalitarian,
-            "interpretation": "Text shows totalitarian elements - domination through terror and ideology, destroying plurality." if totalitarian_present else "Limited totalitarian themes present."
+            "interpretation": (
+                "Text shows totalitarian elements - domination through terror and ideology, destroying plurality."
+                if totalitarian_present
+                else "Limited totalitarian themes present."
+            ),
         }
 
     def _assess_judgment(self, text: str) -> Dict[str, Any]:
@@ -307,9 +454,21 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         judgment_words = [
-            "judge", "judgment", "think", "thinking", "reflect",
-            "consider", "deliberate", "reason", "evaluate", "assess",
-            "understand", "comprehend", "examine", "question", "critical"
+            "judge",
+            "judgment",
+            "think",
+            "thinking",
+            "reflect",
+            "consider",
+            "deliberate",
+            "reason",
+            "evaluate",
+            "assess",
+            "understand",
+            "comprehend",
+            "examine",
+            "question",
+            "critical",
         ]
 
         has_judgment = sum(1 for word in judgment_words if word in text_lower)
@@ -319,7 +478,11 @@ class Arendt(Philosopher):
             "judgment_present": judgment_present,
             "thinking": judgment_present,
             "score": has_judgment,
-            "interpretation": "Text engages political judgment - thinking what we are doing, reflecting on action." if judgment_present else "Limited engagement with judgment or reflective thinking."
+            "interpretation": (
+                "Text engages political judgment - thinking what we are doing, reflecting on action."
+                if judgment_present
+                else "Limited engagement with judgment or reflective thinking."
+            ),
         }
 
     def _evaluate_freedom(self, text: str) -> Dict[str, Any]:
@@ -332,13 +495,28 @@ class Arendt(Philosopher):
         text_lower = text.lower()
 
         freedom_words = [
-            "freedom", "free", "liberty", "liberate", "autonomous",
-            "independence", "self-govern", "choice", "spontaneous", "act"
+            "freedom",
+            "free",
+            "liberty",
+            "liberate",
+            "autonomous",
+            "independence",
+            "self-govern",
+            "choice",
+            "spontaneous",
+            "act",
         ]
 
         political_words = [
-            "political", "public", "action", "together", "citizen",
-            "community", "collective", "participate", "engage"
+            "political",
+            "public",
+            "action",
+            "together",
+            "citizen",
+            "community",
+            "collective",
+            "participate",
+            "engage",
         ]
 
         has_freedom = sum(1 for word in freedom_words if word in text_lower)
@@ -351,7 +529,15 @@ class Arendt(Philosopher):
             "political_freedom": political_freedom,
             "freedom_score": has_freedom,
             "political_score": has_political,
-            "interpretation": "Text expresses political freedom - freedom realized through action in the public sphere." if political_freedom else "Freedom without strong political dimension." if has_freedom > 0 else "Limited engagement with freedom."
+            "interpretation": (
+                "Text expresses political freedom - freedom realized through action in the public sphere."
+                if political_freedom
+                else (
+                    "Freedom without strong political dimension."
+                    if has_freedom > 0
+                    else "Limited engagement with freedom."
+                )
+            ),
         }
 
     def _generate_summary(
@@ -363,32 +549,44 @@ class Arendt(Philosopher):
         evil_analysis: Dict[str, Any],
         totalitarian: Dict[str, Any],
         judgment: Dict[str, Any],
-        freedom: Dict[str, Any]
+        freedom: Dict[str, Any],
     ) -> str:
         """Generate an Arendtian summary of the analysis."""
         parts = []
 
-        parts.append(f"The text emphasizes {vita_activa['dominant_mode']} within the vita activa.")
+        parts.append(
+            f"The text emphasizes {vita_activa['dominant_mode']} within the vita activa."
+        )
 
         if natality["natality_present"]:
-            parts.append("It expresses natality - the human capacity for new beginnings.")
+            parts.append(
+                "It expresses natality - the human capacity for new beginnings."
+            )
 
         if public_private["dominant_realm"] != "balanced":
             parts.append(f"The {public_private['dominant_realm']} realm dominates.")
 
         if plurality["plurality_present"]:
-            parts.append("It acknowledges human plurality - living together as distinct beings.")
+            parts.append(
+                "It acknowledges human plurality - living together as distinct beings."
+            )
 
         if evil_analysis["banality_of_evil"]:
-            parts.append("It suggests the banality of evil - thoughtless, ordinary wrongdoing.")
+            parts.append(
+                "It suggests the banality of evil - thoughtless, ordinary wrongdoing."
+            )
 
         if totalitarian["totalitarian_elements"]:
-            parts.append("Totalitarian elements present - domination destroying plurality.")
+            parts.append(
+                "Totalitarian elements present - domination destroying plurality."
+            )
 
         if judgment["judgment_present"]:
             parts.append("It engages political judgment - thinking what we are doing.")
 
         if freedom["political_freedom"]:
-            parts.append("It expresses political freedom - freedom through action in the public sphere.")
+            parts.append(
+                "It expresses political freedom - freedom through action in the public sphere."
+            )
 
         return " ".join(parts)

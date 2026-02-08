@@ -26,9 +26,9 @@ from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.decision_report_md import render_markdown
 from po_core.viewer.pipeline_view import render_pipeline_markdown, render_pipeline_text
 from po_core.viewer.tensor_view import (
+    extract_tensor_values,
     render_tensor_markdown,
     render_tensor_text,
-    extract_tensor_values,
 )
 
 

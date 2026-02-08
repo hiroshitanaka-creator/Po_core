@@ -26,19 +26,27 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
 
+from po_core.aggregator.conflict_resolver import analyze_conflicts
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
+from po_core.domain.keys import (
+    AUTHOR_RELIABILITY,
+    CONFLICTS,
+    FREEDOM_PRESSURE,
+    FRONT,
+    MODE,
+    PARETO_DEBUG,
+    PO_CORE,
+    POLICY,
+    TRACEQ,
+    WEIGHTS,
+    WINNER,
+)
+from po_core.domain.pareto_config import ParetoConfig, ParetoWeights
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.domain.keys import (
-    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR_RELIABILITY,
-    PARETO_DEBUG, FRONT, WEIGHTS, WINNER, CONFLICTS, MODE,
-)
-from po_core.domain.pareto_config import ParetoConfig, ParetoWeights
 from po_core.ports.aggregator import AggregatorPort
-
-from po_core.aggregator.conflict_resolver import analyze_conflicts
 
 
 def _clamp01(x: float) -> float:
@@ -225,7 +233,9 @@ def _compute_objectives(
     # explain = rationale × author_reliability (weights from config)
     rationale = _explain_score(p)
     rel = _author_rel(p)
-    explain = _clamp01(explain_rationale_weight * rationale + explain_author_rel_weight * rel)
+    explain = _clamp01(
+        explain_rationale_weight * rationale + explain_author_rel_weight * rel
+    )
 
     # brevity (max_len from config)
     brevity = _brevity_score(p, max_len=brevity_max_len)
@@ -279,10 +289,28 @@ def pareto_front(vs: Sequence[ObjectiveVec]) -> List[int]:
 def _weights_for_mode(mode: SafetyMode) -> Mapping[str, float]:
     """Weights for weighted-sum selection from Pareto front."""
     if mode == SafetyMode.CRITICAL:
-        return {"safety": 0.55, "freedom": 0.00, "explain": 0.20, "brevity": 0.15, "coherence": 0.30}
+        return {
+            "safety": 0.55,
+            "freedom": 0.00,
+            "explain": 0.20,
+            "brevity": 0.15,
+            "coherence": 0.30,
+        }
     if mode in (SafetyMode.WARN, SafetyMode.UNKNOWN):
-        return {"safety": 0.40, "freedom": 0.10, "explain": 0.20, "brevity": 0.15, "coherence": 0.25}
-    return {"safety": 0.25, "freedom": 0.30, "explain": 0.20, "brevity": 0.10, "coherence": 0.15}
+        return {
+            "safety": 0.40,
+            "freedom": 0.10,
+            "explain": 0.20,
+            "brevity": 0.15,
+            "coherence": 0.25,
+        }
+    return {
+        "safety": 0.25,
+        "freedom": 0.30,
+        "explain": 0.20,
+        "brevity": 0.10,
+        "coherence": 0.15,
+    }
 
 
 def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
@@ -307,7 +335,9 @@ class ParetoAggregator(AggregatorPort):
         """Get weights for mode from injected config."""
         w = self.config.weights_by_mode.get(mode)
         if w is None:
-            w = self.config.weights_by_mode.get(SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25))
+            w = self.config.weights_by_mode.get(
+                SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25)
+            )
         return w.to_dict()
 
     def aggregate(
@@ -340,12 +370,17 @@ class ParetoAggregator(AggregatorPort):
         for p in proposals:
             pen = float(penalties.get(p.proposal_id, 0.0))
             consensus = cons.get(p.proposal_id, 0.5)
-            vecs.append(_compute_objectives(
-                p, tensors, pen, consensus,
-                brevity_max_len=tuning.brevity_max_len,
-                explain_rationale_weight=tuning.explain_rationale_weight,
-                explain_author_rel_weight=tuning.explain_author_rel_weight,
-            ))
+            vecs.append(
+                _compute_objectives(
+                    p,
+                    tensors,
+                    pen,
+                    consensus,
+                    brevity_max_len=tuning.brevity_max_len,
+                    explain_rationale_weight=tuning.explain_rationale_weight,
+                    explain_author_rel_weight=tuning.explain_author_rel_weight,
+                )
+            )
 
         # 4) Pareto front
         front_idx = pareto_front(vecs)
@@ -355,7 +390,12 @@ class ParetoAggregator(AggregatorPort):
         # 5) Select best from front using weighted score
         def key(i: int) -> Tuple[float, float, float, str]:
             v = vecs[i]
-            return (_weighted_score(v, w), v.safety, v.coherence, proposals[i].proposal_id)
+            return (
+                _weighted_score(v, w),
+                v.safety,
+                v.coherence,
+                proposals[i].proposal_id,
+            )
 
         best_i = max(front_idx, key=key)
         best = proposals[best_i]
@@ -370,13 +410,15 @@ class ParetoAggregator(AggregatorPort):
         for i in front_idx[:front_limit]:
             p = proposals[i]
             v = vecs[i]
-            front_rows.append({
-                "proposal_id": p.proposal_id,
-                "action_type": p.action_type,
-                "scores": v.to_dict(),
-                "content_len": len(p.content or ""),
-                "content_hash": _hash10(p.content or ""),
-            })
+            front_rows.append(
+                {
+                    "proposal_id": p.proposal_id,
+                    "action_type": p.action_type,
+                    "scores": v.to_dict(),
+                    "content_len": len(p.content or ""),
+                    "content_hash": _hash10(p.content or ""),
+                }
+            )
 
         winner_payload = {
             "proposal_id": best.proposal_id,

@@ -3,13 +3,15 @@ Tests for Po_trace Database Backend
 
 Comprehensive tests for the database-enabled Po_trace system.
 """
-import json
-import pytest
-import tempfile
-import os
 
-from po_core.po_trace_db import PoTraceDB
+import json
+import os
+import tempfile
+
+import pytest
+
 from po_core.po_trace import EventType
+from po_core.po_trace_db import PoTraceDB
 
 
 class TestPoTraceDBBasicFunctionality:

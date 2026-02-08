@@ -9,6 +9,7 @@ from typing import Optional
 
 try:
     import anthropic
+
     HAS_ANTHROPIC = True
 except ImportError:
     HAS_ANTHROPIC = False
@@ -76,9 +77,7 @@ class PoClaudeClient:
             model=self.model,
             max_tokens=self.max_tokens,
             system=system,
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
+            messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
         )
 
@@ -151,24 +150,28 @@ def main():
 
     parser = argparse.ArgumentParser(description="Run Po_core tests with Claude")
     parser.add_argument(
-        "--question", "-q",
+        "--question",
+        "-q",
         type=str,
         help="Single question to test",
     )
     parser.add_argument(
-        "--mode", "-m",
+        "--mode",
+        "-m",
         type=str,
         default="off",
         choices=["off", "weak", "medium", "strong", "placeboA", "placeboB"],
         help="Constraint mode",
     )
     parser.add_argument(
-        "--full-suite", "-f",
+        "--full-suite",
+        "-f",
         action="store_true",
         help="Run full test suite",
     )
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         type=str,
         help="Output file for results (JSON)",
     )
@@ -187,6 +190,7 @@ def main():
 
     if args.demo:
         from po_core.po_test_runner import demo_test
+
         demo_test()
         return
 
@@ -210,11 +214,16 @@ def main():
 
         if args.output:
             with open(args.output, "w", encoding="utf-8") as f:
-                json.dump({
-                    "question": args.question,
-                    "mode": args.mode,
-                    "response": response,
-                }, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {
+                        "question": args.question,
+                        "mode": args.mode,
+                        "response": response,
+                    },
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
     else:
         parser.print_help()
 

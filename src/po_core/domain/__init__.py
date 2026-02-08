@@ -38,7 +38,6 @@ from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.trace_event import TraceEvent
 
-
 __all__ = [
     # Context
     "Context",

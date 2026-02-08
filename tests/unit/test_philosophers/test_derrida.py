@@ -121,7 +121,11 @@ class TestDerridaTraces:
         traces = result["traces"]
         # Traces are detected for negation or absence-related words
         assert len(traces) > 0
-        assert any("negation" in t.get("type", "").lower() or "trace" in t.get("type", "").lower() for t in traces)
+        assert any(
+            "negation" in t.get("type", "").lower()
+            or "trace" in t.get("type", "").lower()
+            for t in traces
+        )
 
 
 class TestDerridaDifferance:
@@ -194,7 +198,11 @@ class TestDerridaExclusion:
         result = derrida.reason("What is the meaning of life?")
 
         excluded = result["what_is_excluded"]
-        assert any("nonsense" in e.get("term", "").lower() or "ambiguity" in e.get("term", "").lower() for e in excluded)
+        assert any(
+            "nonsense" in e.get("term", "").lower()
+            or "ambiguity" in e.get("term", "").lower()
+            for e in excluded
+        )
 
 
 class TestDerridaReasoning:
@@ -215,7 +223,9 @@ class TestDerridaReasoning:
         result = derrida.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "deconstruction" in reasoning.lower() or "différance" in reasoning.lower()
+        assert (
+            "deconstruction" in reasoning.lower() or "différance" in reasoning.lower()
+        )
 
 
 class TestDerridaEdgeCases:

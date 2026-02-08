@@ -1,12 +1,13 @@
 """
 Tests for database layer (database.py)
 """
+
 import tempfile
 from pathlib import Path
 
 import pytest
 
-from po_core.database import DatabaseManager, SessionModel, EventModel, MetricModel
+from po_core.database import DatabaseManager, EventModel, MetricModel, SessionModel
 
 
 class TestDatabaseManager:
@@ -282,8 +283,8 @@ class TestPoTraceDB:
 
     def test_log_event(self):
         """Test logging an event."""
-        from po_core.po_trace_db import PoTraceDB
         from po_core.po_trace import EventType
+        from po_core.po_trace_db import PoTraceDB
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"

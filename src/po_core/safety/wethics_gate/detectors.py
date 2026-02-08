@@ -27,6 +27,7 @@ Usage:
 
     violations = aggregate_evidence_to_violations(evidence)
 """
+
 from __future__ import annotations
 
 import re
@@ -140,8 +141,8 @@ def aggregate_evidence_to_violations(evs: Sequence[Evidence]) -> List[Violation]
         sev = 1.0
         conf = 1.0
         for it in items:
-            sev *= (1.0 - _clamp01(it.strength))
-            conf *= (1.0 - _clamp01(it.confidence))
+            sev *= 1.0 - _clamp01(it.strength)
+            conf *= 1.0 - _clamp01(it.confidence)
         severity = 1.0 - sev
         confidence = 1.0 - conf
 
@@ -167,18 +168,18 @@ def aggregate_evidence_to_violations(evs: Sequence[Evidence]) -> List[Violation]
                 "支配/捕獲/排除が目的化している場合は不許可（REJECT）"
             )
         elif code == "W0":
-            suggested_repairs.append(
-                "不可逆的な生存構造の破壊は不許可（REJECT）"
-            )
+            suggested_repairs.append("不可逆的な生存構造の破壊は不許可（REJECT）")
 
-        violations.append(Violation(
-            code=code,
-            severity=_clamp01(severity),
-            confidence=_clamp01(confidence),
-            repairable=repairable,
-            evidence=list(items),
-            suggested_repairs=suggested_repairs,
-        ))
+        violations.append(
+            Violation(
+                code=code,
+                severity=_clamp01(severity),
+                confidence=_clamp01(confidence),
+                repairable=repairable,
+                evidence=list(items),
+                suggested_repairs=suggested_repairs,
+            )
+        )
 
     # Stable order: W0..W4
     order = {"W0": 0, "W1": 1, "W2": 2, "W3": 3, "W4": 4}
@@ -189,6 +190,7 @@ def aggregate_evidence_to_violations(evs: Sequence[Evidence]) -> List[Violation]
 @dataclass
 class KeywordRule:
     """A keyword-based detection rule."""
+
     code: str
     pattern: re.Pattern
     strength: float
@@ -220,76 +222,85 @@ class KeywordViolationDetector(ViolationDetector):
             KeywordRule(
                 "W1",
                 re.compile(r"(市場|業界|プラットフォーム).*(支配|独占|掌握)"),
-                0.9, 0.9,
-                "支配/独占の意図を明示"
+                0.9,
+                0.9,
+                "支配/独占の意図を明示",
             ),
             KeywordRule(
                 "W1",
                 re.compile(r"(競合|他社).*(排除|潰す|叩き潰す)"),
-                0.8, 0.8,
-                "競合排除の意図を明示"
+                0.8,
+                0.8,
+                "競合排除の意図を明示",
             ),
             KeywordRule(
                 "W1",
                 re.compile(r"(独裁|強制|搾取).*(利益|私益)"),
-                0.95, 0.85,
-                "独裁的私益による捕獲の兆候"
+                0.95,
+                0.85,
+                "独裁的私益による捕獲の兆候",
             ),
-
             # W0: Irreversible viability harm (explicit)
             KeywordRule(
                 "W0",
                 re.compile(r"(不可逆|取り返しがつかない|回復不能).*(破壊|損傷)"),
-                0.95, 0.8,
-                "不可逆損傷の明示"
+                0.95,
+                0.8,
+                "不可逆損傷の明示",
             ),
             KeywordRule(
                 "W0",
                 re.compile(r"(生態系|生命|未来世代|インフラ).*(破壊|焼き尽くす|壊す)"),
-                0.95, 0.75,
-                "生存構造への破壊の兆候"
+                0.95,
+                0.75,
+                "生存構造への破壊の兆候",
             ),
-
             # W4: Structural exclusion
             KeywordRule(
                 "W4",
-                re.compile(r"(既存|古い).*(ユーザー|利用者).*(切り捨て|切り捨てる|見捨てる)"),
-                0.6, 0.8,
-                "既存ユーザー切り捨て"
+                re.compile(
+                    r"(既存|古い).*(ユーザー|利用者).*(切り捨て|切り捨てる|見捨てる)"
+                ),
+                0.6,
+                0.8,
+                "既存ユーザー切り捨て",
             ),
             KeywordRule(
                 "W4",
                 re.compile(r"(障害者|高齢者|低スペック).*(無視|対象外|切り捨て)"),
-                0.7, 0.8,
-                "アクセシビリティ/包摂の欠如"
+                0.7,
+                0.8,
+                "アクセシビリティ/包摂の欠如",
             ),
-
             # W3: Dependency engineering / lock-in
             KeywordRule(
                 "W3",
                 re.compile(r"(ロックイン|囲い込み|乗り換え不可|逃げ道がない)"),
-                0.7, 0.85,
-                "ロックイン/逃げ道なし"
+                0.7,
+                0.85,
+                "ロックイン/逃げ道なし",
             ),
             KeywordRule(
                 "W3",
                 re.compile(r"(依存|中毒).*(させる|誘う)"),
-                0.8, 0.7,
-                "依存誘発の意図"
+                0.8,
+                0.7,
+                "依存誘発の意図",
             ),
-
             # W2: Dignity / manipulation
             KeywordRule(
                 "W2",
                 re.compile(r"(操作|洗脳|誘導).*(ユーザー|利用者)"),
-                0.7, 0.7,
-                "同意なき操作/誘導の兆候"
+                0.7,
+                0.7,
+                "同意なき操作/誘導の兆候",
             ),
             KeywordRule(
                 "W2",
                 re.compile(r"(弱者|愚者).*(排除|搾取|利用)"),
-                0.85, 0.75,
-                "弱者の道具化の兆候"
+                0.85,
+                0.75,
+                "弱者の道具化の兆候",
             ),
         ]
 
@@ -306,18 +317,20 @@ class KeywordViolationDetector(ViolationDetector):
                 continue
 
             span = (m.start(), m.end())
-            snippet = txt[span[0]:span[1]]
+            snippet = txt[span[0] : span[1]]
             msg = f"{rule.message}: '{snippet}'"
 
-            evs.append(Evidence(
-                code=rule.code,
-                message=msg,
-                strength=rule.strength,
-                confidence=rule.confidence,
-                detector_id=self.detector_id,
-                span=span,
-                tags=["keyword"],
-            ))
+            evs.append(
+                Evidence(
+                    code=rule.code,
+                    message=msg,
+                    strength=rule.strength,
+                    confidence=rule.confidence,
+                    detector_id=self.detector_id,
+                    span=span,
+                    tags=["keyword"],
+                )
+            )
 
         return evs
 
@@ -337,77 +350,96 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             # W1: Domination / Capture
             KeywordRule(
                 "W1",
-                re.compile(r"(dominate|subjugate|control)\s+(market|users|competitors)", re.I),
-                0.85, 0.85,
-                "Domination/subjugation intent"
+                re.compile(
+                    r"(dominate|subjugate|control)\s+(market|users|competitors)", re.I
+                ),
+                0.85,
+                0.85,
+                "Domination/subjugation intent",
             ),
             KeywordRule(
                 "W1",
-                re.compile(r"(eliminate|crush|destroy)\s+(competitors?|competition)", re.I),
-                0.8, 0.8,
-                "Competitor elimination intent"
+                re.compile(
+                    r"(eliminate|crush|destroy)\s+(competitors?|competition)", re.I
+                ),
+                0.8,
+                0.8,
+                "Competitor elimination intent",
             ),
             KeywordRule(
                 "W1",
                 re.compile(r"(absolute|total)\s+(power|control|authority)", re.I),
-                0.9, 0.8,
-                "Absolute power/control intent"
+                0.9,
+                0.8,
+                "Absolute power/control intent",
             ),
-
             # W0: Irreversible viability harm
             KeywordRule(
                 "W0",
-                re.compile(r"(irreversible|permanent)\s+(destruction|harm|damage)", re.I),
-                0.95, 0.8,
-                "Irreversible harm indication"
+                re.compile(
+                    r"(irreversible|permanent)\s+(destruction|harm|damage)", re.I
+                ),
+                0.95,
+                0.8,
+                "Irreversible harm indication",
             ),
             KeywordRule(
                 "W0",
                 re.compile(r"(annihilate|extinction|eradicate)", re.I),
-                0.9, 0.75,
-                "Extinction-level harm indication"
+                0.9,
+                0.75,
+                "Extinction-level harm indication",
             ),
-
             # W4: Structural exclusion
             KeywordRule(
                 "W4",
-                re.compile(r"(abandon|discard|cut off)\s+(existing|legacy)\s+users?", re.I),
-                0.6, 0.8,
-                "Existing user abandonment"
+                re.compile(
+                    r"(abandon|discard|cut off)\s+(existing|legacy)\s+users?", re.I
+                ),
+                0.6,
+                0.8,
+                "Existing user abandonment",
             ),
             KeywordRule(
                 "W4",
-                re.compile(r"(ignore|exclude)\s+(accessibility|disabled|elderly)", re.I),
-                0.7, 0.8,
-                "Accessibility/inclusion failure"
+                re.compile(
+                    r"(ignore|exclude)\s+(accessibility|disabled|elderly)", re.I
+                ),
+                0.7,
+                0.8,
+                "Accessibility/inclusion failure",
             ),
-
             # W3: Dependency engineering / lock-in
             KeywordRule(
                 "W3",
                 re.compile(r"(lock.?in|no\s+escape|trap\s+users)", re.I),
-                0.7, 0.85,
-                "Lock-in/no escape design"
+                0.7,
+                0.85,
+                "Lock-in/no escape design",
             ),
             KeywordRule(
                 "W3",
                 re.compile(r"(create|engineer)\s+(dependency|addiction)", re.I),
-                0.8, 0.7,
-                "Dependency engineering intent"
+                0.8,
+                0.7,
+                "Dependency engineering intent",
             ),
-
             # W2: Dignity / manipulation
             KeywordRule(
                 "W2",
-                re.compile(r"(manipulate|deceive|brainwash)\s+(users?|customers?)", re.I),
-                0.7, 0.7,
-                "Manipulation/deception intent"
+                re.compile(
+                    r"(manipulate|deceive|brainwash)\s+(users?|customers?)", re.I
+                ),
+                0.7,
+                0.7,
+                "Manipulation/deception intent",
             ),
             KeywordRule(
                 "W2",
                 re.compile(r"without\s+(consent|permission|knowledge)", re.I),
-                0.65, 0.75,
-                "Non-consensual action"
+                0.65,
+                0.75,
+                "Non-consensual action",
             ),
         ]
 
@@ -424,18 +456,20 @@ class EnglishKeywordViolationDetector(ViolationDetector):
                 continue
 
             span = (m.start(), m.end())
-            snippet = txt[span[0]:span[1]]
+            snippet = txt[span[0] : span[1]]
             msg = f"{rule.message}: '{snippet}'"
 
-            evs.append(Evidence(
-                code=rule.code,
-                message=msg,
-                strength=rule.strength,
-                confidence=rule.confidence,
-                detector_id=self.detector_id,
-                span=span,
-                tags=["keyword"],
-            ))
+            evs.append(
+                Evidence(
+                    code=rule.code,
+                    message=msg,
+                    strength=rule.strength,
+                    confidence=rule.confidence,
+                    detector_id=self.detector_id,
+                    span=span,
+                    tags=["keyword"],
+                )
+            )
 
         return evs
 

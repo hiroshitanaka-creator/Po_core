@@ -8,6 +8,7 @@ of choices and the pressure field of responsibility.
 """
 
 from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 from po_core.tensors.base import Tensor
@@ -170,9 +171,7 @@ class FreedomPressureTensor(Tensor):
             dtype=np.float64,
         )
 
-    def _aggregate_perspectives(
-        self, perspectives: List[Dict[str, Any]]
-    ) -> np.ndarray:
+    def _aggregate_perspectives(self, perspectives: List[Dict[str, Any]]) -> np.ndarray:
         """
         Aggregate freedom pressure from multiple philosopher perspectives.
 
@@ -274,7 +273,9 @@ class FreedomPressureTensor(Tensor):
         Returns:
             Dictionary mapping dimension names to values
         """
-        return {name: float(self.data[i]) for i, name in enumerate(self.dimension_names)}
+        return {
+            name: float(self.data[i]) for i, name in enumerate(self.dimension_names)
+        }
 
     def to_dict(self) -> Dict[str, Any]:
         """

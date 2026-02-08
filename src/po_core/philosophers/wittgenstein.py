@@ -37,10 +37,12 @@ class Wittgenstein(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Ludwig Wittgenstein",
-            description="Language philosopher focused on language games, forms of life, and meaning as use"
+            description="Language philosopher focused on language games, forms of life, and meaning as use",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Wittgenstein's perspective.
 
@@ -68,8 +70,8 @@ class Wittgenstein(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Language analysis and conceptual clarification",
-                "focus": "Language games, meaning as use, and forms of life"
-            }
+                "focus": "Language games, meaning as use, and forms of life",
+            },
         }
 
     def _analyze_language(self, prompt: str) -> Dict[str, Any]:
@@ -120,7 +122,7 @@ class Wittgenstein(Philosopher):
             "private_language": private_language,
             "confusion": confusion,
             "limits": limits,
-            "period": period
+            "period": period,
         }
 
     def _identify_language_games(self, text: str) -> Dict[str, Any]:
@@ -134,11 +136,17 @@ class Wittgenstein(Philosopher):
         games_detected = []
 
         # Directive language game (commands, requests)
-        if any(word in text_lower for word in ["should", "must", "do this", "please", "command"]):
+        if any(
+            word in text_lower
+            for word in ["should", "must", "do this", "please", "command"]
+        ):
             games_detected.append("Directive - giving orders or requests")
 
         # Descriptive language game (describing states of affairs)
-        if any(word in text_lower for word in ["is", "are", "describe", "looks like", "appears"]):
+        if any(
+            word in text_lower
+            for word in ["is", "are", "describe", "looks like", "appears"]
+        ):
             games_detected.append("Descriptive - describing how things are")
 
         # Interrogative language game (asking questions)
@@ -146,19 +154,31 @@ class Wittgenstein(Philosopher):
             games_detected.append("Interrogative - asking questions")
 
         # Expressive language game (expressing feelings, attitudes)
-        if any(word in text_lower for word in ["feel", "hope", "wish", "love", "hate", "believe"]):
+        if any(
+            word in text_lower
+            for word in ["feel", "hope", "wish", "love", "hate", "believe"]
+        ):
             games_detected.append("Expressive - expressing inner states")
 
         # Performative language game (doing things with words)
-        if any(word in text_lower for word in ["promise", "declare", "apologize", "thank", "name"]):
+        if any(
+            word in text_lower
+            for word in ["promise", "declare", "apologize", "thank", "name"]
+        ):
             games_detected.append("Performative - performing actions through words")
 
         # Evaluative language game (making judgments)
-        if any(word in text_lower for word in ["good", "bad", "right", "wrong", "beautiful", "ugly"]):
+        if any(
+            word in text_lower
+            for word in ["good", "bad", "right", "wrong", "beautiful", "ugly"]
+        ):
             games_detected.append("Evaluative - making value judgments")
 
         # Explanatory language game (giving reasons)
-        if any(word in text_lower for word in ["because", "since", "therefore", "reason", "explain"]):
+        if any(
+            word in text_lower
+            for word in ["because", "since", "therefore", "reason", "explain"]
+        ):
             games_detected.append("Explanatory - giving reasons and explanations")
 
         if not games_detected:
@@ -168,7 +188,7 @@ class Wittgenstein(Philosopher):
             "games": games_detected,
             "count": len(games_detected),
             "primary": games_detected[0],
-            "note": "Language games are language embedded in activities and forms of life"
+            "note": "Language games are language embedded in activities and forms of life",
         }
 
     def _assess_forms_of_life(self, text: str) -> Dict[str, Any]:
@@ -182,27 +202,45 @@ class Wittgenstein(Philosopher):
         forms = []
 
         # Social/communal form of life
-        if any(word in text_lower for word in ["we", "us", "community", "society", "together", "shared"]):
+        if any(
+            word in text_lower
+            for word in ["we", "us", "community", "society", "together", "shared"]
+        ):
             forms.append("Communal - shared social practices")
 
         # Individual/solitary form of life
-        if any(word in text_lower for word in ["i", "me", "alone", "myself", "individual", "personal"]):
+        if any(
+            word in text_lower
+            for word in ["i", "me", "alone", "myself", "individual", "personal"]
+        ):
             forms.append("Individual - personal practices")
 
         # Scientific/theoretical form of life
-        if any(word in text_lower for word in ["theory", "evidence", "test", "hypothesis", "science"]):
+        if any(
+            word in text_lower
+            for word in ["theory", "evidence", "test", "hypothesis", "science"]
+        ):
             forms.append("Scientific - theoretical inquiry practices")
 
         # Practical/everyday form of life
-        if any(word in text_lower for word in ["everyday", "practical", "daily", "ordinary", "common"]):
+        if any(
+            word in text_lower
+            for word in ["everyday", "practical", "daily", "ordinary", "common"]
+        ):
             forms.append("Everyday - ordinary practical life")
 
         # Religious/spiritual form of life
-        if any(word in text_lower for word in ["god", "divine", "sacred", "spiritual", "faith", "prayer"]):
+        if any(
+            word in text_lower
+            for word in ["god", "divine", "sacred", "spiritual", "faith", "prayer"]
+        ):
             forms.append("Religious - spiritual practices")
 
         # Artistic/aesthetic form of life
-        if any(word in text_lower for word in ["art", "beauty", "create", "aesthetic", "express"]):
+        if any(
+            word in text_lower
+            for word in ["art", "beauty", "create", "aesthetic", "express"]
+        ):
             forms.append("Artistic - creative and aesthetic practices")
 
         if not forms:
@@ -211,7 +249,7 @@ class Wittgenstein(Philosopher):
         return {
             "forms": forms,
             "primary": forms[0],
-            "note": "Forms of life are the shared agreements and practices that ground language"
+            "note": "Forms of life are the shared agreements and practices that ground language",
         }
 
     def _evaluate_meaning_use(self, text: str) -> Dict[str, Any]:
@@ -228,7 +266,13 @@ class Wittgenstein(Philosopher):
         has_use = sum(1 for word in use_words if word in text_lower)
 
         # Reference/essence indicators (opposed to use theory)
-        reference_words = ["essence", "true meaning", "really means", "definition", "refers to"]
+        reference_words = [
+            "essence",
+            "true meaning",
+            "really means",
+            "definition",
+            "refers to",
+        ]
         has_reference = sum(1 for word in reference_words if word in text_lower)
 
         # Context/situation indicators
@@ -241,7 +285,9 @@ class Wittgenstein(Philosopher):
             orientation = "Late Wittgenstein"
         elif has_reference >= 1:
             adherence = "Reference Theory"
-            description = "Meaning understood as reference or essence - pre-Wittgensteinian"
+            description = (
+                "Meaning understood as reference or essence - pre-Wittgensteinian"
+            )
             orientation = "Traditional"
         else:
             adherence = "Unclear"
@@ -252,7 +298,7 @@ class Wittgenstein(Philosopher):
             "adherence": adherence,
             "description": description,
             "orientation": orientation,
-            "principle": "The meaning of a word is its use in the language"
+            "principle": "The meaning of a word is its use in the language",
         }
 
     def _check_family_resemblance(self, text: str) -> Dict[str, Any]:
@@ -265,24 +311,47 @@ class Wittgenstein(Philosopher):
         text_lower = text.lower()
 
         # Family resemblance indicators
-        resemblance_words = ["similar", "resemble", "like", "overlap", "variety", "different kinds"]
+        resemblance_words = [
+            "similar",
+            "resemble",
+            "like",
+            "overlap",
+            "variety",
+            "different kinds",
+        ]
         has_resemblance = sum(1 for word in resemblance_words if word in text_lower)
 
         # Essence/definition indicators (opposed to family resemblance)
-        essence_words = ["essence", "common to all", "necessary", "sufficient", "definition"]
+        essence_words = [
+            "essence",
+            "common to all",
+            "necessary",
+            "sufficient",
+            "definition",
+        ]
         has_essence = sum(1 for word in essence_words if word in text_lower)
 
         # Boundary/vagueness indicators
-        boundary_words = ["vague", "blurry", "unclear boundary", "hard to say", "borderline"]
+        boundary_words = [
+            "vague",
+            "blurry",
+            "unclear boundary",
+            "hard to say",
+            "borderline",
+        ]
         has_boundary = sum(1 for word in boundary_words if word in text_lower)
 
         if has_resemblance >= 1 or has_boundary >= 1:
             thinking = "Family Resemblance"
-            description = "Concepts understood through overlapping similarities, not essence"
+            description = (
+                "Concepts understood through overlapping similarities, not essence"
+            )
             type_thinking = "Wittgensteinian"
         elif has_essence >= 1:
             thinking = "Essentialist"
-            description = "Concepts understood through necessary and sufficient conditions"
+            description = (
+                "Concepts understood through necessary and sufficient conditions"
+            )
             type_thinking = "Traditional"
         else:
             thinking = "Unclear"
@@ -293,7 +362,7 @@ class Wittgenstein(Philosopher):
             "thinking": thinking,
             "description": description,
             "type": type_thinking,
-            "principle": "Concepts are united by family resemblance, not common essence"
+            "principle": "Concepts are united by family resemblance, not common essence",
         }
 
     def _analyze_private_language(self, text: str) -> Dict[str, Any]:
@@ -310,11 +379,23 @@ class Wittgenstein(Philosopher):
         has_private = sum(1 for word in private_words if word in text_lower)
 
         # Public/shared indicators
-        public_words = ["public", "shared", "we all", "objective", "observable", "criteria"]
+        public_words = [
+            "public",
+            "shared",
+            "we all",
+            "objective",
+            "observable",
+            "criteria",
+        ]
         has_public = sum(1 for word in public_words if word in text_lower)
 
         # Ineffability indicators
-        ineffable_words = ["cannot express", "indescribable", "ineffable", "beyond words"]
+        ineffable_words = [
+            "cannot express",
+            "indescribable",
+            "ineffable",
+            "beyond words",
+        ]
         has_ineffable = sum(1 for word in ineffable_words if word in text_lower)
 
         if has_private >= 2 or has_ineffable >= 1:
@@ -323,7 +404,9 @@ class Wittgenstein(Philosopher):
             issue = "Problematic"
         elif has_public >= 1:
             status = "Public Language"
-            description = "Recognition of shared, public criteria - consistent with Wittgenstein"
+            description = (
+                "Recognition of shared, public criteria - consistent with Wittgenstein"
+            )
             issue = "Sound"
         else:
             status = "Unclear"
@@ -334,7 +417,7 @@ class Wittgenstein(Philosopher):
             "status": status,
             "description": description,
             "issue": issue,
-            "principle": "There can be no purely private language - language requires public criteria"
+            "principle": "There can be no purely private language - language requires public criteria",
         }
 
     def _detect_philosophical_confusion(self, text: str) -> Dict[str, Any]:
@@ -347,19 +430,41 @@ class Wittgenstein(Philosopher):
         text_lower = text.lower()
 
         # Philosophical question indicators
-        deep_questions = ["what is", "the nature of", "essence of", "meaning of life", "ultimate"]
+        deep_questions = [
+            "what is",
+            "the nature of",
+            "essence of",
+            "meaning of life",
+            "ultimate",
+        ]
         has_deep_questions = sum(1 for phrase in deep_questions if phrase in text_lower)
 
         # Confusion indicators
-        confusion_words = ["confused", "puzzled", "paradox", "contradiction", "doesn't make sense"]
+        confusion_words = [
+            "confused",
+            "puzzled",
+            "paradox",
+            "contradiction",
+            "doesn't make sense",
+        ]
         has_confusion = sum(1 for phrase in confusion_words if phrase in text_lower)
 
         # Language misuse indicators
-        misuse_words = ["category mistake", "nonsense", "meaningless", "abuse of language"]
+        misuse_words = [
+            "category mistake",
+            "nonsense",
+            "meaningless",
+            "abuse of language",
+        ]
         has_misuse = sum(1 for phrase in misuse_words if phrase in text_lower)
 
         # Therapeutic indicators
-        therapeutic_words = ["dissolve", "show the fly the way out", "clarify", "untangle"]
+        therapeutic_words = [
+            "dissolve",
+            "show the fly the way out",
+            "clarify",
+            "untangle",
+        ]
         has_therapeutic = sum(1 for phrase in therapeutic_words if phrase in text_lower)
 
         if has_confusion >= 1 or has_deep_questions >= 2:
@@ -383,7 +488,7 @@ class Wittgenstein(Philosopher):
             "detection": detection,
             "description": description,
             "need": need,
-            "principle": "Philosophy should dissolve problems, not solve them - therapy not theory"
+            "principle": "Philosophy should dissolve problems, not solve them - therapy not theory",
         }
 
     def _check_limits_of_language(self, text: str) -> Dict[str, Any]:
@@ -396,7 +501,13 @@ class Wittgenstein(Philosopher):
         text_lower = text.lower()
 
         # Sayable/unsayable indicators
-        unsayable_words = ["cannot say", "beyond words", "ineffable", "inexpressible", "silence"]
+        unsayable_words = [
+            "cannot say",
+            "beyond words",
+            "ineffable",
+            "inexpressible",
+            "silence",
+        ]
         has_unsayable = sum(1 for word in unsayable_words if word in text_lower)
 
         # Showing vs saying
@@ -426,7 +537,7 @@ class Wittgenstein(Philosopher):
             "awareness": awareness,
             "description": description,
             "attitude": attitude,
-            "principle": "What can be shown cannot be said - whereof we cannot speak, we must be silent"
+            "principle": "What can be shown cannot be said - whereof we cannot speak, we must be silent",
         }
 
     def _determine_period(self, text: str) -> Dict[str, Any]:
@@ -439,11 +550,27 @@ class Wittgenstein(Philosopher):
         text_lower = text.lower()
 
         # Early Wittgenstein indicators
-        early_words = ["logic", "structure", "limits", "cannot say", "essence", "picture", "fact"]
+        early_words = [
+            "logic",
+            "structure",
+            "limits",
+            "cannot say",
+            "essence",
+            "picture",
+            "fact",
+        ]
         early_score = sum(1 for word in early_words if word in text_lower)
 
         # Late Wittgenstein indicators
-        late_words = ["use", "practice", "game", "form of life", "ordinary", "everyday", "context"]
+        late_words = [
+            "use",
+            "practice",
+            "game",
+            "form of life",
+            "ordinary",
+            "everyday",
+            "context",
+        ]
         late_score = sum(1 for word in late_words if word in text_lower)
 
         if late_score > early_score and late_score >= 2:
@@ -467,7 +594,7 @@ class Wittgenstein(Philosopher):
             "period": period,
             "work": work,
             "description": description,
-            "note": "Wittgenstein's philosophy changed dramatically between early and late periods"
+            "note": "Wittgenstein's philosophy changed dramatically between early and late periods",
         }
 
     def _construct_reasoning(
@@ -476,7 +603,7 @@ class Wittgenstein(Philosopher):
         forms_of_life: Dict[str, Any],
         meaning_use: Dict[str, Any],
         confusion: Dict[str, Any],
-        period: Dict[str, Any]
+        period: Dict[str, Any],
     ) -> str:
         """Construct Wittgensteinian language analysis reasoning."""
         primary_game = language_games["primary"]
@@ -492,7 +619,9 @@ class Wittgenstein(Philosopher):
             reasoning += f"Philosophical analysis: {confusion['description']}. "
 
         # Add period indication
-        reasoning += f"This resonates with {period['period']}: {period['description']}. "
+        reasoning += (
+            f"This resonates with {period['period']}: {period['description']}. "
+        )
 
         # Conclude with Wittgensteinian principle
         reasoning += (

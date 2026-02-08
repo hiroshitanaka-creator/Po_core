@@ -10,46 +10,42 @@ Tests for the W_ethics Gate system including:
 - Axis scoring (ΔE metrics)
 - Candidate selection (Pareto + MCDA)
 """
-import pytest
+
 from typing import List
 
-from po_core.safety.wethics_gate import (
-    # Types
-    GateDecision,
-    GateViolationCode,
-    RepairStage,
-    Evidence,
-    Violation,
-    GateConfig,
-    AxisScore,
-    GateResult,
-    Candidate,
-    SelectionResult,
+import pytest
+
+from po_core.safety.wethics_gate import (  # Types; Detectors; Semantic Drift; Gate; Metrics; Selection
     AXES,
     AXIS_NAMES,
-    # Detectors
-    ViolationDetector,
-    DetectorRegistry,
-    KeywordViolationDetector,
-    EnglishKeywordViolationDetector,
-    aggregate_evidence_to_violations,
-    create_default_registry,
-    # Semantic Drift
-    DriftReport,
-    semantic_drift,
-    # Gate
-    RuleBasedRepairEngine,
-    WethicsGate,
-    create_wethics_gate,
-    # Metrics
-    ContextProfile,
-    MetricsEvaluator,
-    create_metrics_evaluator,
-    # Selection
+    AxisScore,
+    Candidate,
     CandidateSelector,
+    ContextProfile,
+    DetectorRegistry,
+    DriftReport,
+    EnglishKeywordViolationDetector,
+    Evidence,
+    GateConfig,
+    GateDecision,
+    GateResult,
+    GateViolationCode,
+    KeywordViolationDetector,
+    MetricsEvaluator,
+    RepairStage,
+    RuleBasedRepairEngine,
+    SelectionResult,
+    Violation,
+    ViolationDetector,
+    WethicsGate,
+    aggregate_evidence_to_violations,
     create_candidate_selector,
+    create_default_registry,
+    create_metrics_evaluator,
+    create_wethics_gate,
     pareto_front,
     robust_weight_sampling_rank,
+    semantic_drift,
     topsis_rank,
 )
 
@@ -202,8 +198,20 @@ class TestEvidenceAggregation:
     def test_aggregate_multiple_evidence_same_code(self):
         """Test aggregating multiple evidence pieces for same violation code."""
         evs = [
-            Evidence(code="W1", message="test1", strength=0.5, confidence=0.6, detector_id="a"),
-            Evidence(code="W1", message="test2", strength=0.5, confidence=0.6, detector_id="b"),
+            Evidence(
+                code="W1",
+                message="test1",
+                strength=0.5,
+                confidence=0.6,
+                detector_id="a",
+            ),
+            Evidence(
+                code="W1",
+                message="test2",
+                strength=0.5,
+                confidence=0.6,
+                detector_id="b",
+            ),
         ]
         violations = aggregate_evidence_to_violations(evs)
         assert len(violations) == 1
@@ -214,8 +222,20 @@ class TestEvidenceAggregation:
     def test_aggregate_multiple_codes(self):
         """Test aggregating evidence with different codes."""
         evs = [
-            Evidence(code="W1", message="test1", strength=0.8, confidence=0.9, detector_id="a"),
-            Evidence(code="W2", message="test2", strength=0.6, confidence=0.7, detector_id="b"),
+            Evidence(
+                code="W1",
+                message="test1",
+                strength=0.8,
+                confidence=0.9,
+                detector_id="a",
+            ),
+            Evidence(
+                code="W2",
+                message="test2",
+                strength=0.6,
+                confidence=0.7,
+                detector_id="b",
+            ),
         ]
         violations = aggregate_evidence_to_violations(evs)
         assert len(violations) == 2
@@ -226,9 +246,15 @@ class TestEvidenceAggregation:
     def test_violation_order(self):
         """Test violations are ordered W0..W4."""
         evs = [
-            Evidence(code="W3", message="test", strength=0.5, confidence=0.5, detector_id="a"),
-            Evidence(code="W0", message="test", strength=0.5, confidence=0.5, detector_id="b"),
-            Evidence(code="W2", message="test", strength=0.5, confidence=0.5, detector_id="c"),
+            Evidence(
+                code="W3", message="test", strength=0.5, confidence=0.5, detector_id="a"
+            ),
+            Evidence(
+                code="W0", message="test", strength=0.5, confidence=0.5, detector_id="b"
+            ),
+            Evidence(
+                code="W2", message="test", strength=0.5, confidence=0.5, detector_id="c"
+            ),
         ]
         violations = aggregate_evidence_to_violations(evs)
         codes = [v.code for v in violations]
@@ -334,7 +360,8 @@ class TestSemanticDrift:
         before = "Implement user tracking."
         after = "Implement user support with privacy."
         report = semantic_drift(
-            before, after,
+            before,
+            after,
             before_goal="track users",
             after_goal="support users",
         )
@@ -383,7 +410,9 @@ class TestRepairEngine:
         engine = RuleBasedRepairEngine()
         text = "Create lock-in for users with no escape."
         repaired, log = engine.repair(text, ["W3"])
-        assert "interoperability" in repaired.lower() or "portability" in repaired.lower()
+        assert (
+            "interoperability" in repaired.lower() or "portability" in repaired.lower()
+        )
         assert len(log) > 0
 
     def test_repair_no_violations(self):
@@ -463,14 +492,22 @@ class TestWethicsGate:
         gate = WethicsGate()
         candidates = [
             Candidate(cid="c1", text="A collaborative community project."),
-            Candidate(cid="c2", text="Dominate and subjugate all markets with absolute power."),
+            Candidate(
+                cid="c2", text="Dominate and subjugate all markets with absolute power."
+            ),
             Candidate(cid="c3", text="Partner with stakeholders."),
         ]
         results = gate.check_batch(candidates)
         assert len(results) == 3
         # First and third should pass, second should fail
-        assert results[0][1].decision in (GateDecision.ALLOW, GateDecision.ALLOW_WITH_REPAIR)
-        assert results[2][1].decision in (GateDecision.ALLOW, GateDecision.ALLOW_WITH_REPAIR)
+        assert results[0][1].decision in (
+            GateDecision.ALLOW,
+            GateDecision.ALLOW_WITH_REPAIR,
+        )
+        assert results[2][1].decision in (
+            GateDecision.ALLOW,
+            GateDecision.ALLOW_WITH_REPAIR,
+        )
 
 
 class TestMetrics:
@@ -488,7 +525,10 @@ class TestMetrics:
         profile = ContextProfile.disaster()
         assert profile.name == "disaster"
         # Disaster should have higher safety requirements
-        assert profile.axis_profiles["A"].e_min > ContextProfile.default().axis_profiles["A"].e_min
+        assert (
+            profile.axis_profiles["A"].e_min
+            > ContextProfile.default().axis_profiles["A"].e_min
+        )
 
     def test_evaluator_creation(self):
         """Test MetricsEvaluator creation."""

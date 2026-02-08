@@ -8,6 +8,7 @@ run_turn pipeline and public APIs (po_core.run, PoSelf.generate).
 Original tests tested run_ensemble (removed in v0.3).
 These test the same behavioral contracts via the new API.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -34,9 +35,9 @@ class TestRunAPISmoke:
 
         result = run(user_input=sample_prompt)
         required_keys = {"status", "request_id"}
-        assert required_keys <= set(result.keys()), (
-            f"Missing keys: {required_keys - set(result.keys())}"
-        )
+        assert required_keys <= set(
+            result.keys()
+        ), f"Missing keys: {required_keys - set(result.keys())}"
 
     def test_run_status_ok_for_normal_input(self, sample_prompt: str) -> None:
         from po_core import run

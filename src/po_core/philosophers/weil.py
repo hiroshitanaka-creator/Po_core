@@ -53,7 +53,9 @@ class Weil(Philosopher):
             "the good",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Weil's philosophy to the prompt.
 
@@ -99,8 +101,16 @@ class Weil(Philosopher):
         spiritual = self._derive_spiritual_guidance(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, attention, affliction, decreation, gravity_grace,
-            void, beauty, justice, labor, rootedness
+            prompt,
+            attention,
+            affliction,
+            decreation,
+            gravity_grace,
+            void,
+            beauty,
+            justice,
+            labor,
+            rootedness,
         )
 
         return {
@@ -231,7 +241,11 @@ class Weil(Philosopher):
         return {
             "gravity": {
                 "description": "The natural downward pull of the soul",
-                "manifestations": ["Self-centeredness", "Power-seeking", "Flight from emptiness"],
+                "manifestations": [
+                    "Self-centeredness",
+                    "Power-seeking",
+                    "Flight from emptiness",
+                ],
                 "universality": "All natural movements of the soul follow gravity",
             },
             "grace": {
@@ -391,8 +405,17 @@ class Weil(Philosopher):
             },
             "uprootedness": {
                 "description": "The condition of modern humanity",
-                "causes": ["Colonialism", "Industrialization", "War", "Forced migration"],
-                "effects": ["Loss of meaning", "Vulnerability to propaganda", "Violence"],
+                "causes": [
+                    "Colonialism",
+                    "Industrialization",
+                    "War",
+                    "Forced migration",
+                ],
+                "effects": [
+                    "Loss of meaning",
+                    "Vulnerability to propaganda",
+                    "Violence",
+                ],
             },
             "false_roots": {
                 "nationalism": "A substitute that mimics rootedness",
@@ -438,9 +461,17 @@ class Weil(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, attention: Dict, affliction: Dict, decreation: Dict,
-        gravity_grace: Dict, void: Dict, beauty: Dict, justice: Dict,
-        labor: Dict, rootedness: Dict
+        self,
+        prompt: str,
+        attention: Dict,
+        affliction: Dict,
+        decreation: Dict,
+        gravity_grace: Dict,
+        void: Dict,
+        beauty: Dict,
+        justice: Dict,
+        labor: Dict,
+        rootedness: Dict,
     ) -> str:
         """Construct comprehensive Weil reasoning."""
         return f"""Contemplation through Simone Weil: "{prompt}"

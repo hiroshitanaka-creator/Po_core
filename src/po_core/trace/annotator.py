@@ -4,8 +4,8 @@ Philosophical Annotator
 Automatically adds philosophical annotations to reasoning traces.
 """
 
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 
 @dataclass

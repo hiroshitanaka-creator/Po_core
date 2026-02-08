@@ -43,10 +43,12 @@ class Zhuangzi(Philosopher):
     def __init__(self):
         super().__init__(
             name="Zhuangzi (莊子)",
-            description="Daoist philosophy emphasizing naturalness (ziran), non-action (wu wei), spiritual freedom (xiaoyaoyou), and the relativity of perspectives"
+            description="Daoist philosophy emphasizing naturalness (ziran), non-action (wu wei), spiritual freedom (xiaoyaoyou), and the relativity of perspectives",
         )
 
-    def reason(self, text: str, context: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    def reason(
+        self, text: str, context: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         Analyze text through Zhuangzi's Daoist philosophy.
 
@@ -79,12 +81,19 @@ class Zhuangzi(Philosopher):
                 "qiwulun_equality": qiwulun,
                 "dream_reality": dream,
                 "transformation": transformation,
-                "uselessness": uselessness
+                "uselessness": uselessness,
             },
             "summary": self._generate_summary(
-                dao, wu_wei, ziran, qi, xiaoyaoyou, qiwulun,
-                dream, transformation, uselessness
-            )
+                dao,
+                wu_wei,
+                ziran,
+                qi,
+                xiaoyaoyou,
+                qiwulun,
+                dream,
+                transformation,
+                uselessness,
+            ),
         }
 
     def _assess_dao(self, text: str) -> Dict[str, Any]:
@@ -97,9 +106,22 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         dao_words = [
-            "way", "path", "dao", "tao", "nature", "natural order",
-            "flow", "cosmic", "ultimate", "underlying", "pattern",
-            "nameless", "ineffable", "source", "origin", "mystery"
+            "way",
+            "path",
+            "dao",
+            "tao",
+            "nature",
+            "natural order",
+            "flow",
+            "cosmic",
+            "ultimate",
+            "underlying",
+            "pattern",
+            "nameless",
+            "ineffable",
+            "source",
+            "origin",
+            "mystery",
         ]
 
         has_dao = sum(1 for word in dao_words if word in text_lower)
@@ -108,7 +130,11 @@ class Zhuangzi(Philosopher):
         return {
             "dao_present": dao_present,
             "score": has_dao,
-            "interpretation": "Text references the Dao - the natural Way and cosmic order underlying all things." if dao_present else "Limited reference to the Dao or natural Way."
+            "interpretation": (
+                "Text references the Dao - the natural Way and cosmic order underlying all things."
+                if dao_present
+                else "Limited reference to the Dao or natural Way."
+            ),
         }
 
     def _assess_wu_wei(self, text: str) -> Dict[str, Any]:
@@ -121,10 +147,24 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         wu_wei_words = [
-            "effortless", "non-action", "wu wei", "without forcing",
-            "natural", "spontaneous", "flow", "ease", "not striving",
-            "let go", "allow", "yield", "soft", "gentle",
-            "without effort", "unforced", "natural way", "non-doing"
+            "effortless",
+            "non-action",
+            "wu wei",
+            "without forcing",
+            "natural",
+            "spontaneous",
+            "flow",
+            "ease",
+            "not striving",
+            "let go",
+            "allow",
+            "yield",
+            "soft",
+            "gentle",
+            "without effort",
+            "unforced",
+            "natural way",
+            "non-doing",
         ]
 
         has_wu_wei = sum(1 for word in wu_wei_words if word in text_lower)
@@ -133,7 +173,11 @@ class Zhuangzi(Philosopher):
         return {
             "wu_wei_present": wu_wei_present,
             "score": has_wu_wei,
-            "interpretation": "Text embodies wu wei - effortless action and non-forcing, following the natural flow." if wu_wei_present else "Limited expression of non-action or effortless way."
+            "interpretation": (
+                "Text embodies wu wei - effortless action and non-forcing, following the natural flow."
+                if wu_wei_present
+                else "Limited expression of non-action or effortless way."
+            ),
         }
 
     def _assess_ziran(self, text: str) -> Dict[str, Any]:
@@ -146,10 +190,22 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         ziran_words = [
-            "natural", "spontaneous", "authentic", "genuine",
-            "unaffected", "simple", "simplicity", "organic",
-            "innate", "inherent", "uncontrived", "artless",
-            "free", "unforced", "self-so", "naturally"
+            "natural",
+            "spontaneous",
+            "authentic",
+            "genuine",
+            "unaffected",
+            "simple",
+            "simplicity",
+            "organic",
+            "innate",
+            "inherent",
+            "uncontrived",
+            "artless",
+            "free",
+            "unforced",
+            "self-so",
+            "naturally",
         ]
 
         has_ziran = sum(1 for word in ziran_words if word in text_lower)
@@ -158,7 +214,11 @@ class Zhuangzi(Philosopher):
         return {
             "ziran_present": ziran_present,
             "score": has_ziran,
-            "interpretation": "Text expresses ziran - naturalness and spontaneity, being so of itself." if ziran_present else "Limited expression of naturalness or spontaneity."
+            "interpretation": (
+                "Text expresses ziran - naturalness and spontaneity, being so of itself."
+                if ziran_present
+                else "Limited expression of naturalness or spontaneity."
+            ),
         }
 
     def _assess_qi(self, text: str) -> Dict[str, Any]:
@@ -171,9 +231,21 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         qi_words = [
-            "energy", "vital", "breath", "life force", "spirit",
-            "vitality", "animate", "living", "dynamic", "force",
-            "flow", "chi", "qi", "power", "essence"
+            "energy",
+            "vital",
+            "breath",
+            "life force",
+            "spirit",
+            "vitality",
+            "animate",
+            "living",
+            "dynamic",
+            "force",
+            "flow",
+            "chi",
+            "qi",
+            "power",
+            "essence",
         ]
 
         has_qi = sum(1 for word in qi_words if word in text_lower)
@@ -182,7 +254,11 @@ class Zhuangzi(Philosopher):
         return {
             "qi_present": qi_present,
             "score": has_qi,
-            "interpretation": "Text references qi - vital energy and life force flowing through all things." if qi_present else "Limited reference to vital energy or life force."
+            "interpretation": (
+                "Text references qi - vital energy and life force flowing through all things."
+                if qi_present
+                else "Limited reference to vital energy or life force."
+            ),
         }
 
     def _assess_xiaoyaoyou(self, text: str) -> Dict[str, Any]:
@@ -195,10 +271,24 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         xiaoyaoyou_words = [
-            "freedom", "free", "wander", "wandering", "liberated",
-            "unencumbered", "roam", "soar", "fly", "limitless",
-            "boundless", "unconstrained", "at ease", "carefree",
-            "unfettered", "unrestricted", "liberty", "transcend"
+            "freedom",
+            "free",
+            "wander",
+            "wandering",
+            "liberated",
+            "unencumbered",
+            "roam",
+            "soar",
+            "fly",
+            "limitless",
+            "boundless",
+            "unconstrained",
+            "at ease",
+            "carefree",
+            "unfettered",
+            "unrestricted",
+            "liberty",
+            "transcend",
         ]
 
         has_xiaoyaoyou = sum(1 for word in xiaoyaoyou_words if word in text_lower)
@@ -207,7 +297,11 @@ class Zhuangzi(Philosopher):
         return {
             "xiaoyaoyou_present": xiaoyaoyou_present,
             "score": has_xiaoyaoyou,
-            "interpretation": "Text expresses xiaoyaoyou - free and easy wandering, spiritual freedom." if xiaoyaoyou_present else "Limited expression of spiritual freedom or wandering."
+            "interpretation": (
+                "Text expresses xiaoyaoyou - free and easy wandering, spiritual freedom."
+                if xiaoyaoyou_present
+                else "Limited expression of spiritual freedom or wandering."
+            ),
         }
 
     def _assess_qiwulun(self, text: str) -> Dict[str, Any]:
@@ -220,10 +314,23 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         qiwulun_words = [
-            "relative", "relativity", "perspective", "viewpoint",
-            "equal", "equality", "same", "different", "distinction",
-            "judgment", "conventional", "question", "doubt",
-            "depends", "context", "standpoint", "point of view"
+            "relative",
+            "relativity",
+            "perspective",
+            "viewpoint",
+            "equal",
+            "equality",
+            "same",
+            "different",
+            "distinction",
+            "judgment",
+            "conventional",
+            "question",
+            "doubt",
+            "depends",
+            "context",
+            "standpoint",
+            "point of view",
         ]
 
         has_qiwulun = sum(1 for word in qiwulun_words if word in text_lower)
@@ -232,7 +339,11 @@ class Zhuangzi(Philosopher):
         return {
             "qiwulun_present": qiwulun_present,
             "score": has_qiwulun,
-            "interpretation": "Text expresses qiwulun - relativity of perspectives and equality of things." if qiwulun_present else "Limited expression of relativism or equality of perspectives."
+            "interpretation": (
+                "Text expresses qiwulun - relativity of perspectives and equality of things."
+                if qiwulun_present
+                else "Limited expression of relativism or equality of perspectives."
+            ),
         }
 
     def _assess_dream_reality(self, text: str) -> Dict[str, Any]:
@@ -245,9 +356,21 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         dream_words = [
-            "dream", "dreaming", "illusion", "real", "reality",
-            "butterfly", "awake", "waking", "sleep", "sleeping",
-            "imagination", "fantasy", "appearance", "true", "false"
+            "dream",
+            "dreaming",
+            "illusion",
+            "real",
+            "reality",
+            "butterfly",
+            "awake",
+            "waking",
+            "sleep",
+            "sleeping",
+            "imagination",
+            "fantasy",
+            "appearance",
+            "true",
+            "false",
         ]
 
         has_dream = sum(1 for word in dream_words if word in text_lower)
@@ -256,7 +379,11 @@ class Zhuangzi(Philosopher):
         return {
             "dream_reality_present": dream_present,
             "score": has_dream,
-            "interpretation": "Text questions the distinction between dream and reality, appearance and truth." if dream_present else "Limited engagement with dream/reality theme."
+            "interpretation": (
+                "Text questions the distinction between dream and reality, appearance and truth."
+                if dream_present
+                else "Limited engagement with dream/reality theme."
+            ),
         }
 
     def _assess_transformation(self, text: str) -> Dict[str, Any]:
@@ -269,19 +396,39 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         transformation_words = [
-            "transform", "transformation", "change", "changing",
-            "become", "becoming", "evolve", "evolution", "metamorphosis",
-            "transition", "shift", "convert", "alter", "mutation",
-            "impermanence", "flux", "flow", "process"
+            "transform",
+            "transformation",
+            "change",
+            "changing",
+            "become",
+            "becoming",
+            "evolve",
+            "evolution",
+            "metamorphosis",
+            "transition",
+            "shift",
+            "convert",
+            "alter",
+            "mutation",
+            "impermanence",
+            "flux",
+            "flow",
+            "process",
         ]
 
-        has_transformation = sum(1 for word in transformation_words if word in text_lower)
+        has_transformation = sum(
+            1 for word in transformation_words if word in text_lower
+        )
         transformation_present = has_transformation >= 2
 
         return {
             "transformation_present": transformation_present,
             "score": has_transformation,
-            "interpretation": "Text acknowledges transformation - the constant change and flow of all things." if transformation_present else "Limited recognition of transformation or change."
+            "interpretation": (
+                "Text acknowledges transformation - the constant change and flow of all things."
+                if transformation_present
+                else "Limited recognition of transformation or change."
+            ),
         }
 
     def _assess_uselessness(self, text: str) -> Dict[str, Any]:
@@ -294,14 +441,26 @@ class Zhuangzi(Philosopher):
         text_lower = text.lower()
 
         uselessness_words = [
-            "useless", "uselessness", "no use", "purpose", "practical",
-            "utility", "functional", "value", "worthless", "pointless"
+            "useless",
+            "uselessness",
+            "no use",
+            "purpose",
+            "practical",
+            "utility",
+            "functional",
+            "value",
+            "worthless",
+            "pointless",
         ]
 
         # Check for themes of finding value in the useless
         paradox_phrases = [
-            "useless", "no purpose", "no use", "worthless",
-            "impractical", "serves no"
+            "useless",
+            "no purpose",
+            "no use",
+            "worthless",
+            "impractical",
+            "serves no",
         ]
 
         has_uselessness = sum(1 for word in uselessness_words if word in text_lower)
@@ -312,7 +471,11 @@ class Zhuangzi(Philosopher):
         return {
             "uselessness_theme_present": uselessness_present,
             "score": has_uselessness,
-            "interpretation": "Text engages with the paradox of usefulness - what appears useless may have deeper value." if uselessness_present else "Limited engagement with usefulness/uselessness theme."
+            "interpretation": (
+                "Text engages with the paradox of usefulness - what appears useless may have deeper value."
+                if uselessness_present
+                else "Limited engagement with usefulness/uselessness theme."
+            ),
         }
 
     def _generate_summary(
@@ -325,13 +488,15 @@ class Zhuangzi(Philosopher):
         qiwulun: Dict[str, Any],
         dream: Dict[str, Any],
         transformation: Dict[str, Any],
-        uselessness: Dict[str, Any]
+        uselessness: Dict[str, Any],
     ) -> str:
         """Generate a Daoist summary of the analysis."""
         parts = []
 
         if dao["dao_present"]:
-            parts.append("Text references the Dao - the natural Way underlying all things.")
+            parts.append(
+                "Text references the Dao - the natural Way underlying all things."
+            )
 
         if wu_wei["wu_wei_present"]:
             parts.append("It embodies wu wei - effortless action and non-forcing.")
@@ -343,10 +508,14 @@ class Zhuangzi(Philosopher):
             parts.append("It references qi - vital energy flowing through existence.")
 
         if xiaoyaoyou["xiaoyaoyou_present"]:
-            parts.append("It expresses xiaoyaoyou - free and easy wandering, spiritual freedom.")
+            parts.append(
+                "It expresses xiaoyaoyou - free and easy wandering, spiritual freedom."
+            )
 
         if qiwulun["qiwulun_present"]:
-            parts.append("It embodies qiwulun - relativity of perspectives and equality of things.")
+            parts.append(
+                "It embodies qiwulun - relativity of perspectives and equality of things."
+            )
 
         if dream["dream_reality_present"]:
             parts.append("It questions the distinction between dream and reality.")

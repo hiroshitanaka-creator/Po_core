@@ -18,9 +18,9 @@ import pytest
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
-from po_core.domain.keys import PO_CORE, PARETO_DEBUG
+from po_core.domain.keys import PARETO_DEBUG, PO_CORE
 from po_core.domain.proposal import Proposal
-from po_core.domain.safety_mode import SafetyModeConfig, SafetyMode
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.trace_event import TraceEvent
 from po_core.trace.in_memory import InMemoryTracer
@@ -36,7 +36,9 @@ class TestParetoDebugEmbedding:
         agg = ParetoAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "test")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.3})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.3}
+        )
 
         ps = [
             Proposal("p1", "answer", "答えます", 0.8),
@@ -62,7 +64,9 @@ class TestParetoDebugEmbedding:
         agg = ParetoAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "test")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2}
+        )
 
         ps = [
             Proposal("p1", "answer", "短い", 0.9),
@@ -93,17 +97,82 @@ class TestTraceEventSimulation:
         rid = "test-req-123"
 
         # Simulate events that run_turn would emit
-        tracer.emit(TraceEvent.now("TensorComputed", rid, {"metrics": ["freedom_pressure"], "version": "1"}))
+        tracer.emit(
+            TraceEvent.now(
+                "TensorComputed", rid, {"metrics": ["freedom_pressure"], "version": "1"}
+            )
+        )
         tracer.emit(TraceEvent.now("IntentGenerated", rid, {"mode": "normal"}))
-        tracer.emit(TraceEvent.now("PhilosophersSelected", rid, {"mode": "normal", "n": 5, "cost_total": 10, "covered_tags": ["compliance"]}))
-        tracer.emit(TraceEvent.now("PolicyPrecheckSummary", rid, {"allow": 3, "revise": 1, "reject": 0}))
-        tracer.emit(TraceEvent.now("ConflictSummaryComputed", rid, {"n": 1, "kinds": "action_divergence", "suggested_forced_action": "ask_clarification"}))
-        tracer.emit(TraceEvent.now("ParetoFrontComputed", rid, {
-            "weights": {"safety": 0.25, "freedom": 0.30, "explain": 0.20, "brevity": 0.10, "coherence": 0.15},
-            "front": [{"proposal_id": "p1", "action_type": "answer", "scores": {"safety": 0.8, "freedom": 0.7, "explain": 0.5, "brevity": 0.9, "coherence": 0.8}}],
-        }))
-        tracer.emit(TraceEvent.now("ParetoWinnerSelected", rid, {"winner": {"proposal_id": "p1", "action_type": "answer"}}))
-        tracer.emit(TraceEvent.now("AggregateCompleted", rid, {"proposal_id": "p1", "action_type": "answer"}))
+        tracer.emit(
+            TraceEvent.now(
+                "PhilosophersSelected",
+                rid,
+                {
+                    "mode": "normal",
+                    "n": 5,
+                    "cost_total": 10,
+                    "covered_tags": ["compliance"],
+                },
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "PolicyPrecheckSummary", rid, {"allow": 3, "revise": 1, "reject": 0}
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "ConflictSummaryComputed",
+                rid,
+                {
+                    "n": 1,
+                    "kinds": "action_divergence",
+                    "suggested_forced_action": "ask_clarification",
+                },
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "ParetoFrontComputed",
+                rid,
+                {
+                    "weights": {
+                        "safety": 0.25,
+                        "freedom": 0.30,
+                        "explain": 0.20,
+                        "brevity": 0.10,
+                        "coherence": 0.15,
+                    },
+                    "front": [
+                        {
+                            "proposal_id": "p1",
+                            "action_type": "answer",
+                            "scores": {
+                                "safety": 0.8,
+                                "freedom": 0.7,
+                                "explain": 0.5,
+                                "brevity": 0.9,
+                                "coherence": 0.8,
+                            },
+                        }
+                    ],
+                },
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "ParetoWinnerSelected",
+                rid,
+                {"winner": {"proposal_id": "p1", "action_type": "answer"}},
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "AggregateCompleted",
+                rid,
+                {"proposal_id": "p1", "action_type": "answer"},
+            )
+        )
 
         # Verify events
         events = tracer.events
@@ -119,14 +188,55 @@ class TestTraceEventSimulation:
         tracer = InMemoryTracer()
         rid = "test-req-456"
 
-        tracer.emit(TraceEvent.now("TensorComputed", rid, {"metrics": ["fp"], "version": "1"}))
-        tracer.emit(TraceEvent.now("PhilosophersSelected", rid, {"mode": "warn", "n": 5, "cost_total": 12, "covered_tags": ["compliance", "clarify"]}))
-        tracer.emit(TraceEvent.now("PolicyPrecheckSummary", rid, {"allow": 4, "revise": 1, "reject": 0}))
-        tracer.emit(TraceEvent.now("ParetoFrontComputed", rid, {
-            "weights": {"safety": 0.40, "freedom": 0.10},
-            "front": [{"proposal_id": "w1", "action_type": "ask_clarification", "scores": {"safety": 0.9, "freedom": 0.5, "explain": 0.6, "brevity": 0.8, "coherence": 0.7}}],
-        }))
-        tracer.emit(TraceEvent.now("ParetoWinnerSelected", rid, {"winner": {"proposal_id": "w1", "action_type": "ask_clarification"}}))
+        tracer.emit(
+            TraceEvent.now("TensorComputed", rid, {"metrics": ["fp"], "version": "1"})
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "PhilosophersSelected",
+                rid,
+                {
+                    "mode": "warn",
+                    "n": 5,
+                    "cost_total": 12,
+                    "covered_tags": ["compliance", "clarify"],
+                },
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "PolicyPrecheckSummary", rid, {"allow": 4, "revise": 1, "reject": 0}
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "ParetoFrontComputed",
+                rid,
+                {
+                    "weights": {"safety": 0.40, "freedom": 0.10},
+                    "front": [
+                        {
+                            "proposal_id": "w1",
+                            "action_type": "ask_clarification",
+                            "scores": {
+                                "safety": 0.9,
+                                "freedom": 0.5,
+                                "explain": 0.6,
+                                "brevity": 0.8,
+                                "coherence": 0.7,
+                            },
+                        }
+                    ],
+                },
+            )
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "ParetoWinnerSelected",
+                rid,
+                {"winner": {"proposal_id": "w1", "action_type": "ask_clarification"}},
+            )
+        )
 
         md = render_markdown(tracer.events)
 
@@ -150,8 +260,16 @@ class TestViewerMarkdown:
     def test_missing_pareto_events(self):
         """Should handle missing Pareto events gracefully."""
         tracer = InMemoryTracer()
-        tracer.emit(TraceEvent.now("TensorComputed", "r1", {"metrics": ["fp"], "version": "1"}))
-        tracer.emit(TraceEvent.now("AggregateCompleted", "r1", {"proposal_id": "p1", "action_type": "answer"}))
+        tracer.emit(
+            TraceEvent.now("TensorComputed", "r1", {"metrics": ["fp"], "version": "1"})
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "AggregateCompleted",
+                "r1",
+                {"proposal_id": "p1", "action_type": "answer"},
+            )
+        )
 
         md = render_markdown(tracer.events)
         assert "# Po_core Decision Report" in md

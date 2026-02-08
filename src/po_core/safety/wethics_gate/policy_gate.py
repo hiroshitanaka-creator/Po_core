@@ -5,6 +5,7 @@ Policy-based WethicsGate
 Unified 2-stage ethics gate implementing WethicsGatePort.
 Wraps PolicyIntentionGate and PolicyActionGate.
 """
+
 from __future__ import annotations
 
 from po_core.domain.context import Context
@@ -13,8 +14,8 @@ from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_verdict import SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
 from po_core.safety.wethics_gate.action_gate import PolicyActionGate
+from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
 
 
 class PolicyWethicsGate:

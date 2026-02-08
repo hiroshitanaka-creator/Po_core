@@ -37,10 +37,12 @@ class Husserl(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Edmund Husserl",
-            description="Founder of phenomenology - focused on consciousness, intentionality, and transcendental constitution"
+            description="Founder of phenomenology - focused on consciousness, intentionality, and transcendental constitution",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Husserl's phenomenological perspective.
 
@@ -78,8 +80,8 @@ class Husserl(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Transcendental phenomenology / Eidetic analysis",
-                "focus": "Pure consciousness, intentionality, essences, and transcendental constitution"
-            }
+                "focus": "Pure consciousness, intentionality, essences, and transcendental constitution",
+            },
         }
 
     def _analyze_consciousness(self, prompt: str) -> Dict[str, Any]:
@@ -112,8 +114,14 @@ class Husserl(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
-            epoche, intentionality, noesis_noema, lifeworld,
-            transcendental_ego, essence, evidence, concepts
+            epoche,
+            intentionality,
+            noesis_noema,
+            lifeworld,
+            transcendental_ego,
+            essence,
+            evidence,
+            concepts,
         )
 
         return {
@@ -131,7 +139,7 @@ class Husserl(Philosopher):
             "intersubjectivity": intersubjectivity,
             "evidence": evidence,
             "natural_attitude": natural_attitude,
-            "constitution": constitution
+            "constitution": constitution,
         }
 
     def _assess_epoche(self, text: str) -> Dict[str, Any]:
@@ -145,27 +153,55 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Epoché/bracketing indicators
-        epoche_words = ["bracket", "suspend", "reduction", "epoché", "epoche",
-                        "put aside", "set aside", "parentheses", "phenomenological reduction"]
+        epoche_words = [
+            "bracket",
+            "suspend",
+            "reduction",
+            "epoché",
+            "epoche",
+            "put aside",
+            "set aside",
+            "parentheses",
+            "phenomenological reduction",
+        ]
         epoche_count = sum(1 for phrase in epoche_words if phrase in text_lower)
 
         # Presupposition/assumption indicators
-        presupposition_words = ["presupposition", "assumption", "presume", "take for granted",
-                                "assume", "belief", "prejudice", "bias"]
-        presupposition_count = sum(1 for phrase in presupposition_words if phrase in text_lower)
+        presupposition_words = [
+            "presupposition",
+            "assumption",
+            "presume",
+            "take for granted",
+            "assume",
+            "belief",
+            "prejudice",
+            "bias",
+        ]
+        presupposition_count = sum(
+            1 for phrase in presupposition_words if phrase in text_lower
+        )
 
         # Suspension/withholding indicators
         suspension_words = ["suspend", "withhold", "refrain", "abstain", "hold back"]
         suspension_count = sum(1 for word in suspension_words if word in text_lower)
 
         # Pure consciousness indicators
-        pure_consciousness = ["pure consciousness", "transcendental consciousness",
-                              "consciousness itself", "pure experience"]
+        pure_consciousness = [
+            "pure consciousness",
+            "transcendental consciousness",
+            "consciousness itself",
+            "pure experience",
+        ]
         pure_count = sum(1 for phrase in pure_consciousness if phrase in text_lower)
 
         # Natural attitude indicators (opposite)
-        natural_attitude = ["natural attitude", "take for real", "obvious existence",
-                            "just is", "of course exists"]
+        natural_attitude = [
+            "natural attitude",
+            "take for real",
+            "obvious existence",
+            "just is",
+            "of course exists",
+        ]
         natural_count = sum(1 for phrase in natural_attitude if phrase in text_lower)
 
         if epoche_count >= 1 and suspension_count >= 1:
@@ -196,7 +232,7 @@ class Husserl(Philosopher):
             "epoche_score": epoche_count,
             "suspension_score": suspension_count,
             "presuppositions_noted": presupposition_count,
-            "principle": "Epoché: Bracketing the natural attitude to access pure consciousness"
+            "principle": "Epoché: Bracketing the natural attitude to access pure consciousness",
         }
 
     def _analyze_intentionality(self, text: str) -> Dict[str, Any]:
@@ -210,22 +246,40 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Intentionality explicit
-        intentionality_words = ["intentional", "intentionality", "directed toward",
-                                "consciousness of", "about something"]
-        intentionality_count = sum(1 for phrase in intentionality_words if phrase in text_lower)
+        intentionality_words = [
+            "intentional",
+            "intentionality",
+            "directed toward",
+            "consciousness of",
+            "about something",
+        ]
+        intentionality_count = sum(
+            1 for phrase in intentionality_words if phrase in text_lower
+        )
 
         # Directedness indicators
         directedness_words = ["directed", "aimed at", "toward", "targets", "refers to"]
-        directedness_count = sum(1 for phrase in directedness_words if phrase in text_lower)
+        directedness_count = sum(
+            1 for phrase in directedness_words if phrase in text_lower
+        )
 
         # Object-consciousness indicators
-        object_consciousness = ["object of consciousness", "intended object",
-                                "what is meant", "what is intended"]
+        object_consciousness = [
+            "object of consciousness",
+            "intended object",
+            "what is meant",
+            "what is intended",
+        ]
         object_count = sum(1 for phrase in object_consciousness if phrase in text_lower)
 
         # Act-object structure
-        act_object = ["act and object", "thinking about", "perceiving something",
-                      "remembering that", "imagining what"]
+        act_object = [
+            "act and object",
+            "thinking about",
+            "perceiving something",
+            "remembering that",
+            "imagining what",
+        ]
         act_object_count = sum(1 for phrase in act_object if phrase in text_lower)
 
         # Reference/aboutness indicators
@@ -260,7 +314,7 @@ class Husserl(Philosopher):
             "intentionality_score": intentionality_count,
             "directedness": directedness_count >= 1,
             "act_object_structure": act_object_count >= 1,
-            "principle": "Intentionality: Consciousness is always consciousness-of-something"
+            "principle": "Intentionality: Consciousness is always consciousness-of-something",
         }
 
     def _analyze_noesis_noema(self, text: str) -> Dict[str, Any]:
@@ -274,13 +328,28 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Noesis indicators (act of consciousness)
-        noesis_words = ["noesis", "act of", "perceiving", "judging", "thinking",
-                        "intending", "experiencing", "consciousness acts"]
+        noesis_words = [
+            "noesis",
+            "act of",
+            "perceiving",
+            "judging",
+            "thinking",
+            "intending",
+            "experiencing",
+            "consciousness acts",
+        ]
         noesis_count = sum(1 for phrase in noesis_words if phrase in text_lower)
 
         # Noema indicators (intended object)
-        noema_words = ["noema", "intended object", "as intended", "as meant",
-                       "object-as-intended", "sense", "meaning"]
+        noema_words = [
+            "noema",
+            "intended object",
+            "as intended",
+            "as meant",
+            "object-as-intended",
+            "sense",
+            "meaning",
+        ]
         noema_count = sum(1 for phrase in noema_words if phrase in text_lower)
 
         # Correlation indicators
@@ -288,17 +357,27 @@ class Husserl(Philosopher):
         correlation_count = sum(1 for word in correlation_words if word in text_lower)
 
         # How/what structure (how given vs what given)
-        how_what = ["how it appears", "what appears", "manner of givenness",
-                    "mode of presentation"]
+        how_what = [
+            "how it appears",
+            "what appears",
+            "manner of givenness",
+            "mode of presentation",
+        ]
         how_what_count = sum(1 for phrase in how_what if phrase in text_lower)
 
         # Act-content distinction
-        act_content = ["act and content", "act versus object", "subjective and objective"]
+        act_content = [
+            "act and content",
+            "act versus object",
+            "subjective and objective",
+        ]
         act_content_count = sum(1 for phrase in act_content if phrase in text_lower)
 
         if (noesis_count >= 1 and noema_count >= 1) or correlation_count >= 1:
             status = "Noesis-Noema Correlation"
-            description = "Full noetic-noematic structure - act correlated with intended object"
+            description = (
+                "Full noetic-noematic structure - act correlated with intended object"
+            )
             structure = "Correlated"
         elif noesis_count >= 1 and how_what_count >= 1:
             status = "Noetic Analysis"
@@ -324,7 +403,7 @@ class Husserl(Philosopher):
             "noesis_score": noesis_count,
             "noema_score": noema_count,
             "correlation": correlation_count >= 1,
-            "principle": "Noesis-Noema: Correlation of act and intended object"
+            "principle": "Noesis-Noema: Correlation of act and intended object",
         }
 
     def _assess_lifeworld(self, text: str) -> Dict[str, Any]:
@@ -342,18 +421,40 @@ class Husserl(Philosopher):
         lifeworld_count = sum(1 for phrase in lifeworld_words if phrase in text_lower)
 
         # Pre-theoretical indicators
-        pretheoretical_words = ["pre-theoretical", "pre-scientific", "before theory",
-                                "everyday", "ordinary experience", "lived experience"]
-        pretheoretical_count = sum(1 for phrase in pretheoretical_words if phrase in text_lower)
+        pretheoretical_words = [
+            "pre-theoretical",
+            "pre-scientific",
+            "before theory",
+            "everyday",
+            "ordinary experience",
+            "lived experience",
+        ]
+        pretheoretical_count = sum(
+            1 for phrase in pretheoretical_words if phrase in text_lower
+        )
 
         # Background/ground indicators
-        background_words = ["background", "ground", "horizon", "context",
-                            "taken for granted", "presupposed", "tacit"]
+        background_words = [
+            "background",
+            "ground",
+            "horizon",
+            "context",
+            "taken for granted",
+            "presupposed",
+            "tacit",
+        ]
         background_count = sum(1 for phrase in background_words if phrase in text_lower)
 
         # Everyday world indicators
-        everyday_words = ["everyday", "ordinary", "common", "familiar",
-                          "daily life", "mundane", "quotidian"]
+        everyday_words = [
+            "everyday",
+            "ordinary",
+            "common",
+            "familiar",
+            "daily life",
+            "mundane",
+            "quotidian",
+        ]
         everyday_count = sum(1 for word in everyday_words if word in text_lower)
 
         # Scientific/theoretical (contrasted with lifeworld)
@@ -370,7 +471,9 @@ class Husserl(Philosopher):
             character = "Foundational"
         elif everyday_count >= 1 and scientific_count >= 1:
             status = "Everyday vs Scientific"
-            description = "Contrast between lived experience and theoretical abstraction"
+            description = (
+                "Contrast between lived experience and theoretical abstraction"
+            )
             character = "Contrasted"
         elif everyday_count >= 2:
             status = "Everyday Experience"
@@ -388,7 +491,7 @@ class Husserl(Philosopher):
             "lifeworld_score": lifeworld_count,
             "pretheoretical": pretheoretical_count >= 1,
             "background_noted": background_count >= 1,
-            "principle": "Lifeworld: Pre-theoretical ground of all experience and science"
+            "principle": "Lifeworld: Pre-theoretical ground of all experience and science",
         }
 
     def _assess_transcendental_ego(self, text: str) -> Dict[str, Any]:
@@ -402,17 +505,35 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Transcendental ego explicit
-        transcendental_ego = ["transcendental ego", "transcendental i", "pure i",
-                              "pure ego", "transcendental subject"]
-        transcendental_count = sum(1 for phrase in transcendental_ego if phrase in text_lower)
+        transcendental_ego = [
+            "transcendental ego",
+            "transcendental i",
+            "pure i",
+            "pure ego",
+            "transcendental subject",
+        ]
+        transcendental_count = sum(
+            1 for phrase in transcendental_ego if phrase in text_lower
+        )
 
         # Constituting subject indicators
-        constituting_words = ["constituting", "constitute", "constitution",
-                              "constitutive", "subject constitutes"]
-        constituting_count = sum(1 for phrase in constituting_words if phrase in text_lower)
+        constituting_words = [
+            "constituting",
+            "constitute",
+            "constitution",
+            "constitutive",
+            "subject constitutes",
+        ]
+        constituting_count = sum(
+            1 for phrase in constituting_words if phrase in text_lower
+        )
 
         # Pure consciousness indicators
-        pure_words = ["pure consciousness", "pure subjectivity", "transcendental consciousness"]
+        pure_words = [
+            "pure consciousness",
+            "pure subjectivity",
+            "transcendental consciousness",
+        ]
         pure_count = sum(1 for phrase in pure_words if phrase in text_lower)
 
         # Pole of identity indicators
@@ -420,13 +541,20 @@ class Husserl(Philosopher):
         pole_count = sum(1 for phrase in pole_words if phrase in text_lower)
 
         # Empirical self (contrasted with transcendental ego)
-        empirical_words = ["empirical self", "empirical i", "psychological ego",
-                           "person", "individual"]
+        empirical_words = [
+            "empirical self",
+            "empirical i",
+            "psychological ego",
+            "person",
+            "individual",
+        ]
         empirical_count = sum(1 for phrase in empirical_words if phrase in text_lower)
 
         if transcendental_count >= 1:
             status = "Transcendental Ego Explicit"
-            description = "Pure transcendental I explicitly recognized as constituting subject"
+            description = (
+                "Pure transcendental I explicitly recognized as constituting subject"
+            )
             level = "Transcendental"
         elif constituting_count >= 1 and pure_count >= 1:
             status = "Constituting Subjectivity"
@@ -452,7 +580,7 @@ class Husserl(Philosopher):
             "transcendental_score": transcendental_count,
             "constituting": constituting_count >= 1,
             "pure_consciousness": pure_count >= 1,
-            "principle": "Transcendental Ego: Pure I as pole of constituting acts"
+            "principle": "Transcendental Ego: Pure I as pole of constituting acts",
         }
 
     def _analyze_essence(self, text: str) -> Dict[str, Any]:
@@ -466,28 +594,57 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Essence/eidos explicit
-        essence_words = ["essence", "eidos", "essential", "eidetic",
-                         "necessary", "invariant", "universal"]
+        essence_words = [
+            "essence",
+            "eidos",
+            "essential",
+            "eidetic",
+            "necessary",
+            "invariant",
+            "universal",
+        ]
         essence_count = sum(1 for word in essence_words if word in text_lower)
 
         # Eidetic intuition/variation
-        eidetic_words = ["eidetic intuition", "eidetic variation", "free variation",
-                         "imaginative variation", "essence intuition"]
+        eidetic_words = [
+            "eidetic intuition",
+            "eidetic variation",
+            "free variation",
+            "imaginative variation",
+            "essence intuition",
+        ]
         eidetic_count = sum(1 for phrase in eidetic_words if phrase in text_lower)
 
         # Necessary/universal structure
-        necessary_words = ["necessary", "must be", "cannot be otherwise",
-                           "universal", "always", "invariant"]
+        necessary_words = [
+            "necessary",
+            "must be",
+            "cannot be otherwise",
+            "universal",
+            "always",
+            "invariant",
+        ]
         necessary_count = sum(1 for phrase in necessary_words if phrase in text_lower)
 
         # Essential vs factual
-        essential_factual = ["essential versus factual", "essence and fact",
-                             "necessary and contingent", "eidetic and empirical"]
-        essential_factual_count = sum(1 for phrase in essential_factual if phrase in text_lower)
+        essential_factual = [
+            "essential versus factual",
+            "essence and fact",
+            "necessary and contingent",
+            "eidetic and empirical",
+        ]
+        essential_factual_count = sum(
+            1 for phrase in essential_factual if phrase in text_lower
+        )
 
         # Contingent/factual (contrasted with essential)
-        contingent_words = ["contingent", "factual", "accidental", "merely happens",
-                            "could be otherwise"]
+        contingent_words = [
+            "contingent",
+            "factual",
+            "accidental",
+            "merely happens",
+            "could be otherwise",
+        ]
         contingent_count = sum(1 for phrase in contingent_words if phrase in text_lower)
 
         if eidetic_count >= 1:
@@ -522,7 +679,7 @@ class Husserl(Philosopher):
             "essence_score": essence_count,
             "eidetic_intuition": eidetic_count >= 1,
             "necessary_structures": necessary_count >= 1,
-            "principle": "Eidos: Essential structures grasped through eidetic intuition"
+            "principle": "Eidos: Essential structures grasped through eidetic intuition",
         }
 
     def _analyze_horizons(self, text: str) -> Dict[str, Any]:
@@ -540,23 +697,45 @@ class Husserl(Philosopher):
         horizon_count = sum(1 for word in horizon_words if word in text_lower)
 
         # Inner horizon indicators
-        inner_horizon = ["inner horizon", "unseen sides", "back side",
-                         "hidden aspects", "more to see"]
+        inner_horizon = [
+            "inner horizon",
+            "unseen sides",
+            "back side",
+            "hidden aspects",
+            "more to see",
+        ]
         inner_count = sum(1 for phrase in inner_horizon if phrase in text_lower)
 
         # Outer horizon indicators
-        outer_horizon = ["outer horizon", "context", "surrounding world",
-                         "background", "field"]
+        outer_horizon = [
+            "outer horizon",
+            "context",
+            "surrounding world",
+            "background",
+            "field",
+        ]
         outer_count = sum(1 for phrase in outer_horizon if phrase in text_lower)
 
         # Implicit/co-given indicators
-        implicit_words = ["implicit", "co-given", "tacit", "presupposed",
-                          "background", "surrounding"]
+        implicit_words = [
+            "implicit",
+            "co-given",
+            "tacit",
+            "presupposed",
+            "background",
+            "surrounding",
+        ]
         implicit_count = sum(1 for word in implicit_words if word in text_lower)
 
         # Perspective/aspect indicators
-        perspective_words = ["perspective", "aspect", "side", "profile",
-                             "view", "appearance"]
+        perspective_words = [
+            "perspective",
+            "aspect",
+            "side",
+            "profile",
+            "view",
+            "appearance",
+        ]
         perspective_count = sum(1 for word in perspective_words if word in text_lower)
 
         if horizon_count >= 1 and (inner_count >= 1 or outer_count >= 1):
@@ -587,7 +766,7 @@ class Husserl(Philosopher):
             "horizon_score": horizon_count,
             "inner_horizon": inner_count >= 1,
             "outer_horizon": outer_count >= 1,
-            "principle": "Horizons: Every experience has inner and outer horizons"
+            "principle": "Horizons: Every experience has inner and outer horizons",
         }
 
     def _analyze_time_consciousness(self, text: str) -> Dict[str, Any]:
@@ -602,27 +781,58 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Time-consciousness explicit
-        time_consciousness = ["time-consciousness", "internal time", "temporal consciousness"]
-        time_consciousness_count = sum(1 for phrase in time_consciousness if phrase in text_lower)
+        time_consciousness = [
+            "time-consciousness",
+            "internal time",
+            "temporal consciousness",
+        ]
+        time_consciousness_count = sum(
+            1 for phrase in time_consciousness if phrase in text_lower
+        )
 
         # Retention indicators
-        retention_words = ["retention", "just-past", "retained", "still present",
-                           "fading", "receding"]
+        retention_words = [
+            "retention",
+            "just-past",
+            "retained",
+            "still present",
+            "fading",
+            "receding",
+        ]
         retention_count = sum(1 for phrase in retention_words if phrase in text_lower)
 
         # Primal impression indicators
-        primal_impression = ["primal impression", "now-point", "living present",
-                             "impression", "present moment"]
-        impression_count = sum(1 for phrase in primal_impression if phrase in text_lower)
+        primal_impression = [
+            "primal impression",
+            "now-point",
+            "living present",
+            "impression",
+            "present moment",
+        ]
+        impression_count = sum(
+            1 for phrase in primal_impression if phrase in text_lower
+        )
 
         # Protention indicators
-        protention_words = ["protention", "anticipate", "expect", "coming",
-                            "about to", "future horizon"]
+        protention_words = [
+            "protention",
+            "anticipate",
+            "expect",
+            "coming",
+            "about to",
+            "future horizon",
+        ]
         protention_count = sum(1 for phrase in protention_words if phrase in text_lower)
 
         # Temporal flow indicators
-        flow_words = ["flow", "stream", "temporal flux", "flowing",
-                      "succession", "temporal synthesis"]
+        flow_words = [
+            "flow",
+            "stream",
+            "temporal flux",
+            "flowing",
+            "succession",
+            "temporal synthesis",
+        ]
         flow_count = sum(1 for phrase in flow_words if phrase in text_lower)
 
         # Past-present-future structure
@@ -654,7 +864,7 @@ class Husserl(Philosopher):
             "retention": retention_count >= 1,
             "primal_impression": impression_count >= 1,
             "protention": protention_count >= 1,
-            "principle": "Time-consciousness: Retention-impression-protention structure"
+            "principle": "Time-consciousness: Retention-impression-protention structure",
         }
 
     def _assess_intersubjectivity(self, text: str) -> Dict[str, Any]:
@@ -668,23 +878,45 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Intersubjectivity explicit
-        intersubjectivity_words = ["intersubjectivity", "intersubjective",
-                                    "other subjects", "other egos"]
-        intersubjectivity_count = sum(1 for phrase in intersubjectivity_words if phrase in text_lower)
+        intersubjectivity_words = [
+            "intersubjectivity",
+            "intersubjective",
+            "other subjects",
+            "other egos",
+        ]
+        intersubjectivity_count = sum(
+            1 for phrase in intersubjectivity_words if phrase in text_lower
+        )
 
         # Empathy/Einfühlung indicators
-        empathy_words = ["empathy", "einfühlung", "appresentation",
-                         "analogical apperception", "pairing"]
+        empathy_words = [
+            "empathy",
+            "einfühlung",
+            "appresentation",
+            "analogical apperception",
+            "pairing",
+        ]
         empathy_count = sum(1 for phrase in empathy_words if phrase in text_lower)
 
         # Other minds/subjects
-        other_minds = ["other minds", "others", "other people", "other persons",
-                       "fellow subjects", "we", "community"]
+        other_minds = [
+            "other minds",
+            "others",
+            "other people",
+            "other persons",
+            "fellow subjects",
+            "we",
+            "community",
+        ]
         other_count = sum(1 for phrase in other_minds if phrase in text_lower)
 
         # Objective world indicators
-        objective_world = ["objective world", "shared world", "common world",
-                           "intersubjectively constituted"]
+        objective_world = [
+            "objective world",
+            "shared world",
+            "common world",
+            "intersubjectively constituted",
+        ]
         objective_count = sum(1 for phrase in objective_world if phrase in text_lower)
 
         # Solipsism (problem to be overcome)
@@ -719,7 +951,7 @@ class Husserl(Philosopher):
             "intersubjectivity_score": intersubjectivity_count,
             "empathy": empathy_count >= 1,
             "other_subjects": other_count >= 1,
-            "principle": "Intersubjectivity: Other subjects constituted through empathy"
+            "principle": "Intersubjectivity: Other subjects constituted through empathy",
         }
 
     def _assess_evidence(self, text: str) -> Dict[str, Any]:
@@ -737,28 +969,43 @@ class Husserl(Philosopher):
         evidence_count = sum(1 for phrase in evidence_words if phrase in text_lower)
 
         # Self-givenness indicators
-        selfgivenness = ["self-given", "given itself", "itself present",
-                         "bodily present", "in person"]
+        selfgivenness = [
+            "self-given",
+            "given itself",
+            "itself present",
+            "bodily present",
+            "in person",
+        ]
         selfgivenness_count = sum(1 for phrase in selfgivenness if phrase in text_lower)
 
         # Fulfillment indicators
-        fulfillment_words = ["fulfillment", "fulfilled", "fulfilling",
-                             "verification", "confirmed"]
-        fulfillment_count = sum(1 for phrase in fulfillment_words if phrase in text_lower)
+        fulfillment_words = [
+            "fulfillment",
+            "fulfilled",
+            "fulfilling",
+            "verification",
+            "confirmed",
+        ]
+        fulfillment_count = sum(
+            1 for phrase in fulfillment_words if phrase in text_lower
+        )
 
         # Apodictic indicators
-        apodictic_words = ["apodictic", "indubitable", "absolute certainty",
-                           "cannot doubt", "necessarily"]
+        apodictic_words = [
+            "apodictic",
+            "indubitable",
+            "absolute certainty",
+            "cannot doubt",
+            "necessarily",
+        ]
         apodictic_count = sum(1 for phrase in apodictic_words if phrase in text_lower)
 
         # Adequate/inadequate indicators
-        adequate_words = ["adequate", "inadequate", "complete givenness",
-                          "incomplete"]
+        adequate_words = ["adequate", "inadequate", "complete givenness", "incomplete"]
         adequate_count = sum(1 for word in adequate_words if word in text_lower)
 
         # Intuition indicators
-        intuition_words = ["intuition", "intuit", "direct seeing",
-                           "immediate seeing"]
+        intuition_words = ["intuition", "intuit", "direct seeing", "immediate seeing"]
         intuition_count = sum(1 for phrase in intuition_words if phrase in text_lower)
 
         if apodictic_count >= 1:
@@ -789,7 +1036,7 @@ class Husserl(Philosopher):
             "evidence_score": evidence_count,
             "selfgivenness": selfgivenness_count >= 1,
             "apodictic": apodictic_count >= 1,
-            "principle": "Evidence: Self-givenness and fulfillment of intention"
+            "principle": "Evidence: Self-givenness and fulfillment of intention",
         }
 
     def _assess_natural_attitude(self, text: str) -> Dict[str, Any]:
@@ -802,33 +1049,61 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Natural attitude explicit
-        natural_attitude = ["natural attitude", "naturally", "take for granted",
-                            "simply exists", "just is there", "obvious"]
+        natural_attitude = [
+            "natural attitude",
+            "naturally",
+            "take for granted",
+            "simply exists",
+            "just is there",
+            "obvious",
+        ]
         natural_count = sum(1 for phrase in natural_attitude if phrase in text_lower)
 
         # Phenomenological attitude explicit
-        phenomenological_attitude = ["phenomenological attitude", "phenomenological standpoint",
-                                      "transcendental standpoint", "after reduction"]
-        phenomenological_count = sum(1 for phrase in phenomenological_attitude if phrase in text_lower)
+        phenomenological_attitude = [
+            "phenomenological attitude",
+            "phenomenological standpoint",
+            "transcendental standpoint",
+            "after reduction",
+        ]
+        phenomenological_count = sum(
+            1 for phrase in phenomenological_attitude if phrase in text_lower
+        )
 
         # Existence belief indicators (natural attitude)
-        existence_belief = ["really exists", "out there", "independent reality",
-                            "actual world", "objective reality"]
+        existence_belief = [
+            "really exists",
+            "out there",
+            "independent reality",
+            "actual world",
+            "objective reality",
+        ]
         existence_count = sum(1 for phrase in existence_belief if phrase in text_lower)
 
         # Suspension/bracketing (phenomenological attitude)
-        suspension = ["suspend", "bracket", "put aside", "neutralize",
-                      "set aside existence"]
+        suspension = [
+            "suspend",
+            "bracket",
+            "put aside",
+            "neutralize",
+            "set aside existence",
+        ]
         suspension_count = sum(1 for phrase in suspension if phrase in text_lower)
 
         # How it appears (phenomenological focus)
-        how_appears = ["how it appears", "as it appears", "mode of givenness",
-                       "manner of appearance"]
+        how_appears = [
+            "how it appears",
+            "as it appears",
+            "mode of givenness",
+            "manner of appearance",
+        ]
         how_appears_count = sum(1 for phrase in how_appears if phrase in text_lower)
 
         if phenomenological_count >= 1 or suspension_count >= 1:
             attitude = "Phenomenological Attitude"
-            description = "Phenomenological standpoint - focus on givenness, not existence"
+            description = (
+                "Phenomenological standpoint - focus on givenness, not existence"
+            )
             stance = "Phenomenological"
         elif how_appears_count >= 1:
             attitude = "Descriptive Focus"
@@ -840,7 +1115,9 @@ class Husserl(Philosopher):
             stance = "Natural"
         else:
             attitude = "Attitude Unclear"
-            description = "Neither natural nor phenomenological attitude clearly present"
+            description = (
+                "Neither natural nor phenomenological attitude clearly present"
+            )
             stance = "Undetermined"
 
         return {
@@ -850,7 +1127,7 @@ class Husserl(Philosopher):
             "natural_score": natural_count,
             "phenomenological_score": phenomenological_count,
             "suspension": suspension_count >= 1,
-            "principle": "Natural attitude takes world as existing; phenomenological attitude brackets this"
+            "principle": "Natural attitude takes world as existing; phenomenological attitude brackets this",
         }
 
     def _analyze_constitution(self, text: str) -> Dict[str, Any]:
@@ -864,18 +1141,35 @@ class Husserl(Philosopher):
         text_lower = text.lower()
 
         # Constitution explicit
-        constitution_words = ["constitution", "constitute", "constituted",
-                              "constitutive", "sense-giving"]
-        constitution_count = sum(1 for phrase in constitution_words if phrase in text_lower)
+        constitution_words = [
+            "constitution",
+            "constitute",
+            "constituted",
+            "constitutive",
+            "sense-giving",
+        ]
+        constitution_count = sum(
+            1 for phrase in constitution_words if phrase in text_lower
+        )
 
         # Synthesis indicators
-        synthesis_words = ["synthesis", "synthetic", "synthesize",
-                           "active synthesis", "passive synthesis"]
+        synthesis_words = [
+            "synthesis",
+            "synthetic",
+            "synthesize",
+            "active synthesis",
+            "passive synthesis",
+        ]
         synthesis_count = sum(1 for phrase in synthesis_words if phrase in text_lower)
 
         # Meaning/sense-giving
-        meaning_giving = ["meaning", "sense", "significance",
-                          "sense-giving", "bestow meaning"]
+        meaning_giving = [
+            "meaning",
+            "sense",
+            "significance",
+            "sense-giving",
+            "bestow meaning",
+        ]
         meaning_count = sum(1 for phrase in meaning_giving if phrase in text_lower)
 
         # Active vs passive
@@ -883,11 +1177,18 @@ class Husserl(Philosopher):
         active_passive_count = sum(1 for word in active_passive if word in text_lower)
 
         # Association/genesis indicators
-        genesis_words = ["association", "genesis", "genetic", "sedimentation",
-                         "habituality"]
+        genesis_words = [
+            "association",
+            "genesis",
+            "genetic",
+            "sedimentation",
+            "habituality",
+        ]
         genesis_count = sum(1 for word in genesis_words if word in text_lower)
 
-        if constitution_count >= 2 or (constitution_count >= 1 and synthesis_count >= 1):
+        if constitution_count >= 2 or (
+            constitution_count >= 1 and synthesis_count >= 1
+        ):
             status = "Constitutive Analysis"
             description = "Explicit analysis of how consciousness constitutes objects"
             mode = "Transcendental"
@@ -915,7 +1216,7 @@ class Husserl(Philosopher):
             "constitution_score": constitution_count,
             "synthesis": synthesis_count >= 1,
             "meaning_giving": meaning_count >= 1,
-            "principle": "Constitution: Consciousness constitutes meaning and validity"
+            "principle": "Constitution: Consciousness constitutes meaning and validity",
         }
 
     def _identify_concepts(self, text: str) -> List[str]:
@@ -924,7 +1225,12 @@ class Husserl(Philosopher):
         concepts = []
 
         concept_map = {
-            "Intentionality": ["intentional", "consciousness of", "directed toward", "about"],
+            "Intentionality": [
+                "intentional",
+                "consciousness of",
+                "directed toward",
+                "about",
+            ],
             "Phenomenological Reduction": ["epoché", "bracket", "reduction", "suspend"],
             "Essence (Eidos)": ["essence", "essential", "eidetic", "necessary"],
             "Evidence": ["evidence", "self-given", "intuition", "evident"],
@@ -935,7 +1241,7 @@ class Husserl(Philosopher):
             "Noesis-Noema": ["noesis", "noema", "act", "object"],
             "Transcendental Ego": ["transcendental", "pure ego", "pure i"],
             "Intersubjectivity": ["intersubjective", "others", "empathy"],
-            "Natural Attitude": ["natural attitude", "take for granted", "obvious"]
+            "Natural Attitude": ["natural attitude", "take for granted", "obvious"],
         }
 
         for concept, keywords in concept_map.items():
@@ -962,7 +1268,9 @@ class Husserl(Philosopher):
         if "Essence (Eidos)" in concepts:
             questions.append("What are the essential, invariant structures?")
         if "Constitution" in concepts:
-            questions.append("How does consciousness constitute this object and its meaning?")
+            questions.append(
+                "How does consciousness constitute this object and its meaning?"
+            )
         if "Evidence" in concepts:
             questions.append("Is this given in self-evidence or merely signified?")
         if "Lifeworld" in concepts:
@@ -979,7 +1287,7 @@ class Husserl(Philosopher):
         transcendental_ego: Dict[str, Any],
         essence: Dict[str, Any],
         evidence: Dict[str, Any],
-        concepts: List[str]
+        concepts: List[str],
     ) -> str:
         """Construct comprehensive Husserlian phenomenological reasoning."""
         reasoning = (
@@ -992,23 +1300,25 @@ class Husserl(Philosopher):
         reasoning += f"Intentionality: {intentionality['description']}. "
 
         # Add noesis-noema if present
-        if noesis_noema['status'] != "No Noesis-Noema Structure":
+        if noesis_noema["status"] != "No Noesis-Noema Structure":
             reasoning += f"Noetic-noematic structure: {noesis_noema['description']}. "
 
         # Add evidence
         reasoning += f"Evidence: {evidence['description']}. "
 
         # Add essence if present
-        if essence['status'] != "No Eidetic Analysis":
+        if essence["status"] != "No Eidetic Analysis":
             reasoning += f"Essential analysis: {essence['description']}. "
 
         # Add lifeworld if present
-        if lifeworld['status'] != "Lifeworld Not Evident":
+        if lifeworld["status"] != "Lifeworld Not Evident":
             reasoning += f"Lifeworld: {lifeworld['description']}. "
 
         # Add transcendental ego if present
-        if transcendental_ego['status'] != "Transcendental Ego Not Evident":
-            reasoning += f"Transcendental subjectivity: {transcendental_ego['description']}. "
+        if transcendental_ego["status"] != "Transcendental Ego Not Evident":
+            reasoning += (
+                f"Transcendental subjectivity: {transcendental_ego['description']}. "
+            )
 
         # Conclude with phenomenological principles
         reasoning += (
@@ -1038,7 +1348,9 @@ class Husserl(Philosopher):
         epoche = analysis["epoche"]
         if epoche["stage"] == "Pre-phenomenological":
             tension_score += 2
-            tension_elements.append("Remaining in natural attitude - epoché not performed")
+            tension_elements.append(
+                "Remaining in natural attitude - epoché not performed"
+            )
         elif epoche["stage"] == "Undetermined":
             tension_score += 1
             tension_elements.append("Unclear phenomenological stance")
@@ -1079,7 +1391,9 @@ class Husserl(Philosopher):
         # Determine tension level
         if tension_score >= 6:
             level = "Very High"
-            description = "Deep pre-phenomenological stance - natural attitude dominates"
+            description = (
+                "Deep pre-phenomenological stance - natural attitude dominates"
+            )
         elif tension_score >= 4:
             level = "High"
             description = "Significant lack of phenomenological analysis"
@@ -1097,5 +1411,7 @@ class Husserl(Philosopher):
             "level": level,
             "score": tension_score,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }

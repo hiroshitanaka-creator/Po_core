@@ -13,13 +13,13 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from po_core.po_system_prompt import (
-    PO_CORE_SYSTEM_PROMPT,
-    TEST_QUESTIONS,
-    STRESS_TEST_CONCEPTS,
     EVALUATION_RUBRIC,
+    PO_CORE_SYSTEM_PROMPT,
+    STRESS_TEST_CONCEPTS,
+    TEST_QUESTIONS,
     ConstraintMode,
-    build_user_prompt,
     build_stress_test_prompt,
+    build_user_prompt,
 )
 
 
@@ -55,7 +55,9 @@ class TestReport:
 
     results: List[TestResult]
     aggregate_scores: Dict[str, float] = field(default_factory=dict)
-    constraint_mode_comparison: Dict[str, Dict[str, float]] = field(default_factory=dict)
+    constraint_mode_comparison: Dict[str, Dict[str, float]] = field(
+        default_factory=dict
+    )
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
 
     def to_dict(self) -> Dict[str, Any]:
@@ -155,9 +157,7 @@ class PoTestRunner:
         return sections
 
     def check_format_compliance(
-        self,
-        response: str,
-        constraint_mode: ConstraintMode
+        self, response: str, constraint_mode: ConstraintMode
     ) -> Dict[str, bool]:
         """
         Check if the response follows the required format.
@@ -183,7 +183,11 @@ class PoTestRunner:
 
         # Check 20 Modules Snapshot has 20 lines
         if "20 Modules Snapshot" in sections:
-            lines = [l for l in sections["20 Modules Snapshot"].split("\n") if l.strip() and ":" in l]
+            lines = [
+                l
+                for l in sections["20 Modules Snapshot"].split("\n")
+                if l.strip() and ":" in l
+            ]
             compliance["20_modules_count"] = len(lines) >= 20
 
         # Check Conflicts has 3 items
@@ -196,7 +200,9 @@ class PoTestRunner:
         # Check Objections & Replies has 2 objections
         if "Objections & Replies" in sections:
             objections_text = sections["Objections & Replies"]
-            objection_count = len(re.findall(r"反論\d|Objection", objections_text, re.IGNORECASE))
+            objection_count = len(
+                re.findall(r"反論\d|Objection", objections_text, re.IGNORECASE)
+            )
             compliance["2_objections"] = objection_count >= 2
 
         # Check placeboA constraints
@@ -217,9 +223,7 @@ class PoTestRunner:
         return compliance
 
     def evaluate_response(
-        self,
-        response: str,
-        constraint_mode: ConstraintMode
+        self, response: str, constraint_mode: ConstraintMode
     ) -> Dict[str, float]:
         """
         Evaluate the response according to the rubric.
@@ -238,7 +242,9 @@ class PoTestRunner:
 
         # Format compliance affects base score
         compliance = self.check_format_compliance(response, constraint_mode)
-        compliance_rate = sum(compliance.values()) / len(compliance) if compliance else 0
+        compliance_rate = (
+            sum(compliance.values()) / len(compliance) if compliance else 0
+        )
 
         # Heuristic scoring based on content presence
         # N (Novelty) - check for unique terms, re-definitions
@@ -247,7 +253,9 @@ class PoTestRunner:
 
         # I (Integration) - check for integration language
         integration_indicators = ["統合", "結合", "間柄", "関係構造", "三層"]
-        scores["I"] = min(5.0, sum(1 for i in integration_indicators if i in response) + 1)
+        scores["I"] = min(
+            5.0, sum(1 for i in integration_indicators if i in response) + 1
+        )
 
         # D (Depth) - check for philosophical depth markers
         depth_indicators = ["前提", "限界", "射程", "反論", "批判", "問い"]
@@ -259,7 +267,9 @@ class PoTestRunner:
         # E (Ethicality) - check for ethics-related content
         ethics_indicators = ["生命構造", "尊厳", "持続可能", "共存", "W_ethics"]
         if constraint_mode in ["weak", "medium", "strong"]:
-            scores["E"] = min(5.0, sum(1 for i in ethics_indicators if i in response) + 1)
+            scores["E"] = min(
+                5.0, sum(1 for i in ethics_indicators if i in response) + 1
+            )
         else:
             scores["E"] = 3.0  # Neutral for non-ethics modes
 
@@ -328,7 +338,14 @@ class PoTestRunner:
             TestReport with aggregated results
         """
         questions = questions or TEST_QUESTIONS
-        constraint_modes = constraint_modes or ["off", "weak", "medium", "strong", "placeboA", "placeboB"]
+        constraint_modes = constraint_modes or [
+            "off",
+            "weak",
+            "medium",
+            "strong",
+            "placeboA",
+            "placeboB",
+        ]
 
         results = []
         for question in questions:
@@ -349,7 +366,9 @@ class PoTestRunner:
             mode_results = [r for r in results if r.constraint_mode == mode]
             mode_scores = {}
             for metric in EVALUATION_RUBRIC:
-                values = [r.scores.get(metric, 0) for r in mode_results if metric in r.scores]
+                values = [
+                    r.scores.get(metric, 0) for r in mode_results if metric in r.scores
+                ]
                 if values:
                     mode_scores[metric] = sum(values) / len(values)
             mode_comparison[mode] = mode_scores

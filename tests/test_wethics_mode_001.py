@@ -1,6 +1,7 @@
 """
 Tests for WG.ACT.MODE.001 - Action SafetyMode Degradation Policy
 """
+
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
@@ -73,7 +74,9 @@ def test_mode_warn_allows_safe_action():
         metrics={"freedom_pressure": 0.7},  # WARN mode
     )
     # ask_clarification should pass
-    result = policy.check(_ctx(), _intent(), _proposal("ask_clarification"), tensors, _memory())
+    result = policy.check(
+        _ctx(), _intent(), _proposal("ask_clarification"), tensors, _memory()
+    )
     assert result is None
 
     # refuse should pass

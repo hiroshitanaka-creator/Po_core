@@ -14,23 +14,23 @@ from po_core.autonomy.solarwill.model import (
     WillState,
     WillVector,
 )
+from po_core.autonomy.solarwill.planner import (
+    generate_goals,
+    generate_intent,
+    prioritize_goals,
+)
 from po_core.autonomy.solarwill.update import (
-    update_will,
     compute_will_delta,
     should_reconsider,
-)
-from po_core.autonomy.solarwill.planner import (
-    generate_intent,
-    generate_goals,
-    prioritize_goals,
+    update_will,
 )
 
 # Import domain types for SolarWillPort implementation
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent as DomainIntent
 from po_core.domain.memory_snapshot import MemorySnapshot
-from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
+from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class SolarWillEngine:

@@ -7,7 +7,7 @@ Paretoフロント + mode重み付き選択のテスト。
 
 from datetime import datetime, timezone
 
-from po_core.aggregator.pareto import ParetoAggregator, pareto_front, ObjectiveVec
+from po_core.aggregator.pareto import ObjectiveVec, ParetoAggregator, pareto_front
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.proposal import Proposal
@@ -21,7 +21,9 @@ def test_pareto_selects_and_annotates():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r1", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2}
+    )
 
     ps = [
         Proposal("p1", "answer", "短い答え", 0.6),
@@ -37,7 +39,9 @@ def test_pareto_front_basic():
     vecs = [
         ObjectiveVec(safety=0.8, freedom=0.2, explain=0.5, brevity=0.5, coherence=0.5),
         ObjectiveVec(safety=0.5, freedom=0.8, explain=0.5, brevity=0.5, coherence=0.5),
-        ObjectiveVec(safety=0.3, freedom=0.3, explain=0.5, brevity=0.5, coherence=0.5),  # dominated
+        ObjectiveVec(
+            safety=0.3, freedom=0.3, explain=0.5, brevity=0.5, coherence=0.5
+        ),  # dominated
     ]
     front = pareto_front(vecs)
     assert 0 in front
@@ -52,7 +56,9 @@ def test_pareto_critical_prefers_safety():
 
     ctx = Context("r1", datetime.now(timezone.utc), "x")
     # freedom_pressure=0.9 → CRITICAL mode
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.9})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.9}
+    )
 
     ps = [
         Proposal("safe", "refuse", "できません", 0.9),
@@ -71,7 +77,9 @@ def test_pareto_normal_allows_answer():
 
     ctx = Context("r1", datetime.now(timezone.utc), "x")
     # freedom_pressure=0.2 → NORMAL mode
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2}
+    )
 
     ps = [
         Proposal("ans", "answer", "答えます", 0.8),
@@ -102,7 +110,9 @@ def test_pareto_extra_contains_scores():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r1", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.4})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.4}
+    )
 
     ps = [Proposal("p1", "answer", "テスト", 0.7)]
 

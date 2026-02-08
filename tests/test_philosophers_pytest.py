@@ -6,23 +6,50 @@ Pytest-compatible test suite for all 39 philosopher modules.
 Run with: pytest tests/test_philosophers_pytest.py -v
 """
 
-import pytest
-from typing import Dict, Any
+from typing import Any, Dict
 
+import pytest
 
 # All 39 philosophers in the registry
 PHILOSOPHER_KEYS = [
-    "aristotle", "plato", "parmenides", "peirce",
-    "kant", "hegel", "husserl", "heidegger", "schopenhauer", "merleau_ponty",
-    "descartes", "spinoza",
-    "kierkegaard", "nietzsche", "sartre",
-    "derrida", "deleuze", "foucault", "badiou", "lacan",
-    "beauvoir", "butler",
-    "levinas", "arendt", "jonas", "weil",
-    "marcus_aurelius", "epicurus",
-    "wittgenstein", "dewey",
+    "aristotle",
+    "plato",
+    "parmenides",
+    "peirce",
+    "kant",
+    "hegel",
+    "husserl",
+    "heidegger",
+    "schopenhauer",
+    "merleau_ponty",
+    "descartes",
+    "spinoza",
+    "kierkegaard",
+    "nietzsche",
+    "sartre",
+    "derrida",
+    "deleuze",
+    "foucault",
+    "badiou",
+    "lacan",
+    "beauvoir",
+    "butler",
+    "levinas",
+    "arendt",
+    "jonas",
+    "weil",
+    "marcus_aurelius",
+    "epicurus",
+    "wittgenstein",
+    "dewey",
     "jung",
-    "confucius", "zhuangzi", "laozi", "watsuji", "nishida", "dogen", "nagarjuna",
+    "confucius",
+    "zhuangzi",
+    "laozi",
+    "watsuji",
+    "nishida",
+    "dogen",
+    "nagarjuna",
     "wabi_sabi",
 ]
 
@@ -34,6 +61,7 @@ TEST_PROMPT = "What is the nature of consciousness and how should we understand 
 def philosopher_registry():
     """Load the philosopher registry."""
     from po_core.ensemble import PHILOSOPHER_REGISTRY
+
     return PHILOSOPHER_REGISTRY
 
 
@@ -42,14 +70,14 @@ class TestPhilosopherRegistry:
 
     def test_registry_count(self, philosopher_registry):
         """Test that registry contains expected number of philosophers."""
-        assert len(philosopher_registry) == 39, \
-            f"Expected 39 philosophers, got {len(philosopher_registry)}"
+        assert (
+            len(philosopher_registry) == 39
+        ), f"Expected 39 philosophers, got {len(philosopher_registry)}"
 
     def test_all_keys_present(self, philosopher_registry):
         """Test that all expected keys are in registry."""
         for key in PHILOSOPHER_KEYS:
-            assert key in philosopher_registry, \
-                f"Missing philosopher: {key}"
+            assert key in philosopher_registry, f"Missing philosopher: {key}"
 
 
 class TestPhilosopherInstantiation:
@@ -84,8 +112,9 @@ class TestPhilosopherInstantiation:
         """Test that each philosopher has key concepts."""
         philosopher = philosopher_registry[key]()
         assert philosopher.key_concepts, f"Philosopher {key} has no key concepts"
-        assert len(philosopher.key_concepts) >= 3, \
-            f"Philosopher {key} should have at least 3 key concepts"
+        assert (
+            len(philosopher.key_concepts) >= 3
+        ), f"Philosopher {key} should have at least 3 key concepts"
 
 
 class TestPhilosopherReasoning:
@@ -97,8 +126,9 @@ class TestPhilosopherReasoning:
         philosopher = philosopher_registry[key]()
         result = philosopher.reason(TEST_PROMPT)
 
-        assert isinstance(result, dict), \
-            f"Philosopher {key} reason() should return dict"
+        assert isinstance(
+            result, dict
+        ), f"Philosopher {key} reason() should return dict"
 
     @pytest.mark.parametrize("key", PHILOSOPHER_KEYS)
     def test_philosopher_reason_has_required_fields(self, philosopher_registry, key):
@@ -108,8 +138,7 @@ class TestPhilosopherReasoning:
 
         required_fields = ["reasoning", "perspective"]
         for field in required_fields:
-            assert field in result, \
-                f"Philosopher {key} missing field: {field}"
+            assert field in result, f"Philosopher {key} missing field: {field}"
 
     @pytest.mark.parametrize("key", PHILOSOPHER_KEYS)
     def test_philosopher_reason_non_empty(self, philosopher_registry, key):
@@ -117,10 +146,10 @@ class TestPhilosopherReasoning:
         philosopher = philosopher_registry[key]()
         result = philosopher.reason(TEST_PROMPT)
 
-        assert result["reasoning"], \
-            f"Philosopher {key} returned empty reasoning"
-        assert len(result["reasoning"]) > 100, \
-            f"Philosopher {key} reasoning too short: {len(result['reasoning'])} chars"
+        assert result["reasoning"], f"Philosopher {key} returned empty reasoning"
+        assert (
+            len(result["reasoning"]) > 100
+        ), f"Philosopher {key} reasoning too short: {len(result['reasoning'])} chars"
 
     @pytest.mark.parametrize("key", PHILOSOPHER_KEYS)
     def test_philosopher_reason_has_perspective(self, philosopher_registry, key):
@@ -128,8 +157,7 @@ class TestPhilosopherReasoning:
         philosopher = philosopher_registry[key]()
         result = philosopher.reason(TEST_PROMPT)
 
-        assert result["perspective"], \
-            f"Philosopher {key} returned empty perspective"
+        assert result["perspective"], f"Philosopher {key} returned empty perspective"
 
 
 class TestPhilosopherMetadata:
@@ -179,8 +207,9 @@ class TestPhilosopherDiversity:
 
         # Most perspectives should be unique
         unique_count = len(set(perspectives))
-        assert unique_count >= 30, \
-            f"Expected at least 30 unique perspectives, got {unique_count}"
+        assert (
+            unique_count >= 30
+        ), f"Expected at least 30 unique perspectives, got {unique_count}"
 
     def test_reasoning_diversity(self, philosopher_registry):
         """Test that philosophers produce diverse reasoning."""
@@ -192,8 +221,9 @@ class TestPhilosopherDiversity:
 
         # All reasonings should be different
         unique_count = len(set(reasonings))
-        assert unique_count == len(reasonings), \
-            "Some philosophers produced identical reasoning"
+        assert unique_count == len(
+            reasonings
+        ), "Some philosophers produced identical reasoning"
 
 
 # Convenience function for running tests directly

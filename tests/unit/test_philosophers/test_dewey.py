@@ -148,7 +148,9 @@ class TestDeweyGrowth:
         result = dewey.reason("I continue to grow, develop, and learn more")
 
         growth = result["growth_potential"]
-        assert "Growth" in growth["potential"] or "growth" in growth["orientation"].lower()
+        assert (
+            "Growth" in growth["potential"] or "growth" in growth["orientation"].lower()
+        )
 
     def test_static_mindset_detection(self):
         """Test detection of static mindset."""
@@ -176,10 +178,15 @@ class TestDeweyDemocracy:
     def test_democratic_detection(self):
         """Test detection of democratic qualities."""
         dewey = Dewey()
-        result = dewey.reason("We share, collaborate, and communicate together with mutual respect")
+        result = dewey.reason(
+            "We share, collaborate, and communicate together with mutual respect"
+        )
 
         democracy = result["democratic_quality"]
-        assert "Democratic" in democracy["quality"] or "democratic" in democracy["mode"].lower()
+        assert (
+            "Democratic" in democracy["quality"]
+            or "democratic" in democracy["mode"].lower()
+        )
 
 
 class TestDeweyReflectiveThinking:
@@ -201,7 +208,10 @@ class TestDeweyReflectiveThinking:
         result = dewey.reason("I carefully reflect and consider the evidence to learn")
 
         reflection = result["reflective_thinking"]
-        assert "Reflective" in reflection["level"] or "reflective" in reflection["type"].lower()
+        assert (
+            "Reflective" in reflection["level"]
+            or "reflective" in reflection["type"].lower()
+        )
 
 
 class TestDeweyHabitFormation:
@@ -221,7 +231,9 @@ class TestDeweyHabitFormation:
     def test_intelligent_habits_detection(self):
         """Test detection of intelligent habits."""
         dewey = Dewey()
-        result = dewey.reason("I have flexible, adaptive habits that adjust thoughtfully")
+        result = dewey.reason(
+            "I have flexible, adaptive habits that adjust thoughtfully"
+        )
 
         habit = result["habit_formation"]
         assert "habit" in habit["formation"].lower() or "quality" in habit
@@ -265,10 +277,15 @@ class TestDeweyContinuityInteraction:
     def test_continuity_detection(self):
         """Test detection of continuity."""
         dewey = Dewey()
-        result = dewey.reason("The past connects to the future and builds on what came before")
+        result = dewey.reason(
+            "The past connects to the future and builds on what came before"
+        )
 
         continuity = result["continuity_interaction"]
-        assert "Continuity" in continuity["quality"] or "continuity" in continuity["description"].lower()
+        assert (
+            "Continuity" in continuity["quality"]
+            or "continuity" in continuity["description"].lower()
+        )
 
 
 class TestDeweyReasoningText:

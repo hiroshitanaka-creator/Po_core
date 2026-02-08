@@ -10,13 +10,13 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+from po_core.aggregator.pareto import ParetoAggregator
 from po_core.domain.context import Context
-from po_core.domain.keys import PO_CORE, PARETO_DEBUG
+from po_core.domain.keys import PARETO_DEBUG, PO_CORE
 from po_core.domain.pareto_config import ParetoConfig
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.aggregator.pareto import ParetoAggregator
 from po_core.trace.in_memory import InMemoryTracer
 from po_core.trace.pareto_events import emit_pareto_debug_events
 
@@ -78,7 +78,9 @@ def test_emit_pareto_debug_events_includes_config_version_source():
                     "config_source": "file:/path/to/table.yaml",
                     "weights": {"safety": 0.25},
                     "front_size": 1,
-                    "front": [{"proposal_id": "p1", "action_type": "answer", "scores": {}}],
+                    "front": [
+                        {"proposal_id": "p1", "action_type": "answer", "scores": {}}
+                    ],
                     "winner": {"proposal_id": "p1", "action_type": "answer"},
                     "conflicts": {"n": 0},
                 },
@@ -99,7 +101,7 @@ def test_emit_pareto_debug_events_includes_config_version_source():
 
 def test_custom_pareto_config_version_propagates():
     """Custom ParetoConfig version propagates through to trace events."""
-    from po_core.domain.pareto_config import ParetoWeights, ParetoTuning
+    from po_core.domain.pareto_config import ParetoTuning, ParetoWeights
 
     custom_cfg = ParetoConfig(
         weights_by_mode={

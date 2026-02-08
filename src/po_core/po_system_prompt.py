@@ -393,8 +393,7 @@ def build_user_prompt(question: str, constraint_mode: ConstraintMode = "off") ->
 
 
 def build_stress_test_prompt(
-    concept_key: str,
-    constraint_mode: ConstraintMode = "off"
+    concept_key: str, constraint_mode: ConstraintMode = "off"
 ) -> str:
     """
     Build a stress test prompt for a specific philosophical concept.

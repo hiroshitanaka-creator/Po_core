@@ -7,6 +7,7 @@ Tests for the three metric functions:
 - metric_semantic_delta: token overlap divergence
 - metric_blocked_tensor: constraint / harm estimation
 """
+
 from __future__ import annotations
 
 import uuid
@@ -18,15 +19,14 @@ pytestmark = pytest.mark.pipeline
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemoryItem, MemorySnapshot
+from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
 from po_core.tensors.metrics.freedom_pressure import (
-    metric_freedom_pressure,
     _compute_dimensions,
     _tokenize,
+    metric_freedom_pressure,
 )
-from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
-from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
 from po_core.tensors.metrics.interaction_tensor import metric_interaction_tensor
-
+from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
 
 # ── Helpers ──
 
@@ -84,7 +84,9 @@ class TestFreedomPressure:
 
     def test_neutral_input_low_pressure(self):
         """Plain philosophical question should have low pressure."""
-        _, val = metric_freedom_pressure(_ctx("What is the nature of reality?"), _empty_mem())
+        _, val = metric_freedom_pressure(
+            _ctx("What is the nature of reality?"), _empty_mem()
+        )
         assert val < 0.3, f"Neutral input should have low pressure, got {val}"
 
     def test_ethical_input_higher_pressure(self):
@@ -101,7 +103,9 @@ class TestFreedomPressure:
             _ctx("We must urgently decide what is right and wrong now for society"),
             _empty_mem(),
         )
-        assert val > 0.1, f"Multi-dimensional input should have notable pressure, got {val}"
+        assert (
+            val > 0.1
+        ), f"Multi-dimensional input should have notable pressure, got {val}"
 
     def test_empty_input_zero(self):
         _, val = metric_freedom_pressure(_ctx(""), _empty_mem())
@@ -203,7 +207,9 @@ class TestBlockedTensor:
 
     def test_safe_input_low(self):
         """Normal input should have low blocked score."""
-        _, val = metric_blocked_tensor(_ctx("What is the meaning of life?"), _empty_mem())
+        _, val = metric_blocked_tensor(
+            _ctx("What is the meaning of life?"), _empty_mem()
+        )
         assert val < 0.3, f"Safe input should have low blocked score, got {val}"
 
     def test_harmful_keyword_high(self):
@@ -214,8 +220,12 @@ class TestBlockedTensor:
     def test_multiple_harmful_keywords_higher(self):
         """Multiple harmful keywords should produce higher score."""
         _, val_one = metric_blocked_tensor(_ctx("bomb"), _empty_mem())
-        _, val_many = metric_blocked_tensor(_ctx("bomb weapon kill attack"), _empty_mem())
-        assert val_many > val_one, "Multiple harmful keywords should produce higher score"
+        _, val_many = metric_blocked_tensor(
+            _ctx("bomb weapon kill attack"), _empty_mem()
+        )
+        assert (
+            val_many > val_one
+        ), "Multiple harmful keywords should produce higher score"
 
     def test_empty_input_zero(self):
         _, val = metric_blocked_tensor(_ctx(""), _empty_mem())
@@ -291,12 +301,14 @@ class TestTensorEngineIntegration:
     def _build_engine(self):
         from po_core.tensors.engine import TensorEngine
 
-        return TensorEngine(metrics=(
-            metric_freedom_pressure,
-            metric_semantic_delta,
-            metric_blocked_tensor,
-            metric_interaction_tensor,
-        ))
+        return TensorEngine(
+            metrics=(
+                metric_freedom_pressure,
+                metric_semantic_delta,
+                metric_blocked_tensor,
+                metric_interaction_tensor,
+            )
+        )
 
     def test_engine_computes_all_four(self):
         snapshot = self._build_engine().compute(_ctx("What is justice?"), _empty_mem())
@@ -306,7 +318,9 @@ class TestTensorEngineIntegration:
         assert "interaction_tensor" in snapshot.metrics
 
     def test_all_values_in_range(self):
-        snapshot = self._build_engine().compute(_ctx("We must decide what is right"), _empty_mem())
+        snapshot = self._build_engine().compute(
+            _ctx("We must decide what is right"), _empty_mem()
+        )
         for key, val in snapshot.metrics.items():
             assert 0.0 <= val <= 1.0, f"{key}={val} out of range"
 

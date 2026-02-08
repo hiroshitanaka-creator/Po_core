@@ -46,7 +46,6 @@ from po_core.viewer import (
     TensionMapVisualizer,
 )
 
-
 # Available philosophers
 AVAILABLE_PHILOSOPHERS = {
     "sartre": (Sartre, "Jean-Paul Sartre - Existentialism"),
@@ -154,11 +153,17 @@ You will:
 
         # Get selection
         self.console.print("\n[bold]Selection options:[/bold]")
-        self.console.print("  • Enter philosopher keys separated by commas (e.g., 'sartre,nietzsche,heidegger')")
+        self.console.print(
+            "  • Enter philosopher keys separated by commas (e.g., 'sartre,nietzsche,heidegger')"
+        )
         self.console.print("  • Enter 'all' to use all philosophers")
-        self.console.print("  • Press Enter for default selection (sartre, nietzsche, heidegger)")
+        self.console.print(
+            "  • Press Enter for default selection (sartre, nietzsche, heidegger)"
+        )
 
-        selection = Prompt.ask("\n[cyan]Select philosophers[/cyan]", default="sartre,nietzsche,heidegger")
+        selection = Prompt.ask(
+            "\n[cyan]Select philosophers[/cyan]", default="sartre,nietzsche,heidegger"
+        )
 
         if selection.lower() == "all":
             self.selected_philosophers = list(AVAILABLE_PHILOSOPHERS.keys())
@@ -167,12 +172,16 @@ You will:
             # Validate selection
             valid = [s for s in selected if s in AVAILABLE_PHILOSOPHERS]
             if not valid:
-                self.console.print("[red]No valid philosophers selected. Exiting.[/red]")
+                self.console.print(
+                    "[red]No valid philosophers selected. Exiting.[/red]"
+                )
                 return False
             self.selected_philosophers = valid
 
         # Confirm selection
-        self.console.print(f"\n[green]✓ Selected {len(self.selected_philosophers)} philosophers:[/green]")
+        self.console.print(
+            f"\n[green]✓ Selected {len(self.selected_philosophers)} philosophers:[/green]"
+        )
         for phil in self.selected_philosophers:
             desc = AVAILABLE_PHILOSOPHERS[phil][1]
             self.console.print(f"  • {desc}")
@@ -191,11 +200,12 @@ You will:
 
         # Create ensemble
         self.ensemble = PhilosophicalEnsemble(
-            philosophers=philosophers,
-            enable_tracing=True
+            philosophers=philosophers, enable_tracing=True
         )
 
-        self.console.print(f"[green]✓ Ensemble created with {len(philosophers)} philosophers[/green]")
+        self.console.print(
+            f"[green]✓ Ensemble created with {len(philosophers)} philosophers[/green]"
+        )
 
     def _reasoning_loop(self) -> None:
         """Interactive reasoning loop."""
@@ -205,7 +215,9 @@ You will:
             try:
                 # Get prompt
                 self.console.print()
-                prompt = Prompt.ask("[bold cyan]Enter your philosophical question[/bold cyan] (or 'quit' to exit)")
+                prompt = Prompt.ask(
+                    "[bold cyan]Enter your philosophical question[/bold cyan] (or 'quit' to exit)"
+                )
 
                 if prompt.lower() in ["quit", "exit", "q"]:
                     break
@@ -226,7 +238,9 @@ You will:
                     self._show_visualizations(result)
 
                 # Ask to continue
-                if not Confirm.ask("\n[cyan]Continue with another question?[/cyan]", default=True):
+                if not Confirm.ask(
+                    "\n[cyan]Continue with another question?[/cyan]", default=True
+                ):
                     break
 
             except KeyboardInterrupt:
@@ -268,7 +282,9 @@ You will:
         # Display annotations
         annotations = result.get("annotations", [])
         if annotations:
-            self.console.print("\n[bold yellow]Key Philosophical Concepts:[/bold yellow]")
+            self.console.print(
+                "\n[bold yellow]Key Philosophical Concepts:[/bold yellow]"
+            )
             # Show top 5 concepts
             for ann in annotations[:5]:
                 concept = ann.get("concept", "")
@@ -290,7 +306,11 @@ You will:
             self.console.print("  4. All visualizations")
             self.console.print("  5. Back to reasoning")
 
-            choice = Prompt.ask("[cyan]Select visualization[/cyan]", choices=["1", "2", "3", "4", "5"], default="5")
+            choice = Prompt.ask(
+                "[cyan]Select visualization[/cyan]",
+                choices=["1", "2", "3", "4", "5"],
+                default="5",
+            )
 
             if choice == "1":
                 self.tension_visualizer.render(result)
@@ -305,34 +325,44 @@ You will:
             elif choice == "5":
                 break
 
-            if choice != "5" and not Confirm.ask("\n[cyan]View another visualization?[/cyan]", default=False):
+            if choice != "5" and not Confirm.ask(
+                "\n[cyan]View another visualization?[/cyan]", default=False
+            ):
                 break
 
     def _session_summary(self) -> None:
         """Display session summary and offer export."""
         self.console.rule("[bold cyan]Session Summary[/bold cyan]")
 
-        self.console.print(f"\n[bold]Reasoning Sessions:[/bold] {len(self.reasoning_history)}")
-        self.console.print(f"[bold]Philosophers:[/bold] {len(self.selected_philosophers)}")
+        self.console.print(
+            f"\n[bold]Reasoning Sessions:[/bold] {len(self.reasoning_history)}"
+        )
+        self.console.print(
+            f"[bold]Philosophers:[/bold] {len(self.selected_philosophers)}"
+        )
 
         if self.reasoning_history:
             # Offer trace export
             if Confirm.ask("\n[cyan]Export reasoning traces?[/cyan]", default=False):
                 self._export_traces()
 
-        self.console.print("\n[bold green]Thank you for using Po_core Interactive Reasoning![/bold green]")
+        self.console.print(
+            "\n[bold green]Thank you for using Po_core Interactive Reasoning![/bold green]"
+        )
 
     def _export_traces(self) -> None:
         """Export reasoning traces to JSON file."""
-        filename = Prompt.ask("[cyan]Enter filename[/cyan]", default="po_core_reasoning_trace.json")
+        filename = Prompt.ask(
+            "[cyan]Enter filename[/cyan]", default="po_core_reasoning_trace.json"
+        )
 
         try:
             export_data = {
                 "session": {
                     "philosophers": self.selected_philosophers,
-                    "total_reasonings": len(self.reasoning_history)
+                    "total_reasonings": len(self.reasoning_history),
                 },
-                "reasoning_history": self.reasoning_history
+                "reasoning_history": self.reasoning_history,
             }
 
             with open(filename, "w") as f:

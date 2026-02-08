@@ -23,6 +23,7 @@ NOT:
     safety/ -> philosophers/
     domain/ -> anything in po_core
 """
+
 import ast
 import os
 from pathlib import Path
@@ -87,8 +88,7 @@ class TestDependencyRules:
             po_core_imports = imports_match_pattern(imports, "po_core")
             # domain.* imports are OK (internal), but not other po_core.*
             external_po_core = {
-                imp for imp in po_core_imports
-                if not imp.startswith("po_core.domain")
+                imp for imp in po_core_imports if not imp.startswith("po_core.domain")
             }
             if external_po_core:
                 violations.append((py_file, external_po_core))
@@ -184,10 +184,11 @@ class TestArchitecturalLayers:
         from po_core.domain import (
             Context,
             Proposal,
-            TensorSnapshot,
             SafetyVerdict,
+            TensorSnapshot,
             TraceEvent,
         )
+
         assert Context is not None
         assert Proposal is not None
         assert TensorSnapshot is not None
@@ -201,8 +202,8 @@ class TestArchitecturalLayers:
 
     def test_tensors_engine_returns_domain_types(self):
         """tensors engine should return domain types."""
-        from po_core.tensors import compute_tensors
         from po_core.domain import TensorSnapshot
+        from po_core.tensors import compute_tensors
 
         result = compute_tensors("test prompt")
         assert isinstance(result, TensorSnapshot)
@@ -210,11 +211,12 @@ class TestArchitecturalLayers:
     def test_philosophers_base_has_contract(self):
         """philosophers/base.py should define the contract types."""
         from po_core.philosophers.base import (
+            Context,
             Philosopher,
             PhilosopherResponse,
-            Context,
             normalize_response,
         )
+
         assert Philosopher is not None
         assert PhilosopherResponse is not None
         assert Context is not None
@@ -228,10 +230,10 @@ class TestNoCircularImports:
         """All core modules should be importable without circular import errors."""
         # These imports should not raise ImportError
         import po_core.domain
-        import po_core.tensors
+        import po_core.ensemble
         import po_core.philosophers
         import po_core.safety
-        import po_core.ensemble
+        import po_core.tensors
 
     def test_domain_imports_cleanly(self):
         """domain/ should import without dependencies."""
@@ -239,7 +241,7 @@ class TestNoCircularImports:
         from po_core.domain import (
             Context,
             Proposal,
-            TensorSnapshot,
             SafetyVerdict,
+            TensorSnapshot,
             TraceEvent,
         )

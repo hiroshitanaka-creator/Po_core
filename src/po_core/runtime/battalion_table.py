@@ -58,9 +58,12 @@ def load_battalion_table(path: str) -> Dict[SafetyMode, BattalionModePlan]:
         # YAMLを使いたい場合だけPyYAMLを許可
         try:
             import yaml  # type: ignore
+
             data = yaml.safe_load(raw)
         except Exception as e:
-            raise RuntimeError("battalion_table parse failed (use JSON-in-YAML or install pyyaml)") from e
+            raise RuntimeError(
+                "battalion_table parse failed (use JSON-in-YAML or install pyyaml)"
+            ) from e
 
     if not isinstance(data, dict) or "modes" not in data:
         raise ValueError("invalid battalion_table schema")

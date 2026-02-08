@@ -78,11 +78,17 @@ class EvolutionGraphVisualizer(PhilosophicalVisualizer):
 
         # Evolution intensity
         if total_evolution > 0.5:
-            self.console.print("\n[bold red]High semantic transformation[/bold red] - meaning evolved significantly")
+            self.console.print(
+                "\n[bold red]High semantic transformation[/bold red] - meaning evolved significantly"
+            )
         elif total_evolution > 0.2:
-            self.console.print("\n[bold yellow]Moderate transformation[/bold yellow] - meaning shifted moderately")
+            self.console.print(
+                "\n[bold yellow]Moderate transformation[/bold yellow] - meaning shifted moderately"
+            )
         else:
-            self.console.print("\n[dim]Low transformation[/dim] - meaning remained relatively stable")
+            self.console.print(
+                "\n[dim]Low transformation[/dim] - meaning remained relatively stable"
+            )
 
     def _render_evolution_trajectory(self, sp_data: Dict[str, Any]) -> None:
         """
@@ -177,9 +183,7 @@ class EvolutionGraphVisualizer(PhilosophicalVisualizer):
 
             # Find prominent dimensions
             sorted_dims = sorted(
-                enumerate(current_data),
-                key=lambda x: abs(x[1] - 0.5),
-                reverse=True
+                enumerate(current_data), key=lambda x: abs(x[1] - 0.5), reverse=True
             )
 
             for idx, value in sorted_dims[:3]:
@@ -230,7 +234,11 @@ class EvolutionGraphVisualizer(PhilosophicalVisualizer):
         if current_data and dimension_names:
             # Identify dominant characteristic
             max_idx = int(np.argmax([abs(v - 0.5) for v in current_data]))
-            max_dim = dimension_names[max_idx] if max_idx < len(dimension_names) else "unknown"
+            max_dim = (
+                dimension_names[max_idx]
+                if max_idx < len(dimension_names)
+                else "unknown"
+            )
             max_value = current_data[max_idx] if max_idx < len(current_data) else 0.5
 
             direction = "high" if max_value > 0.5 else "low"
@@ -239,7 +247,9 @@ class EvolutionGraphVisualizer(PhilosophicalVisualizer):
                 f"{max_dim.replace('_', ' ')} ({direction}, {max_value:.3f})"
             )
 
-    def render_ascii_timeline(self, values: List[float], width: int = 50, height: int = 10) -> None:
+    def render_ascii_timeline(
+        self, values: List[float], width: int = 50, height: int = 10
+    ) -> None:
         """
         Render an ASCII timeline graph.
 

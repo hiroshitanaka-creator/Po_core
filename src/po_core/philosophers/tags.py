@@ -6,6 +6,7 @@ Philosopher Role Tags
 タグを定数化してブレを殺す。
 哲学者の"兵科"を定義する。
 """
+
 from __future__ import annotations
 
 # 規範・安全・拒否

@@ -36,10 +36,12 @@ class MerleauPonty(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Maurice Merleau-Ponty",
-            description="Phenomenologist focused on embodiment, perception, and the lived body"
+            description="Phenomenologist focused on embodiment, perception, and the lived body",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Merleau-Ponty's phenomenological perspective.
 
@@ -68,8 +70,8 @@ class MerleauPonty(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Phenomenology of perception and embodied experience",
-                "focus": "Lived body, perception, flesh, and ambiguity"
-            }
+                "focus": "Lived body, perception, flesh, and ambiguity",
+            },
         }
 
     def _analyze_embodiment(self, prompt: str) -> Dict[str, Any]:
@@ -110,9 +112,7 @@ class MerleauPonty(Philosopher):
         intersubjectivity = self._check_intersubjectivity(prompt)
 
         # Construct reasoning
-        reasoning = self._construct_reasoning(
-            lived_body, perception, flesh, ambiguity
-        )
+        reasoning = self._construct_reasoning(lived_body, perception, flesh, ambiguity)
 
         return {
             "reasoning": reasoning,
@@ -124,7 +124,7 @@ class MerleauPonty(Philosopher):
             "being_in_world": being_in_world,
             "gestalt": gestalt,
             "reversibility": reversibility,
-            "intersubjectivity": intersubjectivity
+            "intersubjectivity": intersubjectivity,
         }
 
     def _assess_lived_body(self, text: str) -> Dict[str, Any]:
@@ -186,7 +186,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "mode": mode,
-            "principle": "Lived body (corps propre) is body as subject, not object"
+            "principle": "Lived body (corps propre) is body as subject, not object",
         }
 
     def _evaluate_perception(self, text: str) -> Dict[str, Any]:
@@ -208,12 +208,21 @@ class MerleauPonty(Philosopher):
         has_direct = sum(1 for word in direct_words if word in text_lower)
 
         # Pre-reflective indicators
-        prereflective_words = ["pre-reflective", "before thinking", "prior to", "unreflected"]
-        has_prereflective = sum(1 for phrase in prereflective_words if phrase in text_lower)
+        prereflective_words = [
+            "pre-reflective",
+            "before thinking",
+            "prior to",
+            "unreflected",
+        ]
+        has_prereflective = sum(
+            1 for phrase in prereflective_words if phrase in text_lower
+        )
 
         # Representation/mental (not direct perception)
         representation_words = ["represent", "mental image", "idea of", "concept"]
-        has_representation = sum(1 for phrase in representation_words if phrase in text_lower)
+        has_representation = sum(
+            1 for phrase in representation_words if phrase in text_lower
+        )
 
         # World/reality indicators
         world_words = ["world", "reality", "things", "objects"]
@@ -225,7 +234,9 @@ class MerleauPonty(Philosopher):
 
         if has_perception >= 1 and has_direct >= 1:
             status = "Direct Perception"
-            description = "Immediate perceptual access to world - not through representations"
+            description = (
+                "Immediate perceptual access to world - not through representations"
+            )
             character = "Pre-objective"
         elif has_perception >= 1 and has_prereflective >= 1:
             status = "Pre-Reflective Perception"
@@ -252,7 +263,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "character": character,
-            "principle": "Perception is primary, pre-reflective access to the world"
+            "principle": "Perception is primary, pre-reflective access to the world",
         }
 
     def _detect_flesh(self, text: str) -> Dict[str, Any]:
@@ -271,7 +282,9 @@ class MerleauPonty(Philosopher):
 
         # Reversibility indicators
         reversibility_words = ["reversible", "intertwine", "chiasm", "both sides"]
-        has_reversibility = sum(1 for phrase in reversibility_words if phrase in text_lower)
+        has_reversibility = sum(
+            1 for phrase in reversibility_words if phrase in text_lower
+        )
 
         # Sensing-sensed indicators
         sensing_sensed = ["see and seen", "touch and touched", "feel and felt"]
@@ -283,7 +296,9 @@ class MerleauPonty(Philosopher):
 
         # Visible/invisible indicators
         visible_invisible = ["visible", "invisible", "seen", "unseen"]
-        has_visible_invisible = sum(1 for word in visible_invisible if word in text_lower)
+        has_visible_invisible = sum(
+            1 for word in visible_invisible if word in text_lower
+        )
 
         if has_flesh >= 1 or (has_reversibility >= 1 and has_sensing_sensed >= 1):
             presence = "The Flesh (La Chair)"
@@ -306,7 +321,7 @@ class MerleauPonty(Philosopher):
             "presence": presence,
             "description": description,
             "nature": nature,
-            "principle": "Flesh is reversible element - sensible and sentient intertwined"
+            "principle": "Flesh is reversible element - sensible and sentient intertwined",
         }
 
     def _assess_chiasm(self, text: str) -> Dict[str, Any]:
@@ -328,7 +343,9 @@ class MerleauPonty(Philosopher):
 
         # Toucher-touched indicators
         toucher_touched = ["touch and touched", "toucher", "feel and felt"]
-        has_toucher_touched = sum(1 for phrase in toucher_touched if phrase in text_lower)
+        has_toucher_touched = sum(
+            1 for phrase in toucher_touched if phrase in text_lower
+        )
 
         # Two-way/mutual indicators
         mutual_words = ["mutual", "reciprocal", "two-way", "both ways"]
@@ -355,7 +372,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "structure": structure,
-            "principle": "Chiasm: intertwining of seer/seen, toucher/touched"
+            "principle": "Chiasm: intertwining of seer/seen, toucher/touched",
         }
 
     def _check_ambiguity(self, text: str) -> Dict[str, Any]:
@@ -409,7 +426,7 @@ class MerleauPonty(Philosopher):
             "presence": presence,
             "description": description,
             "character": character,
-            "principle": "Ambiguity is fundamental to embodied perceptual experience"
+            "principle": "Ambiguity is fundamental to embodied perceptual experience",
         }
 
     def _evaluate_being_in_world(self, text: str) -> Dict[str, Any]:
@@ -463,7 +480,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "mode": mode,
-            "principle": "Being-in-the-world: primordial embodied engagement, not detached consciousness"
+            "principle": "Being-in-the-world: primordial embodied engagement, not detached consciousness",
         }
 
     def _detect_gestalt(self, text: str) -> Dict[str, Any]:
@@ -494,7 +511,9 @@ class MerleauPonty(Philosopher):
 
         # Meaning/significance in whole
         meaningful_whole = ["meaningful whole", "significant pattern", "coherent"]
-        has_meaningful_whole = sum(1 for phrase in meaningful_whole if phrase in text_lower)
+        has_meaningful_whole = sum(
+            1 for phrase in meaningful_whole if phrase in text_lower
+        )
 
         if has_gestalt >= 1 or has_figure_ground >= 2:
             presence = "Gestalt Structure"
@@ -517,7 +536,7 @@ class MerleauPonty(Philosopher):
             "presence": presence,
             "description": description,
             "character": character,
-            "principle": "Perception involves gestalt structures - organized wholes, not atomic sensations"
+            "principle": "Perception involves gestalt structures - organized wholes, not atomic sensations",
         }
 
     def _assess_reversibility(self, text: str) -> Dict[str, Any]:
@@ -536,7 +555,9 @@ class MerleauPonty(Philosopher):
 
         # Touching-touched
         touching_touched = ["touch myself", "touching and touched", "hand touches hand"]
-        has_touching_touched = sum(1 for phrase in touching_touched if phrase in text_lower)
+        has_touching_touched = sum(
+            1 for phrase in touching_touched if phrase in text_lower
+        )
 
         # Seeing-seen
         seeing_seen = ["see myself", "seeing and seen", "visible and seeing"]
@@ -544,7 +565,9 @@ class MerleauPonty(Philosopher):
 
         # Double sensation
         double_sensation = ["double sensation", "feel both", "sense both sides"]
-        has_double_sensation = sum(1 for phrase in double_sensation if phrase in text_lower)
+        has_double_sensation = sum(
+            1 for phrase in double_sensation if phrase in text_lower
+        )
 
         # One-way/unidirectional (opposite)
         one_way = ["one way", "unidirectional", "only sensing", "only active"]
@@ -571,7 +594,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "structure": structure,
-            "principle": "Reversibility: my body is both sensing and sensible - touching-touched"
+            "principle": "Reversibility: my body is both sensing and sensible - touching-touched",
         }
 
     def _check_intersubjectivity(self, text: str) -> Dict[str, Any]:
@@ -586,7 +609,9 @@ class MerleauPonty(Philosopher):
 
         # Intersubjectivity indicators
         intersubjectivity_words = ["intersubjectivity", "others", "other people", "we"]
-        has_intersubjectivity = sum(1 for phrase in intersubjectivity_words if phrase in text_lower)
+        has_intersubjectivity = sum(
+            1 for phrase in intersubjectivity_words if phrase in text_lower
+        )
 
         # Other bodies/embodied others
         other_bodies = ["other bodies", "their body", "embodied others"]
@@ -594,7 +619,9 @@ class MerleauPonty(Philosopher):
 
         # Direct perception of others
         direct_perception = ["see them", "perceive others", "directly experience"]
-        has_direct_perception = sum(1 for phrase in direct_perception if phrase in text_lower)
+        has_direct_perception = sum(
+            1 for phrase in direct_perception if phrase in text_lower
+        )
 
         # Shared world indicators
         shared_world = ["shared world", "common world", "together", "collective"]
@@ -606,7 +633,9 @@ class MerleauPonty(Philosopher):
 
         if has_intersubjectivity >= 1 and has_other_bodies >= 1:
             status = "Embodied Intersubjectivity"
-            description = "Intersubjectivity through embodied perception of other bodies"
+            description = (
+                "Intersubjectivity through embodied perception of other bodies"
+            )
             mode = "Perceptual"
         elif has_shared_world >= 1:
             status = "Shared World"
@@ -625,7 +654,7 @@ class MerleauPonty(Philosopher):
             "status": status,
             "description": description,
             "mode": mode,
-            "principle": "Intersubjectivity through direct embodied perception of other bodies"
+            "principle": "Intersubjectivity through direct embodied perception of other bodies",
         }
 
     def _construct_reasoning(
@@ -633,7 +662,7 @@ class MerleauPonty(Philosopher):
         lived_body: Dict[str, Any],
         perception: Dict[str, Any],
         flesh: Dict[str, Any],
-        ambiguity: Dict[str, Any]
+        ambiguity: Dict[str, Any],
     ) -> str:
         """Construct Merleau-Pontian phenomenological reasoning."""
         reasoning = (

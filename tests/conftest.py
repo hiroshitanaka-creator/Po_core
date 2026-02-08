@@ -29,18 +29,21 @@ def empty_prompt():
 @pytest.fixture
 def make_context():
     """Factory fixture for creating Context objects."""
+
     def _make(user_input="What is justice?", request_id="test-req-001"):
         return Context.now(
             request_id=request_id,
             user_input=user_input,
             meta={"entry": "test"},
         )
+
     return _make
 
 
 @pytest.fixture
 def make_proposal():
     """Factory fixture for creating Proposal objects."""
+
     def _make(
         proposal_id="p1",
         action_type="answer",
@@ -58,4 +61,5 @@ def make_proposal():
             risk_tags=[],
             extra=extra or {},
         )
+
     return _make

@@ -79,7 +79,10 @@ class TestAristotleReasonMethod:
         result = aristotle.reason(simple_prompt)
 
         metadata = result["metadata"]
-        assert "Aristotle" in metadata["philosopher"] or "Ἀριστοτέλης" in metadata["philosopher"]
+        assert (
+            "Aristotle" in metadata["philosopher"]
+            or "Ἀριστοτέλης" in metadata["philosopher"]
+        )
         assert "approach" in metadata
         assert "focus" in metadata
 
@@ -103,7 +106,9 @@ class TestAristotleVirtueAssessment:
 
         virtue = result["virtue_assessment"]
         virtues = virtue["virtues"]
-        assert any("Courage" in v["virtue"] or "ἀνδρεία" in v["virtue"] for v in virtues)
+        assert any(
+            "Courage" in v["virtue"] or "ἀνδρεία" in v["virtue"] for v in virtues
+        )
 
     def test_temperance_virtue_detection(self):
         """Test detection of temperance virtue."""
@@ -113,17 +118,23 @@ class TestAristotleVirtueAssessment:
 
         virtue = result["virtue_assessment"]
         virtues = virtue["virtues"]
-        assert any("Temperance" in v["virtue"] or "σωφροσύνη" in v["virtue"] for v in virtues)
+        assert any(
+            "Temperance" in v["virtue"] or "σωφροσύνη" in v["virtue"] for v in virtues
+        )
 
     def test_justice_virtue_detection(self):
         """Test detection of justice virtue."""
         aristotle = Aristotle()
-        prompt = "We must be just and fair, giving each person what they deserve equally."
+        prompt = (
+            "We must be just and fair, giving each person what they deserve equally."
+        )
         result = aristotle.reason(prompt)
 
         virtue = result["virtue_assessment"]
         virtues = virtue["virtues"]
-        assert any("Justice" in v["virtue"] or "δικαιοσύνη" in v["virtue"] for v in virtues)
+        assert any(
+            "Justice" in v["virtue"] or "δικαιοσύνη" in v["virtue"] for v in virtues
+        )
 
     def test_practical_wisdom_virtue_detection(self):
         """Test detection of practical wisdom virtue."""
@@ -133,7 +144,9 @@ class TestAristotleVirtueAssessment:
 
         virtue = result["virtue_assessment"]
         virtues = virtue["virtues"]
-        assert any("Wisdom" in v["virtue"] or "φρόνησις" in v["virtue"] for v in virtues)
+        assert any(
+            "Wisdom" in v["virtue"] or "φρόνησις" in v["virtue"] for v in virtues
+        )
 
     def test_virtue_count(self, simple_prompt):
         """Test that virtue count is tracked."""
@@ -165,7 +178,9 @@ class TestAristotleGoldenMean:
         result = aristotle.reason(prompt)
 
         golden_mean = result["golden_mean"]
-        assert "Excess" in golden_mean["position"] or "ὑπερβολή" in golden_mean["position"]
+        assert (
+            "Excess" in golden_mean["position"] or "ὑπερβολή" in golden_mean["position"]
+        )
 
     def test_deficiency_detection(self):
         """Test detection of deficiency (vice)."""
@@ -186,7 +201,10 @@ class TestAristotleGoldenMean:
 
         golden_mean = result["golden_mean"]
         assert "principle" in golden_mean
-        assert "mean" in golden_mean["principle"].lower() and "vice" in golden_mean["principle"].lower()
+        assert (
+            "mean" in golden_mean["principle"].lower()
+            and "vice" in golden_mean["principle"].lower()
+        )
 
 
 class TestAristotleEudaimonia:
@@ -217,7 +235,10 @@ class TestAristotleEudaimonia:
 
         eudaimonia = result["eudaimonia_level"]
         assert "note" in eudaimonia
-        assert "highest" in eudaimonia["note"].lower() or "good" in eudaimonia["note"].lower()
+        assert (
+            "highest" in eudaimonia["note"].lower()
+            or "good" in eudaimonia["note"].lower()
+        )
 
 
 class TestAristotleFourCauses:
@@ -253,7 +274,10 @@ class TestAristotleFourCauses:
 
         four_causes = result["four_causes"]
         # Check if final cause is identified
-        assert any("purpose" in cause.lower() or "identified" in cause.lower() for cause in four_causes["final"])
+        assert any(
+            "purpose" in cause.lower() or "identified" in cause.lower()
+            for cause in four_causes["final"]
+        )
 
 
 class TestAristotlePotentialityActuality:
@@ -262,7 +286,9 @@ class TestAristotlePotentialityActuality:
     def test_actualization_detection(self):
         """Test detection of actualization (potential becoming actual)."""
         aristotle = Aristotle()
-        prompt = "I am realizing my potential, becoming and developing toward my completion."
+        prompt = (
+            "I am realizing my potential, becoming and developing toward my completion."
+        )
         result = aristotle.reason(prompt)
 
         potential_actual = result["potentiality_actuality"]
@@ -278,7 +304,10 @@ class TestAristotlePotentialityActuality:
         result = aristotle.reason(prompt)
 
         potential_actual = result["potentiality_actuality"]
-        assert "Potentiality" in potential_actual["state"] or "δύναμις" in potential_actual["state"]
+        assert (
+            "Potentiality" in potential_actual["state"]
+            or "δύναμις" in potential_actual["state"]
+        )
 
     def test_potential_actual_has_note(self, simple_prompt):
         """Test that potentiality_actuality includes note."""
@@ -318,7 +347,9 @@ class TestAristotlePhronesis:
 
         phronesis = result["practical_wisdom"]
         assert "note" in phronesis
-        assert "Phronesis" in phronesis["note"] or "practical" in phronesis["note"].lower()
+        assert (
+            "Phronesis" in phronesis["note"] or "practical" in phronesis["note"].lower()
+        )
 
 
 class TestAristotleTelos:
@@ -349,7 +380,10 @@ class TestAristotleTelos:
 
         telos = result["telos"]
         assert "principle" in telos
-        assert "eudaimonia" in telos["principle"].lower() or "good" in telos["principle"].lower()
+        assert (
+            "eudaimonia" in telos["principle"].lower()
+            or "good" in telos["principle"].lower()
+        )
 
 
 class TestAristotleCharacterFormation:
@@ -381,7 +415,10 @@ class TestAristotleCharacterFormation:
 
         character = result["character_formation"]
         assert "note" in character
-        assert "virtuous" in character["note"].lower() or "action" in character["note"].lower()
+        assert (
+            "virtuous" in character["note"].lower()
+            or "action" in character["note"].lower()
+        )
 
 
 class TestAristotleReasoningText:
@@ -411,7 +448,11 @@ class TestAristotleReasoningText:
 
         reasoning = result["reasoning"]
         # Should mention habituation or practice
-        assert "habit" in reasoning.lower() or "practice" in reasoning.lower() or "virtue" in reasoning.lower()
+        assert (
+            "habit" in reasoning.lower()
+            or "practice" in reasoning.lower()
+            or "virtue" in reasoning.lower()
+        )
 
 
 class TestAristotleEdgeCases:

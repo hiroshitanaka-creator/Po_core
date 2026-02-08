@@ -24,6 +24,7 @@ Based on the 6 interaction dimensions from the legacy InteractionTensor:
 DEPENDENCY RULES:
 - domain only (Context, MemorySnapshot)
 """
+
 from __future__ import annotations
 
 import math
@@ -32,7 +33,6 @@ from typing import Dict, List, Tuple
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
-
 
 # ── Keyword dictionaries for 6 interaction dimensions ──
 
@@ -63,7 +63,13 @@ _EPISTEMOLOGICAL_KEYWORDS = {
     "rational": ["reason", "logic", "deduction", "a priori", "innate"],
     "intuitive": ["intuition", "insight", "feeling", "awareness", "direct"],
     "dialectical": ["thesis", "antithesis", "synthesis", "contradiction", "sublation"],
-    "phenomenological": ["consciousness", "perception", "intentionality", "lived", "phenomenon"],
+    "phenomenological": [
+        "consciousness",
+        "perception",
+        "intentionality",
+        "lived",
+        "phenomenon",
+    ],
     "pragmatic": ["practice", "consequence", "usefulness", "inquiry", "action"],
 }
 
@@ -76,9 +82,22 @@ _ETHICAL_KEYWORDS = {
 }
 
 _ONTOLOGICAL_KEYWORDS = [
-    "being", "existence", "nothing", "void", "time", "space",
-    "substance", "essence", "dasein", "phenomenon", "noumenon",
-    "contingent", "necessary", "possible", "actual", "potential",
+    "being",
+    "existence",
+    "nothing",
+    "void",
+    "time",
+    "space",
+    "substance",
+    "essence",
+    "dasein",
+    "phenomenon",
+    "noumenon",
+    "contingent",
+    "necessary",
+    "possible",
+    "actual",
+    "potential",
 ]
 
 _METHODOLOGICAL_KEYWORDS = {
@@ -120,7 +139,11 @@ def _epistemological_breadth(tokens: set) -> float:
     for approach_kws in _EPISTEMOLOGICAL_KEYWORDS.values():
         if tokens & set(approach_kws):
             approaches_hit += 1
-    return approaches_hit / len(_EPISTEMOLOGICAL_KEYWORDS) if _EPISTEMOLOGICAL_KEYWORDS else 0.0
+    return (
+        approaches_hit / len(_EPISTEMOLOGICAL_KEYWORDS)
+        if _EPISTEMOLOGICAL_KEYWORDS
+        else 0.0
+    )
 
 
 def _ethical_engagement(tokens: set) -> float:
@@ -144,7 +167,9 @@ def _methodological_diversity(tokens: set) -> float:
     for method_kws in _METHODOLOGICAL_KEYWORDS.values():
         if tokens & set(method_kws):
             methods_hit += 1
-    return methods_hit / len(_METHODOLOGICAL_KEYWORDS) if _METHODOLOGICAL_KEYWORDS else 0.0
+    return (
+        methods_hit / len(_METHODOLOGICAL_KEYWORDS) if _METHODOLOGICAL_KEYWORDS else 0.0
+    )
 
 
 def _memory_continuity_boost(memory: MemorySnapshot) -> float:
@@ -155,7 +180,9 @@ def _memory_continuity_boost(memory: MemorySnapshot) -> float:
     return min(n / 20.0, 0.1)
 
 
-def metric_interaction_tensor(ctx: Context, memory: MemorySnapshot) -> Tuple[str, float]:
+def metric_interaction_tensor(
+    ctx: Context, memory: MemorySnapshot
+) -> Tuple[str, float]:
     """
     Estimate philosopher-philosopher interaction potential.
 

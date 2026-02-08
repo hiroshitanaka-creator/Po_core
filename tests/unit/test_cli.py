@@ -3,6 +3,7 @@ Tests for Po_core CLI Module
 
 Comprehensive tests for command-line interface functionality.
 """
+
 import json
 
 import pytest
@@ -182,9 +183,7 @@ class TestCLIIntegration:
         runner = CliRunner()
 
         # Get JSON output
-        result_json = runner.invoke(
-            main, ["prompt", sample_prompt, "--format", "json"]
-        )
+        result_json = runner.invoke(main, ["prompt", sample_prompt, "--format", "json"])
         assert result_json.exit_code == 0
         json_data = json.loads(result_json.output)
 

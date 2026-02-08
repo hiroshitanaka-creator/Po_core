@@ -21,17 +21,19 @@ from typing import Any, Dict, List, Mapping, Optional
 
 class ExperimentStatus(Enum):
     """実験のステータス"""
-    PENDING = "pending"      # 未実行
-    RUNNING = "running"      # 実行中
+
+    PENDING = "pending"  # 未実行
+    RUNNING = "running"  # 実行中
     COMPLETED = "completed"  # 完了
-    FAILED = "failed"        # 失敗
+    FAILED = "failed"  # 失敗
     ANALYZING = "analyzing"  # 分析中
-    PROMOTED = "promoted"    # 勝者が昇格済み
+    PROMOTED = "promoted"  # 勝者が昇格済み
 
 
 @dataclass(frozen=True)
 class ExperimentVariant:
     """実験のバリアント（baseline または treatment）"""
+
     name: str
     config_path: str
     description: str = ""
@@ -60,6 +62,7 @@ class ExperimentDefinition:
         status: 実験のステータス
         created_at: 実験作成日時
     """
+
     id: str
     description: str
     baseline: ExperimentVariant
@@ -98,6 +101,7 @@ class ExperimentSample:
         timestamp: サンプル取得時刻
         metadata: その他のメタデータ
     """
+
     request_id: str
     variant_name: str
     metrics: Mapping[str, Any]
@@ -124,6 +128,7 @@ class VariantStatistics:
         n: サンプル数
         metrics: メトリクス毎の統計（mean, std, min, max, median）
     """
+
     variant_name: str
     n: int
     metrics: Mapping[str, Mapping[str, float]]
@@ -152,6 +157,7 @@ class SignificanceTest:
         test_type: 検定の種類（"t_test", "mann_whitney"等）
         effect_size: 効果量（Cohen's d等）
     """
+
     metric_name: str
     baseline_mean: float
     variant_mean: float
@@ -190,6 +196,7 @@ class ExperimentAnalysis:
         recommendation: 推奨アクション（"promote", "reject", "continue"）
         analyzed_at: 分析実行時刻
     """
+
     experiment_id: str
     baseline_stats: VariantStatistics
     variant_stats: List[VariantStatistics]

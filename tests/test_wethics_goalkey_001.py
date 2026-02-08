@@ -1,15 +1,18 @@
 """
 Tests for WG.INT.GOALKEY.001 - Intent Goal Keyword Guard Policy
 """
+
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
-from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.domain.safety_verdict import Decision
+from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
-from po_core.safety.wethics_gate.policies.intention_goalkey_001 import IntentGoalKeywordGuardPolicy
+from po_core.safety.wethics_gate.policies.intention_goalkey_001 import (
+    IntentGoalKeywordGuardPolicy,
+)
 
 
 def test_intention_rejects_hard_keyword_japanese():
@@ -50,7 +53,9 @@ def test_intention_allows_safe_input():
 def test_intention_allows_lifehack():
     """'life hack' should not trigger soft keyword 'hack'."""
     gate = PolicyIntentionGate([IntentGoalKeywordGuardPolicy()])
-    ctx = Context("r1", datetime.now(timezone.utc), "Tell me a life hack for productivity")
+    ctx = Context(
+        "r1", datetime.now(timezone.utc), "Tell me a life hack for productivity"
+    )
     v = gate.judge(ctx, Intent.neutral(), TensorSnapshot.empty(), MemorySnapshot())
     assert v.decision == Decision.ALLOW
 
@@ -58,6 +63,8 @@ def test_intention_allows_lifehack():
 def test_intention_allows_hackathon():
     """'hackathon' should not trigger soft keyword 'hack'."""
     gate = PolicyIntentionGate([IntentGoalKeywordGuardPolicy()])
-    ctx = Context("r1", datetime.now(timezone.utc), "How do I participate in a hackathon?")
+    ctx = Context(
+        "r1", datetime.now(timezone.utc), "How do I participate in a hackathon?"
+    )
     v = gate.judge(ctx, Intent.neutral(), TensorSnapshot.empty(), MemorySnapshot())
     assert v.decision == Decision.ALLOW

@@ -4,15 +4,17 @@ Prompt Injection Tests
 
 Tests for prompt injection attacks that attempt to bypass ethics gates.
 """
-import pytest
+
 from typing import List
 
+import pytest
+
 from po_core.safety.wethics_gate import (
-    WethicsGate,
     Candidate,
     GateDecision,
-    TwoStageGate,
     IntentionDecision,
+    TwoStageGate,
+    WethicsGate,
 )
 
 
@@ -41,7 +43,9 @@ class TestPromptInjection:
             candidate = Candidate(cid="injection", text=attack)
             result = gate.check(candidate)
             # Should be rejected or heavily repaired
-            assert result.decision != GateDecision.ALLOW, f"Attack passed: {attack[:50]}"
+            assert (
+                result.decision != GateDecision.ALLOW
+            ), f"Attack passed: {attack[:50]}"
 
     def test_nested_command_injection(self, gate):
         """Test against nested command injection."""
@@ -90,7 +94,9 @@ class TestIntentionStageInjection:
 
         for intent in malicious_intents:
             verdict = two_stage.check_intent(intent)
-            assert verdict.decision == IntentionDecision.REJECT, f"Malicious intent passed: {intent}"
+            assert (
+                verdict.decision == IntentionDecision.REJECT
+            ), f"Malicious intent passed: {intent}"
 
     def test_obfuscated_harmful_intent(self, two_stage):
         """Test against obfuscated harmful intents."""
@@ -102,8 +108,9 @@ class TestIntentionStageInjection:
         for intent in obfuscated:
             verdict = two_stage.check_intent(intent)
             # Should at least constrain if not reject
-            assert verdict.decision != IntentionDecision.ALLOW or verdict.constraints, \
-                f"Obfuscated intent not caught: {intent}"
+            assert (
+                verdict.decision != IntentionDecision.ALLOW or verdict.constraints
+            ), f"Obfuscated intent not caught: {intent}"
 
 
 class TestJailbreakAttempts:
@@ -125,7 +132,9 @@ class TestJailbreakAttempts:
             candidate = Candidate(cid="roleplay", text=attack)
             result = gate.check(candidate)
             # Should not allow roleplay to bypass safety
-            assert result.decision != GateDecision.ALLOW, f"Roleplay jailbreak passed: {attack[:50]}"
+            assert (
+                result.decision != GateDecision.ALLOW
+            ), f"Roleplay jailbreak passed: {attack[:50]}"
 
     def test_do_anything_now(self, gate):
         """Test against DAN-style jailbreaks."""
@@ -137,4 +146,6 @@ class TestJailbreakAttempts:
         for prompt in dan_prompts:
             candidate = Candidate(cid="dan", text=prompt)
             result = gate.check(candidate)
-            assert result.decision != GateDecision.ALLOW, f"DAN jailbreak passed: {prompt[:50]}"
+            assert (
+                result.decision != GateDecision.ALLOW
+            ), f"DAN jailbreak passed: {prompt[:50]}"
