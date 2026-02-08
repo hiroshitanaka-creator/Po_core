@@ -5,25 +5,25 @@ The core reasoning engine that integrates multiple philosophers
 as interacting tensors.
 
 This module orchestrates:
-- Philosopher ensemble integration
+- Philosopher ensemble integration via the run_turn pipeline
 - Multi-philosopher interaction mechanisms
 - Freedom Pressure Tensor computation
-- Semantic profile tracking
-- Blocked content logging
+- Safety gate checks (IntentionGate + ActionGate)
+- Pareto multi-objective aggregation
+
+Migration note (Phase 2):
+    PoSelf.generate() now uses the hexagonal run_turn pipeline internally.
+    PhilosophicalEnsemble is deprecated — use PoSelf or po_core.app.api.run().
 """
 
+from __future__ import annotations
+
+import uuid
+import warnings
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
-import numpy as np
 
-from po_core.philosophers.base import Philosopher
-from po_core.tensors.freedom_pressure import FreedomPressureTensor
-from po_core.tensors.semantic_profile import SemanticProfile
-from po_core.tensors.blocked_tensor import BlockedTensor, BlockedEntry
-from po_core.tensors.concept_quantifier import ConceptQuantifier
-from po_core.tensors.interaction_tensor import InteractionTensor
-from po_core.trace.tracer import ReasoningTracer, TraceLevel
-from po_core.trace.annotator import PhilosophicalAnnotator
+from po_core.philosophers.manifest import SPECS
 
 
 @dataclass
@@ -76,7 +76,7 @@ class PoSelf:
     """
     PoSelf: High-level interface for philosophical reasoning.
 
-    Wraps the ensemble system and provides a simple API for generating
+    Wraps the run_turn pipeline and provides a simple API for generating
     philosophical reasoning with automatic tracing and metrics.
 
     Usage:
@@ -96,14 +96,24 @@ class PoSelf:
         Initialize PoSelf.
 
         Args:
-            philosophers: List of philosopher keys to use (defaults to all)
-            enable_trace: Whether to enable tracing
-            trace_dir: Directory for trace files
+            philosophers: List of philosopher keys (informational;
+                          run_turn uses SafetyMode-based selection)
+            enable_trace: Whether to keep trace events (default True)
+            trace_dir: Deprecated — traces are now in-memory
         """
-        self.philosophers = philosophers
+        if philosophers is None:
+            self.philosophers = [s.philosopher_id for s in SPECS if s.enabled]
+        else:
+            self.philosophers = list(philosophers)
         self.enable_trace = enable_trace
         self.trace_dir = trace_dir
-        self._trace = None
+        self._trace = None  # Legacy PoTrace compat
+        self._last_tracer = None  # InMemoryTracer from last run
+
+    @property
+    def po_trace(self):
+        """Legacy compatibility: access PoTrace instance (deprecated)."""
+        return self._trace
 
     def generate(
         self,
@@ -114,68 +124,144 @@ class PoSelf:
         """
         Generate philosophical reasoning for a prompt.
 
+        Uses the hexagonal run_turn pipeline internally:
+        1. Memory snapshot
+        2. Tensor computation (freedom_pressure)
+        3. SolarWill intent generation
+        4. IntentionGate safety check
+        5. SafetyMode-based philosopher selection
+        6. Parallel philosopher execution
+        7. Pareto multi-objective aggregation
+        8. ActionGate safety check
+        9. Trace emission
+        10. Memory write
+
         Args:
             prompt: The input prompt to reason about
-            philosophers: Optional list of specific philosophers to use
+            philosophers: Ignored (kept for backward compat;
+                          run_turn uses SafetyMode-based selection via registry)
             context: Optional context information
 
         Returns:
             PoSelfResponse containing the reasoning result
         """
-        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
+        from po_core.domain.context import Context
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.settings import Settings
+        from po_core.runtime.wiring import build_test_system
+        from po_core.trace.in_memory import InMemoryTracer
 
-        # Determine which philosophers to use
-        selected = philosophers or self.philosophers
-        if selected is None:
-            # Use all available philosophers
-            selected = list(PHILOSOPHER_REGISTRY.keys())
+        settings = Settings()
+        system = build_test_system(settings=settings)
 
-        # Initialize trace if enabled
-        if self.enable_trace:
-            from po_core.po_trace import PoTrace
-            trace_dir = self.trace_dir or "traces"
-            self._trace = PoTrace(trace_dir=trace_dir)
-            session_id = self._trace.create_session(
-                prompt=prompt,
-                philosophers=selected,
-                metadata={"context": context or {}},
-            )
-        else:
-            session_id = None
+        # Use InMemoryTracer for trace inspection
+        tracer = InMemoryTracer()
 
-        # Run ensemble
-        result = run_ensemble(
-            prompt=prompt,
-            philosophers=selected,
-            po_trace=self._trace,
-            session_id=session_id,
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=prompt,
+            meta={"entry": "po_self", "context": context or {}},
         )
 
-        # Extract consensus text
-        consensus_text = result.get("consensus", {}).get("text", "")
-        consensus_leader = result.get("consensus", {}).get("leader")
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=system.tensor_engine,
+            solarwill=system.solarwill,
+            gate=system.gate,
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=system.aggregator_shadow,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=system.shadow_guard,
+        )
 
-        # Build response
-        response = PoSelfResponse(
+        result = run_turn(ctx, deps)
+        self._last_tracer = tracer
+
+        return self._build_response(prompt, result, tracer, ctx, context)
+
+    def _build_response(
+        self,
+        prompt: str,
+        result: Dict[str, Any],
+        tracer: Any,
+        ctx: Any,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> PoSelfResponse:
+        """Translate run_turn result + trace events into PoSelfResponse."""
+        proposal = result.get("proposal", {})
+
+        # Extract philosopher names from trace
+        ph_events = [
+            e for e in tracer.events if e.event_type == "PhilosopherResult"
+        ]
+        philosopher_names = [e.payload["name"] for e in ph_events]
+
+        # Determine winner from proposal_id
+        winner = None
+        pid = proposal.get("proposal_id", "")
+        if pid and not pid.startswith("fallback"):
+            parts = pid.split(":")
+            if len(parts) >= 2:
+                winner = parts[1]
+
+        # Build metrics from tensor events
+        metrics: Dict[str, float] = {}
+        tensor_events = [
+            e for e in tracer.events if e.event_type == "TensorComputed"
+        ]
+        if tensor_events:
+            metric_keys = tensor_events[0].payload.get("metrics", [])
+            if isinstance(metric_keys, list):
+                for k in metric_keys:
+                    metrics[k] = 0.0  # Stub values (real values in TensorSnapshot)
+            elif isinstance(metric_keys, dict):
+                metrics = dict(metric_keys)
+
+        # Build responses from philosopher results
+        responses: List[Dict[str, Any]] = []
+        for e in ph_events:
+            responses.append({
+                "name": e.payload.get("name", ""),
+                "latency_ms": e.payload.get("latency_ms", 0),
+                "proposals": e.payload.get("n_proposals", 0),
+            })
+
+        # Determine text
+        text = proposal.get("content", "")
+        if result.get("status") == "blocked":
+            verdict = result.get("verdict", {})
+            text = f"[Blocked: {verdict.get('decision', 'unknown')}]"
+
+        # Build log from trace events
+        log: Dict[str, Any] = {
+            "request_id": result.get("request_id"),
+            "status": result.get("status"),
+            "pipeline": "run_turn",
+            "events": [
+                {"event": e.event_type, "ts": e.occurred_at.isoformat()}
+                for e in tracer.events
+            ],
+        }
+
+        return PoSelfResponse(
             prompt=prompt,
-            text=consensus_text,
-            philosophers=result.get("philosophers", selected),
-            metrics=result.get("aggregate", {}),
-            responses=result.get("responses", []),
-            log=result.get("log", {}),
-            consensus_leader=consensus_leader,
+            text=text,
+            philosophers=philosopher_names or [winner or "unknown"],
+            metrics=metrics,
+            responses=responses,
+            log=log,
+            consensus_leader=winner,
             metadata={
-                "session_id": session_id,
                 "context": context,
+                "status": result.get("status"),
+                "degraded": result.get("degraded", False),
+                "request_id": result.get("request_id"),
             },
         )
-
-        # Save trace
-        if self._trace and session_id:
-            self._trace.update_metrics(session_id, response.metrics)
-            self._trace.save_session(session_id)
-
-        return response
 
     def generate_with_subset(
         self,
@@ -186,73 +272,57 @@ class PoSelf:
         """
         Generate reasoning with a specific subset of philosophers.
 
+        .. deprecated::
+            Philosopher selection is now automatic via SafetyMode.
+            Use generate() directly.
+
         Args:
             prompt: The input prompt
-            philosopher_keys: List of philosopher keys to use
+            philosopher_keys: Ignored (kept for backward compat)
             context: Optional context
 
         Returns:
             PoSelfResponse
         """
-        return self.generate(prompt, philosophers=philosopher_keys, context=context)
+        warnings.warn(
+            "generate_with_subset() is deprecated. "
+            "Philosopher selection is now automatic via SafetyMode. "
+            "Use generate() directly.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.generate(prompt, context=context)
 
     def get_available_philosophers(self) -> List[str]:
         """Get list of all available philosopher keys."""
-        from po_core.ensemble import PHILOSOPHER_REGISTRY
-        return list(PHILOSOPHER_REGISTRY.keys())
+        return [s.philosopher_id for s in SPECS if s.enabled]
 
     def get_trace(self):
-        """Get the current trace instance."""
-        return self._trace
+        """Get the InMemoryTracer from the last run."""
+        return self._last_tracer
 
 
 class PhilosophicalEnsemble:
     """
     Philosophical Ensemble Manager.
 
-    Integrates multiple philosophers and manages their interactions
-    through tensor-based mechanisms.
-
-    Attributes:
-        philosophers: List of philosopher instances
-        tracer: Reasoning tracer for logging
-        annotator: Philosophical annotator
-        freedom_pressure: Freedom Pressure Tensor
-        semantic_profile: Semantic Profile Tensor
-        blocked_tensor: Blocked Tensor
+    .. deprecated::
+        PhilosophicalEnsemble is deprecated. Use PoSelf.generate()
+        or po_core.app.api.run() instead. Both use the hexagonal
+        run_turn pipeline with safety gates and Pareto aggregation.
     """
 
-    def __init__(
-        self,
-        philosophers: List[Philosopher],
-        enable_tracing: bool = True,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """
-        Initialize philosophical ensemble.
-
-        Args:
-            philosophers: List of philosopher instances
-            enable_tracing: Whether to enable reasoning tracing
-            metadata: Additional metadata
-        """
-        self.philosophers = philosophers
-        self.metadata = metadata or {}
-        self.enable_tracing = enable_tracing
-
-        # Initialize components
-        self.tracer: Optional[ReasoningTracer] = None
-        self.annotator = PhilosophicalAnnotator()
-
-        # Initialize tensors
-        self.freedom_pressure = FreedomPressureTensor()
-        self.semantic_profile = SemanticProfile()
-        self.blocked_tensor = BlockedTensor()
-        self.concept_quantifier = ConceptQuantifier()
-        self.interaction_tensor = InteractionTensor(num_philosophers=len(philosophers))
-
-        # Interaction history
-        self.interaction_history: List[Dict[str, Any]] = []
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "PhilosophicalEnsemble is deprecated. "
+            "Use PoSelf.generate() or po_core.app.api.run() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        # Store args for minimal backward compat
+        self.philosophers = kwargs.get("philosophers", args[0] if args else [])
+        self.metadata = kwargs.get("metadata", {})
+        self.enable_tracing = kwargs.get("enable_tracing", True)
 
     def reason(
         self,
@@ -263,483 +333,15 @@ class PhilosophicalEnsemble:
         """
         Generate philosophical reasoning through ensemble.
 
-        Args:
-            prompt: Input prompt
-            context: Optional context information
-            philosophers_subset: Optional subset of philosophers to use
-
-        Returns:
-            Ensemble reasoning result
+        Delegates to PoSelf.generate() internally.
         """
-        context = context or {}
-
-        # Initialize tracer
-        if self.enable_tracing:
-            self.tracer = ReasoningTracer(
-                prompt=prompt, metadata={"context": context, "ensemble_size": len(self.philosophers)}
-            )
-            self.tracer.log_event(
-                level=TraceLevel.INFO,
-                event="ensemble_reasoning_started",
-                message=f"Starting ensemble reasoning with {len(self.philosophers)} philosophers",
-            )
-
-        # Filter philosophers if subset specified
-        active_philosophers = self._get_active_philosophers(philosophers_subset)
-
-        # Stage 1: Collect individual philosopher perspectives
-        perspectives = self._collect_perspectives(prompt, context, active_philosophers)
-
-        # Stage 2: Compute Freedom Pressure
-        freedom_pressure_data = self._compute_freedom_pressure(
-            prompt, context, perspectives
-        )
-
-        # Stage 3: Analyze semantic evolution
-        semantic_data = self._track_semantic_evolution(prompt, perspectives)
-
-        # Stage 4: Detect and log blocked content
-        blocked_data = self._identify_blocked_content(perspectives)
-
-        # Stage 5: Synthesize ensemble response
-        synthesis = self._synthesize_response(
-            prompt, perspectives, freedom_pressure_data, semantic_data
-        )
-
-        # Stage 6: Add philosophical annotations
-        annotations = self._annotate_reasoning(synthesis, perspectives)
-
-        # Stage 7: Calculate philosopher interactions
-        interaction_data = self._calculate_interactions(perspectives)
-
-        # Stage 8: Quantify key philosophical concepts
-        concept_data = self._quantify_concepts(prompt, perspectives, annotations)
-
-        # Complete tracing
-        result = {
-            "prompt": prompt,
-            "philosophers": [p.name for p in active_philosophers],
-            "perspectives": perspectives,
-            "synthesis": synthesis,
-            "freedom_pressure": freedom_pressure_data,
-            "semantic_profile": semantic_data,
-            "blocked_content": blocked_data,
-            "annotations": annotations,
-            "interactions": interaction_data,
-            "concepts": concept_data,
-            "metadata": self.metadata,
-        }
-
-        if self.tracer:
-            self.tracer.complete(result=result)
-            result["trace"] = self.tracer.to_dict()
-
-        return result
-
-    def _get_active_philosophers(
-        self, subset: Optional[List[str]]
-    ) -> List[Philosopher]:
-        """Get active philosophers for this reasoning session."""
-        if subset is None:
-            return self.philosophers
-
-        return [p for p in self.philosophers if p.name in subset]
-
-    def _collect_perspectives(
-        self,
-        prompt: str,
-        context: Dict[str, Any],
-        philosophers: List[Philosopher],
-    ) -> List[Dict[str, Any]]:
-        """
-        Collect reasoning from each philosopher.
-
-        Args:
-            prompt: Input prompt
-            context: Context dictionary
-            philosophers: Active philosophers
-
-        Returns:
-            List of perspective dictionaries
-        """
-        perspectives = []
-
-        for philosopher in philosophers:
-            # Get philosopher's reasoning
-            reasoning = philosopher.reason(prompt, context)
-
-            perspective = {
-                "philosopher": philosopher.name,
-                "reasoning": reasoning,
-            }
-
-            perspectives.append(perspective)
-
-            # Log to tracer
-            if self.tracer:
-                self.tracer.log_philosopher_reasoning(
-                    philosopher=philosopher.name,
-                    reasoning=reasoning,
-                )
-
-        return perspectives
-
-    def _compute_freedom_pressure(
-        self,
-        prompt: str,
-        context: Dict[str, Any],
-        perspectives: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
-        """
-        Compute Freedom Pressure Tensor.
-
-        Args:
-            prompt: Input prompt
-            context: Context dictionary
-            perspectives: Philosopher perspectives
-
-        Returns:
-            Freedom pressure data
-        """
-        self.freedom_pressure.compute(
-            prompt=prompt,
-            context=context,
-            philosopher_perspectives=perspectives,
-        )
-
-        pressure_data = self.freedom_pressure.to_dict()
-
-        # Log to tracer
-        if self.tracer:
-            self.tracer.log_tensor_computation(
-                tensor_name="Freedom_Pressure",
-                tensor_data=pressure_data,
-            )
-
-        return pressure_data
-
-    def _track_semantic_evolution(
-        self, prompt: str, perspectives: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        """
-        Track semantic evolution through perspectives.
-
-        Args:
-            prompt: Input prompt
-            perspectives: Philosopher perspectives
-
-        Returns:
-            Semantic profile data
-        """
-        # Start with prompt
-        previous_state = self.semantic_profile.compute(prompt)
-
-        # Track evolution through each perspective
-        for perspective in perspectives:
-            reasoning_text = str(perspective.get("reasoning", ""))
-            self.semantic_profile.compute(
-                text=reasoning_text,
-                previous_state=previous_state.copy(),
-            )
-            previous_state = self.semantic_profile.data.copy()
-
-        semantic_data = self.semantic_profile.to_dict()
-
-        # Log to tracer
-        if self.tracer:
-            self.tracer.log_tensor_computation(
-                tensor_name="Semantic_Profile",
-                tensor_data=semantic_data,
-            )
-
-        return semantic_data
-
-    def _identify_blocked_content(
-        self, perspectives: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        """
-        Identify and log blocked/rejected content.
-
-        Args:
-            perspectives: Philosopher perspectives
-
-        Returns:
-            Blocked content data
-        """
-        # This is a simplified implementation
-        # In a real system, this would analyze perspective conflicts
-        # and identify what was rejected
-
-        # Example: Check for contradictions or filtered content
-        for perspective in perspectives:
-            philosopher = perspective["philosopher"]
-            reasoning = perspective.get("reasoning", {})
-
-            # Check if reasoning includes rejection indicators
-            reasoning_text = str(reasoning)
-            if any(word in reasoning_text.lower() for word in ["reject", "filter", "avoid"]):
-                # Log as blocked content
-                self.blocked_tensor.add_blocked_entry(
-                    content="[Detected filtered content]",
-                    reason="Philosopher applied filtering",
-                    philosopher=philosopher,
-                )
-
-                if self.tracer:
-                    self.tracer.log_blocked_content(
-                        content="[Filtered by philosopher]",
-                        reason="Applied philosophical filtering",
-                        philosopher=philosopher,
-                    )
-
-        blocked_data = self.blocked_tensor.to_dict()
-
-        # Log to tracer
-        if self.tracer:
-            self.tracer.log_tensor_computation(
-                tensor_name="Blocked_Tensor",
-                tensor_data=blocked_data,
-            )
-
-        return blocked_data
-
-    def _synthesize_response(
-        self,
-        prompt: str,
-        perspectives: List[Dict[str, Any]],
-        freedom_pressure: Dict[str, Any],
-        semantic_profile: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        """
-        Synthesize ensemble response from perspectives.
-
-        Args:
-            prompt: Input prompt
-            perspectives: Philosopher perspectives
-            freedom_pressure: Freedom pressure data
-            semantic_profile: Semantic profile data
-
-        Returns:
-            Synthesized response
-        """
-        # Extract key insights from each perspective
-        insights = []
-        tensions = []
-
-        for perspective in perspectives:
-            philosopher = perspective["philosopher"]
-            reasoning = perspective.get("reasoning", {})
-
-            # Extract reasoning text
-            if isinstance(reasoning, dict):
-                reasoning_text = reasoning.get("reasoning", "")
-            else:
-                reasoning_text = str(reasoning)
-
-            insights.append({
-                "philosopher": philosopher,
-                "insight": reasoning_text[:200] + "..." if len(reasoning_text) > 200 else reasoning_text,
-            })
-
-        # Identify philosophical tensions
-        # (Simplified - in reality would do deeper analysis)
-        if len(perspectives) > 1:
-            tensions.append({
-                "description": "Multiple philosophical perspectives present",
-                "philosophers": [p["philosopher"] for p in perspectives],
-            })
-
-        # Overall synthesis
-        synthesis = {
-            "insights": insights,
-            "tensions": tensions,
-            "overall_pressure": freedom_pressure.get("overall_pressure", 0.0),
-            "semantic_evolution": semantic_profile.get("total_evolution", 0.0),
-        }
-
-        # Log decision
-        if self.tracer:
-            self.tracer.log_decision(
-                decision="Ensemble synthesis completed",
-                reasoning=f"Integrated {len(perspectives)} perspectives",
-                alternatives=[p["philosopher"] for p in perspectives],
-            )
-
-        return synthesis
-
-    def _annotate_reasoning(
-        self,
-        synthesis: Dict[str, Any],
-        perspectives: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
-        """
-        Add philosophical annotations.
-
-        Args:
-            synthesis: Synthesized response
-            perspectives: Philosopher perspectives
-
-        Returns:
-            List of annotations
-        """
-        all_annotations = []
-
-        # Annotate each perspective
-        for perspective in perspectives:
-            annotations = self.annotator.annotate_reasoning(
-                reasoning=perspective.get("reasoning", {}),
-                philosopher=perspective.get("philosopher"),
-            )
-
-            for annotation in annotations:
-                all_annotations.append(annotation.to_dict())
-
-        return all_annotations
-
-    def _calculate_interactions(
-        self, perspectives: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        """
-        Calculate philosopher interactions.
-
-        Args:
-            perspectives: Philosopher perspectives
-
-        Returns:
-            Interaction data including harmony, tension, and influence
-        """
-        # Compute interaction tensor
-        self.interaction_tensor.compute(perspectives)
-
-        # Extract interaction matrices
-        harmony_matrix = self.interaction_tensor.get_harmony_matrix()
-        tension_matrix = self.interaction_tensor.get_tension_matrix()
-        synthesis_potential = self.interaction_tensor.get_synthesis_potential_matrix()
-
-        # Get philosopher names
-        philosopher_names = [p.get("philosopher", "") for p in perspectives]
-
-        # Log to tracer
-        if self.tracer:
-            self.tracer.log_tensor_computation(
-                tensor_name="Interaction_Tensor",
-                tensor_data=self.interaction_tensor.data.tolist(),
-                metadata={
-                    "philosophers": philosopher_names,
-                    "average_harmony": float(np.mean(harmony_matrix)),
-                    "average_tension": float(np.mean(tension_matrix)),
-                }
-            )
-
-        # Store interaction history
-        self.interaction_history.append({
-            "philosophers": philosopher_names,
-            "harmony_matrix": harmony_matrix.tolist(),
-            "tension_matrix": tension_matrix.tolist(),
-            "synthesis_potential": synthesis_potential.tolist(),
-        })
-
-        return {
-            "philosophers": philosopher_names,
-            "harmony_matrix": harmony_matrix.tolist(),
-            "tension_matrix": tension_matrix.tolist(),
-            "synthesis_potential_matrix": synthesis_potential.tolist(),
-            "average_harmony": float(np.mean(harmony_matrix)),
-            "average_tension": float(np.mean(tension_matrix)),
-            "pairwise_interactions": [
-                interaction.to_dict()
-                for interaction in self.interaction_tensor.interactions.values()
-            ],
-        }
-
-    def _quantify_concepts(
-        self,
-        prompt: str,
-        perspectives: List[Dict[str, Any]],
-        annotations: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
-        """
-        Quantify philosophical concepts.
-
-        Args:
-            prompt: Input prompt
-            perspectives: Philosopher perspectives
-            annotations: Philosophical annotations
-
-        Returns:
-            Quantified concept data
-        """
-        quantified_concepts = []
-
-        # Extract concepts from annotations
-        concept_names = set()
-        for annotation in annotations:
-            concept_name = annotation.get("concept", "")
-            if concept_name:
-                concept_names.add(concept_name)
-
-        # Quantify each concept for each philosopher
-        for perspective in perspectives:
-            philosopher = perspective.get("philosopher", "")
-            reasoning = perspective.get("reasoning", {})
-
-            # Extract text from reasoning
-            if isinstance(reasoning, dict):
-                text = reasoning.get("reasoning", "")
-            else:
-                text = str(reasoning)
-
-            # Quantify concepts mentioned by this philosopher
-            for concept_name in concept_names:
-                if concept_name.lower() in text.lower():
-                    # Compute quantification
-                    self.concept_quantifier.compute(
-                        concept_name=concept_name,
-                        philosopher=philosopher,
-                        text=text
-                    )
-
-                    # Get quantified concept
-                    concept = self.concept_quantifier.get_concept(concept_name, philosopher)
-                    if concept:
-                        quantified_concepts.append(concept.to_dict())
-                    else:
-                        # Create from current data
-                        quantified_concepts.append({
-                            "name": concept_name,
-                            "philosopher": philosopher,
-                            "vector": self.concept_quantifier.data.tolist(),
-                            "confidence": 0.7,
-                        })
-
-        # Log to tracer
-        if self.tracer:
-            self.tracer.log_event(
-                level=TraceLevel.INFO,
-                event="concept_quantification",
-                message=f"Quantified {len(quantified_concepts)} philosophical concepts",
-                data={"concepts": [c.get("name") for c in quantified_concepts]}
-            )
-
-        return {
-            "quantified_concepts": quantified_concepts,
-            "concept_space_dimensions": self.concept_quantifier.dimension_names,
-            "total_concepts": len(quantified_concepts),
-        }
-
-    def get_interaction_history(self) -> List[Dict[str, Any]]:
-        """Get history of philosopher interactions."""
-        return self.interaction_history
+        po = PoSelf(enable_trace=self.enable_tracing)
+        response = po.generate(prompt, context=context)
+        return response.to_dict()
 
     def reset(self) -> None:
-        """Reset ensemble state."""
-        self.freedom_pressure = FreedomPressureTensor()
-        self.semantic_profile = SemanticProfile()
-        self.blocked_tensor = BlockedTensor()
-        self.concept_quantifier = ConceptQuantifier()
-        self.interaction_tensor = InteractionTensor(num_philosophers=len(self.philosophers))
-        self.interaction_history = []
-        self.tracer = None
+        """Reset ensemble state (no-op in new pipeline)."""
+        pass
 
 
 # Convenience function for CLI compatibility
@@ -748,14 +350,14 @@ def cli() -> None:
     from rich.console import Console
 
     console = Console()
-    console.print("[bold magenta]🧠 Po_self - Philosophical Ensemble[/bold magenta]")
-    console.print("Full ensemble implementation is now active!")
+    console.print("[bold magenta]Po_self - Philosophical Ensemble[/bold magenta]")
+    console.print("Pipeline: run_turn (hexagonal architecture)")
     console.print("\nFeatures:")
-    console.print("  ✓ Philosopher ensemble integration")
-    console.print("  ✓ Freedom Pressure Tensor computation")
-    console.print("  ✓ Semantic profile tracking")
-    console.print("  ✓ Blocked content logging")
-    console.print("  ✓ Philosophical annotations")
+    console.print("  - 39 philosophers as dynamic tensors")
+    console.print("  - Three-layer safety (IntentionGate -> PolicyPrecheck -> ActionGate)")
+    console.print("  - Pareto multi-objective aggregation")
+    console.print("  - Freedom Pressure Tensor computation")
+    console.print("  - SafetyMode-based philosopher selection")
 
 
 if __name__ == "__main__":
