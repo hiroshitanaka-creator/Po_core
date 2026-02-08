@@ -88,12 +88,12 @@ Legacy tensors not yet in TensorEngine:
 - Semantic Profile (full conversation tracking, not just single-turn delta)
 - Consider adding as `MetricFn` plugins
 
-### Issue: Viewer integration with new trace format
-**Priority:** Medium
-**Labels:** `viewer`, `frontend`
+### ~~Issue: Viewer integration with new trace format~~ DONE
+**Status:** Completed
 
-The Viewer currently expects legacy trace format. Update to:
-- Read `InMemoryTracer` / `TraceEvent` stream
-- Display 10-step pipeline progression
-- Show tensor metric evolution
-- A/B shadow diff visualization
+PoViewer class created. Reads InMemoryTracer / TraceEvent stream.
+- `pipeline_view.py`: 10-step pipeline progression (Markdown + text)
+- `tensor_view.py`: Tensor metric display
+- `po_viewer.py`: High-level PoViewer combining all views
+- A/B shadow diff via existing `decision_report_md.py`
+- 30 viewer tests
