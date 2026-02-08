@@ -93,12 +93,11 @@ class TestManifestIntegrity:
 
 
 class TestPhilosopherLoading:
-    """Test that all philosophers load and have propose() via bridge."""
+    """Test that all philosophers load with native propose()/info."""
 
     def test_all_load_via_registry(self, registry):
         """All 39 philosophers should load in NORMAL mode."""
         loaded = registry.select_and_load(SafetyMode.NORMAL)
-        # NORMAL mode may cap the count, but should be > 0
         assert len(loaded) > 0
 
     def test_all_have_propose_method(self, all_loaded_philosophers):
@@ -108,11 +107,42 @@ class TestPhilosopherLoading:
             )
             assert callable(phil.propose)
 
-    def test_all_have_info_method(self, all_loaded_philosophers):
+    def test_all_have_info_property(self, all_loaded_philosophers):
         for phil in all_loaded_philosophers:
             assert hasattr(phil, "info"), (
-                f"Philosopher missing info(): {phil}"
+                f"Philosopher missing info: {phil}"
             )
+            assert phil.info.name, f"info.name is empty for {phil}"
+            assert phil.info.version, f"info.version is empty for {phil}"
+
+    def test_no_bridge_needed_for_philosopher_subclasses(self, registry):
+        """Philosopher subclasses should implement propose() natively (no Bridge)."""
+        from po_core.philosophers.base import Philosopher
+        from po_core.philosophers.bridge import PhilosopherBridge
+
+        loaded = registry.select_and_load(SafetyMode.NORMAL)
+        for phil in loaded:
+            assert not isinstance(phil, PhilosopherBridge), (
+                f"{phil.info.name} should not need PhilosopherBridge"
+            )
+
+    def test_propose_returns_proposals(self, all_loaded_philosophers):
+        """propose() should return a list of Proposal objects."""
+        from po_core.domain.intent import Intent
+        from po_core.domain.proposal import Proposal
+
+        ctx = _ctx()
+        intent = Intent(goals=["understand"], constraints=[])
+        tensors = _empty_tensors()
+        mem = _empty_mem()
+
+        # Test with first philosopher only (for speed)
+        phil = all_loaded_philosophers[0]
+        proposals = phil.propose(ctx, intent, tensors, mem)
+        assert isinstance(proposals, list)
+        assert len(proposals) > 0
+        assert isinstance(proposals[0], Proposal)
+        assert proposals[0].content, "Proposal content should not be empty"
 
 
 # ══════════════════════════════════════════════════════════════════════════

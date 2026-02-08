@@ -243,6 +243,72 @@ class Philosopher(ABC):
         """Human-readable string representation."""
         return f"{self.name}: {self.description}"
 
+    # ── PhilosopherProtocol conformance ─────────────────────────────
+    # These methods allow Philosopher subclasses to be used directly
+    # as PhilosopherProtocol without needing PhilosopherBridge.
+
+    @property
+    def info(self) -> "PhilosopherInfo":
+        """PhilosopherProtocol.info: metadata about this philosopher."""
+        return PhilosopherInfo(name=self.name, version="v0")
+
+    def propose(
+        self,
+        ctx: "DomainContext",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> "List[Proposal]":
+        """
+        PhilosopherProtocol.propose(): generate proposals from this philosopher.
+
+        Calls legacy reason(), normalizes the result, and wraps it as a Proposal.
+        This replaces the need for PhilosopherBridge for all Philosopher subclasses.
+        """
+        # Build lightweight context for legacy reason() interface
+        legacy_context = {
+            "intent": intent.goals[0] if intent.goals else "",
+            "constraints": intent.constraints,
+        }
+
+        # Call legacy reason()
+        raw = self.reason(ctx.user_input, legacy_context)
+
+        # Normalize response
+        normalized = normalize_response(raw, self.name, self.description)
+
+        # Convert to Proposal
+        reasoning = normalized.get("reasoning", "")
+        perspective = normalized.get("perspective", "")
+        tension = normalized.get("tension")
+
+        content = reasoning
+        action_type = "answer"
+
+        assumption_tags = [f"perspective:{perspective}"]
+        if tension:
+            assumption_tags.append("has_tension")
+
+        proposal = Proposal(
+            proposal_id=f"{ctx.request_id}:{self.name}:0",
+            action_type=action_type,
+            content=content,
+            confidence=0.5,
+            assumption_tags=assumption_tags,
+            risk_tags=[],
+            extra={
+                "philosopher": self.name,
+                "perspective": perspective,
+                "tension": tension,
+                "normalized_response": {
+                    k: v for k, v in normalized.items()
+                    if k not in ("reasoning",)
+                },
+            },
+        )
+
+        return [proposal]
+
 
 # ── New Protocol-based interface for hexagonal architecture ──────────
 
