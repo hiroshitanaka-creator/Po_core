@@ -14,9 +14,11 @@
 
 ### TL;DR
 - **39 philosophers** as interacting **tensors** → accountable LLM reasoning
+- **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
+- **Real tensor metrics** — Freedom Pressure (6D), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
 - **A/B testing framework** for optimizing philosophy configurations with statistical rigor
-- 88% implementation complete; active experimentation phase
+- 125+ pipeline tests; active experimentation phase
 
 ### Quick links
 [Modules](./04_modules) ·
@@ -83,14 +85,20 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, and Eastern wisdom traditions
 
 ### Tensor-Based Architecture
-- **Freedom Pressure Tensor (F_P)**: Measures responsibility weight of each response
-- **Semantic Profile**: Tracks meaning evolution across conversation
-- **Blocked Tensor**: Records what was *not* said (Derrida's trace, Heidegger's absence)
+- **Freedom Pressure (6D)**: 6-dimensional keyword analysis (choice, responsibility, urgency, ethics, social impact, authenticity) with memory depth/refuse-tag boost
+- **Semantic Delta**: Token-overlap divergence between user input and memory history (1.0 = novel, 0.0 = seen before)
+- **Blocked Tensor**: Constraint/harm estimation via harmful keyword detection + vocabulary diversity scoring
 
 ### Transparency by Design
 - **Po_trace**: Complete audit log of reasoning process
 - **Rejection Logs**: What the AI chose not to say, and why
 - **Philosophical Annotations**: Which philosopher influenced each decision
+
+### Three-Layer Safety (`run_turn` pipeline)
+- **IntentionGate**: Pre-deliberation safety check (blocks/degrades before philosopher selection)
+- **PolicyPrecheck**: Mid-pipeline policy validation
+- **ActionGate**: Post-deliberation ethical review (W0–W4 violation detection + repair)
+- SafetyMode transitions: NORMAL → WARN → CRITICAL based on freedom_pressure thresholds
 
 ### Ethical Grounding
 - Not just "alignment"—but **deliberation**
@@ -111,10 +119,19 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │  External (03_api/, scripts, tests)                                 │
-│  ↓ imports ONLY po_core.app.api                                     │
+│  ↓ imports po_core.run() or PoSelf.generate()                       │
 ├─────────────────────────────────────────────────────────────────────┤
-│  po_core.app.api  ← Public facade (PoCore, PoCoreConfig)            │
-│  ↓ uses runtime/wiring.py Container (DI)                            │
+│  po_core.app.api.run()  ← Public entry point (recommended)          │
+│  po_core.po_self.PoSelf ← High-level wrapper (uses run_turn)        │
+│  ↓ uses runtime/wiring.py build_test_system() (DI)                  │
+├─────────────────────────────────────────────────────────────────────┤
+│  run_turn: 10-Step Hexagonal Pipeline                               │
+│                                                                     │
+│  1. MemoryRead        6. PartyMachine (deliberation)               │
+│  2. TensorCompute     7. ParetoAggregate (multi-objective)         │
+│  3. SolarWill         8. ShadowPareto (A/B) + ShadowGuard         │
+│  4. IntentionGate     9. ActionGate (W-ethics post-check)          │
+│  5. PhilosopherSelect 10. MemoryWrite                               │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Internal Layers (hexagonal architecture)                           │
 │                                                                     │
@@ -125,7 +142,8 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 │  └─────────────┘  └─────────────┘  └─────────────┘                │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Po_self: Philosophical Ensemble (39 philosophers)            │ │
+│  │ Philosophers: 39 modules + PhilosopherBridge adapter          │ │
+│  │  Legacy Philosopher.reason() → PhilosopherProtocol.propose() │ │
 │  │                                                              │ │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │ │
 │  │  │Heidegger │  │ Derrida  │  │  Sartre  │  ...              │ │
@@ -135,15 +153,14 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 │  │  ↓ Interference & Resonance ↓                               │ │
 │  │                                                              │ │
 │  │  ┌─────────────────────────────────────────────────────┐   │ │
-│  │  │ Tensors: Freedom Pressure (F_P), Semantic Delta,    │   │ │
-│  │  │          Blocked Tensor (B), Interaction Tensor     │   │ │
+│  │  │ TensorEngine: Freedom Pressure (6D), Semantic Delta, │   │ │
+│  │  │               Blocked Tensor                         │   │ │
 │  │  └─────────────────────────────────────────────────────┘   │ │
 │  └──────────────────────────────────────────────────────────────┘ │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Safety: 2-Stage Ethics Gate (W-ethics)                       │ │
-│  │  Stage 1: Intention Gate (before deliberation)               │ │
-│  │  Stage 2: Action Gate (after deliberation)                   │ │
+│  │ Safety: 3-Layer (IntentionGate → PolicyPrecheck → ActionGate)│ │
+│  │  SafetyMode: NORMAL / WARN / CRITICAL (from freedom_pressure)│ │
 │  └──────────────────────────────────────────────────────────────┘ │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
@@ -154,10 +171,9 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
            │
            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│      Po_trace: Audit Log                                            │
-│  - What was said                                                    │
-│  - What was not said                                                │
-│  - Why (philosophical reasoning)                                    │
+│      InMemoryTracer / Po_trace: Audit Log                           │
+│  - TraceEvent stream (frozen schema, CI-validated)                  │
+│  - Philosophical reasoning, safety decisions, tensor snapshots      │
 └─────────────────────────────────────────────────────────────────────┘
            │
            ▼
@@ -174,30 +190,40 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 ```
 src/po_core/
 ├── app/
-│   └── api.py           # Public entry point (PoCore, PoCoreConfig)
+│   └── api.py           # Public entry point: run() (recommended API)
 ├── domain/              # Immutable value objects
 │   ├── context.py       # Context for reasoning
 │   ├── proposal.py      # Philosopher proposals
 │   ├── pareto_config.py # Pareto weights/tuning types
 │   ├── tensor_snapshot.py
+│   ├── memory_snapshot.py
 │   └── safety_verdict.py
 ├── ports/               # Abstract interfaces
 │   └── memory.py        # MemoryPort interface
 ├── adapters/            # Concrete implementations
 │   └── memory_poself.py # Po_self adapter
 ├── runtime/             # Dependency injection
-│   ├── settings.py      # Configuration
-│   ├── wiring.py        # DI Container
+│   ├── settings.py      # Configuration + feature flags
+│   ├── wiring.py        # DI Container (build_test_system)
 │   ├── pareto_table.py  # Pareto config loader (JSON-in-YAML)
 │   └── battalion_table.py # Battalion config loader
 ├── aggregator/          # Multi-objective optimization
 │   └── pareto.py        # ParetoAggregator (config-driven)
 ├── philosophers/        # 39 philosopher modules
+│   ├── manifest.py      # SPECS: 39 philosopher specs (risk/cost/tags)
+│   ├── registry.py      # SafetyMode-based selection + cost budget
+│   └── bridge.py        # PhilosopherBridge: legacy → PhilosopherProtocol
 ├── tensors/             # Tensor computation
+│   ├── engine.py        # TensorEngine (MetricFn registry)
+│   └── metrics/
+│       ├── freedom_pressure.py  # 6D keyword analysis + memory boost
+│       ├── semantic_delta.py    # Token-overlap divergence vs memory
+│       └── blocked_tensor.py    # Harm keyword + constraint scoring
 ├── safety/              # W-ethics gate system
 │   └── wethics_gate/
-│       ├── intention_gate.py  # Stage 1
-│       └── action_gate.py     # Stage 2
+│       ├── gate.py            # W0-W4 violation detection + repair
+│       ├── intention_gate.py  # Stage 1 (pre-deliberation)
+│       └── action_gate.py     # Stage 2 (post-deliberation)
 ├── trace/               # Audit trail
 │   ├── pareto_events.py # Emit pareto debug TraceEvents
 │   ├── decision_events.py # Emit decision audit events
@@ -209,8 +235,8 @@ src/po_core/
 │   ├── runner.py        # Execute experiments across variants
 │   ├── analyzer.py      # Statistical analysis (t-test, effect size)
 │   └── promoter.py      # Automatic winner promotion
-├── ensemble.py          # Multi-philosopher deliberation
-├── po_self.py           # Self-reflective API
+├── ensemble.py          # run_turn (hex pipeline) + run_ensemble (deprecated)
+├── po_self.py           # PoSelf: high-level API (uses run_turn internally)
 └── po_trace.py          # Execution tracing
 ```
 
@@ -266,40 +292,44 @@ experiments/
 | Documentation | Complete | 100% (120+ specs) |
 | Architecture Design | Complete | 100% |
 | Hexagonal Architecture | Complete | 100% |
+| `run_turn` Pipeline | **Complete** | 100% (10-step hex pipeline) |
+| PhilosopherBridge | **Complete** | 100% (all 39 → `PhilosopherProtocol`) |
+| TensorEngine (3 metrics) | **Complete** | 100% (freedom_pressure, semantic_delta, blocked_tensor) |
 | Pareto Optimization | Complete | 100% (config-driven) |
-| Battalion System | Complete | 100% (config-driven) |
+| Battalion System | Complete | 100% |
 | Trace/Audit Contract | Complete | 100% (schema validation) |
-| Implementation | In Progress | 88% |
-| Testing | In Progress | 60% |
-| Visualization (Viewer) | In Progress | 50% |
-| Safety System (W-ethics) | Complete | 100% |
+| Safety System (3-layer) | Complete | 100% (IntentionGate → PolicyPrecheck → ActionGate) |
+| Pipeline Tests | **Complete** | 100% (125+ tests, CI-gated) |
 | Experiment Management | Complete | 100% (A/B testing framework) |
+| Visualization (Viewer) | In Progress | 50% |
 
 **What's Working:**
+- **`run_turn` hexagonal pipeline** — 10-step deliberation, fully operational
+- **`po_core.run()`** — Recommended public API entry point
+- **`PoSelf.generate()`** — High-level wrapper, migrated to `run_turn` internally
+- **PhilosopherBridge** — Adapts all 39 legacy `Philosopher.reason()` → `PhilosopherProtocol.propose()`
+- **TensorEngine with 3 real metrics** — Freedom Pressure (6D keyword), Semantic Delta (token overlap), Blocked Tensor (harm detection)
+- **3-layer safety** — IntentionGate (pre-deliberation) → PolicyPrecheck → ActionGate (W0–W4 post-check)
+- **SafetyMode transitions** — NORMAL/WARN/CRITICAL from freedom_pressure thresholds
+- **125+ pipeline tests** — E2E (37), PoSelf (40), Bridge (19), Tensor (29), CI-gated as must-pass
 - 39 philosopher modules (full reasoning implementations)
-- Tensor framework (Freedom Pressure, Semantic Profile, Blocked Tensor, Interaction Tensor)
-- **Pareto optimization (config-driven via pareto_table.yaml)**
-- **Battalion system (config-driven via battalion_table.yaml)**
-- **Trace audit contract (schema validation with config_version tracking)**
-- Po_self API with PoSelfResponse dataclass
-- Ensemble system (multi-philosopher deliberation)
-- Po_trace / Po_trace_db (execution tracing & database storage)
-- Safety system (2-stage W-ethics gate: intention + action)
-- Hexagonal architecture (ports/adapters/domain/runtime)
-- Database layer with migration tools
-- CLI with interactive mode
-- Party Machine (philosopher combination assembly)
-- Anthropic API client (Claude integration)
-- System prompt framework
-- CI/CD pipeline (pytest, coverage, linting, security checks)
-- Solar Will experiments (39-philosopher cross-LLM emergence testing)
-- **Experiment Management Framework** (A/B testing for Pareto configurations with statistical analysis)
+- Pareto optimization (config-driven via pareto_table.yaml)
+- Battalion system (config-driven via battalion_table.yaml)
+- Trace audit contract (schema validation with config_version tracking)
+- Shadow Pareto A/B with ShadowGuard autonomous brake
+- Experiment Management Framework (A/B testing with statistical analysis)
+- CI/CD pipeline (pytest, coverage, linting, security checks, 2-stage testing)
+- Solar Will experiments (experimental)
+
+**Deprecated (will be removed in v0.3):**
+- `run_ensemble()` — Use `po_core.run()` or `PoSelf.generate()` instead
+- `PhilosophicalEnsemble` — Use `PoSelf` instead
 
 **What's Next:**
 - **Regression audit** — Golden DecisionEmitted events for regression detection
 - **Production experiment runs** — Validate statistical methods with real philosophy comparisons
+- Legacy test suite cleanup (197 legacy tests need migration to `run_turn`)
 - Viewer UI polish and frontend integration
-- Expand test coverage (currently 60+ test files)
 - Performance optimization for large philosopher ensembles
 - Package publishing (PyPI)
 - Full API reference documentation
@@ -311,7 +341,7 @@ experiments/
 ## Installation
 
 **Alpha Status Notice:**
-Po_core is in active development (80% implementation). CLI, 39 philosopher modules, tensor framework, and safety system are functional. Viewer and full test coverage are in progress.
+Po_core is in active development. The `run_turn` hexagonal pipeline, 39 philosopher modules, tensor metrics, and 3-layer safety system are fully operational. Viewer and legacy test migration are in progress.
 
 ```bash
 # Clone the repository
@@ -417,55 +447,49 @@ po-experiment rollback
 
 ## Python API
 
-### New Unified API (Recommended)
+### Simple API (Recommended)
 
 ```python
-from po_core.app.api import PoCore, PoCoreConfig
+from po_core import run
 
-# Configure the system
-config = PoCoreConfig(
-    fail_closed=True,           # Safety: fail closed on errors
-    quorum_threshold=0.6,       # Ensemble consensus threshold
-    autonomy_enabled=False,     # Solar Will (experimental)
-    debug=False,
-)
+# Single-function entry point — runs the full run_turn pipeline
+result = run(user_input="Should AI have rights?")
 
-# Initialize Po_core
-core = PoCore(config)
-
-# Process a prompt through the philosophy ensemble
-result = core.process(
-    prompt="Should AI have rights?",
-    context={"user_id": "123"},
-    session_id="session_abc",
-)
-
-# Check results
-if result.is_safe:
-    print(result.synthesis)              # Combined response
-    print(result.primary_proposal)       # Highest confidence proposal
-    print(result.tensors)                # Tensor snapshot
-
-# Get current state
-tensors = core.get_tensor_snapshot()
-memory = core.get_memory_snapshot()
+print(result["status"])       # "ok" or "blocked"
+print(result["request_id"])   # Unique request ID
+print(result["proposal"])     # Winning philosopher's response
 ```
 
-### Legacy API (Still Supported)
+### PoSelf API (Rich Response)
 
 ```python
-from po_core import PoSelf, PoSelfResponse, run_ensemble, PoTrace
+from po_core import PoSelf, PoSelfResponse
 
-# Run the philosophical ensemble
-result = run_ensemble(prompt="What is freedom?")
-
-# Use PoSelf for self-reflective responses
 po_self = PoSelf()
 response: PoSelfResponse = po_self.generate("Should AI have rights?")
 
-# Trace philosophical reasoning
-trace = PoTrace()
-trace.log_event("deliberation_start", {"prompt": "ethical question"})
+# Response fields
+print(response.text)              # Combined response text
+print(response.consensus_leader)  # Winning philosopher name
+print(response.philosophers)      # Selected philosopher list
+print(response.metrics)           # {"freedom_pressure": ..., "semantic_delta": ..., "blocked_tensor": ...}
+print(response.metadata["status"])  # "ok" or "blocked"
+
+# Trace inspection
+print(response.log["events"])     # Full trace event stream
+print(response.log["pipeline"])   # "run_turn"
+
+# Serialization
+d = response.to_dict()            # JSON-serializable dict
+restored = PoSelfResponse.from_dict(d)  # Round-trip
+```
+
+### Legacy API (Deprecated — will be removed in v0.3)
+
+```python
+# ⚠️ Deprecated: use po_core.run() or PoSelf.generate() instead
+from po_core import run_ensemble
+result = run_ensemble(prompt="What is freedom?")  # emits DeprecationWarning
 ```
 
 ---
