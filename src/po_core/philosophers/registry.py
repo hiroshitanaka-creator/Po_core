@@ -234,12 +234,15 @@ class PhilosopherRegistry:
                 mod = importlib.import_module(spec.module)
                 obj = getattr(mod, spec.symbol)
                 ph = obj() if callable(obj) else obj  # class or factory or instance
-                # Auto-bridge: Legacy Philosopher → PhilosopherProtocol
-                if isinstance(ph, Philosopher) and not hasattr(ph, "propose"):
-                    ph = PhilosopherBridge(ph)
-                # 最低限の形チェック（Protocolを満たすか）
+                # Philosopher subclasses now natively implement propose()/info
+                # via the base class. PhilosopherBridge is only needed for
+                # non-Philosopher objects that lack propose().
                 if not hasattr(ph, "propose") or not hasattr(ph, "info"):
-                    raise TypeError("not_a_philosopher")
+                    if isinstance(ph, Philosopher):
+                        # Shouldn't happen: base class provides propose()/info
+                        ph = PhilosopherBridge(ph)
+                    else:
+                        raise TypeError("not_a_philosopher")
                 out.append(ph)
                 if self._cache:
                     self._instances[pid] = ph

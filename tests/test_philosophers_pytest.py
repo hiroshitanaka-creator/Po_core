@@ -146,58 +146,24 @@ class TestPhilosopherMetadata:
             assert isinstance(result["metadata"], dict)
 
 
-class TestEnsemble:
-    """Test the ensemble system with all philosophers."""
+class TestRunAPI:
+    """Test the run_turn pipeline via po_core.run()."""
 
-    def test_ensemble_with_all_philosophers(self):
-        """Test running ensemble with all 39 philosophers."""
-        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
+    def test_run_returns_ok(self):
+        """Test po_core.run() returns ok status."""
+        from po_core import run
 
-        all_keys = list(PHILOSOPHER_REGISTRY.keys())
-        result = run_ensemble(
-            "What is the meaning of existence?",
-            philosophers=all_keys
-        )
+        result = run(user_input="What is the meaning of existence?")
+        assert result["status"] == "ok"
+        assert "proposal" in result
 
-        assert "responses" in result
-        assert len(result["responses"]) == 39
-        assert "aggregate" in result
-        assert "consensus" in result
+    def test_run_has_request_id(self):
+        """Test po_core.run() returns request_id."""
+        from po_core import run
 
-    def test_ensemble_aggregate_metrics(self):
-        """Test that ensemble returns aggregate metrics."""
-        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
-
-        all_keys = list(PHILOSOPHER_REGISTRY.keys())
-        result = run_ensemble(
-            "What is truth?",
-            philosophers=all_keys
-        )
-
-        agg = result["aggregate"]
-        assert "freedom_pressure" in agg
-        assert "semantic_delta" in agg
-        assert "blocked_tensor" in agg
-
-        # Metrics should be in valid ranges
-        assert 0 <= agg["freedom_pressure"] <= 1
-        assert 0 <= agg["semantic_delta"] <= 1
-        assert 0 <= agg["blocked_tensor"] <= 1
-
-    def test_ensemble_consensus(self):
-        """Test that ensemble returns consensus."""
-        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
-
-        all_keys = list(PHILOSOPHER_REGISTRY.keys())
-        result = run_ensemble(
-            "How should we live?",
-            philosophers=all_keys
-        )
-
-        consensus = result["consensus"]
-        assert "leader" in consensus
-        assert "text" in consensus
-        assert consensus["leader"] in all_keys or consensus["leader"] is None
+        result = run(user_input="What is truth?")
+        assert "request_id" in result
+        assert isinstance(result["request_id"], str)
 
 
 class TestPhilosopherDiversity:

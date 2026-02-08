@@ -7,6 +7,10 @@ to PhilosopherProtocol.propose(), enabling the run_turn pipeline.
 """
 from __future__ import annotations
 
+import pytest
+
+pytestmark = pytest.mark.pipeline
+
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
