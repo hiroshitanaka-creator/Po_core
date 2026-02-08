@@ -26,7 +26,8 @@ from po_core.domain.safety_mode import SafetyMode
 
 if TYPE_CHECKING:
     from po_core.runtime.battalion_table import BattalionModePlan
-from po_core.philosophers.base import PhilosopherProtocol
+from po_core.philosophers.base import Philosopher, PhilosopherProtocol
+from po_core.philosophers.bridge import PhilosopherBridge
 from po_core.philosophers.manifest import PhilosopherSpec, SPECS
 from po_core.philosophers.tags import (
     TAG_COMPLIANCE,
@@ -233,6 +234,9 @@ class PhilosopherRegistry:
                 mod = importlib.import_module(spec.module)
                 obj = getattr(mod, spec.symbol)
                 ph = obj() if callable(obj) else obj  # class or factory or instance
+                # Auto-bridge: Legacy Philosopher → PhilosopherProtocol
+                if isinstance(ph, Philosopher) and not hasattr(ph, "propose"):
+                    ph = PhilosopherBridge(ph)
                 # 最低限の形チェック（Protocolを満たすか）
                 if not hasattr(ph, "propose") or not hasattr(ph, "info"):
                     raise TypeError("not_a_philosopher")

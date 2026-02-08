@@ -190,12 +190,14 @@ def run_philosophers(
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         try:
-            proposal = ph.deliberate(ctx, intent, tensors, memory)
+            proposals = ph.propose(ctx, intent, tensors, memory)
             dt = int((perf_counter() - t0) * 1000)
+            # propose() returns List[Proposal]; take the first one
+            proposal = proposals[0] if proposals else None
             # Embed author into proposal
             if proposal is not None:
                 proposal = _embed_author(proposal, pid)
-            return proposal, 1 if proposal else 0, None, dt, pid
+            return proposal, len(proposals), None, dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
