@@ -235,7 +235,7 @@ src/po_core/
 │   ├── runner.py        # Execute experiments across variants
 │   ├── analyzer.py      # Statistical analysis (t-test, effect size)
 │   └── promoter.py      # Automatic winner promotion
-├── ensemble.py          # run_turn (hex pipeline) + run_ensemble (deprecated)
+├── ensemble.py          # run_turn (hex pipeline) + PHILOSOPHER_REGISTRY
 ├── po_self.py           # PoSelf: high-level API (uses run_turn internally)
 └── po_trace.py          # Execution tracing
 ```
@@ -321,14 +321,12 @@ experiments/
 - CI/CD pipeline (pytest, coverage, linting, security checks, 2-stage testing)
 - Solar Will experiments (experimental)
 
-**Deprecated (will be removed in v0.3):**
-- `run_ensemble()` — Use `po_core.run()` or `PoSelf.generate()` instead
-- `PhilosophicalEnsemble` — Use `PoSelf` instead
+**Removed in v0.3:**
+- `run_ensemble()` — Removed. Use `po_core.run()` or `PoSelf.generate()` instead
+- `PhilosophicalEnsemble` — Deprecated. Use `PoSelf` instead
 
 **What's Next:**
-- **Regression audit** — Golden DecisionEmitted events for regression detection
 - **Production experiment runs** — Validate statistical methods with real philosophy comparisons
-- Legacy test suite cleanup (197 legacy tests need migration to `run_turn`)
 - Viewer UI polish and frontend integration
 - Performance optimization for large philosopher ensembles
 - Package publishing (PyPI)
@@ -487,9 +485,8 @@ restored = PoSelfResponse.from_dict(d)  # Round-trip
 ### Legacy API (Deprecated — will be removed in v0.3)
 
 ```python
-# ⚠️ Deprecated: use po_core.run() or PoSelf.generate() instead
-from po_core import run_ensemble
-result = run_ensemble(prompt="What is freedom?")  # emits DeprecationWarning
+# run_ensemble() was removed in v0.3
+# Use po_core.run() or PoSelf.generate() instead
 ```
 
 ---

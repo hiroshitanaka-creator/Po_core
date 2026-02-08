@@ -7,7 +7,7 @@ Po_core APIの基本的な使い方を示すサンプルコード
 """
 
 import json
-from po_core import __version__, run_ensemble
+from po_core import __version__, run
 from po_core.po_self import PoSelf
 
 
@@ -71,29 +71,23 @@ def example_3_json_output():
     print()
 
 
-def example_4_ensemble_direct():
-    """例4: ensembleを直接使用"""
+def example_4_run_api():
+    """例4: po_core.run() を使用"""
     print("=" * 70)
-    print("例4: ensemble関数を直接使用")
+    print("例4: po_core.run() APIを使用")
     print("=" * 70)
 
-    # ensembleを直接呼び出し
-    result = run_ensemble(
-        prompt="美とは何か？",
-        philosophers=["aristotle", "nietzsche", "wabi_sabi"]
-    )
+    # run() を直接呼び出し
+    result = run(user_input="美とは何か？")
 
-    print(f"\n質問: {result['prompt']}")
-    print(f"参加哲学者: {', '.join(result['philosophers'])}")
-    print(f"\nコンセンサス:")
-    print(f"  リーダー: {result['consensus']['leader']}")
-    print(f"  テキスト: {result['consensus']['text'][:200]}...")
+    print(f"\nステータス: {result['status']}")
+    print(f"リクエストID: {result['request_id']}")
 
-    print(f"\n集約メトリクス:")
-    for key, value in result['aggregate'].items():
-        print(f"  {key}: {value}")
+    if "proposal" in result:
+        proposal = result["proposal"]
+        print(f"\n提案:")
+        print(f"  内容: {str(proposal)[:200]}...")
 
-    print(f"\n個別の哲学者の応答数: {len(result['responses'])}")
     print()
 
 
@@ -183,7 +177,7 @@ def main():
         example_3_json_output()
         print("\n")
 
-        example_4_ensemble_direct()
+        example_4_run_api()
         print("\n")
 
         example_5_response_details()

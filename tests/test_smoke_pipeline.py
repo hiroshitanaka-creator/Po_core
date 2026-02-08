@@ -5,7 +5,7 @@ Smoke Tests for run_turn Pipeline (migrated from test_smoke_ensemble.py)
 Migrated smoke tests that lock the minimal expected behavior of the
 run_turn pipeline and public APIs (po_core.run, PoSelf.generate).
 
-Original tests tested run_ensemble (now deprecated).
+Original tests tested run_ensemble (removed in v0.3).
 These test the same behavioral contracts via the new API.
 """
 from __future__ import annotations

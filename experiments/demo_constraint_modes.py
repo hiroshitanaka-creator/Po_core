@@ -10,7 +10,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from po_core import run_ensemble
+from po_core import run
 
 
 def demo_constraint_modes():
@@ -48,38 +48,20 @@ def demo_constraint_modes():
         full_prompt = f"CONSTRAINT_MODE=\"{mode_key}\"\n\n{question}"
 
         try:
-            # Po_core ensemble実行
-            result = run_ensemble(full_prompt, enable_tracer=False)
+            # Po_core run_turn pipeline実行
+            result = run(user_input=full_prompt)
 
             # 結果表示
             print(f"\n📊 メタデータ:")
-            print(f"  - Philosophers used: {len(result.get('perspectives', []))}")
-            print(f"  - Freedom pressure: {result.get('freedom_pressure', 0):.2f}")
-            print(f"  - Semantic delta: {result.get('semantic_delta', 0):.2f}")
+            print(f"  - Status: {result.get('status', 'unknown')}")
+            print(f"  - Request ID: {result.get('request_id', 'N/A')}")
 
-            # 統合された回答の一部を表示
-            integrated = result.get('integrated_answer', '')
-            if integrated:
-                preview = integrated[:300] + "..." if len(integrated) > 300 else integrated
-                print(f"\n💡 統合回答（プレビュー）:")
+            # 提案を表示
+            proposal = result.get('proposal', '')
+            if proposal:
+                preview = str(proposal)[:300] + "..." if len(str(proposal)) > 300 else str(proposal)
+                print(f"\n💡 提案（プレビュー）:")
                 print(f"  {preview}")
-
-            # ニーチェの視点を抽出
-            perspectives = result.get('perspectives', {})
-            if 'nietzsche' in perspectives:
-                nietzsche_view = perspectives['nietzsche'].get('reasoning', '')
-                print(f"\n⚡ ニーチェの視点:")
-                nietzsche_preview = nietzsche_view[:200] + "..." if len(nietzsche_view) > 200 else nietzsche_view
-                print(f"  {nietzsche_preview}")
-
-            # 変容の指標（簡易版）
-            print(f"\n🔄 変容の指標:")
-            transformation_indicators = ["共栄", "共に", "生成", "可能にする", "flourish", "共存"]
-            found_indicators = [ind for ind in transformation_indicators if ind in integrated]
-            if found_indicators:
-                print(f"  ✓ 検出: {', '.join(found_indicators)}")
-            else:
-                print(f"  ✗ 変容指標なし")
 
         except Exception as e:
             print(f"\n❌ エラー: {e}")

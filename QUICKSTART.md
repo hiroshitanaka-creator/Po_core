@@ -163,18 +163,16 @@ response.log                # トレースログ（Po_trace）
 
 ## 🔧 高度な使用法
 
-### ensemble関数を直接使用
+### po_core.run() を直接使用
 
 ```python
-from po_core import run_ensemble
+from po_core import run
 
-result = run_ensemble(
-    prompt="美とは何か？",
-    philosophers=["aristotle", "nietzsche", "wabi_sabi"]
-)
+result = run(user_input="美とは何か？")
 
-print(result['consensus']['leader'])
-print(result['aggregate'])  # 集約メトリクス
+print(result['status'])       # "ok"
+print(result['request_id'])   # リクエストID
+print(result['proposal'])     # 提案内容
 ```
 
 ### トレース機能の制御

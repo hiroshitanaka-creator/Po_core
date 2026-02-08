@@ -278,38 +278,30 @@ def run_full_test() -> Tuple[int, int, List[Dict]]:
     return passed, failed, results
 
 
-def run_ensemble_test():
-    """Test ensemble with all philosophers."""
-    print_header("Ensemble Test: All 39 Philosophers")
+def run_pipeline_test():
+    """Test run_turn pipeline via po_core.run()."""
+    print_header("Pipeline Test: po_core.run()")
 
     try:
-        from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
+        from po_core import run
 
-        all_keys = list(PHILOSOPHER_REGISTRY.keys())
-        print_info(f"Testing ensemble with {len(all_keys)} philosophers...")
+        print_info("Testing run_turn pipeline...")
 
         start_time = time.time()
-        result = run_ensemble(
-            "What gives life meaning?",
-            philosophers=all_keys
-        )
+        result = run(user_input="What gives life meaning?")
         elapsed = time.time() - start_time
 
-        print_success(f"Ensemble completed in {elapsed:.2f} seconds")
-        print_success(f"Responses: {len(result['responses'])}")
-        print_success(f"Consensus leader: {result['consensus']['leader']}")
+        print_success(f"Pipeline completed in {elapsed:.2f} seconds")
+        print_success(f"Status: {result['status']}")
+        print_success(f"Request ID: {result['request_id']}")
 
-        # Show aggregate metrics
-        agg = result['aggregate']
-        print_info(f"Aggregate metrics:")
-        print_info(f"  Freedom pressure: {agg['freedom_pressure']:.2f}")
-        print_info(f"  Semantic delta: {agg['semantic_delta']:.2f}")
-        print_info(f"  Blocked tensor: {agg['blocked_tensor']:.2f}")
+        if "proposal" in result:
+            print_info(f"Proposal: {str(result['proposal'])[:120]}...")
 
         return True, result
 
     except Exception as e:
-        print_error(f"Ensemble test failed: {str(e)}")
+        print_error(f"Pipeline test failed: {str(e)}")
         import traceback
         traceback.print_exc()
         return False, None
@@ -362,7 +354,7 @@ def main():
     # Run ensemble test if all individual tests passed
     if failed == 0:
         print()
-        ensemble_ok, ensemble_result = run_ensemble_test()
+        ensemble_ok, ensemble_result = run_pipeline_test()
         if not ensemble_ok:
             failed += 1
 

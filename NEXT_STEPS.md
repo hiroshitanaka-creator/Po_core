@@ -46,15 +46,11 @@ This document tracks issues to be created on GitHub and remaining work items.
 2. Migrated to use `run_turn` / `po_core.run()`
 3. Removed if no longer relevant
 
-### Issue: Remove `run_ensemble` in v0.3
-**Priority:** Low (scheduled)
-**Labels:** `breaking-change`, `v0.3`
+### ~~Issue: Remove `run_ensemble` in v0.3~~ DONE
+**Status:** Completed
 
-`run_ensemble()` is deprecated since Phase 4. Plan removal:
-1. Search all callers in codebase
-2. Migrate remaining usages
-3. Remove function + legacy dependencies
-4. Update documentation
+`run_ensemble()` removed. All callers migrated to `po_core.run()` or `PoSelf.generate()`.
+Legacy test files deleted. Examples and docs updated.
 
 ### Issue: Implement sentence-level semantic delta
 **Priority:** Medium

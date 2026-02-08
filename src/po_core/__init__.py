@@ -19,7 +19,7 @@ __email__ = "flyingpig0229+github@gmail.com"
 from po_core.app.api import run
 
 # ── Legacy exports (backward compat) ──
-from po_core.ensemble import run_ensemble, PHILOSOPHER_REGISTRY
+from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_trace import PoTrace, EventType
 from po_core.po_self import PoSelf, PoSelfResponse
 from po_core.po_system_prompt import (
@@ -36,8 +36,7 @@ __all__ = [
     "__version__",
     # Modern API (recommended)
     "run",
-    # Legacy Ensemble (deprecated — use run() or PoSelf)
-    "run_ensemble",
+    # Registry
     "PHILOSOPHER_REGISTRY",
     # Tracing
     "PoTrace",

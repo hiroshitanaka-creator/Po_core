@@ -9,8 +9,8 @@ Validates that every philosopher:
 3. Produces valid proposals via PhilosopherBridge.propose()
 4. Can reason() individually (unit-level, still valid)
 
-Original tests used PHILOSOPHER_REGISTRY + run_ensemble.
-These test via PhilosopherRegistry + PhilosopherBridge.
+Original tests used PHILOSOPHER_REGISTRY + run_ensemble (removed in v0.3).
+These test via PhilosopherRegistry + native propose().
 """
 from __future__ import annotations
 

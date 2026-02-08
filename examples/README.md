@@ -62,7 +62,7 @@ python examples/api_demo.py
 1. 基本的な使い方
 2. カスタム哲学者の選択
 3. JSON形式での出力
-4. ensemble関数の直接使用
+4. po_core.run() APIの使用
 5. 各哲学者の詳細な応答
 6. トレース無効化（軽量モード）
 7. 複数の質問を連続処理
@@ -215,18 +215,15 @@ response = po.generate("倫理的決定とは？")
 print(json.dumps(response.to_dict(), indent=2, ensure_ascii=False))
 ```
 
-### ensemble関数の直接使用
+### po_core.run() の直接使用
 
 ```python
-from po_core import run_ensemble
+from po_core import run
 
-result = run_ensemble(
-    prompt="美とは何か？",
-    philosophers=["aristotle", "nietzsche", "wabi_sabi"]
-)
+result = run(user_input="美とは何か？")
 
-print(f"コンセンサスリーダー: {result['consensus']['leader']}")
-print(f"メトリクス: {result['aggregate']}")
+print(f"ステータス: {result['status']}")
+print(f"提案: {result['proposal']}")
 ```
 
 ## 🧠 利用可能な哲学者

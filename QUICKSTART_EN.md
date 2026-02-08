@@ -163,18 +163,16 @@ response.log                # Trace log (Po_trace)
 
 ## 🔧 Advanced Usage
 
-### Using the ensemble Function Directly
+### Using po_core.run() Directly
 
 ```python
-from po_core import run_ensemble
+from po_core import run
 
-result = run_ensemble(
-    prompt="What is beauty?",
-    philosophers=["aristotle", "nietzsche", "wabi_sabi"]
-)
+result = run(user_input="What is beauty?")
 
-print(result['consensus']['leader'])
-print(result['aggregate'])  # Aggregate metrics
+print(result['status'])       # "ok"
+print(result['request_id'])   # Request ID
+print(result['proposal'])     # Proposal content
 ```
 
 ### Controlling Trace Functionality
