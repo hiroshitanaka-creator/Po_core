@@ -13,6 +13,8 @@ import warnings
 
 import pytest
 
+pytestmark = pytest.mark.pipeline
+
 from po_core.po_self import PhilosophicalEnsemble, PoSelf, PoSelfResponse
 
 

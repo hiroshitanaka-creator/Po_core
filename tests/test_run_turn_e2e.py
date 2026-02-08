@@ -21,6 +21,8 @@ from typing import Tuple
 
 import pytest
 
+pytestmark = pytest.mark.pipeline
+
 from po_core.adapters.memory_poself import InMemoryAdapter
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.autonomy.solarwill.engine import SolarWillEngine

@@ -192,6 +192,11 @@ def run_ensemble(
     """
     Return a structured ensemble response for a given prompt.
 
+    .. deprecated::
+        Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
+        Both use the hexagonal ``run_turn`` pipeline with safety gates
+        and Pareto aggregation. ``run_ensemble`` will be removed in v0.3.
+
     Args:
         prompt: The input prompt to reason about
         philosophers: Optional list of philosopher names to use
@@ -202,6 +207,14 @@ def run_ensemble(
     Returns:
         Dictionary with ensemble response
     """
+    import warnings
+    warnings.warn(
+        "run_ensemble() is deprecated. "
+        "Use po_core.app.api.run() or PoSelf.generate() instead. "
+        "Will be removed in v0.3.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     selected = list(philosophers) if philosophers is not None else DEFAULT_PHILOSOPHERS
     thinkers = _load_philosophers(selected)
