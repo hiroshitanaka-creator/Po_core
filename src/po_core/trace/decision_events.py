@@ -1,4 +1,3 @@
-"""
 decision_events.py - 最終決定の監査イベント helper
 ===================================================
 
@@ -14,7 +13,6 @@ SECURITY NOTE:
 DEPENDENCY RULES:
 - domain のみ依存
 - tracer は emit(TraceEvent) を持つ前提
-"""
 
 from __future__ import annotations
 
@@ -46,13 +44,16 @@ def _as_dict(x: Any) -> dict:
 
 def _hash10(text: str) -> str:
     """content の指紋（sha1[:10]）"""
-    return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
+    return hashlib.sha1(
+        (text or "").encode("utf-8"),
+        usedforsecurity=False,
+    ).hexdigest()[:10]
 
 
 def _pareto_cfg_from(p: Optional[Proposal]) -> tuple[str, str]:
     """Proposalから pareto config_version/source を抽出（なければ空文字列）"""
     if p is None:
-        return "", ""
+        return "", ""  
     extra = _as_dict(p.extra)
     pc = _as_dict(extra.get(PO_CORE))
     dbg = _as_dict(pc.get(PARETO_DEBUG))
