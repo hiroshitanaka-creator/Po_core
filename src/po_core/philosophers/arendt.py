@@ -70,7 +70,44 @@ class Arendt(Philosopher):
         judgment = self._assess_judgment(text)
         freedom = self._evaluate_freedom(text)
 
+        summary = self._generate_summary(
+            vita_activa,
+            natality,
+            public_private,
+            plurality,
+            evil_analysis,
+            totalitarian,
+            judgment,
+            freedom,
+        )
+
+        tension = self._calculate_tension(
+            vita_activa,
+            natality,
+            public_private,
+            plurality,
+            evil_analysis,
+            totalitarian,
+            judgment,
+            freedom,
+        )
+
         return {
+            # Standard contract keys
+            "reasoning": summary,
+            "perspective": "Political Philosophy / Vita Activa",
+            "tension": tension,
+            "metadata": {"philosopher": self.name},
+            # Philosopher-specific concept analyses
+            "vita_activa": vita_activa,
+            "natality": natality,
+            "public_private_realm": public_private,
+            "plurality": plurality,
+            "evil_analysis": evil_analysis,
+            "totalitarian_elements": totalitarian,
+            "political_judgment": judgment,
+            "freedom": freedom,
+            # Backward-compat keys (used by existing tests)
             "philosopher": self.name,
             "description": self.description,
             "analysis": {
@@ -83,16 +120,7 @@ class Arendt(Philosopher):
                 "political_judgment": judgment,
                 "freedom": freedom,
             },
-            "summary": self._generate_summary(
-                vita_activa,
-                natality,
-                public_private,
-                plurality,
-                evil_analysis,
-                totalitarian,
-                judgment,
-                freedom,
-            ),
+            "summary": summary,
         }
 
     def _analyze_vita_activa(self, text: str) -> Dict[str, Any]:
@@ -590,3 +618,85 @@ class Arendt(Philosopher):
             )
 
         return " ".join(parts)
+
+    def _calculate_tension(
+        self,
+        vita_activa: Dict[str, Any],
+        natality: Dict[str, Any],
+        public_private: Dict[str, Any],
+        plurality: Dict[str, Any],
+        evil_analysis: Dict[str, Any],
+        totalitarian: Dict[str, Any],
+        judgment: Dict[str, Any],
+        freedom: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Calculate political-philosophical tensions in the text."""
+        elements = []
+
+        # Tension: labor dominates without action — loss of political life
+        if (
+            vita_activa["dominant_mode"] == "labor"
+            and not vita_activa["action_present"]
+        ):
+            elements.append("Labor dominates without action — political life is absent")
+        # Tension: labor vs action within vita activa
+        elif vita_activa["labor_present"] and vita_activa["action_present"]:
+            elements.append(
+                "Tension between labor (necessity) and action (political freedom)"
+            )
+
+        # Tension: only private realm, no public sphere
+        if public_private["private_present"] and not public_private["public_present"]:
+            elements.append(
+                "Private realm without public sphere — space of appearance is absent"
+            )
+        # Tension: public vs private coexistence
+        elif public_private["public_present"] and public_private["private_present"]:
+            elements.append(
+                "Tension between public political sphere and private realm of necessity"
+            )
+
+        # Tension: totalitarian elements threaten plurality
+        if totalitarian["totalitarian_elements"]:
+            elements.append(
+                "Totalitarian domination threatens plurality and political freedom"
+            )
+        # Tension: banality of evil — thoughtless wrongdoing
+        if evil_analysis["banality_of_evil"]:
+            elements.append(
+                "Banality of evil — thoughtless, ordinary wrongdoing present"
+            )
+
+        # Tension: freedom vs totalitarianism
+        if freedom["freedom_present"] and totalitarian["totalitarian_elements"]:
+            elements.append("Tension between freedom and totalitarian control")
+        # Tension: natality vs evil
+        if natality["natality_present"] and evil_analysis["evil_present"]:
+            elements.append("Tension between capacity for new beginnings and evil")
+        # Tension: plurality threatened
+        if plurality["plurality_present"] and totalitarian["totalitarian_elements"]:
+            elements.append(
+                "Tension between human plurality and totalitarian uniformity"
+            )
+
+        n = len(elements)
+        if n >= 3:
+            level = "High"
+            desc = "Multiple political tensions active — rich engagement with Arendtian themes of power, freedom, and evil."
+        elif n >= 2:
+            level = "Moderate"
+            desc = "Some political tensions present — text engages with competing aspects of the human condition."
+        elif n >= 1:
+            level = "Low"
+            desc = "Mild tension within political-philosophical themes."
+        else:
+            level = "Very Low"
+            desc = "Minimal political tension; text does not strongly engage competing Arendtian themes."
+            elements = ["No significant Arendtian tensions detected"]
+
+        return {
+            "level": level,
+            "score": n,
+            "description": desc,
+            "elements": elements,
+        }

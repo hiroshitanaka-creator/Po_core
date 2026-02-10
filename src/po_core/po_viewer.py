@@ -24,6 +24,12 @@ from typing import Any, Dict, List, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.decision_report_md import render_markdown
+from po_core.viewer.philosopher_view import (
+    extract_battalion_info,
+    extract_philosopher_data,
+    render_philosopher_markdown,
+    render_philosopher_text,
+)
 from po_core.viewer.pipeline_view import render_pipeline_markdown, render_pipeline_text
 from po_core.viewer.tensor_view import (
     extract_tensor_values,
@@ -80,6 +86,9 @@ class PoViewer:
         # Tensor metrics
         parts.append(render_tensor_markdown(self._events))
 
+        # Philosopher participation
+        parts.append(render_philosopher_markdown(self._events))
+
         # Full decision report (includes Pareto, A/B, etc.)
         parts.append(render_markdown(self._events))
 
@@ -96,6 +105,18 @@ class PoViewer:
     def tensor_values(self) -> Dict[str, float]:
         """Extract tensor metric values as dict."""
         return extract_tensor_values(self._events)
+
+    def philosopher_text(self) -> str:
+        """Plain-text philosopher participation view."""
+        return render_philosopher_text(self._events)
+
+    def philosopher_data(self) -> List[Dict[str, Any]]:
+        """Extract per-philosopher participation data."""
+        return extract_philosopher_data(self._events)
+
+    def battalion_info(self) -> Dict[str, Any]:
+        """Extract battalion (selection) information."""
+        return extract_battalion_info(self._events)
 
     def summary(self) -> str:
         """
@@ -145,6 +166,8 @@ class PoViewer:
             "n_events": len(self._events),
             "event_types": self.event_types,
             "tensor_values": self.tensor_values(),
+            "philosophers": self.philosopher_data(),
+            "battalion": self.battalion_info(),
             "summary": self.summary(),
         }
 

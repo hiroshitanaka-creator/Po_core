@@ -68,7 +68,30 @@ class Confucius(Philosopher):
         tianming = self._assess_tianming(text)
         learning = self._assess_learning(text)
 
+        summary = self._generate_summary(
+            ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
+        )
+        tension = self._calculate_tension(
+            ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
+        )
+
         return {
+            # Standard contract keys
+            "reasoning": summary,
+            "perspective": "Confucian Ethics / Virtue Cultivation",
+            "tension": tension,
+            "metadata": {"philosopher": self.name},
+            # Philosopher-specific concept analyses
+            "ren_benevolence": ren,
+            "li_ritual_propriety": li,
+            "yi_righteousness": yi,
+            "xiao_filial_piety": xiao,
+            "junzi_exemplary_person": junzi,
+            "zhong_shu_loyalty_reciprocity": zhong_shu,
+            "de_virtue": de,
+            "tianming_mandate": tianming,
+            "learning_cultivation": learning,
+            # Backward-compat keys (used by existing tests)
             "philosopher": self.name,
             "description": self.description,
             "analysis": {
@@ -82,9 +105,7 @@ class Confucius(Philosopher):
                 "tianming_mandate": tianming,
                 "learning_cultivation": learning,
             },
-            "summary": self._generate_summary(
-                ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
-            ),
+            "summary": summary,
         }
 
     def _assess_ren(self, text: str) -> Dict[str, Any]:
@@ -547,3 +568,80 @@ class Confucius(Philosopher):
             parts.append("Text shows limited engagement with core Confucian values.")
 
         return " ".join(parts)
+
+    def _calculate_tension(
+        self,
+        ren: Dict[str, Any],
+        li: Dict[str, Any],
+        yi: Dict[str, Any],
+        xiao: Dict[str, Any],
+        junzi: Dict[str, Any],
+        zhong_shu: Dict[str, Any],
+        de: Dict[str, Any],
+        tianming: Dict[str, Any],
+        learning: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Calculate Confucian tensions in the text."""
+        elements = []
+
+        # Count present core virtues
+        core_virtues = [
+            ren["ren_present"],
+            li["li_present"],
+            yi["yi_present"],
+            xiao["xiao_present"],
+            de["de_present"],
+        ]
+        n_virtues = sum(1 for v in core_virtues if v)
+
+        # Deficiency tensions — absence of virtues is itself a tension
+        if not ren["ren_present"]:
+            elements.append(
+                "Deficiency in ren (benevolence) — lack of compassion and humaneness"
+            )
+        if not li["li_present"]:
+            elements.append(
+                "Deficiency in li (ritual propriety) — lack of proper conduct"
+            )
+        if not yi["yi_present"]:
+            elements.append("Deficiency in yi (righteousness) — weak moral disposition")
+
+        # Conflict tensions — when present virtues create ethical dilemmas
+        if yi["yi_present"] and xiao["xiao_present"]:
+            elements.append(
+                "Tension between righteousness (yi) and filial obligation (xiao)"
+            )
+        if junzi["junzi_present"] and not de["de_present"]:
+            elements.append(
+                "Aspiration to junzi ideal without clear virtue (de) foundation"
+            )
+        if zhong_shu["zhong_loyalty_present"] and zhong_shu["shu_reciprocity_present"]:
+            elements.append(
+                "Tension between loyalty (zhong) and empathetic reciprocity (shu)"
+            )
+
+        # When many virtues present harmoniously, the ideal is achieved — low tension
+        if n_virtues >= 4:
+            elements = []
+
+        n = len(elements)
+        if n >= 3:
+            level = "High"
+            desc = "Multiple Confucian tensions active — competing virtues and obligations create rich ethical complexity."
+        elif n >= 2:
+            level = "Moderate"
+            desc = "Some tensions from virtue deficiency or competing obligations."
+        elif n >= 1:
+            level = "Low"
+            desc = "Mild tension within Confucian ethical framework."
+        else:
+            level = "Very Low"
+            desc = "Minimal tension; virtues align in harmonious moral order."
+            elements = ["No significant Confucian tensions detected"]
+
+        return {
+            "level": level,
+            "score": n,
+            "description": desc,
+            "elements": elements,
+        }

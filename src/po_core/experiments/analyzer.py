@@ -28,7 +28,7 @@ from po_core.domain.experiment import (
 
 # scipy は optional
 try:
-    from scipy import stats as scipy_stats  # type: ignore
+    from scipy import stats as scipy_stats
 
     HAS_SCIPY = True
 except ImportError:

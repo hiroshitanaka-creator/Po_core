@@ -300,48 +300,6 @@ class PoSelf:
         return self._last_tracer
 
 
-class PhilosophicalEnsemble:
-    """
-    Philosophical Ensemble Manager.
-
-    .. deprecated::
-        PhilosophicalEnsemble is deprecated. Use PoSelf.generate()
-        or po_core.app.api.run() instead. Both use the hexagonal
-        run_turn pipeline with safety gates and Pareto aggregation.
-    """
-
-    def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "PhilosophicalEnsemble is deprecated. "
-            "Use PoSelf.generate() or po_core.app.api.run() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        # Store args for minimal backward compat
-        self.philosophers = kwargs.get("philosophers", args[0] if args else [])
-        self.metadata = kwargs.get("metadata", {})
-        self.enable_tracing = kwargs.get("enable_tracing", True)
-
-    def reason(
-        self,
-        prompt: str,
-        context: Optional[Dict[str, Any]] = None,
-        philosophers_subset: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Generate philosophical reasoning through ensemble.
-
-        Delegates to PoSelf.generate() internally.
-        """
-        po = PoSelf(enable_trace=self.enable_tracing)
-        response = po.generate(prompt, context=context)
-        return response.to_dict()
-
-    def reset(self) -> None:
-        """Reset ensemble state (no-op in new pipeline)."""
-        pass
-
-
 # Convenience function for CLI compatibility
 def cli() -> None:
     """Po_self CLI entry point."""

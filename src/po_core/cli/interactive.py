@@ -39,7 +39,7 @@ from po_core.philosophers import (
     Wittgenstein,
     Zhuangzi,
 )
-from po_core.po_self import PhilosophicalEnsemble
+from po_core.po_self import PoSelf
 from po_core.viewer import (
     EvolutionGraphVisualizer,
     PressureDisplayVisualizer,
@@ -198,10 +198,8 @@ You will:
             PhilClass, _ = AVAILABLE_PHILOSOPHERS[phil_key]
             philosophers.append(PhilClass())
 
-        # Create ensemble
-        self.ensemble = PhilosophicalEnsemble(
-            philosophers=philosophers, enable_tracing=True
-        )
+        # Create PoSelf pipeline
+        self.po = PoSelf(enable_trace=True)
 
         self.console.print(
             f"[green]✓ Ensemble created with {len(philosophers)} philosophers[/green]"
@@ -227,7 +225,7 @@ You will:
 
                 # Execute reasoning
                 self.console.print("\n[yellow]🤔 Reasoning...[/yellow]")
-                result = self.ensemble.reason(prompt)
+                result = self.po.generate(prompt).to_dict()
                 self.reasoning_history.append(result)
 
                 # Display result

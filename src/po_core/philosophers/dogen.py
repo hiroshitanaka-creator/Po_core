@@ -84,7 +84,47 @@ class Dogen(Philosopher):
         non_thinking = self._assess_non_thinking(text)
         zazen_buddha = self._assess_zazen_buddha(text)
 
+        summary = self._generate_summary(
+            being_time,
+            buddha_nature,
+            shikantaza,
+            practice_enlightenment,
+            genjo_koan,
+            dropping_body_mind,
+            mountains_waters,
+            impermanence,
+            non_thinking,
+            zazen_buddha,
+        )
+
+        tension = self._calculate_tension(
+            being_time,
+            buddha_nature,
+            shikantaza,
+            practice_enlightenment,
+            dropping_body_mind,
+            impermanence,
+            non_thinking,
+        )
+
         return {
+            # Standard contract keys
+            "reasoning": summary,
+            "perspective": "Zen Buddhist Practice-Enlightenment Unity",
+            "tension": tension,
+            "metadata": {"philosopher": self.name},
+            # Philosopher-specific concept analyses
+            "being_time_uji": being_time,
+            "buddha_nature": buddha_nature,
+            "shikantaza_just_sitting": shikantaza,
+            "practice_enlightenment_unity": practice_enlightenment,
+            "genjo_koan": genjo_koan,
+            "dropping_body_mind": dropping_body_mind,
+            "mountains_waters_sutra": mountains_waters,
+            "impermanence": impermanence,
+            "non_thinking": non_thinking,
+            "zazen_as_buddha": zazen_buddha,
+            # Backward-compat keys (used by existing tests)
             "philosopher": self.name,
             "description": self.description,
             "analysis": {
@@ -99,18 +139,7 @@ class Dogen(Philosopher):
                 "non_thinking": non_thinking,
                 "zazen_as_buddha": zazen_buddha,
             },
-            "summary": self._generate_summary(
-                being_time,
-                buddha_nature,
-                shikantaza,
-                practice_enlightenment,
-                genjo_koan,
-                dropping_body_mind,
-                mountains_waters,
-                impermanence,
-                non_thinking,
-                zazen_buddha,
-            ),
+            "summary": summary,
         }
 
     def _assess_being_time(self, text: str) -> Dict[str, Any]:
@@ -1301,3 +1330,69 @@ class Dogen(Philosopher):
             )
 
         return " ".join(parts)
+
+    def _calculate_tension(
+        self,
+        being_time: Dict[str, Any],
+        buddha_nature: Dict[str, Any],
+        shikantaza: Dict[str, Any],
+        practice_enlightenment: Dict[str, Any],
+        dropping_body_mind: Dict[str, Any],
+        impermanence: Dict[str, Any],
+        non_thinking: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Calculate Zen Buddhist tensions in the text."""
+        elements = []
+
+        # Tension: being-time vs impermanence (eternal present vs radical flux)
+        if being_time["being_time_present"] and impermanence["impermanence_present"]:
+            elements.append(
+                "Tension between being-time identity and radical impermanence"
+            )
+        # Tension: practice-enlightenment unity vs seeking
+        if (
+            practice_enlightenment.get("has_both")
+            and not practice_enlightenment["unity_present"]
+        ):
+            elements.append(
+                "Practice and enlightenment mentioned but unity not realized"
+            )
+        # Tension: non-thinking vs conceptual engagement
+        if non_thinking["non_thinking_present"] and not non_thinking.get(
+            "beyond_duality"
+        ):
+            elements.append("Non-thinking referenced but dualistic thinking persists")
+        # Tension: dropping body-mind vs attachment
+        if dropping_body_mind["dropping_present"] and not dropping_body_mind.get(
+            "self_forgetting"
+        ):
+            elements.append("Letting go referenced but self-attachment remains")
+        # Tension: buddha-nature universality vs particular realization
+        if buddha_nature["buddha_nature_present"] and not buddha_nature.get(
+            "radical_immanence"
+        ):
+            elements.append(
+                "Buddha-nature affirmed but radical immanence not expressed"
+            )
+
+        n = len(elements)
+        if n >= 3:
+            level = "High"
+            desc = "Multiple Zen tensions active — the text engages deeply with paradoxes of non-dual practice."
+        elif n >= 2:
+            level = "Moderate"
+            desc = "Some Zen tensions present — balancing practice and realization."
+        elif n >= 1:
+            level = "Low"
+            desc = "Mild tension within Zen Buddhist themes."
+        else:
+            level = "Very Low"
+            desc = "Minimal tension; text rests in non-dual awareness or shows limited Zen engagement."
+            elements = ["No significant Zen tensions detected"]
+
+        return {
+            "level": level,
+            "score": n,
+            "description": desc,
+            "elements": elements,
+        }
