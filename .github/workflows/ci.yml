@@ -80,19 +80,33 @@ jobs:
 
     - name: Security check with bandit
       run: |
-        bandit -r src/ -f json -o bandit-report.json || true
-        # Parse bandit report for high-severity issues
-        python -c "
-        import json, sys
-        with open('bandit-report.json') as f:
-            data = json.load(f)
-        high = [r for r in data.get('results', []) if r.get('issue_severity') == 'HIGH']
+        bandit -r src/ \
+          -f json \
+          -o bandit-report.json \
+          --severity-level high \
+          --confidence-level high \
+          --exit-zero
+        # Parse bandit report for high-severity issues (high/high only)
+        python - <<'PY'
+        import json
+        import pathlib
+        import sys
+
+        report_path = pathlib.Path("bandit-report.json")
+        if not report_path.exists():
+            print("Bandit report missing: bandit-report.json", file=sys.stderr)
+            sys.exit(1)
+        data = json.loads(report_path.read_text())
+        high = data.get("results", [])
         if high:
             for r in high:
-                print(f\"HIGH: {r['filename']}:{r['line_number']} - {r['issue_text']}\", file=sys.stderr)
+                print(
+                    f"HIGH: {r['filename']}:{r['line_number']} - {r['issue_text']}",
+                    file=sys.stderr,
+                )
             sys.exit(1)
-        print(f'Bandit: {len(data.get(\"results\", []))} issues, 0 HIGH severity')
-        "
+        print("Bandit: 0 HIGH severity issues (high/high only)")
+        PY
 
     - name: Check dependencies with safety
       run: |

@@ -1,6 +1,4 @@
-"""
-decision_events.py - 最終決定の監査イベント helper
-===================================================
+"""decision_events.py - 最終決定の監査イベント helper.
 
 目的:
 - 「候補（Pareto/哲学者）→ 最終（Gate後）」の変遷を監査ログに残す
@@ -46,7 +44,10 @@ def _as_dict(x: Any) -> dict:
 
 def _hash10(text: str) -> str:
     """content の指紋（sha1[:10]）"""
-    return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
+    return hashlib.sha1(
+        (text or "").encode("utf-8"),
+        usedforsecurity=False,
+    ).hexdigest()[:10]
 
 
 def _pareto_cfg_from(p: Optional[Proposal]) -> tuple[str, str]:

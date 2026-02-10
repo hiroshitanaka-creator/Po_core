@@ -403,7 +403,10 @@ class ParetoAggregator(AggregatorPort):
 
         # 6) Build debug info for trace
         def _hash10(text: str) -> str:
-            return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
+            return hashlib.sha1(
+                (text or "").encode("utf-8"),
+                usedforsecurity=False,
+            ).hexdigest()[:10]
 
         front_limit = self.config.tuning.front_limit
         front_rows = []
