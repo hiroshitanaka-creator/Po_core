@@ -69,17 +69,23 @@ def sample_experiment(storage):
 
     for i in range(20):
         # Baseline: metric1 mean ~0.5, metric2 mean ~0.8
-        storage.append_sample("test_exp", _make_sample(
-            "baseline",
-            {"metric1": 0.5 + (i % 5) * 0.02, "metric2": 0.8 + (i % 3) * 0.01},
-            i,
-        ))
+        storage.append_sample(
+            "test_exp",
+            _make_sample(
+                "baseline",
+                {"metric1": 0.5 + (i % 5) * 0.02, "metric2": 0.8 + (i % 3) * 0.01},
+                i,
+            ),
+        )
         # Variant A: metric1 mean ~0.7, metric2 mean ~0.6
-        storage.append_sample("test_exp", _make_sample(
-            "variant_a",
-            {"metric1": 0.7 + (i % 5) * 0.02, "metric2": 0.6 + (i % 3) * 0.01},
-            i,
-        ))
+        storage.append_sample(
+            "test_exp",
+            _make_sample(
+                "variant_a",
+                {"metric1": 0.7 + (i % 5) * 0.02, "metric2": 0.6 + (i % 3) * 0.01},
+                i,
+            ),
+        )
 
     return "test_exp"
 
@@ -104,7 +110,9 @@ def test_analyze_detects_significant_difference(analyzer, sample_experiment):
     analysis = analyzer.analyze(sample_experiment)
 
     # Find metric1 tests
-    metric1_tests = [t for t in analysis.significance_tests if t.metric_name == "metric1"]
+    metric1_tests = [
+        t for t in analysis.significance_tests if t.metric_name == "metric1"
+    ]
     assert len(metric1_tests) == 1
 
     test = metric1_tests[0]
@@ -118,7 +126,9 @@ def test_analyze_effect_size(analyzer, sample_experiment):
     """Test that effect size is computed."""
     analysis = analyzer.analyze(sample_experiment)
 
-    metric1_tests = [t for t in analysis.significance_tests if t.metric_name == "metric1"]
+    metric1_tests = [
+        t for t in analysis.significance_tests if t.metric_name == "metric1"
+    ]
     assert len(metric1_tests) == 1
     assert metric1_tests[0].effect_size is not None
     assert metric1_tests[0].effect_size > 0
@@ -151,12 +161,22 @@ def test_analyze_no_significant_difference():
         storage.save_definition(definition)
 
         for i in range(20):
-            storage.append_sample("no_diff_exp", _make_sample(
-                "baseline", {"metric1": 0.5 + (i % 5) * 0.02}, i,
-            ))
-            storage.append_sample("no_diff_exp", _make_sample(
-                "variant_a", {"metric1": 0.5 + (i % 5) * 0.02}, i,
-            ))
+            storage.append_sample(
+                "no_diff_exp",
+                _make_sample(
+                    "baseline",
+                    {"metric1": 0.5 + (i % 5) * 0.02},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "no_diff_exp",
+                _make_sample(
+                    "variant_a",
+                    {"metric1": 0.5 + (i % 5) * 0.02},
+                    i,
+                ),
+            )
 
         analysis = analyzer.analyze("no_diff_exp")
 
@@ -195,15 +215,30 @@ def test_analyze_multiple_variants():
         storage.save_definition(definition)
 
         for i in range(20):
-            storage.append_sample("multi_var_exp", _make_sample(
-                "baseline", {"metric1": 0.5 + (i % 5) * 0.01}, i,
-            ))
-            storage.append_sample("multi_var_exp", _make_sample(
-                "variant_a", {"metric1": 0.6 + (i % 5) * 0.01}, i,
-            ))
-            storage.append_sample("multi_var_exp", _make_sample(
-                "variant_b", {"metric1": 0.75 + (i % 5) * 0.01}, i,
-            ))
+            storage.append_sample(
+                "multi_var_exp",
+                _make_sample(
+                    "baseline",
+                    {"metric1": 0.5 + (i % 5) * 0.01},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "multi_var_exp",
+                _make_sample(
+                    "variant_a",
+                    {"metric1": 0.6 + (i % 5) * 0.01},
+                    i,
+                ),
+            )
+            storage.append_sample(
+                "multi_var_exp",
+                _make_sample(
+                    "variant_b",
+                    {"metric1": 0.75 + (i % 5) * 0.01},
+                    i,
+                ),
+            )
 
         analysis = analyzer.analyze("multi_var_exp")
 
@@ -238,12 +273,22 @@ def test_analyze_boolean_metrics():
         storage.save_definition(definition)
 
         for i in range(20):
-            storage.append_sample("bool_exp", _make_sample(
-                "baseline", {"degraded": i < 6}, i,  # 30% degraded
-            ))
-            storage.append_sample("bool_exp", _make_sample(
-                "variant_a", {"degraded": i < 2}, i,  # 10% degraded
-            ))
+            storage.append_sample(
+                "bool_exp",
+                _make_sample(
+                    "baseline",
+                    {"degraded": i < 6},
+                    i,  # 30% degraded
+                ),
+            )
+            storage.append_sample(
+                "bool_exp",
+                _make_sample(
+                    "variant_a",
+                    {"degraded": i < 2},
+                    i,  # 10% degraded
+                ),
+            )
 
         analysis = analyzer.analyze("bool_exp")
 

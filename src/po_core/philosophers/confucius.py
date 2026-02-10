@@ -42,10 +42,12 @@ class Confucius(Philosopher):
     def __init__(self):
         super().__init__(
             name="Confucius (孔子)",
-            description="Confucian philosophy emphasizing ren (benevolence), li (ritual propriety), and the cultivation of virtue through learning and proper relationships"
+            description="Confucian philosophy emphasizing ren (benevolence), li (ritual propriety), and the cultivation of virtue through learning and proper relationships",
         )
 
-    def reason(self, text: str, context: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    def reason(
+        self, text: str, context: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         Analyze text through Confucian philosophy.
 
@@ -78,11 +80,11 @@ class Confucius(Philosopher):
                 "zhong_shu_loyalty_reciprocity": zhong_shu,
                 "de_virtue": de,
                 "tianming_mandate": tianming,
-                "learning_cultivation": learning
+                "learning_cultivation": learning,
             },
             "summary": self._generate_summary(
                 ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
-            )
+            ),
         }
 
     def _assess_ren(self, text: str) -> Dict[str, Any]:
@@ -95,10 +97,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         ren_words = [
-            "benevolence", "benevolent", "compassion", "compassionate",
-            "humanity", "humane", "kindness", "kind", "care", "caring",
-            "love", "loving", "empathy", "empathetic", "goodness",
-            "altruism", "generosity", "generous", "warmth", "tender"
+            "benevolence",
+            "benevolent",
+            "compassion",
+            "compassionate",
+            "humanity",
+            "humane",
+            "kindness",
+            "kind",
+            "care",
+            "caring",
+            "love",
+            "loving",
+            "empathy",
+            "empathetic",
+            "goodness",
+            "altruism",
+            "generosity",
+            "generous",
+            "warmth",
+            "tender",
         ]
 
         has_ren = sum(1 for word in ren_words if word in text_lower)
@@ -107,7 +125,11 @@ class Confucius(Philosopher):
         return {
             "ren_present": ren_present,
             "score": has_ren,
-            "interpretation": "Text embodies ren - benevolence and humaneness toward others, the supreme Confucian virtue." if ren_present else "Limited expression of ren or benevolence."
+            "interpretation": (
+                "Text embodies ren - benevolence and humaneness toward others, the supreme Confucian virtue."
+                if ren_present
+                else "Limited expression of ren or benevolence."
+            ),
         }
 
     def _assess_li(self, text: str) -> Dict[str, Any]:
@@ -120,10 +142,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         li_words = [
-            "ritual", "ceremony", "propriety", "proper", "etiquette",
-            "manners", "decorum", "protocol", "custom", "tradition",
-            "formality", "respect", "respectful", "courtesy", "polite",
-            "behavior", "conduct", "appropriate", "fitting", "reverence"
+            "ritual",
+            "ceremony",
+            "propriety",
+            "proper",
+            "etiquette",
+            "manners",
+            "decorum",
+            "protocol",
+            "custom",
+            "tradition",
+            "formality",
+            "respect",
+            "respectful",
+            "courtesy",
+            "polite",
+            "behavior",
+            "conduct",
+            "appropriate",
+            "fitting",
+            "reverence",
         ]
 
         has_li = sum(1 for word in li_words if word in text_lower)
@@ -132,7 +170,11 @@ class Confucius(Philosopher):
         return {
             "li_present": li_present,
             "score": has_li,
-            "interpretation": "Text emphasizes li - ritual propriety and proper conduct according to social roles." if li_present else "Limited emphasis on ritual propriety or proper conduct."
+            "interpretation": (
+                "Text emphasizes li - ritual propriety and proper conduct according to social roles."
+                if li_present
+                else "Limited emphasis on ritual propriety or proper conduct."
+            ),
         }
 
     def _assess_yi(self, text: str) -> Dict[str, Any]:
@@ -145,10 +187,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         yi_words = [
-            "righteous", "righteousness", "justice", "just", "moral",
-            "morality", "right", "ethical", "ethics", "principle",
-            "principled", "integrity", "upright", "honorable", "duty",
-            "obligation", "ought", "should", "correct", "proper"
+            "righteous",
+            "righteousness",
+            "justice",
+            "just",
+            "moral",
+            "morality",
+            "right",
+            "ethical",
+            "ethics",
+            "principle",
+            "principled",
+            "integrity",
+            "upright",
+            "honorable",
+            "duty",
+            "obligation",
+            "ought",
+            "should",
+            "correct",
+            "proper",
         ]
 
         has_yi = sum(1 for word in yi_words if word in text_lower)
@@ -157,7 +215,11 @@ class Confucius(Philosopher):
         return {
             "yi_present": yi_present,
             "score": has_yi,
-            "interpretation": "Text demonstrates yi - righteousness and moral commitment to what is right." if yi_present else "Limited expression of righteousness or moral principle."
+            "interpretation": (
+                "Text demonstrates yi - righteousness and moral commitment to what is right."
+                if yi_present
+                else "Limited expression of righteousness or moral principle."
+            ),
         }
 
     def _assess_xiao(self, text: str) -> Dict[str, Any]:
@@ -170,10 +232,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         xiao_words = [
-            "filial", "piety", "parent", "parents", "father", "mother",
-            "family", "ancestor", "ancestors", "elder", "elders",
-            "respect", "honor", "obedience", "duty", "devotion",
-            "care", "serve", "revere", "reverence"
+            "filial",
+            "piety",
+            "parent",
+            "parents",
+            "father",
+            "mother",
+            "family",
+            "ancestor",
+            "ancestors",
+            "elder",
+            "elders",
+            "respect",
+            "honor",
+            "obedience",
+            "duty",
+            "devotion",
+            "care",
+            "serve",
+            "revere",
+            "reverence",
         ]
 
         has_xiao = sum(1 for word in xiao_words if word in text_lower)
@@ -182,7 +260,11 @@ class Confucius(Philosopher):
         return {
             "xiao_present": xiao_present,
             "score": has_xiao,
-            "interpretation": "Text expresses xiao - filial piety and respect for parents and ancestors." if xiao_present else "Limited emphasis on filial piety or family reverence."
+            "interpretation": (
+                "Text expresses xiao - filial piety and respect for parents and ancestors."
+                if xiao_present
+                else "Limited emphasis on filial piety or family reverence."
+            ),
         }
 
     def _assess_junzi(self, text: str) -> Dict[str, Any]:
@@ -195,10 +277,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         junzi_words = [
-            "exemplary", "gentleman", "noble", "superior", "virtuous",
-            "cultivated", "refined", "cultivate", "self-improvement",
-            "worthy", "excellence", "character", "moral", "integrity",
-            "wisdom", "wise", "sage", "model", "ideal", "leader"
+            "exemplary",
+            "gentleman",
+            "noble",
+            "superior",
+            "virtuous",
+            "cultivated",
+            "refined",
+            "cultivate",
+            "self-improvement",
+            "worthy",
+            "excellence",
+            "character",
+            "moral",
+            "integrity",
+            "wisdom",
+            "wise",
+            "sage",
+            "model",
+            "ideal",
+            "leader",
         ]
 
         has_junzi = sum(1 for word in junzi_words if word in text_lower)
@@ -207,7 +305,11 @@ class Confucius(Philosopher):
         return {
             "junzi_present": junzi_present,
             "score": has_junzi,
-            "interpretation": "Text reflects the ideal of junzi - the exemplary person of virtue and cultivation." if junzi_present else "Limited reference to the exemplary person or moral ideal."
+            "interpretation": (
+                "Text reflects the ideal of junzi - the exemplary person of virtue and cultivation."
+                if junzi_present
+                else "Limited reference to the exemplary person or moral ideal."
+            ),
         }
 
     def _assess_zhong_shu(self, text: str) -> Dict[str, Any]:
@@ -220,14 +322,31 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         zhong_words = [
-            "loyal", "loyalty", "faithful", "faithfulness", "devotion",
-            "dedicated", "dedication", "commitment", "committed", "conscientious"
+            "loyal",
+            "loyalty",
+            "faithful",
+            "faithfulness",
+            "devotion",
+            "dedicated",
+            "dedication",
+            "commitment",
+            "committed",
+            "conscientious",
         ]
 
         shu_words = [
-            "reciprocity", "empathy", "golden rule", "treat others",
-            "consideration", "understanding", "mutual", "respect",
-            "others", "sympathy", "compassion", "fellow"
+            "reciprocity",
+            "empathy",
+            "golden rule",
+            "treat others",
+            "consideration",
+            "understanding",
+            "mutual",
+            "respect",
+            "others",
+            "sympathy",
+            "compassion",
+            "fellow",
         ]
 
         has_zhong = sum(1 for word in zhong_words if word in text_lower)
@@ -238,7 +357,7 @@ class Confucius(Philosopher):
             "shu_reciprocity_present": has_shu >= 2,
             "zhong_score": has_zhong,
             "shu_score": has_shu,
-            "interpretation": self._interpret_zhong_shu(has_zhong, has_shu)
+            "interpretation": self._interpret_zhong_shu(has_zhong, has_shu),
         }
 
     def _interpret_zhong_shu(self, zhong: int, shu: int) -> str:
@@ -248,7 +367,9 @@ class Confucius(Philosopher):
         elif zhong >= 1:
             return "Text emphasizes zhong - loyalty and conscientious commitment."
         elif shu >= 2:
-            return "Text emphasizes shu - reciprocity and empathetic treatment of others."
+            return (
+                "Text emphasizes shu - reciprocity and empathetic treatment of others."
+            )
         else:
             return "Limited emphasis on loyalty or reciprocity."
 
@@ -262,9 +383,21 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         de_words = [
-            "virtue", "virtuous", "character", "integrity", "moral",
-            "goodness", "excellence", "quality", "upright", "honorable",
-            "worthy", "meritorious", "exemplary", "noble", "ethical"
+            "virtue",
+            "virtuous",
+            "character",
+            "integrity",
+            "moral",
+            "goodness",
+            "excellence",
+            "quality",
+            "upright",
+            "honorable",
+            "worthy",
+            "meritorious",
+            "exemplary",
+            "noble",
+            "ethical",
         ]
 
         has_de = sum(1 for word in de_words if word in text_lower)
@@ -273,7 +406,11 @@ class Confucius(Philosopher):
         return {
             "de_present": de_present,
             "score": has_de,
-            "interpretation": "Text emphasizes de - virtue and moral character that leads through example." if de_present else "Limited emphasis on virtue or moral character."
+            "interpretation": (
+                "Text emphasizes de - virtue and moral character that leads through example."
+                if de_present
+                else "Limited emphasis on virtue or moral character."
+            ),
         }
 
     def _assess_tianming(self, text: str) -> Dict[str, Any]:
@@ -286,9 +423,20 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         tianming_words = [
-            "heaven", "heavenly", "cosmic", "mandate", "destiny",
-            "fate", "divine", "sacred", "order", "moral order",
-            "will of heaven", "legitimacy", "authority", "decree"
+            "heaven",
+            "heavenly",
+            "cosmic",
+            "mandate",
+            "destiny",
+            "fate",
+            "divine",
+            "sacred",
+            "order",
+            "moral order",
+            "will of heaven",
+            "legitimacy",
+            "authority",
+            "decree",
         ]
 
         has_tianming = sum(1 for word in tianming_words if word in text_lower)
@@ -297,7 +445,11 @@ class Confucius(Philosopher):
         return {
             "tianming_present": tianming_present,
             "score": has_tianming,
-            "interpretation": "Text references tianming - the Mandate of Heaven and cosmic moral order." if tianming_present else "Limited reference to Heaven's mandate or cosmic order."
+            "interpretation": (
+                "Text references tianming - the Mandate of Heaven and cosmic moral order."
+                if tianming_present
+                else "Limited reference to Heaven's mandate or cosmic order."
+            ),
         }
 
     def _assess_learning(self, text: str) -> Dict[str, Any]:
@@ -310,10 +462,26 @@ class Confucius(Philosopher):
         text_lower = text.lower()
 
         learning_words = [
-            "learn", "learning", "study", "education", "educate",
-            "teach", "teaching", "knowledge", "cultivate", "cultivation",
-            "practice", "self-improvement", "develop", "development",
-            "refine", "refinement", "grow", "growth", "wisdom", "scholar"
+            "learn",
+            "learning",
+            "study",
+            "education",
+            "educate",
+            "teach",
+            "teaching",
+            "knowledge",
+            "cultivate",
+            "cultivation",
+            "practice",
+            "self-improvement",
+            "develop",
+            "development",
+            "refine",
+            "refinement",
+            "grow",
+            "growth",
+            "wisdom",
+            "scholar",
         ]
 
         has_learning = sum(1 for word in learning_words if word in text_lower)
@@ -322,7 +490,11 @@ class Confucius(Philosopher):
         return {
             "learning_present": learning_present,
             "score": has_learning,
-            "interpretation": "Text emphasizes learning and self-cultivation through study and practice." if learning_present else "Limited emphasis on learning or self-cultivation."
+            "interpretation": (
+                "Text emphasizes learning and self-cultivation through study and practice."
+                if learning_present
+                else "Limited emphasis on learning or self-cultivation."
+            ),
         }
 
     def _generate_summary(
@@ -335,13 +507,15 @@ class Confucius(Philosopher):
         zhong_shu: Dict[str, Any],
         de: Dict[str, Any],
         tianming: Dict[str, Any],
-        learning: Dict[str, Any]
+        learning: Dict[str, Any],
     ) -> str:
         """Generate a Confucian summary of the analysis."""
         parts = []
 
         if ren["ren_present"]:
-            parts.append("Text embodies ren (benevolence) - the supreme Confucian virtue.")
+            parts.append(
+                "Text embodies ren (benevolence) - the supreme Confucian virtue."
+            )
 
         if li["li_present"]:
             parts.append("It emphasizes li (ritual propriety) and proper conduct.")
@@ -350,7 +524,9 @@ class Confucius(Philosopher):
             parts.append("It demonstrates yi (righteousness) and moral principle.")
 
         if xiao["xiao_present"]:
-            parts.append("It expresses xiao (filial piety) toward family and ancestors.")
+            parts.append(
+                "It expresses xiao (filial piety) toward family and ancestors."
+            )
 
         if junzi["junzi_present"]:
             parts.append("It reflects the ideal of the junzi - the exemplary person.")

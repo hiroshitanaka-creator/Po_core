@@ -20,6 +20,7 @@ Memory factors:
 - Conversation depth amplifies pressure slightly
 - Recent "refuse" or "blocked" tags increase pressure
 """
+
 from __future__ import annotations
 
 import math
@@ -28,15 +29,55 @@ from typing import List, Tuple
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 
-
 # ── Keyword lists for each dimension ──
 
-_CHOICE_KEYWORDS = ["should", "must", "ought", "decide", "choose", "what", "option", "alternative"]
-_RESPONSIBILITY_KEYWORDS = ["responsible", "duty", "obligation", "accountable", "consequence"]
-_URGENCY_KEYWORDS = ["now", "urgent", "immediate", "quickly", "soon", "hurry", "deadline"]
-_ETHICAL_KEYWORDS = ["right", "wrong", "good", "bad", "moral", "ethical", "virtue", "harm", "justice"]
+_CHOICE_KEYWORDS = [
+    "should",
+    "must",
+    "ought",
+    "decide",
+    "choose",
+    "what",
+    "option",
+    "alternative",
+]
+_RESPONSIBILITY_KEYWORDS = [
+    "responsible",
+    "duty",
+    "obligation",
+    "accountable",
+    "consequence",
+]
+_URGENCY_KEYWORDS = [
+    "now",
+    "urgent",
+    "immediate",
+    "quickly",
+    "soon",
+    "hurry",
+    "deadline",
+]
+_ETHICAL_KEYWORDS = [
+    "right",
+    "wrong",
+    "good",
+    "bad",
+    "moral",
+    "ethical",
+    "virtue",
+    "harm",
+    "justice",
+]
 _SOCIAL_KEYWORDS = ["we", "us", "society", "people", "community", "others", "public"]
-_AUTHENTICITY_KEYWORDS = ["authentic", "genuine", "true", "self", "identity", "real", "honest"]
+_AUTHENTICITY_KEYWORDS = [
+    "authentic",
+    "genuine",
+    "true",
+    "self",
+    "identity",
+    "real",
+    "honest",
+]
 
 _ALL_DIMENSIONS = [
     ("choice_weight", _CHOICE_KEYWORDS),

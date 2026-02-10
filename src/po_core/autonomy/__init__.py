@@ -29,13 +29,13 @@ This ensures that "will" drives the system, not just reactive response.
 """
 
 from po_core.autonomy.solarwill import (
-    WillState,
-    Intent,
     GoalCandidate,
-    update_will,
-    generate_intent,
-    generate_goals,
+    Intent,
     SolarWillEngine,
+    WillState,
+    generate_goals,
+    generate_intent,
+    update_will,
 )
 
 __all__ = [

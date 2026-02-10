@@ -20,17 +20,17 @@ from po_core.app.api import run
 
 # ── Legacy exports (backward compat) ──
 from po_core.ensemble import PHILOSOPHER_REGISTRY
-from po_core.po_trace import PoTrace, EventType
 from po_core.po_self import PoSelf, PoSelfResponse
 from po_core.po_system_prompt import (
-    PO_CORE_SYSTEM_PROMPT,
-    TEST_QUESTIONS,
-    STRESS_TEST_CONCEPTS,
     EVALUATION_RUBRIC,
-    build_user_prompt,
+    PO_CORE_SYSTEM_PROMPT,
+    STRESS_TEST_CONCEPTS,
+    TEST_QUESTIONS,
     build_stress_test_prompt,
+    build_user_prompt,
 )
-from po_core.po_test_runner import PoTestRunner, TestResult, TestReport
+from po_core.po_test_runner import PoTestRunner, TestReport, TestResult
+from po_core.po_trace import EventType, PoTrace
 
 __all__ = [
     "__version__",

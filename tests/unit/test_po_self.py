@@ -3,8 +3,10 @@ Tests for Po_self Module
 
 Comprehensive tests for the Po_self philosophical ensemble system.
 """
-import pytest
+
 import json
+
+import pytest
 
 from po_core.po_self import PoSelf
 
@@ -229,10 +231,10 @@ class TestPoSelfEdgeCases:
     def test_special_characters_prompt(self):
         """Test handling of special characters."""
         po = PoSelf()
-        response = po.generate("What is <truth> & \"beauty\"?")
+        response = po.generate('What is <truth> & "beauty"?')
 
         assert response is not None
-        assert response.prompt == "What is <truth> & \"beauty\"?"
+        assert response.prompt == 'What is <truth> & "beauty"?'
 
 
 class TestPoSelfIntegration:

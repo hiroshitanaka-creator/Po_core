@@ -37,10 +37,12 @@ class Levinas(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Emmanuel Levinas",
-            description="Ethical philosopher focused on the Other, the face, and infinite responsibility"
+            description="Ethical philosopher focused on the Other, the face, and infinite responsibility",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Levinas's ethical perspective.
 
@@ -69,8 +71,8 @@ class Levinas(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Ethics of the Other and face-to-face encounter",
-                "focus": "Responsibility, the face, and radical alterity"
-            }
+                "focus": "Responsibility, the face, and radical alterity",
+            },
         }
 
     def _analyze_ethics(self, prompt: str) -> Dict[str, Any]:
@@ -125,7 +127,7 @@ class Levinas(Philosopher):
             "substitution": substitution,
             "third_party": third_party,
             "saying_said": saying_said,
-            "il_y_a": il_y_a
+            "il_y_a": il_y_a,
         }
 
     def _assess_other(self, text: str) -> Dict[str, Any]:
@@ -186,7 +188,7 @@ class Levinas(Philosopher):
             "presence": presence,
             "description": description,
             "relation": relation,
-            "principle": "The Other is absolute alterity - irreducible to comprehension or totality"
+            "principle": "The Other is absolute alterity - irreducible to comprehension or totality",
         }
 
     def _detect_face(self, text: str) -> Dict[str, Any]:
@@ -251,7 +253,7 @@ class Levinas(Philosopher):
             "status": status,
             "description": description,
             "encounter_type": encounter_type,
-            "principle": "The face is not an object but that which speaks to me - 'Thou shalt not kill'"
+            "principle": "The face is not an object but that which speaks to me - 'Thou shalt not kill'",
         }
 
     def _evaluate_responsibility(self, text: str) -> Dict[str, Any]:
@@ -264,8 +266,15 @@ class Levinas(Philosopher):
         text_lower = text.lower()
 
         # Responsibility indicators
-        responsibility_words = ["responsible", "responsibility", "accountable", "answer for"]
-        has_responsibility = sum(1 for phrase in responsibility_words if phrase in text_lower)
+        responsibility_words = [
+            "responsible",
+            "responsibility",
+            "accountable",
+            "answer for",
+        ]
+        has_responsibility = sum(
+            1 for phrase in responsibility_words if phrase in text_lower
+        )
 
         # For others indicators
         for_others = ["for others", "for them", "for the other", "for everyone"]
@@ -289,7 +298,9 @@ class Levinas(Philosopher):
 
         if has_responsibility >= 1 and has_infinite >= 1:
             level = "Infinite Responsibility"
-            description = "Infinite responsibility for the Other - unlimited and asymmetrical"
+            description = (
+                "Infinite responsibility for the Other - unlimited and asymmetrical"
+            )
             nature = "Levinasian"
         elif has_responsibility >= 1 and has_for_others >= 1:
             level = "Responsibility for Others"
@@ -316,7 +327,7 @@ class Levinas(Philosopher):
             "level": level,
             "description": description,
             "nature": nature,
-            "principle": "Infinite responsibility for the Other - asymmetrical and not chosen"
+            "principle": "Infinite responsibility for the Other - asymmetrical and not chosen",
         }
 
     def _assess_totality_infinity(self, text: str) -> Dict[str, Any]:
@@ -329,7 +340,14 @@ class Levinas(Philosopher):
         text_lower = text.lower()
 
         # Totality indicators (system, whole, comprehend)
-        totality_words = ["totality", "whole", "system", "complete", "comprehend", "grasp"]
+        totality_words = [
+            "totality",
+            "whole",
+            "system",
+            "complete",
+            "comprehend",
+            "grasp",
+        ]
         has_totality = sum(1 for word in totality_words if word in text_lower)
 
         # Infinity indicators
@@ -373,7 +391,7 @@ class Levinas(Philosopher):
             "orientation": orientation,
             "description": description,
             "mode": mode,
-            "principle": "Totality (violence) vs Infinity (the Other who exceeds comprehension)"
+            "principle": "Totality (violence) vs Infinity (the Other who exceeds comprehension)",
         }
 
     def _check_same_other(self, text: str) -> Dict[str, Any]:
@@ -430,7 +448,7 @@ class Levinas(Philosopher):
             "relation": relation,
             "description": description,
             "status": status,
-            "principle": "The Same seeks to reduce the Other - ethics maintains alterity"
+            "principle": "The Same seeks to reduce the Other - ethics maintains alterity",
         }
 
     def _detect_substitution(self, text: str) -> Dict[str, Any]:
@@ -444,7 +462,9 @@ class Levinas(Philosopher):
 
         # Substitution indicators
         substitution_words = ["substitute", "replace", "in place of", "instead of"]
-        has_substitution = sum(1 for phrase in substitution_words if phrase in text_lower)
+        has_substitution = sum(
+            1 for phrase in substitution_words if phrase in text_lower
+        )
 
         # Hostage indicators
         hostage_words = ["hostage", "captive", "bound", "obligated"]
@@ -483,7 +503,7 @@ class Levinas(Philosopher):
             "presence": presence,
             "description": description,
             "depth": depth,
-            "principle": "Substitution - I am responsible even for the Other's responsibility"
+            "principle": "Substitution - I am responsible even for the Other's responsibility",
         }
 
     def _assess_third_party(self, text: str) -> Dict[str, Any]:
@@ -508,7 +528,13 @@ class Levinas(Philosopher):
         has_compare = sum(1 for word in compare_words if word in text_lower)
 
         # Institution indicators
-        institution_words = ["institution", "state", "politics", "society", "government"]
+        institution_words = [
+            "institution",
+            "state",
+            "politics",
+            "society",
+            "government",
+        ]
         has_institution = sum(1 for word in institution_words if word in text_lower)
 
         # Single other (not third party)
@@ -525,7 +551,9 @@ class Levinas(Philosopher):
             necessity = "Institutional"
         elif has_compare >= 1:
             presence = "Comparison"
-            description = "Necessity of weighing and comparing - movement toward justice"
+            description = (
+                "Necessity of weighing and comparing - movement toward justice"
+            )
             necessity = "Emerging"
         elif has_single >= 1:
             presence = "Face-to-Face Only"
@@ -540,7 +568,7 @@ class Levinas(Philosopher):
             "presence": presence,
             "description": description,
             "necessity": necessity,
-            "principle": "The third party necessitates justice - comparing incomparables"
+            "principle": "The third party necessitates justice - comparing incomparables",
         }
 
     def _evaluate_saying_said(self, text: str) -> Dict[str, Any]:
@@ -593,7 +621,7 @@ class Levinas(Philosopher):
             "mode": mode,
             "description": description,
             "level": level,
-            "principle": "Saying (ethical exposure) is betrayed but also preserved in the Said"
+            "principle": "Saying (ethical exposure) is betrayed but also preserved in the Said",
         }
 
     def _detect_il_y_a(self, text: str) -> Dict[str, Any]:
@@ -646,7 +674,7 @@ class Levinas(Philosopher):
             "presence": presence,
             "description": description,
             "character": character,
-            "principle": "Il y a - the horror of anonymous, impersonal being"
+            "principle": "Il y a - the horror of anonymous, impersonal being",
         }
 
     def _construct_reasoning(
@@ -654,7 +682,7 @@ class Levinas(Philosopher):
         other: Dict[str, Any],
         face: Dict[str, Any],
         responsibility: Dict[str, Any],
-        totality_infinity: Dict[str, Any]
+        totality_infinity: Dict[str, Any],
     ) -> str:
         """Construct Levinasian ethical reasoning."""
         reasoning = (

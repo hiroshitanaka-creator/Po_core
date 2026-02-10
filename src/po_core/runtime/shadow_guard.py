@@ -17,7 +17,7 @@ import json
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Mapping, Optional, Protocol, Tuple, Callable
+from typing import Any, Callable, Mapping, Optional, Protocol, Tuple
 
 from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal
@@ -55,6 +55,7 @@ class ShadowGuardConfig:
     - disable_on_override_increase:
         If shadow has more safety overrides (fallback) than main, treat as unstable degradation.
     """
+
     enabled: bool = True
     policy_score_drop_threshold: float = 0.15
     min_shadow_policy_score: float = 0.0
@@ -69,6 +70,7 @@ class ShadowGuardConfig:
 @dataclass(frozen=True)
 class ShadowGuardState:
     """Persistent state for a specific shadow configuration."""
+
     shadow_key: str
     bad_streak: int = 0
     disabled_until_ts: float = 0.0
@@ -81,12 +83,14 @@ class ShadowGuardState:
 
 class ShadowGuardStore(Protocol):
     """Protocol for persisting ShadowGuard state."""
+
     def load(self) -> Optional[Mapping[str, Any]]: ...
     def save(self, data: Mapping[str, Any]) -> None: ...
 
 
 class InMemoryShadowGuardStore(ShadowGuardStore):
     """In-memory store for testing."""
+
     def __init__(self):
         self.data: Optional[dict] = None
 
@@ -99,6 +103,7 @@ class InMemoryShadowGuardStore(ShadowGuardStore):
 
 class FileShadowGuardStore(ShadowGuardStore):
     """File-based store for production use."""
+
     def __init__(self, path: str):
         self._path = path
 
@@ -211,12 +216,7 @@ class ShadowGuard:
     # ---- Events ----
 
     def _event_shadow_disabled(
-        self,
-        ctx: Context,
-        *,
-        action: str,
-        reason: str,
-        payload: Mapping[str, Any]
+        self, ctx: Context, *, action: str, reason: str, payload: Mapping[str, Any]
     ) -> TraceEvent:
         """Emit ShadowDisabled TraceEvent for audit trail."""
         base = {

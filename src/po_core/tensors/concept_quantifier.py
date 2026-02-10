@@ -31,6 +31,7 @@ class PhilosophicalConcept:
         confidence: Confidence in this quantification (0-1)
         metadata: Additional concept information
     """
+
     name: str
     philosopher: str
     vector: np.ndarray
@@ -44,7 +45,7 @@ class PhilosophicalConcept:
         if self.metadata is None:
             self.metadata = {}
 
-    def similarity(self, other: 'PhilosophicalConcept') -> float:
+    def similarity(self, other: "PhilosophicalConcept") -> float:
         """
         Calculate similarity with another concept.
 
@@ -70,7 +71,7 @@ class PhilosophicalConcept:
         # Normalize to [0, 1]
         return (similarity + 1) / 2
 
-    def tension(self, other: 'PhilosophicalConcept') -> float:
+    def tension(self, other: "PhilosophicalConcept") -> float:
         """
         Calculate tension with another concept.
 
@@ -84,7 +85,7 @@ class PhilosophicalConcept:
         """
         return 1.0 - self.similarity(other)
 
-    def distance(self, other: 'PhilosophicalConcept') -> float:
+    def distance(self, other: "PhilosophicalConcept") -> float:
         """
         Calculate Euclidean distance to another concept.
 
@@ -106,7 +107,7 @@ class PhilosophicalConcept:
             "philosopher": self.philosopher,
             "vector": self.vector.tolist(),
             "confidence": self.confidence,
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -134,7 +135,7 @@ class ConceptQuantifier(Tensor):
         super().__init__(
             name="Concept_Quantifier",
             dimensions=dimensions,
-            metadata={"type": "philosophical_concept"}
+            metadata={"type": "philosophical_concept"},
         )
 
         self.dimension_names = [
@@ -145,16 +146,20 @@ class ConceptQuantifier(Tensor):
             "positive_negative",
             "rational_intuitive",
             "ethical_aesthetic",
-            "freedom_determinism"
+            "freedom_determinism",
         ]
 
         # Library of quantified concepts
         self.concept_library: Dict[str, Dict[str, PhilosophicalConcept]] = {}
         self._initialize_concept_library()
 
-    def compute(self, concept_name: str, philosopher: str,
-                text: Optional[str] = None,
-                context: Optional[Dict[str, Any]] = None) -> np.ndarray:
+    def compute(
+        self,
+        concept_name: str,
+        philosopher: str,
+        text: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> np.ndarray:
         """
         Compute quantification for a philosophical concept.
 
@@ -185,74 +190,88 @@ class ConceptQuantifier(Tensor):
     def _initialize_concept_library(self) -> None:
         """Initialize library with key philosophical concepts."""
         # Sartre: Freedom
-        self.add_concept(PhilosophicalConcept(
-            name="freedom",
-            philosopher="sartre",
-            vector=np.array([0.3, 0.6, 0.4, 0.8, 0.5, 0.6, 0.9, 0.95]),
-            # abstract, subjective, individual, dynamic, positive, balance, ethical, freedom
-            confidence=0.95,
-            metadata={"description": "Radical freedom and responsibility"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="freedom",
+                philosopher="sartre",
+                vector=np.array([0.3, 0.6, 0.4, 0.8, 0.5, 0.6, 0.9, 0.95]),
+                # abstract, subjective, individual, dynamic, positive, balance, ethical, freedom
+                confidence=0.95,
+                metadata={"description": "Radical freedom and responsibility"},
+            )
+        )
 
         # Heidegger: Being (Sein)
-        self.add_concept(PhilosophicalConcept(
-            name="being",
-            philosopher="heidegger",
-            vector=np.array([0.9, 0.5, 0.8, 0.7, 0.5, 0.3, 0.4, 0.4]),
-            # highly abstract, balance subj/obj, universal, dynamic, neutral, intuitive
-            confidence=0.9,
-            metadata={"description": "Being as fundamental question"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="being",
+                philosopher="heidegger",
+                vector=np.array([0.9, 0.5, 0.8, 0.7, 0.5, 0.3, 0.4, 0.4]),
+                # highly abstract, balance subj/obj, universal, dynamic, neutral, intuitive
+                confidence=0.9,
+                metadata={"description": "Being as fundamental question"},
+            )
+        )
 
         # Nietzsche: Will to Power
-        self.add_concept(PhilosophicalConcept(
-            name="will_to_power",
-            philosopher="nietzsche",
-            vector=np.array([0.4, 0.5, 0.6, 0.9, 0.7, 0.6, 0.5, 0.8]),
-            # somewhat abstract, subjective, individual/universal, highly dynamic, positive, balance
-            confidence=0.92,
-            metadata={"description": "Fundamental life force and drive"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="will_to_power",
+                philosopher="nietzsche",
+                vector=np.array([0.4, 0.5, 0.6, 0.9, 0.7, 0.6, 0.5, 0.8]),
+                # somewhat abstract, subjective, individual/universal, highly dynamic, positive, balance
+                confidence=0.92,
+                metadata={"description": "Fundamental life force and drive"},
+            )
+        )
 
         # Derrida: Différance
-        self.add_concept(PhilosophicalConcept(
-            name="differance",
-            philosopher="derrida",
-            vector=np.array([0.95, 0.6, 0.9, 0.95, 0.5, 0.7, 0.3, 0.5]),
-            # highly abstract, subjective, universal, dynamic, neutral, rational/intuitive
-            confidence=0.85,
-            metadata={"description": "Difference and deferral in language"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="differance",
+                philosopher="derrida",
+                vector=np.array([0.95, 0.6, 0.9, 0.95, 0.5, 0.7, 0.3, 0.5]),
+                # highly abstract, subjective, universal, dynamic, neutral, rational/intuitive
+                confidence=0.85,
+                metadata={"description": "Difference and deferral in language"},
+            )
+        )
 
         # Wittgenstein: Language Games
-        self.add_concept(PhilosophicalConcept(
-            name="language_games",
-            philosopher="wittgenstein",
-            vector=np.array([0.5, 0.4, 0.7, 0.7, 0.5, 0.8, 0.2, 0.4]),
-            # balance abstract/concrete, objective, universal, dynamic, neutral, rational
-            confidence=0.88,
-            metadata={"description": "Forms of life and rule-following"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="language_games",
+                philosopher="wittgenstein",
+                vector=np.array([0.5, 0.4, 0.7, 0.7, 0.5, 0.8, 0.2, 0.4]),
+                # balance abstract/concrete, objective, universal, dynamic, neutral, rational
+                confidence=0.88,
+                metadata={"description": "Forms of life and rule-following"},
+            )
+        )
 
         # Confucius: Ren (仁 - Benevolence)
-        self.add_concept(PhilosophicalConcept(
-            name="ren",
-            philosopher="confucius",
-            vector=np.array([0.4, 0.5, 0.3, 0.4, 0.9, 0.6, 0.9, 0.3]),
-            # somewhat abstract, balance, individual, somewhat static, positive, balance, ethical
-            confidence=0.9,
-            metadata={"description": "Benevolence and humaneness"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="ren",
+                philosopher="confucius",
+                vector=np.array([0.4, 0.5, 0.3, 0.4, 0.9, 0.6, 0.9, 0.3]),
+                # somewhat abstract, balance, individual, somewhat static, positive, balance, ethical
+                confidence=0.9,
+                metadata={"description": "Benevolence and humaneness"},
+            )
+        )
 
         # Zhuangzi: Wu Wei (無為 - Non-action)
-        self.add_concept(PhilosophicalConcept(
-            name="wu_wei",
-            philosopher="zhuangzi",
-            vector=np.array([0.6, 0.6, 0.5, 0.6, 0.6, 0.2, 0.6, 0.6]),
-            # abstract, subjective, balance, somewhat dynamic, positive, intuitive, balance
-            confidence=0.87,
-            metadata={"description": "Effortless action in harmony with Dao"}
-        ))
+        self.add_concept(
+            PhilosophicalConcept(
+                name="wu_wei",
+                philosopher="zhuangzi",
+                vector=np.array([0.6, 0.6, 0.5, 0.6, 0.6, 0.2, 0.6, 0.6]),
+                # abstract, subjective, balance, somewhat dynamic, positive, intuitive, balance
+                confidence=0.87,
+                metadata={"description": "Effortless action in harmony with Dao"},
+            )
+        )
 
     def add_concept(self, concept: PhilosophicalConcept) -> None:
         """
@@ -266,7 +285,9 @@ class ConceptQuantifier(Tensor):
 
         self.concept_library[concept.name][concept.philosopher] = concept
 
-    def get_concept(self, concept_name: str, philosopher: str) -> Optional[PhilosophicalConcept]:
+    def get_concept(
+        self, concept_name: str, philosopher: str
+    ) -> Optional[PhilosophicalConcept]:
         """
         Retrieve a concept from the library.
 
@@ -281,8 +302,9 @@ class ConceptQuantifier(Tensor):
             return self.concept_library[concept_name].get(philosopher)
         return None
 
-    def find_similar_concepts(self, concept: PhilosophicalConcept,
-                            threshold: float = 0.7) -> List[Tuple[PhilosophicalConcept, float]]:
+    def find_similar_concepts(
+        self, concept: PhilosophicalConcept, threshold: float = 0.7
+    ) -> List[Tuple[PhilosophicalConcept, float]]:
         """
         Find concepts similar to the given concept.
 
@@ -298,8 +320,10 @@ class ConceptQuantifier(Tensor):
         for concept_name, philosophers in self.concept_library.items():
             for phil_name, other_concept in philosophers.items():
                 # Skip self
-                if (other_concept.name == concept.name and
-                    other_concept.philosopher == concept.philosopher):
+                if (
+                    other_concept.name == concept.name
+                    and other_concept.philosopher == concept.philosopher
+                ):
                     continue
 
                 similarity = concept.similarity(other_concept)
@@ -310,8 +334,9 @@ class ConceptQuantifier(Tensor):
         similar.sort(key=lambda x: x[1], reverse=True)
         return similar
 
-    def find_tensions(self, concept: PhilosophicalConcept,
-                     threshold: float = 0.7) -> List[Tuple[PhilosophicalConcept, float]]:
+    def find_tensions(
+        self, concept: PhilosophicalConcept, threshold: float = 0.7
+    ) -> List[Tuple[PhilosophicalConcept, float]]:
         """
         Find concepts in tension with the given concept.
 
@@ -327,8 +352,10 @@ class ConceptQuantifier(Tensor):
         for concept_name, philosophers in self.concept_library.items():
             for phil_name, other_concept in philosophers.items():
                 # Skip self
-                if (other_concept.name == concept.name and
-                    other_concept.philosopher == concept.philosopher):
+                if (
+                    other_concept.name == concept.name
+                    and other_concept.philosopher == concept.philosopher
+                ):
                     continue
 
                 tension = concept.tension(other_concept)
@@ -339,7 +366,9 @@ class ConceptQuantifier(Tensor):
         tensions.sort(key=lambda x: x[1], reverse=True)
         return tensions
 
-    def calculate_concept_space_position(self, concepts: List[PhilosophicalConcept]) -> np.ndarray:
+    def calculate_concept_space_position(
+        self, concepts: List[PhilosophicalConcept]
+    ) -> np.ndarray:
         """
         Calculate the centroid position in concept space for multiple concepts.
 
@@ -362,7 +391,9 @@ class ConceptQuantifier(Tensor):
 
         return centroid
 
-    def _quantify_from_text(self, concept_name: str, text: str, philosopher: str) -> np.ndarray:
+    def _quantify_from_text(
+        self, concept_name: str, text: str, philosopher: str
+    ) -> np.ndarray:
         """
         Quantify a concept from text analysis.
 
@@ -382,28 +413,36 @@ class ConceptQuantifier(Tensor):
         concrete_words = ["concrete", "practical", "specific", "particular", "example"]
         abstract_score = sum(1 for w in abstract_words if w in text_lower)
         concrete_score = sum(1 for w in concrete_words if w in text_lower)
-        vector[0] = 0.5 + 0.4 * (abstract_score - concrete_score) / max(abstract_score + concrete_score, 1)
+        vector[0] = 0.5 + 0.4 * (abstract_score - concrete_score) / max(
+            abstract_score + concrete_score, 1
+        )
 
         # Subjective ←→ Objective
         subjective_words = ["feel", "believe", "think", "personal", "subjective"]
         objective_words = ["fact", "objective", "evidence", "proven", "reality"]
         subj_score = sum(1 for w in subjective_words if w in text_lower)
         obj_score = sum(1 for w in objective_words if w in text_lower)
-        vector[1] = 0.5 + 0.4 * (subj_score - obj_score) / max(subj_score + obj_score, 1)
+        vector[1] = 0.5 + 0.4 * (subj_score - obj_score) / max(
+            subj_score + obj_score, 1
+        )
 
         # Individual ←→ Universal
         indiv_words = ["individual", "personal", "unique", "particular", "self"]
         univ_words = ["universal", "general", "common", "collective", "all"]
         indiv_score = sum(1 for w in indiv_words if w in text_lower)
         univ_score = sum(1 for w in univ_words if w in text_lower)
-        vector[2] = 0.5 + 0.4 * (indiv_score - univ_score) / max(indiv_score + univ_score, 1)
+        vector[2] = 0.5 + 0.4 * (indiv_score - univ_score) / max(
+            indiv_score + univ_score, 1
+        )
 
         # Static ←→ Dynamic
         static_words = ["static", "fixed", "unchanging", "permanent", "eternal"]
         dynamic_words = ["dynamic", "changing", "evolving", "fluid", "becoming"]
         static_score = sum(1 for w in static_words if w in text_lower)
         dynamic_score = sum(1 for w in dynamic_words if w in text_lower)
-        vector[3] = 0.5 + 0.4 * (dynamic_score - static_score) / max(static_score + dynamic_score, 1)
+        vector[3] = 0.5 + 0.4 * (dynamic_score - static_score) / max(
+            static_score + dynamic_score, 1
+        )
 
         # Positive ←→ Negative (valence)
         positive_words = ["good", "positive", "beneficial", "affirming", "joy"]
@@ -431,14 +470,18 @@ class ConceptQuantifier(Tensor):
         determ_words = ["determinism", "necessity", "determined", "caused", "fated"]
         free_score = sum(1 for w in freedom_words if w in text_lower)
         det_score = sum(1 for w in determ_words if w in text_lower)
-        vector[7] = 0.5 + 0.4 * (free_score - det_score) / max(free_score + det_score, 1)
+        vector[7] = 0.5 + 0.4 * (free_score - det_score) / max(
+            free_score + det_score, 1
+        )
 
         # Clip to [0, 1]
         vector = np.clip(vector, 0.0, 1.0)
 
         return vector
 
-    def _get_default_quantification(self, concept_name: str, philosopher: str) -> np.ndarray:
+    def _get_default_quantification(
+        self, concept_name: str, philosopher: str
+    ) -> np.ndarray:
         """
         Get default quantification for unknown concepts.
 
@@ -469,5 +512,5 @@ class ConceptQuantifier(Tensor):
         return {
             "dimension_names": self.dimension_names,
             "concepts": concepts_export,
-            "total_concepts": sum(len(p) for p in self.concept_library.values())
+            "total_concepts": sum(len(p) for p in self.concept_library.values()),
         }

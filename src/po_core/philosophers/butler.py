@@ -54,7 +54,9 @@ class Butler(Philosopher):
             "citation",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Butler's critical theory to the prompt.
 
@@ -100,8 +102,15 @@ class Butler(Philosopher):
         political = self._derive_political_implications(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, performativity, gender_trouble, bodies, matrix,
-            precarity, grievability, recognition, subversion
+            prompt,
+            performativity,
+            gender_trouble,
+            bodies,
+            matrix,
+            precarity,
+            grievability,
+            recognition,
+            subversion,
         )
 
         return {
@@ -424,9 +433,16 @@ class Butler(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, performativity: Dict, gender_trouble: Dict, bodies: Dict,
-        matrix: Dict, precarity: Dict, grievability: Dict, recognition: Dict,
-        subversion: Dict
+        self,
+        prompt: str,
+        performativity: Dict,
+        gender_trouble: Dict,
+        bodies: Dict,
+        matrix: Dict,
+        precarity: Dict,
+        grievability: Dict,
+        recognition: Dict,
+        subversion: Dict,
     ) -> str:
         """Construct comprehensive Butler reasoning."""
         return f"""Critical Analysis through Butler: "{prompt}"

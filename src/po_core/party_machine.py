@@ -29,15 +29,17 @@ Parallel Execution:
         max_workers=12, timeout_s=1.2
     )
 """
+
 from __future__ import annotations
 
 import random
 import traceback
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
 from time import perf_counter
-from typing import Dict, List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Sequence, Tuple
 
 if TYPE_CHECKING:
     from po_core.domain.context import Context
@@ -47,11 +49,11 @@ if TYPE_CHECKING:
     from po_core.domain.tensor_snapshot import TensorSnapshot
     from po_core.philosophers.base import PhilosopherProtocol
 
-from po_core.domain.keys import PO_CORE, AUTHOR
-
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+
+from po_core.domain.keys import AUTHOR, PO_CORE
 
 console = Console()
 
@@ -181,7 +183,9 @@ def run_philosophers(
             extra=extra,
         )
 
-    def _run_single(ph: "PhilosopherProtocol") -> Tuple[Optional[Proposal], int, Optional[str], int, str]:
+    def _run_single(
+        ph: "PhilosopherProtocol",
+    ) -> Tuple[Optional[Proposal], int, Optional[str], int, str]:
         """Run a single philosopher with error handling and timing.
 
         Returns:
@@ -212,34 +216,40 @@ def run_philosophers(
             pid = getattr(ph, "name", ph.__class__.__name__)
             try:
                 proposal, n, err, dt, author_id = future.result(timeout=timeout_s)
-                results.append(RunResult(
-                    philosopher_id=author_id,
-                    ok=(err is None),
-                    n=n,
-                    timed_out=False,
-                    error=err,
-                    latency_ms=dt,
-                ))
+                results.append(
+                    RunResult(
+                        philosopher_id=author_id,
+                        ok=(err is None),
+                        n=n,
+                        timed_out=False,
+                        error=err,
+                        latency_ms=dt,
+                    )
+                )
                 if proposal is not None:
                     proposals.append(proposal)
             except FuturesTimeoutError:
-                results.append(RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=True,
-                    error=f"Timeout after {timeout_s}s",
-                    latency_ms=None,
-                ))
+                results.append(
+                    RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=True,
+                        error=f"Timeout after {timeout_s}s",
+                        latency_ms=None,
+                    )
+                )
             except Exception as e:
-                results.append(RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=False,
-                    error=f"{type(e).__name__}: {e}",
-                    latency_ms=None,
-                ))
+                results.append(
+                    RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=False,
+                        error=f"{type(e).__name__}: {e}",
+                        latency_ms=None,
+                    )
+                )
 
     return proposals, results
 
@@ -319,11 +329,28 @@ class PhilosopherPartyMachine:
         """Initialize the party machine."""
         self.verbose = verbose
         self.available_philosophers = [
-            "aristotle", "kant", "mill", "confucius", "dewey",
-            "heidegger", "sartre", "kierkegaard", "merleau_ponty",
-            "levinas", "rawls", "arendt", "peirce", "wittgenstein",
-            "derrida", "deleuze", "badiou", "jung", "watsuji",
-            "zhuangzi", "wabi_sabi", "lacan",
+            "aristotle",
+            "kant",
+            "mill",
+            "confucius",
+            "dewey",
+            "heidegger",
+            "sartre",
+            "kierkegaard",
+            "merleau_ponty",
+            "levinas",
+            "rawls",
+            "arendt",
+            "peirce",
+            "wittgenstein",
+            "derrida",
+            "deleuze",
+            "badiou",
+            "jung",
+            "watsuji",
+            "zhuangzi",
+            "wabi_sabi",
+            "lacan",
         ]
 
     def suggest_party(
@@ -357,7 +384,9 @@ class PhilosopherPartyMachine:
         emergence = self._estimate_emergence(philosophers, tension)
 
         # Generate reasoning
-        reasoning = self._generate_reasoning(theme, mood, philosophers, tension, emergence)
+        reasoning = self._generate_reasoning(
+            theme, mood, philosophers, tension, emergence
+        )
 
         config = PartyConfig(
             theme=custom_prompt or theme,
@@ -385,11 +414,32 @@ class PhilosopherPartyMachine:
 
         # Keyword matching
         keywords = {
-            PhilosophicalTheme.ETHICS: ["moral", "right", "wrong", "responsibility", "duty"],
+            PhilosophicalTheme.ETHICS: [
+                "moral",
+                "right",
+                "wrong",
+                "responsibility",
+                "duty",
+            ],
             PhilosophicalTheme.EXISTENCE: ["being", "dasein", "ontology", "existence"],
-            PhilosophicalTheme.KNOWLEDGE: ["epistemology", "truth", "knowledge", "certainty"],
-            PhilosophicalTheme.POLITICS: ["society", "democracy", "power", "government"],
-            PhilosophicalTheme.CONSCIOUSNESS: ["mind", "awareness", "subject", "psyche"],
+            PhilosophicalTheme.KNOWLEDGE: [
+                "epistemology",
+                "truth",
+                "knowledge",
+                "certainty",
+            ],
+            PhilosophicalTheme.POLITICS: [
+                "society",
+                "democracy",
+                "power",
+                "government",
+            ],
+            PhilosophicalTheme.CONSCIOUSNESS: [
+                "mind",
+                "awareness",
+                "subject",
+                "psyche",
+            ],
             PhilosophicalTheme.FREEDOM: ["liberty", "autonomy", "choice", "free will"],
             PhilosophicalTheme.MEANING: ["purpose", "significance", "life", "value"],
             PhilosophicalTheme.JUSTICE: ["fairness", "equality", "rights", "law"],
@@ -456,7 +506,13 @@ class PhilosopherPartyMachine:
 
         elif mood == PartyMood.CRITICAL:
             # Add critical/skeptical philosophers
-            critical_types = ["nietzsche", "wittgenstein", "derrida", "kierkegaard", "sartre"]
+            critical_types = [
+                "nietzsche",
+                "wittgenstein",
+                "derrida",
+                "kierkegaard",
+                "sartre",
+            ]
             for p in critical_types:
                 if p not in selected and len(selected) < size:
                     selected.append(p)
@@ -494,7 +550,8 @@ class PhilosopherPartyMachine:
 
         # Diversity bonus
         clusters_present = sum(
-            1 for cluster in HARMONIOUS_CLUSTERS.values()
+            1
+            for cluster in HARMONIOUS_CLUSTERS.values()
             if any(p in philosophers for p in cluster)
         )
         diversity_factor = min(1.0, clusters_present / 4)
@@ -551,7 +608,9 @@ class PhilosopherPartyMachine:
             lines.append("  • Peak performance size (RQ3: 15 philosophers)")
 
         if tension > 0.6:
-            lines.append(f"  • High dialectical tension → +{int(tension * 1975)}% emergence boost (RQ4)")
+            lines.append(
+                f"  • High dialectical tension → +{int(tension * 1975)}% emergence boost (RQ4)"
+            )
 
         lines.append("")
         lines.append(f"🧠 Selected philosophers: {', '.join(philosophers)}")
@@ -560,11 +619,13 @@ class PhilosopherPartyMachine:
 
     def _display_config(self, config: PartyConfig) -> None:
         """Display party configuration with Rich formatting."""
-        console.print(Panel(
-            config.reasoning,
-            title=f"[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
-            border_style="magenta",
-        ))
+        console.print(
+            Panel(
+                config.reasoning,
+                title=f"[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
+                border_style="magenta",
+            )
+        )
 
 
 # ============================================================================

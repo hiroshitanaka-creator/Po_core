@@ -6,6 +6,7 @@ Tests for the working prototypes:
 - Batch Analyzer
 - Philosopher Comparison Tool
 """
+
 import sys
 from pathlib import Path
 
@@ -86,6 +87,7 @@ class TestBatchAnalyzer:
     def test_export_json_format(self):
         """Test exporting results as JSON."""
         import json
+
         from batch_analyzer import BatchAnalyzer
 
         analyzer = BatchAnalyzer(philosophers=["aristotle"])
@@ -189,7 +191,9 @@ class TestPhilosopherComparison:
         from philosopher_comparison import PhilosopherComparison
 
         comparison = PhilosopherComparison()
-        comparison.compare_groups(prompt="What is truth?", groups=["倫理学"], verbose=False)
+        comparison.compare_groups(
+            prompt="What is truth?", groups=["倫理学"], verbose=False
+        )
 
         assert "倫理学" in comparison.responses
         response_data = comparison.responses["倫理学"]
@@ -235,6 +239,7 @@ class TestPrototypeIntegration:
     def test_batch_analyzer_uses_po_self(self):
         """Test that BatchAnalyzer uses Po_self correctly."""
         from batch_analyzer import BatchAnalyzer
+
         from po_core.po_self import PoSelf
 
         analyzer = BatchAnalyzer()
@@ -243,6 +248,7 @@ class TestPrototypeIntegration:
     def test_philosopher_comparison_uses_po_self(self):
         """Test that PhilosopherComparison uses Po_self correctly."""
         from philosopher_comparison import PhilosopherComparison
+
         from po_core.po_self import PoSelf
 
         comparison = PhilosopherComparison()
@@ -268,7 +274,9 @@ class TestPrototypeIntegration:
 
         # Test PhilosopherComparison
         comparison = PhilosopherComparison()
-        comparison.compare_groups(prompt="What is virtue?", groups=["倫理学"], verbose=False)
+        comparison.compare_groups(
+            prompt="What is virtue?", groups=["倫理学"], verbose=False
+        )
 
         response = comparison.responses["倫理学"]["response"]
         assert hasattr(response, "metrics")
@@ -324,9 +332,7 @@ class TestPrototypeUsability:
 
         analyzer = BatchAnalyzer()
         # Should not raise error when progress is disabled
-        results = analyzer.analyze_batch(
-            ["What is truth?"], show_progress=False
-        )
+        results = analyzer.analyze_batch(["What is truth?"], show_progress=False)
 
         assert len(results) == 1
 

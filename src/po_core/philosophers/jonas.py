@@ -52,7 +52,9 @@ class Jonas(Philosopher):
             "preservation",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Jonas's responsibility ethics to the prompt.
 
@@ -96,8 +98,15 @@ class Jonas(Philosopher):
         practical = self._derive_practical_guidance(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, responsibility, future, fear, technology,
-            life, ontological_ethics, vulnerability, ecological
+            prompt,
+            responsibility,
+            future,
+            fear,
+            technology,
+            life,
+            ontological_ethics,
+            vulnerability,
+            ecological,
         )
 
         return {
@@ -389,9 +398,16 @@ class Jonas(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, responsibility: Dict, future: Dict, fear: Dict,
-        technology: Dict, life: Dict, ontological_ethics: Dict,
-        vulnerability: Dict, ecological: Dict
+        self,
+        prompt: str,
+        responsibility: Dict,
+        future: Dict,
+        fear: Dict,
+        technology: Dict,
+        life: Dict,
+        ontological_ethics: Dict,
+        vulnerability: Dict,
+        ecological: Dict,
     ) -> str:
         """Construct comprehensive Jonas reasoning."""
         return f"""Analysis through Jonas's Ethics of Responsibility: "{prompt}"

@@ -4,15 +4,15 @@ Tensor Metrics Module
 Advanced tensor-based metrics for Po_core philosophical reasoning analysis.
 Implements Freedom Pressure Tensor (F_P), Semantic Profile, and Blocked Tensor.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-import torch
 import numpy as np
+import torch
 from sentence_transformers import SentenceTransformer
-
 
 # Lazy load the sentence transformer model
 _SENTENCE_MODEL: Optional[SentenceTransformer] = None
@@ -22,7 +22,7 @@ def _get_sentence_model() -> SentenceTransformer:
     """Get or initialize the sentence transformer model."""
     global _SENTENCE_MODEL
     if _SENTENCE_MODEL is None:
-        _SENTENCE_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+        _SENTENCE_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
     return _SENTENCE_MODEL
 
 
@@ -52,10 +52,7 @@ class FreedomPressureTensor:
 
     @classmethod
     def compute(
-        cls,
-        prompt: str,
-        reasoning: str,
-        philosopher_name: str = "unknown"
+        cls, prompt: str, reasoning: str, philosopher_name: str = "unknown"
     ) -> "FreedomPressureTensor":
         """
         Compute Freedom Pressure Tensor from prompt and reasoning.
@@ -85,25 +82,21 @@ class FreedomPressureTensor:
 
         # 4. Overall freedom (weighted average)
         overall = (
-            lexical_freedom * 0.3 +
-            semantic_freedom * 0.5 +
-            structural_freedom * 0.2
+            lexical_freedom * 0.3 + semantic_freedom * 0.5 + structural_freedom * 0.2
         )
 
         # 5. Create tensor representation
-        tensor = torch.tensor([
-            lexical_freedom,
-            semantic_freedom,
-            structural_freedom,
-            overall
-        ], dtype=torch.float32)
+        tensor = torch.tensor(
+            [lexical_freedom, semantic_freedom, structural_freedom, overall],
+            dtype=torch.float32,
+        )
 
         return cls(
             lexical_freedom=round(lexical_freedom, 3),
             semantic_freedom=round(semantic_freedom, 3),
             structural_freedom=round(structural_freedom, 3),
             overall=round(overall, 3),
-            tensor=tensor
+            tensor=tensor,
         )
 
     def to_dict(self) -> Dict[str, float]:
@@ -112,7 +105,7 @@ class FreedomPressureTensor:
             "lexical_freedom": self.lexical_freedom,
             "semantic_freedom": self.semantic_freedom,
             "structural_freedom": self.structural_freedom,
-            "overall": self.overall
+            "overall": self.overall,
         }
 
 
@@ -134,11 +127,7 @@ class SemanticProfile:
     coherence: float
 
     @classmethod
-    def compute(
-        cls,
-        prompt: str,
-        reasoning: str
-    ) -> "SemanticProfile":
+    def compute(cls, prompt: str, reasoning: str) -> "SemanticProfile":
         """
         Compute semantic profile from prompt and reasoning.
 
@@ -157,8 +146,7 @@ class SemanticProfile:
 
         # Compute cosine similarity
         similarity = torch.nn.functional.cosine_similarity(
-            prompt_embedding.unsqueeze(0),
-            reasoning_embedding.unsqueeze(0)
+            prompt_embedding.unsqueeze(0), reasoning_embedding.unsqueeze(0)
         ).item()
 
         # Normalize to 0-1 range (cosine similarity is -1 to 1)
@@ -170,14 +158,14 @@ class SemanticProfile:
         return cls(
             embedding=reasoning_embedding,
             prompt_similarity=round(prompt_similarity, 3),
-            coherence=round(coherence, 3)
+            coherence=round(coherence, 3),
         )
 
     def to_dict(self) -> Dict[str, float]:
         """Convert to dictionary format."""
         return {
             "prompt_similarity": self.prompt_similarity,
-            "coherence": self.coherence
+            "coherence": self.coherence,
         }
 
 
@@ -204,9 +192,7 @@ class BlockedTensor:
 
     @classmethod
     def compute(
-        cls,
-        freedom_pressure: FreedomPressureTensor,
-        semantic_profile: SemanticProfile
+        cls, freedom_pressure: FreedomPressureTensor, semantic_profile: SemanticProfile
     ) -> "BlockedTensor":
         """
         Compute Blocked Tensor from freedom pressure and semantic profile.
@@ -229,17 +215,15 @@ class BlockedTensor:
         overall = np.sqrt(freedom_component * semantic_component)
 
         # Create tensor
-        tensor = torch.tensor([
-            freedom_component,
-            semantic_component,
-            overall
-        ], dtype=torch.float32)
+        tensor = torch.tensor(
+            [freedom_component, semantic_component, overall], dtype=torch.float32
+        )
 
         return cls(
             freedom_component=round(freedom_component, 3),
             semantic_component=round(semantic_component, 3),
             overall=round(overall, 3),
-            tensor=tensor
+            tensor=tensor,
         )
 
     def to_dict(self) -> Dict[str, float]:
@@ -247,11 +231,12 @@ class BlockedTensor:
         return {
             "freedom_component": self.freedom_component,
             "semantic_component": self.semantic_component,
-            "overall": self.overall
+            "overall": self.overall,
         }
 
 
 # Helper functions
+
 
 def _compute_semantic_freedom(prompt: str, reasoning: str) -> float:
     """
@@ -267,8 +252,7 @@ def _compute_semantic_freedom(prompt: str, reasoning: str) -> float:
 
         # Cosine similarity
         similarity = torch.nn.functional.cosine_similarity(
-            prompt_emb.unsqueeze(0),
-            reasoning_emb.unsqueeze(0)
+            prompt_emb.unsqueeze(0), reasoning_emb.unsqueeze(0)
         ).item()
 
         # Convert to freedom (inverse of similarity)
@@ -294,7 +278,7 @@ def _compute_structural_freedom(reasoning: str) -> float:
 
     Measures variability in sentence length and structure.
     """
-    sentences = [s.strip() for s in reasoning.split('.') if s.strip()]
+    sentences = [s.strip() for s in reasoning.split(".") if s.strip()]
     if len(sentences) < 2:
         return 0.5
 
@@ -319,7 +303,7 @@ def _compute_coherence(text: str, model: SentenceTransformer) -> float:
 
     Measures how semantically related different parts of the text are.
     """
-    sentences = [s.strip() for s in text.split('.') if s.strip()]
+    sentences = [s.strip() for s in text.split(".") if s.strip()]
     if len(sentences) < 2:
         return 1.0
 
@@ -330,8 +314,7 @@ def _compute_coherence(text: str, model: SentenceTransformer) -> float:
     similarities = []
     for i in range(len(embeddings) - 1):
         sim = torch.nn.functional.cosine_similarity(
-            embeddings[i].unsqueeze(0),
-            embeddings[i + 1].unsqueeze(0)
+            embeddings[i].unsqueeze(0), embeddings[i + 1].unsqueeze(0)
         ).item()
         similarities.append(sim)
 
@@ -343,9 +326,7 @@ def _compute_coherence(text: str, model: SentenceTransformer) -> float:
 
 
 def compute_all_metrics(
-    prompt: str,
-    reasoning: str,
-    philosopher_name: str = "unknown"
+    prompt: str, reasoning: str, philosopher_name: str = "unknown"
 ) -> Dict[str, any]:
     """
     Compute all tensor metrics for a philosopher's reasoning.
@@ -370,5 +351,5 @@ def compute_all_metrics(
         # Legacy compatibility
         "freedom_pressure_value": fp_tensor.overall,
         "semantic_delta": 1.0 - semantic_profile.prompt_similarity,
-        "blocked_tensor_value": blocked_tensor.overall
+        "blocked_tensor_value": blocked_tensor.overall,
     }

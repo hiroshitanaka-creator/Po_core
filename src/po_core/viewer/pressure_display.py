@@ -185,15 +185,15 @@ class PressureDisplayVisualizer(PhilosophicalVisualizer):
         if highest:
             name = highest.get("name", "").replace("_", " ")
             value = highest.get("value", 0)
-            self.console.print(
-                f"• [red]Highest pressure:[/red] {name} ({value:.3f})"
-            )
+            self.console.print(f"• [red]Highest pressure:[/red] {name} ({value:.3f})")
 
             # Interpretation
             if "ethical" in name.lower():
                 self.console.print("  → Strong ethical considerations present")
             elif "responsibility" in name.lower():
-                self.console.print("  → High sense of responsibility and accountability")
+                self.console.print(
+                    "  → High sense of responsibility and accountability"
+                )
             elif "temporal" in name.lower():
                 self.console.print("  → Time-sensitive decision with urgency")
             elif "choice" in name.lower():
@@ -206,9 +206,7 @@ class PressureDisplayVisualizer(PhilosophicalVisualizer):
         if lowest:
             name = lowest.get("name", "").replace("_", " ")
             value = lowest.get("value", 0)
-            self.console.print(
-                f"\n• [dim]Lowest pressure:[/dim] {name} ({value:.3f})"
-            )
+            self.console.print(f"\n• [dim]Lowest pressure:[/dim] {name} ({value:.3f})")
 
         # Overall interpretation
         total = fp_data.get("pressure_summary", {}).get("total_pressure", 0)

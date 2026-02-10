@@ -9,6 +9,7 @@ Classify philosophers into safety tiers:
 
 This prevents misuse while enabling legitimate research.
 """
+
 from enum import Enum
 from typing import Dict, List, Set
 
@@ -16,20 +17,20 @@ from typing import Dict, List, Set
 class SafetyTier(str, Enum):
     """Safety classification for philosophers."""
 
-    TRUSTED = "trusted"           # Safe for general use
-    RESTRICTED = "restricted"     # Research only, dangerous pattern detection mode
-    MONITORED = "monitored"       # Requires extra ethical oversight
+    TRUSTED = "trusted"  # Safe for general use
+    RESTRICTED = "restricted"  # Research only, dangerous pattern detection mode
+    MONITORED = "monitored"  # Requires extra ethical oversight
 
 
 class EthicalRiskPattern(str, Enum):
     """Known ethical risk patterns."""
 
-    SUPREMACY_IDEOLOGY = "supremacy_ideology"           # Racial/ethnic superiority claims
-    EXCLUSIONARY_FRAMING = "exclusionary_framing"       # In-group/out-group division
-    DEHUMANIZATION = "dehumanization"                   # Reducing human dignity
-    ABSOLUTE_AUTHORITY = "absolute_authority"           # Unchecked power justification
-    COLLECTIVE_PUNISHMENT = "collective_punishment"     # Group-based judgment
-    BIOLOGICAL_DETERMINISM = "biological_determinism"   # Innate inferiority claims
+    SUPREMACY_IDEOLOGY = "supremacy_ideology"  # Racial/ethnic superiority claims
+    EXCLUSIONARY_FRAMING = "exclusionary_framing"  # In-group/out-group division
+    DEHUMANIZATION = "dehumanization"  # Reducing human dignity
+    ABSOLUTE_AUTHORITY = "absolute_authority"  # Unchecked power justification
+    COLLECTIVE_PUNISHMENT = "collective_punishment"  # Group-based judgment
+    BIOLOGICAL_DETERMINISM = "biological_determinism"  # Innate inferiority claims
 
 
 # Philosopher safety classifications
@@ -52,7 +53,11 @@ PHILOSOPHER_SAFETY_PROFILES: Dict[str, Dict] = {
     },
     "arendt": {
         "tier": SafetyTier.TRUSTED,
-        "ethical_anchors": ["human_dignity", "political_freedom", "totalitarianism_critique"],
+        "ethical_anchors": [
+            "human_dignity",
+            "political_freedom",
+            "totalitarianism_critique",
+        ],
         "risk_factors": [],
     },
     "levinas": {
@@ -97,7 +102,11 @@ PHILOSOPHER_SAFETY_PROFILES: Dict[str, Dict] = {
     },
     "jung": {
         "tier": SafetyTier.TRUSTED,
-        "ethical_anchors": ["individuation", "shadow_integration", "collective_unconscious"],
+        "ethical_anchors": [
+            "individuation",
+            "shadow_integration",
+            "collective_unconscious",
+        ],
         "risk_factors": ["archetypal_essentialism"],  # Minor risk: overgeneralization
     },
     "kierkegaard": {
@@ -126,7 +135,6 @@ PHILOSOPHER_SAFETY_PROFILES: Dict[str, Dict] = {
         "risk_factors": ["obscurity", "determinism_risk"],
         "monitoring_reason": "Complex psychoanalytic concepts require careful contextualization",
     },
-
     # MONITORED: Require careful interpretation
     "heidegger": {
         "tier": SafetyTier.MONITORED,
@@ -136,7 +144,6 @@ PHILOSOPHER_SAFETY_PROFILES: Dict[str, Dict] = {
         "safe_contexts": ["ontology", "phenomenology", "technology_critique"],
         "restricted_contexts": ["political_philosophy", "community_identity"],
     },
-
     # RESTRICTED: Research only, dangerous pattern detection mode
     "nietzsche": {
         "tier": SafetyTier.RESTRICTED,
@@ -165,7 +172,8 @@ PHILOSOPHER_SAFETY_PROFILES: Dict[str, Dict] = {
 def get_trusted_philosophers() -> List[str]:
     """Get list of all TRUSTED tier philosophers."""
     return [
-        name for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
+        name
+        for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
         if profile["tier"] == SafetyTier.TRUSTED
     ]
 
@@ -173,7 +181,8 @@ def get_trusted_philosophers() -> List[str]:
 def get_restricted_philosophers() -> List[str]:
     """Get list of RESTRICTED tier philosophers."""
     return [
-        name for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
+        name
+        for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
         if profile["tier"] == SafetyTier.RESTRICTED
     ]
 
@@ -181,7 +190,8 @@ def get_restricted_philosophers() -> List[str]:
 def get_monitored_philosophers() -> List[str]:
     """Get list of MONITORED tier philosophers."""
     return [
-        name for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
+        name
+        for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
         if profile["tier"] == SafetyTier.MONITORED
     ]
 
@@ -212,7 +222,7 @@ def get_risk_factors(philosopher: str) -> List[str]:
 def validate_philosopher_group(
     philosophers: List[str],
     allow_restricted: bool = False,
-    dangerous_pattern_mode: bool = False
+    dangerous_pattern_mode: bool = False,
 ) -> Dict:
     """
     Validate a group of philosophers for safety.

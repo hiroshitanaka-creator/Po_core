@@ -29,12 +29,15 @@ from po_core.domain.experiment import (
 # scipy は optional
 try:
     from scipy import stats as scipy_stats  # type: ignore
+
     HAS_SCIPY = True
 except ImportError:
     HAS_SCIPY = False
 
 
-def _compute_statistics(samples: List[ExperimentSample], metric_name: str) -> Dict[str, float]:
+def _compute_statistics(
+    samples: List[ExperimentSample], metric_name: str
+) -> Dict[str, float]:
     """
     単一メトリクスの統計量を計算する。
 
@@ -77,7 +80,9 @@ def _compute_statistics(samples: List[ExperimentSample], metric_name: str) -> Di
     }
 
 
-def _t_test(baseline_values: List[float], variant_values: List[float]) -> tuple[float, float]:
+def _t_test(
+    baseline_values: List[float], variant_values: List[float]
+) -> tuple[float, float]:
     """
     t検定を実行する（scipy使用、なければ簡易実装）。
 
@@ -108,7 +113,9 @@ def _t_test(baseline_values: List[float], variant_values: List[float]) -> tuple[
 
     t = (mean2 - mean1) / se
     # 自由度（Welch-Satterthwaite）
-    df = (var1 / n1 + var2 / n2) ** 2 / ((var1 / n1) ** 2 / (n1 - 1) + (var2 / n2) ** 2 / (n2 - 1))
+    df = (var1 / n1 + var2 / n2) ** 2 / (
+        (var1 / n1) ** 2 / (n1 - 1) + (var2 / n2) ** 2 / (n2 - 1)
+    )
 
     # p値の簡易計算（正規分布近似）
     # 本来は t分布を使うべきだが、簡易実装なので正規分布で近似
@@ -122,12 +129,14 @@ def _normal_cdf(x: float) -> float:
     return 0.5 * (1 + math.erf(x / math.sqrt(2)))
 
 
-def _cohens_d(mean1: float, std1: float, n1: int, mean2: float, std2: float, n2: int) -> float:
+def _cohens_d(
+    mean1: float, std1: float, n1: int, mean2: float, std2: float, n2: int
+) -> float:
     """Cohen's d（効果量）を計算"""
     if n1 < 2 or n2 < 2:
         return 0.0
 
-    pooled_std = math.sqrt(((n1 - 1) * std1 ** 2 + (n2 - 1) * std2 ** 2) / (n1 + n2 - 2))
+    pooled_std = math.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
     if pooled_std == 0:
         return 0.0
 
@@ -173,9 +182,13 @@ class ExperimentAnalyzer:
             variant_groups[v.name] = [s for s in samples if s.variant_name == v.name]
 
         # 統計量を計算
-        baseline_stats = self._compute_variant_stats("baseline", baseline_samples, definition.metrics)
+        baseline_stats = self._compute_variant_stats(
+            "baseline", baseline_samples, definition.metrics
+        )
         variant_stats_list = [
-            self._compute_variant_stats(v.name, variant_groups[v.name], definition.metrics)
+            self._compute_variant_stats(
+                v.name, variant_groups[v.name], definition.metrics
+            )
             for v in definition.variants
         ]
 
@@ -280,8 +293,12 @@ class ExperimentAnalyzer:
         baseline_std = _compute_statistics(baseline_samples, metric_name)["std"]
         variant_std = _compute_statistics(variant_samples, metric_name)["std"]
         effect_size = _cohens_d(
-            baseline_mean, baseline_std, len(baseline_values),
-            variant_mean, variant_std, len(variant_values),
+            baseline_mean,
+            baseline_std,
+            len(baseline_values),
+            variant_mean,
+            variant_std,
+            len(variant_values),
         )
 
         return SignificanceTest(

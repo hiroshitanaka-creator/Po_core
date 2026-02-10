@@ -35,10 +35,12 @@ class Lacan(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Jacques Lacan",
-            description="Psychoanalyst focused on desire, the symbolic, and structural analysis of the unconscious"
+            description="Psychoanalyst focused on desire, the symbolic, and structural analysis of the unconscious",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Lacan's psychoanalytic perspective.
 
@@ -67,8 +69,8 @@ class Lacan(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Structural psychoanalysis of desire and language",
-                "focus": "Desire, the symbolic, the Other, and lack"
-            }
+                "focus": "Desire, the symbolic, the Other, and lack",
+            },
         }
 
     def _analyze_structure(self, prompt: str) -> Dict[str, Any]:
@@ -109,9 +111,7 @@ class Lacan(Philosopher):
         discourse = self._determine_discourse(prompt)
 
         # Construct reasoning
-        reasoning = self._construct_reasoning(
-            register, desire, other, lack, objet_a
-        )
+        reasoning = self._construct_reasoning(register, desire, other, lack, objet_a)
 
         return {
             "reasoning": reasoning,
@@ -123,7 +123,7 @@ class Lacan(Philosopher):
             "signifier": signifier,
             "split_subject": split_subject,
             "jouissance": jouissance,
-            "discourse": discourse
+            "discourse": discourse,
         }
 
     def _determine_register(self, text: str) -> Dict[str, Any]:
@@ -137,22 +137,47 @@ class Lacan(Philosopher):
         text_lower = text.lower()
 
         # Imaginary indicators
-        imaginary_words = ["image", "mirror", "reflect", "identity", "self", "ego", "appearance", "imagine"]
+        imaginary_words = [
+            "image",
+            "mirror",
+            "reflect",
+            "identity",
+            "self",
+            "ego",
+            "appearance",
+            "imagine",
+        ]
         has_imaginary = sum(1 for word in imaginary_words if word in text_lower)
 
         # Symbolic indicators
-        symbolic_words = ["language", "word", "law", "rule", "structure", "order", "meaning", "symbol"]
+        symbolic_words = [
+            "language",
+            "word",
+            "law",
+            "rule",
+            "structure",
+            "order",
+            "meaning",
+            "symbol",
+        ]
         has_symbolic = sum(1 for word in symbolic_words if word in text_lower)
 
         # Real indicators
-        real_words = ["impossible", "trauma", "unspeakable", "beyond words", "cannot say", "ineffable"]
+        real_words = [
+            "impossible",
+            "trauma",
+            "unspeakable",
+            "beyond words",
+            "cannot say",
+            "ineffable",
+        ]
         has_real = sum(1 for word in real_words if word in text_lower)
 
         # Determine dominant register
         scores = {
             "Imaginary": has_imaginary,
             "Symbolic": has_symbolic,
-            "Real": has_real
+            "Real": has_real,
         }
         dominant = max(scores, key=scores.get)
 
@@ -173,7 +198,7 @@ class Lacan(Philosopher):
             "dominant": register_type,
             "description": description,
             "scores": scores,
-            "principle": "Three registers structure all subjective experience: Imaginary, Symbolic, Real"
+            "principle": "Three registers structure all subjective experience: Imaginary, Symbolic, Real",
         }
 
     def _analyze_desire(self, text: str) -> Dict[str, Any]:
@@ -207,7 +232,9 @@ class Lacan(Philosopher):
 
         if has_other_desire >= 1 or (has_desire >= 1 and has_insatiable >= 1):
             structure_type = "Desire of the Other"
-            description = "Desire is structured by the Other - desiring what the Other desires"
+            description = (
+                "Desire is structured by the Other - desiring what the Other desires"
+            )
             status = "Lacanian desire"
         elif has_desire >= 2:
             structure_type = "Metonymic Desire"
@@ -230,7 +257,7 @@ class Lacan(Philosopher):
             "type": structure_type,
             "description": description,
             "status": status,
-            "principle": "Desire is the desire of the Other - man's desire is the Other's desire"
+            "principle": "Desire is the desire of the Other - man's desire is the Other's desire",
         }
 
     def _assess_other(self, text: str) -> Dict[str, Any]:
@@ -243,7 +270,15 @@ class Lacan(Philosopher):
         text_lower = text.lower()
 
         # Big Other indicators (symbolic, language, law)
-        big_other = ["language", "law", "society", "they", "others", "everyone", "authority"]
+        big_other = [
+            "language",
+            "law",
+            "society",
+            "they",
+            "others",
+            "everyone",
+            "authority",
+        ]
         has_big_other = sum(1 for word in big_other if word in text_lower)
 
         # Small other indicators (imaginary, mirror)
@@ -255,12 +290,20 @@ class Lacan(Philosopher):
         has_gaze = sum(1 for phrase in gaze_words if phrase in text_lower)
 
         # Recognition from Other
-        recognition_words = ["recognize", "acknowledge", "validate", "approval", "acceptance"]
+        recognition_words = [
+            "recognize",
+            "acknowledge",
+            "validate",
+            "approval",
+            "acceptance",
+        ]
         has_recognition = sum(1 for word in recognition_words if word in text_lower)
 
         if has_big_other >= 2 or (has_big_other >= 1 and has_recognition >= 1):
             other_type = "The Big Other (grand Autre)"
-            description = "The symbolic order - language, law, and the site of the signifier"
+            description = (
+                "The symbolic order - language, law, and the site of the signifier"
+            )
             presence = "Strong"
         elif has_gaze >= 1:
             other_type = "Gaze of the Other"
@@ -279,7 +322,7 @@ class Lacan(Philosopher):
             "type": other_type,
             "description": description,
             "presence": presence,
-            "principle": "The big Other is the symbolic order - the treasure of signifiers"
+            "principle": "The big Other is the symbolic order - the treasure of signifiers",
         }
 
     def _detect_lack(self, text: str) -> Dict[str, Any]:
@@ -309,7 +352,9 @@ class Lacan(Philosopher):
 
         if has_lack >= 2 or (has_lack >= 1 and has_incomplete >= 1):
             presence = "Fundamental Lack"
-            description = "Structural lack that drives desire - manque-à-être (lack-of-being)"
+            description = (
+                "Structural lack that drives desire - manque-à-être (lack-of-being)"
+            )
             type_lack = "Constitutive"
         elif has_loss >= 1:
             presence = "Loss and Separation"
@@ -328,7 +373,7 @@ class Lacan(Philosopher):
             "presence": presence,
             "description": description,
             "type": type_lack,
-            "principle": "Lack is structural - the subject is constituted by lack"
+            "principle": "Lack is structural - the subject is constituted by lack",
         }
 
     def _check_objet_petit_a(self, text: str) -> Dict[str, Any]:
@@ -342,7 +387,13 @@ class Lacan(Philosopher):
         text_lower = text.lower()
 
         # Objet a indicators (unattainable, causing desire)
-        objet_a_words = ["unattainable", "just beyond", "almost", "elusive", "can't quite"]
+        objet_a_words = [
+            "unattainable",
+            "just beyond",
+            "almost",
+            "elusive",
+            "can't quite",
+        ]
         has_objet_a = sum(1 for phrase in objet_a_words if phrase in text_lower)
 
         # Remainder/surplus indicators
@@ -378,7 +429,7 @@ class Lacan(Philosopher):
             "status": status,
             "description": description,
             "function": function,
-            "principle": "Objet a is the cause of desire, not its object - it makes desire desire"
+            "principle": "Objet a is the cause of desire, not its object - it makes desire desire",
         }
 
     def _analyze_signifier(self, text: str) -> Dict[str, Any]:
@@ -404,7 +455,13 @@ class Lacan(Philosopher):
         has_slippage = sum(1 for phrase in slippage_words if phrase in text_lower)
 
         # Retroactive meaning
-        retroactive_words = ["after", "later", "looking back", "retroactive", "in hindsight"]
+        retroactive_words = [
+            "after",
+            "later",
+            "looking back",
+            "retroactive",
+            "in hindsight",
+        ]
         has_retroactive = sum(1 for phrase in retroactive_words if phrase in text_lower)
 
         if has_signifier >= 1 and has_slippage >= 1:
@@ -428,7 +485,7 @@ class Lacan(Philosopher):
             "relation": relation,
             "description": description,
             "structure": structure,
-            "principle": "The signifier has primacy over the signified - the bar is resistant"
+            "principle": "The signifier has primacy over the signified - the bar is resistant",
         }
 
     def _assess_split_subject(self, text: str) -> Dict[str, Any]:
@@ -441,16 +498,36 @@ class Lacan(Philosopher):
         text_lower = text.lower()
 
         # Split/division indicators
-        split_words = ["split", "divided", "torn", "conflict", "contradiction", "paradox"]
+        split_words = [
+            "split",
+            "divided",
+            "torn",
+            "conflict",
+            "contradiction",
+            "paradox",
+        ]
         has_split = sum(1 for word in split_words if word in text_lower)
 
         # Alienation indicators
-        alienation_words = ["alienated", "estranged", "foreign", "not myself", "stranger"]
+        alienation_words = [
+            "alienated",
+            "estranged",
+            "foreign",
+            "not myself",
+            "stranger",
+        ]
         has_alienation = sum(1 for phrase in alienation_words if phrase in text_lower)
 
         # Conscious vs unconscious
-        conscious_unconscious = ["conscious", "unconscious", "don't know why", "unaware"]
-        has_conscious_unconscious = sum(1 for phrase in conscious_unconscious if phrase in text_lower)
+        conscious_unconscious = [
+            "conscious",
+            "unconscious",
+            "don't know why",
+            "unaware",
+        ]
+        has_conscious_unconscious = sum(
+            1 for phrase in conscious_unconscious if phrase in text_lower
+        )
 
         # Unity/wholeness (opposed to split)
         unity_words = ["unified", "whole", "integrated", "coherent", "one"]
@@ -458,7 +535,9 @@ class Lacan(Philosopher):
 
         if has_split >= 2 or (has_split >= 1 and has_conscious_unconscious >= 1):
             status = "Split Subject ($)"
-            description = "Subject divided by language and the unconscious - barred subject"
+            description = (
+                "Subject divided by language and the unconscious - barred subject"
+            )
             type_subject = "Lacanian subject"
         elif has_alienation >= 1:
             status = "Alienated Subject"
@@ -477,7 +556,7 @@ class Lacan(Philosopher):
             "status": status,
             "description": description,
             "type": type_subject,
-            "principle": "The subject is split by entry into language - $ (barred subject)"
+            "principle": "The subject is split by entry into language - $ (barred subject)",
         }
 
     def _evaluate_jouissance(self, text: str) -> Dict[str, Any]:
@@ -491,7 +570,13 @@ class Lacan(Philosopher):
         text_lower = text.lower()
 
         # Jouissance indicators (excessive, painful pleasure)
-        jouissance_words = ["excess", "transgress", "beyond", "too much", "painful pleasure"]
+        jouissance_words = [
+            "excess",
+            "transgress",
+            "beyond",
+            "too much",
+            "painful pleasure",
+        ]
         has_jouissance = sum(1 for phrase in jouissance_words if phrase in text_lower)
 
         # Pleasure indicators (moderate, homeostatic)
@@ -508,7 +593,9 @@ class Lacan(Philosopher):
 
         if has_jouissance >= 1 or (has_pleasure >= 1 and has_prohibition >= 1):
             type_enjoyment = "Jouissance"
-            description = "Excessive enjoyment beyond pleasure principle - transgressive"
+            description = (
+                "Excessive enjoyment beyond pleasure principle - transgressive"
+            )
             status = "Beyond law"
         elif has_suffering >= 1 and has_pleasure >= 1:
             type_enjoyment = "Painful Pleasure"
@@ -527,7 +614,7 @@ class Lacan(Philosopher):
             "type": type_enjoyment,
             "description": description,
             "status": status,
-            "principle": "Jouissance is excessive enjoyment beyond the pleasure principle"
+            "principle": "Jouissance is excessive enjoyment beyond the pleasure principle",
         }
 
     def _determine_discourse(self, text: str) -> Dict[str, Any]:
@@ -546,22 +633,41 @@ class Lacan(Philosopher):
         has_master = sum(1 for word in master_words if word in text_lower)
 
         # University indicators (knowledge, expertise)
-        university_words = ["knowledge", "expert", "science", "research", "study", "data"]
+        university_words = [
+            "knowledge",
+            "expert",
+            "science",
+            "research",
+            "study",
+            "data",
+        ]
         has_university = sum(1 for word in university_words if word in text_lower)
 
         # Hysteric indicators (questioning, symptom)
-        hysteric_words = ["why", "question", "symptom", "what do you want", "understand me"]
+        hysteric_words = [
+            "why",
+            "question",
+            "symptom",
+            "what do you want",
+            "understand me",
+        ]
         has_hysteric = sum(1 for phrase in hysteric_words if phrase in text_lower)
 
         # Analyst indicators (listening, provoking)
-        analyst_words = ["listen", "silence", "provoke", "what does it mean", "associate"]
+        analyst_words = [
+            "listen",
+            "silence",
+            "provoke",
+            "what does it mean",
+            "associate",
+        ]
         has_analyst = sum(1 for phrase in analyst_words if phrase in text_lower)
 
         scores = {
             "Master": has_master,
             "University": has_university,
             "Hysteric": has_hysteric,
-            "Analyst": has_analyst
+            "Analyst": has_analyst,
         }
         dominant = max(scores, key=scores.get)
 
@@ -584,7 +690,7 @@ class Lacan(Philosopher):
         return {
             "type": discourse_type,
             "description": description,
-            "principle": "Four discourses structure social bonds and positions"
+            "principle": "Four discourses structure social bonds and positions",
         }
 
     def _construct_reasoning(
@@ -593,7 +699,7 @@ class Lacan(Philosopher):
         desire: Dict[str, Any],
         other: Dict[str, Any],
         lack: Dict[str, Any],
-        objet_a: Dict[str, Any]
+        objet_a: Dict[str, Any],
     ) -> str:
         """Construct Lacanian psychoanalytic reasoning."""
         reasoning = (

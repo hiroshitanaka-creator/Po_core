@@ -7,6 +7,7 @@ Abstract base class for all philosophical tensors in Po_core.
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
+
 import numpy as np
 
 
@@ -103,9 +104,7 @@ class Tensor(ABC):
             Dot product value
         """
         if self.data.shape != other.data.shape:
-            raise ValueError(
-                f"Shape mismatch: {self.data.shape} vs {other.data.shape}"
-            )
+            raise ValueError(f"Shape mismatch: {self.data.shape} vs {other.data.shape}")
         return float(np.dot(self.data.flatten(), other.data.flatten()))
 
     def distance(self, other: "Tensor") -> float:
@@ -119,9 +118,7 @@ class Tensor(ABC):
             Euclidean distance
         """
         if self.data.shape != other.data.shape:
-            raise ValueError(
-                f"Shape mismatch: {self.data.shape} vs {other.data.shape}"
-            )
+            raise ValueError(f"Shape mismatch: {self.data.shape} vs {other.data.shape}")
         return float(np.linalg.norm(self.data - other.data))
 
     def to_dict(self) -> Dict[str, Any]:

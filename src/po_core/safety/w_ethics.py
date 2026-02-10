@@ -23,10 +23,11 @@ When these boundaries are violated, the system:
 This is not censorship—it's protecting the integrity of philosophical reasoning
 from being weaponized for oppression.
 """
+
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
-import re
 
 
 class ViolationType(str, Enum):
@@ -54,7 +55,9 @@ class ViolationPattern:
 
     # Detection patterns (regex or keyword-based)
     keywords: List[str]
-    context_required: bool = True  # Requires contextual analysis, not just keyword match
+    context_required: bool = (
+        True  # Requires contextual analysis, not just keyword match
+    )
 
 
 # ============================================================================
@@ -68,109 +71,129 @@ VIOLATION_PATTERNS: Dict[ViolationType, ViolationPattern] = {
         severity=1.0,
         w_ethics_penalty=-1.0,  # Maximum penalty
         keywords=[
-            "superior race", "inferior race", "racial hierarchy",
-            "genetically superior", "inherently inferior",
-            "natural slaves", "master race",
+            "superior race",
+            "inferior race",
+            "racial hierarchy",
+            "genetically superior",
+            "inherently inferior",
+            "natural slaves",
+            "master race",
         ],
         context_required=True,
     ),
-
     ViolationType.ETHNIC_SUPREMACY: ViolationPattern(
         violation_type=ViolationType.ETHNIC_SUPREMACY,
         description="Claims of ethnic superiority or inferiority",
         severity=1.0,
         w_ethics_penalty=-1.0,
         keywords=[
-            "superior ethnicity", "inferior culture", "ethnic purity",
-            "cultural supremacy", "ethnic cleansing",
+            "superior ethnicity",
+            "inferior culture",
+            "ethnic purity",
+            "cultural supremacy",
+            "ethnic cleansing",
         ],
         context_required=True,
     ),
-
     ViolationType.RELIGIOUS_DEGRADATION: ViolationPattern(
         violation_type=ViolationType.RELIGIOUS_DEGRADATION,
         description="Degradation of human value based on religion",
         severity=0.9,
         w_ethics_penalty=-0.9,
         keywords=[
-            "inferior faith", "heretic subhuman", "religious vermin",
-            "deserve persecution", "religious inferiority",
+            "inferior faith",
+            "heretic subhuman",
+            "religious vermin",
+            "deserve persecution",
+            "religious inferiority",
         ],
         context_required=True,
     ),
-
     ViolationType.GENDER_ESSENTIALISM: ViolationPattern(
         violation_type=ViolationType.GENDER_ESSENTIALISM,
         description="Biological determinism justifying gender-based oppression",
         severity=0.8,
         w_ethics_penalty=-0.8,
         keywords=[
-            "naturally inferior", "biologically suited for submission",
-            "inherently irrational", "naturally submissive",
+            "naturally inferior",
+            "biologically suited for submission",
+            "inherently irrational",
+            "naturally submissive",
             "biological destiny",
         ],
         context_required=True,
     ),
-
     ViolationType.DISABILITY_DEHUMANIZATION: ViolationPattern(
         violation_type=ViolationType.DISABILITY_DEHUMANIZATION,
         description="Dehumanization based on disability or ability",
         severity=1.0,
         w_ethics_penalty=-1.0,
         keywords=[
-            "life unworthy of life", "burden on society",
-            "genetic defect", "should not reproduce",
-            "mercy killing", "useless eaters",
+            "life unworthy of life",
+            "burden on society",
+            "genetic defect",
+            "should not reproduce",
+            "mercy killing",
+            "useless eaters",
         ],
         context_required=True,
     ),
-
     ViolationType.BIOLOGICAL_DETERMINISM: ViolationPattern(
         violation_type=ViolationType.BIOLOGICAL_DETERMINISM,
         description="Using biology to justify oppression or hierarchy",
         severity=0.9,
         w_ethics_penalty=-0.9,
         keywords=[
-            "genetic destiny", "born to serve", "natural hierarchy",
-            "evolutionary inferior", "biological caste",
+            "genetic destiny",
+            "born to serve",
+            "natural hierarchy",
+            "evolutionary inferior",
+            "biological caste",
         ],
         context_required=True,
     ),
-
     ViolationType.COLLECTIVE_PUNISHMENT: ViolationPattern(
         violation_type=ViolationType.COLLECTIVE_PUNISHMENT,
         description="Group-based guilt or punishment for immutable traits",
         severity=0.8,
         w_ethics_penalty=-0.8,
         keywords=[
-            "all [GROUP] are guilty", "collective guilt",
-            "punish the entire", "group responsibility",
-            "inherited sin", "blood guilt",
+            "all [GROUP] are guilty",
+            "collective guilt",
+            "punish the entire",
+            "group responsibility",
+            "inherited sin",
+            "blood guilt",
         ],
         context_required=True,
     ),
-
     ViolationType.DEHUMANIZATION: ViolationPattern(
         violation_type=ViolationType.DEHUMANIZATION,
         description="Removing human dignity based on immutable characteristics",
         severity=1.0,
         w_ethics_penalty=-1.0,
         keywords=[
-            "subhuman", "vermin", "parasites", "animals",
-            "not fully human", "lesser beings",
+            "subhuman",
+            "vermin",
+            "parasites",
+            "animals",
+            "not fully human",
+            "lesser beings",
         ],
         context_required=True,
     ),
-
     ViolationType.EXCLUSIONARY_FRAMING: ViolationPattern(
         violation_type=ViolationType.EXCLUSIONARY_FRAMING,
         description="Strong in-group/out-group division with value degradation",
         severity=0.7,
         w_ethics_penalty=-0.7,
         keywords=[
-            "us versus them", "purify our group",
-            "eliminate the other", "enemy within",
-            "traitor to the race", "contamination",
+            "us versus them",
+            "purify our group",
+            "eliminate the other",
+            "enemy within",
+            "traitor to the race",
+            "contamination",
         ],
         context_required=True,
     ),
@@ -303,8 +326,11 @@ class WEthicsGuardian:
 
         # Check if it's in a negation context (e.g., "we must reject...")
         negation_words = ["reject", "oppose", "condemn", "wrong", "not", "never"]
-        words_before = text[max(0, text.lower().find(keyword.lower()) - 50):
-                           text.lower().find(keyword.lower())].lower()
+        words_before = text[
+            max(0, text.lower().find(keyword.lower()) - 50) : text.lower().find(
+                keyword.lower()
+            )
+        ].lower()
 
         if any(neg in words_before for neg in negation_words):
             confidence *= 0.3  # Likely discussing/rejecting, not endorsing
@@ -319,6 +345,7 @@ class WEthicsGuardian:
     def _get_timestamp(self) -> str:
         """Get current timestamp."""
         from datetime import datetime
+
         return datetime.utcnow().isoformat()
 
     def reset(self) -> None:
@@ -342,8 +369,7 @@ class WEthicsGuardian:
             "cumulative_w_ethics": self.cumulative_w_ethics,
             "dangerous_ideology_flag": self.dangerous_ideology_flag,
             "most_severe": max(
-                (v.severity for v in self.violation_history),
-                default=0.0
+                (v.severity for v in self.violation_history), default=0.0
             ),
         }
 

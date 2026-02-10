@@ -4,8 +4,9 @@ Po_core Mock Philosopher System
 Provides deterministic philosopher responses without requiring LLM APIs.
 Useful for testing, development, and demonstrations.
 """
-from typing import Dict, List, Optional
+
 import random
+from typing import Dict, List, Optional
 
 
 class MockPhilosopher:
@@ -30,7 +31,9 @@ class MockPhilosopher:
             "philosopher": self.name,
             "perspective": self.perspective,
             "response": f"{self.name}'s perspective on: {prompt[:50]}...",
-            "freedom_pressure": min(1.0, self.base_freedom_pressure + prompt_hash * 0.1),
+            "freedom_pressure": min(
+                1.0, self.base_freedom_pressure + prompt_hash * 0.1
+            ),
             "semantic_delta": min(1.0, self.base_semantic_delta + prompt_hash * 0.15),
             "blocked_tensor": max(0.0, self.base_blocked_tensor - prompt_hash * 0.1),
         }
@@ -41,7 +44,7 @@ class MockPoSelf:
 
     def __init__(self, enable_trace: bool = True):
         """Initialize mock Po_self with predefined philosophers."""
-        from po_core.po_trace import PoTrace, EventType
+        from po_core.po_trace import EventType, PoTrace
 
         self.enable_trace = enable_trace
         self.po_trace = PoTrace() if enable_trace else None
@@ -62,7 +65,9 @@ class MockPoSelf:
             "levinas": MockPhilosopher("Levinas", "Ethics of the Other"),
             "badiou": MockPhilosopher("Badiou", "Event and Truth"),
             "peirce": MockPhilosopher("Peirce", "Semiotics"),
-            "merleau_ponty": MockPhilosopher("Merleau-Ponty", "Phenomenology of Perception"),
+            "merleau_ponty": MockPhilosopher(
+                "Merleau-Ponty", "Phenomenology of Perception"
+            ),
             "arendt": MockPhilosopher("Arendt", "Political Action"),
             "watsuji": MockPhilosopher("Watsuji", "Betweenness"),
             "wabi_sabi": MockPhilosopher("Wabi-Sabi", "Imperfection"),
@@ -70,11 +75,7 @@ class MockPoSelf:
             "zhuangzi": MockPhilosopher("Zhuangzi", "Natural Spontaneity"),
         }
 
-    def generate(
-        self,
-        prompt: str,
-        philosophers: Optional[List[str]] = None
-    ) -> Dict:
+    def generate(self, prompt: str, philosophers: Optional[List[str]] = None) -> Dict:
         """Generate mock philosophical response.
 
         Args:
@@ -101,8 +102,7 @@ class MockPoSelf:
         session_id = None
         if self.enable_trace:
             session_id = self.po_trace.create_session(
-                prompt=prompt,
-                philosophers=selected
+                prompt=prompt, philosophers=selected
             )
 
             # Log start event
@@ -110,7 +110,7 @@ class MockPoSelf:
                 session_id=session_id,
                 event_type=EventType.EXECUTION,
                 source="ensemble",
-                data={"message": "Mock ensemble started"}
+                data={"message": "Mock ensemble started"},
             )
 
         # Generate responses from each philosopher
@@ -141,7 +141,7 @@ class MockPoSelf:
                         "semantic_delta": response["semantic_delta"],
                         "blocked_tensor": response["blocked_tensor"],
                         "perspective": response["perspective"],
-                    }
+                    },
                 )
 
         # Calculate ensemble metrics
@@ -158,7 +158,7 @@ class MockPoSelf:
                     "freedom_pressure": avg_fp,
                     "semantic_delta": avg_sd,
                     "blocked_tensor": avg_bt,
-                }
+                },
             )
 
         # Generate synthetic ensemble response
@@ -178,14 +178,13 @@ class MockPoSelf:
             "log": {
                 "session_id": session_id,
                 "philosopher_responses": responses,
-            }
+            },
         }
 
 
 # Convenience function
 def create_mock_sessions(
-    prompts: List[str],
-    philosophers_per_session: Optional[int] = None
+    prompts: List[str], philosophers_per_session: Optional[int] = None
 ) -> List[str]:
     """Create multiple mock sessions for testing.
 
@@ -202,8 +201,7 @@ def create_mock_sessions(
     for prompt in prompts:
         if philosophers_per_session:
             phil_names = random.sample(
-                list(mock_po.philosophers.keys()),
-                philosophers_per_session
+                list(mock_po.philosophers.keys()), philosophers_per_session
             )
             result = mock_po.generate(prompt, philosophers=phil_names)
         else:

@@ -26,6 +26,7 @@ from po_core.domain.trace_event import TraceEvent
 @dataclass(frozen=True)
 class EventSpec:
     """TraceEvent の required keys 仕様"""
+
     event_type: str
     required_keys: Sequence[str]
 
@@ -35,19 +36,15 @@ SPECS: List[EventSpec] = [
     # Decision events
     EventSpec("DecisionEmitted", ["stage", "origin", "degraded", "final"]),
     EventSpec("SafetyOverrideApplied", ["stage", "reason", "from", "to", "gate"]),
-
     # Pareto events
     EventSpec("ParetoFrontComputed", ["mode", "weights", "front_size", "front"]),
     EventSpec("ParetoWinnerSelected", ["mode", "winner"]),
     EventSpec("ConflictSummaryComputed", ["n", "kinds"]),
-
     # Policy events
     EventSpec("PolicyPrecheckSummary", ["allow", "revise", "reject"]),
-
     # Safety events
     EventSpec("SafetyJudged:Intention", ["decision", "rule_ids"]),
     EventSpec("SafetyJudged:Action", ["decision", "rule_ids"]),
-
     # Pipeline events
     EventSpec("MemorySnapshotted", ["items"]),
     EventSpec("TensorComputed", ["metrics"]),

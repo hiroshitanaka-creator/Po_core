@@ -52,7 +52,9 @@ class MarcusAurelius(Philosopher):
             "nature",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Stoic reasoning to the prompt.
 
@@ -100,8 +102,17 @@ class MarcusAurelius(Philosopher):
         practical_wisdom = self._derive_practical_wisdom(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, virtue, control, logos, prohairesis, amor_fati,
-            memento_mori, cosmopolitanism, present, indifferents, ataraxia
+            prompt,
+            virtue,
+            control,
+            logos,
+            prohairesis,
+            amor_fati,
+            memento_mori,
+            cosmopolitanism,
+            present,
+            indifferents,
+            ataraxia,
         )
 
         return {
@@ -469,9 +480,18 @@ class MarcusAurelius(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, virtue: Dict, control: Dict, logos: Dict,
-        prohairesis: Dict, amor_fati: Dict, memento_mori: Dict,
-        cosmopolitanism: Dict, present: Dict, indifferents: Dict, ataraxia: Dict
+        self,
+        prompt: str,
+        virtue: Dict,
+        control: Dict,
+        logos: Dict,
+        prohairesis: Dict,
+        amor_fati: Dict,
+        memento_mori: Dict,
+        cosmopolitanism: Dict,
+        present: Dict,
+        indifferents: Dict,
+        ataraxia: Dict,
     ) -> str:
         """Construct comprehensive Stoic reasoning."""
         return f"""Stoic Meditation on: "{prompt}"

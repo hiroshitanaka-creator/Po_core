@@ -34,10 +34,12 @@ class Foucault(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Michel Foucault",
-            description="Post-structuralist focused on power/knowledge, discourse, discipline, and biopower"
+            description="Post-structuralist focused on power/knowledge, discourse, discipline, and biopower",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Foucault's perspective.
 
@@ -68,8 +70,8 @@ class Foucault(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Genealogical and archaeological analysis",
-                "focus": "Power/knowledge, discourse, and disciplinary mechanisms"
-            }
+                "focus": "Power/knowledge, discourse, and disciplinary mechanisms",
+            },
         }
 
     def _analyze_power_knowledge(self, prompt: str) -> Dict[str, Any]:
@@ -132,7 +134,7 @@ class Foucault(Philosopher):
             "subjectivation": subjectivation,
             "governmentality": governmentality,
             "care_of_self": care_of_self,
-            "episteme": episteme
+            "episteme": episteme,
         }
 
     def _assess_power_knowledge(self, text: str) -> Dict[str, Any]:
@@ -146,19 +148,49 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Power indicators
-        power_words = ["power", "control", "authority", "domination", "govern", "rule", "regulate"]
+        power_words = [
+            "power",
+            "control",
+            "authority",
+            "domination",
+            "govern",
+            "rule",
+            "regulate",
+        ]
         has_power = sum(1 for word in power_words if word in text_lower)
 
         # Knowledge indicators
-        knowledge_words = ["knowledge", "truth", "science", "expertise", "know", "information", "data"]
+        knowledge_words = [
+            "knowledge",
+            "truth",
+            "science",
+            "expertise",
+            "know",
+            "information",
+            "data",
+        ]
         has_knowledge = sum(1 for word in knowledge_words if word in text_lower)
 
         # Mutual implication indicators
-        mutual_words = ["legitimize", "justify", "validate", "authorize", "enable", "support"]
+        mutual_words = [
+            "legitimize",
+            "justify",
+            "validate",
+            "authorize",
+            "enable",
+            "support",
+        ]
         has_mutual = sum(1 for word in mutual_words if word in text_lower)
 
         # Expert/professional knowledge
-        expert_words = ["expert", "professional", "specialist", "doctor", "psychiatrist", "scientist"]
+        expert_words = [
+            "expert",
+            "professional",
+            "specialist",
+            "doctor",
+            "psychiatrist",
+            "scientist",
+        ]
         has_expert = sum(1 for word in expert_words if word in text_lower)
 
         # Truth regime indicators
@@ -190,7 +222,7 @@ class Foucault(Philosopher):
             "relation": relation,
             "description": description,
             "status": status,
-            "principle": "There is no power relation without the correlative constitution of a field of knowledge"
+            "principle": "There is no power relation without the correlative constitution of a field of knowledge",
         }
 
     def _analyze_discourse(self, text: str) -> Dict[str, Any]:
@@ -203,23 +235,57 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Discourse indicators
-        discourse_words = ["discourse", "language", "statement", "speech", "say", "speak", "talk"]
+        discourse_words = [
+            "discourse",
+            "language",
+            "statement",
+            "speech",
+            "say",
+            "speak",
+            "talk",
+        ]
         has_discourse = sum(1 for word in discourse_words if word in text_lower)
 
         # Rules/norms indicators
-        rules_words = ["rule", "norm", "regulation", "standard", "convention", "acceptable"]
+        rules_words = [
+            "rule",
+            "norm",
+            "regulation",
+            "standard",
+            "convention",
+            "acceptable",
+        ]
         has_rules = sum(1 for word in rules_words if word in text_lower)
 
         # Exclusion/prohibition indicators
-        exclusion_words = ["exclude", "prohibit", "forbidden", "cannot say", "unspeakable", "taboo"]
+        exclusion_words = [
+            "exclude",
+            "prohibit",
+            "forbidden",
+            "cannot say",
+            "unspeakable",
+            "taboo",
+        ]
         has_exclusion = sum(1 for word in exclusion_words if word in text_lower)
 
         # Truth production indicators
-        truth_prod = ["produce truth", "construct", "constitute", "create meaning", "define"]
+        truth_prod = [
+            "produce truth",
+            "construct",
+            "constitute",
+            "create meaning",
+            "define",
+        ]
         has_truth_prod = sum(1 for phrase in truth_prod if phrase in text_lower)
 
         # What can be said/thought
-        sayable_words = ["what can be said", "thinkable", "intelligible", "make sense", "possible to"]
+        sayable_words = [
+            "what can be said",
+            "thinkable",
+            "intelligible",
+            "make sense",
+            "possible to",
+        ]
         has_sayable = sum(1 for phrase in sayable_words if phrase in text_lower)
 
         if has_discourse >= 1 and (has_rules >= 1 or has_exclusion >= 1):
@@ -247,7 +313,7 @@ class Foucault(Philosopher):
             "type": type_discourse,
             "description": description,
             "regime": regime,
-            "principle": "Discourse produces the objects of which it speaks"
+            "principle": "Discourse produces the objects of which it speaks",
         }
 
     def _assess_disciplinary_power(self, text: str) -> Dict[str, Any]:
@@ -260,27 +326,72 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Surveillance indicators
-        surveillance_words = ["surveillance", "watch", "monitor", "observe", "inspect", "supervise", "track"]
+        surveillance_words = [
+            "surveillance",
+            "watch",
+            "monitor",
+            "observe",
+            "inspect",
+            "supervise",
+            "track",
+        ]
         has_surveillance = sum(1 for word in surveillance_words if word in text_lower)
 
         # Normalization indicators
-        normalization_words = ["normal", "abnormal", "deviant", "standard", "average", "normalize"]
+        normalization_words = [
+            "normal",
+            "abnormal",
+            "deviant",
+            "standard",
+            "average",
+            "normalize",
+        ]
         has_normalization = sum(1 for word in normalization_words if word in text_lower)
 
         # Examination indicators
-        examination_words = ["examination", "test", "evaluate", "assess", "measure", "grade", "rank"]
+        examination_words = [
+            "examination",
+            "test",
+            "evaluate",
+            "assess",
+            "measure",
+            "grade",
+            "rank",
+        ]
         has_examination = sum(1 for word in examination_words if word in text_lower)
 
         # Institutional indicators
-        institution_words = ["school", "prison", "hospital", "army", "factory", "clinic", "asylum"]
+        institution_words = [
+            "school",
+            "prison",
+            "hospital",
+            "army",
+            "factory",
+            "clinic",
+            "asylum",
+        ]
         has_institution = sum(1 for word in institution_words if word in text_lower)
 
         # Docile bodies indicators
-        docile_words = ["obedient", "compliant", "disciplined", "trained", "controlled", "docile"]
+        docile_words = [
+            "obedient",
+            "compliant",
+            "disciplined",
+            "trained",
+            "controlled",
+            "docile",
+        ]
         has_docile = sum(1 for word in docile_words if word in text_lower)
 
         # Timetable/organization indicators
-        organization_words = ["schedule", "timetable", "organize", "regulate", "routine", "ordered"]
+        organization_words = [
+            "schedule",
+            "timetable",
+            "organize",
+            "regulate",
+            "routine",
+            "ordered",
+        ]
         has_organization = sum(1 for word in organization_words if word in text_lower)
 
         discipline_score = has_surveillance + has_normalization + has_examination
@@ -310,7 +421,7 @@ class Foucault(Philosopher):
             "presence": presence,
             "description": description,
             "mechanism": mechanism,
-            "principle": "Discipline produces subjected and practiced bodies, 'docile' bodies"
+            "principle": "Discipline produces subjected and practiced bodies, 'docile' bodies",
         }
 
     def _check_panopticon(self, text: str) -> Dict[str, Any]:
@@ -328,15 +439,35 @@ class Foucault(Philosopher):
         has_panopticon = sum(1 for phrase in panopticon_words if phrase in text_lower)
 
         # Visibility/seeing indicators
-        visibility_words = ["visible", "see", "seen", "visibility", "transparent", "exposed"]
+        visibility_words = [
+            "visible",
+            "see",
+            "seen",
+            "visibility",
+            "transparent",
+            "exposed",
+        ]
         has_visibility = sum(1 for word in visibility_words if word in text_lower)
 
         # Surveillance/observation
-        surveillance_words = ["surveillance", "watch", "observe", "monitor", "gaze", "look"]
+        surveillance_words = [
+            "surveillance",
+            "watch",
+            "observe",
+            "monitor",
+            "gaze",
+            "look",
+        ]
         has_surveillance = sum(1 for word in surveillance_words if word in text_lower)
 
         # Internalization indicators
-        internalize_words = ["internalize", "self-regulate", "self-monitor", "assume", "feel watched"]
+        internalize_words = [
+            "internalize",
+            "self-regulate",
+            "self-monitor",
+            "assume",
+            "feel watched",
+        ]
         has_internalize = sum(1 for phrase in internalize_words if phrase in text_lower)
 
         # Automatic functioning
@@ -349,7 +480,9 @@ class Foucault(Philosopher):
             model = "Benthamite"
         elif has_visibility >= 1 and has_surveillance >= 1:
             presence = "Panoptic Logic"
-            description = "Operates through visibility and surveillance - induces self-regulation"
+            description = (
+                "Operates through visibility and surveillance - induces self-regulation"
+            )
             model = "Panoptic"
         elif has_internalize >= 1:
             presence = "Internalized Surveillance"
@@ -368,7 +501,7 @@ class Foucault(Philosopher):
             "presence": presence,
             "description": description,
             "model": model,
-            "principle": "He who is subjected to a field of visibility inscribes in himself the power relation"
+            "principle": "He who is subjected to a field of visibility inscribes in himself the power relation",
         }
 
     def _analyze_biopower(self, text: str) -> Dict[str, Any]:
@@ -382,19 +515,49 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Life/biological indicators
-        life_words = ["life", "death", "birth", "health", "disease", "body", "biological"]
+        life_words = [
+            "life",
+            "death",
+            "birth",
+            "health",
+            "disease",
+            "body",
+            "biological",
+        ]
         has_life = sum(1 for word in life_words if word in text_lower)
 
         # Population indicators
-        population_words = ["population", "demographic", "birthrate", "mortality", "public health", "epidemic"]
+        population_words = [
+            "population",
+            "demographic",
+            "birthrate",
+            "mortality",
+            "public health",
+            "epidemic",
+        ]
         has_population = sum(1 for word in population_words if word in text_lower)
 
         # Management/regulation indicators
-        management_words = ["manage", "regulate", "control", "optimize", "administer", "govern"]
+        management_words = [
+            "manage",
+            "regulate",
+            "control",
+            "optimize",
+            "administer",
+            "govern",
+        ]
         has_management = sum(1 for word in management_words if word in text_lower)
 
         # Medical/health indicators
-        medical_words = ["medicine", "medical", "doctor", "hospital", "clinic", "treatment", "cure"]
+        medical_words = [
+            "medicine",
+            "medical",
+            "doctor",
+            "hospital",
+            "clinic",
+            "treatment",
+            "cure",
+        ]
         has_medical = sum(1 for word in medical_words if word in text_lower)
 
         # Race/species indicators
@@ -407,15 +570,21 @@ class Foucault(Philosopher):
 
         if has_population >= 1 and has_management >= 1:
             type_biopower = "Biopolitics"
-            description = "Power over populations - regulation of life processes at species level"
+            description = (
+                "Power over populations - regulation of life processes at species level"
+            )
             level = "Population"
         elif has_life >= 1 and has_medical >= 1:
             type_biopower = "Anatomo-politics"
-            description = "Power over individual bodies - optimization of life and health"
+            description = (
+                "Power over individual bodies - optimization of life and health"
+            )
             level = "Individual Body"
         elif has_race >= 1 or (has_population >= 1 and has_stats >= 1):
             type_biopower = "Biopower Regime"
-            description = "Knowledge and management of life - making live and letting die"
+            description = (
+                "Knowledge and management of life - making live and letting die"
+            )
             level = "Biopolitical"
         elif has_medical >= 2:
             type_biopower = "Medical Power"
@@ -430,7 +599,7 @@ class Foucault(Philosopher):
             "type": type_biopower,
             "description": description,
             "level": level,
-            "principle": "Biopower: the power to make live and let die (vs sovereign power: take life or let live)"
+            "principle": "Biopower: the power to make live and let die (vs sovereign power: take life or let live)",
         }
 
     def _check_archaeology(self, text: str) -> Dict[str, Any]:
@@ -444,11 +613,23 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Archaeological method indicators
-        archaeology_words = ["archaeology", "archaeological", "archive", "historical a priori"]
+        archaeology_words = [
+            "archaeology",
+            "archaeological",
+            "archive",
+            "historical a priori",
+        ]
         has_archaeology = sum(1 for phrase in archaeology_words if phrase in text_lower)
 
         # Conditions of possibility
-        conditions_words = ["conditions", "possibility", "possible", "allow", "enable", "permit"]
+        conditions_words = [
+            "conditions",
+            "possibility",
+            "possible",
+            "allow",
+            "enable",
+            "permit",
+        ]
         has_conditions = sum(1 for word in conditions_words if word in text_lower)
 
         # Discourse formation
@@ -460,7 +641,13 @@ class Foucault(Philosopher):
         has_rules = sum(1 for word in rules_words if word in text_lower)
 
         # Discontinuity indicators (vs continuous history)
-        discontinuity_words = ["discontinuity", "break", "rupture", "shift", "transformation"]
+        discontinuity_words = [
+            "discontinuity",
+            "break",
+            "rupture",
+            "shift",
+            "transformation",
+        ]
         has_discontinuity = sum(1 for word in discontinuity_words if word in text_lower)
 
         if has_archaeology >= 1:
@@ -488,7 +675,7 @@ class Foucault(Philosopher):
             "method": method,
             "description": description,
             "approach": approach,
-            "principle": "Archaeology describes discourses as practices specified by rules of formation"
+            "principle": "Archaeology describes discourses as practices specified by rules of formation",
         }
 
     def _check_genealogy(self, text: str) -> Dict[str, Any]:
@@ -506,7 +693,13 @@ class Foucault(Philosopher):
         has_genealogy = sum(1 for word in genealogy_words if word in text_lower)
 
         # Contingency indicators
-        contingency_words = ["contingent", "accident", "chance", "arbitrary", "could have been otherwise"]
+        contingency_words = [
+            "contingent",
+            "accident",
+            "chance",
+            "arbitrary",
+            "could have been otherwise",
+        ]
         has_contingency = sum(1 for phrase in contingency_words if phrase in text_lower)
 
         # Historical emergence (not origin)
@@ -514,7 +707,14 @@ class Foucault(Philosopher):
         has_emergence = sum(1 for word in emergence_words if word in text_lower)
 
         # Power struggle indicators
-        struggle_words = ["struggle", "conflict", "battle", "fight", "contest", "domination"]
+        struggle_words = [
+            "struggle",
+            "conflict",
+            "battle",
+            "fight",
+            "contest",
+            "domination",
+        ]
         has_struggle = sum(1 for word in struggle_words if word in text_lower)
 
         # Present/history of present
@@ -522,12 +722,20 @@ class Foucault(Philosopher):
         has_present = sum(1 for word in present_words if word in text_lower)
 
         # Anti-origin indicators
-        anti_origin = ["no origin", "not original", "not natural", "constructed", "invented"]
+        anti_origin = [
+            "no origin",
+            "not original",
+            "not natural",
+            "constructed",
+            "invented",
+        ]
         has_anti_origin = sum(1 for phrase in anti_origin if phrase in text_lower)
 
         if has_genealogy >= 1 or (has_contingency >= 1 and has_emergence >= 1):
             method = "Genealogical"
-            description = "Tracing contingent historical emergence - history of the present"
+            description = (
+                "Tracing contingent historical emergence - history of the present"
+            )
             approach = "Nietzschean Genealogy"
         elif has_struggle >= 1 and has_emergence >= 1:
             method = "Power History"
@@ -550,7 +758,7 @@ class Foucault(Philosopher):
             "method": method,
             "description": description,
             "approach": approach,
-            "principle": "Genealogy: gray, meticulous, documentary - history of the present, not origins"
+            "principle": "Genealogy: gray, meticulous, documentary - history of the present, not origins",
         }
 
     def _analyze_subjectivation(self, text: str) -> Dict[str, Any]:
@@ -564,27 +772,66 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Subject/self indicators
-        subject_words = ["subject", "self", "identity", "individual", "person", "who i am"]
+        subject_words = [
+            "subject",
+            "self",
+            "identity",
+            "individual",
+            "person",
+            "who i am",
+        ]
         has_subject = sum(1 for phrase in subject_words if phrase in text_lower)
 
         # Production/constitution indicators
-        production_words = ["produce", "constitute", "create", "form", "make", "construct"]
+        production_words = [
+            "produce",
+            "constitute",
+            "create",
+            "form",
+            "make",
+            "construct",
+        ]
         has_production = sum(1 for word in production_words if word in text_lower)
 
         # Subjection indicators (subjected to)
-        subjection_words = ["subjected", "submission", "obedience", "control", "dominated"]
+        subjection_words = [
+            "subjected",
+            "submission",
+            "obedience",
+            "control",
+            "dominated",
+        ]
         has_subjection = sum(1 for word in subjection_words if word in text_lower)
 
         # Self-knowledge indicators
-        self_knowledge = ["know myself", "self-knowledge", "introspection", "examine myself", "confession"]
+        self_knowledge = [
+            "know myself",
+            "self-knowledge",
+            "introspection",
+            "examine myself",
+            "confession",
+        ]
         has_self_knowledge = sum(1 for phrase in self_knowledge if phrase in text_lower)
 
         # Identity formation
-        formation_words = ["become", "formation", "shaped", "molded", "fashioned", "develop"]
+        formation_words = [
+            "become",
+            "formation",
+            "shaped",
+            "molded",
+            "fashioned",
+            "develop",
+        ]
         has_formation = sum(1 for word in formation_words if word in text_lower)
 
         # Technologies of self
-        tech_self = ["practice", "technique", "exercise", "discipline myself", "work on myself"]
+        tech_self = [
+            "practice",
+            "technique",
+            "exercise",
+            "discipline myself",
+            "work on myself",
+        ]
         has_tech_self = sum(1 for phrase in tech_self if phrase in text_lower)
 
         if has_subject >= 1 and has_production >= 1:
@@ -612,7 +859,7 @@ class Foucault(Philosopher):
             "process": process,
             "description": description,
             "mode": mode,
-            "principle": "The subject is a form, not a substance - produced through historical practices"
+            "principle": "The subject is a form, not a substance - produced through historical practices",
         }
 
     def _assess_governmentality(self, text: str) -> Dict[str, Any]:
@@ -634,7 +881,13 @@ class Foucault(Philosopher):
         has_conduct = sum(1 for word in conduct_words if word in text_lower)
 
         # Self-government indicators
-        self_govern = ["self-govern", "self-regulate", "self-control", "govern myself", "self-management"]
+        self_govern = [
+            "self-govern",
+            "self-regulate",
+            "self-control",
+            "govern myself",
+            "self-management",
+        ]
         has_self_govern = sum(1 for phrase in self_govern if phrase in text_lower)
 
         # Population/state indicators
@@ -642,11 +895,24 @@ class Foucault(Philosopher):
         has_pop_state = sum(1 for word in pop_state if word in text_lower)
 
         # Neoliberal indicators
-        neoliberal_words = ["market", "entrepreneur", "competition", "choice", "responsibility", "investment"]
+        neoliberal_words = [
+            "market",
+            "entrepreneur",
+            "competition",
+            "choice",
+            "responsibility",
+            "investment",
+        ]
         has_neoliberal = sum(1 for word in neoliberal_words if word in text_lower)
 
         # Rationality/calculation
-        rationality_words = ["rationality", "calculate", "optimize", "efficiency", "rational"]
+        rationality_words = [
+            "rationality",
+            "calculate",
+            "optimize",
+            "efficiency",
+            "rational",
+        ]
         has_rationality = sum(1 for word in rationality_words if word in text_lower)
 
         if has_govern >= 1 and has_conduct >= 1:
@@ -659,7 +925,9 @@ class Foucault(Philosopher):
             rationality = "Self-regulatory"
         elif has_neoliberal >= 2:
             type_gov = "Neoliberal Governmentality"
-            description = "Individuals as entrepreneurs of themselves - self as enterprise"
+            description = (
+                "Individuals as entrepreneurs of themselves - self as enterprise"
+            )
             rationality = "Neoliberal"
         elif has_govern >= 1 and has_pop_state >= 1:
             type_gov = "State Governmentality"
@@ -674,7 +942,7 @@ class Foucault(Philosopher):
             "type": type_gov,
             "description": description,
             "rationality": rationality,
-            "principle": "Governmentality: the conduct of conduct - how to govern and be governed"
+            "principle": "Governmentality: the conduct of conduct - how to govern and be governed",
         }
 
     def _check_care_of_self(self, text: str) -> Dict[str, Any]:
@@ -688,15 +956,33 @@ class Foucault(Philosopher):
         text_lower = text.lower()
 
         # Care of self direct indicators
-        care_self = ["care of self", "care of myself", "souci de soi", "epimeleia heautou"]
+        care_self = [
+            "care of self",
+            "care of myself",
+            "souci de soi",
+            "epimeleia heautou",
+        ]
         has_care_self = sum(1 for phrase in care_self if phrase in text_lower)
 
         # Self-practice indicators
-        practice_words = ["practice", "exercise", "cultivate", "work on myself", "train"]
+        practice_words = [
+            "practice",
+            "exercise",
+            "cultivate",
+            "work on myself",
+            "train",
+        ]
         has_practice = sum(1 for phrase in practice_words if phrase in text_lower)
 
         # Aesthetics of existence
-        aesthetic_words = ["art", "beauty", "style", "craft", "aesthetic", "create myself"]
+        aesthetic_words = [
+            "art",
+            "beauty",
+            "style",
+            "craft",
+            "aesthetic",
+            "create myself",
+        ]
         has_aesthetic = sum(1 for phrase in aesthetic_words if phrase in text_lower)
 
         # Ancient ethics indicators
@@ -704,7 +990,13 @@ class Foucault(Philosopher):
         has_ancient = sum(1 for phrase in ancient_words if phrase in text_lower)
 
         # Self-transformation
-        transform_words = ["transform", "change myself", "become", "fashioning", "shaping"]
+        transform_words = [
+            "transform",
+            "change myself",
+            "become",
+            "fashioning",
+            "shaping",
+        ]
         has_transform = sum(1 for phrase in transform_words if phrase in text_lower)
 
         # Moral code (opposed to care of self)
@@ -713,7 +1005,9 @@ class Foucault(Philosopher):
 
         if has_care_self >= 1:
             presence = "Care of Self"
-            description = "Ethics as aesthetic self-formation - making life a work of art"
+            description = (
+                "Ethics as aesthetic self-formation - making life a work of art"
+            )
             ethics_type = "Greek/Roman"
         elif has_aesthetic >= 1 and has_practice >= 1:
             presence = "Aesthetic Existence"
@@ -736,7 +1030,7 @@ class Foucault(Philosopher):
             "presence": presence,
             "description": description,
             "ethics_type": ethics_type,
-            "principle": "Make your life a work of art - ethics as aesthetics of existence"
+            "principle": "Make your life a work of art - ethics as aesthetics of existence",
         }
 
     def _identify_episteme(self, text: str) -> Dict[str, Any]:
@@ -762,15 +1056,34 @@ class Foucault(Philosopher):
         has_knowledge = sum(1 for word in knowledge_words if word in text_lower)
 
         # Underlying/fundamental
-        fundamental_words = ["underlying", "fundamental", "basis", "foundation", "ground", "deep"]
+        fundamental_words = [
+            "underlying",
+            "fundamental",
+            "basis",
+            "foundation",
+            "ground",
+            "deep",
+        ]
         has_fundamental = sum(1 for word in fundamental_words if word in text_lower)
 
         # Order/organization
-        order_words = ["order", "organize", "arrange", "classify", "system", "structure"]
+        order_words = [
+            "order",
+            "organize",
+            "arrange",
+            "classify",
+            "system",
+            "structure",
+        ]
         has_order = sum(1 for word in order_words if word in text_lower)
 
         # Specific epistemes
-        renaissance_words = ["renaissance", "resemblance", "similarity", "correspondence"]
+        renaissance_words = [
+            "renaissance",
+            "resemblance",
+            "similarity",
+            "correspondence",
+        ]
         classical_words = ["classical", "representation", "table", "taxonomy", "order"]
         modern_words = ["modern", "man", "human sciences", "finitude", "anthropology"]
 
@@ -780,7 +1093,9 @@ class Foucault(Philosopher):
 
         if has_episteme >= 1:
             type_episteme = "Episteme"
-            description = "Underlying epistemological framework organizing knowledge in an era"
+            description = (
+                "Underlying epistemological framework organizing knowledge in an era"
+            )
             period = "Explicit"
         elif has_renaissance >= 2:
             type_episteme = "Renaissance Episteme"
@@ -792,7 +1107,9 @@ class Foucault(Philosopher):
             period = "Classical Age (17th-18th century)"
         elif has_modern >= 2:
             type_episteme = "Modern Episteme"
-            description = "Knowledge organized around Man as empirical-transcendental doublet"
+            description = (
+                "Knowledge organized around Man as empirical-transcendental doublet"
+            )
             period = "Modern (19th-20th century)"
         elif has_fundamental >= 1 and has_knowledge >= 1:
             type_episteme = "Epistemological Framework"
@@ -807,7 +1124,7 @@ class Foucault(Philosopher):
             "type": type_episteme,
             "description": description,
             "period": period,
-            "principle": "Episteme: the strategic apparatus which permits separating out true from false statements"
+            "principle": "Episteme: the strategic apparatus which permits separating out true from false statements",
         }
 
     def _construct_reasoning(
@@ -816,7 +1133,7 @@ class Foucault(Philosopher):
         discourse: Dict[str, Any],
         disciplinary_power: Dict[str, Any],
         biopower: Dict[str, Any],
-        subjectivation: Dict[str, Any]
+        subjectivation: Dict[str, Any],
     ) -> str:
         """Construct Foucauldian genealogical/archaeological reasoning."""
         reasoning = (

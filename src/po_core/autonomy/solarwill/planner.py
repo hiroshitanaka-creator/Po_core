@@ -215,13 +215,18 @@ def _generate_goal_for_dimension(
         },
     }
 
-    template = goal_templates.get(dim_name, {
-        "description": f"Address {dim_name} concern",
-        "criteria": ["Goal achieved"],
-    })
+    template = goal_templates.get(
+        dim_name,
+        {
+            "description": f"Address {dim_name} concern",
+            "criteria": ["Goal achieved"],
+        },
+    )
 
     # Calculate ethical risk (lower for ethics dimension, higher for autonomy)
-    ethical_risk = 0.1 if dim_name == "ethics" else 0.2 if dim_name == "preservation" else 0.3
+    ethical_risk = (
+        0.1 if dim_name == "ethics" else 0.2 if dim_name == "preservation" else 0.3
+    )
 
     return GoalCandidate(
         description=template["description"],

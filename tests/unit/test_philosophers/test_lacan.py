@@ -20,7 +20,10 @@ class TestLacanBasicFunctionality:
         """Test that Lacan initializes correctly."""
         lacan = Lacan()
         assert lacan.name == "Jacques Lacan"
-        assert "psychoanalyst" in lacan.description.lower() or "psychoanalysis" in lacan.description.lower()
+        assert (
+            "psychoanalyst" in lacan.description.lower()
+            or "psychoanalysis" in lacan.description.lower()
+        )
 
     def test_lacan_repr(self):
         """Test string representation."""
@@ -84,7 +87,10 @@ class TestLacanRegisters:
         result = lacan.reason("I see my mirror image and identify with it")
 
         register = result["register"]
-        assert "Imaginary" in register["dominant"] or "imaginary" in register["description"].lower()
+        assert (
+            "Imaginary" in register["dominant"]
+            or "imaginary" in register["description"].lower()
+        )
 
     def test_symbolic_detection(self):
         """Test detection of Symbolic register."""
@@ -199,7 +205,9 @@ class TestLacanSignifier:
     def test_signifier_detection(self):
         """Test detection of signifier primacy."""
         lacan = Lacan()
-        result = lacan.reason("The signifier represents the subject for another signifier")
+        result = lacan.reason(
+            "The signifier represents the subject for another signifier"
+        )
 
         signifier = result["signifier_signified"]
         assert "relation" in signifier
@@ -265,7 +273,9 @@ class TestLacanDiscourse:
     def test_discourse_detection(self):
         """Test detection of discourse type."""
         lacan = Lacan()
-        result = lacan.reason("The master commands and the discourse structures relations")
+        result = lacan.reason(
+            "The master commands and the discourse structures relations"
+        )
 
         discourse = result["discourse"]
         assert "type" in discourse
@@ -289,7 +299,11 @@ class TestLacanReasoningText:
         result = lacan.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Lacan" in reasoning or "desire" in reasoning.lower() or "Other" in reasoning
+        assert (
+            "Lacan" in reasoning
+            or "desire" in reasoning.lower()
+            or "Other" in reasoning
+        )
 
 
 class TestLacanEdgeCases:

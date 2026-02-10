@@ -20,7 +20,10 @@ class TestDeleuzeBasicFunctionality:
         """Test that Deleuze initializes correctly."""
         deleuze = Deleuze()
         assert deleuze.name == "Gilles Deleuze"
-        assert "difference" in deleuze.description.lower() or "rhizome" in deleuze.description.lower()
+        assert (
+            "difference" in deleuze.description.lower()
+            or "rhizome" in deleuze.description.lower()
+        )
 
     def test_deleuze_repr(self):
         """Test string representation."""
@@ -81,15 +84,22 @@ class TestDeleuzeRhizome:
     def test_rhizome_detection(self):
         """Test detection of rhizomatic structure."""
         deleuze = Deleuze()
-        result = deleuze.reason("Multiple connections branching everywhere without center or hierarchy")
+        result = deleuze.reason(
+            "Multiple connections branching everywhere without center or hierarchy"
+        )
 
         rhizome = result["rhizome_vs_tree"]
-        assert "Rhizome" in rhizome["structure"] or "rhizome" in rhizome["description"].lower()
+        assert (
+            "Rhizome" in rhizome["structure"]
+            or "rhizome" in rhizome["description"].lower()
+        )
 
     def test_tree_detection(self):
         """Test detection of tree structure."""
         deleuze = Deleuze()
-        result = deleuze.reason("Hierarchical structure with roots, trunk, and linear branches")
+        result = deleuze.reason(
+            "Hierarchical structure with roots, trunk, and linear branches"
+        )
 
         rhizome = result["rhizome_vs_tree"]
         assert "structure" in rhizome
@@ -111,7 +121,9 @@ class TestDeleuzeDifference:
     def test_difference_in_itself_detection(self):
         """Test detection of difference in itself."""
         deleuze = Deleuze()
-        result = deleuze.reason("Each thing differs from itself in becoming and variation")
+        result = deleuze.reason(
+            "Each thing differs from itself in becoming and variation"
+        )
 
         difference = result["difference_repetition"]
         assert "orientation" in difference
@@ -136,7 +148,10 @@ class TestDeleuzeBecoming:
         result = deleuze.reason("I am becoming other, in flux and transformation")
 
         becoming = result["becoming"]
-        assert "Becoming" in becoming["presence"] or "becoming" in becoming["description"].lower()
+        assert (
+            "Becoming" in becoming["presence"]
+            or "becoming" in becoming["description"].lower()
+        )
 
 
 class TestDeleuzeBodyWithoutOrgans:
@@ -289,7 +304,11 @@ class TestDeleuzeReasoningText:
         result = deleuze.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Deleuze" in reasoning or "difference" in reasoning.lower() or "rhizome" in reasoning.lower()
+        assert (
+            "Deleuze" in reasoning
+            or "difference" in reasoning.lower()
+            or "rhizome" in reasoning.lower()
+        )
 
 
 class TestDeleuzeEdgeCases:

@@ -15,39 +15,47 @@ def test_viewer_renders_candidate_to_final_section():
     """DecisionEmitted から Candidate → Emitted セクションが生成される"""
     rid = "r1"
     events = [
-        TraceEvent.now("DecisionEmitted", rid, {
-            "stage": "action",
-            "origin": "safety_fallback",
-            "degraded": True,
-            "candidate": {
-                "proposal_id": "p1",
-                "action_type": "answer",
-                "content_len": 100,
-                "content_hash": "aaaa123456",
-                "policy_score": "0.100",
-                "author_reliability": "0.900",
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "stage": "action",
+                "origin": "safety_fallback",
+                "degraded": True,
+                "candidate": {
+                    "proposal_id": "p1",
+                    "action_type": "answer",
+                    "content_len": 100,
+                    "content_hash": "aaaa123456",
+                    "policy_score": "0.100",
+                    "author_reliability": "0.900",
+                },
+                "final": {
+                    "proposal_id": "p2",
+                    "action_type": "refuse",
+                    "content_len": 20,
+                    "content_hash": "bbbb789012",
+                    "policy_score": "1.000",
+                    "author_reliability": "1.000",
+                },
+                "gate": {
+                    "decision": "allow",
+                    "rule_ids": [],
+                },
             },
-            "final": {
-                "proposal_id": "p2",
-                "action_type": "refuse",
-                "content_len": 20,
-                "content_hash": "bbbb789012",
-                "policy_score": "1.000",
-                "author_reliability": "1.000",
+        ),
+        TraceEvent.now(
+            "SafetyOverrideApplied",
+            rid,
+            {
+                "stage": "action",
+                "reason": "gate_revise",
+                "gate": {
+                    "decision": "revise",
+                    "rule_ids": ["WG.ACT.OUTGUARD.001"],
+                },
             },
-            "gate": {
-                "decision": "allow",
-                "rule_ids": [],
-            },
-        }),
-        TraceEvent.now("SafetyOverrideApplied", rid, {
-            "stage": "action",
-            "reason": "gate_revise",
-            "gate": {
-                "decision": "revise",
-                "rule_ids": ["WG.ACT.OUTGUARD.001"],
-            },
-        }),
+        ),
     ]
 
     md = render_markdown(events)
@@ -64,27 +72,31 @@ def test_viewer_renders_without_override():
     """SafetyOverrideApplied がなくても DecisionEmitted がレンダリングされる"""
     rid = "r2"
     events = [
-        TraceEvent.now("DecisionEmitted", rid, {
-            "stage": "action",
-            "origin": "pareto",
-            "degraded": False,
-            "candidate": {
-                "proposal_id": "p1",
-                "action_type": "answer",
-                "content_len": 50,
-                "content_hash": "cccc",
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "stage": "action",
+                "origin": "pareto",
+                "degraded": False,
+                "candidate": {
+                    "proposal_id": "p1",
+                    "action_type": "answer",
+                    "content_len": 50,
+                    "content_hash": "cccc",
+                },
+                "final": {
+                    "proposal_id": "p1",
+                    "action_type": "answer",
+                    "content_len": 50,
+                    "content_hash": "cccc",
+                },
+                "gate": {
+                    "decision": "allow",
+                    "rule_ids": [],
+                },
             },
-            "final": {
-                "proposal_id": "p1",
-                "action_type": "answer",
-                "content_len": 50,
-                "content_hash": "cccc",
-            },
-            "gate": {
-                "decision": "allow",
-                "rule_ids": [],
-            },
-        }),
+        ),
     ]
 
     md = render_markdown(events)
@@ -99,22 +111,26 @@ def test_viewer_renders_intent_fallback():
     """意図段階の fallback でも DecisionEmitted がレンダリングされる"""
     rid = "r3"
     events = [
-        TraceEvent.now("DecisionEmitted", rid, {
-            "stage": "intent",
-            "origin": "intent_gate_fallback",
-            "degraded": True,
-            "candidate": None,
-            "final": {
-                "proposal_id": "fb1",
-                "action_type": "refuse",
-                "content_len": 30,
-                "content_hash": "dddd",
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "stage": "intent",
+                "origin": "intent_gate_fallback",
+                "degraded": True,
+                "candidate": None,
+                "final": {
+                    "proposal_id": "fb1",
+                    "action_type": "refuse",
+                    "content_len": 30,
+                    "content_hash": "dddd",
+                },
+                "gate": {
+                    "decision": "allow",
+                    "rule_ids": [],
+                },
             },
-            "gate": {
-                "decision": "allow",
-                "rule_ids": [],
-            },
-        }),
+        ),
     ]
 
     md = render_markdown(events)
@@ -128,25 +144,33 @@ def test_viewer_renders_gate_info():
     """gate情報（decision/rule_ids）がレンダリングされる"""
     rid = "r4"
     events = [
-        TraceEvent.now("DecisionEmitted", rid, {
-            "stage": "action",
-            "origin": "safety_fallback",
-            "degraded": True,
-            "candidate": {"proposal_id": "p1"},
-            "final": {"proposal_id": "p2"},
-            "gate": {
-                "decision": "allow",
-                "rule_ids": ["R1", "R2"],
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "stage": "action",
+                "origin": "safety_fallback",
+                "degraded": True,
+                "candidate": {"proposal_id": "p1"},
+                "final": {"proposal_id": "p2"},
+                "gate": {
+                    "decision": "allow",
+                    "rule_ids": ["R1", "R2"],
+                },
             },
-        }),
-        TraceEvent.now("SafetyOverrideApplied", rid, {
-            "stage": "action",
-            "reason": "gate_reject",
-            "gate": {
-                "decision": "reject",
-                "rule_ids": ["WG.ACT.001", "WG.ACT.002"],
+        ),
+        TraceEvent.now(
+            "SafetyOverrideApplied",
+            rid,
+            {
+                "stage": "action",
+                "reason": "gate_reject",
+                "gate": {
+                    "decision": "reject",
+                    "rule_ids": ["WG.ACT.001", "WG.ACT.002"],
+                },
             },
-        }),
+        ),
     ]
 
     md = render_markdown(events)
@@ -160,27 +184,31 @@ def test_viewer_renders_policy_score_and_author_rel():
     """policy_score と author_reliability がテーブルに含まれる"""
     rid = "r5"
     events = [
-        TraceEvent.now("DecisionEmitted", rid, {
-            "stage": "action",
-            "origin": "pareto",
-            "degraded": False,
-            "candidate": {
-                "proposal_id": "p1",
-                "action_type": "answer",
-                "content_len": 100,
-                "content_hash": "aaaa",
-                "policy_score": "0.850",
-                "author_reliability": "0.920",
+        TraceEvent.now(
+            "DecisionEmitted",
+            rid,
+            {
+                "stage": "action",
+                "origin": "pareto",
+                "degraded": False,
+                "candidate": {
+                    "proposal_id": "p1",
+                    "action_type": "answer",
+                    "content_len": 100,
+                    "content_hash": "aaaa",
+                    "policy_score": "0.850",
+                    "author_reliability": "0.920",
+                },
+                "final": {
+                    "proposal_id": "p1",
+                    "action_type": "answer",
+                    "content_len": 100,
+                    "content_hash": "aaaa",
+                    "policy_score": "0.850",
+                    "author_reliability": "0.920",
+                },
             },
-            "final": {
-                "proposal_id": "p1",
-                "action_type": "answer",
-                "content_len": 100,
-                "content_hash": "aaaa",
-                "policy_score": "0.850",
-                "author_reliability": "0.920",
-            },
-        }),
+        ),
     ]
 
     md = render_markdown(events)

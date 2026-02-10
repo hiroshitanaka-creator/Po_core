@@ -8,11 +8,11 @@ These are pure data classes with no external dependencies
 (except domain types).
 """
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
-import uuid
 
 
 class WillDimension(str, Enum):

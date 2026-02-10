@@ -7,8 +7,9 @@ The Semantic Profile maintains a dynamic representation of how meaning
 shifts and develops through philosophical analysis.
 """
 
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 from po_core.tensors.base import Tensor
@@ -160,9 +161,7 @@ class SemanticProfile(Tensor):
 
         # Novelty: Question marks and exploration terms
         novelty_indicators = ["?", "new", "novel", "innovative", "original", "unique"]
-        novelty = sum(
-            1 for indicator in novelty_indicators if indicator in text_lower
-        )
+        novelty = sum(1 for indicator in novelty_indicators if indicator in text_lower)
         novelty = min(novelty / len(novelty_indicators), 1.0)
 
         # Depth: Length and complexity indicators
@@ -174,9 +173,7 @@ class SemanticProfile(Tensor):
             [abstract, concrete, valence, coherence, novelty, depth], dtype=np.float64
         )
 
-    def _record_state(
-        self, text: str, profile: np.ndarray, delta: np.ndarray
-    ) -> None:
+    def _record_state(self, text: str, profile: np.ndarray, delta: np.ndarray) -> None:
         """
         Record current state in history.
 

@@ -64,7 +64,9 @@ def _extract_metrics_from_events(
             metrics["final_content_changed"] = diff.get("final_content_changed", False)
 
         if "final_policy_score_delta" in metric_names:
-            metrics["final_policy_score_delta"] = diff.get("final_policy_score_delta", 0.0)
+            metrics["final_policy_score_delta"] = diff.get(
+                "final_policy_score_delta", 0.0
+            )
 
     # DecisionEmitted から degraded 情報を取得
     de_events = [e for e in events if e.event_type == "DecisionEmitted"]
@@ -181,11 +183,15 @@ class ExperimentRunner:
 
                 # 定期的に進捗を表示
                 if (i + 1) % save_interval == 0:
-                    print(f"[{definition.id}] {i + 1}/{target_samples} samples collected")
+                    print(
+                        f"[{definition.id}] {i + 1}/{target_samples} samples collected"
+                    )
 
             # 4. ステータスを COMPLETED に更新
             self.storage.update_status(definition.id, ExperimentStatus.COMPLETED)
-            print(f"[{definition.id}] Experiment completed: {samples_collected} samples")
+            print(
+                f"[{definition.id}] Experiment completed: {samples_collected} samples"
+            )
 
         except Exception as e:
             # 失敗時はステータスを FAILED に更新
@@ -215,7 +221,10 @@ class ExperimentRunner:
         metrics = _extract_metrics_from_events(events, metric_names)
 
         return ExperimentSample(
-            request_id=result.get("request_id", f"{experiment_id}_{variant_name}_{datetime.now().timestamp()}"),
+            request_id=result.get(
+                "request_id",
+                f"{experiment_id}_{variant_name}_{datetime.now().timestamp()}",
+            ),
             variant_name=variant_name,
             metrics=metrics,
             timestamp=datetime.now(timezone.utc),

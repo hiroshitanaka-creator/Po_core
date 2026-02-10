@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal
 from po_core.runtime.shadow_guard import (
+    InMemoryShadowGuardStore,
     ShadowGuard,
     ShadowGuardConfig,
-    InMemoryShadowGuardStore,
 )
 
 

@@ -4,6 +4,7 @@ Policy-Aware Aggregator Test
 
 Tests that the aggregator prefers conservative proposals in dangerous modes.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -27,7 +28,9 @@ class TestCriticalMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.99})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.99}
+        )
 
         proposals = [
             Proposal("a", "answer", "do it", confidence=0.9),
@@ -43,7 +46,9 @@ class TestCriticalMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.90})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.90}
+        )
 
         proposals = [
             Proposal("a", "answer", "do it", confidence=0.9),
@@ -59,7 +64,9 @@ class TestCriticalMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.95})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.95}
+        )
 
         proposals = [
             Proposal("q", "ask_clarification", "what?", confidence=0.5),
@@ -79,7 +86,9 @@ class TestWarnMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70}
+        )
 
         proposals = [
             Proposal("a", "answer", "here is the answer", confidence=0.8),
@@ -101,7 +110,9 @@ class TestWarnMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70}
+        )
 
         proposals = [
             Proposal("a", "answer", "here is the answer", confidence=0.95),
@@ -119,7 +130,9 @@ class TestWarnMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70}
+        )
 
         proposals = [
             Proposal("a", "answer", "here is the answer", confidence=0.5),
@@ -141,7 +154,9 @@ class TestNormalMode:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40}
+        )
 
         proposals = [
             Proposal("a", "answer", "here is the answer", confidence=0.9),
@@ -162,10 +177,18 @@ class TestRiskPenalty:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40}
+        )
 
         proposals = [
-            Proposal("risky", "answer", "risky answer", confidence=0.8, risk_tags=["danger", "warning"]),
+            Proposal(
+                "risky",
+                "answer",
+                "risky answer",
+                confidence=0.8,
+                risk_tags=["danger", "warning"],
+            ),
             Proposal("safe", "answer", "safe answer", confidence=0.7, risk_tags=[]),
         ]
 
@@ -184,7 +207,9 @@ class TestEmptyProposals:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.40}
+        )
 
         out = agg.aggregate(ctx, Intent.neutral(), tensors, [])
         assert out.action_type == "refuse"
@@ -200,7 +225,9 @@ class TestAggregationMetadata:
         agg = PolicyAwareAggregator(cfg)
 
         ctx = Context("r1", datetime.now(timezone.utc), "x")
-        tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70})
+        tensors = TensorSnapshot(
+            datetime.now(timezone.utc), metrics={"freedom_pressure": 0.70}
+        )
 
         proposals = [
             Proposal("a", "answer", "here", confidence=0.8),

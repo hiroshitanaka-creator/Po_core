@@ -5,6 +5,7 @@ PhilosopherBridge Tests
 Tests that the bridge adapter correctly converts legacy Philosopher.reason()
 to PhilosopherProtocol.propose(), enabling the run_turn pipeline.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -17,12 +18,12 @@ from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
+from po_core.domain.safety_mode import SafetyMode
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.philosophers.base import Philosopher, PhilosopherInfo
 from po_core.philosophers.bridge import PhilosopherBridge, bridge
 from po_core.philosophers.manifest import SPECS
 from po_core.philosophers.registry import PhilosopherRegistry
-from po_core.domain.safety_mode import SafetyMode
 
 
 def _make_ctx(user_input: str = "test input") -> Context:
@@ -49,18 +50,21 @@ class TestBridgeBasics:
 
     def test_bridge_has_info(self):
         from po_core.philosophers.aristotle import Aristotle
+
         bridged = PhilosopherBridge(Aristotle())
         assert isinstance(bridged.info, PhilosopherInfo)
         assert "Aristotle" in bridged.info.name
 
     def test_bridge_has_propose(self):
         from po_core.philosophers.kant import Kant
+
         bridged = PhilosopherBridge(Kant())
         assert hasattr(bridged, "propose")
         assert callable(bridged.propose)
 
     def test_bridge_has_name(self):
         from po_core.philosophers.confucius import Confucius
+
         bridged = PhilosopherBridge(Confucius())
         assert hasattr(bridged, "name")
         assert isinstance(bridged.name, str)
@@ -68,6 +72,7 @@ class TestBridgeBasics:
 
     def test_bridge_factory_function(self):
         from po_core.philosophers.sartre import Sartre
+
         bridged = bridge(Sartre())
         assert isinstance(bridged, PhilosopherBridge)
         assert hasattr(bridged, "propose")
@@ -79,22 +84,31 @@ class TestBridgePropose:
 
     def test_propose_returns_list(self):
         from po_core.philosophers.aristotle import Aristotle
+
         bridged = PhilosopherBridge(Aristotle())
-        result = bridged.propose(_make_ctx(), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
+        )
         assert isinstance(result, list)
         assert len(result) >= 1
 
     def test_propose_returns_proposals(self):
         from po_core.philosophers.kant import Kant
+
         bridged = PhilosopherBridge(Kant())
-        result = bridged.propose(_make_ctx(), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
+        )
         for p in result:
             assert isinstance(p, Proposal)
 
     def test_proposal_has_required_fields(self):
         from po_core.philosophers.nietzsche import Nietzsche
+
         bridged = PhilosopherBridge(Nietzsche())
-        result = bridged.propose(_make_ctx("What is power?"), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx("What is power?"), _make_intent(), _make_tensors(), _make_memory()
+        )
         p = result[0]
         assert p.proposal_id
         assert p.action_type == "answer"
@@ -103,6 +117,7 @@ class TestBridgePropose:
 
     def test_proposal_id_contains_request_id(self):
         from po_core.philosophers.heidegger import Heidegger
+
         ctx = _make_ctx("What is being?")
         bridged = PhilosopherBridge(Heidegger())
         result = bridged.propose(ctx, _make_intent(), _make_tensors(), _make_memory())
@@ -110,15 +125,24 @@ class TestBridgePropose:
 
     def test_proposal_content_is_reasoning(self):
         from po_core.philosophers.dewey import Dewey
+
         bridged = PhilosopherBridge(Dewey())
-        result = bridged.propose(_make_ctx("What is education?"), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx("What is education?"),
+            _make_intent(),
+            _make_tensors(),
+            _make_memory(),
+        )
         # Content should come from the philosopher's reasoning
         assert len(result[0].content) > 10
 
     def test_proposal_extra_has_philosopher_info(self):
         from po_core.philosophers.wittgenstein import Wittgenstein
+
         bridged = PhilosopherBridge(Wittgenstein())
-        result = bridged.propose(_make_ctx(), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
+        )
         extra = result[0].extra
         assert "philosopher" in extra
         assert "perspective" in extra
@@ -130,8 +154,14 @@ class TestBridgeWithConfucius:
 
     def test_confucius_bridge_works(self):
         from po_core.philosophers.confucius import Confucius
+
         bridged = PhilosopherBridge(Confucius())
-        result = bridged.propose(_make_ctx("What is virtue?"), _make_intent(), _make_tensors(), _make_memory())
+        result = bridged.propose(
+            _make_ctx("What is virtue?"),
+            _make_intent(),
+            _make_tensors(),
+            _make_memory(),
+        )
         assert len(result) == 1
         p = result[0]
         assert len(p.content) > 0
@@ -176,7 +206,9 @@ class TestRegistryAutoBridge:
             result = ph.propose(ctx, intent, tensors, memory)
             assert isinstance(result, list), f"{ph.info.name} returned {type(result)}"
             assert len(result) >= 1, f"{ph.info.name} returned empty list"
-            assert isinstance(result[0], Proposal), f"{ph.info.name} returned non-Proposal"
+            assert isinstance(
+                result[0], Proposal
+            ), f"{ph.info.name} returned non-Proposal"
 
     def test_warn_mode_loads_subset(self):
         """WARN mode should load fewer philosophers, all bridged."""
@@ -216,6 +248,7 @@ class TestBridgeInPipeline:
     def test_run_with_bridged_philosophers(self):
         """Full pipeline should work with bridged philosophers."""
         from po_core.app.api import run
+
         result = run("What is the meaning of life?")
         assert result["status"] in ("ok", "blocked")
         if result["status"] == "ok":
@@ -225,6 +258,7 @@ class TestBridgeInPipeline:
     def test_run_proposal_not_dummy(self):
         """With bridge, proposals should contain real philosopher reasoning."""
         from po_core.app.api import run
+
         result = run("Is AI conscious?")
         if result["status"] == "ok":
             content = result["proposal"]["content"]

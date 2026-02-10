@@ -3,10 +3,10 @@
 import pytest
 
 from po_core.philosophers.base import Philosopher
+from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.nietzsche import Nietzsche
 from po_core.philosophers.sartre import Sartre
-from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.wittgenstein import Wittgenstein
 
 
@@ -91,7 +91,10 @@ class TestNietzsche:
     def test_nietzsche_initialization(self, nietzsche):
         """Test Nietzsche philosopher initialization."""
         assert nietzsche.name == "Friedrich Nietzsche"
-        assert "Will to Power" in nietzsche.description or "will to power" in nietzsche.description.lower()
+        assert (
+            "Will to Power" in nietzsche.description
+            or "will to power" in nietzsche.description.lower()
+        )
 
     def test_nietzsche_reason_structure(self, nietzsche, sample_prompt):
         """Test that Nietzsche's reasoning has expected structure."""
@@ -115,7 +118,10 @@ class TestSartre:
     def test_sartre_initialization(self, sartre):
         """Test Sartre philosopher initialization."""
         assert sartre.name == "Jean-Paul Sartre"
-        assert "Existentialism" in sartre.description or "existentialism" in sartre.description.lower()
+        assert (
+            "Existentialism" in sartre.description
+            or "existentialism" in sartre.description.lower()
+        )
 
     def test_sartre_reason_structure(self, sartre, sample_prompt):
         """Test that Sartre's reasoning has expected structure."""
@@ -137,7 +143,10 @@ class TestDerrida:
     def test_derrida_initialization(self, derrida):
         """Test Derrida philosopher initialization."""
         assert derrida.name == "Jacques Derrida"
-        assert "Deconstruction" in derrida.description or "deconstruction" in derrida.description.lower()
+        assert (
+            "Deconstruction" in derrida.description
+            or "deconstruction" in derrida.description.lower()
+        )
 
     def test_derrida_reason_structure(self, derrida, sample_prompt):
         """Test that Derrida's reasoning has expected structure."""

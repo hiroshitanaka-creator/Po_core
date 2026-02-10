@@ -5,6 +5,7 @@ WG.ACT.ACTTYPE.001 - Action Type Allowlist
 Rejects proposals with unknown action_type.
 Prevents philosophers from creating arbitrary action types.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -46,7 +47,9 @@ class ActionTypeAllowlistPolicy(ActionPolicy):
         return SafetyVerdict(
             decision=Decision.REJECT,
             rule_ids=[self.rule_id],
-            reasons=[f"[{self.rule_id}] 許可されていない action_type: '{proposal.action_type}'"],
+            reasons=[
+                f"[{self.rule_id}] 許可されていない action_type: '{proposal.action_type}'"
+            ],
             required_changes=[
                 f"action_type を許可集合 {sorted(self.allow)} のいずれかに制限してください。",
             ],

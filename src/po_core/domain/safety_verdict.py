@@ -114,6 +114,7 @@ class SafetyVerdict:
 
 # ── Backward compatibility types (for legacy code) ──────────────────
 
+
 class VerdictType(str, Enum):
     """Legacy verdict type enum (backward compat with action_gate.py)."""
 

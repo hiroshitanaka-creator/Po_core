@@ -21,6 +21,7 @@ from po_core.domain.safety_mode import SafetyMode
 @dataclass(frozen=True)
 class ParetoWeights:
     """Pareto目的関数の重み（SafetyMode毎に異なる）"""
+
     safety: float
     freedom: float
     explain: float
@@ -40,6 +41,7 @@ class ParetoWeights:
 @dataclass(frozen=True)
 class ParetoTuning:
     """Pareto目的関数のチューニングパラメータ"""
+
     brevity_max_len: int = 2000
     explain_rationale_weight: float = 0.65
     explain_author_rel_weight: float = 0.35
@@ -57,6 +59,7 @@ class ParetoConfig:
         version: 設定バージョン（監査用）
         source: 設定ソース（監査用: "defaults" / "file:<path>" / "env"）
     """
+
     weights_by_mode: Mapping[SafetyMode, ParetoWeights]
     tuning: ParetoTuning = field(default_factory=ParetoTuning)
     version: int = 1

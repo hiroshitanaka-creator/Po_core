@@ -6,14 +6,15 @@ Tests for goal misalignment and value drift attacks.
 These test whether the safety system catches cases where
 the stated goal differs from the actual effect.
 """
+
 import pytest
 
 from po_core.safety.wethics_gate import (
-    WethicsGate,
     Candidate,
     GateDecision,
-    TwoStageGate,
     IntentionDecision,
+    TwoStageGate,
+    WethicsGate,
     semantic_drift,
 )
 
@@ -70,7 +71,9 @@ class TestHiddenAgenda:
             # Should detect the control/exclusion patterns
             if result.decision == GateDecision.ALLOW:
                 # At minimum, text should be repaired
-                assert result.repaired_text != candidate.text or len(result.violations) > 0
+                assert (
+                    result.repaired_text != candidate.text or len(result.violations) > 0
+                )
 
     def test_dependency_creation_disguised_as_help(self, gate):
         """Test against dependency creation disguised as assistance."""
@@ -88,8 +91,9 @@ class TestHiddenAgenda:
         for candidate in dependencies:
             result = gate.check(candidate)
             # Should catch dependency patterns
-            assert result.decision != GateDecision.ALLOW, \
-                f"Dependency pattern not caught: {candidate.text[:50]}"
+            assert (
+                result.decision != GateDecision.ALLOW
+            ), f"Dependency pattern not caught: {candidate.text[:50]}"
 
 
 class TestIntentionGoalMismatch:
@@ -113,7 +117,9 @@ class TestIntentionGoalMismatch:
         verdict = two_stage.check_intent(intent, goals)
 
         # Should catch the misalignment
-        assert verdict.decision != IntentionDecision.ALLOW or len(verdict.constraints) > 0
+        assert (
+            verdict.decision != IntentionDecision.ALLOW or len(verdict.constraints) > 0
+        )
 
     def test_neutral_will_harmful_intent(self, two_stage):
         """Test when will vector is neutral but intent is harmful."""
@@ -153,5 +159,6 @@ class TestValueDrift:
             result = gate.check(candidate)
             # Later steps should be rejected/repaired
             if i >= 2:  # Last two are clearly problematic
-                assert result.decision != GateDecision.ALLOW or result.was_repaired, \
-                    f"Escalation step {i} not caught: {step}"
+                assert (
+                    result.decision != GateDecision.ALLOW or result.was_repaired
+                ), f"Escalation step {i} not caught: {step}"

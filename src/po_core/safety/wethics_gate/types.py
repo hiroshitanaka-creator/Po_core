@@ -21,7 +21,9 @@ Design Notes:
 
 Reference: 01_specifications/wethics_gate/W_ETHICS_GATE.md
 """
+
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
@@ -36,6 +38,7 @@ class GateDecision(str, Enum):
     - REJECT: Candidate fails and cannot be repaired
     - ESCALATE: Insufficient evidence, requires human review
     """
+
     ALLOW = "allow"
     ALLOW_WITH_REPAIR = "allow_with_repair"
     REJECT = "reject"
@@ -55,6 +58,7 @@ class GateViolationCode(str, Enum):
     - W3: Dependency Engineering
     - W4: Structural Exclusion
     """
+
     W0_IRREVERSIBLE_VIABILITY_HARM = "W0"
     W1_DOMINATION_CAPTURE = "W1"
     W2_DIGNITY_VIOLATION = "W2"
@@ -71,6 +75,7 @@ class RepairStage(str, Enum):
     3. SCOPE_REDUCTION: Reduce impact scope/authority/duration
     4. GOAL_REFRAME: Redefine goal to achieve same value differently
     """
+
     CONCEPT_MAPPING = "concept_mapping"
     CONSTRAINT_INJECTION = "constraint_injection"
     SCOPE_REDUCTION = "scope_reduction"
@@ -94,6 +99,7 @@ class Evidence:
         span: Optional (start, end) character positions in text
         tags: Optional tags for categorization
     """
+
     code: str  # "W0", "W1", "W2", "W3", "W4"
     message: str
     strength: float  # [0, 1]
@@ -124,6 +130,7 @@ class Violation:
         evidence: List of Evidence objects that contributed
         suggested_repairs: List of suggested repair descriptions
     """
+
     code: str  # "W0", "W1", "W2", "W3", "W4"
     severity: float  # [0, 1]
     confidence: float  # [0, 1]
@@ -155,6 +162,7 @@ class GateConfig:
         tau_drift_escalate: Semantic drift threshold for escalation
         strict_no_escalate: If True, escalate becomes reject
     """
+
     tau_reject: float = 0.6
     tau_repair: float = 0.3
     max_repairs: int = 2
@@ -175,6 +183,7 @@ class AxisScore:
         counterevidence: List of contradicting evidence strings
         notes: Additional notes for audit
     """
+
     value: float  # [0, 1]
     confidence: float  # [0, 1]
     evidence: List[str] = field(default_factory=list)
@@ -199,6 +208,7 @@ class RepairAction:
         after_text: Repaired text segment
         semantic_drift: Estimated semantic drift in [0, 1]
     """
+
     stage: RepairStage
     description: str
     before_text: str
@@ -220,6 +230,7 @@ class GateResult:
         drift_notes: Notes about semantic drift
         explanation: Human-readable explanation of decision
     """
+
     decision: GateDecision
     violations: List[Violation] = field(default_factory=list)
     repaired_text: Optional[str] = None
@@ -247,6 +258,7 @@ class Candidate:
         gate_result: W_ethics Gate evaluation result (if evaluated)
         source_philosopher: Source philosopher module (if applicable)
     """
+
     cid: str
     text: str
     meta: Dict[str, Any] = field(default_factory=dict)
@@ -282,6 +294,7 @@ class SelectionResult:
         explanation: Human-readable explanation
         rejected: List of rejected candidate info
     """
+
     selected_id: Optional[str]
     pareto_set_ids: List[str]
     mcda_method: str

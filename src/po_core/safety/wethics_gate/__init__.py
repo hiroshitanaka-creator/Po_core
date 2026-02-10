@@ -51,83 +51,74 @@ Reference Specifications:
 - 01_specifications/wethics_gate/SELECTION_PROTOCOL.md
 """
 
-from .types import (
-    # Enums
-    GateDecision,
-    GateViolationCode,
-    RepairStage,
-    # Data classes
-    Evidence,
-    Violation,
-    GateConfig,
-    AxisScore,
-    RepairAction,
-    GateResult,
-    Candidate,
-    SelectionResult,
-    # Constants
-    AXES,
-    AXIS_NAMES,
-    DEFAULT_TAU_REJECT,
-    DEFAULT_TAU_REPAIR,
-    DEFAULT_MAX_REPAIRS,
-    DEFAULT_PBEST_THRESHOLD,
+from .action_gate import (
+    ActionGate,
+    TwoStageGate,
+    check_proposal,
 )
-
 from .detectors import (
-    ViolationDetector,
     DetectorRegistry,
+    EnglishKeywordViolationDetector,
     KeywordRule,
     KeywordViolationDetector,
-    EnglishKeywordViolationDetector,
+    ViolationDetector,
     aggregate_evidence_to_violations,
     create_default_registry,
 )
-
-from .semantic_drift import (
-    DriftReport,
-    semantic_drift,
-)
-
 from .gate import (
     RuleBasedRepairEngine,
     WethicsGate,
     create_wethics_gate,
 )
 
-from .metrics import (
-    AxisProfile,
-    ContextProfile,
-    AxisScorer,
-    SafetyScorer,
-    FairnessScorer,
-    PrivacyScorer,
-    AutonomyScorer,
-    HarmAvoidanceScorer,
-    MetricsEvaluator,
-    create_metrics_evaluator,
-)
-
-from .select import (
-    pareto_front,
-    robust_weight_sampling_rank,
-    topsis_rank,
-    CandidateSelector,
-    create_candidate_selector,
-)
-
 # 2-Stage Gate (new in v0.3)
 from .intention_gate import (
     IntentionDecision,
-    IntentionVerdict,
     IntentionGate,
+    IntentionVerdict,
     check_intent,
 )
-
-from .action_gate import (
-    ActionGate,
-    TwoStageGate,
-    check_proposal,
+from .metrics import (
+    AutonomyScorer,
+    AxisProfile,
+    AxisScorer,
+    ContextProfile,
+    FairnessScorer,
+    HarmAvoidanceScorer,
+    MetricsEvaluator,
+    PrivacyScorer,
+    SafetyScorer,
+    create_metrics_evaluator,
+)
+from .select import (
+    CandidateSelector,
+    create_candidate_selector,
+    pareto_front,
+    robust_weight_sampling_rank,
+    topsis_rank,
+)
+from .semantic_drift import (
+    DriftReport,
+    semantic_drift,
+)
+from .types import (  # Enums; Data classes; Constants
+    AXES,
+    AXIS_NAMES,
+    DEFAULT_MAX_REPAIRS,
+    DEFAULT_PBEST_THRESHOLD,
+    DEFAULT_TAU_REJECT,
+    DEFAULT_TAU_REPAIR,
+    AxisScore,
+    Candidate,
+    Evidence,
+    GateConfig,
+    GateDecision,
+    GateResult,
+    GateViolationCode,
+    RepairAction,
+    RepairStage,
+    SelectionResult,
+    Violation,
 )
 
 __all__ = [

@@ -11,13 +11,14 @@ Shadow Pareto A/B comparison event のテスト:
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
-from po_core.domain.keys import PO_CORE, PARETO_DEBUG
+from po_core.domain.keys import PARETO_DEBUG, PO_CORE
 from po_core.domain.proposal import Proposal
 from po_core.trace.decision_compare import emit_decision_comparison
 
 
 class DummyTracer:
     """テスト用の簡易 Tracer"""
+
     def __init__(self):
         self.events = []
 
@@ -31,24 +32,59 @@ def test_emit_decision_comparison_emits_event():
     ctx = Context("r1", datetime.now(timezone.utc), "x")
 
     main_cand = Proposal(
-        "p1_main", "answer", "Main answer", 0.9,
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}}}
+        "p1_main",
+        "answer",
+        "Main answer",
+        0.9,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}
+            }
+        },
     )
     main_final = Proposal(
-        "p1_main", "answer", "Main answer", 0.9,
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}}}
+        "p1_main",
+        "answer",
+        "Main answer",
+        0.9,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}
+            }
+        },
     )
     shadow_cand = Proposal(
-        "p2_shadow", "refuse", "Shadow refuse", 1.0,
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "2", "config_source": "file:/shadow.yaml"}}}
+        "p2_shadow",
+        "refuse",
+        "Shadow refuse",
+        1.0,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    "config_version": "2",
+                    "config_source": "file:/shadow.yaml",
+                }
+            }
+        },
     )
     shadow_final = Proposal(
-        "p2_shadow", "refuse", "Shadow refuse", 1.0,
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "2", "config_source": "file:/shadow.yaml"}}}
+        "p2_shadow",
+        "refuse",
+        "Shadow refuse",
+        1.0,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    "config_version": "2",
+                    "config_source": "file:/shadow.yaml",
+                }
+            }
+        },
     )
 
     emit_decision_comparison(
-        tr, ctx,
+        tr,
+        ctx,
         main_candidate=main_cand,
         main_final=main_final,
         shadow_candidate=shadow_cand,
@@ -66,13 +102,22 @@ def test_decision_comparison_does_not_log_raw_content():
     tr = DummyTracer()
     ctx = Context("r2", datetime.now(timezone.utc), "x")
 
-    main_cand = Proposal("p1", "answer", "SECRET_MAIN_CONTENT_SHOULD_NOT_BE_LOGGED", 0.9)
-    main_final = Proposal("p1", "answer", "SECRET_MAIN_CONTENT_SHOULD_NOT_BE_LOGGED", 0.9)
-    shadow_cand = Proposal("p2", "refuse", "SECRET_SHADOW_CONTENT_SHOULD_NOT_BE_LOGGED", 1.0)
-    shadow_final = Proposal("p2", "refuse", "SECRET_SHADOW_CONTENT_SHOULD_NOT_BE_LOGGED", 1.0)
+    main_cand = Proposal(
+        "p1", "answer", "SECRET_MAIN_CONTENT_SHOULD_NOT_BE_LOGGED", 0.9
+    )
+    main_final = Proposal(
+        "p1", "answer", "SECRET_MAIN_CONTENT_SHOULD_NOT_BE_LOGGED", 0.9
+    )
+    shadow_cand = Proposal(
+        "p2", "refuse", "SECRET_SHADOW_CONTENT_SHOULD_NOT_BE_LOGGED", 1.0
+    )
+    shadow_final = Proposal(
+        "p2", "refuse", "SECRET_SHADOW_CONTENT_SHOULD_NOT_BE_LOGGED", 1.0
+    )
 
     emit_decision_comparison(
-        tr, ctx,
+        tr,
+        ctx,
         main_candidate=main_cand,
         main_final=main_final,
         shadow_candidate=shadow_cand,
@@ -91,18 +136,36 @@ def test_decision_comparison_diff_fields():
     ctx = Context("r3", datetime.now(timezone.utc), "x")
 
     main_cand = Proposal(
-        "p1", "answer", "Main", 0.9,
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}}}
+        "p1",
+        "answer",
+        "Main",
+        0.9,
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {"config_version": "1", "config_source": "defaults"}
+            }
+        },
     )
     main_final = Proposal("p1", "answer", "Main", 0.9)
     shadow_cand = Proposal(
-        "p2", "refuse", "Shadow", 1.0,  # action_type が異なる
-        extra={PO_CORE: {PARETO_DEBUG: {"config_version": "99", "config_source": "file:/shadow.yaml"}}}
+        "p2",
+        "refuse",
+        "Shadow",
+        1.0,  # action_type が異なる
+        extra={
+            PO_CORE: {
+                PARETO_DEBUG: {
+                    "config_version": "99",
+                    "config_source": "file:/shadow.yaml",
+                }
+            }
+        },
     )
     shadow_final = Proposal("p2", "refuse", "Shadow", 1.0)
 
     emit_decision_comparison(
-        tr, ctx,
+        tr,
+        ctx,
         main_candidate=main_cand,
         main_final=main_final,
         shadow_candidate=shadow_cand,
@@ -135,7 +198,8 @@ def test_decision_comparison_same_proposals():
     shadow_final = Proposal("p1", "answer", "Same", 0.9)
 
     emit_decision_comparison(
-        tr, ctx,
+        tr,
+        ctx,
         main_candidate=main_cand,
         main_final=main_final,
         shadow_candidate=shadow_cand,
@@ -163,7 +227,8 @@ def test_decision_comparison_contains_main_and_shadow():
     shadow_final = Proposal("p2_shadow", "refuse", "Shadow", 1.0)
 
     emit_decision_comparison(
-        tr, ctx,
+        tr,
+        ctx,
         main_candidate=main_cand,
         main_final=main_final,
         shadow_candidate=shadow_cand,

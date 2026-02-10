@@ -107,7 +107,9 @@ class TestWittgensteinMeaningUse:
     def test_use_theory_detection(self):
         """Test detection of use-theory of meaning."""
         wittgenstein = Wittgenstein()
-        result = wittgenstein.reason("The meaning depends on how we use it in practice.")
+        result = wittgenstein.reason(
+            "The meaning depends on how we use it in practice."
+        )
         meaning_use = result["meaning_use"]
         assert "Use-Theory" in meaning_use["adherence"]
 
@@ -126,7 +128,9 @@ class TestWittgensteinPhilosophicalConfusion:
     def test_confusion_detection(self):
         """Test detection of philosophical confusion."""
         wittgenstein = Wittgenstein()
-        result = wittgenstein.reason("What is the essence of reality? What is the ultimate meaning?")
+        result = wittgenstein.reason(
+            "What is the essence of reality? What is the ultimate meaning?"
+        )
         confusion = result["philosophical_confusion"]
         assert "Confusion" in confusion["detection"]
 

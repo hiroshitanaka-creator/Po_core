@@ -3,17 +3,19 @@ Tests for Philosopher Party Machine
 
 Comprehensive tests for the automated philosopher combination system.
 """
-import pytest
+
 from unittest.mock import patch
 
+import pytest
+
 from po_core.party_machine import (
-    PhilosopherPartyMachine,
-    PartyMood,
-    PhilosophicalTheme,
-    PartyConfig,
-    OPTIMAL_4_COMBOS,
-    HIGH_TENSION_PAIRS,
     HARMONIOUS_CLUSTERS,
+    HIGH_TENSION_PAIRS,
+    OPTIMAL_4_COMBOS,
+    PartyConfig,
+    PartyMood,
+    PhilosopherPartyMachine,
+    PhilosophicalTheme,
 )
 
 
@@ -192,9 +194,7 @@ class TestPhilosopherSelection:
         assert len(philosophers) == 4
         # Should be one of the optimal combos for ethics
         optimal_combos = OPTIMAL_4_COMBOS[PhilosophicalTheme.ETHICS]
-        assert any(
-            set(philosophers) == set(combo[:4]) for combo in optimal_combos
-        )
+        assert any(set(philosophers) == set(combo[:4]) for combo in optimal_combos)
 
     def test_select_philosophers_calm_mood_uses_harmonious(self):
         """Test that calm mood tends to use harmonious philosophers."""
@@ -208,7 +208,9 @@ class TestPhilosopherSelection:
 
         assert len(philosophers) == 8
         # Should have some philosophers from harmonious clusters
-        all_harmonious = [p for cluster in HARMONIOUS_CLUSTERS.values() for p in cluster]
+        all_harmonious = [
+            p for cluster in HARMONIOUS_CLUSTERS.values() for p in cluster
+        ]
         assert any(p in all_harmonious for p in philosophers)
 
 

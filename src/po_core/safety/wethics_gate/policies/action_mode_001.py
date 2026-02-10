@@ -12,6 +12,7 @@ Behavior:
 - WARN: REVISE unless action_type is safe (ask_clarification, refuse)
 - CRITICAL: REVISE to refuse unless already refuse
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -21,9 +22,9 @@ from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 
 
 @dataclass(frozen=True)
@@ -72,7 +73,9 @@ class ActionModeDegradePolicy:
                 reasons=[
                     f"[{self.rule_id}] SafetyMode=warn のため ask_clarification へ縮退",
                 ],
-                required_changes=["action_type を ask_clarification に変更してください。"],
+                required_changes=[
+                    "action_type を ask_clarification に変更してください。"
+                ],
                 meta={
                     "stage": "action",
                     "mode": mode.value,

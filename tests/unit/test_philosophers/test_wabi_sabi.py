@@ -20,7 +20,10 @@ class TestWabiSabiBasicFunctionality:
         """Test that Wabi-Sabi initializes correctly."""
         wabi_sabi = WabiSabi()
         assert "Wabi-Sabi" in wabi_sabi.name
-        assert "imperfection" in wabi_sabi.description.lower() or "impermanence" in wabi_sabi.description.lower()
+        assert (
+            "imperfection" in wabi_sabi.description.lower()
+            or "impermanence" in wabi_sabi.description.lower()
+        )
 
     def test_wabi_sabi_repr(self):
         """Test string representation."""
@@ -82,10 +85,15 @@ class TestWabiSabiImperfection:
     def test_imperfection_appreciation_detection(self):
         """Test detection of imperfection appreciation."""
         wabi_sabi = WabiSabi()
-        result = wabi_sabi.reason("The worn, weathered, and imperfect surfaces have beauty")
+        result = wabi_sabi.reason(
+            "The worn, weathered, and imperfect surfaces have beauty"
+        )
 
         imperfection = result["imperfection"]
-        assert "High" in imperfection["appreciation"] or "wabi" in imperfection["quality"].lower()
+        assert (
+            "High" in imperfection["appreciation"]
+            or "wabi" in imperfection["quality"].lower()
+        )
 
     def test_perfection_seeking_detection(self):
         """Test detection of perfection seeking."""
@@ -116,7 +124,11 @@ class TestWabiSabiImpermanence:
         result = wabi_sabi.reason("All things are transient, fleeting, and passing")
 
         impermanence = result["impermanence"]
-        assert "High" in impermanence["awareness"] or "sabi" in impermanence["quality"].lower() or "Awareness" in impermanence["awareness"]
+        assert (
+            "High" in impermanence["awareness"]
+            or "sabi" in impermanence["quality"].lower()
+            or "Awareness" in impermanence["awareness"]
+        )
 
 
 class TestWabiSabiSimplicity:
@@ -138,7 +150,11 @@ class TestWabiSabiSimplicity:
         result = wabi_sabi.reason("Simple, minimal, and austere quiet beauty")
 
         simplicity = result["simplicity"]
-        assert "High" in simplicity["level"] or "wabi-sabi" in simplicity["quality"].lower() or "Simplicity" in simplicity["level"]
+        assert (
+            "High" in simplicity["level"]
+            or "wabi-sabi" in simplicity["quality"].lower()
+            or "Simplicity" in simplicity["level"]
+        )
 
 
 class TestWabiSabiNaturalness:
@@ -157,10 +173,16 @@ class TestWabiSabiNaturalness:
     def test_naturalness_detection(self):
         """Test detection of naturalness."""
         wabi_sabi = WabiSabi()
-        result = wabi_sabi.reason("Natural, organic, and authentic materials from nature")
+        result = wabi_sabi.reason(
+            "Natural, organic, and authentic materials from nature"
+        )
 
         naturalness = result["naturalness"]
-        assert "High" in naturalness["level"] or "wabi-sabi" in naturalness["quality"].lower() or "Natural" in naturalness["level"]
+        assert (
+            "High" in naturalness["level"]
+            or "wabi-sabi" in naturalness["quality"].lower()
+            or "Natural" in naturalness["level"]
+        )
 
 
 class TestWabiSabiAsymmetry:
@@ -182,7 +204,10 @@ class TestWabiSabiAsymmetry:
         result = wabi_sabi.reason("Irregular, uneven, and asymmetric forms")
 
         asymmetry = result["asymmetry"]
-        assert "Asymmetry" in asymmetry["presence"] or "asymmetric" in asymmetry["description"].lower()
+        assert (
+            "Asymmetry" in asymmetry["presence"]
+            or "asymmetric" in asymmetry["description"].lower()
+        )
 
 
 class TestWabiSabiIntimacy:
@@ -204,7 +229,11 @@ class TestWabiSabiIntimacy:
         result = wabi_sabi.reason("Small, modest, and humble quiet spaces")
 
         intimacy = result["intimacy"]
-        assert "Intimacy" in intimacy["level"] or "intimate" in intimacy["description"].lower() or "level" in intimacy
+        assert (
+            "Intimacy" in intimacy["level"]
+            or "intimate" in intimacy["description"].lower()
+            or "level" in intimacy
+        )
 
 
 class TestWabiSabiYugen:
@@ -267,7 +296,9 @@ class TestWabiSabiMonoNoAware:
     def test_mono_no_aware_detection(self):
         """Test detection of mono no aware."""
         wabi_sabi = WabiSabi()
-        result = wabi_sabi.reason("Poignant beauty of fleeting cherry blossoms fading away")
+        result = wabi_sabi.reason(
+            "Poignant beauty of fleeting cherry blossoms fading away"
+        )
 
         mono_no_aware = result["mono_no_aware"]
         assert "presence" in mono_no_aware
@@ -314,7 +345,11 @@ class TestWabiSabiReasoning:
         result = wabi_sabi.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "wabi-sabi" in reasoning.lower() or "imperfection" in reasoning.lower() or "impermanence" in reasoning.lower()
+        assert (
+            "wabi-sabi" in reasoning.lower()
+            or "imperfection" in reasoning.lower()
+            or "impermanence" in reasoning.lower()
+        )
 
 
 class TestWabiSabiEdgeCases:

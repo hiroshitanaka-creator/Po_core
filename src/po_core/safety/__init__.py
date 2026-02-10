@@ -24,62 +24,55 @@ Purpose: Enable legitimate research while preventing misuse.
 """
 
 from po_core.safety.philosopher_profiles import (
-    SafetyTier,
-    EthicalRiskPattern,
     PHILOSOPHER_SAFETY_PROFILES,
-    get_trusted_philosophers,
-    get_restricted_philosophers,
+    EthicalRiskPattern,
+    SafetyTier,
     get_monitored_philosophers,
+    get_restricted_philosophers,
+    get_risk_factors,
+    get_trusted_philosophers,
     is_safe_for_general_use,
     requires_dangerous_pattern_mode,
-    get_risk_factors,
     validate_philosopher_group,
 )
-
 from po_core.safety.w_ethics import (
-    ViolationType,
-    ViolationPattern,
+    VIOLATION_PATTERNS,
     EthicsViolation,
+    ViolationPattern,
+    ViolationType,
     WEthicsGuardian,
     create_ethics_guardian,
-    VIOLATION_PATTERNS,
 )
 
 # W_ethics Gate (advanced filtering and selection)
-from po_core.safety.wethics_gate import (
-    # Gate types
-    GateDecision,
-    GateViolationCode,
-    RepairStage,
-    Evidence,
-    Violation,
-    GateConfig,
+from po_core.safety.wethics_gate import (  # Gate types; Detectors; Semantic Drift; Gate; Metrics; Selection
     AxisScore,
-    RepairAction,
-    GateResult,
     Candidate,
-    SelectionResult,
-    # Detectors
-    ViolationDetector,
-    DetectorRegistry,
-    KeywordViolationDetector,
-    aggregate_evidence_to_violations,
-    create_default_registry,
-    # Semantic Drift
-    DriftReport,
-    semantic_drift,
-    # Gate
-    RuleBasedRepairEngine,
-    WethicsGate,
-    create_wethics_gate,
-    # Metrics
-    ContextProfile,
-    MetricsEvaluator,
-    create_metrics_evaluator,
-    # Selection
     CandidateSelector,
+    ContextProfile,
+    DetectorRegistry,
+    DriftReport,
+    Evidence,
+    GateConfig,
+    GateDecision,
+    GateResult,
+    GateViolationCode,
+    KeywordViolationDetector,
+    MetricsEvaluator,
+    RepairAction,
+    RepairStage,
+    RuleBasedRepairEngine,
+    SelectionResult,
+    Violation,
+    ViolationDetector,
+    WethicsGate,
+    aggregate_evidence_to_violations,
     create_candidate_selector,
+    create_default_registry,
+    create_metrics_evaluator,
+    create_wethics_gate,
     pareto_front,
+    semantic_drift,
 )
 
 __all__ = [
@@ -94,7 +87,6 @@ __all__ = [
     "requires_dangerous_pattern_mode",
     "get_risk_factors",
     "validate_philosopher_group",
-
     # W_ethics boundaries
     "ViolationType",
     "ViolationPattern",
@@ -102,7 +94,6 @@ __all__ = [
     "WEthicsGuardian",
     "create_ethics_guardian",
     "VIOLATION_PATTERNS",
-
     # W_ethics Gate types
     "GateDecision",
     "GateViolationCode",
@@ -115,28 +106,23 @@ __all__ = [
     "GateResult",
     "Candidate",
     "SelectionResult",
-
     # W_ethics Detectors
     "ViolationDetector",
     "DetectorRegistry",
     "KeywordViolationDetector",
     "aggregate_evidence_to_violations",
     "create_default_registry",
-
     # W_ethics Semantic Drift
     "DriftReport",
     "semantic_drift",
-
     # W_ethics Gate
     "RuleBasedRepairEngine",
     "WethicsGate",
     "create_wethics_gate",
-
     # W_ethics Metrics
     "ContextProfile",
     "MetricsEvaluator",
     "create_metrics_evaluator",
-
     # W_ethics Selection
     "CandidateSelector",
     "create_candidate_selector",

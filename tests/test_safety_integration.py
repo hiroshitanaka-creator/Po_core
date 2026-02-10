@@ -8,13 +8,15 @@ Tests for Po_core safety system integration:
 - Restricted philosopher handling
 - Dangerous pattern detection mode
 """
+
 import pytest
+
 from po_core.po_self import PoSelf
 from po_core.safety import (
-    validate_philosopher_group,
-    create_ethics_guardian,
     SafetyTier,
     ViolationType,
+    create_ethics_guardian,
+    validate_philosopher_group,
 )
 
 
@@ -174,9 +176,7 @@ class TestValidatePhilosopherGroup:
 
     def test_all_trusted_valid(self):
         """All TRUSTED philosophers should validate."""
-        result = validate_philosopher_group(
-            ["aristotle", "confucius", "kant"]
-        )
+        result = validate_philosopher_group(["aristotle", "confucius", "kant"])
 
         assert result["valid"] is True
         assert len(result["blocked_philosophers"]) == 0
@@ -244,6 +244,7 @@ class TestViolationPatterns:
 # ============================================================================
 # Integration Tests with Mock Ensemble
 # ============================================================================
+
 
 class TestMockEthicsViolation:
     """Test ethics violation handling with mocked responses."""

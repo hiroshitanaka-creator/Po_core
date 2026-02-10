@@ -20,7 +20,10 @@ class TestBadiouBasicFunctionality:
         """Test that Badiou initializes correctly."""
         badiou = Badiou()
         assert badiou.name == "Alain Badiou"
-        assert "event" in badiou.description.lower() or "truth" in badiou.description.lower()
+        assert (
+            "event" in badiou.description.lower()
+            or "truth" in badiou.description.lower()
+        )
 
     def test_badiou_repr(self):
         """Test string representation."""
@@ -81,7 +84,9 @@ class TestBadiouEvent:
     def test_event_detection(self):
         """Test detection of event."""
         badiou = Badiou()
-        result = badiou.reason("Something radically new and unprecedented happens that ruptures the situation")
+        result = badiou.reason(
+            "Something radically new and unprecedented happens that ruptures the situation"
+        )
 
         event = result["event"]
         assert "Event" in event["status"] or "event" in event["description"].lower()
@@ -103,7 +108,9 @@ class TestBadiouTruthProcedure:
     def test_truth_procedure_detection(self):
         """Test detection of truth procedures."""
         badiou = Badiou()
-        result = badiou.reason("Through science, art, politics, and love we create truths")
+        result = badiou.reason(
+            "Through science, art, politics, and love we create truths"
+        )
 
         truth = result["truth_procedure"]
         assert "procedure" in truth
@@ -128,7 +135,10 @@ class TestBadiouFidelity:
         result = badiou.reason("I remain faithful and committed to what happened")
 
         fidelity = result["fidelity"]
-        assert "Fidelity" in fidelity["level"] or "faithful" in fidelity["description"].lower()
+        assert (
+            "Fidelity" in fidelity["level"]
+            or "faithful" in fidelity["description"].lower()
+        )
 
 
 class TestBadiouSubject:
@@ -281,7 +291,11 @@ class TestBadiouReasoningText:
         result = badiou.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Badiou" in reasoning or "event" in reasoning.lower() or "truth" in reasoning.lower()
+        assert (
+            "Badiou" in reasoning
+            or "event" in reasoning.lower()
+            or "truth" in reasoning.lower()
+        )
 
 
 class TestBadiouEdgeCases:

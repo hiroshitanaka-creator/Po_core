@@ -33,10 +33,12 @@ class Schopenhauer(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Arthur Schopenhauer",
-            description="Pessimist philosopher focused on the Will, suffering, compassion, and denial"
+            description="Pessimist philosopher focused on the Will, suffering, compassion, and denial",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Schopenhauer's pessimistic perspective.
 
@@ -70,8 +72,8 @@ class Schopenhauer(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Pessimistic metaphysics and ethics of compassion",
-                "focus": "The Will, suffering, aesthetic redemption, and negation"
-            }
+                "focus": "The Will, suffering, aesthetic redemption, and negation",
+            },
         }
 
     def _analyze_will_and_suffering(self, prompt: str) -> Dict[str, Any]:
@@ -130,7 +132,7 @@ class Schopenhauer(Philosopher):
             "principium_individuationis": principium_individuationis,
             "music": music,
             "suffering_boredom": suffering_boredom,
-            "nothingness": nothingness
+            "nothingness": nothingness,
         }
 
     def _analyze_will(self, text: str) -> Dict[str, Any]:
@@ -152,7 +154,13 @@ class Schopenhauer(Philosopher):
         has_blind = sum(1 for word in blind_words if word in text_lower)
 
         # Striving/endless indicators
-        striving_words = ["endless", "never satisfied", "always wanting", "ceaseless", "restless"]
+        striving_words = [
+            "endless",
+            "never satisfied",
+            "always wanting",
+            "ceaseless",
+            "restless",
+        ]
         has_striving = sum(1 for phrase in striving_words if phrase in text_lower)
 
         # Cosmic/universal will
@@ -165,7 +173,9 @@ class Schopenhauer(Philosopher):
 
         if has_will >= 2 and has_blind >= 1 and has_cosmic >= 1:
             presence = "The Will-in-Itself"
-            description = "Blind, cosmic Will - the thing-in-itself underlying all phenomena"
+            description = (
+                "Blind, cosmic Will - the thing-in-itself underlying all phenomena"
+            )
             type_will = "Metaphysical Will"
         elif has_will >= 2 and (has_striving >= 1 or has_blind >= 1):
             presence = "Will to Live"
@@ -188,7 +198,7 @@ class Schopenhauer(Philosopher):
             "presence": presence,
             "description": description,
             "type": type_will,
-            "principle": "The Will is the blind, irrational thing-in-itself - endless striving without purpose"
+            "principle": "The Will is the blind, irrational thing-in-itself - endless striving without purpose",
         }
 
     def _analyze_representation(self, text: str) -> Dict[str, Any]:
@@ -202,8 +212,17 @@ class Schopenhauer(Philosopher):
         text_lower = text.lower()
 
         # Representation indicators
-        representation_words = ["appear", "seem", "perceive", "experience", "observe", "see"]
-        has_representation = sum(1 for word in representation_words if word in text_lower)
+        representation_words = [
+            "appear",
+            "seem",
+            "perceive",
+            "experience",
+            "observe",
+            "see",
+        ]
+        has_representation = sum(
+            1 for word in representation_words if word in text_lower
+        )
 
         # Subject-object indicators
         subject_words = ["subject", "observer", "consciousness", "mind", "perceiver"]
@@ -246,7 +265,7 @@ class Schopenhauer(Philosopher):
             "level": level,
             "has_subject_object": has_subject and has_object,
             "causality_present": has_causality >= 1,
-            "principle": "The world is my representation - appearance structured by subject's forms"
+            "principle": "The world is my representation - appearance structured by subject's forms",
         }
 
     def _assess_pessimism(self, text: str) -> Dict[str, Any]:
@@ -264,15 +283,34 @@ class Schopenhauer(Philosopher):
         has_suffering = sum(1 for word in suffering_words if word in text_lower)
 
         # Pessimistic conclusions
-        pessimistic_phrases = ["not worth", "better not", "should not have", "regret being", "curse"]
-        has_pessimistic = sum(1 for phrase in pessimistic_phrases if phrase in text_lower)
+        pessimistic_phrases = [
+            "not worth",
+            "better not",
+            "should not have",
+            "regret being",
+            "curse",
+        ]
+        has_pessimistic = sum(
+            1 for phrase in pessimistic_phrases if phrase in text_lower
+        )
 
         # Life-denying indicators
-        life_denial = ["life is suffering", "existence is bad", "not worth living", "better to not exist"]
+        life_denial = [
+            "life is suffering",
+            "existence is bad",
+            "not worth living",
+            "better to not exist",
+        ]
         has_life_denial = sum(1 for phrase in life_denial if phrase in text_lower)
 
         # Optimism indicators (opposed to Schopenhauer)
-        optimistic_words = ["wonderful", "beautiful", "blessed", "good to be alive", "worth it"]
+        optimistic_words = [
+            "wonderful",
+            "beautiful",
+            "blessed",
+            "good to be alive",
+            "worth it",
+        ]
         has_optimistic = sum(1 for phrase in optimistic_words if phrase in text_lower)
 
         # Resignation indicators
@@ -293,7 +331,9 @@ class Schopenhauer(Philosopher):
             stance = "Realistic"
         elif has_optimistic >= 2:
             orientation = "Optimism"
-            description = "Naive belief that life is fundamentally good - denying reality"
+            description = (
+                "Naive belief that life is fundamentally good - denying reality"
+            )
             stance = "Deluded"
         else:
             orientation = "Unclear"
@@ -304,7 +344,7 @@ class Schopenhauer(Philosopher):
             "orientation": orientation,
             "description": description,
             "stance": stance,
-            "principle": "Life is suffering - optimism is absurd; existence itself is the problem"
+            "principle": "Life is suffering - optimism is absurd; existence itself is the problem",
         }
 
     def _evaluate_aesthetic_contemplation(self, text: str) -> Dict[str, Any]:
@@ -318,15 +358,38 @@ class Schopenhauer(Philosopher):
         text_lower = text.lower()
 
         # Art/beauty indicators
-        art_words = ["art", "beauty", "beautiful", "aesthetic", "sublime", "painting", "sculpture"]
+        art_words = [
+            "art",
+            "beauty",
+            "beautiful",
+            "aesthetic",
+            "sublime",
+            "painting",
+            "sculpture",
+        ]
         has_art = sum(1 for word in art_words if word in text_lower)
 
         # Contemplation indicators
-        contemplation_words = ["contemplate", "observe", "gaze", "behold", "pure perception"]
-        has_contemplation = sum(1 for phrase in contemplation_words if phrase in text_lower)
+        contemplation_words = [
+            "contemplate",
+            "observe",
+            "gaze",
+            "behold",
+            "pure perception",
+        ]
+        has_contemplation = sum(
+            1 for phrase in contemplation_words if phrase in text_lower
+        )
 
         # Will-less/escape indicators
-        escape_words = ["escape", "forget", "lost in", "absorbed", "transcend", "free from desire"]
+        escape_words = [
+            "escape",
+            "forget",
+            "lost in",
+            "absorbed",
+            "transcend",
+            "free from desire",
+        ]
         has_escape = sum(1 for phrase in escape_words if phrase in text_lower)
 
         # Platonic Ideas
@@ -339,7 +402,9 @@ class Schopenhauer(Philosopher):
 
         if has_art >= 1 and has_contemplation >= 1 and has_escape >= 1:
             status = "Aesthetic Redemption"
-            description = "Pure will-less contemplation - temporary escape from suffering"
+            description = (
+                "Pure will-less contemplation - temporary escape from suffering"
+            )
             level = "Full aesthetic experience"
         elif has_art >= 2 or (has_art >= 1 and has_contemplation >= 1):
             status = "Aesthetic Engagement"
@@ -360,7 +425,7 @@ class Schopenhauer(Philosopher):
             "level": level,
             "will_less": has_escape >= 1,
             "temporary": has_temporary >= 1,
-            "principle": "Art provides temporary liberation - pure will-less contemplation of Ideas"
+            "principle": "Art provides temporary liberation - pure will-less contemplation of Ideas",
         }
 
     def _assess_compassion(self, text: str) -> Dict[str, Any]:
@@ -378,19 +443,40 @@ class Schopenhauer(Philosopher):
         has_compassion = sum(1 for phrase in compassion_words if phrase in text_lower)
 
         # Suffering of others
-        others_suffering = ["their pain", "others suffer", "their suffering", "they hurt"]
-        has_others_suffering = sum(1 for phrase in others_suffering if phrase in text_lower)
+        others_suffering = [
+            "their pain",
+            "others suffer",
+            "their suffering",
+            "they hurt",
+        ]
+        has_others_suffering = sum(
+            1 for phrase in others_suffering if phrase in text_lower
+        )
 
         # Identification with others
-        identification_words = ["same as me", "like me", "no different", "one with", "recognize myself"]
-        has_identification = sum(1 for phrase in identification_words if phrase in text_lower)
+        identification_words = [
+            "same as me",
+            "like me",
+            "no different",
+            "one with",
+            "recognize myself",
+        ]
+        has_identification = sum(
+            1 for phrase in identification_words if phrase in text_lower
+        )
 
         # Unity/oneness indicators
         unity_words = ["unity", "oneness", "same", "one", "connected", "together"]
         has_unity = sum(1 for word in unity_words if word in text_lower)
 
         # Selfishness/egoism (opposed to compassion)
-        selfish_words = ["selfish", "only me", "my gain", "use them", "don't care about"]
+        selfish_words = [
+            "selfish",
+            "only me",
+            "my gain",
+            "use them",
+            "don't care about",
+        ]
         has_selfish = sum(1 for phrase in selfish_words if phrase in text_lower)
 
         if has_compassion >= 1 and has_identification >= 1:
@@ -418,7 +504,7 @@ class Schopenhauer(Philosopher):
             "presence": presence,
             "description": description,
             "moral_basis": moral_basis,
-            "principle": "Compassion is the basis of morality - recognizing the same Will in all beings"
+            "principle": "Compassion is the basis of morality - recognizing the same Will in all beings",
         }
 
     def _check_denial_of_will(self, text: str) -> Dict[str, Any]:
@@ -436,7 +522,14 @@ class Schopenhauer(Philosopher):
         has_denial = sum(1 for word in denial_words if word in text_lower)
 
         # Asceticism indicators
-        ascetic_words = ["ascetic", "abstain", "celibacy", "poverty", "self-denial", "mortification"]
+        ascetic_words = [
+            "ascetic",
+            "abstain",
+            "celibacy",
+            "poverty",
+            "self-denial",
+            "mortification",
+        ]
         has_ascetic = sum(1 for word in ascetic_words if word in text_lower)
 
         # Resignation indicators
@@ -448,7 +541,13 @@ class Schopenhauer(Philosopher):
         has_desire = sum(1 for phrase in desire_words if phrase in text_lower)
 
         # Salvation/liberation indicators
-        salvation_words = ["salvation", "liberation", "freedom", "release", "escape suffering"]
+        salvation_words = [
+            "salvation",
+            "liberation",
+            "freedom",
+            "release",
+            "escape suffering",
+        ]
         has_salvation = sum(1 for phrase in salvation_words if phrase in text_lower)
 
         # Saintly/holy indicators
@@ -480,7 +579,7 @@ class Schopenhauer(Philosopher):
             "status": status,
             "description": description,
             "path": path,
-            "principle": "Denial of the will to live is the only salvation from suffering"
+            "principle": "Denial of the will to live is the only salvation from suffering",
         }
 
     def _analyze_principium_individuationis(self, text: str) -> Dict[str, Any]:
@@ -494,7 +593,14 @@ class Schopenhauer(Philosopher):
         text_lower = text.lower()
 
         # Individuation indicators
-        individual_words = ["individual", "separate", "distinct", "different", "alone", "apart"]
+        individual_words = [
+            "individual",
+            "separate",
+            "distinct",
+            "different",
+            "alone",
+            "apart",
+        ]
         has_individual = sum(1 for word in individual_words if word in text_lower)
 
         # Illusion/Maya indicators
@@ -502,20 +608,41 @@ class Schopenhauer(Philosopher):
         has_illusion = sum(1 for phrase in illusion_words if phrase in text_lower)
 
         # Unity/oneness (seeing through individuation)
-        unity_words = ["one", "unity", "same", "identical", "no difference", "all is one"]
+        unity_words = [
+            "one",
+            "unity",
+            "same",
+            "identical",
+            "no difference",
+            "all is one",
+        ]
         has_unity = sum(1 for phrase in unity_words if phrase in text_lower)
 
         # Separation/boundaries
-        separation_words = ["boundary", "border", "me vs them", "us vs them", "separate from"]
+        separation_words = [
+            "boundary",
+            "border",
+            "me vs them",
+            "us vs them",
+            "separate from",
+        ]
         has_separation = sum(1 for phrase in separation_words if phrase in text_lower)
 
         # Seeing through the veil
-        penetrating_words = ["see through", "recognize", "understand", "realize oneness", "truth"]
+        penetrating_words = [
+            "see through",
+            "recognize",
+            "understand",
+            "realize oneness",
+            "truth",
+        ]
         has_penetrating = sum(1 for phrase in penetrating_words if phrase in text_lower)
 
         if has_unity >= 2 or (has_unity >= 1 and has_penetrating >= 1):
             status = "Seeing Through Individuation"
-            description = "Penetrating Maya's veil - recognizing the unity of all in the Will"
+            description = (
+                "Penetrating Maya's veil - recognizing the unity of all in the Will"
+            )
             level = "Enlightened"
         elif has_illusion >= 1 and has_individual >= 1:
             status = "Aware of Illusion"
@@ -534,7 +661,7 @@ class Schopenhauer(Philosopher):
             "status": status,
             "description": description,
             "level": level,
-            "principle": "Principium individuationis is Maya's veil - illusion of multiplicity created by space and time"
+            "principle": "Principium individuationis is Maya's veil - illusion of multiplicity created by space and time",
         }
 
     def _evaluate_music(self, text: str) -> Dict[str, Any]:
@@ -560,7 +687,13 @@ class Schopenhauer(Philosopher):
         has_emotional = sum(1 for word in emotional_words if word in text_lower)
 
         # Universal language
-        universal_words = ["universal", "language", "speaks", "expresses", "communicates"]
+        universal_words = [
+            "universal",
+            "language",
+            "speaks",
+            "expresses",
+            "communicates",
+        ]
         has_universal = sum(1 for word in universal_words if word in text_lower)
 
         # Highest/supreme indicators
@@ -588,7 +721,7 @@ class Schopenhauer(Philosopher):
             "status": status,
             "description": description,
             "significance": significance,
-            "principle": "Music is a direct copy of the Will itself - the highest of all arts"
+            "principle": "Music is a direct copy of the Will itself - the highest of all arts",
         }
 
     def _assess_suffering_boredom(self, text: str) -> Dict[str, Any]:
@@ -610,7 +743,13 @@ class Schopenhauer(Philosopher):
         has_boredom = sum(1 for word in boredom_words if word in text_lower)
 
         # Oscillation/pendulum indicators
-        oscillation_words = ["swing", "oscillate", "between", "alternate", "back and forth"]
+        oscillation_words = [
+            "swing",
+            "oscillate",
+            "between",
+            "alternate",
+            "back and forth",
+        ]
         has_oscillation = sum(1 for phrase in oscillation_words if phrase in text_lower)
 
         # Unsatisfied desire
@@ -627,7 +766,9 @@ class Schopenhauer(Philosopher):
 
         if has_suffering >= 1 and has_boredom >= 1:
             status = "Pendulum Between Pain and Boredom"
-            description = "Oscillating between suffering of desire and boredom of satisfaction"
+            description = (
+                "Oscillating between suffering of desire and boredom of satisfaction"
+            )
             condition = "Life's fundamental structure"
         elif has_oscillation >= 1 or (has_unsatisfied >= 1 and has_empty >= 1):
             status = "Alternating Misery"
@@ -654,7 +795,7 @@ class Schopenhauer(Philosopher):
             "status": status,
             "description": description,
             "condition": condition,
-            "principle": "Life is a pendulum between pain and boredom - no positive happiness"
+            "principle": "Life is a pendulum between pain and boredom - no positive happiness",
         }
 
     def _check_nothingness(self, text: str) -> Dict[str, Any]:
@@ -672,7 +813,14 @@ class Schopenhauer(Philosopher):
         has_nothing = sum(1 for word in nothing_words if word in text_lower)
 
         # Nirvana/peace indicators
-        nirvana_words = ["nirvana", "peace", "calm", "tranquility", "stillness", "quiet"]
+        nirvana_words = [
+            "nirvana",
+            "peace",
+            "calm",
+            "tranquility",
+            "stillness",
+            "quiet",
+        ]
         has_nirvana = sum(1 for word in nirvana_words if word in text_lower)
 
         # Better than existence
@@ -680,7 +828,12 @@ class Schopenhauer(Philosopher):
         has_better = sum(1 for phrase in better_words if phrase in text_lower)
 
         # Fear of nothingness
-        fear_nothing = ["fear nothing", "afraid of void", "terror of", "dread of nothing"]
+        fear_nothing = [
+            "fear nothing",
+            "afraid of void",
+            "terror of",
+            "dread of nothing",
+        ]
         has_fear = sum(1 for phrase in fear_nothing if phrase in text_lower)
 
         # Affirmation of existence (opposed to nothingness)
@@ -712,7 +865,7 @@ class Schopenhauer(Philosopher):
             "orientation": orientation,
             "description": description,
             "stance": stance,
-            "principle": "Nothingness is the goal of will-denial - better than the suffering of existence"
+            "principle": "Nothingness is the goal of will-denial - better than the suffering of existence",
         }
 
     def _construct_reasoning(
@@ -721,7 +874,7 @@ class Schopenhauer(Philosopher):
         pessimism: Dict[str, Any],
         aesthetic_contemplation: Dict[str, Any],
         compassion: Dict[str, Any],
-        denial_of_will: Dict[str, Any]
+        denial_of_will: Dict[str, Any],
     ) -> str:
         """Construct Schopenhauerian pessimistic reasoning."""
         reasoning = (
@@ -761,11 +914,16 @@ class Schopenhauer(Philosopher):
         denial_status = analysis["denial_of_will"]["status"]
         if "Affirmation" in denial_status:
             tension_score += 2
-            tension_elements.append("Affirming the will to live - perpetuating suffering")
+            tension_elements.append(
+                "Affirming the will to live - perpetuating suffering"
+            )
 
         # Check pessimism
         pessimism_orientation = analysis["pessimism"]["orientation"]
-        if "Optimism" in pessimism_orientation or "Deluded" in analysis["pessimism"]["stance"]:
+        if (
+            "Optimism" in pessimism_orientation
+            or "Deluded" in analysis["pessimism"]["stance"]
+        ):
             tension_score += 2
             tension_elements.append("Naive optimism - denying the reality of suffering")
 
@@ -796,7 +954,9 @@ class Schopenhauer(Philosopher):
         # Determine tension level
         if tension_score >= 6:
             level = "Very High"
-            description = "Profound delusion - strong will-affirmation and denial of suffering"
+            description = (
+                "Profound delusion - strong will-affirmation and denial of suffering"
+            )
         elif tension_score >= 4:
             level = "High"
             description = "Significant tensions - trapped in willing and egoism"
@@ -808,10 +968,14 @@ class Schopenhauer(Philosopher):
             description = "Minor tensions, moving toward resignation"
         else:
             level = "Very Low"
-            description = "Aligned with will-denial and compassion - on the path to salvation"
+            description = (
+                "Aligned with will-denial and compassion - on the path to salvation"
+            )
 
         return {
             "level": level,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }

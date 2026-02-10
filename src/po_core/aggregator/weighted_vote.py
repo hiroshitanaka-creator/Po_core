@@ -4,6 +4,7 @@ Weighted Vote Aggregator
 
 Aggregates proposals by selecting the highest-confidence one.
 """
+
 from __future__ import annotations
 
 from typing import Sequence

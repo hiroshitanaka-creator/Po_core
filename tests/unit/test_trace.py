@@ -168,7 +168,9 @@ class TestReasoningTracer:
         tracer = ReasoningTracer()
 
         tracer.log_tensor_computation(
-            tensor_name="FreedomPressure", tensor_data=[0.1, 0.2, 0.3], metadata={"foo": "bar"}
+            tensor_name="FreedomPressure",
+            tensor_data=[0.1, 0.2, 0.3],
+            metadata={"foo": "bar"},
         )
 
         assert len(tracer.entries) == 1
@@ -373,9 +375,7 @@ class TestPhilosophicalAnnotator:
 
         # All annotations should be relevant to Sartre
         for annotation in annotations:
-            assert "sartre" in [
-                p.lower() for p in annotation.associated_philosophers
-            ]
+            assert "sartre" in [p.lower() for p in annotation.associated_philosophers]
 
     def test_annotate_reasoning_no_matches(self):
         """Test annotation with text that has no philosophical keywords."""
@@ -543,11 +543,19 @@ class TestTraceIntegration:
 
         # 2. Log philosopher perspectives
         tracer.log_philosopher_reasoning(
-            "sartre", "What is authenticity?", "Living in good faith", 0.9, "Existentialism"
+            "sartre",
+            "What is authenticity?",
+            "Living in good faith",
+            0.9,
+            "Existentialism",
         )
 
         tracer.log_philosopher_reasoning(
-            "heidegger", "What is authenticity?", "Being true to Dasein", 0.85, "Phenomenology"
+            "heidegger",
+            "What is authenticity?",
+            "Being true to Dasein",
+            0.85,
+            "Phenomenology",
         )
 
         # 3. Log blocked content

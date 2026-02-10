@@ -24,18 +24,18 @@ The Solar Will engine sits BEFORE philosophers in the pipeline,
 ensuring that autonomous will drives the deliberation process.
 """
 
+from po_core.autonomy.solarwill.engine import SolarWillEngine
 from po_core.autonomy.solarwill.model import (
+    GoalCandidate,
+    Intent,
     WillState,
     WillVector,
-    Intent,
-    GoalCandidate,
+)
+from po_core.autonomy.solarwill.planner import (
+    generate_goals,
+    generate_intent,
 )
 from po_core.autonomy.solarwill.update import update_will
-from po_core.autonomy.solarwill.planner import (
-    generate_intent,
-    generate_goals,
-)
-from po_core.autonomy.solarwill.engine import SolarWillEngine
 
 __all__ = [
     # Model

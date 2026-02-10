@@ -7,8 +7,9 @@ The Blocked Tensor records what was NOT said - the rejected, filtered,
 or suppressed meanings. This captures the "trace" of absent possibilities.
 """
 
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 from po_core.tensors.base import Tensor
@@ -253,9 +254,7 @@ class BlockedTensor(Tensor):
             List of blocked entries
         """
         return [
-            entry
-            for entry in self.blocked_entries
-            if entry.philosopher == philosopher
+            entry for entry in self.blocked_entries if entry.philosopher == philosopher
         ]
 
     def get_blocked_by_category(self, category: str) -> List[BlockedEntry]:
@@ -306,9 +305,7 @@ class BlockedTensor(Tensor):
 
         # Philosopher breakdown
         philosophers = set(
-            entry.philosopher
-            for entry in self.blocked_entries
-            if entry.philosopher
+            entry.philosopher for entry in self.blocked_entries if entry.philosopher
         )
         for phil in philosophers:
             entries = self.get_blocked_by_philosopher(phil)

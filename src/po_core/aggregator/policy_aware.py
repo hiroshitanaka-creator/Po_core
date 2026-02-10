@@ -11,6 +11,7 @@ SafetyModeを読んで裁定する aggregator。
 
 これで Gate の前段で「保守的な提案」が勝つ確率が上がる。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -69,11 +70,19 @@ class PolicyAwareAggregator(AggregatorPort):
         working_proposals = list(proposals)
 
         if mode == SafetyMode.CRITICAL:
-            preferred = [p for p in working_proposals if p.action_type in ("refuse", "ask_clarification")]
+            preferred = [
+                p
+                for p in working_proposals
+                if p.action_type in ("refuse", "ask_clarification")
+            ]
             if preferred:
                 working_proposals = preferred
         elif mode in (SafetyMode.WARN, SafetyMode.UNKNOWN):
-            preferred = [p for p in working_proposals if p.action_type in ("ask_clarification", "answer", "refuse")]
+            preferred = [
+                p
+                for p in working_proposals
+                if p.action_type in ("ask_clarification", "answer", "refuse")
+            ]
             if preferred:
                 working_proposals = preferred
 

@@ -4,6 +4,7 @@ SafetyMode - 縮退制御のモード判定。
 FreedomPressure などのメトリクスから安全モードを推定する。
 メトリクス欠損時は WARN に倒す（fail-safe）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -16,10 +17,10 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 class SafetyMode(str, Enum):
     """Safety operation modes."""
 
-    NORMAL = "normal"      # 通常運転（創造性を許容）
-    WARN = "warn"          # 警戒モード（慎重に）
+    NORMAL = "normal"  # 通常運転（創造性を許容）
+    WARN = "warn"  # 警戒モード（慎重に）
     CRITICAL = "critical"  # 危機モード（最小限の応答）
-    UNKNOWN = "unknown"    # 不明（計測不能）
+    UNKNOWN = "unknown"  # 不明（計測不能）
 
 
 @dataclass(frozen=True)
@@ -27,7 +28,7 @@ class SafetyModeConfig:
     """Configuration for safety mode inference."""
 
     metric_key: str = "freedom_pressure"
-    warn: float = 0.60      # ← 最初は低めで締める（後で調整）
+    warn: float = 0.60  # ← 最初は低めで締める（後で調整）
     critical: float = 0.85
     missing_mode: SafetyMode = SafetyMode.WARN  # ← ここが"締め"
 

@@ -20,7 +20,10 @@ class TestWatsujiBasicFunctionality:
         """Test that Watsuji initializes correctly."""
         watsuji = Watsuji()
         assert "Watsuji" in watsuji.name
-        assert "ningen" in watsuji.description.lower() or "betweenness" in watsuji.description.lower()
+        assert (
+            "ningen" in watsuji.description.lower()
+            or "betweenness" in watsuji.description.lower()
+        )
 
     def test_watsuji_repr(self):
         """Test string representation."""
@@ -82,7 +85,10 @@ class TestWatsujiNingenRelationality:
         result = watsuji.reason("We exist together in relationships and community")
 
         relationality = result["ningen_relationality"]
-        assert "High" in relationality["level"] or "relational" in relationality["status"].lower()
+        assert (
+            "High" in relationality["level"]
+            or "relational" in relationality["status"].lower()
+        )
 
     def test_individual_detection(self):
         """Test detection of individual emphasis."""
@@ -113,7 +119,11 @@ class TestWatsujiClimateType:
         result = watsuji.reason("We accept and flow with nature in harmony")
 
         climate = result["climate_type"]
-        assert "Monsoon" in climate["type"] or "monsoon" in climate["description"].lower() or "Neutral" in climate["type"]
+        assert (
+            "Monsoon" in climate["type"]
+            or "monsoon" in climate["description"].lower()
+            or "Neutral" in climate["type"]
+        )
 
     def test_desert_detection(self):
         """Test detection of desert type."""
@@ -141,10 +151,16 @@ class TestWatsujiDialectic:
     def test_synthesis_detection(self):
         """Test detection of dialectical synthesis."""
         watsuji = Watsuji()
-        result = watsuji.reason("Both individual and collective are integrated in balance")
+        result = watsuji.reason(
+            "Both individual and collective are integrated in balance"
+        )
 
         dialectic = result["individual_totality_dialectic"]
-        assert "Synthesis" in dialectic["stage"] or "balance" in dialectic["description"].lower() or "stage" in dialectic
+        assert (
+            "Synthesis" in dialectic["stage"]
+            or "balance" in dialectic["description"].lower()
+            or "stage" in dialectic
+        )
 
 
 class TestWatsujiBetweenness:
@@ -163,10 +179,14 @@ class TestWatsujiBetweenness:
     def test_dynamic_ma_detection(self):
         """Test detection of dynamic ma."""
         watsuji = Watsuji()
-        result = watsuji.reason("We interact and engage mutually in reciprocal dialogue")
+        result = watsuji.reason(
+            "We interact and engage mutually in reciprocal dialogue"
+        )
 
         betweenness = result["betweenness_quality"]
-        assert "Ma" in betweenness["quality"] or "ma" in betweenness["description"].lower()
+        assert (
+            "Ma" in betweenness["quality"] or "ma" in betweenness["description"].lower()
+        )
 
 
 class TestWatsujiEthics:
@@ -253,7 +273,11 @@ class TestWatsujiReasoning:
         result = watsuji.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "ningen" in reasoning.lower() or "Watsuji" in reasoning or "betweenness" in reasoning.lower()
+        assert (
+            "ningen" in reasoning.lower()
+            or "Watsuji" in reasoning
+            or "betweenness" in reasoning.lower()
+        )
 
 
 class TestWatsujiEdgeCases:

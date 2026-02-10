@@ -12,6 +12,7 @@ Validates that every philosopher:
 Original tests used PHILOSOPHER_REGISTRY + run_ensemble (removed in v0.3).
 These test via PhilosopherRegistry + native propose().
 """
+
 from __future__ import annotations
 
 import uuid
@@ -27,10 +28,11 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.philosophers.manifest import SPECS
 from po_core.philosophers.registry import PhilosopherRegistry
 
-
 # ── Helpers ──
 
-PHILOSOPHER_IDS = [s.philosopher_id for s in SPECS if s.enabled and s.philosopher_id != "dummy"]
+PHILOSOPHER_IDS = [
+    s.philosopher_id for s in SPECS if s.enabled and s.philosopher_id != "dummy"
+]
 
 TEST_PROMPT = "What is the nature of consciousness and how should we understand it?"
 
@@ -102,16 +104,12 @@ class TestPhilosopherLoading:
 
     def test_all_have_propose_method(self, all_loaded_philosophers):
         for phil in all_loaded_philosophers:
-            assert hasattr(phil, "propose"), (
-                f"Philosopher missing propose(): {phil}"
-            )
+            assert hasattr(phil, "propose"), f"Philosopher missing propose(): {phil}"
             assert callable(phil.propose)
 
     def test_all_have_info_property(self, all_loaded_philosophers):
         for phil in all_loaded_philosophers:
-            assert hasattr(phil, "info"), (
-                f"Philosopher missing info: {phil}"
-            )
+            assert hasattr(phil, "info"), f"Philosopher missing info: {phil}"
             assert phil.info.name, f"info.name is empty for {phil}"
             assert phil.info.version, f"info.version is empty for {phil}"
 
@@ -122,9 +120,9 @@ class TestPhilosopherLoading:
 
         loaded = registry.select_and_load(SafetyMode.NORMAL)
         for phil in loaded:
-            assert not isinstance(phil, PhilosopherBridge), (
-                f"{phil.info.name} should not need PhilosopherBridge"
-            )
+            assert not isinstance(
+                phil, PhilosopherBridge
+            ), f"{phil.info.name} should not need PhilosopherBridge"
 
     def test_propose_returns_proposals(self, all_loaded_philosophers):
         """propose() should return a list of Proposal objects."""
@@ -208,11 +206,17 @@ class TestPhilosopherAttributes:
         instance = PHILOSOPHER_REGISTRY[key]()
         result = instance.reason(TEST_PROMPT)
 
-        content_keys = {"reasoning", "analysis", "description", "summary", "perspective"}
+        content_keys = {
+            "reasoning",
+            "analysis",
+            "description",
+            "summary",
+            "perspective",
+        }
         found = content_keys & set(result.keys())
-        assert len(found) > 0, (
-            f"{key} reason() has no content field. Keys: {list(result.keys())}"
-        )
+        assert (
+            len(found) > 0
+        ), f"{key} reason() has no content field. Keys: {list(result.keys())}"
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -250,7 +254,9 @@ class TestPhilosopherDiversity:
 
         # At least 30 out of 39 should be unique
         unique = len(set(contents))
-        assert unique >= 30, f"Expected 30+ unique contents, got {unique}/{len(contents)}"
+        assert (
+            unique >= 30
+        ), f"Expected 30+ unique contents, got {unique}/{len(contents)}"
 
 
 # ══════════════════════════════════════════════════════════════════════════

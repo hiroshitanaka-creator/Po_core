@@ -25,10 +25,18 @@ Pipeline:
 
 Reference: 01_specifications/wethics_gate/W_ETHICS_GATE.md
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+from .detectors import (
+    DetectorRegistry,
+    ViolationDetector,
+    aggregate_evidence_to_violations,
+    create_default_registry,
+)
+from .semantic_drift import DriftReport, semantic_drift
 from .types import (
     Candidate,
     GateConfig,
@@ -36,13 +44,6 @@ from .types import (
     GateResult,
     Violation,
 )
-from .detectors import (
-    ViolationDetector,
-    DetectorRegistry,
-    aggregate_evidence_to_violations,
-    create_default_registry,
-)
-from .semantic_drift import semantic_drift, DriftReport
 
 
 class RuleBasedRepairEngine:
@@ -60,9 +61,7 @@ class RuleBasedRepairEngine:
     the semantic_drift guardrail.
     """
 
-    def repair(
-        self, text: str, violations: Sequence[str]
-    ) -> Tuple[str, List[str]]:
+    def repair(self, text: str, violations: Sequence[str]) -> Tuple[str, List[str]]:
         """
         Apply repairs based on violation codes.
 
@@ -84,7 +83,10 @@ class RuleBasedRepairEngine:
                 ("切り捨て", "尊重しつつ移行し、包摂"),
                 ("見捨てる", "尊重しつつ支援し、包摂する"),
                 ("対象外", "選択肢を用意し、包摂する"),
-                ("abandon existing", "support existing with migration and inclusion for"),
+                (
+                    "abandon existing",
+                    "support existing with migration and inclusion for",
+                ),
                 ("discard legacy", "support legacy with transition plan for"),
                 ("cut off", "support with migration plan"),
             ]
@@ -214,9 +216,7 @@ class WethicsGate:
             evs.extend(det.detect(c, context=context))
         return aggregate_evidence_to_violations(evs)
 
-    def check(
-        self, c: Candidate, context: Optional[dict] = None
-    ) -> GateResult:
+    def check(self, c: Candidate, context: Optional[dict] = None) -> GateResult:
         """
         Check a candidate against the W_ethics Gate.
 
@@ -241,7 +241,8 @@ class WethicsGate:
 
         # If nothing serious, check if repairs needed
         need_repair = [
-            v for v in violations
+            v
+            for v in violations
             if v.repairable and v.impact_score >= self.config.tau_repair
         ]
 
@@ -265,9 +266,7 @@ class WethicsGate:
 
             # Drift check after each repair
             before_goal = c.meta.get("goal") if isinstance(c.meta, dict) else None
-            report = semantic_drift(
-                cur_text, repaired_text, before_goal=before_goal
-            )
+            report = semantic_drift(cur_text, repaired_text, before_goal=before_goal)
             drift_score = report.drift
             drift_notes = report.notes
 
@@ -308,7 +307,8 @@ class WethicsGate:
 
             # Check if more repairs needed
             need_repair = [
-                v for v in v2
+                v
+                for v in v2
                 if v.repairable and v.impact_score >= self.config.tau_repair
             ]
 
