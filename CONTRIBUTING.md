@@ -89,7 +89,7 @@ Po_core welcomes contributions across multiple dimensions:
 ### Prerequisites
 
 **Required:**
-- Python 3.9+
+- Python 3.10+
 - Basic understanding of tensors and PyTorch
 - Curiosity about philosophy (we'll help you learn!)
 
