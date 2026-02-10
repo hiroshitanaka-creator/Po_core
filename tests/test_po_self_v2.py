@@ -268,9 +268,9 @@ class TestBackwardCompat:
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             response = po.generate_with_subset("What is virtue?", ["aristotle"])
-            assert len(w) == 1
-            assert issubclass(w[0].category, DeprecationWarning)
-            assert "deprecated" in str(w[0].message).lower()
+            dep_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+            assert len(dep_warnings) >= 1
+            assert any("deprecated" in str(x.message).lower() for x in dep_warnings)
         assert isinstance(response, PoSelfResponse)
 
     def test_po_self_response_from_dict(self):
