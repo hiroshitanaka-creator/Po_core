@@ -1,5 +1,4 @@
-decision_events.py - 最終決定の監査イベント helper
-===================================================
+"""decision_events.py - 最終決定の監査イベント helper.
 
 目的:
 - 「候補（Pareto/哲学者）→ 最終（Gate後）」の変遷を監査ログに残す
@@ -13,6 +12,7 @@ SECURITY NOTE:
 DEPENDENCY RULES:
 - domain のみ依存
 - tracer は emit(TraceEvent) を持つ前提
+"""
 
 from __future__ import annotations
 
