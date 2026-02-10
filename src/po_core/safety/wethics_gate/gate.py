@@ -37,13 +37,7 @@ from .detectors import (
     create_default_registry,
 )
 from .semantic_drift import DriftReport, semantic_drift
-from .types import (
-    Candidate,
-    GateConfig,
-    GateDecision,
-    GateResult,
-    Violation,
-)
+from .types import Candidate, GateConfig, GateDecision, GateResult, Violation
 
 
 class RuleBasedRepairEngine:

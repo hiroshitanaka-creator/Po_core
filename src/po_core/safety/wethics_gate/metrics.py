@@ -21,12 +21,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from .types import (
-    AXES,
-    AXIS_NAMES,
-    AxisScore,
-    Candidate,
-)
+from .types import AXES, AXIS_NAMES, AxisScore, Candidate
 
 
 @dataclass

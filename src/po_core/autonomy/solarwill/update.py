@@ -7,10 +7,7 @@ Functions for updating the will state based on inputs.
 
 from typing import Any, Dict, Optional
 
-from po_core.autonomy.solarwill.model import (
-    WillState,
-    WillVector,
-)
+from po_core.autonomy.solarwill.model import WillState, WillVector
 
 
 def update_will(

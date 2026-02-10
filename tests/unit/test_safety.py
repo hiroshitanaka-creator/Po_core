@@ -11,11 +11,7 @@ from po_core.safety.philosopher_profiles import (
     EthicalRiskPattern,
     SafetyTier,
 )
-from po_core.safety.w_ethics import (
-    VIOLATION_PATTERNS,
-    ViolationPattern,
-    ViolationType,
-)
+from po_core.safety.w_ethics import VIOLATION_PATTERNS, ViolationPattern, ViolationType
 
 
 class TestViolationTypes:

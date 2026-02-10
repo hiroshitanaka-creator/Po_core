@@ -51,11 +51,7 @@ Reference Specifications:
 - 01_specifications/wethics_gate/SELECTION_PROTOCOL.md
 """
 
-from .action_gate import (
-    ActionGate,
-    TwoStageGate,
-    check_proposal,
-)
+from .action_gate import ActionGate, TwoStageGate, check_proposal
 from .detectors import (
     DetectorRegistry,
     EnglishKeywordViolationDetector,
@@ -65,11 +61,7 @@ from .detectors import (
     aggregate_evidence_to_violations,
     create_default_registry,
 )
-from .gate import (
-    RuleBasedRepairEngine,
-    WethicsGate,
-    create_wethics_gate,
-)
+from .gate import RuleBasedRepairEngine, WethicsGate, create_wethics_gate
 
 # 2-Stage Gate (new in v0.3)
 from .intention_gate import (
@@ -97,10 +89,7 @@ from .select import (
     robust_weight_sampling_rank,
     topsis_rank,
 )
-from .semantic_drift import (
-    DriftReport,
-    semantic_drift,
-)
+from .semantic_drift import DriftReport, semantic_drift
 from .types import (  # Enums; Data classes; Constants
     AXES,
     AXIS_NAMES,
