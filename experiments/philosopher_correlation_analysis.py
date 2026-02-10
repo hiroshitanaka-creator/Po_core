@@ -287,9 +287,7 @@ class PhilosopherCorrelationAnalyzer:
 
 def main():
     """Main function to run correlation analysis."""
-    console.print(
-        "\n[bold magenta]🔬 Philosopher Correlation Analysis[/bold magenta]\n"
-    )
+    console.print("\n[bold magenta]🔬 Philosopher Correlation Analysis[/bold magenta]\n")
 
     # Initialize
     trace_db = PoTraceDB()

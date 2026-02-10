@@ -248,7 +248,9 @@ class Kant(Philosopher):
                     "indication": (
                         "High"
                         if kingdom_count >= 3
-                        else "Moderate" if kingdom_count >= 1 else "Low"
+                        else "Moderate"
+                        if kingdom_count >= 1
+                        else "Low"
                     ),
                 },
             },

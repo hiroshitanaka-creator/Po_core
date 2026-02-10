@@ -33,7 +33,8 @@ class RunFn(Protocol):
     結果には request_id と events を含むことが期待される。
     """
 
-    def __call__(self, user_input: str, *, config_path: str) -> Dict[str, Any]: ...
+    def __call__(self, user_input: str, *, config_path: str) -> Dict[str, Any]:
+        ...
 
 
 def _extract_metrics_from_events(

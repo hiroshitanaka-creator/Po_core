@@ -168,10 +168,10 @@ class InteractionTensor(Tensor):
                     # Cache interaction object
                     phil_a = persp_a.get("philosopher", f"phil_{i}")
                     phil_b = persp_b.get("philosopher", f"phil_{j}")
-                    self.interactions[(phil_a, phil_b)] = (
-                        self._create_interaction_object(
-                            phil_a, phil_b, interaction_vector
-                        )
+                    self.interactions[
+                        (phil_a, phil_b)
+                    ] = self._create_interaction_object(
+                        phil_a, phil_b, interaction_vector
                     )
 
         # Flatten for return

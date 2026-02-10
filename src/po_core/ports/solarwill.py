@@ -14,4 +14,5 @@ class SolarWillPort(Protocol):
         ctx: Context,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
-    ) -> Tuple[Intent, Mapping[str, Any]]: ...
+    ) -> Tuple[Intent, Mapping[str, Any]]:
+        ...

@@ -1120,7 +1120,9 @@ class Nishida(Philosopher):
         )
 
         # Add acting intuition
-        reasoning += f"Concerning 行為的直観 (acting intuition): {acting_intuition['description']}. "
+        reasoning += (
+            f"Concerning 行為的直観 (acting intuition): {acting_intuition['description']}. "
+        )
 
         # Add Zen influence if significant
         if zen_influence["zen_score"] >= 1 or zen_influence["nondual_score"] >= 1:

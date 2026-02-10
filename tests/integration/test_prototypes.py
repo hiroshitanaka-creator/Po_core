@@ -162,9 +162,7 @@ class TestPhilosopherComparison:
         prompt = "What is virtue?"
 
         # Compare existentialism vs classical philosophy
-        comparison.compare_groups(
-            prompt=prompt, groups=["実存主義", "古典哲学"], verbose=False
-        )
+        comparison.compare_groups(prompt=prompt, groups=["実存主義", "古典哲学"], verbose=False)
 
         # Should have responses for both groups
         assert len(comparison.responses) == 2

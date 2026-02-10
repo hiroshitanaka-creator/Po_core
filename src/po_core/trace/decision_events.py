@@ -175,9 +175,7 @@ def emit_decision_emitted(
     Emits:
         DecisionEmitted: 最終決定の事実
     """
-    cfg_ver, cfg_src = _pareto_cfg_from(
-        candidate
-    )  # candidate優先（finalがfallbackでも追える）
+    cfg_ver, cfg_src = _pareto_cfg_from(candidate)  # candidate優先（finalがfallbackでも追える）
 
     payload: dict = {
         "variant": variant,

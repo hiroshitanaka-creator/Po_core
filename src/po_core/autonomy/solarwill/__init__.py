@@ -31,10 +31,7 @@ from po_core.autonomy.solarwill.model import (
     WillState,
     WillVector,
 )
-from po_core.autonomy.solarwill.planner import (
-    generate_goals,
-    generate_intent,
-)
+from po_core.autonomy.solarwill.planner import generate_goals, generate_intent
 from po_core.autonomy.solarwill.update import update_will
 
 __all__ = [

@@ -140,9 +140,7 @@ def select_mood() -> PartyMood:
 
 def display_party_config(config: PartyConfig):
     """Display the suggested party configuration."""
-    console.print(
-        "\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n"
-    )
+    console.print("\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n")
 
     # Main info panel
     console.print(
