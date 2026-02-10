@@ -27,8 +27,8 @@ coverage[toml]>=7.3.0
 # ==================
 
 # Code Formatting
-black>=23.12.0
-isort>=5.13.0
+black==23.12.1
+isort==5.13.2
 
 # Linting
 flake8>=6.1.0
