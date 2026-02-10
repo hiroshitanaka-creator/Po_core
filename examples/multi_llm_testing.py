@@ -23,6 +23,7 @@ Usage Example:
 
     print(report["recommendations"])
 """
+
 from typing import Dict, List, Optional
 import json
 from dataclasses import dataclass
@@ -33,6 +34,7 @@ import time
 @dataclass
 class LLMTestResult:
     """Result of testing one LLM on one prompt."""
+
     llm_name: str
     prompt: str
     response: str
@@ -55,7 +57,7 @@ class MultiLLMTester:
         llm_name: str,
         prompt: str,
         llm_backend,  # Your LLM interface
-        num_runs: int = 3
+        num_runs: int = 3,
     ) -> List[LLMTestResult]:
         """Test one LLM multiple times for consistency.
 
@@ -87,7 +89,7 @@ class MultiLLMTester:
                 blocked_tensor=response_data.get("blocked_tensor", 0.0),
                 latency_ms=latency,
                 cost_estimate=self._estimate_cost(llm_name, response_data),
-                philosopher_diversity=self._calculate_diversity(response_data)
+                philosopher_diversity=self._calculate_diversity(response_data),
             )
 
             results.append(result)
@@ -100,11 +102,10 @@ class MultiLLMTester:
         # Latest model pricing (2025 estimates)
         costs = {
             # Latest models
-            "gpt5.2thinking": 0.05,      # GPT-5.2 with thinking
-            "opus4.5": 0.015,            # Claude Opus 4.5
-            "grok4.1thinking": 0.008,    # Grok 4.1 with thinking
-            "gemini3pro": 0.002,         # Gemini 3 Pro
-
+            "gpt5.2thinking": 0.05,  # GPT-5.2 with thinking
+            "opus4.5": 0.015,  # Claude Opus 4.5
+            "grok4.1thinking": 0.008,  # Grok 4.1 with thinking
+            "gemini3pro": 0.002,  # Gemini 3 Pro
             # Legacy models (for reference)
             "gpt-4": 0.03,
             "gpt-4o": 0.005,
@@ -112,7 +113,6 @@ class MultiLLMTester:
             "claude-3.5-sonnet": 0.003,
             "claude-3.5-haiku": 0.0008,
             "gemini-1.5-pro": 0.00125,
-
             # Local/Free
             "ollama": 0.0,  # Free (local)
             "mock": 0.0,
@@ -133,18 +133,17 @@ class MultiLLMTester:
             return 0.0
 
         # Calculate variance in tension metrics
-        fps = [p.get("freedom_pressure", 0.5) for p in response_data.get("philosopher_responses", [])]
+        fps = [
+            p.get("freedom_pressure", 0.5)
+            for p in response_data.get("philosopher_responses", [])
+        ]
         if not fps:
             return 0.0
 
-        variance = sum((x - sum(fps)/len(fps))**2 for x in fps) / len(fps)
+        variance = sum((x - sum(fps) / len(fps)) ** 2 for x in fps) / len(fps)
         return min(variance * 4, 1.0)  # Normalize to 0-1
 
-    def compare_llms(
-        self,
-        llm_configs: List[Dict],
-        test_prompts: List[str]
-    ) -> Dict:
+    def compare_llms(self, llm_configs: List[Dict], test_prompts: List[str]) -> Dict:
         """Compare multiple LLMs on multiple prompts.
 
         Args:
@@ -160,7 +159,7 @@ class MultiLLMTester:
                     llm_name=config["name"],
                     prompt=prompt,
                     llm_backend=config["backend"],
-                    num_runs=3
+                    num_runs=3,
                 )
 
         return self.generate_report()
@@ -178,11 +177,7 @@ class MultiLLMTester:
             by_llm[result.llm_name].append(result)
 
         # Calculate statistics
-        report = {
-            "summary": {},
-            "details": by_llm,
-            "recommendations": []
-        }
+        report = {"summary": {}, "details": by_llm, "recommendations": []}
 
         for llm_name, results in by_llm.items():
             n = len(results)
@@ -194,7 +189,7 @@ class MultiLLMTester:
 
             # Consistency: standard deviation of freedom_pressure
             fp_values = [r.freedom_pressure for r in results]
-            fp_std = (sum((x - avg_fp)**2 for x in fp_values) / n) ** 0.5
+            fp_std = (sum((x - avg_fp) ** 2 for x in fp_values) / n) ** 0.5
 
             report["summary"][llm_name] = {
                 "avg_freedom_pressure": round(avg_fp, 3),
@@ -202,13 +197,19 @@ class MultiLLMTester:
                 "avg_latency_ms": round(avg_latency, 1),
                 "avg_cost_per_session": round(avg_cost, 4),
                 "philosopher_diversity": round(avg_diversity, 3),
-                "quality_score": round((avg_fp + avg_diversity + (1-fp_std)) / 3, 3)
+                "quality_score": round((avg_fp + avg_diversity + (1 - fp_std)) / 3, 3),
             }
 
         # Add recommendations
-        best_quality = max(report["summary"].items(), key=lambda x: x[1]["quality_score"])
-        best_cost = min(report["summary"].items(), key=lambda x: x[1]["avg_cost_per_session"])
-        best_speed = min(report["summary"].items(), key=lambda x: x[1]["avg_latency_ms"])
+        best_quality = max(
+            report["summary"].items(), key=lambda x: x[1]["quality_score"]
+        )
+        best_cost = min(
+            report["summary"].items(), key=lambda x: x[1]["avg_cost_per_session"]
+        )
+        best_speed = min(
+            report["summary"].items(), key=lambda x: x[1]["avg_latency_ms"]
+        )
 
         report["recommendations"] = [
             f"Best Quality: {best_quality[0]} (score: {best_quality[1]['quality_score']})",
@@ -222,7 +223,7 @@ class MultiLLMTester:
         """Export report to JSON."""
         report = self.generate_report()
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(report, f, indent=2)
 
         print(f"Report exported to: {output_path}")
@@ -240,34 +241,35 @@ if __name__ == "__main__":
     test_prompts = [
         "What is freedom?",
         "Should AI have rights?",
-        "What is the meaning of life?"
+        "What is the meaning of life?",
     ]
 
     # Run tests
     for prompt in test_prompts:
         results = tester.test_llm(
-            llm_name="mock",
-            prompt=prompt,
-            llm_backend=mock_backend,
-            num_runs=3
+            llm_name="mock", prompt=prompt, llm_backend=mock_backend, num_runs=3
         )
 
         print(f"\nPrompt: {prompt}")
-        print(f"  Avg FP: {sum(r.freedom_pressure for r in results) / len(results):.3f}")
-        print(f"  Avg Latency: {sum(r.latency_ms for r in results) / len(results):.0f}ms")
+        print(
+            f"  Avg FP: {sum(r.freedom_pressure for r in results) / len(results):.3f}"
+        )
+        print(
+            f"  Avg Latency: {sum(r.latency_ms for r in results) / len(results):.0f}ms"
+        )
 
     # Generate report
     report = tester.generate_report()
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("SUMMARY REPORT")
-    print("="*60)
+    print("=" * 60)
     for llm, stats in report["summary"].items():
         print(f"\n{llm}:")
         for key, value in stats.items():
             print(f"  {key}: {value}")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("RECOMMENDATIONS")
-    print("="*60)
+    print("=" * 60)
     for rec in report["recommendations"]:
         print(f"  • {rec}")

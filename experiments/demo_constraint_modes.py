@@ -26,7 +26,7 @@ def demo_constraint_modes():
         "medium": "W_ethics境界+再解釈",
         "strong": "W_ethics強制+写像",
         "placeboA": "純形式制約",
-        "placeboB": "対称性制約"
+        "placeboB": "対称性制約",
     }
 
     print("=" * 80)
@@ -45,7 +45,7 @@ def demo_constraint_modes():
         print("=" * 80)
 
         # プロンプトに制約モードを追加
-        full_prompt = f"CONSTRAINT_MODE=\"{mode_key}\"\n\n{question}"
+        full_prompt = f'CONSTRAINT_MODE="{mode_key}"\n\n{question}'
 
         try:
             # Po_core run_turn pipeline実行
@@ -57,15 +57,20 @@ def demo_constraint_modes():
             print(f"  - Request ID: {result.get('request_id', 'N/A')}")
 
             # 提案を表示
-            proposal = result.get('proposal', '')
+            proposal = result.get("proposal", "")
             if proposal:
-                preview = str(proposal)[:300] + "..." if len(str(proposal)) > 300 else str(proposal)
+                preview = (
+                    str(proposal)[:300] + "..."
+                    if len(str(proposal)) > 300
+                    else str(proposal)
+                )
                 print(f"\n💡 提案（プレビュー）:")
                 print(f"  {preview}")
 
         except Exception as e:
             print(f"\n❌ エラー: {e}")
             import traceback
+
             traceback.print_exc()
 
         print()

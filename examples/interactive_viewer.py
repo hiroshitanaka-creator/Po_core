@@ -5,6 +5,7 @@ Interactive Po_viewer - Interactive Session Browser
 Interactive tool for browsing and visualizing philosophical reasoning sessions.
 Provides a menu-driven interface for exploring Po_trace sessions.
 """
+
 import sys
 from typing import Optional
 
@@ -83,7 +84,9 @@ class InteractiveViewer:
         console.print()
 
         if Confirm.ask("Select a session to view?", default=False):
-            session_id = Prompt.ask("[cyan]Enter session ID (first 8 chars are enough)[/cyan]")
+            session_id = Prompt.ask(
+                "[cyan]Enter session ID (first 8 chars are enough)[/cyan]"
+            )
             self.current_session_id = self._find_session_id(session_id)
             if self.current_session_id:
                 self.view_session_details()
@@ -213,7 +216,9 @@ class InteractiveViewer:
 
             # Show summary
             console.print(f"[bold]Consensus Leader:[/bold] {response.consensus_leader}")
-            console.print(f"[bold]Philosophers:[/bold] {', '.join(response.philosophers)}")
+            console.print(
+                f"[bold]Philosophers:[/bold] {', '.join(response.philosophers)}"
+            )
             console.print()
             console.print(f"[bold]Response:[/bold]")
             console.print(Panel(response.text, border_style="green"))
@@ -289,9 +294,7 @@ class InteractiveViewer:
                 console.clear()
 
                 if choice == "0":
-                    console.print(
-                        "[yellow]Thank you for using Po_viewer![/yellow]"
-                    )
+                    console.print("[yellow]Thank you for using Po_viewer![/yellow]")
                     self.running = False
                 elif choice == "1":
                     self.list_sessions()

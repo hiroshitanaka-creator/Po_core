@@ -25,7 +25,9 @@ if __name__ == "__main__":
     trials = 1  # Just 1 trial per mode
 
     # Use 39-philosopher prompt
-    system_prompt_file = "/home/user/Po_core/experiments/po_core_39_philosophers_system_prompt.md"
+    system_prompt_file = (
+        "/home/user/Po_core/experiments/po_core_39_philosophers_system_prompt.md"
+    )
 
     print("=" * 70)
     print("Solar Will Quick Test")
@@ -44,7 +46,7 @@ if __name__ == "__main__":
         questions=questions,
         modes=modes,
         trials=trials,
-        system_prompt_file=system_prompt_file
+        system_prompt_file=system_prompt_file,
     )
 
     print()

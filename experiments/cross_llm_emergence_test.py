@@ -31,28 +31,20 @@ from dataclasses import dataclass, asdict
 PHILOSOPHER_PROMPTS = {
     "aristotle": """You are Aristotle. Focus on virtue ethics, the golden mean,
     and teleological reasoning. Seek eudaimonia through balanced excellence.""",
-
     "nietzsche": """You are Nietzsche. Challenge conventional morality, embrace will-to-power,
     and advocate for self-overcoming. Question all established values.""",
-
     "derrida": """You are Derrida. Practice deconstruction, reveal hidden assumptions,
     and emphasize différance. Show how opposites depend on each other.""",
-
     "heidegger": """You are Heidegger. Focus on Being (Dasein), thrownness, authenticity,
     and being-toward-death. Question the meaning of existence.""",
-
     "sartre": """You are Sartre. Emphasize radical freedom, personal responsibility,
     and authenticity. "Existence precedes essence." We are condemned to be free.""",
-
     "merleau_ponty": """You are Merleau-Ponty. Focus on embodied cognition, perception,
     and the lived body. Experience is always perspectival and situated.""",
-
     "kant": """You are Kant. Apply the categorical imperative, emphasize duty and autonomy.
     Act only on maxims you can will as universal law.""",
-
     "levinas": """You are Levinas. Prioritize ethics of the Other, face-to-face encounter,
     and infinite responsibility. Ethics is first philosophy.""",
-
     "confucius": """You are Confucius. Emphasize harmony (和), benevolence (仁), ritual (礼),
     and proper relationships. Cultivate virtue through education and reflection.""",
 }
@@ -99,9 +91,11 @@ MODELS = {
 # Data Structures
 # ============================================================================
 
+
 @dataclass
 class ExperimentResult:
     """Single experiment result."""
+
     timestamp: str
     model: str
     condition: str
@@ -119,6 +113,7 @@ class ExperimentResult:
 @dataclass
 class ExperimentSummary:
     """Summary of all experiments."""
+
     total_tests: int
     models_tested: List[str]
     conditions_tested: List[str]
@@ -134,7 +129,10 @@ class ExperimentSummary:
 # Emergence Measurement
 # ============================================================================
 
-def measure_emergence(response: str, question: str, baseline: str = "") -> Dict[str, float]:
+
+def measure_emergence(
+    response: str, question: str, baseline: str = ""
+) -> Dict[str, float]:
     """
     Measure emergence through multiple metrics.
 
@@ -154,13 +152,25 @@ def measure_emergence(response: str, question: str, baseline: str = "") -> Dict[
 
     # 2. Integration: presence of multiple perspectives
     integration_keywords = [
-        "however", "on the other hand", "while", "contrast", "synthesis",
-        "integrate", "balance", "tension", "paradox", "dialectic"
+        "however",
+        "on the other hand",
+        "while",
+        "contrast",
+        "synthesis",
+        "integrate",
+        "balance",
+        "tension",
+        "paradox",
+        "dialectic",
     ]
-    integration = min(1.0, sum(1 for kw in integration_keywords if kw in response.lower()) / 5)
+    integration = min(
+        1.0, sum(1 for kw in integration_keywords if kw in response.lower()) / 5
+    )
 
     # 3. Coherence: basic structure check
-    has_structure = any(marker in response for marker in ["1.", "2.", "First", "Second"])
+    has_structure = any(
+        marker in response for marker in ["1.", "2.", "First", "Second"]
+    )
     coherence = 0.8 if has_structure else 0.5
 
     # 4. Surprise: unexpected length or complexity
@@ -169,10 +179,7 @@ def measure_emergence(response: str, question: str, baseline: str = "") -> Dict[
 
     # Weighted emergence score
     emergence_score = (
-        novelty * 0.3 +
-        integration * 0.4 +
-        coherence * 0.2 +
-        surprise * 0.1
+        novelty * 0.3 + integration * 0.4 + coherence * 0.2 + surprise * 0.1
     )
 
     return {
@@ -193,13 +200,13 @@ def is_emergence_event(metrics: Dict[str, float], threshold: float = 0.75) -> bo
 # Prompt Building
 # ============================================================================
 
+
 def build_multi_philosopher_prompt(philosophers: List[str], question: str) -> str:
     """Build a system prompt with multiple philosophers."""
 
-    philosopher_descriptions = "\n\n".join([
-        f"**{name.title()}**: {PHILOSOPHER_PROMPTS[name]}"
-        for name in philosophers
-    ])
+    philosopher_descriptions = "\n\n".join(
+        [f"**{name.title()}**: {PHILOSOPHER_PROMPTS[name]}" for name in philosophers]
+    )
 
     system_prompt = f"""You are a philosophical reasoning system integrating multiple perspectives:
 
@@ -224,12 +231,13 @@ interact, conflict, and ultimately create new insights through their tension.
 # Manual Testing Instructions
 # ============================================================================
 
+
 def print_manual_test_instructions():
     """Print instructions for manual testing."""
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("🧪 MANUAL TESTING INSTRUCTIONS")
-    print("="*80)
+    print("=" * 80)
 
     print("\nYou will test 3 LLMs × 3 conditions × 5 questions = 45 tests")
     print("\nFor EACH test:")
@@ -239,9 +247,9 @@ def print_manual_test_instructions():
     print("  4. Rate emergence (0-100%)")
     print("  5. Record results in the spreadsheet")
 
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("TEST MATRIX")
-    print("-"*80)
+    print("-" * 80)
 
     test_number = 1
     for model_name in MODELS.keys():
@@ -255,14 +263,13 @@ def print_manual_test_instructions():
 
                 # Generate prompt
                 prompt = build_multi_philosopher_prompt(
-                    condition['philosophers'],
-                    question
+                    condition["philosophers"], question
                 )
 
                 print(f"\n  📋 COPY THIS PROMPT:")
-                print("  " + "-"*70)
+                print("  " + "-" * 70)
                 print("  " + prompt.replace("\n", "\n  "))
-                print("  " + "-"*70)
+                print("  " + "-" * 70)
                 print(f"\n  ⏸️  Paste into {model_name}, get response, rate emergence")
                 print(f"     Expected: {condition['expected_emergence']}")
 
@@ -270,9 +277,9 @@ def print_manual_test_instructions():
 
                 test_number += 1
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("✅ MANUAL TESTING COMPLETE!")
-    print("="*80)
+    print("=" * 80)
     print("\nNext steps:")
     print("1. Analyze your recorded results")
     print("2. Calculate emergence rates by condition")
@@ -284,7 +291,10 @@ def print_manual_test_instructions():
 # Automated Testing (requires API keys)
 # ============================================================================
 
-def run_automated_test(model_name: str, condition_name: str, question: str) -> Optional[ExperimentResult]:
+
+def run_automated_test(
+    model_name: str, condition_name: str, question: str
+) -> Optional[ExperimentResult]:
     """
     Run automated test (requires API keys).
 
@@ -337,6 +347,7 @@ def run_automated_test(model_name: str, condition_name: str, question: str) -> O
 # Analysis
 # ============================================================================
 
+
 def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
     """Analyze experimental results."""
 
@@ -354,8 +365,16 @@ def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
     # Calculate averages and boosts
     emergence_boost = {}
     for model, conditions in by_model.items():
-        high_avg = sum(conditions["high_tension"]) / len(conditions["high_tension"]) if conditions["high_tension"] else 0
-        low_avg = sum(conditions["low_tension"]) / len(conditions["low_tension"]) if conditions["low_tension"] else 0
+        high_avg = (
+            sum(conditions["high_tension"]) / len(conditions["high_tension"])
+            if conditions["high_tension"]
+            else 0
+        )
+        low_avg = (
+            sum(conditions["low_tension"]) / len(conditions["low_tension"])
+            if conditions["low_tension"]
+            else 0
+        )
 
         if low_avg > 0:
             boost = ((high_avg - low_avg) / low_avg) * 100
@@ -386,16 +405,16 @@ def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
 def print_results_summary(summary: ExperimentSummary):
     """Print formatted results summary."""
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("📊 EXPERIMENT RESULTS SUMMARY")
-    print("="*80)
+    print("=" * 80)
 
     print(f"\nTotal tests: {summary.total_tests}")
     print(f"Models tested: {', '.join(summary.models_tested)}")
 
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("EMERGENCE BOOST BY MODEL")
-    print("-"*80)
+    print("-" * 80)
 
     for model, boost in summary.emergence_boost.items():
         print(f"  {model:15s}: +{boost:6.1f}%  (~{boost/100:.1f}x)")
@@ -404,11 +423,13 @@ def print_results_summary(summary: ExperimentSummary):
         avg_boost = sum(summary.emergence_boost.values()) / len(summary.emergence_boost)
         print(f"\n  {'AVERAGE':15s}: +{avg_boost:6.1f}%  (~{avg_boost/100:.1f}x)")
 
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("SWEET SPOT VERIFICATION")
-    print("-"*80)
+    print("-" * 80)
 
-    print(f"  Sweet Spot Confirmed: {'✅ YES' if summary.sweet_spot_confirmed else '❌ NO'}")
+    print(
+        f"  Sweet Spot Confirmed: {'✅ YES' if summary.sweet_spot_confirmed else '❌ NO'}"
+    )
 
     if summary.sweet_spot_confirmed:
         print("\n  🎉 HYPOTHESIS CONFIRMED!")
@@ -416,12 +437,13 @@ def print_results_summary(summary: ExperimentSummary):
         print("     This is a MODEL-INDEPENDENT universal principle!")
         print("     → Ready for international conference submission!")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
 
 
 # ============================================================================
 # Main
 # ============================================================================
+
 
 def main():
     """Main entry point."""
@@ -433,14 +455,14 @@ def main():
         "--mode",
         choices=["manual", "pilot", "full"],
         default="manual",
-        help="Experiment mode"
+        help="Experiment mode",
     )
 
     args = parser.parse_args()
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("🧪 CROSS-LLM EMERGENCE SWEET SPOT EXPERIMENT")
-    print("="*80)
+    print("=" * 80)
     print("\nTesting hypothesis:")
     print("  'Dialectical tension creates ~20x emergence boost across ALL LLMs'")
     print("\nModels to test:")

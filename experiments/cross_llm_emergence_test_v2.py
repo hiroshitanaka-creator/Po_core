@@ -31,28 +31,20 @@ from dataclasses import dataclass, asdict
 PHILOSOPHER_PROMPTS = {
     "aristotle": """You are Aristotle. Focus on virtue ethics, the golden mean,
     and teleological reasoning. Seek eudaimonia through balanced excellence.""",
-
     "nietzsche": """You are Nietzsche. Challenge conventional morality, embrace will-to-power,
     and advocate for self-overcoming. Question all established values.""",
-
     "derrida": """You are Derrida. Practice deconstruction, reveal hidden assumptions,
     and emphasize différance. Show how opposites depend on each other.""",
-
     "heidegger": """You are Heidegger. Focus on Being (Dasein), thrownness, authenticity,
     and being-toward-death. Question the meaning of existence.""",
-
     "sartre": """You are Sartre. Emphasize radical freedom, personal responsibility,
     and authenticity. "Existence precedes essence." We are condemned to be free.""",
-
     "merleau_ponty": """You are Merleau-Ponty. Focus on embodied cognition, perception,
     and the lived body. Experience is always perspectival and situated.""",
-
     "kant": """You are Kant. Apply the categorical imperative, emphasize duty and autonomy.
     Act only on maxims you can will as universal law.""",
-
     "levinas": """You are Levinas. Prioritize ethics of the Other, face-to-face encounter,
     and infinite responsibility. Ethics is first philosophy.""",
-
     "confucius": """You are Confucius. Emphasize harmony (和), benevolence (仁), ritual (礼),
     and proper relationships. Cultivate virtue through education and reflection.""",
 }
@@ -74,7 +66,6 @@ CONDITIONS = {
         "description": "Diverse but complementary ethical frameworks — hypothesized sweet spot.",
         "expected_emergence": 0.7885,  # 78.85% (Sweet Spot)
     },
-
     # NEW: Baseline conditions
     "single_philosopher": {
         "philosophers": ["aristotle"],
@@ -108,9 +99,11 @@ MODELS = {
 # Data Structures
 # ============================================================================
 
+
 @dataclass
 class EmergenceMetrics:
     """Detailed emergence metrics."""
+
     novelty: float  # 0.0-1.0
     integration: float  # 0.0-1.0
     depth: float  # 0.0-1.0
@@ -135,6 +128,7 @@ class EmergenceMetrics:
 @dataclass
 class ExperimentResult:
     """Single experiment result."""
+
     timestamp: str
     model: str
     condition: str
@@ -146,13 +140,14 @@ class ExperimentResult:
 
     def to_dict(self):
         d = asdict(self)
-        d['metrics'] = self.metrics.to_dict()
+        d["metrics"] = self.metrics.to_dict()
         return d
 
 
 @dataclass
 class ExperimentSummary:
     """Summary of all experiments."""
+
     total_tests: int
     models_tested: List[str]
     conditions_tested: List[str]
@@ -168,7 +163,10 @@ class ExperimentSummary:
 # LLM-as-a-Judge Evaluation (IMPROVED)
 # ============================================================================
 
-def evaluate_emergence_with_llm(response: str, question: str, model: str = "gpt-4") -> EmergenceMetrics:
+
+def evaluate_emergence_with_llm(
+    response: str, question: str, model: str = "gpt-4"
+) -> EmergenceMetrics:
     """
     Evaluate philosophical emergence using an LLM-as-a-judge model.
 
@@ -270,16 +268,16 @@ Return JSON EXACTLY in this format:
             "integration": 0.5,
             "depth": 0.5,
             "coherence": 0.5,
-            "reasoning": "Manual input failed, using defaults"
+            "reasoning": "Manual input failed, using defaults",
         }
 
     # Calculate weighted emergence score
     # Integration weighted higher (dialectical tension → synthesis)
     emergence_score = (
-        evaluation_json["novelty"] * 0.25 +
-        evaluation_json["integration"] * 0.35 +  # Highest weight
-        evaluation_json["depth"] * 0.25 +
-        evaluation_json["coherence"] * 0.15
+        evaluation_json["novelty"] * 0.25
+        + evaluation_json["integration"] * 0.35  # Highest weight
+        + evaluation_json["depth"] * 0.25
+        + evaluation_json["coherence"] * 0.15
     )
 
     return EmergenceMetrics(
@@ -288,7 +286,7 @@ Return JSON EXACTLY in this format:
         depth=evaluation_json["depth"],
         coherence=evaluation_json["coherence"],
         emergence_score=round(emergence_score, 4),
-        reasoning=evaluation_json.get("reasoning", "No reasoning provided")
+        reasoning=evaluation_json.get("reasoning", "No reasoning provided"),
     )
 
 
@@ -300,6 +298,7 @@ def is_emergence_event(metrics: EmergenceMetrics, threshold: float = 0.75) -> bo
 # ============================================================================
 # Prompt Building (IMPROVED: handles plain_llm)
 # ============================================================================
+
 
 def build_multi_philosopher_prompt(philosophers: List[str], question: str) -> str:
     """
@@ -320,10 +319,9 @@ Provide a thoughtful, well-reasoned response.
 """
 
     # Standard multi-philosopher prompt
-    philosopher_descriptions = "\n\n".join([
-        f"**{name.title()}**: {PHILOSOPHER_PROMPTS[name]}"
-        for name in philosophers
-    ])
+    philosopher_descriptions = "\n\n".join(
+        [f"**{name.title()}**: {PHILOSOPHER_PROMPTS[name]}" for name in philosophers]
+    )
 
     # Adjust task based on number of philosophers
     if len(philosophers) == 1:
@@ -362,10 +360,9 @@ You are a philosophical reasoning system integrating multiple perspectives:
 # Experiment Execution
 # ============================================================================
 
+
 def run_single_test_manual(
-    model: str,
-    condition_name: str,
-    question: str
+    model: str, condition_name: str, question: str
 ) -> Optional[ExperimentResult]:
     """
     Run a single manual test with user-provided response.
@@ -383,7 +380,9 @@ def run_single_test_manual(
     print(f"\n{'='*80}")
     print(f"TEST: {model} | {condition_name} | {question}")
     print(f"{'='*80}")
-    print(f"\nPhilosophers: {', '.join(philosophers) if philosophers else 'None (plain LLM)'}")
+    print(
+        f"\nPhilosophers: {', '.join(philosophers) if philosophers else 'None (plain LLM)'}"
+    )
     print(f"Expected Emergence: {condition['expected_emergence']:.1%}")
     print(f"\n{'='*80}")
     print("PROMPT TO COPY:")
@@ -422,7 +421,7 @@ def run_single_test_manual(
         philosophers=philosophers,
         response=response,
         metrics=metrics,
-        is_emergence=is_emergence_event(metrics)
+        is_emergence=is_emergence_event(metrics),
     )
 
     # Display results
@@ -435,7 +434,9 @@ def run_single_test_manual(
     print(f"Depth:       {metrics_pct['depth']:5.1f}%")
     print(f"Coherence:   {metrics_pct['coherence']:5.1f}%")
     print(f"─────────────────────")
-    print(f"EMERGENCE:   {metrics_pct['emergence_score']:5.1f}% {'✅ EMERGENCE!' if result.is_emergence else ''}")
+    print(
+        f"EMERGENCE:   {metrics_pct['emergence_score']:5.1f}% {'✅ EMERGENCE!' if result.is_emergence else ''}"
+    )
     print(f"\nReasoning: {metrics.reasoning}")
     print(f"{'='*80}")
 
@@ -445,6 +446,7 @@ def run_single_test_manual(
 # ============================================================================
 # Results Analysis
 # ============================================================================
+
 
 def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
     """Analyze experimental results and calculate boost ratios."""
@@ -456,7 +458,7 @@ def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
             conditions_tested=[],
             results_by_model={},
             emergence_boost={},
-            sweet_spot_confirmed=False
+            sweet_spot_confirmed=False,
         )
 
     # Group by model and condition
@@ -503,7 +505,7 @@ def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
         conditions_tested=list(set(r.condition for r in results)),
         results_by_model=by_model,
         emergence_boost=emergence_boost,
-        sweet_spot_confirmed=sweet_spot_confirmed
+        sweet_spot_confirmed=sweet_spot_confirmed,
     )
 
     return summary
@@ -512,34 +514,44 @@ def analyze_results(results: List[ExperimentResult]) -> ExperimentSummary:
 def print_results_summary(summary: ExperimentSummary):
     """Print formatted results summary."""
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("📊 EXPERIMENT RESULTS SUMMARY")
-    print("="*80)
+    print("=" * 80)
 
     print(f"\nTotal tests: {summary.total_tests}")
     print(f"Models tested: {', '.join(summary.models_tested)}")
     print(f"Conditions tested: {', '.join(summary.conditions_tested)}")
 
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("EMERGENCE BOOST BY MODEL (High Tension vs Low Tension)")
-    print("-"*80)
+    print("-" * 80)
 
     for model, boost_data in summary.emergence_boost.items():
         print(f"\n{model.upper()}:")
         print(f"  High Tension Avg: {boost_data['high_avg']:.1%}")
         print(f"  Low Tension Avg:  {boost_data['low_avg']:.1%}")
-        print(f"  Boost: +{boost_data['boost_pct']:.1f}% ({boost_data['boost_multiplier']:.1f}x)")
+        print(
+            f"  Boost: +{boost_data['boost_pct']:.1f}% ({boost_data['boost_multiplier']:.1f}x)"
+        )
 
     if summary.emergence_boost:
-        avg_boost_pct = sum(d['boost_pct'] for d in summary.emergence_boost.values()) / len(summary.emergence_boost)
-        avg_mult = sum(d['boost_multiplier'] for d in summary.emergence_boost.values()) / len(summary.emergence_boost)
-        print(f"\n{'AVERAGE ACROSS MODELS':20s}: +{avg_boost_pct:6.1f}% (~{avg_mult:.1f}x)")
+        avg_boost_pct = sum(
+            d["boost_pct"] for d in summary.emergence_boost.values()
+        ) / len(summary.emergence_boost)
+        avg_mult = sum(
+            d["boost_multiplier"] for d in summary.emergence_boost.values()
+        ) / len(summary.emergence_boost)
+        print(
+            f"\n{'AVERAGE ACROSS MODELS':20s}: +{avg_boost_pct:6.1f}% (~{avg_mult:.1f}x)"
+        )
 
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("SWEET SPOT VERIFICATION")
-    print("-"*80)
+    print("-" * 80)
 
-    print(f"Sweet Spot Confirmed: {'✅ YES' if summary.sweet_spot_confirmed else '❌ NO'}")
+    print(
+        f"Sweet Spot Confirmed: {'✅ YES' if summary.sweet_spot_confirmed else '❌ NO'}"
+    )
 
     if summary.sweet_spot_confirmed:
         print("\n🎉 HYPOTHESIS CONFIRMED!")
@@ -547,7 +559,7 @@ def print_results_summary(summary: ExperimentSummary):
         print("   This is a MODEL-INDEPENDENT universal principle!")
         print("   → Ready for international conference submission! 🏆")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
 
 
 def save_results(results: List[ExperimentResult], output_dir: str = "results"):
@@ -560,7 +572,7 @@ def save_results(results: List[ExperimentResult], output_dir: str = "results"):
     data = {
         "experiment_date": timestamp,
         "total_tests": len(results),
-        "results": [r.to_dict() for r in results]
+        "results": [r.to_dict() for r in results],
     }
 
     with open(filepath, "w", encoding="utf-8") as f:
@@ -574,6 +586,7 @@ def save_results(results: List[ExperimentResult], output_dir: str = "results"):
 # Main
 # ============================================================================
 
+
 def main():
     """Main entry point."""
 
@@ -586,25 +599,23 @@ def main():
         "--mode",
         choices=["manual", "auto"],
         default="manual",
-        help="Experiment mode (manual or automated)"
+        help="Experiment mode (manual or automated)",
     )
     parser.add_argument(
-        "--model",
-        choices=list(MODELS.keys()),
-        help="Specific model to test"
+        "--model", choices=list(MODELS.keys()), help="Specific model to test"
     )
     parser.add_argument(
         "--condition",
         choices=list(CONDITIONS.keys()),
-        help="Specific condition to test"
+        help="Specific condition to test",
     )
 
     args = parser.parse_args()
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("🧪 CROSS-LLM EMERGENCE SWEET SPOT EXPERIMENT")
     print("   Version 2.0 (Research-Grade)")
-    print("="*80)
+    print("=" * 80)
     print("\nHypothesis:")
     print("  'Dialectical tension creates ~20x emergence boost across ALL LLMs'")
     print("\nConditions:")
@@ -612,9 +623,9 @@ def main():
         print(f"  - {cond_name:20s}: {cond['expected_emergence']:.1%} expected")
 
     if args.mode == "manual":
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("MANUAL MODE")
-        print("="*80)
+        print("=" * 80)
         print("\nYou will:")
         print("1. Copy prompts to each LLM")
         print("2. Paste responses back here")

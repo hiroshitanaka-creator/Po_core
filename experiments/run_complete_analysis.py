@@ -9,6 +9,7 @@ Run the complete 3-step analysis pipeline:
 
 This provides comprehensive insights into philosophical reasoning dynamics.
 """
+
 import sys
 from pathlib import Path
 import asyncio
@@ -33,8 +34,9 @@ async def run_complete_pipeline():
     console.print("[bold magenta]🔬 PO_CORE COMPLETE ANALYSIS PIPELINE[/bold magenta]")
     console.print("=" * 80)
 
-    console.print(Panel(
-        """
+    console.print(
+        Panel(
+            """
 [bold cyan]Analysis Pipeline:[/bold cyan]
 
 [yellow]Step 1:[/yellow] Execute 20-Philosopher Experiment (10 sessions)
@@ -53,9 +55,10 @@ async def run_complete_pipeline():
 
 [bold green]Expected Duration: ~5-10 minutes[/bold green]
         """,
-        title="[bold]Pipeline Overview[/bold]",
-        border_style="cyan"
-    ))
+            title="[bold]Pipeline Overview[/bold]",
+            border_style="cyan",
+        )
+    )
 
     input("\nPress Enter to begin the analysis...")
 
@@ -66,7 +69,9 @@ async def run_complete_pipeline():
     # ========================================================================
 
     console.print("\n" + "=" * 80)
-    console.print("[bold yellow]STEP 1: Running 20-Philosopher Experiment[/bold yellow]")
+    console.print(
+        "[bold yellow]STEP 1: Running 20-Philosopher Experiment[/bold yellow]"
+    )
     console.print("=" * 80 + "\n")
 
     experiment = ExperimentRunner()
@@ -152,8 +157,9 @@ async def run_complete_pipeline():
     console.print("[bold green]✅ COMPLETE ANALYSIS PIPELINE FINISHED![/bold green]")
     console.print("=" * 80 + "\n")
 
-    console.print(Panel(
-        f"""
+    console.print(
+        Panel(
+            f"""
 [bold cyan]Pipeline Results Summary:[/bold cyan]
 
 [yellow]Step 1 - Experiment:[/yellow]
@@ -186,9 +192,10 @@ async def run_complete_pipeline():
 • Identify optimal philosopher combinations
 • Design experiments targeting specific emergence patterns
         """,
-        title="[bold green]🎉 Analysis Complete![/bold green]",
-        border_style="green"
-    ))
+            title="[bold green]🎉 Analysis Complete![/bold green]",
+            border_style="green",
+        )
+    )
 
     console.print("\n[bold]All data files are ready for further analysis![/bold]\n")
 
@@ -204,6 +211,7 @@ def main():
     except Exception as e:
         console.print(f"\n\n[red]Error: {e}[/red]")
         import traceback
+
         traceback.print_exc()
 
 

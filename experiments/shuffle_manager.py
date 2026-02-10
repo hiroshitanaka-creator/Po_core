@@ -38,7 +38,7 @@ QUESTIONS = [
     "正義とは何か",
     "責任とは何か（意図と結果のどちらが重いか）",
     "自己とは何か（継続性と変化）",
-    "幸福とは何か（快楽・徳・関係性の競合）"
+    "幸福とは何か（快楽・徳・関係性の競合）",
 ]
 
 DATA_FILE = "experiment_data.json"
@@ -47,29 +47,39 @@ DATA_FILE = "experiment_data.json"
 # DATA STRUCTURE
 # ============================================================================
 
+
 def load_data() -> dict:
     """Load or initialize experiment data."""
     if Path(DATA_FILE).exists():
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {
         "created": datetime.now().isoformat(),
         "trials": [],
         "shuffled": False,
-        "blind_mapping": {}
+        "blind_mapping": {},
     }
+
 
 def save_data(data: dict):
     """Save experiment data."""
     data["updated"] = datetime.now().isoformat()
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
 
 # ============================================================================
 # COMMANDS
 # ============================================================================
 
-def add_trial(condition: str, question: str, output: str, model: str = "unknown", trial_num: int = 1):
+
+def add_trial(
+    condition: str,
+    question: str,
+    output: str,
+    model: str = "unknown",
+    trial_num: int = 1,
+):
     """Add a new trial output."""
     if condition not in CONDITIONS:
         print(f"Error: condition must be one of {CONDITIONS}")
@@ -90,7 +100,7 @@ def add_trial(condition: str, question: str, output: str, model: str = "unknown"
         "output_length": len(output),
         "added": datetime.now().isoformat(),
         "blind_id": None,
-        "scores": None
+        "scores": None,
     }
 
     data["trials"].append(trial)
@@ -99,10 +109,18 @@ def add_trial(condition: str, question: str, output: str, model: str = "unknown"
 
     print(f"Added: {trial_id} | {condition} | {question[:20]}... | {len(output)} chars")
 
-def add_from_file(condition: str, question: str, filepath: str, model: str = "unknown", trial_num: int = 1):
+
+def add_from_file(
+    condition: str,
+    question: str,
+    filepath: str,
+    model: str = "unknown",
+    trial_num: int = 1,
+):
     """Add trial from file."""
-    output = Path(filepath).read_text(encoding='utf-8')
+    output = Path(filepath).read_text(encoding="utf-8")
     add_trial(condition, question, output, model, trial_num)
+
 
 def shuffle_trials():
     """Shuffle trials and assign blind IDs."""
@@ -131,6 +149,7 @@ def shuffle_trials():
     print(f"Shuffled {len(data['trials'])} trials.")
     print("Blind IDs assigned. Use 'export-blind' to get evaluation materials.")
 
+
 def export_blind(output_dir: str = "blind_evaluation"):
     """Export trials for blind evaluation (no condition info)."""
     data = load_data()
@@ -156,29 +175,29 @@ Question: {trial["question"]}
 {trial["output"]}
 --- END ---
 """
-        filepath.write_text(content, encoding='utf-8')
+        filepath.write_text(content, encoding="utf-8")
 
     # Export summary for Blind Rater
     summary = {
         "total_trials": len(trials_sorted),
         "blind_ids": [t["blind_id"] for t in trials_sorted],
         "questions": list(set(t["question"] for t in trials_sorted)),
-        "instructions": "Evaluate each B###.txt file using the Blind Rater. Save scores as scores.json"
+        "instructions": "Evaluate each B###.txt file using the Blind Rater. Save scores as scores.json",
     }
 
     (Path(output_dir) / "README.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2),
-        encoding='utf-8'
+        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
     print(f"Exported {len(trials_sorted)} trials to {output_dir}/")
     print("Send each B###.txt to Blind Rater and collect JSON responses.")
 
+
 def import_scores(scores_file: str):
     """Import scores from Blind Rater evaluations."""
     data = load_data()
 
-    with open(scores_file, 'r', encoding='utf-8') as f:
+    with open(scores_file, "r", encoding="utf-8") as f:
         scores_data = json.load(f)
 
     # scores_data should be: {"B001": {...scores...}, "B002": {...}, ...}
@@ -198,6 +217,7 @@ def import_scores(scores_file: str):
 
     save_data(data)
     print(f"Imported scores for {imported} trials.")
+
 
 def analyze():
     """Analyze results with unblinding."""
@@ -220,7 +240,9 @@ def analyze():
 
     # Summary statistics
     print("\n--- EMERGENCE SCORES BY CONDITION ---\n")
-    print(f"{'Condition':<12} | {'N':>6} | {'Emerg*':>8} | {'Emerg_T':>8} | {'Conv':>6}")
+    print(
+        f"{'Condition':<12} | {'N':>6} | {'Emerg*':>8} | {'Emerg_T':>8} | {'Conv':>6}"
+    )
     print("-" * 50)
 
     condition_stats = {}
@@ -232,18 +254,24 @@ def analyze():
         scores = [t["scores"] for t in trials]
 
         # Calculate averages
-        avg_emergence_star = sum(s.get("emergence_star", 0) for s in scores) / len(scores)
-        avg_emergence_total = sum(s.get("emergence_total", 0) for s in scores) / len(scores)
+        avg_emergence_star = sum(s.get("emergence_star", 0) for s in scores) / len(
+            scores
+        )
+        avg_emergence_total = sum(s.get("emergence_total", 0) for s in scores) / len(
+            scores
+        )
         avg_conversion = sum(s.get("conversion_level", 0) for s in scores) / len(scores)
 
         condition_stats[condition] = {
             "n": len(trials),
             "emergence_star": avg_emergence_star,
             "emergence_total": avg_emergence_total,
-            "conversion": avg_conversion
+            "conversion": avg_conversion,
         }
 
-        print(f"{condition:<12} | {len(trials):>6} | {avg_emergence_star:>8.1f} | {avg_emergence_total:>8.1f} | {avg_conversion:>6.2f}")
+        print(
+            f"{condition:<12} | {len(trials):>6} | {avg_emergence_star:>8.1f} | {avg_emergence_total:>8.1f} | {avg_conversion:>6.2f}"
+        )
 
     # Conversion level breakdown
     print("\n--- CONVERSION LEVEL DISTRIBUTION ---\n")
@@ -294,16 +322,17 @@ def analyze():
                 "condition": t["condition"],
                 "question": t["question"],
                 "model": t["model"],
-                "scores": t["scores"]
+                "scores": t["scores"],
             }
             for t in scored_trials
-        ]
+        ],
     }
 
-    with open(results_file, 'w', encoding='utf-8') as f:
+    with open(results_file, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
     print(f"\nFull results saved to {results_file}")
+
 
 def status():
     """Show current experiment status."""
@@ -327,6 +356,7 @@ def status():
     scored = sum(1 for t in data["trials"] if t.get("scores"))
     print(f"\nScored: {scored}/{len(data['trials'])}")
 
+
 def quick_add_interactive():
     """Interactive mode for quickly adding trials."""
     print("=== Quick Add Mode ===")
@@ -335,7 +365,7 @@ def quick_add_interactive():
     while True:
         print("\nConditions:", CONDITIONS)
         condition = input("Condition (or 'done'): ").strip()
-        if condition == 'done':
+        if condition == "done":
             break
         if condition not in CONDITIONS:
             print("Invalid condition.")
@@ -365,6 +395,7 @@ def quick_add_interactive():
         add_trial(condition, question, output, model)
         print("Added!")
 
+
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -389,11 +420,15 @@ if __name__ == "__main__":
     subparsers.add_parser("shuffle", help="Shuffle and assign blind IDs")
 
     # export-blind
-    export_parser = subparsers.add_parser("export-blind", help="Export for blind evaluation")
+    export_parser = subparsers.add_parser(
+        "export-blind", help="Export for blind evaluation"
+    )
     export_parser.add_argument("--output-dir", "-o", default="blind_evaluation")
 
     # import-scores
-    import_parser = subparsers.add_parser("import-scores", help="Import evaluation scores")
+    import_parser = subparsers.add_parser(
+        "import-scores", help="Import evaluation scores"
+    )
     import_parser.add_argument("--file", "-f", required=True)
 
     # analyze
@@ -406,9 +441,13 @@ if __name__ == "__main__":
 
     if args.command == "add":
         if args.file:
-            add_from_file(args.condition, args.question, args.file, args.model, args.trial)
+            add_from_file(
+                args.condition, args.question, args.file, args.model, args.trial
+            )
         elif args.output:
-            add_trial(args.condition, args.question, args.output, args.model, args.trial)
+            add_trial(
+                args.condition, args.question, args.output, args.model, args.trial
+            )
         else:
             print("Provide --file or --output")
 

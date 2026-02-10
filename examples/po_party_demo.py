@@ -17,6 +17,7 @@ Usage:
 
 Interactive mode with beautiful Rich UI.
 """
+
 import sys
 from pathlib import Path
 
@@ -54,8 +55,9 @@ def show_welcome():
     """Display welcome screen."""
     console.clear()
     console.print()
-    console.print(Panel(
-        """
+    console.print(
+        Panel(
+            """
 [bold magenta]🎉 Welcome to Po_Party! 🎉[/bold magenta]
 
 [cyan]The Interactive Philosopher Party Machine[/cyan]
@@ -76,10 +78,11 @@ Pick a theme. Choose a mood. Watch philosophy come alive.
 
 [dim]Let's make philosophy fun again! 🐷🎈[/dim]
         """,
-        title="Po_Party",
-        border_style="magenta",
-        padding=(1, 2),
-    ))
+            title="Po_Party",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
 
 
 def select_theme() -> str:
@@ -104,9 +107,7 @@ def select_theme() -> str:
         console.print(f"  {key}. {name}")
 
     choice = Prompt.ask(
-        "\n[yellow]Select theme[/yellow]",
-        choices=list(themes.keys()),
-        default="1"
+        "\n[yellow]Select theme[/yellow]", choices=list(themes.keys()), default="1"
     )
 
     if choice == "11":
@@ -131,9 +132,7 @@ def select_mood() -> PartyMood:
         console.print(f"  {key}. [bold]{name}[/bold] - {desc}")
 
     choice = Prompt.ask(
-        "\n[yellow]Select mood[/yellow]",
-        choices=list(moods.keys()),
-        default="2"
+        "\n[yellow]Select mood[/yellow]", choices=list(moods.keys()), default="2"
     )
 
     return moods[choice][0]
@@ -141,17 +140,23 @@ def select_mood() -> PartyMood:
 
 def display_party_config(config: PartyConfig):
     """Display the suggested party configuration."""
-    console.print("\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n")
+    console.print(
+        "\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n"
+    )
 
     # Main info panel
-    console.print(Panel(
-        config.reasoning,
-        title="Party Configuration",
-        border_style="cyan",
-    ))
+    console.print(
+        Panel(
+            config.reasoning,
+            title="Party Configuration",
+            border_style="cyan",
+        )
+    )
 
     # Philosopher roster
-    table = Table(title="🧠 Philosopher Roster", show_header=True, header_style="bold magenta")
+    table = Table(
+        title="🧠 Philosopher Roster", show_header=True, header_style="bold magenta"
+    )
     table.add_column("#", style="dim", width=4)
     table.add_column("Philosopher", style="cyan")
     table.add_column("Tradition", style="green")
@@ -222,6 +227,7 @@ def run_party_simulation(config: PartyConfig, prompt: str):
         for i in range(20):
             progress.update(task, advance=5)
             import time
+
             time.sleep(0.05)
 
         progress.update(task, description="[cyan]Running philosophical reasoning...")
@@ -255,11 +261,13 @@ def display_party_results(result, config: PartyConfig):
     console.print("=" * 80 + "\n")
 
     # Consensus text
-    console.print(Panel(
-        result.text[:500] + "..." if len(result.text) > 500 else result.text,
-        title="💬 Philosophical Consensus",
-        border_style="cyan",
-    ))
+    console.print(
+        Panel(
+            result.text[:500] + "..." if len(result.text) > 500 else result.text,
+            title="💬 Philosophical Consensus",
+            border_style="cyan",
+        )
+    )
 
     # Metrics dashboard
     metrics_table = Table(
@@ -278,25 +286,13 @@ def display_party_results(result, config: PartyConfig):
     we = result.metrics.get("w_ethics", 0.0)
 
     metrics_table.add_row(
-        "⚡ Freedom Pressure (F_P)",
-        f"{fp:.3f}",
-        "Responsibility weight"
+        "⚡ Freedom Pressure (F_P)", f"{fp:.3f}", "Responsibility weight"
     )
     metrics_table.add_row(
-        "🔄 Semantic Delta (Δs)",
-        f"{sd:.3f}",
-        "Meaning transformation"
+        "🔄 Semantic Delta (Δs)", f"{sd:.3f}", "Meaning transformation"
     )
-    metrics_table.add_row(
-        "🚫 Blocked Tensor (B)",
-        f"{bt:.3f}",
-        "Healthy disagreement"
-    )
-    metrics_table.add_row(
-        "✅ W_ethics",
-        f"{we:.3f}",
-        "Ethical safety score"
-    )
+    metrics_table.add_row("🚫 Blocked Tensor (B)", f"{bt:.3f}", "Healthy disagreement")
+    metrics_table.add_row("✅ W_ethics", f"{we:.3f}", "Ethical safety score")
 
     console.print("\n")
     console.print(metrics_table)
@@ -305,7 +301,9 @@ def display_party_results(result, config: PartyConfig):
     emergence_detected = sd > 0.5 or bt > 0.4
     if emergence_detected:
         console.print("\n[bold green]✨ EMERGENCE DETECTED! ✨[/bold green]")
-        console.print("[green]High semantic transformation and dialectical tension detected.[/green]")
+        console.print(
+            "[green]High semantic transformation and dialectical tension detected.[/green]"
+        )
     else:
         console.print("\n[yellow]📊 Standard reasoning pattern (no emergence)[/yellow]")
 
@@ -318,19 +316,18 @@ def display_party_results(result, config: PartyConfig):
     comparison.add_column("Match", justify="center")
 
     tension_match = "✓" if abs(bt - config.expected_tension) < 0.3 else "~"
-    emergence_match = "✓" if emergence_detected == (config.expected_emergence > 0.5) else "~"
+    emergence_match = (
+        "✓" if emergence_detected == (config.expected_emergence > 0.5) else "~"
+    )
 
     comparison.add_row(
-        "Tension",
-        f"{config.expected_tension:.1%}",
-        f"{bt:.1%}",
-        tension_match
+        "Tension", f"{config.expected_tension:.1%}", f"{bt:.1%}", tension_match
     )
     comparison.add_row(
         "Emergence",
         f"{config.expected_emergence:.1%}",
         f"{'Yes' if emergence_detected else 'No'}",
-        emergence_match
+        emergence_match,
     )
 
     console.print(comparison)
@@ -366,7 +363,9 @@ def main_interactive():
         return
 
     # Get prompt from user
-    console.print("\n[bold cyan]💭 What question should the philosophers discuss?[/bold cyan]")
+    console.print(
+        "\n[bold cyan]💭 What question should the philosophers discuss?[/bold cyan]"
+    )
     console.print(f"[dim]Theme: {config.theme}[/dim]\n")
 
     default_prompts = {
@@ -385,8 +384,7 @@ def main_interactive():
     default_prompt = default_prompts.get(theme, "What is the nature of reality?")
 
     user_prompt = Prompt.ask(
-        "[yellow]Enter your question[/yellow]",
-        default=default_prompt
+        "[yellow]Enter your question[/yellow]", default=default_prompt
     )
 
     # Step 5: Run the party!
@@ -398,7 +396,9 @@ def main_interactive():
             console.clear()
             main_interactive()
         else:
-            console.print("\n[bold green]Thanks for partying with Po_core! 🐷🎈[/bold green]")
+            console.print(
+                "\n[bold green]Thanks for partying with Po_core! 🐷🎈[/bold green]"
+            )
             console.print("[dim]Until next time...[/dim]\n")
 
 
@@ -437,6 +437,7 @@ def quick_demo():
 def create_party(theme: str, mood: str):
     """Helper for quick demo."""
     from po_core.party_machine import create_party as factory_create
+
     return factory_create(theme, mood)
 
 
@@ -458,4 +459,5 @@ if __name__ == "__main__":
         except Exception as e:
             console.print(f"\n[red]Error: {e}[/red]")
             import traceback
+
             traceback.print_exc()

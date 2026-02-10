@@ -10,7 +10,7 @@ import sys
 import os
 from typing import List, Dict
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from rich.console import Console
 from rich.table import Table
@@ -20,7 +20,6 @@ from rich.text import Text
 
 from po_core import __version__
 from po_core.po_self import PoSelf
-
 
 console = Console()
 
@@ -39,7 +38,7 @@ class PhilosopherComparison:
         "精神分析": ["jung", "lacan", "nietzsche"],
         "東洋哲学": ["confucius", "zhuangzi", "watsuji", "wabi_sabi"],
         "西洋哲学": ["aristotle", "nietzsche", "sartre", "wittgenstein"],
-        "政治哲学": ["arendt", "confucius", "aristotle"]
+        "政治哲学": ["arendt", "confucius", "aristotle"],
     }
 
     def __init__(self):
@@ -57,10 +56,9 @@ class PhilosopherComparison:
         if groups is None:
             groups = list(self.PHILOSOPHER_GROUPS.keys())
 
-        console.print(Panel(
-            f"[bold cyan]Question:[/bold cyan] {prompt}",
-            border_style="cyan"
-        ))
+        console.print(
+            Panel(f"[bold cyan]Question:[/bold cyan] {prompt}", border_style="cyan")
+        )
 
         self.responses = {}
 
@@ -79,7 +77,7 @@ class PhilosopherComparison:
 
             self.responses[group_name] = {
                 "response": response,
-                "philosophers": philosophers
+                "philosophers": philosophers,
             }
 
         # 比較結果を表示
@@ -93,10 +91,9 @@ class PhilosopherComparison:
             prompt: 質問
             philosophers: 哲学者のリスト
         """
-        console.print(Panel(
-            f"[bold cyan]Question:[/bold cyan] {prompt}",
-            border_style="cyan"
-        ))
+        console.print(
+            Panel(f"[bold cyan]Question:[/bold cyan] {prompt}", border_style="cyan")
+        )
 
         self.responses = {}
 
@@ -109,7 +106,7 @@ class PhilosopherComparison:
 
             self.responses[philosopher] = {
                 "response": response,
-                "philosophers": [philosopher]
+                "philosophers": [philosopher],
             }
 
         # 比較結果を表示
@@ -137,7 +134,7 @@ class PhilosopherComparison:
                 response.consensus_leader or "Unknown",
                 f"{metrics['freedom_pressure']:.2f}",
                 f"{metrics['semantic_delta']:.2f}",
-                f"{metrics['blocked_tensor']:.2f}"
+                f"{metrics['blocked_tensor']:.2f}",
             )
 
         console.print(metrics_table)
@@ -154,14 +151,16 @@ class PhilosopherComparison:
                 f"{response.text[:200]}...\n\n"
                 f"[dim]Philosophers: {philosophers}[/dim]",
                 title=f"[cyan]{group_name}[/cyan]",
-                border_style="blue"
+                border_style="blue",
             )
             console.print(panel)
 
     def _display_individual_comparison(self, prompt: str):
         """個別哲学者比較結果を表示"""
         console.print("\n" + "=" * 70 + "\n")
-        console.print("[bold magenta]Individual Philosopher Comparison[/bold magenta]\n")
+        console.print(
+            "[bold magenta]Individual Philosopher Comparison[/bold magenta]\n"
+        )
 
         # メトリクス比較
         metrics_table = Table(title="Metrics Comparison")
@@ -180,7 +179,7 @@ class PhilosopherComparison:
                 f"{metrics['freedom_pressure']:.2f}",
                 f"{metrics['semantic_delta']:.2f}",
                 f"{metrics['blocked_tensor']:.2f}",
-                str(len(response.text))
+                str(len(response.text)),
             )
 
         console.print(metrics_table)
@@ -201,7 +200,7 @@ class PhilosopherComparison:
                     f"[bold green]Perspective:[/bold green] {perspective}\n\n"
                     f"[bold yellow]Reasoning:[/bold yellow]\n{reasoning[:300]}...",
                     title=f"[cyan]{philosopher}[/cyan]",
-                    border_style="blue"
+                    border_style="blue",
                 )
                 console.print(panel)
 
@@ -216,7 +215,9 @@ class PhilosopherComparison:
 def demo_group_comparison():
     """グループ比較のデモ"""
     console.print("\n" + "=" * 70, style="bold blue")
-    console.print("Demo 1: Philosopher Group Comparison", style="bold blue", justify="center")
+    console.print(
+        "Demo 1: Philosopher Group Comparison", style="bold blue", justify="center"
+    )
     console.print("=" * 70 + "\n", style="bold blue")
 
     comparison = PhilosopherComparison()
@@ -230,7 +231,9 @@ def demo_group_comparison():
 def demo_individual_comparison():
     """個別哲学者比較のデモ"""
     console.print("\n" + "=" * 70, style="bold blue")
-    console.print("Demo 2: Individual Philosopher Comparison", style="bold blue", justify="center")
+    console.print(
+        "Demo 2: Individual Philosopher Comparison", style="bold blue", justify="center"
+    )
     console.print("=" * 70 + "\n", style="bold blue")
 
     comparison = PhilosopherComparison()
@@ -244,7 +247,9 @@ def demo_individual_comparison():
 def main():
     """メイン実行関数"""
     console.print("\n" + "=" * 70, style="bold blue")
-    console.print("🐷🎈 Po_core Philosopher Comparison Tool", style="bold blue", justify="center")
+    console.print(
+        "🐷🎈 Po_core Philosopher Comparison Tool", style="bold blue", justify="center"
+    )
     console.print(f"Version: {__version__}", style="dim", justify="center")
     console.print("=" * 70 + "\n", style="bold blue")
 
@@ -280,6 +285,7 @@ def main():
     except Exception as e:
         console.print(f"\n[bold red]Error:[/bold red] {str(e)}\n")
         import traceback
+
         traceback.print_exc()
 
 

@@ -44,7 +44,7 @@ def main() -> None:
     session_ids = []
 
     for i, prompt in enumerate(prompts, 1):
-        console.print(f"\n[yellow]{i+1}. Generating response to:[/yellow] \"{prompt}\"")
+        console.print(f'\n[yellow]{i+1}. Generating response to:[/yellow] "{prompt}"')
         result = po_self.generate(prompt)
         session_id = result.log["session_id"]
         session_ids.append(session_id)
@@ -62,9 +62,7 @@ def main() -> None:
     try:
         tension_path = output_dir / f"tension_map_{demo_session[:8]}.png"
         visualizer.create_tension_map(
-            session_id=demo_session,
-            output_path=tension_path,
-            format='png'
+            session_id=demo_session, output_path=tension_path, format="png"
         )
         console.print(f"   [green]✓[/green] Saved: {tension_path}")
     except Exception as e:
@@ -75,9 +73,7 @@ def main() -> None:
     try:
         network_path = output_dir / f"network_{demo_session[:8]}.png"
         visualizer.create_philosopher_network(
-            session_id=demo_session,
-            output_path=network_path,
-            format='png'
+            session_id=demo_session, output_path=network_path, format="png"
         )
         console.print(f"   [green]✓[/green] Saved: {network_path}")
     except Exception as e:
@@ -88,9 +84,7 @@ def main() -> None:
     try:
         dashboard_path = output_dir / f"dashboard_{demo_session[:8]}.html"
         visualizer.create_comprehensive_dashboard(
-            session_id=demo_session,
-            output_path=dashboard_path,
-            format='html'
+            session_id=demo_session, output_path=dashboard_path, format="html"
         )
         console.print(f"   [green]✓[/green] Saved: {dashboard_path}")
         console.print(f"   [dim]Open in browser to explore interactive features[/dim]")
@@ -104,11 +98,13 @@ def main() -> None:
         visualizer.create_metrics_timeline(
             session_ids=session_ids,
             output_path=timeline_path,
-            format='html',
-            title="Philosophical Reasoning Evolution"
+            format="html",
+            title="Philosophical Reasoning Evolution",
         )
         console.print(f"   [green]✓[/green] Saved: {timeline_path}")
-        console.print(f"   [dim]Shows metrics evolution across {len(session_ids)} sessions[/dim]")
+        console.print(
+            f"   [dim]Shows metrics evolution across {len(session_ids)} sessions[/dim]"
+        )
     except Exception as e:
         console.print(f"   [red]✗[/red] Error: {e}")
 
@@ -118,7 +114,7 @@ def main() -> None:
         results = visualizer.export_session_visualizations(
             session_id=demo_session,
             output_dir=output_dir / "complete_export",
-            formats=['png', 'html']
+            formats=["png", "html"],
         )
         console.print(f"   [green]✓[/green] Exported {len(results)} visualizations:")
         for name, path in results.items():
@@ -128,11 +124,19 @@ def main() -> None:
 
     # Summary
     console.print("\n[bold green]✓ Visualization demo complete![/bold green]")
-    console.print(f"\n[cyan]All visualizations saved to:[/cyan] {output_dir.absolute()}")
+    console.print(
+        f"\n[cyan]All visualizations saved to:[/cyan] {output_dir.absolute()}"
+    )
     console.print("\n[bold]What was created:[/bold]")
-    console.print("  • [yellow]Tension Map[/yellow] - Heatmap of philosophical tensions")
-    console.print("  • [yellow]Network Graph[/yellow] - Philosopher interaction network")
-    console.print("  • [yellow]Interactive Dashboard[/yellow] - Comprehensive multi-view analysis")
+    console.print(
+        "  • [yellow]Tension Map[/yellow] - Heatmap of philosophical tensions"
+    )
+    console.print(
+        "  • [yellow]Network Graph[/yellow] - Philosopher interaction network"
+    )
+    console.print(
+        "  • [yellow]Interactive Dashboard[/yellow] - Comprehensive multi-view analysis"
+    )
     console.print("  • [yellow]Metrics Timeline[/yellow] - Evolution across sessions")
 
     console.print("\n[bold]How to use:[/bold]")
@@ -144,7 +148,9 @@ def main() -> None:
     console.print(f"  po-viewer tension-map {demo_session[:12]} -o my_tension.png")
     console.print(f"  po-viewer network {demo_session[:12]} -o my_network.svg")
     console.print(f"  po-viewer viz-dashboard {demo_session[:12]} -o my_dash.html")
-    console.print(f"  po-viewer export-all {demo_session[:12]} -d ./my_viz -f png -f html")
+    console.print(
+        f"  po-viewer export-all {demo_session[:12]} -d ./my_viz -f png -f html"
+    )
 
     console.print("\n[dim]🐷🎈 When pigs fly through philosophical space...[/dim]")
 

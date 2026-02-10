@@ -11,6 +11,7 @@ Features:
 - Complex problem decomposition
 - Real-time coordination and orchestration
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -145,7 +146,9 @@ class MultiAgentReasoningSystem:
 
             if validation["blocked_philosophers"]:
                 error_msg += f"\nBlocked philosophers: {', '.join(validation['blocked_philosophers'])}\n"
-                error_msg += "\nRESTRICTED philosophers are not allowed in Multi-Agent system\n"
+                error_msg += (
+                    "\nRESTRICTED philosophers are not allowed in Multi-Agent system\n"
+                )
                 error_msg += "for general reasoning. Use only TRUSTED philosophers.\n"
 
             raise ValueError(error_msg)
@@ -206,7 +209,9 @@ class MultiAgentReasoningSystem:
 
         # Create PoSelf instance with agent's philosophers and safety settings
         allow_restricted = agent_config.metadata.get("allow_restricted", False)
-        dangerous_pattern_mode = agent_config.metadata.get("dangerous_pattern_mode", False)
+        dangerous_pattern_mode = agent_config.metadata.get(
+            "dangerous_pattern_mode", False
+        )
 
         po = PoSelf(
             philosophers=agent_config.philosophers,
@@ -297,14 +302,13 @@ class MultiAgentReasoningSystem:
             f"Original question: {prompt}\n\n"
             f"Analyses received:\n"
             + "\n\n".join(
-                [
-                    f"- {r.role.value}: {r.text[:200]}..."
-                    for r in phase1_results
-                ]
+                [f"- {r.role.value}: {r.text[:200]}..." for r in phase1_results]
             )
             + "\n\nProvide critical evaluation."
         )
-        phase2_results = await self.parallel_reasoning(critique_prompt, critic_agents[:2])
+        phase2_results = await self.parallel_reasoning(
+            critique_prompt, critic_agents[:2]
+        )
 
         # Phase 3: Synthesis
         console.print("\n[bold]Phase 3:[/bold] Synthesis & Consensus")
@@ -361,7 +365,9 @@ class MultiAgentReasoningSystem:
 
         return final_result
 
-    def decompose_problem(self, complex_prompt: str, num_subtasks: int = 3) -> List[str]:
+    def decompose_problem(
+        self, complex_prompt: str, num_subtasks: int = 3
+    ) -> List[str]:
         """
         Decompose a complex problem into subtasks.
 
@@ -369,7 +375,8 @@ class MultiAgentReasoningSystem:
         For now, we create simple variations.
         """
         subtasks = [
-            f"Aspect {i+1} of the problem: {complex_prompt}" for i in range(num_subtasks)
+            f"Aspect {i+1} of the problem: {complex_prompt}"
+            for i in range(num_subtasks)
         ]
         return subtasks
 
@@ -456,7 +463,7 @@ class MultiAgentReasoningSystem:
         freedom = metrics.get("freedom_pressure", 0.5)
         blocked = metrics.get("blocked_tensor", 0.5)
 
-        confidence = (semantic * 0.4 + freedom * 0.4 + (1.0 - blocked) * 0.2)
+        confidence = semantic * 0.4 + freedom * 0.4 + (1.0 - blocked) * 0.2
         return max(0.0, min(1.0, confidence))
 
     def _calculate_overall_confidence(self, results: List[AgentResult]) -> float:
@@ -486,7 +493,9 @@ class MultiAgentReasoningSystem:
         # Phase 2
         phase2 = tree.add("[bold yellow]Phase 2: Critique[/bold yellow]")
         for critique in result["phase2_critique"]:
-            phase2.add(f"Agent {critique['agent']} (confidence: {critique['confidence']:.2f})")
+            phase2.add(
+                f"Agent {critique['agent']} (confidence: {critique['confidence']:.2f})"
+            )
 
         # Phase 3
         phase3 = tree.add("[bold green]Phase 3: Synthesis[/bold green]")

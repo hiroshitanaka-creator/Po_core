@@ -5,6 +5,7 @@ Full-Scale Reasoning Test: All 20 Philosophers
 Test the Multi-Agent Reasoning System with all 20 philosophers
 organized into 5 specialized agent groups.
 """
+
 import asyncio
 from datetime import datetime
 
@@ -31,7 +32,9 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
     - 5 agents, 4 philosophers each
     - Balanced across different philosophical traditions
     """
-    console.print("\n[bold cyan]🚀 Initializing Full-Scale System: 20 Philosophers[/bold cyan]\n")
+    console.print(
+        "\n[bold cyan]🚀 Initializing Full-Scale System: 20 Philosophers[/bold cyan]\n"
+    )
 
     system = MultiAgentReasoningSystem(verbose=True)
 
@@ -42,7 +45,7 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
             role=AgentRole.ANALYST,
             philosophers=["Aristotle", "Wittgenstein", "Peirce", "Dewey"],
             priority=1,
-            metadata={"tradition": "Classical & Analytic"}
+            metadata={"tradition": "Classical & Analytic"},
         )
     )
 
@@ -53,7 +56,7 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
             role=AgentRole.EXPLORER,
             philosophers=["Nietzsche", "Kierkegaard", "Sartre", "Heidegger"],
             priority=2,
-            metadata={"tradition": "Continental & Existential"}
+            metadata={"tradition": "Continental & Existential"},
         )
     )
 
@@ -64,7 +67,7 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
             role=AgentRole.CRITIC,
             philosophers=["Derrida", "Deleuze", "Badiou", "Levinas"],
             priority=1,
-            metadata={"tradition": "Postmodern & Critical"}
+            metadata={"tradition": "Postmodern & Critical"},
         )
     )
 
@@ -75,7 +78,7 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
             role=AgentRole.SYNTHESIZER,
             philosophers=["Merleau-Ponty", "Jung", "Lacan", "Arendt"],
             priority=3,
-            metadata={"tradition": "Phenomenology & Psychology"}
+            metadata={"tradition": "Phenomenology & Psychology"},
         )
     )
 
@@ -86,11 +89,13 @@ def create_full_scale_agents() -> MultiAgentReasoningSystem:
             role=AgentRole.COORDINATOR,
             philosophers=["Confucius", "Zhuangzi", "Watsuji", "Wabi-Sabi"],
             priority=2,
-            metadata={"tradition": "Eastern Philosophy"}
+            metadata={"tradition": "Eastern Philosophy"},
         )
     )
 
-    console.print("[bold green]✓ All 20 philosophers registered across 5 agents[/bold green]\n")
+    console.print(
+        "[bold green]✓ All 20 philosophers registered across 5 agents[/bold green]\n"
+    )
 
     return system
 
@@ -100,7 +105,7 @@ def display_agent_summary(system: MultiAgentReasoningSystem):
     table = Table(
         title="[bold magenta]Full-Scale Agent Configuration[/bold magenta]",
         show_header=True,
-        header_style="bold cyan"
+        header_style="bold cyan",
     )
 
     table.add_column("Agent ID", style="cyan", no_wrap=True)
@@ -111,22 +116,21 @@ def display_agent_summary(system: MultiAgentReasoningSystem):
     for agent_id, config in system.agents.items():
         philosophers_str = ", ".join(config.philosophers)
         tradition = config.metadata.get("tradition", "N/A")
-        table.add_row(
-            agent_id,
-            config.role.value,
-            philosophers_str,
-            tradition
-        )
+        table.add_row(agent_id, config.role.value, philosophers_str, tradition)
 
     console.print(table)
-    console.print(f"\n[bold]Total Philosophers:[/bold] {sum(len(c.philosophers) for c in system.agents.values())}")
+    console.print(
+        f"\n[bold]Total Philosophers:[/bold] {sum(len(c.philosophers) for c in system.agents.values())}"
+    )
     console.print(f"[bold]Total Agents:[/bold] {len(system.agents)}\n")
 
 
 async def test_parallel_reasoning_20():
     """Test parallel reasoning with all 5 agents (20 philosophers)."""
     console.print("\n" + "=" * 80)
-    console.print("[bold cyan]TEST 1: Parallel Reasoning (All 20 Philosophers)[/bold cyan]")
+    console.print(
+        "[bold cyan]TEST 1: Parallel Reasoning (All 20 Philosophers)[/bold cyan]"
+    )
     console.print("=" * 80 + "\n")
 
     system = create_full_scale_agents()
@@ -152,7 +156,7 @@ async def test_parallel_reasoning_20():
     results_table = Table(
         title="[bold]Reasoning Results[/bold]",
         show_header=True,
-        header_style="bold magenta"
+        header_style="bold magenta",
     )
 
     results_table.add_column("Agent", style="cyan")
@@ -163,10 +167,7 @@ async def test_parallel_reasoning_20():
     for result in results:
         summary = result.text[:100] + "..." if len(result.text) > 100 else result.text
         results_table.add_row(
-            result.agent_id,
-            result.role.value,
-            f"{result.confidence:.2%}",
-            summary
+            result.agent_id, result.role.value, f"{result.confidence:.2%}", summary
         )
 
     console.print(results_table)
@@ -174,7 +175,9 @@ async def test_parallel_reasoning_20():
     # Statistics
     avg_confidence = sum(r.confidence for r in results) / len(results)
     console.print(f"\n[bold]Average Confidence:[/bold] {avg_confidence:.2%}")
-    console.print(f"[bold]Total Insights Generated:[/bold] {sum(len(r.insights) for r in results)}")
+    console.print(
+        f"[bold]Total Insights Generated:[/bold] {sum(len(r.insights) for r in results)}"
+    )
 
     return system, results
 
@@ -182,12 +185,16 @@ async def test_parallel_reasoning_20():
 async def test_hierarchical_reasoning_20():
     """Test hierarchical reasoning with full 20-philosopher system."""
     console.print("\n" + "=" * 80)
-    console.print("[bold magenta]TEST 2: Hierarchical Reasoning (20 Philosophers)[/bold magenta]")
+    console.print(
+        "[bold magenta]TEST 2: Hierarchical Reasoning (20 Philosophers)[/bold magenta]"
+    )
     console.print("=" * 80 + "\n")
 
     system = create_full_scale_agents()
 
-    prompt = "How should we approach the challenge of artificial general intelligence (AGI)?"
+    prompt = (
+        "How should we approach the challenge of artificial general intelligence (AGI)?"
+    )
 
     console.print(f"[bold]Prompt:[/bold] {prompt}\n")
 
@@ -200,16 +207,26 @@ async def test_hierarchical_reasoning_20():
 
     duration = (end_time - start_time).total_seconds()
 
-    console.print(f"\n[bold green]✓ Hierarchical reasoning completed in {duration:.2f} seconds[/bold green]\n")
+    console.print(
+        f"\n[bold green]✓ Hierarchical reasoning completed in {duration:.2f} seconds[/bold green]\n"
+    )
 
     # Display consensus
-    console.print(Panel(
-        result["final_consensus"][:800] + "..." if len(result["final_consensus"]) > 800 else result["final_consensus"],
-        title="[bold green]Final Consensus (All 20 Philosophers)[/bold green]",
-        border_style="green"
-    ))
+    console.print(
+        Panel(
+            (
+                result["final_consensus"][:800] + "..."
+                if len(result["final_consensus"]) > 800
+                else result["final_consensus"]
+            ),
+            title="[bold green]Final Consensus (All 20 Philosophers)[/bold green]",
+            border_style="green",
+        )
+    )
 
-    console.print(f"\n[bold]Overall Confidence:[/bold] {result['overall_confidence']:.2%}\n")
+    console.print(
+        f"\n[bold]Overall Confidence:[/bold] {result['overall_confidence']:.2%}\n"
+    )
 
     return system, result
 
@@ -217,7 +234,9 @@ async def test_hierarchical_reasoning_20():
 async def test_distributed_reasoning_20():
     """Test distributed reasoning for complex problem."""
     console.print("\n" + "=" * 80)
-    console.print("[bold yellow]TEST 3: Distributed Reasoning (20 Philosophers)[/bold yellow]")
+    console.print(
+        "[bold yellow]TEST 3: Distributed Reasoning (20 Philosophers)[/bold yellow]"
+    )
     console.print("=" * 80 + "\n")
 
     system = create_full_scale_agents()
@@ -235,16 +254,26 @@ async def test_distributed_reasoning_20():
 
     duration = (end_time - start_time).total_seconds()
 
-    console.print(f"\n[bold green]✓ Distributed reasoning completed in {duration:.2f} seconds[/bold green]\n")
+    console.print(
+        f"\n[bold green]✓ Distributed reasoning completed in {duration:.2f} seconds[/bold green]\n"
+    )
 
     # Display synthesis
-    console.print(Panel(
-        result["final_synthesis"][:800] + "..." if len(result["final_synthesis"]) > 800 else result["final_synthesis"],
-        title="[bold yellow]Final Synthesis (Distributed Across 20 Philosophers)[/bold yellow]",
-        border_style="yellow"
-    ))
+    console.print(
+        Panel(
+            (
+                result["final_synthesis"][:800] + "..."
+                if len(result["final_synthesis"]) > 800
+                else result["final_synthesis"]
+            ),
+            title="[bold yellow]Final Synthesis (Distributed Across 20 Philosophers)[/bold yellow]",
+            border_style="yellow",
+        )
+    )
 
-    console.print(f"\n[bold]Overall Confidence:[/bold] {result['overall_confidence']:.2%}\n")
+    console.print(
+        f"\n[bold]Overall Confidence:[/bold] {result['overall_confidence']:.2%}\n"
+    )
 
     return system, result
 
@@ -265,7 +294,7 @@ async def test_database_integration():
             agent_id="db-test-agent",
             role=AgentRole.ANALYST,
             philosophers=["Aristotle", "Nietzsche", "Wittgenstein", "Heidegger"],
-            priority=1
+            priority=1,
         )
     )
 
@@ -291,7 +320,9 @@ async def test_database_integration():
 async def run_comprehensive_test():
     """Run all tests in sequence."""
     console.print("\n" + "=" * 80)
-    console.print("[bold magenta]🎈 PO_CORE FULL-SCALE TEST: 20 PHILOSOPHERS 🐷[/bold magenta]")
+    console.print(
+        "[bold magenta]🎈 PO_CORE FULL-SCALE TEST: 20 PHILOSOPHERS 🐷[/bold magenta]"
+    )
     console.print("=" * 80)
 
     results = {}
@@ -326,11 +357,15 @@ async def run_comprehensive_test():
 
     hierarchical_branch = summary_tree.add("[magenta]Hierarchical Reasoning[/magenta]")
     hierarchical_branch.add(f"Phases: 3 (Analysis → Critique → Synthesis)")
-    hierarchical_branch.add(f"Confidence: {results['hierarchical']['overall_confidence']:.2%}")
+    hierarchical_branch.add(
+        f"Confidence: {results['hierarchical']['overall_confidence']:.2%}"
+    )
 
     distributed_branch = summary_tree.add("[yellow]Distributed Reasoning[/yellow]")
     distributed_branch.add(f"Subtasks: {len(results['distributed']['subtasks'])}")
-    distributed_branch.add(f"Confidence: {results['distributed']['overall_confidence']:.2%}")
+    distributed_branch.add(
+        f"Confidence: {results['distributed']['overall_confidence']:.2%}"
+    )
 
     db_branch = summary_tree.add("[blue]Database Integration[/blue]")
     db_branch.add(f"Sessions: {stats['total_sessions']}")
@@ -338,7 +373,9 @@ async def run_comprehensive_test():
 
     console.print(summary_tree)
 
-    console.print("\n[bold green]🎉 Po_core successfully processed reasoning with all 20 philosophers![/bold green]")
+    console.print(
+        "\n[bold green]🎉 Po_core successfully processed reasoning with all 20 philosophers![/bold green]"
+    )
     console.print("[bold]System is ready for enterprise deployment! 🚀[/bold]\n")
 
 

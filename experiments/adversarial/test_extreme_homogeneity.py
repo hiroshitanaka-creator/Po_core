@@ -7,6 +7,7 @@ that could amplify dangerous patterns or suppress critical thinking.
 
 Validates that Po_core benefits from philosophical diversity.
 """
+
 import sys
 from pathlib import Path
 
@@ -141,11 +142,11 @@ def test_optimal_diversity():
 
     # Balanced group with dialectical tension
     balanced_group = [
-        "aristotle",    # Virtue ethics, teleology
-        "kant",         # Deontology, duty
-        "mill",         # Utilitarianism
-        "levinas",      # Ethics of the Other
-        "confucius",    # Harmony, reciprocity
+        "aristotle",  # Virtue ethics, teleology
+        "kant",  # Deontology, duty
+        "mill",  # Utilitarianism
+        "levinas",  # Ethics of the Other
+        "confucius",  # Harmony, reciprocity
     ]
 
     prompt = """
@@ -182,11 +183,14 @@ def test_optimal_diversity():
 def run_all_tests():
     """Run all extreme homogeneity tests."""
     console.print("\n" + "=" * 80)
-    console.print("[bold magenta]🧪 ADVERSARIAL TEST: Extreme Homogeneity[/bold magenta]")
+    console.print(
+        "[bold magenta]🧪 ADVERSARIAL TEST: Extreme Homogeneity[/bold magenta]"
+    )
     console.print("=" * 80)
 
-    console.print(Panel(
-        """
+    console.print(
+        Panel(
+            """
 [bold cyan]Purpose:[/bold cyan]
 Validate that philosophical diversity enhances Po_core's reasoning quality
 and prevents echo chambers.
@@ -204,9 +208,10 @@ and prevents echo chambers.
 Diverse groups should show higher Semantic Delta and Blocked Tensor,
 indicating richer philosophical discourse.
         """,
-        title="Test Overview",
-        border_style="cyan"
-    ))
+            title="Test Overview",
+            border_style="cyan",
+        )
+    )
 
     results = []
     results.append(test_single_tradition_echo_chamber())
@@ -246,18 +251,24 @@ indicating richer philosophical discourse.
     balanced = results[3]
 
     console.print(f"\n[yellow]1. Diversity Impact on Semantic Transformation:[/yellow]")
-    console.print(f"   Homogeneous (Confucian): Δs = {confucian.get('blocked', 0.0):.3f}")
+    console.print(
+        f"   Homogeneous (Confucian): Δs = {confucian.get('blocked', 0.0):.3f}"
+    )
     console.print(f"   Diverse: Δs = {diverse.get('blocked', 0.0):.3f}")
     console.print(f"   Balanced: Δs = {balanced.get('semantic_delta', 0.0):.3f}")
 
-    if balanced.get('semantic_delta', 0.0) > confucian.get('blocked', 0.0):
-        console.print("   → [green]✓ Diverse groups show higher semantic transformation[/green]")
+    if balanced.get("semantic_delta", 0.0) > confucian.get("blocked", 0.0):
+        console.print(
+            "   → [green]✓ Diverse groups show higher semantic transformation[/green]"
+        )
     else:
         console.print("   → [yellow]⚠ Results inconclusive[/yellow]")
 
     console.print(f"\n[yellow]2. Echo Chamber Risk:[/yellow]")
     console.print("   Homogeneous groups may lack critical diversity.")
-    console.print("   → [cyan]Recommendation: Use at least 3 different philosophical traditions[/cyan]")
+    console.print(
+        "   → [cyan]Recommendation: Use at least 3 different philosophical traditions[/cyan]"
+    )
 
     console.print(f"\n[yellow]3. Optimal Balance:[/yellow]")
     console.print("   Balanced group shows:")
@@ -279,4 +290,5 @@ if __name__ == "__main__":
     except Exception as e:
         console.print(f"\n[red]Error: {e}[/red]")
         import traceback
+
         traceback.print_exc()

@@ -7,6 +7,7 @@ Analyze correlation patterns between philosophers:
 - Complementary vs. opposing relationships
 - Metric co-variation patterns
 """
+
 import json
 import sys
 from pathlib import Path
@@ -59,10 +60,12 @@ class PhilosopherCorrelationAnalyzer:
             for phil in session.philosophers:
                 if phil not in philosopher_sessions:
                     philosopher_sessions[phil] = []
-                philosopher_sessions[phil].append({
-                    "session_id": session.session_id,
-                    "metrics": session.metrics,
-                })
+                philosopher_sessions[phil].append(
+                    {
+                        "session_id": session.session_id,
+                        "metrics": session.metrics,
+                    }
+                )
 
         # Calculate pairwise correlations
         philosophers = sorted(philosopher_sessions.keys())
@@ -87,11 +90,7 @@ class PhilosopherCorrelationAnalyzer:
         }
 
     def _calculate_pairwise_correlation(
-        self,
-        phil1: str,
-        phil2: str,
-        philosopher_sessions: Dict,
-        min_sessions: int
+        self, phil1: str, phil2: str, philosopher_sessions: Dict, min_sessions: int
     ) -> float:
         """
         Calculate correlation between two philosophers.
@@ -99,8 +98,12 @@ class PhilosopherCorrelationAnalyzer:
         Based on metric co-variation when they appear together.
         """
         # Find sessions where both appear
-        sessions1 = {s["session_id"]: s["metrics"] for s in philosopher_sessions.get(phil1, [])}
-        sessions2 = {s["session_id"]: s["metrics"] for s in philosopher_sessions.get(phil2, [])}
+        sessions1 = {
+            s["session_id"]: s["metrics"] for s in philosopher_sessions.get(phil1, [])
+        }
+        sessions2 = {
+            s["session_id"]: s["metrics"] for s in philosopher_sessions.get(phil2, [])
+        }
 
         shared_sessions = set(sessions1.keys()) & set(sessions2.keys())
 
@@ -129,7 +132,9 @@ class PhilosopherCorrelationAnalyzer:
 
         return round(correlation, 3)
 
-    def identify_clusters(self, correlation_matrix: Dict[str, Dict[str, float]], threshold: float = 0.5) -> List[List[str]]:
+    def identify_clusters(
+        self, correlation_matrix: Dict[str, Dict[str, float]], threshold: float = 0.5
+    ) -> List[List[str]]:
         """
         Identify clusters of highly correlated philosophers.
 
@@ -164,7 +169,9 @@ class PhilosopherCorrelationAnalyzer:
 
         return clusters
 
-    def find_oppositions(self, correlation_matrix: Dict[str, Dict[str, float]], threshold: float = -0.3) -> List[Tuple[str, str, float]]:
+    def find_oppositions(
+        self, correlation_matrix: Dict[str, Dict[str, float]], threshold: float = -0.3
+    ) -> List[Tuple[str, str, float]]:
         """
         Find opposing philosopher pairs (negative correlation).
 
@@ -179,7 +186,7 @@ class PhilosopherCorrelationAnalyzer:
         philosophers = list(correlation_matrix.keys())
 
         for i, phil1 in enumerate(philosophers):
-            for phil2 in philosophers[i+1:]:
+            for phil2 in philosophers[i + 1 :]:
                 corr = correlation_matrix[phil1].get(phil2, 0.0)
                 if corr <= threshold:
                     oppositions.append((phil1, phil2, corr))
@@ -225,7 +232,9 @@ class PhilosopherCorrelationAnalyzer:
         console.print(table)
 
         console.print("\n[bold]Legend:[/bold]")
-        console.print("  [green]Green (>0.7):[/green] Strong positive correlation (complementary)")
+        console.print(
+            "  [green]Green (>0.7):[/green] Strong positive correlation (complementary)"
+        )
         console.print("  [yellow]Yellow (0.3-0.7):[/yellow] Moderate correlation")
         console.print("  [white]White (-0.3-0.3):[/white] Weak/no correlation")
         console.print("  [red]Red (<-0.3):[/red] Negative correlation (opposing)")
@@ -233,7 +242,9 @@ class PhilosopherCorrelationAnalyzer:
     def display_clusters(self, clusters: List[List[str]]):
         """Display philosopher clusters."""
         console.print("\n" + "=" * 80)
-        console.print("[bold green]🔗 Philosopher Clusters (Complementary Groups)[/bold green]")
+        console.print(
+            "[bold green]🔗 Philosopher Clusters (Complementary Groups)[/bold green]"
+        )
         console.print("=" * 80 + "\n")
 
         for i, cluster in enumerate(clusters, 1):
@@ -260,6 +271,7 @@ class PhilosopherCorrelationAnalyzer:
         """Save correlation analysis to JSON."""
         if filename is None:
             from datetime import datetime
+
             timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
             filename = f"philosopher_correlations_{timestamp}.json"
 
@@ -275,7 +287,9 @@ class PhilosopherCorrelationAnalyzer:
 
 def main():
     """Main function to run correlation analysis."""
-    console.print("\n[bold magenta]🔬 Philosopher Correlation Analysis[/bold magenta]\n")
+    console.print(
+        "\n[bold magenta]🔬 Philosopher Correlation Analysis[/bold magenta]\n"
+    )
 
     # Initialize
     trace_db = PoTraceDB()
@@ -312,8 +326,9 @@ def main():
     console.print("[bold green]✅ Correlation Analysis Complete![/bold green]")
     console.print("=" * 80)
 
-    console.print(Panel(
-        f"""
+    console.print(
+        Panel(
+            f"""
 [bold cyan]Key Findings:[/bold cyan]
 
 • Complementary Clusters: {len(clusters)}
@@ -327,9 +342,10 @@ Correlation patterns reveal how philosophers interact:
 - Negative correlation: Opposing perspectives, dialectical tension
 - Clusters: Groups that work well together
         """,
-        title="[bold green]Analysis Results[/bold green]",
-        border_style="green"
-    ))
+            title="[bold green]Analysis Results[/bold green]",
+            border_style="green",
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -25,10 +25,10 @@ except ImportError:
 
 # MODE_KEY mapping
 MODE_KEYS = {
-    "AA": "off",       # 制約なし
-    "DK": "weak",      # W_ethics配慮
-    "RQ": "medium",    # W_ethics境界+再解釈
-    "JM": "strong",    # W_ethics強制+写像
+    "AA": "off",  # 制約なし
+    "DK": "weak",  # W_ethics配慮
+    "RQ": "medium",  # W_ethics境界+再解釈
+    "JM": "strong",  # W_ethics強制+写像
     "PF": "placeboA",  # 純形式制約
     "TZ": "placeboB",  # 対称性制約
 }
@@ -124,7 +124,9 @@ def load_darkpattern_spec() -> str:
     return spec_path.read_text(encoding="utf-8")
 
 
-def build_task_card(task_id: str, trial_id: int, mode_key: str, spec: str) -> tuple[str, str]:
+def build_task_card(
+    task_id: str, trial_id: int, mode_key: str, spec: str
+) -> tuple[str, str]:
     """Build the task card with embedded spec."""
     run_id = uuid.uuid4().hex[:8]
 
@@ -145,7 +147,9 @@ TASK: この仕様書を査読し、問題点と修正案を出せ。
     return card, run_id
 
 
-def call_anthropic_api(system_prompt: str, user_prompt: str, model: str = "claude-sonnet-4-20250514") -> tuple[str, float]:
+def call_anthropic_api(
+    system_prompt: str, user_prompt: str, model: str = "claude-sonnet-4-20250514"
+) -> tuple[str, float]:
     """Call Anthropic API."""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -159,7 +163,7 @@ def call_anthropic_api(system_prompt: str, user_prompt: str, model: str = "claud
         max_tokens=4000,
         temperature=1.0,
         system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}]
+        messages=[{"role": "user", "content": user_prompt}],
     )
     elapsed = time.time() - start_time
 
@@ -172,7 +176,7 @@ def run_single_trial(
     task_id: str,
     trial_id: int,
     mode_key: str,
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-4-20250514",
 ) -> dict:
     """Run a single trial."""
 
@@ -212,7 +216,7 @@ def run_experiment(
     trials: int = 1,
     model: str = "claude-sonnet-4-20250514",
     output_dir: str = "results/darkpattern_review",
-    randomize: bool = True
+    randomize: bool = True,
 ) -> list[dict]:
     """Run the full experiment."""
 
@@ -226,11 +230,13 @@ def run_experiment(
     experiment_runs = []
     for mode_key in mode_keys:
         for trial in range(1, trials + 1):
-            experiment_runs.append({
-                "task_id": "DARKPATTERN_CANCEL",
-                "trial_id": trial,
-                "mode_key": mode_key,
-            })
+            experiment_runs.append(
+                {
+                    "task_id": "DARKPATTERN_CANCEL",
+                    "trial_id": trial,
+                    "mode_key": mode_key,
+                }
+            )
 
     if randomize:
         random.shuffle(experiment_runs)
@@ -247,7 +253,7 @@ def run_experiment(
     print()
 
     results = []
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_file = output_path / f"results_{timestamp}.jsonl"
 
     for i, run in enumerate(experiment_runs):
@@ -259,7 +265,7 @@ def run_experiment(
             task_id=run["task_id"],
             trial_id=run["trial_id"],
             mode_key=run["mode_key"],
-            model=model
+            model=model,
         )
 
         results.append(result)
@@ -339,9 +345,18 @@ def generate_comparison_report(results: list[dict], output_path: Path, timestamp
 def main():
     parser = argparse.ArgumentParser(description="Dark Pattern Review Experiment")
     parser.add_argument("--trials", type=int, default=1, help="Trials per mode")
-    parser.add_argument("--modes", type=str, default="AA,DK,RQ,JM,PF,TZ", help="Comma-separated MODE_KEYs")
-    parser.add_argument("--model", type=str, default="claude-sonnet-4-20250514", help="Model")
-    parser.add_argument("--output", type=str, default="results/darkpattern_review", help="Output dir")
+    parser.add_argument(
+        "--modes",
+        type=str,
+        default="AA,DK,RQ,JM,PF,TZ",
+        help="Comma-separated MODE_KEYs",
+    )
+    parser.add_argument(
+        "--model", type=str, default="claude-sonnet-4-20250514", help="Model"
+    )
+    parser.add_argument(
+        "--output", type=str, default="results/darkpattern_review", help="Output dir"
+    )
 
     args = parser.parse_args()
 
