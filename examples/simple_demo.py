@@ -15,24 +15,29 @@ from rich.table import Table
 from po_core import __version__
 from po_core.po_self import PoSelf
 
-
 console = Console()
 
 
 def print_header():
     """ヘッダーを表示"""
     console.print("\n" + "=" * 70, style="bold blue")
-    console.print("🐷🎈 Po_core - Philosophy-Driven AI Prototype Demo", style="bold blue", justify="center")
+    console.print(
+        "🐷🎈 Po_core - Philosophy-Driven AI Prototype Demo",
+        style="bold blue",
+        justify="center",
+    )
     console.print(f"Version: {__version__}", style="dim", justify="center")
     console.print("=" * 70 + "\n", style="bold blue")
-    console.print("[italic]「井の中の蛙、大海は知らずとも、大空を知る」[/italic]\n", justify="center")
+    console.print(
+        "[italic]「井の中の蛙、大海は知らずとも、大空を知る」[/italic]\n",
+        justify="center",
+    )
 
 
 def demo_single_question(prompt: str, philosophers=None):
     """単一の質問に対する哲学的推論を実行"""
 
-    console.print(Panel(f"[bold cyan]質問:[/bold cyan] {prompt}",
-                       border_style="cyan"))
+    console.print(Panel(f"[bold cyan]質問:[/bold cyan] {prompt}", border_style="cyan"))
 
     # Po_selfインスタンスを作成
     po_self = PoSelf(philosophers=philosophers) if philosophers else PoSelf()
@@ -43,12 +48,14 @@ def demo_single_question(prompt: str, philosophers=None):
     response = po_self.generate(prompt)
 
     # 結果を表示
-    console.print(Panel(
-        f"[bold green]コンセンサスリーダー:[/bold green] {response.consensus_leader}\n\n"
-        f"[bold yellow]回答:[/bold yellow]\n{response.text[:300]}...",
-        title="推論結果",
-        border_style="green"
-    ))
+    console.print(
+        Panel(
+            f"[bold green]コンセンサスリーダー:[/bold green] {response.consensus_leader}\n\n"
+            f"[bold yellow]回答:[/bold yellow]\n{response.text[:300]}...",
+            title="推論結果",
+            border_style="green",
+        )
+    )
 
     # メトリクスを表形式で表示
     metrics_table = Table(title="哲学的テンソル・メトリクス")
@@ -71,26 +78,34 @@ def demo_philosopher_comparison():
     """複数の哲学者の視点を比較するデモ"""
 
     console.print("\n" + "=" * 70, style="bold magenta")
-    console.print("哲学者比較デモ - 異なる視点からの推論", style="bold magenta", justify="center")
+    console.print(
+        "哲学者比較デモ - 異なる視点からの推論", style="bold magenta", justify="center"
+    )
     console.print("=" * 70 + "\n", style="bold magenta")
 
     prompt = "人生の意味とは何か？"
 
     # 西洋哲学者グループ
     console.print("[bold blue]1. 西洋実存主義グループ[/bold blue]")
-    response1 = demo_single_question(prompt, philosophers=["sartre", "heidegger", "kierkegaard"])
+    response1 = demo_single_question(
+        prompt, philosophers=["sartre", "heidegger", "kierkegaard"]
+    )
 
     console.print("\n" + "-" * 70 + "\n")
 
     # 東洋哲学者グループ
     console.print("[bold blue]2. 東洋哲学グループ[/bold blue]")
-    response2 = demo_single_question(prompt, philosophers=["confucius", "zhuangzi", "wabi_sabi"])
+    response2 = demo_single_question(
+        prompt, philosophers=["confucius", "zhuangzi", "wabi_sabi"]
+    )
 
     console.print("\n" + "-" * 70 + "\n")
 
     # 古典哲学者グループ
     console.print("[bold blue]3. 古典哲学グループ[/bold blue]")
-    response3 = demo_single_question(prompt, philosophers=["aristotle", "nietzsche", "wittgenstein"])
+    response3 = demo_single_question(
+        prompt, philosophers=["aristotle", "nietzsche", "wittgenstein"]
+    )
 
     # メトリクス比較
     console.print("\n" + "=" * 70 + "\n", style="bold magenta")
@@ -106,19 +121,19 @@ def demo_philosopher_comparison():
         "西洋実存主義",
         f"{response1.metrics['freedom_pressure']:.2f}",
         f"{response1.metrics['semantic_delta']:.2f}",
-        f"{response1.metrics['blocked_tensor']:.2f}"
+        f"{response1.metrics['blocked_tensor']:.2f}",
     )
     comparison_table.add_row(
         "東洋哲学",
         f"{response2.metrics['freedom_pressure']:.2f}",
         f"{response2.metrics['semantic_delta']:.2f}",
-        f"{response2.metrics['blocked_tensor']:.2f}"
+        f"{response2.metrics['blocked_tensor']:.2f}",
     )
     comparison_table.add_row(
         "古典哲学",
         f"{response3.metrics['freedom_pressure']:.2f}",
         f"{response3.metrics['semantic_delta']:.2f}",
-        f"{response3.metrics['blocked_tensor']:.2f}"
+        f"{response3.metrics['blocked_tensor']:.2f}",
     )
 
     console.print(comparison_table)
@@ -131,7 +146,9 @@ def demo_interactive_mode():
     console.print("対話型モード", style="bold green", justify="center")
     console.print("=" * 70 + "\n", style="bold green")
 
-    console.print("[italic]質問を入力してください（終了するには 'quit' または 'exit' を入力）[/italic]\n")
+    console.print(
+        "[italic]質問を入力してください（終了するには 'quit' または 'exit' を入力）[/italic]\n"
+    )
 
     po_self = PoSelf()
 
@@ -139,8 +156,10 @@ def demo_interactive_mode():
         try:
             prompt = console.input("[bold cyan]あなた:[/bold cyan] ")
 
-            if prompt.lower() in ['quit', 'exit', 'q', '終了']:
-                console.print("\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n")
+            if prompt.lower() in ["quit", "exit", "q", "終了"]:
+                console.print(
+                    "\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n"
+                )
                 break
 
             if not prompt.strip():
@@ -149,14 +168,20 @@ def demo_interactive_mode():
             console.print("\n[dim]推論中...[/dim]\n")
             response = po_self.generate(prompt)
 
-            console.print(f"[bold green]Po_core ({response.consensus_leader}):[/bold green]")
+            console.print(
+                f"[bold green]Po_core ({response.consensus_leader}):[/bold green]"
+            )
             console.print(response.text[:500] + "...\n")
-            console.print(f"[dim]メトリクス: FP={response.metrics['freedom_pressure']:.2f}, "
-                        f"SD={response.metrics['semantic_delta']:.2f}, "
-                        f"BT={response.metrics['blocked_tensor']:.2f}[/dim]\n")
+            console.print(
+                f"[dim]メトリクス: FP={response.metrics['freedom_pressure']:.2f}, "
+                f"SD={response.metrics['semantic_delta']:.2f}, "
+                f"BT={response.metrics['blocked_tensor']:.2f}[/dim]\n"
+            )
 
         except KeyboardInterrupt:
-            console.print("\n\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n")
+            console.print(
+                "\n\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n"
+            )
             break
         except Exception as e:
             console.print(f"\n[bold red]エラー:[/bold red] {str(e)}\n")

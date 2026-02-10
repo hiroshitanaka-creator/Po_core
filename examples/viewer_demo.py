@@ -9,6 +9,7 @@ Demonstrates all visualization features of Po_viewer:
 - Philosopher interactions
 - Session comparison
 """
+
 from rich.console import Console
 from rich.panel import Panel
 from rich import print as rprint
@@ -62,12 +63,8 @@ def demo_event_flow():
     """Demo 2: Event flow visualization."""
     print_section_header("Demo 2: Event Flow Visualization")
 
-    console.print(
-        "[yellow]Creating session with multiple philosophers...[/yellow]"
-    )
-    po = PoSelf(
-        philosophers=["aristotle", "nietzsche", "sartre"], enable_trace=True
-    )
+    console.print("[yellow]Creating session with multiple philosophers...[/yellow]")
+    po = PoSelf(philosophers=["aristotle", "nietzsche", "sartre"], enable_trace=True)
     response = po.generate("What is authentic freedom?")
 
     session_id = response.log["session_id"]
@@ -104,9 +101,7 @@ def demo_session_comparison():
     console.print("[yellow]Creating two sessions with different approaches...[/yellow]")
 
     # Session 1: Western philosophers
-    po = PoSelf(
-        philosophers=["aristotle", "nietzsche", "sartre"], enable_trace=True
-    )
+    po = PoSelf(philosophers=["aristotle", "nietzsche", "sartre"], enable_trace=True)
     response1 = po.generate("What is justice?")
     session_id1 = response1.log["session_id"]
     console.print(f"[green]✓ Session 1 (Western): {session_id1[:8]}...[/green]")
@@ -184,9 +179,7 @@ def demo_full_visualization():
         ],
         enable_trace=True,
     )
-    response = po.generate(
-        "How should we live in harmony with nature and society?"
-    )
+    response = po.generate("How should we live in harmony with nature and society?")
 
     session_id = response.log["session_id"]
     viewer = PoViewer(po_trace=po.po_trace)

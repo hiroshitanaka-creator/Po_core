@@ -31,6 +31,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 @dataclass(frozen=True)
 class Rule:
     """Forbidden import rule."""
+
     src_prefix: str
     dst_prefix: str
     message: str
@@ -39,25 +40,41 @@ class Rule:
 # Dependency rules (INVIOLABLE)
 DEFAULT_RULES: List[Rule] = [
     # Core isolation
-    Rule("po_core.safety", "po_core.philosophers", "safety/** must not import philosophers/**"),
+    Rule(
+        "po_core.safety",
+        "po_core.philosophers",
+        "safety/** must not import philosophers/**",
+    ),
     Rule("po_core.tensors", "po_core.safety", "tensors/** must not import safety/**"),
-    Rule("po_core.viewer", "po_core.philosophers", "viewer/** must not import philosophers/**"),
+    Rule(
+        "po_core.viewer",
+        "po_core.philosophers",
+        "viewer/** must not import philosophers/**",
+    ),
     Rule("po_core.viewer", "po_core.tensors", "viewer/** must not import tensors/**"),
-    Rule("po_core.trace", "po_core.philosophers", "trace/** must not import philosophers/**"),
+    Rule(
+        "po_core.trace",
+        "po_core.philosophers",
+        "trace/** must not import philosophers/**",
+    ),
     Rule("po_core.trace", "po_core.tensors", "trace/** must not import tensors/**"),
-
     # domain は外に出ない（domain→domain は許可）
     Rule("po_core.domain", "po_core.", "domain/** must not import po_core/**"),
-
     # ports は domain と ports 以外を見たらアウト
     Rule("po_core.ports", "po_core.tensors", "ports/** must not import tensors/**"),
     Rule("po_core.ports", "po_core.safety", "ports/** must not import safety/**"),
-    Rule("po_core.ports", "po_core.philosophers", "ports/** must not import philosophers/**"),
+    Rule(
+        "po_core.ports",
+        "po_core.philosophers",
+        "ports/** must not import philosophers/**",
+    ),
     Rule("po_core.ports", "po_core.autonomy", "ports/** must not import autonomy/**"),
     Rule("po_core.ports", "po_core.runtime", "ports/** must not import runtime/**"),
     Rule("po_core.ports", "po_core.app", "ports/** must not import app/**"),
     Rule("po_core.ports", "po_core.adapters", "ports/** must not import adapters/**"),
-    Rule("po_core.ports", "po_core.aggregator", "ports/** must not import aggregator/**"),
+    Rule(
+        "po_core.ports", "po_core.aggregator", "ports/** must not import aggregator/**"
+    ),
     Rule("po_core.ports", "po_core.trace", "ports/** must not import trace/**"),
 ]
 
@@ -110,7 +127,11 @@ def resolve_import(
     up = max(0, len(base) - (level - 1))
     base = base[:up]
     if not base:
-        return package if module is None else (module if module.startswith(package) else None)
+        return (
+            package
+            if module is None
+            else (module if module.startswith(package) else None)
+        )
 
     prefix = ".".join(base)
     if module is None:
@@ -203,7 +224,9 @@ def check_rules(graph: Dict[str, Set[str]], rules: List[Rule]) -> List[str]:
                     continue
 
                 # allow domain -> domain imports
-                if r.src_prefix == "po_core.domain" and dst.startswith("po_core.domain"):
+                if r.src_prefix == "po_core.domain" and dst.startswith(
+                    "po_core.domain"
+                ):
                     continue
 
                 # allow ports -> domain imports
@@ -256,8 +279,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Import graph analyzer for Po_core")
     ap.add_argument("--root", default="src/po_core", help="Root directory to analyze")
     ap.add_argument("--package", default="po_core", help="Package name")
-    ap.add_argument("--check", action="store_true", help="Exit non-zero if violations/cycles exist")
-    ap.add_argument("--print", dest="print_output", action="store_true", help="Print summary")
+    ap.add_argument(
+        "--check", action="store_true", help="Exit non-zero if violations/cycles exist"
+    )
+    ap.add_argument(
+        "--print", dest="print_output", action="store_true", help="Print summary"
+    )
     args = ap.parse_args()
 
     # Resolve root path

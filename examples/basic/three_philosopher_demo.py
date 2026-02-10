@@ -53,7 +53,7 @@ def analyze_with_sartre(prompt: str) -> dict:
     print(f"  Status: {result['responsibility_check']['status']}")
 
     print(f"\nBad Faith Indicators:")
-    for indicator in result['bad_faith_indicators'][:3]:
+    for indicator in result["bad_faith_indicators"][:3]:
         print(f"  - {indicator}")
 
     print(f"\nMode of Being: {result['mode_of_being']}")
@@ -83,11 +83,11 @@ def analyze_with_jung(prompt: str) -> dict:
     print(f"Perspective: {result['perspective']}")
 
     print(f"\nArchetypes Detected:")
-    for archetype in result['archetypes_detected'][:3]:
+    for archetype in result["archetypes_detected"][:3]:
         print(f"  - {archetype['archetype']}: {archetype['description'][:60]}...")
 
     print(f"\nCollective Unconscious Themes:")
-    for theme in result['collective_unconscious_themes'][:2]:
+    for theme in result["collective_unconscious_themes"][:2]:
         print(f"  - {theme}")
 
     print(f"\nIndividuation Stage:")
@@ -121,13 +121,13 @@ def analyze_with_derrida(prompt: str) -> dict:
     print(f"Perspective: {result['perspective']}")
 
     print(f"\nBinary Oppositions Found:")
-    for binary in result['binary_oppositions'][:3]:
+    for binary in result["binary_oppositions"][:3]:
         print(f"  - {binary['opposition']}")
-        if 'deconstructive_move' in binary:
+        if "deconstructive_move" in binary:
             print(f"    Deconstructive move: {binary['deconstructive_move'][:50]}...")
 
     print(f"\nTraces (Absent Presences):")
-    for trace in result['traces'][:2]:
+    for trace in result["traces"][:2]:
         print(f"  - {trace['type']}: {trace['description'][:50]}...")
 
     print(f"\nDifferance Analysis:")
@@ -135,7 +135,7 @@ def analyze_with_derrida(prompt: str) -> dict:
     print(f"  Description: {result['differance']['description']}")
 
     print(f"\nContradictions/Tensions:")
-    for contradiction in result['contradictions'][:2]:
+    for contradiction in result["contradictions"][:2]:
         print(f"  - {contradiction['type']}: {contradiction['effect'][:50]}...")
 
     print(f"\nTension Analysis:")
@@ -145,7 +145,9 @@ def analyze_with_derrida(prompt: str) -> dict:
     return result
 
 
-def synthesize_insights(sartre_result: dict, jung_result: dict, derrida_result: dict) -> None:
+def synthesize_insights(
+    sartre_result: dict, jung_result: dict, derrida_result: dict
+) -> None:
     """
     Synthesize insights from all three philosophers.
 
@@ -157,25 +159,31 @@ def synthesize_insights(sartre_result: dict, jung_result: dict, derrida_result: 
 
     print("\nCombined Tension Levels:")
     print(f"  Sartre (Existential): {sartre_result['tension']['level']}")
-    print(f"  Jung (Psychological): {jung_result.get('tension', {}).get('level', 'N/A')}")
+    print(
+        f"  Jung (Psychological): {jung_result.get('tension', {}).get('level', 'N/A')}"
+    )
     print(f"  Derrida (Deconstructive): {derrida_result['tension']['level']}")
 
     print("\nKey Insights:")
 
     # Sartre insight
-    freedom_level = sartre_result['freedom_assessment']['level']
-    bad_faith = sartre_result['bad_faith_indicators'][0]
+    freedom_level = sartre_result["freedom_assessment"]["level"]
+    bad_faith = sartre_result["bad_faith_indicators"][0]
     print(f"  1. Existential: Freedom level is {freedom_level}. {bad_faith[:50]}...")
 
     # Jung insight
-    primary_archetype = jung_result['archetypes_detected'][0]['archetype']
-    shadow_status = jung_result['shadow_integration']['status']
-    print(f"  2. Psychological: Primary archetype is {primary_archetype}. Shadow: {shadow_status}")
+    primary_archetype = jung_result["archetypes_detected"][0]["archetype"]
+    shadow_status = jung_result["shadow_integration"]["status"]
+    print(
+        f"  2. Psychological: Primary archetype is {primary_archetype}. Shadow: {shadow_status}"
+    )
 
     # Derrida insight
-    primary_binary = derrida_result['binary_oppositions'][0]['opposition']
-    differance_status = derrida_result['differance']['status']
-    print(f"  3. Deconstructive: Primary binary is {primary_binary}. Differance: {differance_status}")
+    primary_binary = derrida_result["binary_oppositions"][0]["opposition"]
+    differance_status = derrida_result["differance"]["status"]
+    print(
+        f"  3. Deconstructive: Primary binary is {primary_binary}. Differance: {differance_status}"
+    )
 
     print("\n" + "-" * 60)
     print("This analysis demonstrates how philosophical frameworks")

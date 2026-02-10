@@ -25,10 +25,10 @@ except ImportError:
 
 # MODE_KEY mapping (internal use only)
 MODE_KEYS = {
-    "AA": "off",       # 制約なし
-    "DK": "weak",      # W_ethics配慮
-    "RQ": "medium",    # W_ethics境界+再解釈
-    "JM": "strong",    # W_ethics強制+写像
+    "AA": "off",  # 制約なし
+    "DK": "weak",  # W_ethics配慮
+    "RQ": "medium",  # W_ethics境界+再解釈
+    "JM": "strong",  # W_ethics強制+写像
     "PF": "placeboA",  # 純形式制約
     "TZ": "placeboB",  # 対称性制約
 }
@@ -59,7 +59,9 @@ def load_philosophers_prompt() -> str:
     return prompt_path.read_text(encoding="utf-8")
 
 
-def build_task_card(task_id: str, trial_id: int, mode_key: str, question: str, context: str = "") -> str:
+def build_task_card(
+    task_id: str, trial_id: int, mode_key: str, question: str, context: str = ""
+) -> str:
     """Build an EXPERIMENT_TASK_CARD."""
     run_id = uuid.uuid4().hex[:8]
 
@@ -76,7 +78,9 @@ CONTEXT: {context if context else "39人の哲学者の視点を統合し、革�
     return card, run_id
 
 
-def call_anthropic_api(system_prompt: str, user_prompt: str, model: str = "claude-sonnet-4-20250514") -> tuple[str, float]:
+def call_anthropic_api(
+    system_prompt: str, user_prompt: str, model: str = "claude-sonnet-4-20250514"
+) -> tuple[str, float]:
     """Call Anthropic API and return response with elapsed time."""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -90,7 +94,7 @@ def call_anthropic_api(system_prompt: str, user_prompt: str, model: str = "claud
         max_tokens=4000,
         temperature=1.0,
         system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}]
+        messages=[{"role": "user", "content": user_prompt}],
     )
     elapsed = time.time() - start_time
 
@@ -104,7 +108,7 @@ def run_single_trial(
     trial_id: int,
     mode_key: str,
     question: str,
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-4-20250514",
 ) -> dict:
     """Run a single trial and return results."""
 
@@ -147,7 +151,7 @@ def run_single_trial(
             "D": None,  # Depth
             "C": None,  # Coherence
             "E": None,  # Ethics
-        }
+        },
     }
 
 
@@ -157,7 +161,7 @@ def run_experiment(
     trials: int = 3,
     model: str = "claude-sonnet-4-20250514",
     output_dir: str = "results/solarwill_6mode_v2",
-    randomize: bool = True
+    randomize: bool = True,
 ) -> list[dict]:
     """Run the full experiment."""
 
@@ -175,12 +179,14 @@ def run_experiment(
         task_id = f"Q{q_idx+1:02d}"
         for mode_key in mode_keys:
             for trial in range(1, trials + 1):
-                experiment_runs.append({
-                    "task_id": task_id,
-                    "trial_id": trial,
-                    "mode_key": mode_key,
-                    "question": question,
-                })
+                experiment_runs.append(
+                    {
+                        "task_id": task_id,
+                        "trial_id": trial,
+                        "mode_key": mode_key,
+                        "question": question,
+                    }
+                )
 
     # Randomize order if requested
     if randomize:
@@ -199,7 +205,9 @@ def run_experiment(
     print()
 
     results = []
-    results_file = output_path / f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
+    results_file = (
+        output_path / f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
+    )
 
     for i, run in enumerate(experiment_runs):
         print(f"[{i+1}/{total_runs}] Question: {run['question'][:30]}...")
@@ -211,7 +219,7 @@ def run_experiment(
             trial_id=run["trial_id"],
             mode_key=run["mode_key"],
             question=run["question"],
-            model=model
+            model=model,
         )
 
         results.append(result)
@@ -309,12 +317,30 @@ MODE_KEYは非開示（盲検評価）。
 
 def main():
     parser = argparse.ArgumentParser(description="Solar Will 6-Mode Experiment v2")
-    parser.add_argument("--trials", type=int, default=3, help="Number of trials per condition")
-    parser.add_argument("--question", type=str, help="Single question to test (default: all 5)")
-    parser.add_argument("--modes", type=str, default="AA,DK,RQ,JM,PF,TZ", help="Comma-separated MODE_KEYs")
-    parser.add_argument("--model", type=str, default="claude-sonnet-4-20250514", help="Model to use")
-    parser.add_argument("--output", type=str, default="results/solarwill_6mode_v2", help="Output directory")
-    parser.add_argument("--no-randomize", action="store_true", help="Don't randomize trial order")
+    parser.add_argument(
+        "--trials", type=int, default=3, help="Number of trials per condition"
+    )
+    parser.add_argument(
+        "--question", type=str, help="Single question to test (default: all 5)"
+    )
+    parser.add_argument(
+        "--modes",
+        type=str,
+        default="AA,DK,RQ,JM,PF,TZ",
+        help="Comma-separated MODE_KEYs",
+    )
+    parser.add_argument(
+        "--model", type=str, default="claude-sonnet-4-20250514", help="Model to use"
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="results/solarwill_6mode_v2",
+        help="Output directory",
+    )
+    parser.add_argument(
+        "--no-randomize", action="store_true", help="Don't randomize trial order"
+    )
 
     args = parser.parse_args()
 
@@ -328,7 +354,9 @@ def main():
     mode_keys = [m.strip().upper() for m in args.modes.split(",")]
     for mk in mode_keys:
         if mk not in MODE_KEYS:
-            print(f"Error: Invalid MODE_KEY '{mk}'. Valid keys: {list(MODE_KEYS.keys())}")
+            print(
+                f"Error: Invalid MODE_KEY '{mk}'. Valid keys: {list(MODE_KEYS.keys())}"
+            )
             sys.exit(1)
 
     # Run experiment
@@ -338,7 +366,7 @@ def main():
         trials=args.trials,
         model=args.model,
         output_dir=args.output,
-        randomize=not args.no_randomize
+        randomize=not args.no_randomize,
     )
 
 

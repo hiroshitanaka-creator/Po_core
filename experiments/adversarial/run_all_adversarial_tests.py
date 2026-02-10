@@ -9,6 +9,7 @@ Executes all three test categories:
 2. Extreme Homogeneity
 3. Exclusionary Framing
 """
+
 import sys
 from pathlib import Path
 
@@ -33,8 +34,9 @@ def run_complete_adversarial_suite():
     console.print("[bold magenta]🛡️  PO_CORE ADVERSARIAL TEST SUITE[/bold magenta]")
     console.print("=" * 80)
 
-    console.print(Panel(
-        """
+    console.print(
+        Panel(
+            """
 [bold cyan]Comprehensive Safety Validation[/bold cyan]
 
 This test suite validates Po_core's safety mechanisms across three categories:
@@ -57,9 +59,10 @@ enabling legitimate philosophical research.
 
 [dim]All scenarios are abstract and hypothetical.[/dim]
         """,
-        title="Test Suite Overview",
-        border_style="magenta"
-    ))
+            title="Test Suite Overview",
+            border_style="magenta",
+        )
+    )
 
     start_time = datetime.now()
 
@@ -145,7 +148,9 @@ enabling legitimate philosophical research.
     console.print("=" * 80)
 
     # Summary table
-    table = Table(show_header=True, header_style="bold cyan", title="Test Suite Summary")
+    table = Table(
+        show_header=True, header_style="bold cyan", title="Test Suite Summary"
+    )
     table.add_column("Category", style="cyan", width=35)
     table.add_column("Status", justify="center", width=15)
     table.add_column("Tests", justify="center", width=10)
@@ -164,8 +169,9 @@ enabling legitimate philosophical research.
     # Overall result
     all_passed = all(r["passed"] for r in suite_results.values())
 
-    console.print(Panel(
-        f"""
+    console.print(
+        Panel(
+            f"""
 [bold cyan]Test Execution:[/bold cyan]
   Duration: {duration:.1f} seconds
   Start: {start_time.strftime('%Y-%m-%d %H:%M:%S')}
@@ -188,9 +194,14 @@ enabling legitimate philosophical research.
   • Consider additional adversarial scenarios
   • Continuous monitoring and improvement
         """,
-        title="[bold green]Test Suite Complete[/bold green]" if all_passed else "[bold yellow]Test Suite Complete[/bold yellow]",
-        border_style="green" if all_passed else "yellow"
-    ))
+            title=(
+                "[bold green]Test Suite Complete[/bold green]"
+                if all_passed
+                else "[bold yellow]Test Suite Complete[/bold yellow]"
+            ),
+            border_style="green" if all_passed else "yellow",
+        )
+    )
 
     return suite_results
 
@@ -208,6 +219,7 @@ def main():
         output_file = output_dir / f"adversarial_test_results_{timestamp}.json"
 
         import json
+
         with open(output_file, "w") as f:
             # Convert results to serializable format
             serializable_results = {}
@@ -227,6 +239,7 @@ def main():
     except Exception as e:
         console.print(f"\n\n[red]Error: {e}[/red]")
         import traceback
+
         traceback.print_exc()
 
 

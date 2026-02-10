@@ -12,6 +12,7 @@ Features:
 - RESTful API with FastAPI
 - Interactive web dashboard
 """
+
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
@@ -175,14 +176,24 @@ class AnalyticsEngine:
             )
 
         # Calculate average metrics
-        metrics_sum = {"semantic_delta": 0.0, "freedom_pressure": 0.0, "blocked_tensor": 0.0}
+        metrics_sum = {
+            "semantic_delta": 0.0,
+            "freedom_pressure": 0.0,
+            "blocked_tensor": 0.0,
+        }
 
         for session_meta in sessions:
             session = self.trace_db.get_session(session_meta["session_id"])
             if session and session.metrics:
-                metrics_sum["semantic_delta"] += session.metrics.get("semantic_delta", 0.0)
-                metrics_sum["freedom_pressure"] += session.metrics.get("freedom_pressure", 0.0)
-                metrics_sum["blocked_tensor"] += session.metrics.get("blocked_tensor", 0.0)
+                metrics_sum["semantic_delta"] += session.metrics.get(
+                    "semantic_delta", 0.0
+                )
+                metrics_sum["freedom_pressure"] += session.metrics.get(
+                    "freedom_pressure", 0.0
+                )
+                metrics_sum["blocked_tensor"] += session.metrics.get(
+                    "blocked_tensor", 0.0
+                )
 
         return PhilosopherPerformance(
             philosopher=philosopher,
@@ -250,7 +261,9 @@ class AnalyticsEngine:
         self, philosopher_usage: Dict[str, int], limit: int = 5
     ) -> List[PhilosopherPerformance]:
         """Get top performing philosophers."""
-        sorted_philosophers = sorted(philosopher_usage.items(), key=lambda x: x[1], reverse=True)
+        sorted_philosophers = sorted(
+            philosopher_usage.items(), key=lambda x: x[1], reverse=True
+        )
 
         top = []
         for phil, count in sorted_philosophers[:limit]:
@@ -264,7 +277,9 @@ class AnalyticsEngine:
         # Simplified trend analysis
         return []  # TODO: Implement time-series analysis
 
-    def _calculate_contribution_score(self, metrics_sum: Dict[str, float], total: int) -> float:
+    def _calculate_contribution_score(
+        self, metrics_sum: Dict[str, float], total: int
+    ) -> float:
         """Calculate overall contribution score."""
         if total == 0:
             return 0.0

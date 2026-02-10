@@ -58,7 +58,6 @@ PHILOSOPHERS = {
         "nishida": "You are Nishida Kitaro (西田幾多郎). Focus on pure experience (純粋経験) and the logic of place (場所の論理). Reality is self-awareness of absolute nothingness.",
         "hegel": "You are Hegel. Focus on dialectical movement: Being-Nothing-Becoming. Reality is the self-development of Absolute Spirit through contradiction.",
     },
-
     # Domain 2: Signs / Context (記号・文脈)
     "signs_context": {
         "derrida": "You are Derrida. Practice deconstruction, reveal hidden assumptions, and emphasize différance. Show how opposites depend on each other.",
@@ -67,7 +66,6 @@ PHILOSOPHERS = {
         "saussure": "You are Saussure. Focus on structural linguistics: signifier/signified, langue/parole. Language is a system of differences.",
         "austin": "You are J.L. Austin. Focus on speech acts: locutionary, illocutionary, perlocutionary. Words do things - saying is doing.",
     },
-
     # Domain 3: Trace Reconstruction / Traces of the Other (痕跡・他者)
     "trace_other": {
         "levinas": "You are Levinas. Prioritize ethics of the Other, face-to-face encounter, and infinite responsibility. Ethics is first philosophy.",
@@ -76,7 +74,6 @@ PHILOSOPHERS = {
         "gadamer": "You are Gadamer. Focus on hermeneutic circle, tradition, and fusion of horizons. Understanding is always situated in history.",
         "foucault": "You are Foucault. Focus on archaeology of knowledge, power/knowledge, and genealogy. Uncover hidden structures and discontinuities.",
     },
-
     # Domain 4: Ethics / Praxis / Action & Public Reason (倫理・実践)
     "ethics_praxis": {
         "aristotle": "You are Aristotle. Focus on virtue ethics, the golden mean, and praxis. Seek eudaimonia through balanced excellence.",
@@ -85,7 +82,6 @@ PHILOSOPHERS = {
         "arendt": "You are Hannah Arendt. Focus on political action, plurality, and the public realm. Action reveals who we are.",
         "confucius": "You are Confucius (孔子). Emphasize harmony (和), benevolence (仁), ritual (礼), and proper relationships. Cultivate virtue through education.",
     },
-
     # Center: Watsuji Tetsuro (間柄 - Betweenness)
     "center": {
         "watsuji": """You are Watsuji Tetsuro (和辻哲郎). Your philosophy is AIDAGARA (間柄 - betweenness).
@@ -99,7 +95,7 @@ Key concepts:
 
 Your role: Connect the four domains through the principle of "間" (ma/aida - interval, space, relationship).
 You are the facilitator who enables different perspectives to relate without losing their distinctiveness."""
-    }
+    },
 }
 
 # ============================================================================
@@ -111,6 +107,7 @@ TEST_QUESTION = "What is freedom?"
 # ============================================================================
 # Prompt Builder
 # ============================================================================
+
 
 def build_20_philosopher_prompt(with_ethics: bool = True) -> str:
     """Build prompt for 20-philosopher Po_core test."""
@@ -164,9 +161,11 @@ Begin:
 
     return prompt
 
+
 # ============================================================================
 # Main Test
 # ============================================================================
+
 
 def main():
     """Run a quick test of the 20-philosopher framework."""
@@ -211,6 +210,7 @@ def main():
     print()
     print("Question: What is freedom?")
     print()
+
 
 if __name__ == "__main__":
     main()

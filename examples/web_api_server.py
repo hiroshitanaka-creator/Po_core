@@ -20,23 +20,24 @@ from po_core import __version__
 from po_core.po_self import PoSelf
 from po_core.ensemble import PHILOSOPHER_REGISTRY
 
-
 # ============================================================================
 # Pydantic Models
 # ============================================================================
 
+
 class PromptRequest(BaseModel):
     """推論リクエスト"""
+
     prompt: str = Field(..., min_length=1, description="質問またはプロンプト")
     philosophers: Optional[List[str]] = Field(
-        None,
-        description="使用する哲学者のリスト（省略時はデフォルト）"
+        None, description="使用する哲学者のリスト（省略時はデフォルト）"
     )
     enable_trace: bool = Field(True, description="トレース機能を有効化")
 
 
 class PromptResponse(BaseModel):
     """推論レスポンス"""
+
     session_id: str
     prompt: str
     text: str
@@ -49,6 +50,7 @@ class PromptResponse(BaseModel):
 
 class SessionSummary(BaseModel):
     """セッションサマリー"""
+
     session_id: str
     prompt: str
     consensus_leader: Optional[str]
@@ -58,6 +60,7 @@ class SessionSummary(BaseModel):
 
 class HealthResponse(BaseModel):
     """ヘルスチェックレスポンス"""
+
     status: str
     version: str
     timestamp: str
@@ -66,6 +69,7 @@ class HealthResponse(BaseModel):
 # ============================================================================
 # In-Memory Session Storage
 # ============================================================================
+
 
 class SessionStore:
     """セッション履歴の保存（メモリ内）"""
@@ -85,13 +89,15 @@ class SessionStore:
         """全セッションのサマリーを取得"""
         summaries = []
         for session in self.sessions.values():
-            summaries.append(SessionSummary(
-                session_id=session.session_id,
-                prompt=session.prompt,
-                consensus_leader=session.consensus_leader,
-                created_at=session.created_at,
-                metrics=session.metrics
-            ))
+            summaries.append(
+                SessionSummary(
+                    session_id=session.session_id,
+                    prompt=session.prompt,
+                    consensus_leader=session.consensus_leader,
+                    created_at=session.created_at,
+                    metrics=session.metrics,
+                )
+            )
         return sorted(summaries, key=lambda x: x.created_at, reverse=True)
 
     def count(self) -> int:
@@ -112,7 +118,7 @@ app = FastAPI(
     description="Philosophy-Driven AI System - RESTful API",
     version=__version__,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # CORS設定
@@ -131,6 +137,7 @@ session_store = SessionStore()
 # ============================================================================
 # API Endpoints
 # ============================================================================
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -414,7 +421,7 @@ async def health_check():
     return HealthResponse(
         status="healthy",
         version=__version__,
-        timestamp=datetime.utcnow().isoformat() + "Z"
+        timestamp=datetime.utcnow().isoformat() + "Z",
     )
 
 
@@ -424,14 +431,12 @@ async def list_philosophers():
     philosophers = []
     for key, cls in PHILOSOPHER_REGISTRY.items():
         instance = cls()
-        philosophers.append({
-            "key": key,
-            "name": instance.name,
-            "description": instance.description
-        })
+        philosophers.append(
+            {"key": key, "name": instance.name, "description": instance.description}
+        )
     return {
         "total": len(philosophers),
-        "philosophers": sorted(philosophers, key=lambda x: x["name"])
+        "philosophers": sorted(philosophers, key=lambda x: x["name"]),
     }
 
 
@@ -441,8 +446,7 @@ async def generate_response(request: PromptRequest):
     try:
         # Po_selfインスタンスを作成
         po = PoSelf(
-            philosophers=request.philosophers,
-            enable_trace=request.enable_trace
+            philosophers=request.philosophers, enable_trace=request.enable_trace
         )
 
         # 推論を実行
@@ -460,7 +464,7 @@ async def generate_response(request: PromptRequest):
             philosophers=response.philosophers,
             metrics=response.metrics,
             responses=response.responses,
-            created_at=datetime.utcnow().isoformat() + "Z"
+            created_at=datetime.utcnow().isoformat() + "Z",
         )
 
         # セッションを保存
@@ -480,10 +484,7 @@ async def list_sessions(
 ):
     """セッション履歴のリストを取得"""
     all_sessions = session_store.list_all()
-    return {
-        "total": len(all_sessions),
-        "sessions": all_sessions[:limit]
-    }
+    return {"total": len(all_sessions), "sessions": all_sessions[:limit]}
 
 
 @app.get("/api/v1/sessions/{session_id}", response_model=PromptResponse)
@@ -500,10 +501,7 @@ async def clear_sessions():
     """全セッション履歴をクリア"""
     count = session_store.count()
     session_store.clear()
-    return {
-        "message": "All sessions cleared",
-        "cleared_count": count
-    }
+    return {"message": "All sessions cleared", "cleared_count": count}
 
 
 @app.get("/api/v1/stats")
@@ -515,7 +513,7 @@ async def get_stats():
         return {
             "total_sessions": 0,
             "average_metrics": None,
-            "most_common_leader": None
+            "most_common_leader": None,
         }
 
     # 平均メトリクスを計算
@@ -533,9 +531,9 @@ async def get_stats():
         "average_metrics": {
             "freedom_pressure": round(total_fp / count, 2),
             "semantic_delta": round(total_sd / count, 2),
-            "blocked_tensor": round(total_bt / count, 2)
+            "blocked_tensor": round(total_bt / count, 2),
         },
-        "most_common_leader": most_common_leader
+        "most_common_leader": most_common_leader,
     }
 
 

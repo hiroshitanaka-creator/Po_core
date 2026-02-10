@@ -9,6 +9,7 @@ Collect statistical data on:
 - Fulfillment convergence
 - Non-linear jumps (phase transitions)
 """
+
 import json
 import sys
 from pathlib import Path
@@ -19,7 +20,13 @@ from typing import List, Dict, Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TimeElapsedColumn,
+)
 from rich.table import Table
 from rich.panel import Panel
 
@@ -92,9 +99,13 @@ class ExperimentRunner:
         # Display metrics
         metrics = result.get("metrics", {})
         console.print(f"  [green]F_P:[/green] {metrics.get('freedom_pressure', 0):.3f}")
-        console.print(f"  [yellow]Semantic Δ:[/yellow] {metrics.get('semantic_delta', 0):.3f}")
+        console.print(
+            f"  [yellow]Semantic Δ:[/yellow] {metrics.get('semantic_delta', 0):.3f}"
+        )
         console.print(f"  [red]Blocked:[/red] {metrics.get('blocked_tensor', 0):.3f}")
-        console.print(f"  [magenta]Leader:[/magenta] {result.get('consensus_leader', 'N/A')}")
+        console.print(
+            f"  [magenta]Leader:[/magenta] {result.get('consensus_leader', 'N/A')}"
+        )
 
         return session_data
 
@@ -109,7 +120,9 @@ class ExperimentRunner:
             List of session data dictionaries
         """
         console.print("\n" + "=" * 80)
-        console.print("[bold cyan]🔬 Experiment: 20 Philosophers × 10 Sessions[/bold cyan]")
+        console.print(
+            "[bold cyan]🔬 Experiment: 20 Philosophers × 10 Sessions[/bold cyan]"
+        )
         console.print("=" * 80 + "\n")
 
         console.print(f"[bold]Configuration:[/bold]")
@@ -129,10 +142,7 @@ class ExperimentRunner:
             console=console,
         ) as progress:
 
-            task = progress.add_task(
-                "[cyan]Running sessions...",
-                total=num_sessions
-            )
+            task = progress.add_task("[cyan]Running sessions...", total=num_sessions)
 
             for i in range(num_sessions):
                 prompt = TEST_PROMPTS[i % len(TEST_PROMPTS)]
@@ -214,7 +224,9 @@ class ExperimentRunner:
                 leaders[leader] = leaders.get(leader, 0) + 1
         return leaders
 
-    def _detect_jumps(self, fp_series: List[float], sd_series: List[float]) -> List[Dict]:
+    def _detect_jumps(
+        self, fp_series: List[float], sd_series: List[float]
+    ) -> List[Dict]:
         """
         Detect non-linear jumps (potential phase transitions).
 
@@ -235,14 +247,16 @@ class ExperimentRunner:
             sd_change = abs(sd_series[i] - sd_series[i - 1])
 
             if fp_change > fp_threshold or sd_change > sd_threshold:
-                jumps.append({
-                    "session": i,
-                    "fp_change": fp_change,
-                    "sd_change": sd_change,
-                    "fp_threshold": fp_threshold,
-                    "sd_threshold": sd_threshold,
-                    "type": "F_P" if fp_change > fp_threshold else "Semantic",
-                })
+                jumps.append(
+                    {
+                        "session": i,
+                        "fp_change": fp_change,
+                        "sd_change": sd_change,
+                        "fp_threshold": fp_threshold,
+                        "sd_threshold": sd_threshold,
+                        "type": "F_P" if fp_change > fp_threshold else "Semantic",
+                    }
+                )
 
         return jumps
 
@@ -252,7 +266,7 @@ class ExperimentRunner:
         metrics_table = Table(
             title="[bold]Metric Statistics[/bold]",
             show_header=True,
-            header_style="bold cyan"
+            header_style="bold cyan",
         )
 
         metrics_table.add_column("Metric", style="cyan")
@@ -278,11 +292,15 @@ class ExperimentRunner:
         # Consensus leaders
         console.print("\n[bold]Consensus Leaders:[/bold]")
         leaders = analysis["consensus_leaders"]
-        for leader, count in sorted(leaders.items(), key=lambda x: x[1], reverse=True)[:5]:
+        for leader, count in sorted(leaders.items(), key=lambda x: x[1], reverse=True)[
+            :5
+        ]:
             console.print(f"  {leader}: {count} sessions")
 
         # Jumps
-        console.print(f"\n[bold]Non-linear Jumps Detected:[/bold] {len(analysis['jumps'])}")
+        console.print(
+            f"\n[bold]Non-linear Jumps Detected:[/bold] {len(analysis['jumps'])}"
+        )
         if analysis["jumps"]:
             console.print("[yellow]Potential phase transitions:[/yellow]")
             for jump in analysis["jumps"]:
@@ -322,7 +340,9 @@ class ExperimentRunner:
 def main():
     """Main function to run the experiment."""
     console.print("\n[bold magenta]🔬 Po_core Research Experiment[/bold magenta]")
-    console.print("[bold]Objective:[/bold] Study F_P variation, jumps, and convergence patterns\n")
+    console.print(
+        "[bold]Objective:[/bold] Study F_P variation, jumps, and convergence patterns\n"
+    )
 
     # Run experiment
     runner = ExperimentRunner()
@@ -339,8 +359,9 @@ def main():
     console.print("[bold green]✅ Experiment Complete![/bold green]")
     console.print("=" * 80)
 
-    console.print(Panel(
-        f"""
+    console.print(
+        Panel(
+            f"""
 [bold cyan]Experiment Summary:[/bold cyan]
 
 • Total Sessions: {len(results)}
@@ -354,9 +375,10 @@ def main():
 2. Analyze philosopher correlation patterns
 3. Identify phase transition conditions
         """,
-        title="[bold green]Experiment Results[/bold green]",
-        border_style="green"
-    ))
+            title="[bold green]Experiment Results[/bold green]",
+            border_style="green",
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ from typing import List, Dict
 from dataclasses import dataclass, asdict
 from datetime import datetime
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from rich.console import Console
 from rich.table import Table
@@ -35,7 +35,6 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from po_core import __version__
 from po_core.po_self import PoSelf
-
 
 console = Console()
 
@@ -47,6 +46,7 @@ class AnalysisResult:
 
     単一プロンプトの分析結果
     """
+
     prompt: str
     consensus_leader: str
     metrics: Dict[str, float]
@@ -61,6 +61,7 @@ class BatchAnalysisReport:
 
     バッチ分析の包括的レポート
     """
+
     total_prompts: int
     total_philosophers_used: int
     average_metrics: Dict[str, float]
@@ -99,13 +100,15 @@ class BatchAnalyzer:
             consensus_leader=response.consensus_leader or "Unknown",
             metrics=response.metrics,
             philosopher_count=len(response.philosophers),
-            response_length=len(response.text)
+            response_length=len(response.text),
         )
 
         self.results.append(result)
         return result
 
-    def analyze_batch(self, prompts: List[str], show_progress: bool = True) -> List[AnalysisResult]:
+    def analyze_batch(
+        self, prompts: List[str], show_progress: bool = True
+    ) -> List[AnalysisResult]:
         """
         複数のプロンプトをバッチ分析
 
@@ -122,11 +125,10 @@ class BatchAnalyzer:
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
-                console=console
+                console=console,
             ) as progress:
                 task = progress.add_task(
-                    f"[cyan]Analyzing {len(prompts)} prompts...",
-                    total=len(prompts)
+                    f"[cyan]Analyzing {len(prompts)} prompts...", total=len(prompts)
                 )
 
                 for prompt in prompts:
@@ -154,14 +156,14 @@ class BatchAnalyzer:
                 average_metrics={},
                 leader_distribution={},
                 results=[],
-                created_at=datetime.utcnow().isoformat() + "Z"
+                created_at=datetime.utcnow().isoformat() + "Z",
             )
 
         # 平均メトリクスを計算
         total_metrics = {
             "freedom_pressure": 0.0,
             "semantic_delta": 0.0,
-            "blocked_tensor": 0.0
+            "blocked_tensor": 0.0,
         }
 
         for result in self.results:
@@ -190,7 +192,7 @@ class BatchAnalyzer:
             average_metrics=average_metrics,
             leader_distribution=leader_distribution,
             results=self.results,
-            created_at=datetime.utcnow().isoformat() + "Z"
+            created_at=datetime.utcnow().isoformat() + "Z",
         )
 
     def print_summary(self):
@@ -198,13 +200,15 @@ class BatchAnalyzer:
         report = self.generate_report()
 
         console.print("\n")
-        console.print(Panel(
-            f"[bold cyan]Batch Analysis Summary[/bold cyan]\n\n"
-            f"Total Prompts: {report.total_prompts}\n"
-            f"Philosophers Used: {report.total_philosophers_used}\n"
-            f"Created: {report.created_at}",
-            border_style="cyan"
-        ))
+        console.print(
+            Panel(
+                f"[bold cyan]Batch Analysis Summary[/bold cyan]\n\n"
+                f"Total Prompts: {report.total_prompts}\n"
+                f"Philosophers Used: {report.total_philosophers_used}\n"
+                f"Created: {report.created_at}",
+                border_style="cyan",
+            )
+        )
 
         # 平均メトリクス
         metrics_table = Table(title="Average Metrics")
@@ -224,9 +228,7 @@ class BatchAnalyzer:
         leader_table.add_column("Percentage", style="green")
 
         for leader, count in sorted(
-            report.leader_distribution.items(),
-            key=lambda x: x[1],
-            reverse=True
+            report.leader_distribution.items(), key=lambda x: x[1], reverse=True
         ):
             percentage = (count / report.total_prompts) * 100
             leader_table.add_row(leader, str(count), f"{percentage:.1f}%")
@@ -249,10 +251,10 @@ class BatchAnalyzer:
             "average_metrics": report.average_metrics,
             "leader_distribution": report.leader_distribution,
             "results": [asdict(r) for r in report.results],
-            "created_at": report.created_at
+            "created_at": report.created_at,
         }
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(report_dict, f, indent=2, ensure_ascii=False)
 
         console.print(f"\n[green]✓ Exported to {filepath}[/green]")
@@ -266,31 +268,35 @@ class BatchAnalyzer:
         """
         import csv
 
-        with open(filepath, 'w', newline='', encoding='utf-8') as f:
+        with open(filepath, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
 
             # ヘッダー
-            writer.writerow([
-                'Prompt',
-                'Consensus Leader',
-                'Freedom Pressure',
-                'Semantic Delta',
-                'Blocked Tensor',
-                'Philosopher Count',
-                'Response Length'
-            ])
+            writer.writerow(
+                [
+                    "Prompt",
+                    "Consensus Leader",
+                    "Freedom Pressure",
+                    "Semantic Delta",
+                    "Blocked Tensor",
+                    "Philosopher Count",
+                    "Response Length",
+                ]
+            )
 
             # データ
             for result in self.results:
-                writer.writerow([
-                    result.prompt,
-                    result.consensus_leader,
-                    result.metrics['freedom_pressure'],
-                    result.metrics['semantic_delta'],
-                    result.metrics['blocked_tensor'],
-                    result.philosopher_count,
-                    result.response_length
-                ])
+                writer.writerow(
+                    [
+                        result.prompt,
+                        result.consensus_leader,
+                        result.metrics["freedom_pressure"],
+                        result.metrics["semantic_delta"],
+                        result.metrics["blocked_tensor"],
+                        result.philosopher_count,
+                        result.response_length,
+                    ]
+                )
 
         console.print(f"\n[green]✓ Exported to {filepath}[/green]")
 
@@ -305,7 +311,7 @@ def load_prompts_from_file(filepath: str) -> List[str]:
     Returns:
         質問のリスト
     """
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
 
 
@@ -327,7 +333,7 @@ def main():
         "道徳とは何か？",
         "真理とは何か？",
         "善とは何か？",
-        "悪とは何か？"
+        "悪とは何か？",
     ]
 
     console.print("[bold]デモモード: 10個の哲学的問いを分析[/bold]\n")

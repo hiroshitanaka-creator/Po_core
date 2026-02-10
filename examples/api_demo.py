@@ -135,22 +135,20 @@ def example_7_multiple_prompts():
     print("例7: 複数の質問を連続処理")
     print("=" * 70)
 
-    prompts = [
-        "愛とは何か？",
-        "正義とは何か？",
-        "幸福とは何か？"
-    ]
+    prompts = ["愛とは何か？", "正義とは何か？", "幸福とは何か？"]
 
     po = PoSelf()
 
     results = []
     for prompt in prompts:
         response = po.generate(prompt)
-        results.append({
-            "prompt": prompt,
-            "leader": response.consensus_leader,
-            "fp": response.metrics['freedom_pressure']
-        })
+        results.append(
+            {
+                "prompt": prompt,
+                "leader": response.consensus_leader,
+                "fp": response.metrics["freedom_pressure"],
+            }
+        )
 
     print("\n処理結果サマリー:")
     print(f"{'質問':<20} {'リーダー':<30} {'FP':>6}")
@@ -196,6 +194,7 @@ def main():
     except Exception as e:
         print(f"\nエラー: {str(e)}")
         import traceback
+
         traceback.print_exc()
 
 

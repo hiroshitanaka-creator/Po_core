@@ -10,6 +10,7 @@ Generate JSON datasets for 4 key research questions:
 
 Generates realistic sample data based on Po_core's philosophical dynamics.
 """
+
 import json
 import random
 import math
@@ -19,11 +20,26 @@ from typing import List, Dict, Any
 
 # All 20 philosophers
 ALL_PHILOSOPHERS = [
-    "arendt", "aristotle", "badiou", "confucius",
-    "deleuze", "derrida", "dewey", "heidegger",
-    "jung", "kierkegaard", "lacan", "levinas",
-    "merleau_ponty", "nietzsche", "peirce", "sartre",
-    "wabi_sabi", "watsuji", "wittgenstein", "zhuangzi"
+    "arendt",
+    "aristotle",
+    "badiou",
+    "confucius",
+    "deleuze",
+    "derrida",
+    "dewey",
+    "heidegger",
+    "jung",
+    "kierkegaard",
+    "lacan",
+    "levinas",
+    "merleau_ponty",
+    "nietzsche",
+    "peirce",
+    "sartre",
+    "wabi_sabi",
+    "watsuji",
+    "wittgenstein",
+    "zhuangzi",
 ]
 
 # Philosophical traditions for clustering
@@ -42,7 +58,7 @@ TRADITIONS = {
 def generate_metrics(
     philosophers: List[str],
     has_dialectical_tension: bool = False,
-    diversity_score: float = 0.5
+    diversity_score: float = 0.5,
 ) -> Dict[str, float]:
     """
     Generate realistic philosophical metrics.
@@ -108,8 +124,10 @@ def has_opposition(philosophers: List[str]) -> bool:
 
     # Check for tradition-level oppositions
     has_analytic = any(p in TRADITIONS["analytic"] for p in philosophers)
-    has_continental = any(p in TRADITIONS["existential"] + TRADITIONS["phenomenology"]
-                         for p in philosophers)
+    has_continental = any(
+        p in TRADITIONS["existential"] + TRADITIONS["phenomenology"]
+        for p in philosophers
+    )
 
     return has_analytic and has_continental
 
@@ -128,6 +146,7 @@ def is_emergence_event(metrics: Dict[str, float], threshold: float = 0.75) -> bo
 # ============================================================================
 # Research Question 1: Optimal Philosopher Combinations for Emergence
 # ============================================================================
+
 
 def generate_rq1_data(num_combinations: int = 50) -> Dict[str, Any]:
     """
@@ -159,25 +178,33 @@ def generate_rq1_data(num_combinations: int = 50) -> Dict[str, Any]:
             if is_emergence:
                 emergence_count += 1
 
-            sessions.append({
-                "session_num": session_num,
-                "metrics": metrics,
-                "is_emergence": is_emergence,
-            })
+            sessions.append(
+                {
+                    "session_num": session_num,
+                    "metrics": metrics,
+                    "is_emergence": is_emergence,
+                }
+            )
 
         emergence_rate = emergence_count / 10.0
 
-        combinations.append({
-            "combination_id": i,
-            "philosophers": philosophers,
-            "group_size": group_size,
-            "diversity_score": round(diversity, 4),
-            "has_dialectical_tension": has_tension,
-            "sessions": sessions,
-            "emergence_rate": round(emergence_rate, 4),
-            "avg_freedom_pressure": round(sum(s["metrics"]["freedom_pressure"] for s in sessions) / 10, 4),
-            "avg_semantic_delta": round(sum(s["metrics"]["semantic_delta"] for s in sessions) / 10, 4),
-        })
+        combinations.append(
+            {
+                "combination_id": i,
+                "philosophers": philosophers,
+                "group_size": group_size,
+                "diversity_score": round(diversity, 4),
+                "has_dialectical_tension": has_tension,
+                "sessions": sessions,
+                "emergence_rate": round(emergence_rate, 4),
+                "avg_freedom_pressure": round(
+                    sum(s["metrics"]["freedom_pressure"] for s in sessions) / 10, 4
+                ),
+                "avg_semantic_delta": round(
+                    sum(s["metrics"]["semantic_delta"] for s in sessions) / 10, 4
+                ),
+            }
+        )
 
     # Sort by emergence rate
     combinations.sort(key=lambda x: x["emergence_rate"], reverse=True)
@@ -204,13 +231,14 @@ def generate_rq1_data(num_combinations: int = 50) -> Dict[str, Any]:
             "top_10_tension_rate": round(tension_rate_top, 2),
             "correlation_diversity_emergence": "positive (higher diversity → more emergence)",
             "correlation_tension_emergence": "positive (dialectical tension → more emergence)",
-        }
+        },
     }
 
 
 # ============================================================================
 # Research Question 2: Phase Transition Predictability
 # ============================================================================
+
 
 def generate_rq2_data(num_sequences: int = 20) -> Dict[str, Any]:
     """
@@ -270,29 +298,35 @@ def generate_rq2_data(num_sequences: int = 20) -> Dict[str, Any]:
 
             # Calculate variance of recent window
             if session_num >= 3:
-                recent_fps = [s["metrics"]["freedom_pressure"] for s in session_sequence[-3:]] + [fp]
-                variance = sum((x - sum(recent_fps)/4)**2 for x in recent_fps) / 4
+                recent_fps = [
+                    s["metrics"]["freedom_pressure"] for s in session_sequence[-3:]
+                ] + [fp]
+                variance = sum((x - sum(recent_fps) / 4) ** 2 for x in recent_fps) / 4
             else:
                 variance = 0.0
 
-            session_sequence.append({
-                "session_num": session_num,
-                "metrics": {
-                    "freedom_pressure": round(fp, 4),
-                    "semantic_delta": round(sd, 4),
-                    "blocked_tensor": round(bt, 4),
-                },
-                "variance_fp": round(variance, 6),
-                "is_transition": is_transition,
-                "approaching_transition": approaching_transition,
-            })
+            session_sequence.append(
+                {
+                    "session_num": session_num,
+                    "metrics": {
+                        "freedom_pressure": round(fp, 4),
+                        "semantic_delta": round(sd, 4),
+                        "blocked_tensor": round(bt, 4),
+                    },
+                    "variance_fp": round(variance, 6),
+                    "is_transition": is_transition,
+                    "approaching_transition": approaching_transition,
+                }
+            )
 
-        sequences.append({
-            "sequence_id": seq_id,
-            "sessions": session_sequence,
-            "transition_points": transition_points,
-            "num_transitions": len(transition_points),
-        })
+        sequences.append(
+            {
+                "sequence_id": seq_id,
+                "sessions": session_sequence,
+                "transition_points": transition_points,
+                "num_transitions": len(transition_points),
+            }
+        )
 
     return {
         "research_question": "Can we predict phase transitions before they occur?",
@@ -308,13 +342,14 @@ def generate_rq2_data(num_sequences: int = 20) -> Dict[str, Any]:
             ],
             "prediction_window": "2-3 sessions before transition",
             "prediction_accuracy": "Estimated 70-80% with variance threshold",
-        }
+        },
     }
 
 
 # ============================================================================
 # Research Question 3: Optimal Diversity
 # ============================================================================
+
 
 def generate_rq3_data() -> Dict[str, Any]:
     """
@@ -358,15 +393,22 @@ def generate_rq3_data() -> Dict[str, Any]:
         avg_fp = sum(avg_fps) / 30
         avg_sd = sum(avg_sds) / 30
 
-        group_sizes.append({
-            "group_size": size,
-            "trials": 30,
-            "sessions_per_trial": 10,
-            "avg_emergence_rate": round(avg_emergence, 4),
-            "avg_freedom_pressure": round(avg_fp, 4),
-            "avg_semantic_delta": round(avg_sd, 4),
-            "std_emergence": round(math.sqrt(sum((r - avg_emergence)**2 for r in emergence_rates) / 30), 4),
-        })
+        group_sizes.append(
+            {
+                "group_size": size,
+                "trials": 30,
+                "sessions_per_trial": 10,
+                "avg_emergence_rate": round(avg_emergence, 4),
+                "avg_freedom_pressure": round(avg_fp, 4),
+                "avg_semantic_delta": round(avg_sd, 4),
+                "std_emergence": round(
+                    math.sqrt(
+                        sum((r - avg_emergence) ** 2 for r in emergence_rates) / 30
+                    ),
+                    4,
+                ),
+            }
+        )
 
     # Find optimal
     optimal = max(group_sizes, key=lambda x: x["avg_emergence_rate"])
@@ -383,13 +425,14 @@ def generate_rq3_data() -> Dict[str, Any]:
             "finding": f"Peak emergence at {optimal['group_size']} philosophers",
             "interpretation": "Too few → limited diversity. Too many → coherence loss.",
             "recommended_range": "8-14 philosophers for consistent emergence",
-        }
+        },
     }
 
 
 # ============================================================================
 # Research Question 4: Dialectical Tension and Emergence
 # ============================================================================
+
 
 def generate_rq4_data(num_pairs: int = 100) -> Dict[str, Any]:
     """
@@ -410,13 +453,14 @@ def generate_rq4_data(num_pairs: int = 100) -> Dict[str, Any]:
         # Force inclusion of opposing philosophers
         tension_group = ["aristotle", "nietzsche"]  # Known opposition
         tension_group += random.sample(
-            [p for p in ALL_PHILOSOPHERS if p not in tension_group],
-            size - 2
+            [p for p in ALL_PHILOSOPHERS if p not in tension_group], size - 2
         )
 
         # Group WITHOUT tension (same tradition)
-        no_tension_group = random.sample(TRADITIONS["existential"] + TRADITIONS["phenomenology"],
-                                         min(size, len(TRADITIONS["existential"] + TRADITIONS["phenomenology"])))
+        no_tension_group = random.sample(
+            TRADITIONS["existential"] + TRADITIONS["phenomenology"],
+            min(size, len(TRADITIONS["existential"] + TRADITIONS["phenomenology"])),
+        )
         while len(no_tension_group) < size:
             no_tension_group.append(random.choice(ALL_PHILOSOPHERS))
 
@@ -436,7 +480,9 @@ def generate_rq4_data(num_pairs: int = 100) -> Dict[str, Any]:
                 "philosophers": philosophers,
                 "emergence_count": emergence_count,
                 "emergence_rate": round(emergence_count / 20, 4),
-                "avg_fp": round(sum(m["freedom_pressure"] for m in metrics_list) / 20, 4),
+                "avg_fp": round(
+                    sum(m["freedom_pressure"] for m in metrics_list) / 20, 4
+                ),
                 "avg_sd": round(sum(m["semantic_delta"] for m in metrics_list) / 20, 4),
             }
 
@@ -445,9 +491,13 @@ def generate_rq4_data(num_pairs: int = 100) -> Dict[str, Any]:
 
     # Statistical comparison
     avg_emergence_with = sum(g["emergence_rate"] for g in with_tension) / num_pairs
-    avg_emergence_without = sum(g["emergence_rate"] for g in without_tension) / num_pairs
+    avg_emergence_without = (
+        sum(g["emergence_rate"] for g in without_tension) / num_pairs
+    )
 
-    improvement = (avg_emergence_with - avg_emergence_without) / avg_emergence_without * 100
+    improvement = (
+        (avg_emergence_with - avg_emergence_without) / avg_emergence_without * 100
+    )
 
     return {
         "research_question": "Does dialectical tension promote emergence?",
@@ -460,15 +510,24 @@ def generate_rq4_data(num_pairs: int = 100) -> Dict[str, Any]:
             "avg_emergence_with_tension": round(avg_emergence_with, 4),
             "avg_emergence_without_tension": round(avg_emergence_without, 4),
             "improvement_percentage": round(improvement, 2),
-            "conclusion": "Dialectical tension INCREASES emergence" if improvement > 0 else "No significant effect",
-            "effect_size": "Large" if abs(improvement) > 20 else ("Medium" if abs(improvement) > 10 else "Small"),
-        }
+            "conclusion": (
+                "Dialectical tension INCREASES emergence"
+                if improvement > 0
+                else "No significant effect"
+            ),
+            "effect_size": (
+                "Large"
+                if abs(improvement) > 20
+                else ("Medium" if abs(improvement) > 10 else "Small")
+            ),
+        },
     }
 
 
 # ============================================================================
 # Main Generator
 # ============================================================================
+
 
 def generate_all_research_data():
     """Generate data for all 4 research questions."""
@@ -494,7 +553,7 @@ def generate_all_research_data():
         filename = f"{name}_{timestamp}.json"
         filepath = output_dir / filename
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         print(f"✓ Generated: {filename}")
@@ -508,19 +567,23 @@ def generate_all_research_data():
         "research_questions": datasets,
         "summary": {
             "total_datasets": len(datasets),
-            "total_sessions": sum(d.get("total_sessions", 0) for d in datasets.values()),
-        }
+            "total_sessions": sum(
+                d.get("total_sessions", 0) for d in datasets.values()
+            ),
+        },
     }
 
     combined_file = output_dir / f"all_research_data_{timestamp}.json"
-    with open(combined_file, 'w', encoding='utf-8') as f:
+    with open(combined_file, "w", encoding="utf-8") as f:
         json.dump(combined, f, indent=2, ensure_ascii=False)
 
     print("=" * 80)
     print(f"✓ All research data generated!")
     print(f"  Output directory: {output_dir}")
     print(f"  Combined file: {combined_file.name}")
-    print(f"  Total size: {sum(f.stat().st_size for f in output_dir.glob('*.json')) / 1024:.1f} KB")
+    print(
+        f"  Total size: {sum(f.stat().st_size for f in output_dir.glob('*.json')) / 1024:.1f} KB"
+    )
     print("=" * 80 + "\n")
 
     # Display key findings
@@ -528,7 +591,9 @@ def generate_all_research_data():
 
     print("1. Optimal Combinations:")
     best = datasets["rq1_optimal_combinations"]["analysis"]["best_combination"]
-    print(f"   Best: {len(best['philosophers'])} philosophers, {best['emergence_rate']:.1%} emergence rate")
+    print(
+        f"   Best: {len(best['philosophers'])} philosophers, {best['emergence_rate']:.1%} emergence rate"
+    )
     print(f"   Diversity: {best['diversity']:.2f}, Tension: {best['has_tension']}\n")
 
     print("2. Predictability:")

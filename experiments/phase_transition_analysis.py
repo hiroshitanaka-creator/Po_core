@@ -11,6 +11,7 @@ Analyzes:
 - Critical thresholds and conditions
 - Emergence patterns
 """
+
 import json
 import sys
 from pathlib import Path
@@ -38,9 +39,7 @@ class PhaseTransitionAnalyzer:
         self.transitions = []
 
     def detect_phase_transitions(
-        self,
-        session_ids: List[str] = None,
-        sensitivity: float = 2.0
+        self, session_ids: List[str] = None, sensitivity: float = 2.0
     ) -> List[Dict[str, Any]]:
         """
         Detect phase transitions in reasoning sessions.
@@ -113,8 +112,7 @@ class PhaseTransitionAnalyzer:
             if is_fp_jump or is_sd_jump:
                 # Characterize the transition
                 transition_type = self._characterize_transition(
-                    fp_change, sd_change, bt_change,
-                    fp_threshold, sd_threshold
+                    fp_change, sd_change, bt_change, fp_threshold, sd_threshold
                 )
 
                 transition = {
@@ -168,7 +166,7 @@ class PhaseTransitionAnalyzer:
         sd_change: float,
         bt_change: float,
         fp_threshold: float,
-        sd_threshold: float
+        sd_threshold: float,
     ) -> str:
         """
         Characterize the type of phase transition.
@@ -200,7 +198,7 @@ class PhaseTransitionAnalyzer:
         fp_change: float,
         sd_change: float,
         fp_threshold: float,
-        sd_threshold: float
+        sd_threshold: float,
     ) -> float:
         """
         Calculate significance score of transition.
@@ -303,7 +301,7 @@ class PhaseTransitionAnalyzer:
                 f"{t['significance']:.2f}x",
                 f"{t['fp_change']:.3f}",
                 f"{t['sd_change']:.3f}",
-                t["prompt"][:37] + "..." if len(t["prompt"]) > 37 else t["prompt"]
+                t["prompt"][:37] + "..." if len(t["prompt"]) > 37 else t["prompt"],
             )
 
         console.print(table)
@@ -317,7 +315,9 @@ class PhaseTransitionAnalyzer:
         tree = Tree("[bold]Phase Transition Analysis[/bold]")
 
         # Overall stats
-        stats_branch = tree.add(f"[cyan]Total Transitions:[/cyan] {conditions['total_transitions']}")
+        stats_branch = tree.add(
+            f"[cyan]Total Transitions:[/cyan] {conditions['total_transitions']}"
+        )
 
         # Transition types
         types_branch = tree.add("[yellow]Transition Types:[/yellow]")
@@ -325,7 +325,9 @@ class PhaseTransitionAnalyzer:
             types_branch.add(f"{t_type}: {count}")
 
         # Critical thresholds
-        thresholds_branch = tree.add("[green]Critical Thresholds (Pre-Transition):[/green]")
+        thresholds_branch = tree.add(
+            "[green]Critical Thresholds (Pre-Transition):[/green]"
+        )
         for metric, values in conditions["critical_thresholds"].items():
             metric_branch = thresholds_branch.add(f"{metric}:")
             metric_branch.add(f"Mean: {values['mean']:.4f}")
@@ -345,6 +347,7 @@ class PhaseTransitionAnalyzer:
         """Save phase transition analysis."""
         if filename is None:
             from datetime import datetime
+
             timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
             filename = f"phase_transitions_{timestamp}.json"
 
@@ -392,8 +395,9 @@ def main():
     console.print("=" * 80)
 
     if transitions:
-        console.print(Panel(
-            f"""
+        console.print(
+            Panel(
+                f"""
 [bold cyan]Key Findings:[/bold cyan]
 
 • Phase Transitions Detected: {len(transitions)}
@@ -410,18 +414,21 @@ def main():
 Non-linear jumps indicate moments where the philosophical system
 generates genuinely new meaning through collective reasoning.
             """,
-            title="[bold green]Analysis Results[/bold green]",
-            border_style="green"
-        ))
+                title="[bold green]Analysis Results[/bold green]",
+                border_style="green",
+            )
+        )
     else:
-        console.print(Panel(
-            "[yellow]No phase transitions detected. Try:\n"
-            "1. Run more diverse reasoning sessions\n"
-            "2. Decrease sensitivity threshold\n"
-            "3. Use different philosophical combinations[/yellow]",
-            title="[bold yellow]Recommendations[/bold yellow]",
-            border_style="yellow"
-        ))
+        console.print(
+            Panel(
+                "[yellow]No phase transitions detected. Try:\n"
+                "1. Run more diverse reasoning sessions\n"
+                "2. Decrease sensitivity threshold\n"
+                "3. Use different philosophical combinations[/yellow]",
+                title="[bold yellow]Recommendations[/bold yellow]",
+                border_style="yellow",
+            )
+        )
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ import sys
 import os
 
 # PYTHONPATHにsrcディレクトリを追加
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from po_core import __version__
 from po_core.po_self import PoSelf
@@ -42,7 +42,9 @@ def test_basic_functionality():
     po = PoSelf(philosophers=philosophers)
     response = po.generate("What is existence?")
     assert response.text, "応答テキストが空です"
-    assert set(response.philosophers) == set(philosophers), "選択した哲学者が正しくありません"
+    assert set(response.philosophers) == set(
+        philosophers
+    ), "選択した哲学者が正しくありません"
     print(f"  選択: {', '.join(philosophers)}")
     print(f"  リーダー: {response.consensus_leader}")
     print()
@@ -50,10 +52,10 @@ def test_basic_functionality():
     # テスト3: JSON出力
     print("✓ テスト3: JSON形式への変換")
     data = response.to_dict()
-    assert 'prompt' in data, "promptキーがありません"
-    assert 'text' in data, "textキーがありません"
-    assert 'metrics' in data, "metricsキーがありません"
-    assert 'philosophers' in data, "philosophersキーがありません"
+    assert "prompt" in data, "promptキーがありません"
+    assert "text" in data, "textキーがありません"
+    assert "metrics" in data, "metricsキーがありません"
+    assert "philosophers" in data, "philosophersキーがありません"
     print(f"  キー数: {len(data)}")
     print(f"  メトリクス数: {len(data['metrics'])}")
     print()
@@ -61,12 +63,12 @@ def test_basic_functionality():
     # テスト4: メトリクス
     print("✓ テスト4: メトリクスの検証")
     metrics = response.metrics
-    assert 'freedom_pressure' in metrics, "freedom_pressureがありません"
-    assert 'semantic_delta' in metrics, "semantic_deltaがありません"
-    assert 'blocked_tensor' in metrics, "blocked_tensorがありません"
-    assert 0.0 <= metrics['freedom_pressure'] <= 1.0, "freedom_pressureが範囲外です"
-    assert 0.0 <= metrics['semantic_delta'] <= 2.0, "semantic_deltaが範囲外です"
-    assert 0.0 <= metrics['blocked_tensor'] <= 1.0, "blocked_tensorが範囲外です"
+    assert "freedom_pressure" in metrics, "freedom_pressureがありません"
+    assert "semantic_delta" in metrics, "semantic_deltaがありません"
+    assert "blocked_tensor" in metrics, "blocked_tensorがありません"
+    assert 0.0 <= metrics["freedom_pressure"] <= 1.0, "freedom_pressureが範囲外です"
+    assert 0.0 <= metrics["semantic_delta"] <= 2.0, "semantic_deltaが範囲外です"
+    assert 0.0 <= metrics["blocked_tensor"] <= 1.0, "blocked_tensorが範囲外です"
     print(f"  ✓ すべてのメトリクスが正常範囲内")
     print()
 
@@ -75,7 +77,7 @@ def test_basic_functionality():
     po = PoSelf(enable_trace=True)
     response = po.generate("Test prompt")
     assert response.log, "ログが生成されていません"
-    assert 'session_id' in response.log, "session_idがありません"
+    assert "session_id" in response.log, "session_idがありません"
     print(f"  Session ID: {response.log.get('session_id', 'N/A')[:36]}...")
     print()
 
@@ -116,6 +118,7 @@ def main():
     except Exception as e:
         print(f"\n❌ エラー発生: {e}\n")
         import traceback
+
         traceback.print_exc()
         return 1
 
