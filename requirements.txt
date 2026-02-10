@@ -1,5 +1,5 @@
 # Po_core Production Dependencies
-# Python 3.9+
+# Python 3.10+
 
 # ==================
 # Core Dependencies
@@ -122,5 +122,5 @@ jsonschema>=4.20.0
 # ==================
 
 # Python version check
-# This package requires Python 3.9+
+# This package requires Python 3.10+
 # Ensure your environment meets this requirement

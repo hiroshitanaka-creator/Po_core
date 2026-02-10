@@ -72,7 +72,7 @@ body:
       description: Your environment details
       placeholder: |
         - OS: [e.g., Ubuntu 22.04, macOS 14, Windows 11]
-        - Python version: [e.g., 3.9.7]
+        - Python version: [e.g., 3.10.12]
         - Po_core version: [e.g., 0.1.0-alpha]
       value: |
         - OS:
