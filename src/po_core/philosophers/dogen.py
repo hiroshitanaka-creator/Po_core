@@ -1297,9 +1297,7 @@ class Dogen(Philosopher):
             )
 
         if genjo_koan["genjo_koan_present"]:
-            parts.append(
-                f"Genjo koan (現成公案) manifests: {genjo_koan['interpretation']}"
-            )
+            parts.append(f"Genjo koan (現成公案) manifests: {genjo_koan['interpretation']}")
 
         if dropping_body_mind["dropping_present"]:
             parts.append(

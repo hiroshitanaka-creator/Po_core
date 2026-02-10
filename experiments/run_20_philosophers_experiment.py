@@ -141,7 +141,6 @@ class ExperimentRunner:
             TimeElapsedColumn(),
             console=console,
         ) as progress:
-
             task = progress.add_task("[cyan]Running sessions...", total=num_sessions)
 
             for i in range(num_sessions):

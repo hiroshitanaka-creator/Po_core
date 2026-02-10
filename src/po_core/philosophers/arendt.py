@@ -320,7 +320,9 @@ class Arendt(Philosopher):
         dominant_realm = (
             "public"
             if public_score > private_score
-            else "private" if private_score > public_score else "balanced"
+            else "private"
+            if private_score > public_score
+            else "balanced"
         )
 
         return {

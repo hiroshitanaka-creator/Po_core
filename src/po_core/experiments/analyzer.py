@@ -136,7 +136,9 @@ def _cohens_d(
     if n1 < 2 or n2 < 2:
         return 0.0
 
-    pooled_std = math.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
+    pooled_std = math.sqrt(
+        ((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2)
+    )
     if pooled_std == 0:
         return 0.0
 
