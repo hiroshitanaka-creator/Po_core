@@ -34,6 +34,7 @@ class PhilosopherInteraction:
         synthesis_potential: Potential for synthesis (0-1)
         metadata: Additional interaction information
     """
+
     philosopher_a: str
     philosopher_b: str
     harmony: float
@@ -73,7 +74,7 @@ class PhilosopherInteraction:
             "synthesis_potential": self.synthesis_potential,
             "reciprocal_influence": self.reciprocal_influence(),
             "asymmetry": self.asymmetry(),
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -108,7 +109,10 @@ class InteractionTensor(Tensor):
         super().__init__(
             name="Interaction_Tensor",
             dimensions=num_philosophers * num_philosophers * dimensions,
-            metadata={"num_philosophers": num_philosophers, "interaction_dims": dimensions}
+            metadata={
+                "num_philosophers": num_philosophers,
+                "interaction_dims": dimensions,
+            },
         )
 
         self.num_philosophers = num_philosophers
@@ -124,7 +128,7 @@ class InteractionTensor(Tensor):
             "epistemological_compatibility",
             "ethical_alignment",
             "ontological_resonance",
-            "methodological_affinity"
+            "methodological_affinity",
         ]
 
         # Store philosopher names
@@ -144,8 +148,9 @@ class InteractionTensor(Tensor):
             Flattened interaction tensor
         """
         # Extract philosopher names
-        self.philosopher_names = [p.get("philosopher", f"phil_{i}")
-                                 for i, p in enumerate(perspectives)]
+        self.philosopher_names = [
+            p.get("philosopher", f"phil_{i}") for i, p in enumerate(perspectives)
+        ]
 
         # Calculate pairwise interactions
         for i, persp_a in enumerate(perspectives):
@@ -155,14 +160,18 @@ class InteractionTensor(Tensor):
                     self.interaction_data[i, j, :] = self._compute_self_interaction()
                 else:
                     # Calculate interaction between different philosophers
-                    interaction_vector = self._compute_pairwise_interaction(persp_a, persp_b)
+                    interaction_vector = self._compute_pairwise_interaction(
+                        persp_a, persp_b
+                    )
                     self.interaction_data[i, j, :] = interaction_vector
 
                     # Cache interaction object
                     phil_a = persp_a.get("philosopher", f"phil_{i}")
                     phil_b = persp_b.get("philosopher", f"phil_{j}")
-                    self.interactions[(phil_a, phil_b)] = self._create_interaction_object(
-                        phil_a, phil_b, interaction_vector
+                    self.interactions[(phil_a, phil_b)] = (
+                        self._create_interaction_object(
+                            phil_a, phil_b, interaction_vector
+                        )
                     )
 
         # Flatten for return
@@ -177,8 +186,9 @@ class InteractionTensor(Tensor):
         """
         return np.array([1.0, 0.0, 1.0, 1.0, 1.0, 1.0])  # Perfect harmony, no tension
 
-    def _compute_pairwise_interaction(self, persp_a: Dict[str, Any],
-                                     persp_b: Dict[str, Any]) -> np.ndarray:
+    def _compute_pairwise_interaction(
+        self, persp_a: Dict[str, Any], persp_b: Dict[str, Any]
+    ) -> np.ndarray:
         """
         Compute interaction between two philosophers.
 
@@ -262,27 +272,34 @@ class InteractionTensor(Tensor):
             ("absolute", "relative"),
             ("certain", "uncertain"),
             ("order", "chaos"),
-            ("unity", "plurality")
+            ("unity", "plurality"),
         ]
 
         tension_count = 0
         for word_a, word_b in oppositions:
-            if (word_a in text_a_lower and word_b in text_b_lower) or \
-               (word_b in text_a_lower and word_a in text_b_lower):
+            if (word_a in text_a_lower and word_b in text_b_lower) or (
+                word_b in text_a_lower and word_a in text_b_lower
+            ):
                 tension_count += 1
 
         # Normalize by number of oppositions
         return min(tension_count / len(oppositions), 1.0)
 
-    def _calculate_epistemological_compatibility(self, persp_a: Dict[str, Any],
-                                                 persp_b: Dict[str, Any]) -> float:
+    def _calculate_epistemological_compatibility(
+        self, persp_a: Dict[str, Any], persp_b: Dict[str, Any]
+    ) -> float:
         """
         Calculate epistemological compatibility.
 
         How similar are their ways of knowing?
         """
         # Check for epistemic keywords
-        epistemic_keywords_empirical = ["evidence", "observation", "experience", "sense"]
+        epistemic_keywords_empirical = [
+            "evidence",
+            "observation",
+            "experience",
+            "sense",
+        ]
         epistemic_keywords_rational = ["logic", "reason", "deduction", "proof"]
         epistemic_keywords_intuitive = ["intuition", "insight", "feeling", "immediate"]
 
@@ -319,20 +336,42 @@ class InteractionTensor(Tensor):
 
         Do they share similar ethical orientations?
         """
-        ethical_keywords_deontological = ["duty", "obligation", "rule", "principle", "ought"]
-        ethical_keywords_consequentialist = ["consequence", "result", "outcome", "utility", "benefit"]
-        ethical_keywords_virtue = ["virtue", "character", "excellence", "flourishing", "good"]
+        ethical_keywords_deontological = [
+            "duty",
+            "obligation",
+            "rule",
+            "principle",
+            "ought",
+        ]
+        ethical_keywords_consequentialist = [
+            "consequence",
+            "result",
+            "outcome",
+            "utility",
+            "benefit",
+        ]
+        ethical_keywords_virtue = [
+            "virtue",
+            "character",
+            "excellence",
+            "flourishing",
+            "good",
+        ]
 
         text_a_lower = text_a.lower()
         text_b_lower = text_b.lower()
 
         # Count ethical approaches
         deont_a = sum(1 for k in ethical_keywords_deontological if k in text_a_lower)
-        conseq_a = sum(1 for k in ethical_keywords_consequentialist if k in text_a_lower)
+        conseq_a = sum(
+            1 for k in ethical_keywords_consequentialist if k in text_a_lower
+        )
         virtue_a = sum(1 for k in ethical_keywords_virtue if k in text_a_lower)
 
         deont_b = sum(1 for k in ethical_keywords_deontological if k in text_b_lower)
-        conseq_b = sum(1 for k in ethical_keywords_consequentialist if k in text_b_lower)
+        conseq_b = sum(
+            1 for k in ethical_keywords_consequentialist if k in text_b_lower
+        )
         virtue_b = sum(1 for k in ethical_keywords_virtue if k in text_b_lower)
 
         # Create ethical vectors
@@ -357,8 +396,20 @@ class InteractionTensor(Tensor):
         Do they share similar views on being and existence?
         """
         ontological_keywords_being = ["being", "existence", "ontology", "reality", "is"]
-        ontological_keywords_becoming = ["becoming", "change", "process", "flux", "transformation"]
-        ontological_keywords_substance = ["substance", "essence", "nature", "identity", "self"]
+        ontological_keywords_becoming = [
+            "becoming",
+            "change",
+            "process",
+            "flux",
+            "transformation",
+        ]
+        ontological_keywords_substance = [
+            "substance",
+            "essence",
+            "nature",
+            "identity",
+            "self",
+        ]
 
         text_a_lower = text_a.lower()
         text_b_lower = text_b.lower()
@@ -366,11 +417,15 @@ class InteractionTensor(Tensor):
         # Count ontological themes
         being_a = sum(1 for k in ontological_keywords_being if k in text_a_lower)
         becoming_a = sum(1 for k in ontological_keywords_becoming if k in text_a_lower)
-        substance_a = sum(1 for k in ontological_keywords_substance if k in text_a_lower)
+        substance_a = sum(
+            1 for k in ontological_keywords_substance if k in text_a_lower
+        )
 
         being_b = sum(1 for k in ontological_keywords_being if k in text_b_lower)
         becoming_b = sum(1 for k in ontological_keywords_becoming if k in text_b_lower)
-        substance_b = sum(1 for k in ontological_keywords_substance if k in text_b_lower)
+        substance_b = sum(
+            1 for k in ontological_keywords_substance if k in text_b_lower
+        )
 
         # Create ontological vectors
         vec_a = np.array([being_a, becoming_a, substance_a], dtype=float)
@@ -387,8 +442,9 @@ class InteractionTensor(Tensor):
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
         return (similarity + 1) / 2
 
-    def _calculate_methodological_affinity(self, persp_a: Dict[str, Any],
-                                          persp_b: Dict[str, Any]) -> float:
+    def _calculate_methodological_affinity(
+        self, persp_a: Dict[str, Any], persp_b: Dict[str, Any]
+    ) -> float:
         """
         Calculate methodological affinity.
 
@@ -398,7 +454,12 @@ class InteractionTensor(Tensor):
         reasoning_a = persp_a.get("reasoning", "").lower()
         reasoning_b = persp_b.get("reasoning", "").lower()
 
-        methods_phenomenological = ["phenomenology", "experience", "consciousness", "lived"]
+        methods_phenomenological = [
+            "phenomenology",
+            "experience",
+            "consciousness",
+            "lived",
+        ]
         methods_analytical = ["analysis", "logic", "argument", "definition"]
         methods_dialectical = ["dialectic", "synthesis", "contradiction", "negation"]
         methods_hermeneutic = ["interpretation", "understanding", "meaning", "text"]
@@ -426,8 +487,9 @@ class InteractionTensor(Tensor):
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
         return (similarity + 1) / 2
 
-    def _create_interaction_object(self, phil_a: str, phil_b: str,
-                                   interaction_vector: np.ndarray) -> PhilosopherInteraction:
+    def _create_interaction_object(
+        self, phil_a: str, phil_b: str, interaction_vector: np.ndarray
+    ) -> PhilosopherInteraction:
         """
         Create PhilosopherInteraction object from vector.
 
@@ -465,11 +527,13 @@ class InteractionTensor(Tensor):
                 "epistemological_compatibility": epistem_compat,
                 "ethical_alignment": interaction_vector[3],
                 "ontological_resonance": interaction_vector[4],
-                "methodological_affinity": method_affin
-            }
+                "methodological_affinity": method_affin,
+            },
         )
 
-    def get_interaction(self, phil_a: str, phil_b: str) -> Optional[PhilosopherInteraction]:
+    def get_interaction(
+        self, phil_a: str, phil_b: str
+    ) -> Optional[PhilosopherInteraction]:
         """
         Get interaction between two philosophers.
 
@@ -529,5 +593,5 @@ class InteractionTensor(Tensor):
             "interactions": interactions_export,
             "harmony_matrix": self.get_harmony_matrix().tolist(),
             "tension_matrix": self.get_tension_matrix().tolist(),
-            "synthesis_potential_matrix": self.get_synthesis_potential_matrix().tolist()
+            "synthesis_potential_matrix": self.get_synthesis_potential_matrix().tolist(),
         }

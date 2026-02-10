@@ -4,6 +4,7 @@ Dummy Philosopher
 
 Minimal philosopher for vertical slice testing.
 """
+
 from __future__ import annotations
 
 from typing import List

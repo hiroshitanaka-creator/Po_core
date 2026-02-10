@@ -20,7 +20,10 @@ class TestMerleauPontyBasicFunctionality:
         """Test that Merleau-Ponty initializes correctly."""
         merleau_ponty = MerleauPonty()
         assert merleau_ponty.name == "Maurice Merleau-Ponty"
-        assert "embodiment" in merleau_ponty.description.lower() or "perception" in merleau_ponty.description.lower()
+        assert (
+            "embodiment" in merleau_ponty.description.lower()
+            or "perception" in merleau_ponty.description.lower()
+        )
 
     def test_merleau_ponty_repr(self):
         """Test string representation."""
@@ -84,7 +87,10 @@ class TestMerleauPontyLivedBody:
         result = merleau_ponty.reason("My body knows how to grasp and move")
 
         lived_body = result["lived_body"]
-        assert "Body" in lived_body["status"] or "body" in lived_body["description"].lower()
+        assert (
+            "Body" in lived_body["status"]
+            or "body" in lived_body["description"].lower()
+        )
 
 
 class TestMerleauPontyPerception:
@@ -103,10 +109,15 @@ class TestMerleauPontyPerception:
     def test_direct_perception_detection(self):
         """Test detection of direct perception."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("I directly perceive the world immediately present")
+        result = merleau_ponty.reason(
+            "I directly perceive the world immediately present"
+        )
 
         perception = result["perception"]
-        assert "Perception" in perception["status"] or "perception" in perception["description"].lower()
+        assert (
+            "Perception" in perception["status"]
+            or "perception" in perception["description"].lower()
+        )
 
 
 class TestMerleauPontyFlesh:
@@ -125,7 +136,9 @@ class TestMerleauPontyFlesh:
     def test_flesh_detection(self):
         """Test detection of the flesh."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("The flesh is both sensible and sentient, sensing and sensed")
+        result = merleau_ponty.reason(
+            "The flesh is both sensible and sentient, sensing and sensed"
+        )
 
         flesh = result["flesh"]
         assert "presence" in flesh
@@ -169,10 +182,15 @@ class TestMerleauPontyAmbiguity:
     def test_ambiguity_detection(self):
         """Test detection of fundamental ambiguity."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("Both and neither, ambiguous and indeterminate at once")
+        result = merleau_ponty.reason(
+            "Both and neither, ambiguous and indeterminate at once"
+        )
 
         ambiguity = result["ambiguity"]
-        assert "Ambiguity" in ambiguity["presence"] or "ambiguity" in ambiguity["description"].lower()
+        assert (
+            "Ambiguity" in ambiguity["presence"]
+            or "ambiguity" in ambiguity["description"].lower()
+        )
 
 
 class TestMerleauPontyBeingInWorld:
@@ -191,7 +209,9 @@ class TestMerleauPontyBeingInWorld:
     def test_being_in_world_detection(self):
         """Test detection of being-in-the-world."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("I am situated and immersed in the world around me")
+        result = merleau_ponty.reason(
+            "I am situated and immersed in the world around me"
+        )
 
         being_in_world = result["being_in_world"]
         assert "status" in being_in_world
@@ -213,10 +233,15 @@ class TestMerleauPontyGestalt:
     def test_gestalt_detection(self):
         """Test detection of gestalt structures."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("The whole structure and pattern with figure and ground")
+        result = merleau_ponty.reason(
+            "The whole structure and pattern with figure and ground"
+        )
 
         gestalt = result["gestalt"]
-        assert "Gestalt" in gestalt["presence"] or "gestalt" in gestalt["description"].lower()
+        assert (
+            "Gestalt" in gestalt["presence"]
+            or "gestalt" in gestalt["description"].lower()
+        )
 
 
 class TestMerleauPontyReversibility:
@@ -235,10 +260,15 @@ class TestMerleauPontyReversibility:
     def test_reversibility_detection(self):
         """Test detection of reversibility."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("Touching and touched, my hand touches my other hand")
+        result = merleau_ponty.reason(
+            "Touching and touched, my hand touches my other hand"
+        )
 
         reversibility = result["reversibility"]
-        assert "Reversibility" in reversibility["status"] or "reversib" in reversibility["description"].lower()
+        assert (
+            "Reversibility" in reversibility["status"]
+            or "reversib" in reversibility["description"].lower()
+        )
 
 
 class TestMerleauPontyIntersubjectivity:
@@ -257,7 +287,9 @@ class TestMerleauPontyIntersubjectivity:
     def test_intersubjectivity_detection(self):
         """Test detection of intersubjectivity."""
         merleau_ponty = MerleauPonty()
-        result = merleau_ponty.reason("I perceive other bodies and share the world with others")
+        result = merleau_ponty.reason(
+            "I perceive other bodies and share the world with others"
+        )
 
         intersubjectivity = result["intersubjectivity"]
         assert "status" in intersubjectivity
@@ -281,7 +313,11 @@ class TestMerleauPontyReasoningText:
         result = merleau_ponty.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Merleau-Pont" in reasoning or "body" in reasoning.lower() or "perception" in reasoning.lower()
+        assert (
+            "Merleau-Pont" in reasoning
+            or "body" in reasoning.lower()
+            or "perception" in reasoning.lower()
+        )
 
 
 class TestMerleauPontyEdgeCases:

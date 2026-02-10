@@ -20,7 +20,10 @@ class TestZhuangziBasicFunctionality:
         """Test that Zhuangzi initializes correctly."""
         zhuangzi = Zhuangzi()
         assert "Zhuangzi" in zhuangzi.name
-        assert "naturalness" in zhuangzi.description.lower() or "dao" in zhuangzi.description.lower()
+        assert (
+            "naturalness" in zhuangzi.description.lower()
+            or "dao" in zhuangzi.description.lower()
+        )
 
     def test_zhuangzi_repr(self):
         """Test string representation."""
@@ -169,7 +172,9 @@ class TestZhuangziQi:
     def test_qi_detection(self):
         """Test detection of Qi."""
         zhuangzi = Zhuangzi()
-        result = zhuangzi.reason("Vital energy and breath flow through all living things")
+        result = zhuangzi.reason(
+            "Vital energy and breath flow through all living things"
+        )
 
         qi = result["analysis"]["qi_vital_energy"]
         assert qi["qi_present"] is True
@@ -211,7 +216,9 @@ class TestZhuangziQiwulun:
     def test_qiwulun_detection(self):
         """Test detection of Qiwulun."""
         zhuangzi = Zhuangzi()
-        result = zhuangzi.reason("All perspectives are relative and equal from different viewpoints")
+        result = zhuangzi.reason(
+            "All perspectives are relative and equal from different viewpoints"
+        )
 
         qiwulun = result["analysis"]["qiwulun_equality"]
         assert qiwulun["qiwulun_present"] is True
@@ -232,7 +239,9 @@ class TestZhuangziDreamReality:
     def test_dream_detection(self):
         """Test detection of dream/reality theme."""
         zhuangzi = Zhuangzi()
-        result = zhuangzi.reason("Am I dreaming or is this reality? Like the butterfly dream")
+        result = zhuangzi.reason(
+            "Am I dreaming or is this reality? Like the butterfly dream"
+        )
 
         dream = result["analysis"]["dream_reality"]
         assert dream["dream_reality_present"] is True

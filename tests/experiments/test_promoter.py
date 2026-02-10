@@ -149,8 +149,12 @@ def test_promote_no_recommendation(storage, temp_dir):
     definition = ExperimentDefinition(
         id="no_promote_exp",
         description="No promote",
-        baseline=ExperimentVariant(name="baseline", config_path="configs/baseline.yaml"),
-        variants=[ExperimentVariant(name="variant_a", config_path="configs/variant_a.yaml")],
+        baseline=ExperimentVariant(
+            name="baseline", config_path="configs/baseline.yaml"
+        ),
+        variants=[
+            ExperimentVariant(name="variant_a", config_path="configs/variant_a.yaml")
+        ],
         metrics=["metric1"],
         sample_size=20,
     )
@@ -185,7 +189,9 @@ def test_promote_with_force(storage, temp_dir):
     definition = ExperimentDefinition(
         id="force_exp",
         description="Force promote",
-        baseline=ExperimentVariant(name="baseline", config_path="configs/baseline.yaml"),
+        baseline=ExperimentVariant(
+            name="baseline", config_path="configs/baseline.yaml"
+        ),
         variants=[ExperimentVariant(name="variant_a", config_path=str(variant_config))],
         metrics=["metric1"],
         sample_size=20,

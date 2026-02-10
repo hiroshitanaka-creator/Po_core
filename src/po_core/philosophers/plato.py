@@ -33,10 +33,12 @@ class Plato(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Plato (Πλάτων)",
-            description="Ancient Greek philosopher focused on Forms, justice, and the ascent from illusion to truth"
+            description="Ancient Greek philosopher focused on Forms, justice, and the ascent from illusion to truth",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Plato's perspective.
 
@@ -70,8 +72,8 @@ class Plato(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Ascent from shadows to Forms, from opinion to knowledge",
-                "focus": "The Good, eternal Forms, and harmony of the soul"
-            }
+                "focus": "The Good, eternal Forms, and harmony of the soul",
+            },
         }
 
     def _analyze_forms(self, prompt: str) -> Dict[str, Any]:
@@ -130,7 +132,7 @@ class Plato(Philosopher):
             "eros": eros,
             "justice": justice,
             "dialectic": dialectic,
-            "good": good
+            "good": good,
         }
 
     def _assess_forms(self, text: str) -> Dict[str, Any]:
@@ -146,53 +148,72 @@ class Plato(Philosopher):
         # The Form of Beauty (τὸ καλόν)
         beauty_words = ["beauty", "beautiful", "aesthetic", "elegance"]
         if any(word in text_lower for word in beauty_words):
-            forms_identified.append({
-                "form": "Beauty (τὸ καλόν)",
-                "description": "The eternal Form of Beauty itself, not merely beautiful things"
-            })
+            forms_identified.append(
+                {
+                    "form": "Beauty (τὸ καλόν)",
+                    "description": "The eternal Form of Beauty itself, not merely beautiful things",
+                }
+            )
 
         # The Form of Justice (δικαιοσύνη)
         justice_words = ["justice", "just", "fair", "right"]
         if any(word in text_lower for word in justice_words):
-            forms_identified.append({
-                "form": "Justice (δικαιοσύνη)",
-                "description": "The eternal Form of Justice, of which just acts are mere copies"
-            })
+            forms_identified.append(
+                {
+                    "form": "Justice (δικαιοσύνη)",
+                    "description": "The eternal Form of Justice, of which just acts are mere copies",
+                }
+            )
 
         # The Form of Truth (ἀλήθεια)
         truth_words = ["truth", "true", "reality", "real"]
         if any(word in text_lower for word in truth_words):
-            forms_identified.append({
-                "form": "Truth (ἀλήθεια)",
-                "description": "The eternal Form of Truth, beyond mere opinion"
-            })
+            forms_identified.append(
+                {
+                    "form": "Truth (ἀλήθεια)",
+                    "description": "The eternal Form of Truth, beyond mere opinion",
+                }
+            )
 
         # The Form of Courage (ἀνδρεία)
         courage_words = ["courage", "brave", "courageous"]
         if any(word in text_lower for word in courage_words):
-            forms_identified.append({
-                "form": "Courage (ἀνδρεία)",
-                "description": "The eternal Form of Courage itself"
-            })
+            forms_identified.append(
+                {
+                    "form": "Courage (ἀνδρεία)",
+                    "description": "The eternal Form of Courage itself",
+                }
+            )
 
         # The Form of Wisdom (σοφία)
         wisdom_words = ["wisdom", "wise", "knowledge", "understanding"]
         if any(word in text_lower for word in wisdom_words):
-            forms_identified.append({
-                "form": "Wisdom (σοφία)",
-                "description": "The eternal Form of Wisdom - knowledge of the Forms"
-            })
+            forms_identified.append(
+                {
+                    "form": "Wisdom (σοφία)",
+                    "description": "The eternal Form of Wisdom - knowledge of the Forms",
+                }
+            )
 
         # The Form of Love (ἔρως)
         love_words = ["love", "desire", "longing", "eros"]
         if any(word in text_lower for word in love_words):
-            forms_identified.append({
-                "form": "Love/Eros (ἔρως)",
-                "description": "The eternal Form of Love - yearning for the eternal"
-            })
+            forms_identified.append(
+                {
+                    "form": "Love/Eros (ἔρως)",
+                    "description": "The eternal Form of Love - yearning for the eternal",
+                }
+            )
 
         # Check for awareness of Form vs particular
-        form_awareness = ["ideal", "perfect", "eternal", "unchanging", "essence", "form itself"]
+        form_awareness = [
+            "ideal",
+            "perfect",
+            "eternal",
+            "unchanging",
+            "essence",
+            "form itself",
+        ]
         has_form_awareness = any(phrase in text_lower for phrase in form_awareness)
 
         # Check for material/particular awareness
@@ -200,17 +221,23 @@ class Plato(Philosopher):
         has_particular = any(word in text_lower for word in particular_words)
 
         if not forms_identified:
-            forms_identified.append({
-                "form": "No specific Form detected",
-                "description": "The text may concern the material realm of becoming"
-            })
+            forms_identified.append(
+                {
+                    "form": "No specific Form detected",
+                    "description": "The text may concern the material realm of becoming",
+                }
+            )
 
         return {
             "forms": forms_identified,
-            "count": len([f for f in forms_identified if "No specific" not in f["form"]]),
+            "count": len(
+                [f for f in forms_identified if "No specific" not in f["form"]]
+            ),
             "primary": forms_identified[0]["form"],
-            "form_awareness": "Aware of Forms" if has_form_awareness else "Focuses on particulars",
-            "note": "Forms are eternal, perfect archetypes - material things are mere shadows"
+            "form_awareness": (
+                "Aware of Forms" if has_form_awareness else "Focuses on particulars"
+            ),
+            "note": "Forms are eternal, perfect archetypes - material things are mere shadows",
         }
 
     def _evaluate_cave_position(self, text: str) -> Dict[str, Any]:
@@ -257,7 +284,9 @@ class Plato(Philosopher):
             stage = "Liberation achieved"
         elif has_liberation >= 1 and has_ascent >= 1:
             position = "Ascending"
-            description = "Liberated and rising toward the light - painful but progressive"
+            description = (
+                "Liberated and rising toward the light - painful but progressive"
+            )
             stage = "On the path"
         elif has_liberation >= 1:
             position = "Newly Liberated"
@@ -265,7 +294,9 @@ class Plato(Philosopher):
             stage = "Initial freedom"
         elif has_chains >= 1 or has_shadow >= 2:
             position = "In Chains"
-            description = "Trapped in the cave, watching shadows, mistaking them for reality"
+            description = (
+                "Trapped in the cave, watching shadows, mistaking them for reality"
+            )
             stage = "Imprisoned in illusion"
         else:
             position = "Unclear Position"
@@ -276,7 +307,7 @@ class Plato(Philosopher):
             "position": position,
             "description": description,
             "stage": stage,
-            "principle": "The unexamined life is not worth living - we must ascend from shadows to truth"
+            "principle": "The unexamined life is not worth living - we must ascend from shadows to truth",
         }
 
     def _analyze_divided_line(self, text: str) -> Dict[str, Any]:
@@ -300,39 +331,61 @@ class Plato(Philosopher):
         has_pistis = sum(1 for word in pistis_words if word in text_lower)
 
         # Dianoia - mathematical, hypothetical reasoning
-        dianoia_words = ["calculate", "measure", "hypothesis", "assume", "mathematical", "geometry"]
+        dianoia_words = [
+            "calculate",
+            "measure",
+            "hypothesis",
+            "assume",
+            "mathematical",
+            "geometry",
+        ]
         has_dianoia = sum(1 for word in dianoia_words if word in text_lower)
 
         # Noesis - pure reason, Forms, dialectic
-        noesis_words = ["form", "essence", "reason", "dialectic", "eternal", "intelligible"]
+        noesis_words = [
+            "form",
+            "essence",
+            "reason",
+            "dialectic",
+            "eternal",
+            "intelligible",
+        ]
         has_noesis = sum(1 for word in noesis_words if word in text_lower)
 
         # Determine highest level present
         levels = []
         if has_eikasia >= 1:
-            levels.append({
-                "level": "Eikasia (εἰκασία)",
-                "rank": 1,
-                "description": "Images and shadows - lowest form of apprehension"
-            })
+            levels.append(
+                {
+                    "level": "Eikasia (εἰκασία)",
+                    "rank": 1,
+                    "description": "Images and shadows - lowest form of apprehension",
+                }
+            )
         if has_pistis >= 1:
-            levels.append({
-                "level": "Pistis (πίστις)",
-                "rank": 2,
-                "description": "Belief about physical objects - sensible world"
-            })
+            levels.append(
+                {
+                    "level": "Pistis (πίστις)",
+                    "rank": 2,
+                    "description": "Belief about physical objects - sensible world",
+                }
+            )
         if has_dianoia >= 1:
-            levels.append({
-                "level": "Dianoia (διάνοια)",
-                "rank": 3,
-                "description": "Mathematical reasoning - uses hypotheses"
-            })
+            levels.append(
+                {
+                    "level": "Dianoia (διάνοια)",
+                    "rank": 3,
+                    "description": "Mathematical reasoning - uses hypotheses",
+                }
+            )
         if has_noesis >= 1:
-            levels.append({
-                "level": "Noesis (νόησις)",
-                "rank": 4,
-                "description": "Pure reason and dialectic - knowledge of Forms"
-            })
+            levels.append(
+                {
+                    "level": "Noesis (νόησις)",
+                    "rank": 4,
+                    "description": "Pure reason and dialectic - knowledge of Forms",
+                }
+            )
 
         if not levels:
             highest_level = "Unclear"
@@ -348,10 +401,20 @@ class Plato(Philosopher):
                 epistemic_status = "Illusion"
 
         return {
-            "levels_present": levels if levels else [{"level": "None detected", "rank": 0, "description": "No clear epistemic level"}],
+            "levels_present": (
+                levels
+                if levels
+                else [
+                    {
+                        "level": "None detected",
+                        "rank": 0,
+                        "description": "No clear epistemic level",
+                    }
+                ]
+            ),
             "highest_level": highest_level,
             "epistemic_status": epistemic_status,
-            "note": "Ascend from images to Forms, from opinion (δόξα) to knowledge (ἐπιστήμη)"
+            "note": "Ascend from images to Forms, from opinion (δόξα) to knowledge (ἐπιστήμη)",
         }
 
     def _assess_tripartite_soul(self, text: str) -> Dict[str, Any]:
@@ -385,15 +448,21 @@ class Plato(Philosopher):
         parts_scores = {
             "Reason (λογιστικόν)": has_reason,
             "Spirit (θυμοειδές)": has_spirit,
-            "Appetite (ἐπιθυμητικόν)": has_appetite
+            "Appetite (ἐπιθυμητικόν)": has_appetite,
         }
 
-        dominant_part = max(parts_scores, key=parts_scores.get) if max(parts_scores.values()) > 0 else "None clear"
+        dominant_part = (
+            max(parts_scores, key=parts_scores.get)
+            if max(parts_scores.values()) > 0
+            else "None clear"
+        )
 
         # Assess harmony
         if has_reason >= 2 and has_control >= 1:
             harmony = "Harmonious"
-            description = "Reason rules, spirit allies with reason, appetite is controlled"
+            description = (
+                "Reason rules, spirit allies with reason, appetite is controlled"
+            )
             justice_state = "Just soul"
         elif has_reason >= 1 and has_spirit >= 1 and has_appetite >= 1:
             harmony = "All parts present"
@@ -417,7 +486,7 @@ class Plato(Philosopher):
             "harmony": harmony,
             "description": description,
             "justice_state": justice_state,
-            "principle": "Justice in the soul = each part doing its proper work, reason ruling"
+            "principle": "Justice in the soul = each part doing its proper work, reason ruling",
         }
 
     def _evaluate_governance(self, text: str) -> Dict[str, Any]:
@@ -474,7 +543,7 @@ class Plato(Philosopher):
             "type": governance_type,
             "description": description,
             "quality": quality,
-            "principle": "Only those who know the Form of the Good should rule"
+            "principle": "Only those who know the Form of the Good should rule",
         }
 
     def _check_recollection(self, text: str) -> Dict[str, Any]:
@@ -519,7 +588,7 @@ class Plato(Philosopher):
             "status": status,
             "description": description,
             "mode": mode,
-            "principle": "Learning is recollection - the soul remembers eternal Forms"
+            "principle": "Learning is recollection - the soul remembers eternal Forms",
         }
 
     def _assess_eros_ascent(self, text: str) -> Dict[str, Any]:
@@ -532,7 +601,12 @@ class Plato(Philosopher):
         text_lower = text.lower()
 
         # Physical beauty (lowest rung)
-        physical_beauty = ["beautiful body", "physical beauty", "attractive", "appearance"]
+        physical_beauty = [
+            "beautiful body",
+            "physical beauty",
+            "attractive",
+            "appearance",
+        ]
         has_physical = sum(1 for phrase in physical_beauty if phrase in text_lower)
 
         # Soul/character beauty
@@ -548,7 +622,12 @@ class Plato(Philosopher):
         has_knowledge = sum(1 for word in knowledge_beauty if word in text_lower)
 
         # Beauty itself - the Form
-        form_beauty = ["beauty itself", "eternal beauty", "form of beauty", "absolute beauty"]
+        form_beauty = [
+            "beauty itself",
+            "eternal beauty",
+            "form of beauty",
+            "absolute beauty",
+        ]
         has_form = sum(1 for phrase in form_beauty if phrase in text_lower)
 
         # Desire/eros indicators
@@ -598,7 +677,7 @@ class Plato(Philosopher):
             "description": description,
             "rung": rung,
             "has_eros": has_eros >= 1,
-            "principle": "Eros leads us up the ladder from physical to eternal Beauty"
+            "principle": "Eros leads us up the ladder from physical to eternal Beauty",
         }
 
     def _evaluate_justice(self, text: str) -> Dict[str, Any]:
@@ -652,7 +731,7 @@ class Plato(Philosopher):
             "status": justice_status,
             "description": description,
             "quality": quality,
-            "principle": "Justice is each part doing its proper work - harmony of the whole"
+            "principle": "Justice is each part doing its proper work - harmony of the whole",
         }
 
     def _assess_dialectic(self, text: str) -> Dict[str, Any]:
@@ -711,7 +790,7 @@ class Plato(Philosopher):
             "level": dialectic_level,
             "description": description,
             "method": method,
-            "principle": "Dialectic is the highest method - questioning toward first principles"
+            "principle": "Dialectic is the highest method - questioning toward first principles",
         }
 
     def _contemplate_the_good(self, text: str) -> Dict[str, Any]:
@@ -775,7 +854,7 @@ class Plato(Philosopher):
             "contemplation": contemplation,
             "description": description,
             "level": level,
-            "principle": "The Good is the highest Form - beyond being, source of all truth and reality"
+            "principle": "The Good is the highest Form - beyond being, source of all truth and reality",
         }
 
     def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -800,7 +879,9 @@ class Plato(Philosopher):
             tension_elements.append("Imprisoned in cave - trapped in illusion")
         elif "Unclear" in cave_position:
             tension_score += 1
-            tension_elements.append("Cave position unclear - relationship to truth unknown")
+            tension_elements.append(
+                "Cave position unclear - relationship to truth unknown"
+            )
 
         # Check epistemic status
         epistemic_status = analysis["divided_line"]["epistemic_status"]
@@ -821,7 +902,9 @@ class Plato(Philosopher):
         governance_quality = analysis["governance"]["quality"]
         if governance_quality in ["Corrupt", "Unjust", "Unstable"]:
             tension_score += 1
-            tension_elements.append(f"Problematic governance: {analysis['governance']['type']}")
+            tension_elements.append(
+                f"Problematic governance: {analysis['governance']['type']}"
+            )
 
         # Check justice
         justice_status = analysis["justice"]["status"]
@@ -839,7 +922,9 @@ class Plato(Philosopher):
         good_level = analysis["good"]["level"]
         if "Opinion" in good_level or "Unknown" in good_level:
             tension_score += 1
-            tension_elements.append("Distant from the Good - highest Form not contemplated")
+            tension_elements.append(
+                "Distant from the Good - highest Form not contemplated"
+            )
 
         # Determine tension level
         if tension_score >= 8:
@@ -861,7 +946,9 @@ class Plato(Philosopher):
         return {
             "level": level,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }
 
     def _construct_reasoning(
@@ -871,7 +958,7 @@ class Plato(Philosopher):
         divided_line: Dict[str, Any],
         soul: Dict[str, Any],
         justice: Dict[str, Any],
-        good: Dict[str, Any]
+        good: Dict[str, Any],
     ) -> str:
         """Construct Platonic philosophical reasoning."""
         primary_form = forms["primary"]

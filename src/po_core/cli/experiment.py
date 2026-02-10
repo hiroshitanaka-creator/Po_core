@@ -18,6 +18,7 @@ from pathlib import Path
 # click は optional（なければ簡易実装）
 try:
     import click
+
     HAS_CLICK = True
 except ImportError:
     HAS_CLICK = False
@@ -29,7 +30,8 @@ from po_core.experiments.storage import ExperimentStorage
 
 def _print_help():
     """ヘルプメッセージを表示"""
-    print("""
+    print(
+        """
 Po_core Experiment CLI
 
 Usage:
@@ -43,7 +45,8 @@ Commands:
     analyze      Analyze experiment results
     promote      Promote winner to main (if recommendation is 'promote')
     rollback     Rollback to previous backup
-""")
+"""
+    )
 
 
 def cmd_list():
@@ -75,14 +78,18 @@ def cmd_analyze(experiment_id: str):
         storage.save_analysis(analysis)
 
         print(f"\nAnalysis completed:")
-        print(f"  Baseline: {analysis.baseline_stats.variant_name} (n={analysis.baseline_stats.n})")
+        print(
+            f"  Baseline: {analysis.baseline_stats.variant_name} (n={analysis.baseline_stats.n})"
+        )
         for vs in analysis.variant_stats:
             print(f"  Variant: {vs.variant_name} (n={vs.n})")
 
         print(f"\nSignificance Tests:")
         for test in analysis.significance_tests:
             sig = "✓" if test.is_significant else "✗"
-            print(f"  {sig} {test.metric_name}: baseline={test.baseline_mean:.4f}, variant={test.variant_mean:.4f}, delta={test.delta:+.4f} ({test.delta_percent:+.2f}%), p={test.p_value:.4f}")
+            print(
+                f"  {sig} {test.metric_name}: baseline={test.baseline_mean:.4f}, variant={test.variant_mean:.4f}, delta={test.delta:+.4f} ({test.delta_percent:+.2f}%), p={test.p_value:.4f}"
+            )
 
         print(f"\nRecommendation: {analysis.recommendation}")
         if analysis.winner:
@@ -201,7 +208,9 @@ if HAS_CLICK:
 
     @cli.command()
     @click.argument("experiment_id")
-    @click.option("--force", is_flag=True, help="Force promotion even if not recommended")
+    @click.option(
+        "--force", is_flag=True, help="Force promotion even if not recommended"
+    )
     @click.option("--dry-run", is_flag=True, help="Dry run (don't actually copy files)")
     def promote(experiment_id, force, dry_run):
         """Promote winner to main"""

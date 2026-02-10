@@ -56,19 +56,25 @@ def _render_sample_generation(prompt: str) -> str:
 
 
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+@click.option(
+    "--sample/--no-sample", default=False, help="Run a Po_self sample generation"
+)
 def hello(sample: bool) -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
     console.print("Philosophy-Driven AI System - Alpha v0.1.0")
-    console.print("\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]")
+    console.print(
+        "\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]"
+    )
     if sample:
         console.print("\n[dim]Running Po_self sample...[/dim]")
         console.print(_render_sample_generation(SAMPLE_PROMPT))
 
 
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+@click.option(
+    "--sample/--no-sample", default=False, help="Run a Po_self sample generation"
+)
 def status(sample: bool) -> None:
     """Show project status"""
     console.print("[bold]📊 Po_core Project Status[/bold]\n")
@@ -84,7 +90,9 @@ def status(sample: bool) -> None:
 
 
 @main.command()
-@click.option("--sample/--no-sample", default=False, help="Run a Po_self sample generation")
+@click.option(
+    "--sample/--no-sample", default=False, help="Run a Po_self sample generation"
+)
 def version(sample: bool) -> None:
     """Show version information"""
     table = Table(show_header=False, box=None, padding=(0, 2))
@@ -99,7 +107,9 @@ def version(sample: bool) -> None:
 
     console.print("\n")
     console.print(table)
-    console.print("\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]")
+    console.print(
+        "\n[dim]A frog in a well may not know the ocean, but it can know the sky.[/dim]"
+    )
     if sample:
         console.print("\n[dim]Running Po_self sample...[/dim]")
         console.print(_render_sample_generation(SAMPLE_PROMPT))
@@ -182,7 +192,11 @@ def list(limit: int, trace_dir: Path) -> None:
     for session in sessions:
         session_id = session["session_id"][:8] + "..."  # Truncate for display
         created_at = session["created_at"][:19]  # Remove timezone
-        prompt = session["prompt"][:50] + "..." if len(session["prompt"]) > 50 else session["prompt"]
+        prompt = (
+            session["prompt"][:50] + "..."
+            if len(session["prompt"]) > 50
+            else session["prompt"]
+        )
         event_count = str(len(session.get("events", [])))
 
         table.add_row(session_id, created_at, prompt, event_count)
@@ -237,7 +251,9 @@ def view(session_id: str, trace_dir: Path) -> None:
     if session.events:
         console.print(f"\n[bold yellow]Events ({len(session.events)}):[/bold yellow]")
         for i, event in enumerate(session.events, 1):
-            console.print(f"  {i}. [{event.event_type.value}] {event.source} at {event.timestamp[:19]}")
+            console.print(
+                f"  {i}. [{event.event_type.value}] {event.source} at {event.timestamp[:19]}"
+            )
             if event.data:
                 console.print(f"     Data: {event.data}")
 
@@ -350,7 +366,11 @@ def show_rejections(session_id: str, trace_dir: Path) -> None:
         philosopher = rejection.philosopher
         rejection_type = rejection.rejection_type
         timestamp = rejection.timestamp[:19]
-        reason = rejection.reason[:40] + "..." if len(rejection.reason) > 40 else rejection.reason
+        reason = (
+            rejection.reason[:40] + "..."
+            if len(rejection.reason) > 40
+            else rejection.reason
+        )
 
         table.add_row(rejection_id, philosopher, rejection_type, timestamp, reason)
 
@@ -378,7 +398,9 @@ def show_rejections(session_id: str, trace_dir: Path) -> None:
 )
 @click.option(
     "--mood",
-    type=click.Choice(["calm", "balanced", "chaotic", "critical"], case_sensitive=False),
+    type=click.Choice(
+        ["calm", "balanced", "chaotic", "critical"], case_sensitive=False
+    ),
     default="balanced",
     help="Party atmosphere/mood",
 )
@@ -419,7 +441,9 @@ def party(theme: str, mood: str, quick: bool) -> None:
     elif theme:
         # For now, just run interactive mode
         # Future: pass theme and mood as args
-        console.print(f"[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]")
+        console.print(
+            f"[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]"
+        )
 
     # Run the demo
     try:

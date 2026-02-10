@@ -8,5 +8,4 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class TensorEnginePort(Protocol):
-    def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
-        ...
+    def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot: ...

@@ -109,7 +109,9 @@ def _apply_context_modifiers(
 
     # Time pressure affects autonomy
     if context.get("urgent"):
-        modifications["autonomy"] = vector.autonomy * 0.9  # Reduced autonomy under pressure
+        modifications["autonomy"] = (
+            vector.autonomy * 0.9
+        )  # Reduced autonomy under pressure
         modifications["preservation"] = vector.preservation * 1.1
 
     # Growth opportunity
@@ -139,10 +141,7 @@ def compute_will_delta(
     old_dict = old_state.will_vector.to_dict()
     new_dict = new_state.will_vector.to_dict()
 
-    return {
-        key: new_dict[key] - old_dict[key]
-        for key in old_dict
-    }
+    return {key: new_dict[key] - old_dict[key] for key in old_dict}
 
 
 def should_reconsider(

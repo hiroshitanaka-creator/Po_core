@@ -20,7 +20,9 @@ class TestLevinasBasicFunctionality:
         """Test that Levinas initializes correctly."""
         levinas = Levinas()
         assert levinas.name == "Emmanuel Levinas"
-        assert "ethical" in levinas.description.lower() or "Other" in levinas.description
+        assert (
+            "ethical" in levinas.description.lower() or "Other" in levinas.description
+        )
 
     def test_levinas_repr(self):
         """Test string representation."""
@@ -81,7 +83,9 @@ class TestLevinasTheOther:
     def test_other_detection(self):
         """Test detection of the Other."""
         levinas = Levinas()
-        result = levinas.reason("I encounter the other person who calls me to responsibility")
+        result = levinas.reason(
+            "I encounter the other person who calls me to responsibility"
+        )
 
         other = result["the_other"]
         assert "Other" in other["presence"] or "other" in other["description"].lower()
@@ -128,7 +132,10 @@ class TestLevinasResponsibility:
         result = levinas.reason("I am responsible for the other before myself")
 
         responsibility = result["responsibility"]
-        assert "Responsibility" in responsibility["level"] or "responsible" in responsibility["description"].lower()
+        assert (
+            "Responsibility" in responsibility["level"]
+            or "responsible" in responsibility["description"].lower()
+        )
 
 
 class TestLevinasTotalityInfinity:
@@ -150,7 +157,10 @@ class TestLevinasTotalityInfinity:
         result = levinas.reason("Everything is encompassed in a complete system")
 
         totality = result["totality_vs_infinity"]
-        assert "Totality" in totality["orientation"] or "totality" in totality["description"].lower()
+        assert (
+            "Totality" in totality["orientation"]
+            or "totality" in totality["description"].lower()
+        )
 
 
 class TestLevinasSameOther:
@@ -213,7 +223,9 @@ class TestLevinasThirdParty:
     def test_justice_detection(self):
         """Test detection of justice and third party."""
         levinas = Levinas()
-        result = levinas.reason("Justice requires comparing and weighing between many others")
+        result = levinas.reason(
+            "Justice requires comparing and weighing between many others"
+        )
 
         third = result["third_party"]
         assert "presence" in third
@@ -281,7 +293,11 @@ class TestLevinasReasoningText:
         result = levinas.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Levinas" in reasoning or "Other" in reasoning or "responsibility" in reasoning.lower()
+        assert (
+            "Levinas" in reasoning
+            or "Other" in reasoning
+            or "responsibility" in reasoning.lower()
+        )
 
 
 class TestLevinasEdgeCases:

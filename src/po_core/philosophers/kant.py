@@ -35,10 +35,12 @@ class Kant(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Immanuel Kant",
-            description="Critical philosopher focused on universal moral law, autonomy, duty, and the limits of reason"
+            description="Critical philosopher focused on universal moral law, autonomy, duty, and the limits of reason",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Kant's critical philosophical perspective.
 
@@ -74,8 +76,8 @@ class Kant(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Critical philosophy and deontological moral theory",
-                "focus": "Universal moral law, autonomy, duty, and the architectonic of reason"
-            }
+                "focus": "Universal moral law, autonomy, duty, and the architectonic of reason",
+            },
         }
 
     def _analyze_kantian_framework(self, prompt: str) -> Dict[str, Any]:
@@ -104,8 +106,13 @@ class Kant(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
-            categorical_imperative, autonomy, duty, good_will,
-            phenomena_noumena, theoretical_reason, practical_reason
+            categorical_imperative,
+            autonomy,
+            duty,
+            good_will,
+            phenomena_noumena,
+            theoretical_reason,
+            practical_reason,
         )
 
         return {
@@ -121,7 +128,7 @@ class Kant(Philosopher):
             "kingdom_of_ends": kingdom_of_ends,
             "good_will": good_will,
             "theoretical_reason": theoretical_reason,
-            "practical_reason": practical_reason
+            "practical_reason": practical_reason,
         }
 
     def _analyze_categorical_imperative(self, text: str) -> Dict[str, Any]:
@@ -136,11 +143,21 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Universal Law Formulation indicators
-        universal_words = ["universal", "always", "everyone", "all people", "everywhere", "law"]
+        universal_words = [
+            "universal",
+            "always",
+            "everyone",
+            "all people",
+            "everywhere",
+            "law",
+        ]
         universal_count = sum(1 for word in universal_words if word in text_lower)
 
         # Universalizability test
-        if any(phrase in text_lower for phrase in ["what if everyone", "if all", "everyone did this"]):
+        if any(
+            phrase in text_lower
+            for phrase in ["what if everyone", "if all", "everyone did this"]
+        ):
             universalizable = True
             universal_test = "Explicitly considering universalizability"
         elif universal_count >= 2:
@@ -151,7 +168,15 @@ class Kant(Philosopher):
             universal_test = "Not clearly universalizable"
 
         # Humanity Formulation indicators
-        humanity_words = ["person", "human", "people", "dignity", "respect", "worth", "value"]
+        humanity_words = [
+            "person",
+            "human",
+            "people",
+            "dignity",
+            "respect",
+            "worth",
+            "value",
+        ]
         humanity_count = sum(1 for word in humanity_words if word in text_lower)
 
         # Means vs ends
@@ -172,13 +197,22 @@ class Kant(Philosopher):
             humanity_desc = "Humanity formulation not clearly addressed"
 
         # Kingdom of Ends indicators
-        kingdom_words = ["community", "society", "shared", "mutual", "reciprocal", "legislation"]
+        kingdom_words = [
+            "community",
+            "society",
+            "shared",
+            "mutual",
+            "reciprocal",
+            "legislation",
+        ]
         kingdom_count = sum(1 for word in kingdom_words if word in text_lower)
 
         # Determine overall categorical imperative status
         if universalizable and humanity_status == "Respects Humanity":
             status = "Passes Categorical Imperative"
-            description = "Action appears to be a universal moral law respecting humanity"
+            description = (
+                "Action appears to be a universal moral law respecting humanity"
+            )
             moral_permissibility = "Morally Required"
         elif universalizable or humanity_status == "Respects Humanity":
             status = "Partially Aligned"
@@ -201,20 +235,24 @@ class Kant(Philosopher):
                 "universal_law": {
                     "universalizable": universalizable,
                     "test": universal_test,
-                    "score": universal_count
+                    "score": universal_count,
                 },
                 "humanity": {
                     "status": humanity_status,
                     "description": humanity_desc,
                     "treats_as_end": treats_as_end,
-                    "treats_as_means": treats_as_means
+                    "treats_as_means": treats_as_means,
                 },
                 "kingdom_of_ends": {
                     "score": kingdom_count,
-                    "indication": "High" if kingdom_count >= 3 else "Moderate" if kingdom_count >= 1 else "Low"
-                }
+                    "indication": (
+                        "High"
+                        if kingdom_count >= 3
+                        else "Moderate" if kingdom_count >= 1 else "Low"
+                    ),
+                },
             },
-            "principle": "Act only according to that maxim whereby you can will that it become a universal law"
+            "principle": "Act only according to that maxim whereby you can will that it become a universal law",
         }
 
     def _analyze_phenomena_noumena(self, text: str) -> Dict[str, Any]:
@@ -227,24 +265,51 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Phenomena indicators (appearances, experience, perception)
-        phenomena_words = ["appear", "seem", "perceive", "experience", "observe", "sense"]
+        phenomena_words = [
+            "appear",
+            "seem",
+            "perceive",
+            "experience",
+            "observe",
+            "sense",
+        ]
         phenomena_count = sum(1 for word in phenomena_words if word in text_lower)
 
         # Noumena indicators (thing-in-itself, reality, beyond appearance)
-        noumena_words = ["reality", "actual", "truly is", "in itself", "beyond", "real nature"]
+        noumena_words = [
+            "reality",
+            "actual",
+            "truly is",
+            "in itself",
+            "beyond",
+            "real nature",
+        ]
         noumena_count = sum(1 for phrase in noumena_words if phrase in text_lower)
 
         # Distinction awareness
-        distinction_words = ["appear vs", "seems but is", "surface", "underlying reality"]
+        distinction_words = [
+            "appear vs",
+            "seems but is",
+            "surface",
+            "underlying reality",
+        ]
         has_distinction = any(phrase in text_lower for phrase in distinction_words)
 
         # Limits of knowledge
-        limits_words = ["cannot know", "unknowable", "limits", "beyond understanding", "inaccessible"]
+        limits_words = [
+            "cannot know",
+            "unknowable",
+            "limits",
+            "beyond understanding",
+            "inaccessible",
+        ]
         recognizes_limits = any(phrase in text_lower for phrase in limits_words)
 
         if phenomena_count >= 2 and noumena_count >= 1:
             awareness = "Distinction Recognized"
-            description = "Aware of the difference between appearances and things-in-themselves"
+            description = (
+                "Aware of the difference between appearances and things-in-themselves"
+            )
             stance = "Critical"
         elif phenomena_count >= 2:
             awareness = "Phenomenal Focus"
@@ -252,7 +317,9 @@ class Kant(Philosopher):
             stance = "Empirical"
         elif noumena_count >= 2:
             awareness = "Noumenal Speculation"
-            description = "Attempting to know things-in-themselves (transcendent metaphysics)"
+            description = (
+                "Attempting to know things-in-themselves (transcendent metaphysics)"
+            )
             stance = "Dogmatic"
         else:
             awareness = "Distinction Not Evident"
@@ -266,7 +333,7 @@ class Kant(Philosopher):
             "phenomena_emphasis": phenomena_count,
             "noumena_emphasis": noumena_count,
             "recognizes_limits": recognizes_limits,
-            "principle": "We can know phenomena (appearances) but not noumena (things-in-themselves)"
+            "principle": "We can know phenomena (appearances) but not noumena (things-in-themselves)",
         }
 
     def _analyze_transcendental_idealism(self, text: str) -> Dict[str, Any]:
@@ -279,11 +346,25 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Space and time as forms of intuition
-        space_time_words = ["space", "time", "temporal", "spatial", "duration", "extension"]
+        space_time_words = [
+            "space",
+            "time",
+            "temporal",
+            "spatial",
+            "duration",
+            "extension",
+        ]
         space_time_count = sum(1 for word in space_time_words if word in text_lower)
 
         # Subjective contribution indicators
-        subjective_words = ["perceive", "mind", "consciousness", "subject", "experience", "intuition"]
+        subjective_words = [
+            "perceive",
+            "mind",
+            "consciousness",
+            "subject",
+            "experience",
+            "intuition",
+        ]
         subjective_count = sum(1 for word in subjective_words if word in text_lower)
 
         # A priori indicators
@@ -296,7 +377,9 @@ class Kant(Philosopher):
 
         if space_time_count >= 2 and subjective_count >= 2 and structure_count >= 1:
             position = "Transcendental Idealism"
-            description = "Recognition that space/time and categories structure experience"
+            description = (
+                "Recognition that space/time and categories structure experience"
+            )
             status = "Critical philosophy"
         elif subjective_count >= 2 and structure_count >= 1:
             position = "Subjective Structuring"
@@ -318,7 +401,7 @@ class Kant(Philosopher):
             "space_time_score": space_time_count,
             "subjective_contribution": subjective_count,
             "apriori_recognition": apriori_count >= 2,
-            "principle": "Space and time are pure forms of sensible intuition, not properties of things-in-themselves"
+            "principle": "Space and time are pure forms of sensible intuition, not properties of things-in-themselves",
         }
 
     def _analyze_categories_of_understanding(self, text: str) -> Dict[str, Any]:
@@ -338,25 +421,38 @@ class Kant(Philosopher):
         # Quantity categories
         if any(word in text_lower for word in ["one", "unity", "single", "whole"]):
             categories_present.append("Unity")
-        if any(word in text_lower for word in ["many", "multiple", "plural", "several"]):
+        if any(
+            word in text_lower for word in ["many", "multiple", "plural", "several"]
+        ):
             categories_present.append("Plurality")
         if any(word in text_lower for word in ["all", "total", "totality", "complete"]):
             categories_present.append("Totality")
 
         # Quality categories
-        if any(word in text_lower for word in ["real", "reality", "actual", "positive"]):
+        if any(
+            word in text_lower for word in ["real", "reality", "actual", "positive"]
+        ):
             categories_present.append("Reality")
-        if any(word in text_lower for word in ["not", "negation", "negative", "denial"]):
+        if any(
+            word in text_lower for word in ["not", "negation", "negative", "denial"]
+        ):
             categories_present.append("Negation")
-        if any(word in text_lower for word in ["limit", "limitation", "bounded", "finite"]):
+        if any(
+            word in text_lower for word in ["limit", "limitation", "bounded", "finite"]
+        ):
             categories_present.append("Limitation")
 
         # Relation categories
-        if any(word in text_lower for word in ["substance", "thing", "object", "persist"]):
+        if any(
+            word in text_lower for word in ["substance", "thing", "object", "persist"]
+        ):
             categories_present.append("Substance")
         if any(word in text_lower for word in ["cause", "effect", "because", "result"]):
             categories_present.append("Causality")
-        if any(word in text_lower for word in ["interact", "mutual", "reciprocal", "community"]):
+        if any(
+            word in text_lower
+            for word in ["interact", "mutual", "reciprocal", "community"]
+        ):
             categories_present.append("Community")
 
         # Modality categories
@@ -364,15 +460,41 @@ class Kant(Philosopher):
             categories_present.append("Possibility")
         if any(word in text_lower for word in ["exist", "is", "actual", "being"]):
             categories_present.append("Existence")
-        if any(word in text_lower for word in ["necessary", "must", "cannot be otherwise"]):
+        if any(
+            word in text_lower for word in ["necessary", "must", "cannot be otherwise"]
+        ):
             categories_present.append("Necessity")
 
         # Determine which groups are represented
         groups = {
-            "Quantity": len([c for c in categories_present if c in ["Unity", "Plurality", "Totality"]]),
-            "Quality": len([c for c in categories_present if c in ["Reality", "Negation", "Limitation"]]),
-            "Relation": len([c for c in categories_present if c in ["Substance", "Causality", "Community"]]),
-            "Modality": len([c for c in categories_present if c in ["Possibility", "Existence", "Necessity"]])
+            "Quantity": len(
+                [
+                    c
+                    for c in categories_present
+                    if c in ["Unity", "Plurality", "Totality"]
+                ]
+            ),
+            "Quality": len(
+                [
+                    c
+                    for c in categories_present
+                    if c in ["Reality", "Negation", "Limitation"]
+                ]
+            ),
+            "Relation": len(
+                [
+                    c
+                    for c in categories_present
+                    if c in ["Substance", "Causality", "Community"]
+                ]
+            ),
+            "Modality": len(
+                [
+                    c
+                    for c in categories_present
+                    if c in ["Possibility", "Existence", "Necessity"]
+                ]
+            ),
         }
 
         dominant_group = max(groups, key=groups.get) if any(groups.values()) else "None"
@@ -382,7 +504,7 @@ class Kant(Philosopher):
             "count": len(categories_present),
             "groups": groups,
             "dominant_group": dominant_group,
-            "principle": "The 12 categories are a priori concepts that structure all possible experience"
+            "principle": "The 12 categories are a priori concepts that structure all possible experience",
         }
 
     def _analyze_synthetic_apriori(self, text: str) -> Dict[str, Any]:
@@ -399,7 +521,13 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Necessity indicators (a priori)
-        necessity_words = ["necessary", "must", "always", "cannot be otherwise", "necessarily"]
+        necessity_words = [
+            "necessary",
+            "must",
+            "always",
+            "cannot be otherwise",
+            "necessarily",
+        ]
         necessity_count = sum(1 for phrase in necessity_words if phrase in text_lower)
 
         # Informativeness indicators (synthetic)
@@ -411,16 +539,28 @@ class Kant(Philosopher):
         has_mathematics = any(word in text_lower for word in math_words)
 
         # Causality (synthetic a priori concept)
-        causality_words = ["cause", "effect", "because", "therefore", "necessary connection"]
+        causality_words = [
+            "cause",
+            "effect",
+            "because",
+            "therefore",
+            "necessary connection",
+        ]
         has_causality = any(phrase in text_lower for phrase in causality_words)
 
         # Experience independence
-        apriori_words = ["prior to experience", "independent of experience", "before experience"]
+        apriori_words = [
+            "prior to experience",
+            "independent of experience",
+            "before experience",
+        ]
         apriori_explicit = any(phrase in text_lower for phrase in apriori_words)
 
         if (necessity_count >= 2 and informative_count >= 1) or has_mathematics:
             judgment_type = "Synthetic a Priori"
-            description = "Combines necessity with informativeness - extends knowledge a priori"
+            description = (
+                "Combines necessity with informativeness - extends knowledge a priori"
+            )
             epistemic_status = "Foundational"
         elif necessity_count >= 2:
             judgment_type = "A Priori (possibly analytic)"
@@ -443,7 +583,7 @@ class Kant(Philosopher):
             "informative": informative_count >= 1,
             "has_mathematics": has_mathematics,
             "has_causality": has_causality,
-            "principle": "Synthetic a priori judgments are possible and ground metaphysics and mathematics"
+            "principle": "Synthetic a priori judgments are possible and ground metaphysics and mathematics",
         }
 
     def _assess_autonomy(self, text: str) -> Dict[str, Any]:
@@ -456,7 +596,15 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Autonomy indicators
-        autonomy_words = ["self", "own", "myself", "choose", "free", "autonomous", "self-determine"]
+        autonomy_words = [
+            "self",
+            "own",
+            "myself",
+            "choose",
+            "free",
+            "autonomous",
+            "self-determine",
+        ]
         autonomy_count = sum(1 for word in autonomy_words if word in text_lower)
 
         # Rational self-legislation
@@ -464,17 +612,30 @@ class Kant(Philosopher):
         legislation_count = sum(1 for word in legislation_words if word in text_lower)
 
         # Heteronomy indicators
-        heteronomy_words = ["want", "desire", "feel like", "commanded", "told", "authority says"]
+        heteronomy_words = [
+            "want",
+            "desire",
+            "feel like",
+            "commanded",
+            "told",
+            "authority says",
+        ]
         heteronomy_count = sum(1 for phrase in heteronomy_words if phrase in text_lower)
 
         # Inclination vs duty
         inclination_words = ["want to", "desire to", "enjoy", "pleasant", "feel good"]
         duty_words = ["should", "ought", "must", "duty", "obligation", "required"]
 
-        inclination_score = sum(1 for phrase in inclination_words if phrase in text_lower)
+        inclination_score = sum(
+            1 for phrase in inclination_words if phrase in text_lower
+        )
         duty_score = sum(1 for phrase in duty_words if phrase in text_lower)
 
-        if autonomy_count >= 2 and legislation_count >= 1 and duty_score > inclination_score:
+        if (
+            autonomy_count >= 2
+            and legislation_count >= 1
+            and duty_score > inclination_score
+        ):
             status = "Autonomous"
             description = "Self-legislation through practical reason - moral autonomy"
             will_type = "Free Will"
@@ -499,9 +660,9 @@ class Kant(Philosopher):
             "heteronomy_score": heteronomy_count,
             "inclination_vs_duty": {
                 "inclination": inclination_score,
-                "duty": duty_score
+                "duty": duty_score,
             },
-            "principle": "Autonomy is the ground of human dignity - the will giving itself the moral law"
+            "principle": "Autonomy is the ground of human dignity - the will giving itself the moral law",
         }
 
     def _analyze_duty(self, text: str) -> Dict[str, Any]:
@@ -515,15 +676,37 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Duty language
-        duty_words = ["duty", "obligation", "ought", "should", "must", "required", "imperative"]
+        duty_words = [
+            "duty",
+            "obligation",
+            "ought",
+            "should",
+            "must",
+            "required",
+            "imperative",
+        ]
         duty_count = sum(1 for phrase in duty_words if phrase in text_lower)
 
         # Motivation by respect for law
-        respect_words = ["respect", "reverence", "moral law", "principle", "because it is right"]
+        respect_words = [
+            "respect",
+            "reverence",
+            "moral law",
+            "principle",
+            "because it is right",
+        ]
         respect_count = sum(1 for phrase in respect_words if phrase in text_lower)
 
         # Inclination language
-        inclination_words = ["want", "desire", "like", "enjoy", "pleasant", "benefit", "advantage"]
+        inclination_words = [
+            "want",
+            "desire",
+            "like",
+            "enjoy",
+            "pleasant",
+            "benefit",
+            "advantage",
+        ]
         inclination_count = sum(1 for word in inclination_words if word in text_lower)
 
         # Conflict indicators
@@ -559,7 +742,7 @@ class Kant(Philosopher):
             "respect_for_law": respect_count >= 1,
             "inclination_present": inclination_count >= 1,
             "duty_inclination_conflict": has_conflict,
-            "principle": "Only actions done from duty (not merely in conformity with duty) have moral worth"
+            "principle": "Only actions done from duty (not merely in conformity with duty) have moral worth",
         }
 
     def _analyze_sublime(self, text: str) -> Dict[str, Any]:
@@ -574,15 +757,37 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Mathematical sublime indicators (vastness, infinity, magnitude)
-        mathematical_words = ["vast", "infinite", "immense", "boundless", "enormous", "measureless"]
+        mathematical_words = [
+            "vast",
+            "infinite",
+            "immense",
+            "boundless",
+            "enormous",
+            "measureless",
+        ]
         mathematical_count = sum(1 for word in mathematical_words if word in text_lower)
 
         # Dynamical sublime indicators (power, might, terror)
-        dynamical_words = ["powerful", "mighty", "terrible", "overwhelming", "awesome", "fearsome"]
+        dynamical_words = [
+            "powerful",
+            "mighty",
+            "terrible",
+            "overwhelming",
+            "awesome",
+            "fearsome",
+        ]
         dynamical_count = sum(1 for word in dynamical_words if word in text_lower)
 
         # Sublime objects
-        sublime_objects = ["mountain", "ocean", "sky", "storm", "volcano", "abyss", "universe"]
+        sublime_objects = [
+            "mountain",
+            "ocean",
+            "sky",
+            "storm",
+            "volcano",
+            "abyss",
+            "universe",
+        ]
         has_sublime_object = any(obj in text_lower for obj in sublime_objects)
 
         # Feeling of inadequacy followed by elevation
@@ -595,10 +800,14 @@ class Kant(Philosopher):
         if (mathematical_count >= 2 or dynamical_count >= 2) and has_sublime_object:
             if has_inadequacy and has_elevation:
                 sublime_type = "Full Sublime Experience"
-                description = "Inadequacy of imagination followed by elevation through reason"
+                description = (
+                    "Inadequacy of imagination followed by elevation through reason"
+                )
             elif mathematical_count > dynamical_count:
                 sublime_type = "Mathematical Sublime"
-                description = "Confronting the absolutely large - magnitude beyond comprehension"
+                description = (
+                    "Confronting the absolutely large - magnitude beyond comprehension"
+                )
             else:
                 sublime_type = "Dynamical Sublime"
                 description = "Confronting overwhelming power while remaining safe"
@@ -616,7 +825,7 @@ class Kant(Philosopher):
             "dynamical_score": dynamical_count,
             "has_sublime_object": has_sublime_object,
             "reveals_supersensible": has_elevation,
-            "principle": "The sublime reveals our supersensible faculty and moral vocation beyond nature"
+            "principle": "The sublime reveals our supersensible faculty and moral vocation beyond nature",
         }
 
     def _assess_kingdom_of_ends(self, text: str) -> Dict[str, Any]:
@@ -629,7 +838,14 @@ class Kant(Philosopher):
         text_lower = text.lower()
 
         # Community/kingdom indicators
-        community_words = ["community", "society", "kingdom", "all", "everyone", "together"]
+        community_words = [
+            "community",
+            "society",
+            "kingdom",
+            "all",
+            "everyone",
+            "together",
+        ]
         community_count = sum(1 for word in community_words if word in text_lower)
 
         # Rational beings
@@ -637,7 +853,13 @@ class Kant(Philosopher):
         rational_count = sum(1 for word in rational_words if word in text_lower)
 
         # Ends in themselves
-        ends_words = ["end in itself", "inherent worth", "dignity", "sacred", "absolute value"]
+        ends_words = [
+            "end in itself",
+            "inherent worth",
+            "dignity",
+            "sacred",
+            "absolute value",
+        ]
         ends_count = sum(1 for phrase in ends_words if phrase in text_lower)
 
         # Mutual legislation
@@ -645,14 +867,24 @@ class Kant(Philosopher):
         legislation_count = sum(1 for word in legislation_words if word in text_lower)
 
         # Reciprocity
-        reciprocity_words = ["mutual", "reciprocal", "each other", "one another", "shared"]
-        reciprocity_count = sum(1 for phrase in reciprocity_words if phrase in text_lower)
+        reciprocity_words = [
+            "mutual",
+            "reciprocal",
+            "each other",
+            "one another",
+            "shared",
+        ]
+        reciprocity_count = sum(
+            1 for phrase in reciprocity_words if phrase in text_lower
+        )
 
         total_score = community_count + rational_count + ends_count + reciprocity_count
 
         if total_score >= 4 and legislation_count >= 1:
             status = "Kingdom of Ends"
-            description = "A systematic union of rational beings under common moral laws"
+            description = (
+                "A systematic union of rational beings under common moral laws"
+            )
             realization = "Moral Ideal"
         elif community_count >= 2 and ends_count >= 1:
             status = "Approaching Kingdom of Ends"
@@ -674,7 +906,7 @@ class Kant(Philosopher):
             "community_score": community_count,
             "treats_as_ends": ends_count >= 1,
             "reciprocity": reciprocity_count >= 1,
-            "principle": "Act as a member of a kingdom of ends - a systematic union of rational beings"
+            "principle": "Act as a member of a kingdom of ends - a systematic union of rational beings",
         }
 
     def _assess_good_will(self, text: str) -> Dict[str, Any]:
@@ -691,7 +923,12 @@ class Kant(Philosopher):
         will_count = sum(1 for word in will_words if word in text_lower)
 
         # Intrinsic goodness
-        intrinsic_words = ["good in itself", "intrinsically", "inherently", "unconditionally"]
+        intrinsic_words = [
+            "good in itself",
+            "intrinsically",
+            "inherently",
+            "unconditionally",
+        ]
         intrinsic_count = sum(1 for phrase in intrinsic_words if phrase in text_lower)
 
         # Duty/moral motivation
@@ -706,7 +943,11 @@ class Kant(Philosopher):
         pure_words = ["pure", "solely", "only", "merely because"]
         pure_count = sum(1 for phrase in pure_words if phrase in text_lower)
 
-        if will_count >= 1 and moral_count >= 2 and (intrinsic_count >= 1 or pure_count >= 1):
+        if (
+            will_count >= 1
+            and moral_count >= 2
+            and (intrinsic_count >= 1 or pure_count >= 1)
+        ):
             status = "Good Will Present"
             description = "Will determined by duty and the moral law alone"
             value = "Unconditional Worth"
@@ -730,7 +971,7 @@ class Kant(Philosopher):
             "motivated_by_duty": moral_count >= 2,
             "unconditional": intrinsic_count >= 1,
             "pure": pure_count >= 1,
-            "principle": "A good will is the only thing good without qualification"
+            "principle": "A good will is the only thing good without qualification",
         }
 
     def _analyze_theoretical_reason(self, text: str) -> Dict[str, Any]:
@@ -751,20 +992,39 @@ class Kant(Philosopher):
         experience_count = sum(1 for word in experience_words if word in text_lower)
 
         # Transcendent objects (beyond possible experience)
-        transcendent_words = ["god", "soul", "immortal", "freedom", "infinity", "absolute"]
+        transcendent_words = [
+            "god",
+            "soul",
+            "immortal",
+            "freedom",
+            "infinity",
+            "absolute",
+        ]
         transcendent_count = sum(1 for word in transcendent_words if word in text_lower)
 
         # Limits of knowledge
-        limits_words = ["cannot know", "unknowable", "beyond knowledge", "limits of reason"]
+        limits_words = [
+            "cannot know",
+            "unknowable",
+            "beyond knowledge",
+            "limits of reason",
+        ]
         recognizes_limits = any(phrase in text_lower for phrase in limits_words)
 
         # Speculation vs critical stance
-        speculation_words = ["speculate", "metaphysics", "transcendent", "beyond experience"]
+        speculation_words = [
+            "speculate",
+            "metaphysics",
+            "transcendent",
+            "beyond experience",
+        ]
         has_speculation = any(phrase in text_lower for phrase in speculation_words)
 
         if knowledge_count >= 2 and recognizes_limits and transcendent_count >= 1:
             stance = "Critical"
-            description = "Recognizes limits of theoretical reason regarding transcendent objects"
+            description = (
+                "Recognizes limits of theoretical reason regarding transcendent objects"
+            )
             status = "Post-Critique"
         elif knowledge_count >= 2 and experience_count >= 2:
             stance = "Empirical"
@@ -772,7 +1032,9 @@ class Kant(Philosopher):
             status = "Scientific"
         elif transcendent_count >= 2 and not recognizes_limits:
             stance = "Dogmatic"
-            description = "Claims knowledge of transcendent objects - pre-critical metaphysics"
+            description = (
+                "Claims knowledge of transcendent objects - pre-critical metaphysics"
+            )
             status = "Transcendent Illusion"
         else:
             stance = "Undetermined"
@@ -786,7 +1048,7 @@ class Kant(Philosopher):
             "knowledge_claims": knowledge_count,
             "recognizes_limits": recognizes_limits,
             "transcendent_objects": transcendent_count >= 1,
-            "principle": "Theoretical reason is limited to phenomena - we cannot know things-in-themselves"
+            "principle": "Theoretical reason is limited to phenomena - we cannot know things-in-themselves",
         }
 
     def _analyze_practical_reason(self, text: str) -> Dict[str, Any]:
@@ -812,14 +1074,23 @@ class Kant(Philosopher):
 
         # Postulates of practical reason
         postulates = {
-            "freedom": any(word in text_lower for word in ["free", "freedom", "autonomous"]),
+            "freedom": any(
+                word in text_lower for word in ["free", "freedom", "autonomous"]
+            ),
             "god": "god" in text_lower or "divine" in text_lower,
-            "immortality": any(word in text_lower for word in ["immortal", "eternal", "afterlife"])
+            "immortality": any(
+                word in text_lower for word in ["immortal", "eternal", "afterlife"]
+            ),
         }
         postulates_count = sum(postulates.values())
 
         # Primacy over theoretical
-        primacy_words = ["primacy", "practical over theoretical", "must believe", "faith"]
+        primacy_words = [
+            "primacy",
+            "practical over theoretical",
+            "must believe",
+            "faith",
+        ]
         has_primacy = any(phrase in text_lower for phrase in primacy_words)
 
         if practical_count >= 3 and moral_law_count >= 1 and freedom_count >= 1:
@@ -848,7 +1119,7 @@ class Kant(Philosopher):
             "freedom_recognized": postulates["freedom"],
             "postulates": postulates,
             "postulates_count": postulates_count,
-            "principle": "Practical reason has primacy - determines the will through the moral law"
+            "principle": "Practical reason has primacy - determines the will through the moral law",
         }
 
     def _construct_reasoning(
@@ -859,7 +1130,7 @@ class Kant(Philosopher):
         good_will: Dict[str, Any],
         phenomena_noumena: Dict[str, Any],
         theoretical_reason: Dict[str, Any],
-        practical_reason: Dict[str, Any]
+        practical_reason: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Kantian philosophical reasoning."""
         reasoning = (
@@ -877,11 +1148,11 @@ class Kant(Philosopher):
         reasoning += f"Autonomy: {autonomy['status']} - {autonomy['description']}. "
 
         # Duty and moral worth
-        if duty['status'] != "Duty Not Evident":
+        if duty["status"] != "Duty Not Evident":
             reasoning += f"Duty: {duty['status']} with {duty['moral_worth']}. "
 
         # Good will
-        if good_will['status'] != "Will Not Evident":
+        if good_will["status"] != "Will Not Evident":
             reasoning += f"Good will: {good_will['description']}. "
 
         # Theoretical limits
@@ -948,7 +1219,9 @@ class Kant(Philosopher):
             tension_elements.append("Acting in conformity with duty, not from duty")
 
         # Check humanity formula
-        humanity_status = analysis["categorical_imperative"]["formulations"]["humanity"]["status"]
+        humanity_status = analysis["categorical_imperative"]["formulations"][
+            "humanity"
+        ]["status"]
         if humanity_status == "Violates Humanity Formula":
             tension_score += 2
             tension_elements.append("Treating persons merely as means")
@@ -986,5 +1259,7 @@ class Kant(Philosopher):
             "level": level,
             "score": tension_score,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }

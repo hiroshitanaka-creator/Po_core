@@ -195,9 +195,7 @@ class PoSelf:
         proposal = result.get("proposal", {})
 
         # Extract philosopher names from trace
-        ph_events = [
-            e for e in tracer.events if e.event_type == "PhilosopherResult"
-        ]
+        ph_events = [e for e in tracer.events if e.event_type == "PhilosopherResult"]
         philosopher_names = [e.payload["name"] for e in ph_events]
 
         # Determine winner from proposal_id
@@ -210,9 +208,7 @@ class PoSelf:
 
         # Build metrics from tensor events
         metrics: Dict[str, float] = {}
-        tensor_events = [
-            e for e in tracer.events if e.event_type == "TensorComputed"
-        ]
+        tensor_events = [e for e in tracer.events if e.event_type == "TensorComputed"]
         if tensor_events:
             metric_keys = tensor_events[0].payload.get("metrics", [])
             if isinstance(metric_keys, list):
@@ -224,11 +220,13 @@ class PoSelf:
         # Build responses from philosopher results
         responses: List[Dict[str, Any]] = []
         for e in ph_events:
-            responses.append({
-                "name": e.payload.get("name", ""),
-                "latency_ms": e.payload.get("latency_ms", 0),
-                "proposals": e.payload.get("n_proposals", 0),
-            })
+            responses.append(
+                {
+                    "name": e.payload.get("name", ""),
+                    "latency_ms": e.payload.get("latency_ms", 0),
+                    "proposals": e.payload.get("n_proposals", 0),
+                }
+            )
 
         # Determine text
         text = proposal.get("content", "")
@@ -354,7 +352,9 @@ def cli() -> None:
     console.print("Pipeline: run_turn (hexagonal architecture)")
     console.print("\nFeatures:")
     console.print("  - 39 philosophers as dynamic tensors")
-    console.print("  - Three-layer safety (IntentionGate -> PolicyPrecheck -> ActionGate)")
+    console.print(
+        "  - Three-layer safety (IntentionGate -> PolicyPrecheck -> ActionGate)"
+    )
     console.print("  - Pareto multi-objective aggregation")
     console.print("  - Freedom Pressure Tensor computation")
     console.print("  - SafetyMode-based philosopher selection")

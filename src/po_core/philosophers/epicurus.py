@@ -52,7 +52,9 @@ class Epicurus(Philosopher):
             "prudence",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Epicurean reasoning to the prompt.
 
@@ -98,8 +100,15 @@ class Epicurus(Philosopher):
         practical = self._derive_practical_guidance(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, pleasure, desires, tetrapharmakos, ataraxia,
-            aponia, mortality, friendship, prudence
+            prompt,
+            pleasure,
+            desires,
+            tetrapharmakos,
+            ataraxia,
+            aponia,
+            mortality,
+            friendship,
+            prudence,
         )
 
         return {
@@ -132,7 +141,11 @@ class Epicurus(Philosopher):
             },
             "katastematic_pleasure": {
                 "description": "Static pleasure - the stable state of well-being",
-                "examples": ["Tranquility of mind", "Freedom from bodily pain", "Contentment"],
+                "examples": [
+                    "Tranquility of mind",
+                    "Freedom from bodily pain",
+                    "Contentment",
+                ],
                 "priority": "This is the highest form of pleasure",
             },
             "kinetic_pleasure": {
@@ -446,8 +459,16 @@ class Epicurus(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, pleasure: Dict, desires: Dict, tetrapharmakos: Dict,
-        ataraxia: Dict, aponia: Dict, mortality: Dict, friendship: Dict, prudence: Dict
+        self,
+        prompt: str,
+        pleasure: Dict,
+        desires: Dict,
+        tetrapharmakos: Dict,
+        ataraxia: Dict,
+        aponia: Dict,
+        mortality: Dict,
+        friendship: Dict,
+        prudence: Dict,
     ) -> str:
         """Construct comprehensive Epicurean reasoning."""
         return f"""Epicurean Analysis of: "{prompt}"

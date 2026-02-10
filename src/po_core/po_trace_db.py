@@ -5,6 +5,7 @@ Po_trace with Database Backend
 Database-enabled version of Po_trace using SQLAlchemy
 Compatible with existing Po_trace API
 """
+
 from __future__ import annotations
 
 import uuid
@@ -181,7 +182,9 @@ class PoTraceDB:
                 lines.append(f"  {key}: {value}")
             lines.append(f"\nEvents ({len(session.events)}):")
             for event in session.events:
-                lines.append(f"  [{event.timestamp}] {event.event_type.value} - {event.source}")
+                lines.append(
+                    f"  [{event.timestamp}] {event.event_type.value} - {event.source}"
+                )
                 if "message" in event.data:
                     lines.append(f"    {event.data['message']}")
             return "\n".join(lines)
@@ -205,7 +208,9 @@ class PoTraceDB:
         Returns:
             List of session metadata
         """
-        return self.db.search_sessions(query=query, philosopher=philosopher, limit=limit)
+        return self.db.search_sessions(
+            query=query, philosopher=philosopher, limit=limit
+        )
 
     def get_statistics(self) -> Dict[str, Any]:
         """

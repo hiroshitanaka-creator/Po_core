@@ -18,6 +18,7 @@ Design Notes:
 - Designed to be replaced with embedding-based similarity later
 - Returns drift in [0, 1] where 0 = no change, 1 = complete change
 """
+
 from __future__ import annotations
 
 import re
@@ -38,6 +39,7 @@ class DriftReport:
         lost_concepts: Concepts that were in original but not in repaired
         added_concepts: Concepts that were added in repaired text
     """
+
     drift: float
     notes: str
     key_concepts_before: List[str]
@@ -213,11 +215,7 @@ def semantic_drift(
     length_ratio = min(len_before, len_after) / max(len_before, len_after, 1)
     length_drift = 1.0 - length_ratio
 
-    drift = (
-        0.4 * concept_drift +
-        0.4 * polarity_flip +
-        0.2 * length_drift
-    )
+    drift = 0.4 * concept_drift + 0.4 * polarity_flip + 0.2 * length_drift
 
     # Clamp to [0, 1]
     drift = max(0.0, min(1.0, drift))

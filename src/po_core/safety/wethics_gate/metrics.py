@@ -13,17 +13,19 @@ Key concepts:
 
 Reference: 01_specifications/wethics_gate/DELTA_E.md
 """
+
 from __future__ import annotations
-from typing import Dict, List, Optional, Tuple, Callable, Any
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
+
 import math
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .types import (
-    Candidate,
-    AxisScore,
     AXES,
     AXIS_NAMES,
+    AxisScore,
+    Candidate,
 )
 
 
@@ -38,6 +40,7 @@ class AxisProfile:
         e_target: Target score (ideal)
         weight_range: (min_weight, max_weight) for MCDA
     """
+
     axis: str
     e_min: float
     e_target: float
@@ -52,6 +55,7 @@ class ContextProfile:
     Different contexts (disaster, medical, education, entertainment)
     may have different thresholds and weight ranges.
     """
+
     name: str
     description: str
     axis_profiles: Dict[str, AxisProfile]
@@ -63,12 +67,22 @@ class ContextProfile:
             name="default",
             description="Balanced default context",
             axis_profiles={
-                "A": AxisProfile("A", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.35)),
-                "B": AxisProfile("B", e_min=0.4, e_target=0.8, weight_range=(0.10, 0.25)),
-                "C": AxisProfile("C", e_min=0.3, e_target=0.7, weight_range=(0.10, 0.20)),
-                "D": AxisProfile("D", e_min=0.3, e_target=0.7, weight_range=(0.15, 0.25)),
-                "E": AxisProfile("E", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.30)),
-            }
+                "A": AxisProfile(
+                    "A", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.35)
+                ),
+                "B": AxisProfile(
+                    "B", e_min=0.4, e_target=0.8, weight_range=(0.10, 0.25)
+                ),
+                "C": AxisProfile(
+                    "C", e_min=0.3, e_target=0.7, weight_range=(0.10, 0.20)
+                ),
+                "D": AxisProfile(
+                    "D", e_min=0.3, e_target=0.7, weight_range=(0.15, 0.25)
+                ),
+                "E": AxisProfile(
+                    "E", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.30)
+                ),
+            },
         )
 
     @classmethod
@@ -78,12 +92,22 @@ class ContextProfile:
             name="disaster",
             description="Disaster/emergency context - safety prioritized",
             axis_profiles={
-                "A": AxisProfile("A", e_min=0.6, e_target=0.95, weight_range=(0.30, 0.50)),
-                "B": AxisProfile("B", e_min=0.3, e_target=0.7, weight_range=(0.05, 0.15)),
-                "C": AxisProfile("C", e_min=0.2, e_target=0.5, weight_range=(0.05, 0.15)),
-                "D": AxisProfile("D", e_min=0.2, e_target=0.6, weight_range=(0.10, 0.20)),
-                "E": AxisProfile("E", e_min=0.5, e_target=0.9, weight_range=(0.20, 0.35)),
-            }
+                "A": AxisProfile(
+                    "A", e_min=0.6, e_target=0.95, weight_range=(0.30, 0.50)
+                ),
+                "B": AxisProfile(
+                    "B", e_min=0.3, e_target=0.7, weight_range=(0.05, 0.15)
+                ),
+                "C": AxisProfile(
+                    "C", e_min=0.2, e_target=0.5, weight_range=(0.05, 0.15)
+                ),
+                "D": AxisProfile(
+                    "D", e_min=0.2, e_target=0.6, weight_range=(0.10, 0.20)
+                ),
+                "E": AxisProfile(
+                    "E", e_min=0.5, e_target=0.9, weight_range=(0.20, 0.35)
+                ),
+            },
         )
 
     @classmethod
@@ -93,12 +117,22 @@ class ContextProfile:
             name="medical",
             description="Medical context - safety and privacy prioritized",
             axis_profiles={
-                "A": AxisProfile("A", e_min=0.6, e_target=0.95, weight_range=(0.25, 0.40)),
-                "B": AxisProfile("B", e_min=0.4, e_target=0.8, weight_range=(0.10, 0.20)),
-                "C": AxisProfile("C", e_min=0.6, e_target=0.9, weight_range=(0.20, 0.35)),
-                "D": AxisProfile("D", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.25)),
-                "E": AxisProfile("E", e_min=0.5, e_target=0.9, weight_range=(0.15, 0.25)),
-            }
+                "A": AxisProfile(
+                    "A", e_min=0.6, e_target=0.95, weight_range=(0.25, 0.40)
+                ),
+                "B": AxisProfile(
+                    "B", e_min=0.4, e_target=0.8, weight_range=(0.10, 0.20)
+                ),
+                "C": AxisProfile(
+                    "C", e_min=0.6, e_target=0.9, weight_range=(0.20, 0.35)
+                ),
+                "D": AxisProfile(
+                    "D", e_min=0.4, e_target=0.8, weight_range=(0.15, 0.25)
+                ),
+                "E": AxisProfile(
+                    "E", e_min=0.5, e_target=0.9, weight_range=(0.15, 0.25)
+                ),
+            },
         )
 
 
@@ -110,7 +144,9 @@ class AxisScorer(ABC):
     """
 
     @abstractmethod
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """
         Score a candidate on this axis.
 
@@ -132,7 +168,9 @@ class SafetyScorer(AxisScorer):
     Score = 1 - max_risk where risk = probability * impact * irreversibility
     """
 
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """Score safety based on harm scenario analysis."""
         text = candidate.text.lower()
         evidence = []
@@ -140,13 +178,24 @@ class SafetyScorer(AxisScorer):
 
         # Risk indicators
         high_risk_indicators = [
-            "physical harm", "injury", "death", "dangerous",
-            "toxic", "explosive", "weapon", "attack",
+            "physical harm",
+            "injury",
+            "death",
+            "dangerous",
+            "toxic",
+            "explosive",
+            "weapon",
+            "attack",
         ]
 
         safety_indicators = [
-            "safe", "protected", "secure", "verified",
-            "tested", "certified", "safeguard",
+            "safe",
+            "protected",
+            "secure",
+            "verified",
+            "tested",
+            "certified",
+            "safeguard",
         ]
 
         risk_count = sum(1 for ind in high_risk_indicators if ind in text)
@@ -182,7 +231,9 @@ class FairnessScorer(AxisScorer):
     Score = 1 - max_disparity
     """
 
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """Score fairness based on disparity analysis."""
         text = candidate.text.lower()
         evidence = []
@@ -190,13 +241,23 @@ class FairnessScorer(AxisScorer):
 
         # Bias indicators
         bias_indicators = [
-            "only for", "not for", "exclude", "discriminate",
-            "prefer certain", "favor", "against",
+            "only for",
+            "not for",
+            "exclude",
+            "discriminate",
+            "prefer certain",
+            "favor",
+            "against",
         ]
 
         fairness_indicators = [
-            "equal", "fair", "inclusive", "diverse",
-            "accessible", "equitable", "universal",
+            "equal",
+            "fair",
+            "inclusive",
+            "diverse",
+            "accessible",
+            "equitable",
+            "universal",
         ]
 
         bias_count = sum(1 for ind in bias_indicators if ind in text)
@@ -231,7 +292,9 @@ class PrivacyScorer(AxisScorer):
     Score = 1 - sensitivity * exposure * (1 - protection_strength)
     """
 
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """Score privacy based on data handling analysis."""
         text = candidate.text.lower()
         evidence = []
@@ -239,13 +302,24 @@ class PrivacyScorer(AxisScorer):
 
         # Privacy risk indicators
         risk_indicators = [
-            "collect data", "track", "monitor", "surveillance",
-            "share with third", "sell data", "personal information",
+            "collect data",
+            "track",
+            "monitor",
+            "surveillance",
+            "share with third",
+            "sell data",
+            "personal information",
         ]
 
         protection_indicators = [
-            "encrypt", "anonymize", "consent", "opt-out",
-            "data minimization", "privacy", "gdpr", "confidential",
+            "encrypt",
+            "anonymize",
+            "consent",
+            "opt-out",
+            "data minimization",
+            "privacy",
+            "gdpr",
+            "confidential",
         ]
 
         risk_count = sum(1 for ind in risk_indicators if ind in text)
@@ -279,7 +353,9 @@ class AutonomyScorer(AxisScorer):
     Score based on user control, explainability, and consent.
     """
 
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """Score autonomy based on user agency analysis."""
         text = candidate.text.lower()
         evidence = []
@@ -287,13 +363,24 @@ class AutonomyScorer(AxisScorer):
 
         # Control reduction indicators
         control_loss_indicators = [
-            "automatic", "no choice", "mandatory", "required",
-            "cannot opt out", "forced", "must",
+            "automatic",
+            "no choice",
+            "mandatory",
+            "required",
+            "cannot opt out",
+            "forced",
+            "must",
         ]
 
         agency_indicators = [
-            "user choice", "optional", "configurable", "override",
-            "explain", "transparent", "human in the loop", "consent",
+            "user choice",
+            "optional",
+            "configurable",
+            "override",
+            "explain",
+            "transparent",
+            "human in the loop",
+            "consent",
         ]
 
         loss_count = sum(1 for ind in control_loss_indicators if ind in text)
@@ -328,7 +415,9 @@ class HarmAvoidanceScorer(AxisScorer):
     Score = 1 - harm_risk
     """
 
-    def score(self, candidate: Candidate, context: Optional[Dict[str, Any]] = None) -> AxisScore:
+    def score(
+        self, candidate: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> AxisScore:
         """Score harm avoidance based on harm risk analysis."""
         text = candidate.text.lower()
         evidence = []
@@ -336,13 +425,25 @@ class HarmAvoidanceScorer(AxisScorer):
 
         # Harm indicators
         harm_indicators = [
-            "mislead", "misinformation", "manipulate", "exploit",
-            "hate", "incite", "discriminate", "harass", "bully",
+            "mislead",
+            "misinformation",
+            "manipulate",
+            "exploit",
+            "hate",
+            "incite",
+            "discriminate",
+            "harass",
+            "bully",
         ]
 
         protection_indicators = [
-            "verify", "fact-check", "accurate", "truthful",
-            "respectful", "supportive", "constructive",
+            "verify",
+            "fact-check",
+            "accurate",
+            "truthful",
+            "respectful",
+            "supportive",
+            "constructive",
         ]
 
         harm_count = sum(1 for ind in harm_indicators if ind in text)
@@ -448,8 +549,7 @@ class MetricsEvaluator:
         """
         if target is None:
             target = {
-                axis: self.context_profile.axis_profiles[axis].e_target
-                for axis in AXES
+                axis: self.context_profile.axis_profiles[axis].e_target for axis in AXES
             }
 
         delta = {}
@@ -476,8 +576,7 @@ class MetricsEvaluator:
         """
         if minimum is None:
             minimum = {
-                axis: self.context_profile.axis_profiles[axis].e_min
-                for axis in AXES
+                axis: self.context_profile.axis_profiles[axis].e_min for axis in AXES
             }
 
         violations = {}
@@ -516,7 +615,7 @@ class MetricsEvaluator:
         for axis in AXES:
             w = weights.get(axis, 0.2)
             d = delta.get(axis, 0.0)
-            sum_sq += w * (d ** 2)
+            sum_sq += w * (d**2)
 
         return math.sqrt(sum_sq)
 

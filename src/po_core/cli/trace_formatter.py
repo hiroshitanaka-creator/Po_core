@@ -58,7 +58,9 @@ class TraceFormatter:
 
         # Entries
         entries = trace_data.get("entries", [])
-        self.console.print(f"\n[bold yellow]Trace Entries:[/bold yellow] {len(entries)} events")
+        self.console.print(
+            f"\n[bold yellow]Trace Entries:[/bold yellow] {len(entries)} events"
+        )
 
         # Group entries by level
         by_level = {}
@@ -267,14 +269,18 @@ class TraceFormatter:
             self.console.print(syntax)
         elif format == "markdown":
             md_output = self.format_trace_markdown(trace_data)
-            self.console.print(Panel(md_output, title="Markdown Output", border_style="green"))
+            self.console.print(
+                Panel(md_output, title="Markdown Output", border_style="green")
+            )
         elif format == "text":
             text_output = self.format_trace_text(trace_data)
             self.console.print(text_output)
         else:
             self.console.print(f"[red]Unknown format: {format}[/red]")
 
-    def export_trace(self, trace_data: Dict[str, Any], filename: str, format: str = "json") -> None:
+    def export_trace(
+        self, trace_data: Dict[str, Any], filename: str, format: str = "json"
+    ) -> None:
         """
         Export trace to file.
 

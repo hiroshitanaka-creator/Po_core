@@ -256,7 +256,9 @@ def compute_semantic_delta_simple(prompt: str, reasoning: str) -> float:
     return compute_semantic_delta(prompt, reasoning)
 
 
-def compute_blocked_tensor_simple(freedom_pressure: float, semantic_delta: float) -> float:
+def compute_blocked_tensor_simple(
+    freedom_pressure: float, semantic_delta: float
+) -> float:
     """
     Simple blocked tensor computation (backward compat).
 

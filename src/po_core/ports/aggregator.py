@@ -9,5 +9,10 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class AggregatorPort(Protocol):
-    def aggregate(self, ctx: Context, intent: Intent, tensors: TensorSnapshot, proposals: Sequence[Proposal]) -> Proposal:
-        ...
+    def aggregate(
+        self,
+        ctx: Context,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        proposals: Sequence[Proposal],
+    ) -> Proposal: ...

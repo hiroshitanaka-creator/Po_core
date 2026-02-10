@@ -43,7 +43,9 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
         philosophers = interactions.get("philosophers", [])
         tension_matrix = np.array(interactions.get("tension_matrix", []))
         harmony_matrix = np.array(interactions.get("harmony_matrix", []))
-        synthesis_potential = np.array(interactions.get("synthesis_potential_matrix", []))
+        synthesis_potential = np.array(
+            interactions.get("synthesis_potential_matrix", [])
+        )
 
         # Display tension matrix
         self._render_tension_matrix(philosophers, tension_matrix)
@@ -60,8 +62,9 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
         # Display key tensions and harmonies
         self._render_key_interactions(interactions)
 
-    def _render_tension_matrix(self, philosophers: List[str],
-                               tensor_matrix: np.ndarray) -> None:
+    def _render_tension_matrix(
+        self, philosophers: List[str], tensor_matrix: np.ndarray
+    ) -> None:
         """
         Render tension matrix as ASCII heatmap.
 
@@ -101,8 +104,9 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
         self.console.print("\n[dim]ASCII Heatmap (█ = high tension):[/dim]")
         self._render_ascii_heatmap(tensor_matrix, max_value=1.0)
 
-    def _render_harmony_matrix(self, philosophers: List[str],
-                               harmony_matrix: np.ndarray) -> None:
+    def _render_harmony_matrix(
+        self, philosophers: List[str], harmony_matrix: np.ndarray
+    ) -> None:
         """
         Render harmony matrix.
 
@@ -140,8 +144,9 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
         self.console.print("\n[dim]ASCII Heatmap (█ = high harmony):[/dim]")
         self._render_ascii_heatmap(harmony_matrix, max_value=1.0)
 
-    def _render_synthesis_potential(self, philosophers: List[str],
-                                    synthesis_matrix: np.ndarray) -> None:
+    def _render_synthesis_potential(
+        self, philosophers: List[str], synthesis_matrix: np.ndarray
+    ) -> None:
         """
         Render synthesis potential matrix.
 
@@ -213,7 +218,9 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
 
         table.add_row("Average Harmony", f"{avg_harmony:.3f}")
         table.add_row("Average Tension", f"{avg_tension:.3f}")
-        table.add_row("Harmony/Tension Ratio", f"{avg_harmony / max(avg_tension, 0.001):.3f}")
+        table.add_row(
+            "Harmony/Tension Ratio", f"{avg_harmony / max(avg_tension, 0.001):.3f}"
+        )
 
         self.console.print(table)
 
@@ -254,4 +261,6 @@ class TensionMapVisualizer(PhilosophicalVisualizer):
             f"\n[bold blue]Best Synthesis Potential:[/bold blue] "
             f"{best_synthesis.get('philosopher_a')} ↔ {best_synthesis.get('philosopher_b')}"
         )
-        self.console.print(f"  Potential: {best_synthesis.get('synthesis_potential', 0):.3f}")
+        self.console.print(
+            f"  Potential: {best_synthesis.get('synthesis_potential', 0):.3f}"
+        )

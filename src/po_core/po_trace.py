@@ -4,6 +4,7 @@ Po_trace: Reasoning Audit Log Module
 Tracks and persists the reasoning process of Po_self,
 including aggregate metrics and per-philosopher responses.
 """
+
 from __future__ import annotations
 
 import json
@@ -267,8 +268,12 @@ class PoTrace:
 
         # Update or append
         existing_index = next(
-            (i for i, s in enumerate(sessions) if s["session_id"] == session.session_id),
-            None
+            (
+                i
+                for i, s in enumerate(sessions)
+                if s["session_id"] == session.session_id
+            ),
+            None,
         )
         if existing_index is not None:
             sessions[existing_index] = summary
@@ -433,7 +438,9 @@ class PoTrace:
                 rejection = RejectionLog.from_dict(data)
                 self.rejections[rejection.rejection_id] = rejection
             except Exception as e:
-                console.print(f"[yellow]Warning: Failed to load rejection from {rejection_file}: {e}[/yellow]")
+                console.print(
+                    f"[yellow]Warning: Failed to load rejection from {rejection_file}: {e}[/yellow]"
+                )
 
     def get_session_rejections(self, session_id: str) -> List[RejectionLog]:
         """Get all rejections for a specific session (loads from disk if needed)."""
@@ -463,7 +470,9 @@ class PoTrace:
                 self.sessions[session_id] = session
                 return session
             except Exception as e:
-                console.print(f"[yellow]Warning: Failed to load session {session_id}: {e}[/yellow]")
+                console.print(
+                    f"[yellow]Warning: Failed to load session {session_id}: {e}[/yellow]"
+                )
                 return None
 
         return None
@@ -484,9 +493,7 @@ class PoTrace:
 
         # Sort by created_at in descending order (most recent first)
         sorted_sessions = sorted(
-            sessions,
-            key=lambda s: s.get("created_at", ""),
-            reverse=True
+            sessions, key=lambda s: s.get("created_at", ""), reverse=True
         )
 
         # Apply limit if specified
@@ -533,9 +540,13 @@ class PoTrace:
             lines.append("")
             lines.append(f"Events ({len(session.events)}):")
             for event in session.events:
-                lines.append(f"  [{event.timestamp}] {event.event_type.value} from {event.source}")
+                lines.append(
+                    f"  [{event.timestamp}] {event.event_type.value} from {event.source}"
+                )
                 if event.data:
-                    lines.append(f"    Data: {json.dumps(event.data, ensure_ascii=False)}")
+                    lines.append(
+                        f"    Data: {json.dumps(event.data, ensure_ascii=False)}"
+                    )
 
             return "\n".join(lines)
         else:
@@ -590,8 +601,7 @@ def cli(prompt: List[str], trace_dir: Path) -> None:
     text_prompt = " ".join(prompt).strip()
     if not text_prompt:
         console.print(
-            "[red]No prompt provided.[/red] "
-            "Usage: po-core trace \"What is meaning?\""
+            "[red]No prompt provided.[/red] " 'Usage: po-core trace "What is meaning?"'
         )
         raise SystemExit(1)
 
@@ -608,8 +618,7 @@ def cli(prompt: List[str], trace_dir: Path) -> None:
     path = tracer.save_trace(record)
 
     console.print(
-        f"[green]Trace saved:[/green] {path} "
-        f"(trace_id={record.header.trace_id})"
+        f"[green]Trace saved:[/green] {path} " f"(trace_id={record.header.trace_id})"
     )
 
     # 3. ついでに要約だけ標準出力に出す

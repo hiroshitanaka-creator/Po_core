@@ -4,13 +4,14 @@ Philosopher Registry Scaling Test
 
 Tests the 1→5→39 philosopher scaling based on SafetyMode.
 """
+
 from __future__ import annotations
 
 import pytest
 
 from po_core.domain.safety_mode import SafetyMode
-from po_core.philosophers.registry import PhilosopherRegistry, Selection
 from po_core.philosophers.manifest import SPECS, PhilosopherSpec
+from po_core.philosophers.registry import PhilosopherRegistry, Selection
 
 
 class TestPhilosopherRegistrySelection:
@@ -75,7 +76,9 @@ class TestPhilosopherRegistrySelection:
         selection = registry.select(SafetyMode.CRITICAL)
 
         # Find the selected philosopher's weight
-        selected_spec = next(s for s in SPECS if s.philosopher_id == selection.selected_ids[0])
+        selected_spec = next(
+            s for s in SPECS if s.philosopher_id == selection.selected_ids[0]
+        )
 
         # Should have high weight among risk_level=0
         risk0_specs = [s for s in SPECS if s.risk_level == 0 and s.enabled]
@@ -144,8 +147,12 @@ class TestPhilosopherRegistryCustomization:
     def test_custom_specs(self):
         """Custom specs should be used instead of defaults."""
         custom_specs = [
-            PhilosopherSpec("test1", "po_core.philosophers.dummy", "DummyPhilosopher", risk_level=0),
-            PhilosopherSpec("test2", "po_core.philosophers.dummy", "DummyPhilosopher", risk_level=0),
+            PhilosopherSpec(
+                "test1", "po_core.philosophers.dummy", "DummyPhilosopher", risk_level=0
+            ),
+            PhilosopherSpec(
+                "test2", "po_core.philosophers.dummy", "DummyPhilosopher", risk_level=0
+            ),
         ]
         registry = PhilosopherRegistry(specs=custom_specs, max_critical=1)
 

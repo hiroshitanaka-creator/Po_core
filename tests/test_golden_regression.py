@@ -15,6 +15,7 @@ Golden contract:
 If a test here fails, it means pipeline behavior changed in a way that may
 affect users. Investigate before updating the golden expectations.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -44,18 +45,19 @@ from po_core.safety.wethics_gate.policies.presets import (
 )
 from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
 from po_core.tensors.engine import TensorEngine
+from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
 from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
 from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
-from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor
 from po_core.trace.in_memory import InMemoryTracer
 from po_core.trace.schema import validate_events
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 
 def _ctx(text: str) -> Context:
-    return Context.now(request_id=str(uuid.uuid4()), user_input=text, meta={"entry": "golden"})
+    return Context.now(
+        request_id=str(uuid.uuid4()), user_input=text, meta={"entry": "golden"}
+    )
 
 
 class FixedTensorEngine:
@@ -72,11 +74,13 @@ class RealTensorEngine:
     """Uses all 3 real metrics (for golden regression testing)."""
 
     def __init__(self):
-        self._engine = TensorEngine(metrics=(
-            metric_freedom_pressure,
-            metric_semantic_delta,
-            metric_blocked_tensor,
-        ))
+        self._engine = TensorEngine(
+            metrics=(
+                metric_freedom_pressure,
+                metric_semantic_delta,
+                metric_blocked_tensor,
+            )
+        )
 
     def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
         return self._engine.compute(ctx, memory)
@@ -336,9 +340,9 @@ class TestGoldenEventSequence:
 
         assert len(phil_positions) > 0, "Must have PhilosopherResult events"
         assert len(agg_positions) > 0, "Must have AggregateCompleted event"
-        assert max(phil_positions) < min(agg_positions), (
-            "AggregateCompleted must come after all PhilosopherResults"
-        )
+        assert max(phil_positions) < min(
+            agg_positions
+        ), "AggregateCompleted must come after all PhilosopherResults"
 
     def test_decision_is_last_major_event(self):
         """DecisionEmitted should be one of the last events."""
@@ -353,9 +357,9 @@ class TestGoldenEventSequence:
 
         assert decision_pos is not None
         # DecisionEmitted should be in the last 25% of events
-        assert decision_pos >= len(types) * 0.5, (
-            f"DecisionEmitted at pos {decision_pos}/{len(types)} — too early"
-        )
+        assert (
+            decision_pos >= len(types) * 0.5
+        ), f"DecisionEmitted at pos {decision_pos}/{len(types)} — too early"
 
     def test_memory_write_after_decision(self):
         """MemoryWrite (if present) should be at the end of pipeline."""
@@ -464,9 +468,7 @@ class TestGoldenSchemaCompliance:
             run_turn(ctx, deps)
 
             problems = validate_events(tracer.events)
-            assert problems == {}, (
-                f"Schema violations for '{text}': {problems}"
-            )
+            assert problems == {}, f"Schema violations for '{text}': {problems}"
 
     def test_correlation_id_consistent(self):
         """All events must share the same correlation_id as the context."""
@@ -539,9 +541,9 @@ class TestGoldenSafetyClassification:
 
         intent = _find_event(tracer, "SafetyJudged:Intention")
         assert intent is not None
-        assert intent.payload["decision"] == "allow", (
-            "'life hack' is a false positive — should be allowed"
-        )
+        assert (
+            intent.payload["decision"] == "allow"
+        ), "'life hack' is a false positive — should be allowed"
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -577,13 +579,15 @@ class TestGoldenDeterminism:
             ctx = _ctx("What is justice?")
             run_turn(ctx, deps)
             decision = _find_event(tracer, "DecisionEmitted")
-            decisions.append({
-                "degraded": decision.payload["degraded"],
-                "origin": decision.payload["origin"],
-                "stage": decision.payload["stage"],
-                "variant": decision.payload["variant"],
-                "action_type": decision.payload["final"]["action_type"],
-            })
+            decisions.append(
+                {
+                    "degraded": decision.payload["degraded"],
+                    "origin": decision.payload["origin"],
+                    "stage": decision.payload["stage"],
+                    "variant": decision.payload["variant"],
+                    "action_type": decision.payload["final"]["action_type"],
+                }
+            )
 
         for i in range(1, len(decisions)):
             assert decisions[i] == decisions[0], (

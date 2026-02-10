@@ -9,16 +9,17 @@ Tests the visualization system including:
 - Philosopher interaction analysis
 - Session comparison
 """
+
 import tempfile
 from pathlib import Path
 
 import pytest
-from rich.table import Table
 from rich.panel import Panel
-from rich.tree import Tree
 from rich.syntax import Syntax
+from rich.table import Table
+from rich.tree import Tree
 
-from po_core.po_trace import PoTrace, EventType
+from po_core.po_trace import EventType, PoTrace
 from po_core.po_viewer import PoViewer
 
 

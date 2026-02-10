@@ -25,7 +25,10 @@ class TestConfuciusBasicFunctionality:
         """Test that Confucius initializes correctly."""
         confucius = Confucius()
         assert "Confucius" in confucius.name or "孔子" in confucius.name
-        assert "ren" in confucius.description.lower() or "benevolence" in confucius.description.lower()
+        assert (
+            "ren" in confucius.description.lower()
+            or "benevolence" in confucius.description.lower()
+        )
 
     def test_confucius_repr(self):
         """Test string representation."""
@@ -70,7 +73,9 @@ class TestConfuciusRen:
     def test_ren_detection(self):
         """Test detection of ren (benevolence)."""
         confucius = Confucius()
-        result = confucius.reason("I show compassion and kindness to all, caring for others with love and benevolence.")
+        result = confucius.reason(
+            "I show compassion and kindness to all, caring for others with love and benevolence."
+        )
         ren = result["analysis"]["ren_benevolence"]
         assert ren["ren_present"] is True
 
@@ -88,7 +93,9 @@ class TestConfuciusLi:
     def test_li_detection(self):
         """Test detection of li (ritual propriety)."""
         confucius = Confucius()
-        result = confucius.reason("I follow proper ritual and etiquette, showing respect and courtesy with decorum.")
+        result = confucius.reason(
+            "I follow proper ritual and etiquette, showing respect and courtesy with decorum."
+        )
         li = result["analysis"]["li_ritual_propriety"]
         assert li["li_present"] is True
 
@@ -106,7 +113,9 @@ class TestConfuciusYi:
     def test_yi_detection(self):
         """Test detection of yi (righteousness)."""
         confucius = Confucius()
-        result = confucius.reason("I uphold justice and moral principles with righteous integrity.")
+        result = confucius.reason(
+            "I uphold justice and moral principles with righteous integrity."
+        )
         yi = result["analysis"]["yi_righteousness"]
         assert yi["yi_present"] is True
 
@@ -117,7 +126,9 @@ class TestConfuciusXiao:
     def test_xiao_detection(self):
         """Test detection of xiao (filial piety)."""
         confucius = Confucius()
-        result = confucius.reason("I honor my parents and ancestors, showing filial respect to my family elders.")
+        result = confucius.reason(
+            "I honor my parents and ancestors, showing filial respect to my family elders."
+        )
         xiao = result["analysis"]["xiao_filial_piety"]
         assert xiao["xiao_present"] is True
 
@@ -128,7 +139,9 @@ class TestConfuciusJunzi:
     def test_junzi_detection(self):
         """Test detection of junzi ideal."""
         confucius = Confucius()
-        result = confucius.reason("I cultivate my character with virtue and moral excellence, becoming an exemplary gentleman.")
+        result = confucius.reason(
+            "I cultivate my character with virtue and moral excellence, becoming an exemplary gentleman."
+        )
         junzi = result["analysis"]["junzi_exemplary_person"]
         assert junzi["junzi_present"] is True
 
@@ -146,7 +159,9 @@ class TestConfuciusZhongShu:
     def test_shu_reciprocity_detection(self):
         """Test detection of shu (reciprocity)."""
         confucius = Confucius()
-        result = confucius.reason("I treat others with empathy and reciprocity, showing mutual respect and consideration.")
+        result = confucius.reason(
+            "I treat others with empathy and reciprocity, showing mutual respect and consideration."
+        )
         zhong_shu = result["analysis"]["zhong_shu_loyalty_reciprocity"]
         assert zhong_shu["shu_reciprocity_present"] is True
 

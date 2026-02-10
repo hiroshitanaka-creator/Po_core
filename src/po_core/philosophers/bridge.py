@@ -16,6 +16,7 @@ DEPENDENCY RULES:
 - domain, philosophers.base のみ依存
 - ensemble.py や runtime は見ない
 """
+
 from __future__ import annotations
 
 from typing import List
@@ -81,7 +82,9 @@ class PhilosopherBridge:
         raw = self._legacy.reason(ctx.user_input, legacy_context)
 
         # Normalize response
-        normalized = normalize_response(raw, self._legacy.name, self._legacy.description)
+        normalized = normalize_response(
+            raw, self._legacy.name, self._legacy.description
+        )
 
         # Convert to Proposal
         reasoning = normalized.get("reasoning", "")
@@ -111,8 +114,7 @@ class PhilosopherBridge:
                 "perspective": perspective,
                 "tension": tension,
                 "normalized_response": {
-                    k: v for k, v in normalized.items()
-                    if k not in ("reasoning",)
+                    k: v for k, v in normalized.items() if k not in ("reasoning",)
                 },
             },
         )

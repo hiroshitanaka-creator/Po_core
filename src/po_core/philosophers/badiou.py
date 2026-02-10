@@ -37,10 +37,12 @@ class Badiou(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Alain Badiou",
-            description="Philosopher of the event, truth, and mathematical being"
+            description="Philosopher of the event, truth, and mathematical being",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Badiou's philosophical perspective.
 
@@ -69,8 +71,8 @@ class Badiou(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Mathematical ontology and truth procedures",
-                "focus": "Events, truth, fidelity, and being as multiplicity"
-            }
+                "focus": "Events, truth, fidelity, and being as multiplicity",
+            },
         }
 
     def _analyze_event_truth(self, prompt: str) -> Dict[str, Any]:
@@ -111,9 +113,7 @@ class Badiou(Philosopher):
         subtraction = self._assess_subtraction(prompt)
 
         # Construct reasoning
-        reasoning = self._construct_reasoning(
-            event, truth_procedure, fidelity, subject
-        )
+        reasoning = self._construct_reasoning(event, truth_procedure, fidelity, subject)
 
         return {
             "reasoning": reasoning,
@@ -125,7 +125,7 @@ class Badiou(Philosopher):
             "situation": situation,
             "generic": generic,
             "forcing": forcing,
-            "subtraction": subtraction
+            "subtraction": subtraction,
         }
 
     def _detect_event(self, text: str) -> Dict[str, Any]:
@@ -138,7 +138,13 @@ class Badiou(Philosopher):
         text_lower = text.lower()
 
         # Event indicators
-        event_words = ["event", "happening", "occurrence", "revolutionary", "breakthrough"]
+        event_words = [
+            "event",
+            "happening",
+            "occurrence",
+            "revolutionary",
+            "breakthrough",
+        ]
         has_event = sum(1 for word in event_words if word in text_lower)
 
         # Radical break indicators
@@ -163,7 +169,9 @@ class Badiou(Philosopher):
 
         if has_event >= 1 and has_break >= 1:
             status = "Event Detected"
-            description = "Radical event - unprecedented break opening new possibilities"
+            description = (
+                "Radical event - unprecedented break opening new possibilities"
+            )
             type_event = "Revolutionary"
         elif has_unpredictable >= 1 and has_change >= 1:
             status = "Evental Rupture"
@@ -186,7 +194,7 @@ class Badiou(Philosopher):
             "status": status,
             "description": description,
             "type": type_event,
-            "principle": "Event is radical break, unpredictable supplement naming itself"
+            "principle": "Event is radical break, unpredictable supplement naming itself",
         }
 
     def _determine_truth_procedure(self, text: str) -> Dict[str, Any]:
@@ -203,15 +211,37 @@ class Badiou(Philosopher):
         has_love = sum(1 for word in love_words if word in text_lower)
 
         # Art indicators
-        art_words = ["art", "artistic", "create", "poem", "music", "beauty", "work of art"]
+        art_words = [
+            "art",
+            "artistic",
+            "create",
+            "poem",
+            "music",
+            "beauty",
+            "work of art",
+        ]
         has_art = sum(1 for phrase in art_words if phrase in text_lower)
 
         # Science indicators
-        science_words = ["science", "scientific", "theory", "mathematical", "proof", "discover"]
+        science_words = [
+            "science",
+            "scientific",
+            "theory",
+            "mathematical",
+            "proof",
+            "discover",
+        ]
         has_science = sum(1 for word in science_words if word in text_lower)
 
         # Politics indicators
-        politics_words = ["politics", "political", "collective", "revolution", "emancipation", "equality"]
+        politics_words = [
+            "politics",
+            "political",
+            "collective",
+            "revolution",
+            "emancipation",
+            "equality",
+        ]
         has_politics = sum(1 for word in politics_words if word in text_lower)
 
         # Determine dominant procedure
@@ -219,7 +249,7 @@ class Badiou(Philosopher):
             "Love": has_love,
             "Art": has_art,
             "Science": has_science,
-            "Politics": has_politics
+            "Politics": has_politics,
         }
         dominant = max(scores, key=scores.get)
 
@@ -249,7 +279,7 @@ class Badiou(Philosopher):
             "description": description,
             "domain": domain,
             "scores": scores,
-            "principle": "Four truth procedures: Love, Art, Science, Politics"
+            "principle": "Four truth procedures: Love, Art, Science, Politics",
         }
 
     def _assess_fidelity(self, text: str) -> Dict[str, Any]:
@@ -310,7 +340,7 @@ class Badiou(Philosopher):
             "level": level,
             "description": description,
             "mode": mode,
-            "principle": "Fidelity is remaining faithful to the event, organizing its consequences"
+            "principle": "Fidelity is remaining faithful to the event, organizing its consequences",
         }
 
     def _evaluate_subject(self, text: str) -> Dict[str, Any]:
@@ -328,7 +358,9 @@ class Badiou(Philosopher):
 
         # Faithful subject indicators
         faithful_subject = ["i remain", "we continue", "i believe", "we persist"]
-        has_faithful_subject = sum(1 for phrase in faithful_subject if phrase in text_lower)
+        has_faithful_subject = sum(
+            1 for phrase in faithful_subject if phrase in text_lower
+        )
 
         # Constituted/created indicators
         constituted_words = ["become", "constitute", "emerge", "create"]
@@ -369,7 +401,7 @@ class Badiou(Philosopher):
             "status": status,
             "description": description,
             "type": type_subject,
-            "principle": "Subject is constituted by fidelity to event, not pre-existing"
+            "principle": "Subject is constituted by fidelity to event, not pre-existing",
         }
 
     def _detect_void(self, text: str) -> Dict[str, Any]:
@@ -426,7 +458,7 @@ class Badiou(Philosopher):
             "presence": presence,
             "description": description,
             "status": status,
-            "principle": "The void is the unpresentable empty set at the core of every situation"
+            "principle": "The void is the unpresentable empty set at the core of every situation",
         }
 
     def _assess_situation(self, text: str) -> Dict[str, Any]:
@@ -483,7 +515,7 @@ class Badiou(Philosopher):
             "status": status,
             "description": description,
             "nature": nature,
-            "principle": "Situation is structured multiplicity; state counts and represents"
+            "principle": "Situation is structured multiplicity; state counts and represents",
         }
 
     def _check_generic(self, text: str) -> Dict[str, Any]:
@@ -536,7 +568,7 @@ class Badiou(Philosopher):
             "status": status,
             "description": description,
             "character": character,
-            "principle": "Generic truth is universal singularity, indiscernible and unnameable"
+            "principle": "Generic truth is universal singularity, indiscernible and unnameable",
         }
 
     def _detect_forcing(self, text: str) -> Dict[str, Any]:
@@ -570,7 +602,9 @@ class Badiou(Philosopher):
 
         if has_forcing >= 1 or (has_create >= 1 and has_new_truth >= 1):
             presence = "Forcing"
-            description = "Forcing new truths into existence from undecidable propositions"
+            description = (
+                "Forcing new truths into existence from undecidable propositions"
+            )
             method = "Evental"
         elif has_expand >= 1 and has_undecidable >= 1:
             presence = "Extension"
@@ -589,7 +623,7 @@ class Badiou(Philosopher):
             "presence": presence,
             "description": description,
             "method": method,
-            "principle": "Forcing creates new truths from undecidable propositions (Cohen)"
+            "principle": "Forcing creates new truths from undecidable propositions (Cohen)",
         }
 
     def _assess_subtraction(self, text: str) -> Dict[str, Any]:
@@ -619,7 +653,9 @@ class Badiou(Philosopher):
         addition_words = ["add", "accumulate", "increase", "more"]
         has_addition = sum(1 for word in addition_words if word in text_lower)
 
-        if has_subtraction >= 1 or (has_truth >= 1 and has_negation >= 1 and has_knowledge >= 1):
+        if has_subtraction >= 1 or (
+            has_truth >= 1 and has_negation >= 1 and has_knowledge >= 1
+        ):
             mode = "Subtractive Truth"
             description = "Truth subtracts from knowledge - not additive"
             operation = "Subtraction"
@@ -640,7 +676,7 @@ class Badiou(Philosopher):
             "mode": mode,
             "description": description,
             "operation": operation,
-            "principle": "Truth subtracts from knowledge - it is not additive but subtractive"
+            "principle": "Truth subtracts from knowledge - it is not additive but subtractive",
         }
 
     def _construct_reasoning(
@@ -648,7 +684,7 @@ class Badiou(Philosopher):
         event: Dict[str, Any],
         truth_procedure: Dict[str, Any],
         fidelity: Dict[str, Any],
-        subject: Dict[str, Any]
+        subject: Dict[str, Any],
     ) -> str:
         """Construct Badiouian reasoning."""
         reasoning = (

@@ -28,9 +28,15 @@ def _last(events: Iterable[TraceEvent], event_type: str) -> TraceEvent | None:
     return xs[-1] if xs else None
 
 
-def _last_by_variant(events: Iterable[TraceEvent], event_type: str, variant: str) -> TraceEvent | None:
+def _last_by_variant(
+    events: Iterable[TraceEvent], event_type: str, variant: str
+) -> TraceEvent | None:
     """Get last event of specified type and variant."""
-    xs = [e for e in events if e.event_type == event_type and e.payload.get("variant") == variant]
+    xs = [
+        e
+        for e in events
+        if e.event_type == event_type and e.payload.get("variant") == variant
+    ]
     return xs[-1] if xs else None
 
 
@@ -83,11 +89,15 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
     if phsel:
         lines.append("## Battalion")
         p = phsel[-1].payload
-        lines.append(f"- mode: {p.get('mode')}, n: {p.get('n')}, cost_total: {p.get('cost_total')}")
+        lines.append(
+            f"- mode: {p.get('mode')}, n: {p.get('n')}, cost_total: {p.get('cost_total')}"
+        )
         lines.append(f"- covered_tags: {p.get('covered_tags')}")
-        ids = p.get('ids', [])
+        ids = p.get("ids", [])
         if ids:
-            lines.append(f"- ids: {', '.join(str(i) for i in ids[:10])}{'...' if len(ids) > 10 else ''}")
+            lines.append(
+                f"- ids: {', '.join(str(i) for i in ids[:10])}{'...' if len(ids) > 10 else ''}"
+            )
         lines.append("")
 
     # Policy Precheck section
@@ -103,16 +113,20 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
     if conf:
         lines.append("## Conflict Summary")
         c = conf[-1].payload
-        lines.append(f"- n: {c.get('n')}, kinds: {c.get('kinds')}, suggested: {c.get('suggested_forced_action')}")
+        lines.append(
+            f"- n: {c.get('n')}, kinds: {c.get('kinds')}, suggested: {c.get('suggested_forced_action')}"
+        )
         top = c.get("top", [])
         if top:
             lines.append("")
             lines.append("| id | kind | severity | proposal_ids |")
             lines.append("|---|---:|---:|---|")
             for t in top:
-                pids = t.get('proposal_ids', [])
-                pids_str = ', '.join(str(p) for p in pids[:4])
-                lines.append(f"| {t.get('id', '')} | {t.get('kind', '')} | {t.get('severity', '')} | {pids_str} |")
+                pids = t.get("proposal_ids", [])
+                pids_str = ", ".join(str(p) for p in pids[:4])
+                lines.append(
+                    f"| {t.get('id', '')} | {t.get('kind', '')} | {t.get('severity', '')} | {pids_str} |"
+                )
         lines.append("")
 
     # Pareto Front section
@@ -122,13 +136,17 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
         lines.append(f"- config_version: `{f.get('config_version', '')}`")
         lines.append(f"- config_source: `{f.get('config_source', '')}`")
         w = f.get("weights", {})
-        lines.append(f"- weights: safety={w.get('safety', 0):.2f}, freedom={w.get('freedom', 0):.2f}, "
-                     f"explain={w.get('explain', 0):.2f}, brevity={w.get('brevity', 0):.2f}, "
-                     f"coherence={w.get('coherence', 0):.2f}")
+        lines.append(
+            f"- weights: safety={w.get('safety', 0):.2f}, freedom={w.get('freedom', 0):.2f}, "
+            f"explain={w.get('explain', 0):.2f}, brevity={w.get('brevity', 0):.2f}, "
+            f"coherence={w.get('coherence', 0):.2f}"
+        )
         rows = f.get("front", [])
         if rows:
             lines.append("")
-            lines.append("| proposal_id | action | safety | freedom | explain | brevity | coherence |")
+            lines.append(
+                "| proposal_id | action | safety | freedom | explain | brevity | coherence |"
+            )
             lines.append("|---|---|---:|---:|---:|---:|---:|")
             for r in rows[:10]:  # limit to 10 rows
                 s = r.get("scores", {})
@@ -165,9 +183,13 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
         cand = p.get("candidate")
         final = p.get("final")
         gate = p.get("gate", {})
-        lines.append(f"- stage: `{p.get('stage')}`, origin: `{p.get('origin')}`, degraded: `{p.get('degraded')}`")
+        lines.append(
+            f"- stage: `{p.get('stage')}`, origin: `{p.get('origin')}`, degraded: `{p.get('degraded')}`"
+        )
         if gate:
-            lines.append(f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}")
+            lines.append(
+                f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}"
+            )
         lines.append("")
 
         def _fp_row(kind: str, d: Any) -> str:
@@ -179,7 +201,9 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
                 f"{d.get('policy_score', '')} | {d.get('author_reliability', '')} |"
             )
 
-        lines.append("| kind | proposal_id | action | len | hash | policy_score | author_rel |")
+        lines.append(
+            "| kind | proposal_id | action | len | hash | policy_score | author_rel |"
+        )
         lines.append("|---|---|---|---:|---|---|---|")
         lines.append(_fp_row("candidate", cand))
         lines.append(_fp_row("final", final))
@@ -190,7 +214,9 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
         o = ov[-1].payload
         gate = o.get("gate", {})
         lines.append(f"- reason: `{o.get('reason')}`, stage: `{o.get('stage')}`")
-        lines.append(f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}")
+        lines.append(
+            f"- gate.decision: `{gate.get('decision')}`, rules: {gate.get('rule_ids', [])[:5]}"
+        )
         lines.append("")
 
     # Pareto A/B Comparison section (Shadow評価)
@@ -198,13 +224,25 @@ def render_markdown(events: Iterable[TraceEvent]) -> str:
     if cmp:
         lines.append("## Pareto A/B Comparison（main vs shadow）")
         d = cmp.payload.get("diff", {})
-        lines.append(f"- main config: `{d.get('main_config_version', '')}` / `{d.get('main_config_source', '')}`")
-        lines.append(f"- shadow config: `{d.get('shadow_config_version', '')}` / `{d.get('shadow_config_source', '')}`")
+        lines.append(
+            f"- main config: `{d.get('main_config_version', '')}` / `{d.get('main_config_source', '')}`"
+        )
+        lines.append(
+            f"- shadow config: `{d.get('shadow_config_version', '')}` / `{d.get('shadow_config_source', '')}`"
+        )
         lines.append("")
-        lines.append(f"- candidate_action_changed: `{d.get('candidate_action_changed', False)}`")
-        lines.append(f"- candidate_content_changed: `{d.get('candidate_content_changed', False)}`")
-        lines.append(f"- final_action_changed: `{d.get('final_action_changed', False)}`")
-        lines.append(f"- final_content_changed: `{d.get('final_content_changed', False)}`")
+        lines.append(
+            f"- candidate_action_changed: `{d.get('candidate_action_changed', False)}`"
+        )
+        lines.append(
+            f"- candidate_content_changed: `{d.get('candidate_content_changed', False)}`"
+        )
+        lines.append(
+            f"- final_action_changed: `{d.get('final_action_changed', False)}`"
+        )
+        lines.append(
+            f"- final_content_changed: `{d.get('final_content_changed', False)}`"
+        )
         if "final_policy_score_delta" in d:
             delta = d.get("final_policy_score_delta", 0.0)
             lines.append(f"- final_policy_score_delta (shadow-main): `{delta:.4f}`")

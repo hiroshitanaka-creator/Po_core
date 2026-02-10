@@ -35,10 +35,12 @@ class Peirce(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Charles Sanders Peirce",
-            description="Pragmatist philosopher focused on semiotics, abduction, and scientific inquiry"
+            description="Pragmatist philosopher focused on semiotics, abduction, and scientific inquiry",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Peirce's pragmatic perspective.
 
@@ -67,8 +69,8 @@ class Peirce(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Pragmatic and semiotic analysis",
-                "focus": "Signs, inference, inquiry, and practical consequences"
-            }
+                "focus": "Signs, inference, inquiry, and practical consequences",
+            },
         }
 
     def _analyze_pragmatic(self, prompt: str) -> Dict[str, Any]:
@@ -123,7 +125,7 @@ class Peirce(Philosopher):
             "pragmatic_maxim": pragmatic_maxim,
             "fallibilism": fallibilism,
             "community": community,
-            "continuity": continuity
+            "continuity": continuity,
         }
 
     def _analyze_semiotics(self, text: str) -> Dict[str, Any]:
@@ -160,11 +162,7 @@ class Peirce(Philosopher):
         has_index = sum(1 for phrase in index_words if phrase in text_lower)
         has_symbol = sum(1 for word in symbol_words if word in text_lower)
 
-        sign_type_scores = {
-            "Icon": has_icon,
-            "Index": has_index,
-            "Symbol": has_symbol
-        }
+        sign_type_scores = {"Icon": has_icon, "Index": has_index, "Symbol": has_symbol}
         dominant_sign = max(sign_type_scores, key=sign_type_scores.get)
 
         if has_sign >= 1 and has_interpretant >= 1:
@@ -194,7 +192,7 @@ class Peirce(Philosopher):
             "description": description,
             "structure": structure,
             "sign_type": sign_type,
-            "principle": "Triadic semiotics: Sign, Object, Interpretant (irreducible triad)"
+            "principle": "Triadic semiotics: Sign, Object, Interpretant (irreducible triad)",
         }
 
     def _determine_inference(self, text: str) -> Dict[str, Any]:
@@ -208,7 +206,13 @@ class Peirce(Philosopher):
         text_lower = text.lower()
 
         # Deduction indicators (must, necessarily, follows)
-        deduction_words = ["must", "necessarily", "therefore", "logically", "follows that"]
+        deduction_words = [
+            "must",
+            "necessarily",
+            "therefore",
+            "logically",
+            "follows that",
+        ]
         has_deduction = sum(1 for phrase in deduction_words if phrase in text_lower)
 
         # Induction indicators (probably, generally, usually)
@@ -216,12 +220,26 @@ class Peirce(Philosopher):
         has_induction = sum(1 for phrase in induction_words if phrase in text_lower)
 
         # Abduction indicators (might, could, hypothesis, explain)
-        abduction_words = ["might", "could be", "hypothesis", "explain", "suggest", "perhaps"]
+        abduction_words = [
+            "might",
+            "could be",
+            "hypothesis",
+            "explain",
+            "suggest",
+            "perhaps",
+        ]
         has_abduction = sum(1 for phrase in abduction_words if phrase in text_lower)
 
         # Best explanation indicators
-        best_explanation = ["best explanation", "most likely", "accounts for", "would explain"]
-        has_best_explanation = sum(1 for phrase in best_explanation if phrase in text_lower)
+        best_explanation = [
+            "best explanation",
+            "most likely",
+            "accounts for",
+            "would explain",
+        ]
+        has_best_explanation = sum(
+            1 for phrase in best_explanation if phrase in text_lower
+        )
 
         # Surprise/anomaly (triggers abduction)
         surprise_words = ["surprising", "unexpected", "anomaly", "strange", "curious"]
@@ -230,7 +248,7 @@ class Peirce(Philosopher):
         scores = {
             "Deduction": has_deduction,
             "Induction": has_induction,
-            "Abduction": has_abduction + has_best_explanation + has_surprise
+            "Abduction": has_abduction + has_best_explanation + has_surprise,
         }
         dominant = max(scores, key=scores.get)
 
@@ -256,7 +274,7 @@ class Peirce(Philosopher):
             "description": description,
             "mode": mode,
             "scores": scores,
-            "principle": "Three types of inference: Deduction (necessary), Induction (probable), Abduction (explanatory)"
+            "principle": "Three types of inference: Deduction (necessary), Induction (probable), Abduction (explanatory)",
         }
 
     def _assess_categories(self, text: str) -> Dict[str, Any]:
@@ -270,21 +288,44 @@ class Peirce(Philosopher):
         text_lower = text.lower()
 
         # Firstness indicators (quality, feeling, possibility)
-        firstness_words = ["feeling", "quality", "possibility", "immediate", "fresh", "spontaneous"]
+        firstness_words = [
+            "feeling",
+            "quality",
+            "possibility",
+            "immediate",
+            "fresh",
+            "spontaneous",
+        ]
         has_firstness = sum(1 for word in firstness_words if word in text_lower)
 
         # Secondness indicators (reaction, existence, struggle)
-        secondness_words = ["reaction", "exist", "actual", "fact", "struggle", "resist", "force"]
+        secondness_words = [
+            "reaction",
+            "exist",
+            "actual",
+            "fact",
+            "struggle",
+            "resist",
+            "force",
+        ]
         has_secondness = sum(1 for word in secondness_words if word in text_lower)
 
         # Thirdness indicators (mediation, law, generality, representation)
-        thirdness_words = ["law", "rule", "general", "mediate", "represent", "habit", "pattern"]
+        thirdness_words = [
+            "law",
+            "rule",
+            "general",
+            "mediate",
+            "represent",
+            "habit",
+            "pattern",
+        ]
         has_thirdness = sum(1 for word in thirdness_words if word in text_lower)
 
         scores = {
             "Firstness": has_firstness,
             "Secondness": has_secondness,
-            "Thirdness": has_thirdness
+            "Thirdness": has_thirdness,
         }
         dominant = max(scores, key=scores.get)
 
@@ -310,7 +351,7 @@ class Peirce(Philosopher):
             "description": description,
             "character": character,
             "scores": scores,
-            "principle": "Three categories: Firstness (quality), Secondness (reaction), Thirdness (mediation)"
+            "principle": "Three categories: Firstness (quality), Secondness (reaction), Thirdness (mediation)",
         }
 
     def _evaluate_belief_doubt(self, text: str) -> Dict[str, Any]:
@@ -364,7 +405,7 @@ class Peirce(Philosopher):
             "state": state,
             "description": description,
             "mode": mode,
-            "principle": "Doubt is irritation that prompts inquiry; belief is settled habit"
+            "principle": "Doubt is irritation that prompts inquiry; belief is settled habit",
         }
 
     def _assess_inquiry(self, text: str) -> Dict[str, Any]:
@@ -421,7 +462,7 @@ class Peirce(Philosopher):
             "status": status,
             "description": description,
             "approach": approach,
-            "principle": "Inquiry is self-correcting process of the community of investigators"
+            "principle": "Inquiry is self-correcting process of the community of investigators",
         }
 
     def _apply_pragmatic_maxim(self, text: str) -> Dict[str, Any]:
@@ -438,7 +479,13 @@ class Peirce(Philosopher):
         has_practical = sum(1 for word in practical_words if word in text_lower)
 
         # Consequence indicators
-        consequence_words = ["consequence", "result", "outcome", "impact", "what happens"]
+        consequence_words = [
+            "consequence",
+            "result",
+            "outcome",
+            "impact",
+            "what happens",
+        ]
         has_consequence = sum(1 for phrase in consequence_words if phrase in text_lower)
 
         # Meaning/conception indicators
@@ -478,7 +525,7 @@ class Peirce(Philosopher):
             "application": application,
             "description": description,
             "mode": mode,
-            "principle": "Pragmatic maxim: Consider practical effects to clarify ideas"
+            "principle": "Pragmatic maxim: Consider practical effects to clarify ideas",
         }
 
     def _check_fallibilism(self, text: str) -> Dict[str, Any]:
@@ -491,15 +538,30 @@ class Peirce(Philosopher):
         text_lower = text.lower()
 
         # Fallibilism indicators
-        fallible_words = ["might be wrong", "could be mistaken", "provisional", "corrigible"]
+        fallible_words = [
+            "might be wrong",
+            "could be mistaken",
+            "provisional",
+            "corrigible",
+        ]
         has_fallible = sum(1 for phrase in fallible_words if phrase in text_lower)
 
         # Uncertainty/possibility of error
-        uncertain_words = ["uncertain", "may not be", "possibly wrong", "subject to revision"]
+        uncertain_words = [
+            "uncertain",
+            "may not be",
+            "possibly wrong",
+            "subject to revision",
+        ]
         has_uncertain = sum(1 for phrase in uncertain_words if phrase in text_lower)
 
         # Absolute certainty (opposite of fallibilism)
-        certain_words = ["absolutely certain", "infallible", "cannot be wrong", "indubitable"]
+        certain_words = [
+            "absolutely certain",
+            "infallible",
+            "cannot be wrong",
+            "indubitable",
+        ]
         has_certain = sum(1 for phrase in certain_words if phrase in text_lower)
 
         # Revision/correction indicators
@@ -527,7 +589,7 @@ class Peirce(Philosopher):
             "stance": stance,
             "description": description,
             "attitude": attitude,
-            "principle": "Fallibilism: All knowledge is provisional and corrigible"
+            "principle": "Fallibilism: All knowledge is provisional and corrigible",
         }
 
     def _assess_community(self, text: str) -> Dict[str, Any]:
@@ -581,7 +643,7 @@ class Peirce(Philosopher):
             "status": status,
             "description": description,
             "nature": nature,
-            "principle": "Truth is ultimate agreement of the community of investigators"
+            "principle": "Truth is ultimate agreement of the community of investigators",
         }
 
     def _detect_continuity(self, text: str) -> Dict[str, Any]:
@@ -630,7 +692,7 @@ class Peirce(Philosopher):
             "presence": presence,
             "description": description,
             "character": character,
-            "principle": "Synechism: Doctrine of continuity - no absolute discontinuities"
+            "principle": "Synechism: Doctrine of continuity - no absolute discontinuities",
         }
 
     def _construct_reasoning(
@@ -638,7 +700,7 @@ class Peirce(Philosopher):
         semiotics: Dict[str, Any],
         inference: Dict[str, Any],
         belief_doubt: Dict[str, Any],
-        pragmatic_maxim: Dict[str, Any]
+        pragmatic_maxim: Dict[str, Any],
     ) -> str:
         """Construct Peircean pragmatic reasoning."""
         reasoning = (

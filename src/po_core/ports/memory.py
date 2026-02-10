@@ -16,11 +16,11 @@ DEPENDENCY RULES:
 - This file MUST NOT import from any po_core modules
 """
 
+import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-import uuid
 
 
 @dataclass(frozen=True)

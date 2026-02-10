@@ -14,7 +14,7 @@ DEPENDENCY RULES:
 
 from __future__ import annotations
 
-from typing import Any, Mapping, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping
 
 from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal

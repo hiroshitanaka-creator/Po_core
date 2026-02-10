@@ -17,7 +17,7 @@ The Action Gate is more thorough than the Intention Gate because:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from po_core.domain.safety_verdict import SafetyVerdict, VerdictType, ViolationInfo
 from po_core.safety.wethics_gate.gate import WethicsGate
@@ -91,7 +91,9 @@ def check_proposal(
         repair_log=result.repair_log,
         drift_score=result.drift_score,
         explanation=result.explanation,
-        metadata={"gate_result": result.to_dict() if hasattr(result, "to_dict") else {}},
+        metadata={
+            "gate_result": result.to_dict() if hasattr(result, "to_dict") else {}
+        },
     )
 
 
@@ -279,7 +281,9 @@ def _sort_action_policies(policies: Iterable[ActionPolicy]) -> List[ActionPolicy
     return ps
 
 
-def _merge_action_verdicts(decision: Decision, verdicts: List[DomainSafetyVerdict]) -> DomainSafetyVerdict:
+def _merge_action_verdicts(
+    decision: Decision, verdicts: List[DomainSafetyVerdict]
+) -> DomainSafetyVerdict:
     """Merge multiple verdicts into one, collecting all rule_ids and reasons.
 
     Preserves meta from the first (highest-priority) verdict so that

@@ -15,9 +15,11 @@ Design Principle:
 - Missing detectors = conservative behavior
 - Invalid config = safe defaults
 """
-import pytest
+
 from typing import List, Optional
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from po_core.safety.wethics_gate import (
     Candidate,
@@ -26,8 +28,8 @@ from po_core.safety.wethics_gate import (
     GateDecision,
     GateResult,
     Violation,
-    WethicsGate,
     ViolationDetector,
+    WethicsGate,
     create_wethics_gate,
 )
 
@@ -39,7 +41,9 @@ class BrokenDetector(ViolationDetector):
     def detector_id(self) -> str:
         return "broken_detector"
 
-    def detect(self, candidate: Candidate, context: Optional[dict] = None) -> List[Evidence]:
+    def detect(
+        self, candidate: Candidate, context: Optional[dict] = None
+    ) -> List[Evidence]:
         raise RuntimeError("Detector internal error")
 
 
@@ -50,7 +54,9 @@ class AlwaysViolationDetector(ViolationDetector):
     def detector_id(self) -> str:
         return "always_violation"
 
-    def detect(self, candidate: Candidate, context: Optional[dict] = None) -> List[Evidence]:
+    def detect(
+        self, candidate: Candidate, context: Optional[dict] = None
+    ) -> List[Evidence]:
         return [
             Evidence(
                 code="W0",
@@ -69,7 +75,9 @@ class NeverViolationDetector(ViolationDetector):
     def detector_id(self) -> str:
         return "never_violation"
 
-    def detect(self, candidate: Candidate, context: Optional[dict] = None) -> List[Evidence]:
+    def detect(
+        self, candidate: Candidate, context: Optional[dict] = None
+    ) -> List[Evidence]:
         return []
 
 
@@ -100,8 +108,9 @@ class TestFailClosedBehavior:
         result = gate.check(candidate)
 
         # W0 with high impact should always be rejected
-        assert result.decision == GateDecision.REJECT, \
-            "W0 violation must result in REJECT, not ALLOW"
+        assert (
+            result.decision == GateDecision.REJECT
+        ), "W0 violation must result in REJECT, not ALLOW"
 
     def test_multiple_repair_failures_result_in_reject(self) -> None:
         """If repairs fail repeatedly, gate must REJECT."""
@@ -160,8 +169,9 @@ class TestFailClosedBehavior:
         result = gate.check(candidate)
 
         # In strict mode, should never see ESCALATE
-        assert result.decision != GateDecision.ESCALATE, \
-            "strict_no_escalate should convert ESCALATE to REJECT"
+        assert (
+            result.decision != GateDecision.ESCALATE
+        ), "strict_no_escalate should convert ESCALATE to REJECT"
 
 
 class TestConfigValidation:
@@ -227,8 +237,12 @@ class TestViolationIntegrity:
         result = gate.check(candidate)
 
         if result.decision == GateDecision.ALLOW_WITH_REPAIR:
-            assert result.repaired_text is not None, "ALLOW_WITH_REPAIR must include repaired text"
-            assert len(result.repair_log) > 0, "ALLOW_WITH_REPAIR must include repair log"
+            assert (
+                result.repaired_text is not None
+            ), "ALLOW_WITH_REPAIR must include repaired text"
+            assert (
+                len(result.repair_log) > 0
+            ), "ALLOW_WITH_REPAIR must include repair log"
 
 
 class TestConcurrencySafety:

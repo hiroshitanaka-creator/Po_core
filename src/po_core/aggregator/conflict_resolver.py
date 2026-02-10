@@ -48,7 +48,18 @@ def _jaccard(a: Set[str], b: Set[str]) -> float:
     return inter / union if union else 0.0
 
 
-_NEG = ("ない", "ません", "不可", "禁止", "ダメ", "無理", "no", "not", "cannot", "can't")
+_NEG = (
+    "ない",
+    "ません",
+    "不可",
+    "禁止",
+    "ダメ",
+    "無理",
+    "no",
+    "not",
+    "cannot",
+    "can't",
+)
 _POS = ("できる", "可能", "はい", "ok", "yes", "推奨")
 
 
@@ -83,9 +94,9 @@ class Conflict:
 @dataclass(frozen=True)
 class ConflictReport:
     conflicts: List[Conflict]
-    penalties: Mapping[str, float]              # proposal_id -> penalty (0..)
-    suggested_forced_action: Optional[str]      # global suggestion
-    summary: Mapping[str, str]                  # counts etc
+    penalties: Mapping[str, float]  # proposal_id -> penalty (0..)
+    suggested_forced_action: Optional[str]  # global suggestion
+    summary: Mapping[str, str]  # counts etc
 
 
 def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
@@ -115,7 +126,9 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
     # 1) 行為タイプの分岐（最重要）
     has_answer = "answer" in by_type and len(by_type["answer"]) > 0
     has_refuse = "refuse" in by_type and len(by_type["refuse"]) > 0
-    has_clarify = "ask_clarification" in by_type and len(by_type["ask_clarification"]) > 0
+    has_clarify = (
+        "ask_clarification" in by_type and len(by_type["ask_clarification"]) > 0
+    )
 
     if has_answer and has_refuse:
         ids = [p.proposal_id for p in (by_type["answer"][:2] + by_type["refuse"][:2])]
@@ -136,7 +149,10 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
             add_pen(pid, c.severity)
 
     if has_answer and has_clarify and not has_refuse:
-        ids = [p.proposal_id for p in (by_type["answer"][:3] + by_type["ask_clarification"][:2])]
+        ids = [
+            p.proposal_id
+            for p in (by_type["answer"][:3] + by_type["ask_clarification"][:2])
+        ]
         c = Conflict(
             conflict_id=mk_id("action_divergence", ids),
             kind="action_divergence",
@@ -175,7 +191,10 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
                     kind="answer_contradiction",
                     severity=2,
                     proposal_ids=ids,
-                    evidence={"jaccard": f"{sim:.2f}", "detail": "同一話題っぽいのに肯否が逆"},
+                    evidence={
+                        "jaccard": f"{sim:.2f}",
+                        "detail": "同一話題っぽいのに肯否が逆",
+                    },
                     suggested_forced_action="ask_clarification",
                     questions=[
                         "前提条件（環境/制約/定義）によって結論が変わり得ます。前提を明示してください。",
@@ -190,7 +209,12 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
         sims: List[float] = []
         for i in range(len(answers)):
             for j in range(i + 1, len(answers)):
-                sims.append(_jaccard(ans_tokens[answers[i].proposal_id], ans_tokens[answers[j].proposal_id]))
+                sims.append(
+                    _jaccard(
+                        ans_tokens[answers[i].proposal_id],
+                        ans_tokens[answers[j].proposal_id],
+                    )
+                )
         avg_sim = sum(sims) / len(sims) if sims else 1.0
         if avg_sim < 0.12:
             ids = [p.proposal_id for p in answers[:5]]
@@ -199,7 +223,10 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
                 kind="answer_topic_divergence",
                 severity=1,
                 proposal_ids=ids,
-                evidence={"avg_jaccard": f"{avg_sim:.2f}", "detail": "answerが別方向に分散（要件が曖昧）"},
+                evidence={
+                    "avg_jaccard": f"{avg_sim:.2f}",
+                    "detail": "answerが別方向に分散（要件が曖昧）",
+                },
                 suggested_forced_action="ask_clarification",
                 questions=[
                     "目的（何を達成したいか）と、成功条件（何ができればOKか）を具体化してください。",

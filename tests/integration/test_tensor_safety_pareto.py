@@ -21,7 +21,6 @@ from po_core.tensors.engine import (
     compute_tensors,
 )
 
-
 # ── Tensor computation integration ──────────────────────────────────────
 
 
@@ -52,7 +51,9 @@ class TestTensorComputation:
 
     def test_semantic_delta_range(self):
         """Semantic delta is always in [0, 1]."""
-        result = compute_semantic_delta("What is consciousness?", "An emergent property.")
+        result = compute_semantic_delta(
+            "What is consciousness?", "An emergent property."
+        )
         assert 0.0 <= result <= 1.0
 
     def test_blocked_tensor_derived_correctly(self):
@@ -77,7 +78,11 @@ class TestTensorComputation:
     def test_tensor_snapshot_properties(self):
         """TensorSnapshot provides convenience properties."""
         snap = TensorSnapshot.now(
-            metrics={"freedom_pressure": 0.7, "semantic_delta": 0.3, "blocked_tensor": 0.2}
+            metrics={
+                "freedom_pressure": 0.7,
+                "semantic_delta": 0.3,
+                "blocked_tensor": 0.2,
+            }
         )
         assert snap.freedom_pressure == 0.7
         assert snap.semantic_delta == 0.3

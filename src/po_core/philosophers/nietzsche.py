@@ -35,10 +35,12 @@ class Nietzsche(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Friedrich Nietzsche",
-            description="German philosopher focused on will to power, Übermensch, and revaluation of values"
+            description="German philosopher focused on will to power, Übermensch, and revaluation of values",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Nietzsche's perspective.
 
@@ -71,8 +73,8 @@ class Nietzsche(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Life affirmation and value creation",
-                "focus": "Will to power, Übermensch, and eternal recurrence"
-            }
+                "focus": "Will to power, Übermensch, and eternal recurrence",
+            },
         }
 
     def _analyze_power(self, prompt: str) -> Dict[str, Any]:
@@ -127,7 +129,7 @@ class Nietzsche(Philosopher):
             "ressentiment": ressentiment,
             "amor_fati": amor_fati,
             "dionysian_apollonian": dionysian_apollonian,
-            "value_creation": value_creation
+            "value_creation": value_creation,
         }
 
     def _assess_will_to_power(self, text: str) -> Dict[str, Any]:
@@ -140,11 +142,27 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Power/strength indicators
-        power_words = ["power", "strong", "strength", "force", "overcome", "master", "conquer"]
+        power_words = [
+            "power",
+            "strong",
+            "strength",
+            "force",
+            "overcome",
+            "master",
+            "conquer",
+        ]
         has_power = sum(1 for word in power_words if word in text_lower)
 
         # Creative/growth indicators
-        creative_words = ["create", "grow", "expand", "develop", "rise", "ascend", "enhance"]
+        creative_words = [
+            "create",
+            "grow",
+            "expand",
+            "develop",
+            "rise",
+            "ascend",
+            "enhance",
+        ]
         has_creative = sum(1 for word in creative_words if word in text_lower)
 
         # Self-overcoming indicators
@@ -155,7 +173,11 @@ class Nietzsche(Philosopher):
         weak_words = ["weak", "submit", "surrender", "give up", "helpless", "passive"]
         has_weak = sum(1 for word in weak_words if word in text_lower)
 
-        if has_power >= 2 or has_overcome >= 2 or (has_power >= 1 and has_creative >= 1):
+        if (
+            has_power >= 2
+            or has_overcome >= 2
+            or (has_power >= 1 and has_creative >= 1)
+        ):
             presence = "Strong Will to Power"
             description = "Active drive for self-enhancement and creative overcoming"
             type_will = "Life-affirming"
@@ -176,7 +198,7 @@ class Nietzsche(Philosopher):
             "presence": presence,
             "description": description,
             "type": type_will,
-            "principle": "Will to power is the fundamental drive of all life"
+            "principle": "Will to power is the fundamental drive of all life",
         }
 
     def _evaluate_ubermensch(self, text: str) -> Dict[str, Any]:
@@ -189,23 +211,54 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Übermensch indicators
-        uber_words = ["create values", "own values", "new values", "beyond good and evil", "self-create"]
+        uber_words = [
+            "create values",
+            "own values",
+            "new values",
+            "beyond good and evil",
+            "self-create",
+        ]
         has_uber = sum(1 for phrase in uber_words if phrase in text_lower)
 
         # Self-overcoming indicators
-        self_overcome = ["overcome myself", "surpass", "become who i am", "self-mastery"]
+        self_overcome = [
+            "overcome myself",
+            "surpass",
+            "become who i am",
+            "self-mastery",
+        ]
         has_self_overcome = sum(1 for phrase in self_overcome if phrase in text_lower)
 
         # Life affirmation indicators
-        affirm_words = ["yes to life", "affirm", "celebrate", "embrace life", "love life"]
+        affirm_words = [
+            "yes to life",
+            "affirm",
+            "celebrate",
+            "embrace life",
+            "love life",
+        ]
         has_affirm = sum(1 for phrase in affirm_words if phrase in text_lower)
 
         # Last Man indicators (opposed to Übermensch)
-        last_man_words = ["comfortable", "safe", "security", "happiness", "contentment", "mediocre"]
+        last_man_words = [
+            "comfortable",
+            "safe",
+            "security",
+            "happiness",
+            "contentment",
+            "mediocre",
+        ]
         has_last_man = sum(1 for word in last_man_words if word in text_lower)
 
         # Herd mentality indicators
-        herd_words = ["everyone", "they say", "normal", "conform", "fit in", "like everyone"]
+        herd_words = [
+            "everyone",
+            "they say",
+            "normal",
+            "conform",
+            "fit in",
+            "like everyone",
+        ]
         has_herd = sum(1 for phrase in herd_words if phrase in text_lower)
 
         if has_uber >= 1 or has_self_overcome >= 1 or has_affirm >= 2:
@@ -229,7 +282,7 @@ class Nietzsche(Philosopher):
             "orientation": orientation,
             "description": description,
             "type": type_human,
-            "principle": "The Übermensch creates values and affirms life beyond good and evil"
+            "principle": "The Übermensch creates values and affirms life beyond good and evil",
         }
 
     def _check_eternal_recurrence(self, text: str) -> Dict[str, Any]:
@@ -278,7 +331,7 @@ class Nietzsche(Philosopher):
             "test_result": test_result,
             "description": description,
             "attitude": attitude,
-            "principle": "Live as if you would will this moment to recur eternally"
+            "principle": "Live as if you would will this moment to recur eternally",
         }
 
     def _analyze_nihilism(self, text: str) -> Dict[str, Any]:
@@ -291,11 +344,23 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Passive nihilism indicators
-        passive_nihil = ["meaningless", "pointless", "nothing matters", "despair", "futile", "void"]
+        passive_nihil = [
+            "meaningless",
+            "pointless",
+            "nothing matters",
+            "despair",
+            "futile",
+            "void",
+        ]
         has_passive = sum(1 for phrase in passive_nihil if phrase in text_lower)
 
         # Active nihilism indicators
-        active_nihil = ["destroy old values", "break down", "clear away", "new beginning"]
+        active_nihil = [
+            "destroy old values",
+            "break down",
+            "clear away",
+            "new beginning",
+        ]
         has_active = sum(1 for phrase in active_nihil if phrase in text_lower)
 
         # Value creation (beyond nihilism)
@@ -320,7 +385,9 @@ class Nietzsche(Philosopher):
             status = "Destructive"
         elif has_traditional >= 2:
             type_nihil = "Pre-Nihilistic"
-            description = "Still believing in traditional values - unaware of God's death"
+            description = (
+                "Still believing in traditional values - unaware of God's death"
+            )
             status = "Naive"
         else:
             type_nihil = "Unclear"
@@ -331,7 +398,7 @@ class Nietzsche(Philosopher):
             "type": type_nihil,
             "description": description,
             "status": status,
-            "principle": "God is dead - we must become creators of values"
+            "principle": "God is dead - we must become creators of values",
         }
 
     def _determine_morality_type(self, text: str) -> Dict[str, Any]:
@@ -344,15 +411,38 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Master morality indicators
-        master_words = ["noble", "strong", "proud", "self", "create", "power", "excellence"]
+        master_words = [
+            "noble",
+            "strong",
+            "proud",
+            "self",
+            "create",
+            "power",
+            "excellence",
+        ]
         has_master = sum(1 for word in master_words if word in text_lower)
 
         # Slave morality indicators
-        slave_words = ["evil", "sin", "guilty", "should", "must", "duty", "obey", "humble"]
+        slave_words = [
+            "evil",
+            "sin",
+            "guilty",
+            "should",
+            "must",
+            "duty",
+            "obey",
+            "humble",
+        ]
         has_slave = sum(1 for word in slave_words if word in text_lower)
 
         # Reactive/resentment indicators
-        reactive_words = ["they are evil", "those people", "oppressors", "privileged", "unfair"]
+        reactive_words = [
+            "they are evil",
+            "those people",
+            "oppressors",
+            "privileged",
+            "unfair",
+        ]
         has_reactive = sum(1 for phrase in reactive_words if phrase in text_lower)
 
         # Life affirmation (master)
@@ -387,7 +477,7 @@ class Nietzsche(Philosopher):
             "type": type_morality,
             "description": description,
             "orientation": orientation,
-            "principle": "Master morality creates values; slave morality reacts with ressentiment"
+            "principle": "Master morality creates values; slave morality reacts with ressentiment",
         }
 
     def _detect_ressentiment(self, text: str) -> Dict[str, Any]:
@@ -400,11 +490,23 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Ressentiment indicators
-        ressent_words = ["blame", "fault", "because of them", "their fault", "oppressor", "victim"]
+        ressent_words = [
+            "blame",
+            "fault",
+            "because of them",
+            "their fault",
+            "oppressor",
+            "victim",
+        ]
         has_ressent = sum(1 for phrase in ressent_words if phrase in text_lower)
 
         # Revenge/punishment indicators
-        revenge_words = ["revenge", "punish", "deserve to suffer", "get what they deserve"]
+        revenge_words = [
+            "revenge",
+            "punish",
+            "deserve to suffer",
+            "get what they deserve",
+        ]
         has_revenge = sum(1 for phrase in revenge_words if phrase in text_lower)
 
         # Victimhood indicators
@@ -412,7 +514,13 @@ class Nietzsche(Philosopher):
         has_victim = sum(1 for word in victim_words if word in text_lower)
 
         # Self-responsibility (opposite of ressentiment)
-        responsibility = ["my responsibility", "i choose", "my fault", "i create", "own it"]
+        responsibility = [
+            "my responsibility",
+            "i choose",
+            "my fault",
+            "i create",
+            "own it",
+        ]
         has_responsibility = sum(1 for phrase in responsibility if phrase in text_lower)
 
         if has_ressent >= 2 or has_revenge >= 1:
@@ -436,7 +544,7 @@ class Nietzsche(Philosopher):
             "presence": presence,
             "description": description,
             "level": level,
-            "principle": "Ressentiment is the revenge of the weak through moral condemnation"
+            "principle": "Ressentiment is the revenge of the weak through moral condemnation",
         }
 
     def _assess_amor_fati(self, text: str) -> Dict[str, Any]:
@@ -457,11 +565,22 @@ class Nietzsche(Philosopher):
         has_affirm = sum(1 for word in affirm_words if word in text_lower)
 
         # Necessity/fate indicators
-        fate_words = ["fate", "destiny", "necessary", "must be", "could not be otherwise"]
+        fate_words = [
+            "fate",
+            "destiny",
+            "necessary",
+            "must be",
+            "could not be otherwise",
+        ]
         has_fate = sum(1 for phrase in fate_words if phrase in text_lower)
 
         # Rejection/complaint (opposed to amor fati)
-        reject_words = ["wish it were different", "if only", "regret", "should have been"]
+        reject_words = [
+            "wish it were different",
+            "if only",
+            "regret",
+            "should have been",
+        ]
         has_reject = sum(1 for phrase in reject_words if phrase in text_lower)
 
         if has_amor >= 1 or (has_affirm >= 1 and has_fate >= 1):
@@ -485,7 +604,7 @@ class Nietzsche(Philosopher):
             "presence": presence,
             "description": description,
             "level": level,
-            "principle": "My formula for greatness: amor fati - love your fate"
+            "principle": "My formula for greatness: amor fati - love your fate",
         }
 
     def _evaluate_dionysian_apollonian(self, text: str) -> Dict[str, Any]:
@@ -499,11 +618,29 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Dionysian indicators
-        dionysian_words = ["chaos", "ecstasy", "passion", "wild", "intoxication", "frenzy", "dance", "music"]
+        dionysian_words = [
+            "chaos",
+            "ecstasy",
+            "passion",
+            "wild",
+            "intoxication",
+            "frenzy",
+            "dance",
+            "music",
+        ]
         has_dionysian = sum(1 for word in dionysian_words if word in text_lower)
 
         # Apollonian indicators
-        apollonian_words = ["order", "reason", "clarity", "form", "structure", "measure", "beauty", "light"]
+        apollonian_words = [
+            "order",
+            "reason",
+            "clarity",
+            "form",
+            "structure",
+            "measure",
+            "beauty",
+            "light",
+        ]
         has_apollonian = sum(1 for word in apollonian_words if word in text_lower)
 
         # Synthesis indicators
@@ -531,7 +668,7 @@ class Nietzsche(Philosopher):
             "type": type_spirit,
             "description": description,
             "balance": balance,
-            "principle": "The best art combines Dionysian ecstasy with Apollonian form"
+            "principle": "The best art combines Dionysian ecstasy with Apollonian form",
         }
 
     def _check_value_creation(self, text: str) -> Dict[str, Any]:
@@ -543,11 +680,23 @@ class Nietzsche(Philosopher):
         text_lower = text.lower()
 
         # Value creation indicators
-        create_values = ["create values", "new values", "my values", "own values", "make meaning"]
+        create_values = [
+            "create values",
+            "new values",
+            "my values",
+            "own values",
+            "make meaning",
+        ]
         has_create = sum(1 for phrase in create_values if phrase in text_lower)
 
         # Received values (not created)
-        received_values = ["given values", "traditional", "established", "inherited", "taught"]
+        received_values = [
+            "given values",
+            "traditional",
+            "established",
+            "inherited",
+            "taught",
+        ]
         has_received = sum(1 for word in received_values if word in text_lower)
 
         # Beyond good and evil
@@ -571,7 +720,7 @@ class Nietzsche(Philosopher):
             "status": status,
             "description": description,
             "type": type_creator,
-            "principle": "We must become creators of values - beyond good and evil"
+            "principle": "We must become creators of values - beyond good and evil",
         }
 
     def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -592,7 +741,10 @@ class Nietzsche(Philosopher):
 
         # Check will to power
         will_to_power = analysis["will_to_power"]
-        if "Weak Will" in will_to_power["presence"] or "Life-denying" in will_to_power["type"]:
+        if (
+            "Weak Will" in will_to_power["presence"]
+            or "Life-denying" in will_to_power["type"]
+        ):
             tension_score += 2
             tension_elements.append("Weak will to power - life-denying")
 
@@ -652,7 +804,9 @@ class Nietzsche(Philosopher):
         return {
             "level": level,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }
 
     def _construct_reasoning(
@@ -661,7 +815,7 @@ class Nietzsche(Philosopher):
         ubermensch: Dict[str, Any],
         nihilism: Dict[str, Any],
         morality: Dict[str, Any],
-        amor_fati: Dict[str, Any]
+        amor_fati: Dict[str, Any],
     ) -> str:
         """Construct Nietzschean life-affirming reasoning."""
         reasoning = (

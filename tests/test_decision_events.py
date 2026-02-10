@@ -10,7 +10,7 @@ decision_events helper のテスト:
 from datetime import datetime, timezone
 
 from po_core.domain.context import Context
-from po_core.domain.keys import PO_CORE, AUTHOR, PARETO_DEBUG
+from po_core.domain.keys import AUTHOR, PARETO_DEBUG, PO_CORE
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.trace.decision_events import (
@@ -23,6 +23,7 @@ from po_core.trace.decision_events import (
 
 class DummyTracer:
     """テスト用の簡易 Tracer"""
+
     def __init__(self):
         self.events = []
 
@@ -36,13 +37,13 @@ def test_decision_events_emit_and_do_not_log_raw_content():
     ctx = Context("r1", datetime.now(timezone.utc), "x")
 
     cand = Proposal(
-        "p1", "answer", "SECRET_SHOULD_NOT_BE_LOGGED", 0.9,
-        extra={PO_CORE: {AUTHOR: "A"}}
+        "p1",
+        "answer",
+        "SECRET_SHOULD_NOT_BE_LOGGED",
+        0.9,
+        extra={PO_CORE: {AUTHOR: "A"}},
     )
-    final = Proposal(
-        "p2", "refuse", "ok", 1.0,
-        extra={PO_CORE: {AUTHOR: "system"}}
-    )
+    final = Proposal("p2", "refuse", "ok", 1.0, extra={PO_CORE: {AUTHOR: "system"}})
 
     v = SafetyVerdict(
         decision=Decision.REVISE,
@@ -53,7 +54,8 @@ def test_decision_events_emit_and_do_not_log_raw_content():
     )
 
     emit_safety_override_applied(
-        tr, ctx,
+        tr,
+        ctx,
         stage="action",
         reason="gate_revise",
         from_proposal=cand,
@@ -61,7 +63,8 @@ def test_decision_events_emit_and_do_not_log_raw_content():
         verdict=v,
     )
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         stage="action",
         origin="safety_fallback",
         final=final,
@@ -83,7 +86,10 @@ def test_decision_events_emit_and_do_not_log_raw_content():
 def test_proposal_fingerprint_contains_required_fields():
     """proposal_fingerprint が必要なフィールドを含む"""
     p = Proposal(
-        "p1", "answer", "テスト回答", 0.85,
+        "p1",
+        "answer",
+        "テスト回答",
+        0.85,
         extra={
             PO_CORE: {
                 AUTHOR: "aristotle",
@@ -91,7 +97,7 @@ def test_proposal_fingerprint_contains_required_fields():
                 "policy": {"decision": "allow", "score": "1.000"},
                 "trace_quality": {"author_reliability": "0.950"},
             }
-        }
+        },
     )
 
     fp = proposal_fingerprint(p)
@@ -135,7 +141,8 @@ def test_emit_decision_emitted_without_candidate():
     final = Proposal("p1", "refuse", "blocked", 1.0)
 
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         stage="intent",
         origin="intent_gate_fallback",
         final=final,
@@ -158,10 +165,13 @@ def test_emit_decision_emitted_pareto_origin():
     ctx = Context("r3", datetime.now(timezone.utc), "x")
 
     final = Proposal("p1", "answer", "回答", 0.9)
-    v = SafetyVerdict(decision=Decision.ALLOW, rule_ids=[], reasons=[], required_changes=[], meta={})
+    v = SafetyVerdict(
+        decision=Decision.ALLOW, rule_ids=[], reasons=[], required_changes=[], meta={}
+    )
 
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         stage="action",
         origin="pareto",
         final=final,
@@ -185,10 +195,17 @@ def test_safety_override_applied_contains_from_to():
 
     from_p = Proposal("p1", "answer", "危険な回答", 0.9)
     to_p = Proposal("p2", "refuse", "拒否", 1.0)
-    v = SafetyVerdict(decision=Decision.REJECT, rule_ids=["R1"], reasons=["危険"], required_changes=[], meta={})
+    v = SafetyVerdict(
+        decision=Decision.REJECT,
+        rule_ids=["R1"],
+        reasons=["危険"],
+        required_changes=[],
+        meta={},
+    )
 
     emit_safety_override_applied(
-        tr, ctx,
+        tr,
+        ctx,
         stage="action",
         reason="gate_reject",
         from_proposal=from_p,
@@ -213,7 +230,8 @@ def test_emit_decision_emitted_variant_main():
     final = Proposal("p1", "answer", "回答", 0.9)
 
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         variant="main",
         stage="action",
         origin="pareto",
@@ -235,7 +253,8 @@ def test_emit_decision_emitted_variant_shadow():
     final = Proposal("p1", "answer", "回答", 0.9)
 
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         variant="shadow",
         stage="action",
         origin="pareto_shadow",
@@ -256,10 +275,17 @@ def test_emit_safety_override_applied_variant():
 
     from_p = Proposal("p1", "answer", "回答", 0.9)
     to_p = Proposal("p2", "refuse", "拒否", 1.0)
-    v = SafetyVerdict(decision=Decision.REJECT, rule_ids=["R1"], reasons=[], required_changes=[], meta={})
+    v = SafetyVerdict(
+        decision=Decision.REJECT,
+        rule_ids=["R1"],
+        reasons=[],
+        required_changes=[],
+        meta={},
+    )
 
     emit_safety_override_applied(
-        tr, ctx,
+        tr,
+        ctx,
         variant="shadow",
         stage="action",
         reason="gate_reject",
@@ -276,7 +302,10 @@ def test_emit_safety_override_applied_variant():
 def test_proposal_fingerprint_includes_pareto_config():
     """proposal_fingerprint に pareto_config_version/source が含まれる"""
     p = Proposal(
-        "p1", "answer", "回答", 0.9,
+        "p1",
+        "answer",
+        "回答",
+        0.9,
         extra={
             PO_CORE: {
                 PARETO_DEBUG: {
@@ -284,7 +313,7 @@ def test_proposal_fingerprint_includes_pareto_config():
                     "config_source": "file:/path/to/shadow.yaml",
                 }
             }
-        }
+        },
     )
 
     fp = proposal_fingerprint(p)
@@ -299,7 +328,10 @@ def test_emit_decision_emitted_pareto_config_from_candidate():
     ctx = Context("r8", datetime.now(timezone.utc), "x")
 
     candidate = Proposal(
-        "p1", "answer", "回答", 0.9,
+        "p1",
+        "answer",
+        "回答",
+        0.9,
         extra={
             PO_CORE: {
                 PARETO_DEBUG: {
@@ -307,12 +339,13 @@ def test_emit_decision_emitted_pareto_config_from_candidate():
                     "config_source": "test:source",
                 }
             }
-        }
+        },
     )
     final = Proposal("p2", "answer", "最終", 1.0)
 
     emit_decision_emitted(
-        tr, ctx,
+        tr,
+        ctx,
         variant="main",
         stage="action",
         origin="pareto",

@@ -15,14 +15,21 @@ DEPENDENCY RULES:
 
 from __future__ import annotations
 
-from typing import Any, Mapping, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping
 
 from po_core.domain.context import Context
+from po_core.domain.keys import (
+    CONFLICTS,
+    FREEDOM_PRESSURE,
+    FRONT,
+    MODE,
+    PARETO_DEBUG,
+    PO_CORE,
+    WEIGHTS,
+    WINNER,
+)
 from po_core.domain.proposal import Proposal
 from po_core.domain.trace_event import TraceEvent
-from po_core.domain.keys import (
-    PO_CORE, PARETO_DEBUG, MODE, FREEDOM_PRESSURE, WEIGHTS, FRONT, WINNER, CONFLICTS,
-)
 
 if TYPE_CHECKING:
     from po_core.ports.trace import TracePort
@@ -33,7 +40,9 @@ def _as_dict(x: Any) -> dict:
     return dict(x) if isinstance(x, Mapping) else {}
 
 
-def emit_pareto_debug_events(tracer: "TracePort", ctx: Context, winner: Proposal, *, variant: str = "main") -> None:
+def emit_pareto_debug_events(
+    tracer: "TracePort", ctx: Context, winner: Proposal, *, variant: str = "main"
+) -> None:
     """
     ParetoAggregator が winner.extra["_po_core"]["pareto_debug"] に入れた payload を
     TraceEventへ確実に吐く。

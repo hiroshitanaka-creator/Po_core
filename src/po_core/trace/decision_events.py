@@ -17,21 +17,21 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Mapping, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping, Optional
 
 from po_core.domain.context import Context
-from po_core.domain.proposal import Proposal
-from po_core.domain.safety_verdict import SafetyVerdict
-from po_core.domain.trace_event import TraceEvent
 from po_core.domain.keys import (
+    AUTHOR,
+    AUTHOR_RELIABILITY,
+    FREEDOM_PRESSURE,
+    PARETO_DEBUG,
     PO_CORE,
     POLICY,
     TRACEQ,
-    PARETO_DEBUG,
-    FREEDOM_PRESSURE,
-    AUTHOR,
-    AUTHOR_RELIABILITY,
 )
+from po_core.domain.proposal import Proposal
+from po_core.domain.safety_verdict import SafetyVerdict
+from po_core.domain.trace_event import TraceEvent
 
 if TYPE_CHECKING:
     from po_core.ports.trace import TracePort
@@ -53,7 +53,7 @@ def _hash10(text: str) -> str:
 def _pareto_cfg_from(p: Optional[Proposal]) -> tuple[str, str]:
     """Proposalから pareto config_version/source を抽出（なければ空文字列）"""
     if p is None:
-        return "", ""  
+        return "", ""
     extra = _as_dict(p.extra)
     pc = _as_dict(extra.get(PO_CORE))
     dbg = _as_dict(pc.get(PARETO_DEBUG))
@@ -175,7 +175,9 @@ def emit_decision_emitted(
     Emits:
         DecisionEmitted: 最終決定の事実
     """
-    cfg_ver, cfg_src = _pareto_cfg_from(candidate)  # candidate優先（finalがfallbackでも追える）
+    cfg_ver, cfg_src = _pareto_cfg_from(
+        candidate
+    )  # candidate優先（finalがfallbackでも追える）
 
     payload: dict = {
         "variant": variant,

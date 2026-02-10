@@ -191,7 +191,12 @@ class TestJungPsychologicalType:
         result = jung.reason("I analyze this logically with reason")
 
         psych_type = result["psychological_type"]
-        assert psych_type["dominant_function"] in ["Thinking", "Sensation", "Feeling", "Intuition"]
+        assert psych_type["dominant_function"] in [
+            "Thinking",
+            "Sensation",
+            "Feeling",
+            "Intuition",
+        ]
 
 
 class TestJungShadowIntegration:

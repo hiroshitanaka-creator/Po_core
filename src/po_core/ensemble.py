@@ -4,10 +4,11 @@ Ensemble module — run_turn pipeline + philosopher registry.
 The legacy ``run_ensemble()`` function was removed in v0.3.
 Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from po_core import philosophers
 from po_core.philosophers.base import Philosopher
@@ -63,15 +64,20 @@ PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
 from typing import Mapping, Sequence
 
 from po_core.domain.context import Context as DomainContext
-from po_core.domain.trace_event import TraceEvent
+from po_core.domain.keys import (
+    AUTHOR,
+    AUTHOR_RELIABILITY,
+    FREEDOM_PRESSURE,
+    PO_CORE,
+    POLICY,
+    TRACEQ,
+)
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision
-from po_core.domain.keys import (
-    PO_CORE, POLICY, TRACEQ, FREEDOM_PRESSURE, AUTHOR, AUTHOR_RELIABILITY,
-)
-from po_core.trace.pareto_events import emit_pareto_debug_events
-from po_core.trace.decision_events import emit_decision_emitted, emit_safety_override_applied
-from po_core.trace.decision_compare import emit_decision_comparison
+from po_core.domain.trace_event import TraceEvent
+from po_core.party_machine import RunResult, run_philosophers
+from po_core.philosophers.base import PhilosopherProtocol
+from po_core.philosophers.registry import LoadError, PhilosopherRegistry
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -79,12 +85,15 @@ from po_core.ports.solarwill import SolarWillPort
 from po_core.ports.tensor_engine import TensorEnginePort
 from po_core.ports.trace import TracePort
 from po_core.ports.wethics_gate import WethicsGatePort
-from po_core.philosophers.base import PhilosopherProtocol
-from po_core.philosophers.registry import PhilosopherRegistry, LoadError
-from po_core.party_machine import run_philosophers, RunResult
 from po_core.runtime.settings import Settings
 from po_core.safety.fallback import compose_fallback
 from po_core.safety.policy_scoring import policy_score
+from po_core.trace.decision_compare import emit_decision_comparison
+from po_core.trace.decision_events import (
+    emit_decision_emitted,
+    emit_safety_override_applied,
+)
+from po_core.trace.pareto_events import emit_pareto_debug_events
 
 
 def _author_reliability(
@@ -133,11 +142,17 @@ class EnsembleDeps:
 def _get_swarm_params(mode: SafetyMode, settings: Settings) -> tuple[int, float]:
     """Get worker count and timeout based on SafetyMode."""
     if mode == SafetyMode.CRITICAL:
-        return settings.philosopher_workers_critical, settings.philosopher_timeout_s_critical
+        return (
+            settings.philosopher_workers_critical,
+            settings.philosopher_timeout_s_critical,
+        )
     elif mode == SafetyMode.WARN:
         return settings.philosopher_workers_warn, settings.philosopher_timeout_s_warn
     else:  # NORMAL or UNKNOWN
-        return settings.philosopher_workers_normal, settings.philosopher_timeout_s_normal
+        return (
+            settings.philosopher_workers_normal,
+            settings.philosopher_timeout_s_normal,
+        )
 
 
 def _evaluate_candidate(
@@ -182,7 +197,8 @@ def _evaluate_candidate(
     if v.decision == Decision.ALLOW:
         # 正常経路：候補がそのまま最終
         emit_decision_emitted(
-            tracer, ctx,
+            tracer,
+            ctx,
             variant=variant,
             stage="action",
             origin=origin,
@@ -197,7 +213,8 @@ def _evaluate_candidate(
     fb = compose_fallback(ctx, v, stage="action")
 
     emit_safety_override_applied(
-        tracer, ctx,
+        tracer,
+        ctx,
         variant=variant,
         stage="action",
         reason=f"gate_{v.decision.value}",
@@ -210,7 +227,8 @@ def _evaluate_candidate(
     vfb = deps.gate.judge_action(ctx, intent, fb, tensors, memory)
 
     emit_decision_emitted(
-        tracer, ctx,
+        tracer,
+        ctx,
         variant=variant,
         stage="action",
         origin=f"{origin}_fallback",
@@ -250,19 +268,23 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
 
     # 1. Memory snapshot
     memory = deps.memory_read.snapshot(ctx)
-    tracer.emit(TraceEvent.now(
-        "MemorySnapshotted",
-        ctx.request_id,
-        {"items": len(memory.items)},
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "MemorySnapshotted",
+            ctx.request_id,
+            {"items": len(memory.items)},
+        )
+    )
 
     # 2. Tensor computation
     tensors = deps.tensors.compute(ctx, memory)
-    tracer.emit(TraceEvent.now(
-        "TensorComputed",
-        ctx.request_id,
-        {"metrics": list(tensors.metrics.keys()), "version": tensors.version},
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "TensorComputed",
+            ctx.request_id,
+            {"metrics": list(tensors.metrics.keys()), "version": tensors.version},
+        )
+    )
 
     # Determine SafetyMode from tensors
     safety_config = SafetyModeConfig(
@@ -274,32 +296,39 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
 
     # 3. SolarWill intent
     intent, will_meta = deps.solarwill.compute_intent(ctx, tensors, memory)
-    tracer.emit(TraceEvent.now(
-        "IntentGenerated",
-        ctx.request_id,
-        dict(will_meta),
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "IntentGenerated",
+            ctx.request_id,
+            dict(will_meta),
+        )
+    )
 
     # 4. Intention Gate (Stage 1)
     v1 = deps.gate.judge_intent(ctx, intent, tensors, memory)
-    tracer.emit(TraceEvent.now(
-        "SafetyJudged:Intention",
-        ctx.request_id,
-        {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "SafetyJudged:Intention",
+            ctx.request_id,
+            {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
+        )
+    )
     if v1.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v1, stage="intention")
         # Pass fallback through action gate to verify it's safe
         vfb = deps.gate.judge_action(ctx, intent, fallback, tensors, memory)
-        tracer.emit(TraceEvent.now(
-            "SafetyDegraded",
-            ctx.request_id,
-            {"from": "intention", **v1.meta},
-        ))
+        tracer.emit(
+            TraceEvent.now(
+                "SafetyDegraded",
+                ctx.request_id,
+                {"from": "intention", **v1.meta},
+            )
+        )
         if vfb.decision == Decision.ALLOW:
             # 意図段階で縮退（候補なし）
             emit_decision_emitted(
-                tracer, ctx,
+                tracer,
+                ctx,
                 stage="intent",
                 origin="intent_gate_fallback",
                 final=fallback,
@@ -316,7 +345,8 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             }
         # Fallback itself was rejected - hard block
         emit_decision_emitted(
-            tracer, ctx,
+            tracer,
+            ctx,
             stage="intent",
             origin="intent_gate_blocked",
             final=fallback,
@@ -334,50 +364,69 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     # 5. Select philosophers based on SafetyMode (編成)
     sel = deps.registry.select(mode)
     max_workers, timeout_s = _get_swarm_params(mode, deps.settings)
-    tracer.emit(TraceEvent.now(
-        "PhilosophersSelected",
-        ctx.request_id,
-        {
-            "mode": mode.value,
-            "n": len(sel.selected_ids),
-            "cost_total": sel.cost_total,
-            "covered_tags": sel.covered_tags,
-            "ids": sel.selected_ids,
-            "workers": max_workers,
-        },
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "PhilosophersSelected",
+            ctx.request_id,
+            {
+                "mode": mode.value,
+                "n": len(sel.selected_ids),
+                "cost_total": sel.cost_total,
+                "covered_tags": sel.covered_tags,
+                "ids": sel.selected_ids,
+                "workers": max_workers,
+            },
+        )
+    )
 
     # Load philosophers (with error recovery)
     philosophers, load_errors = deps.registry.load(sel.selected_ids)
     for e in load_errors:
-        tracer.emit(TraceEvent.now(
-            "PhilosopherLoadError",
-            ctx.request_id,
-            {"id": e.philosopher_id, "module": e.module, "symbol": e.symbol, "error": e.error},
-        ))
+        tracer.emit(
+            TraceEvent.now(
+                "PhilosopherLoadError",
+                ctx.request_id,
+                {
+                    "id": e.philosopher_id,
+                    "module": e.module,
+                    "symbol": e.symbol,
+                    "error": e.error,
+                },
+            )
+        )
 
     # 6. Parallel philosopher execution with timeout
     from po_core.domain.proposal import Proposal as DomainProposal
+
     raw_proposals: List[DomainProposal] = []
     ph_proposals, run_results = run_philosophers(
-        philosophers, ctx, intent, tensors, memory,
-        max_workers=max_workers, timeout_s=timeout_s,
+        philosophers,
+        ctx,
+        intent,
+        tensors,
+        memory,
+        max_workers=max_workers,
+        timeout_s=timeout_s,
     )
     raw_proposals.extend(ph_proposals)
 
     # Emit trace events for each result (with latency)
     for result in run_results:
-        tracer.emit(TraceEvent.now(
-            "PhilosopherResult",
-            ctx.request_id,
-            {
-                "name": result.philosopher_id,
-                "n": result.n,
-                "timed_out": result.timed_out,
-                "error": "" if result.error is None else result.error[:200],
-                "latency_ms": -1 if result.latency_ms is None else result.latency_ms,
-            },
-        ))
+        tracer.emit(
+            TraceEvent.now(
+                "PhilosopherResult",
+                ctx.request_id,
+                {
+                    "name": result.philosopher_id,
+                    "n": result.n,
+                    "timed_out": result.timed_out,
+                    "error": "" if result.error is None else result.error[:200],
+                    "latency_ms": (
+                        -1 if result.latency_ms is None else result.latency_ms
+                    ),
+                },
+            )
+        )
 
     # 6.5 Enrich proposals with policy/trace/freedom signals
     author_stat = {r.philosopher_id: r for r in run_results}
@@ -417,30 +466,39 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         pc[FREEDOM_PRESSURE] = fp_str
 
         extra[PO_CORE] = pc
-        enriched.append(DomainProposal(
-            proposal_id=p.proposal_id,
-            action_type=p.action_type,
-            content=p.content,
-            confidence=p.confidence,
-            assumption_tags=list(p.assumption_tags),
-            risk_tags=list(p.risk_tags),
-            extra=extra,
-        ))
+        enriched.append(
+            DomainProposal(
+                proposal_id=p.proposal_id,
+                action_type=p.action_type,
+                content=p.content,
+                confidence=p.confidence,
+                assumption_tags=list(p.assumption_tags),
+                risk_tags=list(p.risk_tags),
+                extra=extra,
+            )
+        )
 
     proposals = enriched
-    tracer.emit(TraceEvent.now(
-        "PolicyPrecheckSummary",
-        ctx.request_id,
-        precheck_counts,
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "PolicyPrecheckSummary",
+            ctx.request_id,
+            precheck_counts,
+        )
+    )
 
     # 7. Main Pareto Aggregation
     candidate_main = deps.aggregator.aggregate(ctx, intent, tensors, proposals)
-    tracer.emit(TraceEvent.now(
-        "AggregateCompleted",
-        ctx.request_id,
-        {"proposal_id": candidate_main.proposal_id, "action_type": candidate_main.action_type},
-    ))
+    tracer.emit(
+        TraceEvent.now(
+            "AggregateCompleted",
+            ctx.request_id,
+            {
+                "proposal_id": candidate_main.proposal_id,
+                "action_type": candidate_main.action_type,
+            },
+        )
+    )
 
     # 8. Main evaluation (Pareto debug + Action Gate)
     final_main, main_degraded = _evaluate_candidate(
@@ -469,7 +527,9 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
                 else:
                     # Shadow Guard允許：実行
                     # Shadow Pareto aggregation（同じproposals集合）
-                    candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
+                    candidate_shadow = deps.aggregator_shadow.aggregate(
+                        ctx, intent, tensors, proposals
+                    )
 
                     # Shadow evaluation
                     final_shadow, shadow_degraded = _evaluate_candidate(
@@ -508,7 +568,9 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             else:
                 # No guard - run shadow normally
                 # Shadow Pareto aggregation（同じproposals集合）
-                candidate_shadow = deps.aggregator_shadow.aggregate(ctx, intent, tensors, proposals)
+                candidate_shadow = deps.aggregator_shadow.aggregate(
+                    ctx, intent, tensors, proposals
+                )
 
                 # Shadow evaluation
                 final_shadow, shadow_degraded = _evaluate_candidate(
@@ -536,14 +598,17 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             pass
 
     # 10. Persist decision summary (main のみ)
-    deps.memory_write.append(ctx, [
-        MemoryRecord(
-            created_at=ctx.created_at,
-            kind="decision",
-            text=f"{final_main.action_type}:{final_main.content[:200]}",
-            tags=["vertex", "allowed"],
-        )
-    ])
+    deps.memory_write.append(
+        ctx,
+        [
+            MemoryRecord(
+                created_at=ctx.created_at,
+                kind="decision",
+                text=f"{final_main.action_type}:{final_main.content[:200]}",
+                tags=["vertex", "allowed"],
+            )
+        ],
+    )
 
     # 11. Return (main のみ)
     return {

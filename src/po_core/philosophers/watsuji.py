@@ -31,10 +31,12 @@ class Watsuji(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="和辻哲郎 (Watsuji Tetsurō)",
-            description="Japanese philosopher focused on ningen (betweenness), climate theory, and relational ethics"
+            description="Japanese philosopher focused on ningen (betweenness), climate theory, and relational ethics",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Watsuji's perspective.
 
@@ -61,8 +63,8 @@ class Watsuji(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Ethics of betweenness and climate theory",
-                "focus": "Ningen (間柄), relationality, and cultural climate"
-            }
+                "focus": "Ningen (間柄), relationality, and cultural climate",
+            },
         }
 
     def _analyze_ningen(self, prompt: str) -> Dict[str, Any]:
@@ -109,7 +111,7 @@ class Watsuji(Philosopher):
             "betweenness": betweenness,
             "ethics": ethics,
             "spatiotemporal": spatiotemporal,
-            "japanese_traits": japanese_traits
+            "japanese_traits": japanese_traits,
         }
 
     def _assess_relationality(self, text: str) -> Dict[str, Any]:
@@ -122,16 +124,41 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Relational indicators
-        relation_words = ["we", "us", "together", "relationship", "connect", "between", "among", "community"]
-        isolation_words = ["i", "me", "alone", "individual", "myself", "independent", "separate"]
+        relation_words = [
+            "we",
+            "us",
+            "together",
+            "relationship",
+            "connect",
+            "between",
+            "among",
+            "community",
+        ]
+        isolation_words = [
+            "i",
+            "me",
+            "alone",
+            "individual",
+            "myself",
+            "independent",
+            "separate",
+        ]
 
         relation_count = sum(1 for word in relation_words if word in text_lower)
         isolation_count = sum(1 for word in isolation_words if word in text_lower)
 
         # Check for explicit relational awareness
-        explicit_relation = any(phrase in text_lower for phrase in [
-            "each other", "one another", "mutual", "shared", "collective", "social"
-        ])
+        explicit_relation = any(
+            phrase in text_lower
+            for phrase in [
+                "each other",
+                "one another",
+                "mutual",
+                "shared",
+                "collective",
+                "social",
+            ]
+        )
 
         if relation_count > isolation_count * 2 or explicit_relation:
             level = "High"
@@ -139,7 +166,9 @@ class Watsuji(Philosopher):
             character = "間柄的 (aidagara-teki) - Relational mode"
         elif isolation_count > relation_count * 2:
             level = "Low"
-            status = "Individualistic emphasis - ningen obscured by Western individualism"
+            status = (
+                "Individualistic emphasis - ningen obscured by Western individualism"
+            )
             character = "個人的 (kojin-teki) - Individualistic mode"
         else:
             level = "Medium"
@@ -150,7 +179,7 @@ class Watsuji(Philosopher):
             "level": level,
             "status": status,
             "character": character,
-            "watsuji_principle": "人間は間柄である - Human being is betweenness"
+            "watsuji_principle": "人間は間柄である - Human being is betweenness",
         }
 
     def _determine_climate_type(self, text: str) -> Dict[str, Any]:
@@ -165,22 +194,48 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Monsoon indicators: Acceptance, harmony, resignation, cyclical
-        monsoon_words = ["accept", "harmony", "flow", "adapt", "resign", "cycle", "nature", "seasonal"]
+        monsoon_words = [
+            "accept",
+            "harmony",
+            "flow",
+            "adapt",
+            "resign",
+            "cycle",
+            "nature",
+            "seasonal",
+        ]
         monsoon_count = sum(1 for word in monsoon_words if word in text_lower)
 
         # Desert indicators: Resistance, transcendence, absolute, struggle
-        desert_words = ["resist", "fight", "transcend", "absolute", "god", "eternal", "struggle", "overcome"]
+        desert_words = [
+            "resist",
+            "fight",
+            "transcend",
+            "absolute",
+            "god",
+            "eternal",
+            "struggle",
+            "overcome",
+        ]
         desert_count = sum(1 for word in desert_words if word in text_lower)
 
         # Meadow indicators: Reason, measure, balance, rational
-        meadow_words = ["reason", "rational", "measure", "balance", "order", "logic", "moderate"]
+        meadow_words = [
+            "reason",
+            "rational",
+            "measure",
+            "balance",
+            "order",
+            "logic",
+            "moderate",
+        ]
         meadow_count = sum(1 for word in meadow_words if word in text_lower)
 
         # Determine dominant type
         scores = {
             "Monsoon": monsoon_count,
             "Desert": desert_count,
-            "Meadow": meadow_count
+            "Meadow": meadow_count,
         }
         dominant_type = max(scores, key=scores.get)
 
@@ -198,14 +253,16 @@ class Watsuji(Philosopher):
             cultural_note = "Resistance and transcendence - 超越 (choetsu)"
         else:  # Meadow
             type_name = "Meadow (牧場型)"
-            description = "Rational, measured, balanced - characteristic of temperate Europe"
+            description = (
+                "Rational, measured, balanced - characteristic of temperate Europe"
+            )
             cultural_note = "Rationality and moderation - 理性 (risei)"
 
         return {
             "type": type_name,
             "description": description,
             "cultural_note": cultural_note,
-            "principle": "風土 (fūdo) - Climate shapes culture and consciousness"
+            "principle": "風土 (fūdo) - Climate shapes culture and consciousness",
         }
 
     def _analyze_dialectic(self, text: str) -> Dict[str, Any]:
@@ -218,39 +275,70 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Individual pole
-        individual_words = ["i", "me", "self", "own", "personal", "individual", "unique"]
+        individual_words = [
+            "i",
+            "me",
+            "self",
+            "own",
+            "personal",
+            "individual",
+            "unique",
+        ]
         individual_count = sum(1 for word in individual_words if word in text_lower)
 
         # Totality/collective pole
-        collective_words = ["we", "society", "community", "group", "collective", "whole", "all"]
+        collective_words = [
+            "we",
+            "society",
+            "community",
+            "group",
+            "collective",
+            "whole",
+            "all",
+        ]
         collective_count = sum(1 for word in collective_words if word in text_lower)
 
         # Dialectical synthesis indicators
-        synthesis_words = ["both", "between", "balance", "integrate", "unite", "harmonize"]
+        synthesis_words = [
+            "both",
+            "between",
+            "balance",
+            "integrate",
+            "unite",
+            "harmonize",
+        ]
         synthesis_count = sum(1 for word in synthesis_words if word in text_lower)
 
         if synthesis_count >= 2:
             stage = "Dialectical Synthesis"
-            description = "Integration of individual and totality - true ethical existence"
+            description = (
+                "Integration of individual and totality - true ethical existence"
+            )
             balance = "Balanced"
         elif individual_count > collective_count * 2:
             stage = "Individual Pole"
-            description = "Emphasis on individual - partial view lacking relational dimension"
+            description = (
+                "Emphasis on individual - partial view lacking relational dimension"
+            )
             balance = "Individual-dominant"
         elif collective_count > individual_count * 2:
             stage = "Totality Pole"
-            description = "Emphasis on collective - partial view lacking individual dimension"
+            description = (
+                "Emphasis on collective - partial view lacking individual dimension"
+            )
             balance = "Collective-dominant"
         else:
             stage = "Dialectical Tension"
-            description = "Tension between individual and totality - movement toward synthesis"
+            description = (
+                "Tension between individual and totality - movement toward synthesis"
+            )
             balance = "Dynamic tension"
 
         return {
             "stage": stage,
             "description": description,
             "balance": balance,
-            "ethical_note": "真の人間存在は個人と全体の弁証法的統一 - True human existence is dialectical unity"
+            "ethical_note": "真の人間存在は個人と全体の弁証法的統一 - True human existence is dialectical unity",
         }
 
     def _assess_betweenness(self, text: str) -> Dict[str, Any]:
@@ -263,15 +351,38 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Betweenness indicators
-        between_words = ["between", "among", "relation", "connect", "link", "bridge", "space", "interval"]
+        between_words = [
+            "between",
+            "among",
+            "relation",
+            "connect",
+            "link",
+            "bridge",
+            "space",
+            "interval",
+        ]
         has_betweenness = sum(1 for word in between_words if word in text_lower)
 
         # Static/fixed indicators (opposed to dynamic betweenness)
-        static_words = ["fixed", "static", "isolated", "separate", "alone", "independent"]
+        static_words = [
+            "fixed",
+            "static",
+            "isolated",
+            "separate",
+            "alone",
+            "independent",
+        ]
         has_static = sum(1 for word in static_words if word in text_lower)
 
         # Dynamic relational indicators
-        dynamic_words = ["interact", "engage", "mutual", "reciprocal", "dialogue", "exchange"]
+        dynamic_words = [
+            "interact",
+            "engage",
+            "mutual",
+            "reciprocal",
+            "dialogue",
+            "exchange",
+        ]
         has_dynamic = sum(1 for word in dynamic_words if word in text_lower)
 
         if has_dynamic >= 2 or has_betweenness >= 3:
@@ -280,7 +391,9 @@ class Watsuji(Philosopher):
             level = "High"
         elif has_static >= 2:
             quality = "Collapsed Ma"
-            description = "Relational space collapsed - beings treated as isolated entities"
+            description = (
+                "Relational space collapsed - beings treated as isolated entities"
+            )
             level = "Low"
         elif has_betweenness >= 1:
             quality = "Emerging Ma"
@@ -295,7 +408,7 @@ class Watsuji(Philosopher):
             "quality": quality,
             "description": description,
             "level": level,
-            "concept": "間 (ma) - The between-space that constitutes relationship"
+            "concept": "間 (ma) - The between-space that constitutes relationship",
         }
 
     def _evaluate_ethics(self, text: str) -> Dict[str, Any]:
@@ -308,11 +421,25 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Relational ethics indicators
-        relational_ethics = ["duty", "obligation", "responsibility", "care", "trust", "respect"]
+        relational_ethics = [
+            "duty",
+            "obligation",
+            "responsibility",
+            "care",
+            "trust",
+            "respect",
+        ]
         has_relational = sum(1 for word in relational_ethics if word in text_lower)
 
         # Abstract/individualist ethics
-        abstract_ethics = ["right", "wrong", "rule", "law", "principle", "individual choice"]
+        abstract_ethics = [
+            "right",
+            "wrong",
+            "rule",
+            "law",
+            "principle",
+            "individual choice",
+        ]
         has_abstract = sum(1 for word in abstract_ethics if word in text_lower)
 
         # Japanese ethical concepts
@@ -336,7 +463,7 @@ class Watsuji(Philosopher):
             "mode": ethical_mode,
             "description": description,
             "orientation": orientation,
-            "principle": "倫理 = 倫 (relationship) + 理 (principle)"
+            "principle": "倫理 = 倫 (relationship) + 理 (principle)",
         }
 
     def _analyze_spatiotemporal(self, text: str) -> Dict[str, Any]:
@@ -348,11 +475,29 @@ class Watsuji(Philosopher):
         text_lower = text.lower()
 
         # Spatial indicators
-        spatial_words = ["place", "space", "here", "where", "location", "environment", "climate", "land"]
+        spatial_words = [
+            "place",
+            "space",
+            "here",
+            "where",
+            "location",
+            "environment",
+            "climate",
+            "land",
+        ]
         has_spatial = sum(1 for word in spatial_words if word in text_lower)
 
         # Temporal indicators
-        temporal_words = ["time", "history", "when", "past", "future", "tradition", "change", "era"]
+        temporal_words = [
+            "time",
+            "history",
+            "when",
+            "past",
+            "future",
+            "tradition",
+            "change",
+            "era",
+        ]
         has_temporal = sum(1 for word in temporal_words if word in text_lower)
 
         if has_spatial > 0 and has_temporal > 0:
@@ -371,7 +516,7 @@ class Watsuji(Philosopher):
         return {
             "structure": structure,
             "description": description,
-            "note": "人間は風土的・歴史的存在 - Humans are climatic-historical beings"
+            "note": "人間は風土的・歴史的存在 - Humans are climatic-historical beings",
         }
 
     def _detect_japanese_traits(self, text: str) -> List[str]:
@@ -384,27 +529,45 @@ class Watsuji(Philosopher):
         traits = []
 
         # Acceptance and resignation (諦念 - teinen)
-        if any(word in text_lower for word in ["accept", "resign", "let go", "flow", "fate"]):
+        if any(
+            word in text_lower
+            for word in ["accept", "resign", "let go", "flow", "fate"]
+        ):
             traits.append("諦念 (teinen) - Acceptance and resignation to natural flow")
 
         # Harmony (和 - wa)
-        if any(word in text_lower for word in ["harmony", "peaceful", "accord", "unite", "together"]):
+        if any(
+            word in text_lower
+            for word in ["harmony", "peaceful", "accord", "unite", "together"]
+        ):
             traits.append("和 (wa) - Harmony and unity")
 
         # Sensitivity to atmosphere (雰囲気 - fun'iki)
-        if any(word in text_lower for word in ["atmosphere", "mood", "feeling", "sense", "vibe"]):
+        if any(
+            word in text_lower
+            for word in ["atmosphere", "mood", "feeling", "sense", "vibe"]
+        ):
             traits.append("雰囲気 (fun'iki) - Sensitivity to atmosphere and context")
 
         # Relational awareness (間柄 - aidagara)
-        if any(word in text_lower for word in ["relationship", "between", "mutual", "reciprocal"]):
+        if any(
+            word in text_lower
+            for word in ["relationship", "between", "mutual", "reciprocal"]
+        ):
             traits.append("間柄 (aidagara) - Awareness of relational context")
 
         # Seasonal/cyclical awareness
-        if any(word in text_lower for word in ["season", "cycle", "change", "impermanent", "transient"]):
+        if any(
+            word in text_lower
+            for word in ["season", "cycle", "change", "impermanent", "transient"]
+        ):
             traits.append("無常 (mujō) - Awareness of impermanence and cycles")
 
         # Obligation/duty (義理 - giri)
-        if any(word in text_lower for word in ["duty", "obligation", "giri", "ought", "must"]):
+        if any(
+            word in text_lower
+            for word in ["duty", "obligation", "giri", "ought", "must"]
+        ):
             traits.append("義理 (giri) - Sense of social obligation")
 
         if not traits:
@@ -418,7 +581,7 @@ class Watsuji(Philosopher):
         climate: Dict[str, Any],
         dialectic: Dict[str, Any],
         betweenness: Dict[str, Any],
-        ethics: Dict[str, Any]
+        ethics: Dict[str, Any],
     ) -> str:
         """Construct Watsuji's ethical-climatic reasoning."""
         reasoning = (
@@ -429,10 +592,14 @@ class Watsuji(Philosopher):
         )
 
         # Add betweenness quality
-        reasoning += f"The quality of 間 (ma/betweenness) is: {betweenness['description']}. "
+        reasoning += (
+            f"The quality of 間 (ma/betweenness) is: {betweenness['description']}. "
+        )
 
         # Add ethical dimension
-        reasoning += f"Ethically, this reflects {ethics['mode']}: {ethics['description']}. "
+        reasoning += (
+            f"Ethically, this reflects {ethics['mode']}: {ethics['description']}. "
+        )
 
         # Conclude with Watsuji's core insight
         reasoning += (

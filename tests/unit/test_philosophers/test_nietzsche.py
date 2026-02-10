@@ -111,7 +111,9 @@ class TestNietzscheWillToPower:
     def test_creative_will_detection(self):
         """Test detection of creative will."""
         nietzsche = Nietzsche()
-        prompt = "I create and develop new ideas, growing and expanding my understanding."
+        prompt = (
+            "I create and develop new ideas, growing and expanding my understanding."
+        )
         result = nietzsche.reason(prompt)
 
         will_to_power = result["will_to_power"]
@@ -166,7 +168,10 @@ class TestNietzscheUbermensch:
         result = nietzsche.reason(prompt)
 
         ubermensch = result["ubermensch"]
-        assert "Potential" in ubermensch["orientation"] or "Übermensch" in ubermensch["orientation"]
+        assert (
+            "Potential" in ubermensch["orientation"]
+            or "Übermensch" in ubermensch["orientation"]
+        )
 
     def test_ubermensch_has_principle(self, simple_prompt):
         """Test that Übermensch includes principle."""
@@ -191,7 +196,9 @@ class TestNietzscheEternalRecurrence:
         assert "Passes" in eternal_recurrence["test_result"]
         assert "Amor fati" in eternal_recurrence["attitude"]
 
-    @pytest.mark.skip(reason="Word matching issue - 'again' matches despite 'never', similar to Sartre tests")
+    @pytest.mark.skip(
+        reason="Word matching issue - 'again' matches despite 'never', similar to Sartre tests"
+    )
     def test_fails_eternal_recurrence(self):
         """Test failing eternal recurrence test."""
         nietzsche = Nietzsche()
@@ -204,12 +211,17 @@ class TestNietzscheEternalRecurrence:
     def test_lives_in_present(self):
         """Test living in the present moment."""
         nietzsche = Nietzsche()
-        prompt = "I focus on this moment, right now, living fully in the present instant."
+        prompt = (
+            "I focus on this moment, right now, living fully in the present instant."
+        )
         result = nietzsche.reason(prompt)
 
         eternal_recurrence = result["eternal_recurrence"]
         # Could be "Lives in Present" or "Passes"
-        assert "Present" in eternal_recurrence["test_result"] or "Passes" in eternal_recurrence["test_result"]
+        assert (
+            "Present" in eternal_recurrence["test_result"]
+            or "Passes" in eternal_recurrence["test_result"]
+        )
 
     def test_eternal_recurrence_has_principle(self, simple_prompt):
         """Test that eternal recurrence includes principle."""
@@ -237,7 +249,9 @@ class TestNietzscheNihilism:
     def test_active_nihilism_detection(self):
         """Test detection of active nihilism."""
         nietzsche = Nietzsche()
-        prompt = "We must destroy old values and clear away the debris for a new beginning."
+        prompt = (
+            "We must destroy old values and clear away the debris for a new beginning."
+        )
         result = nietzsche.reason(prompt)
 
         nihilism = result["nihilism"]
@@ -278,7 +292,9 @@ class TestNietzscheMoralityType:
     def test_slave_morality_detection(self):
         """Test detection of slave morality."""
         nietzsche = Nietzsche()
-        prompt = "They are evil and sinful, they must obey and feel guilty for their sins."
+        prompt = (
+            "They are evil and sinful, they must obey and feel guilty for their sins."
+        )
         result = nietzsche.reason(prompt)
 
         morality = result["morality_type"]
@@ -287,7 +303,9 @@ class TestNietzscheMoralityType:
     def test_mixed_morality_detection(self):
         """Test detection of mixed morality."""
         nietzsche = Nietzsche()
-        prompt = "I affirm my strength and celebrate life, but I also feel duty and guilt."
+        prompt = (
+            "I affirm my strength and celebrate life, but I also feel duty and guilt."
+        )
         result = nietzsche.reason(prompt)
 
         morality = result["morality_type"]
@@ -310,11 +328,16 @@ class TestNietzscheRessentiment:
     def test_strong_ressentiment_detection(self):
         """Test detection of strong ressentiment."""
         nietzsche = Nietzsche()
-        prompt = "It's all their fault, they deserve to be punished for what they did to me."
+        prompt = (
+            "It's all their fault, they deserve to be punished for what they did to me."
+        )
         result = nietzsche.reason(prompt)
 
         ressentiment = result["ressentiment"]
-        assert "Strong Ressentiment" in ressentiment["presence"] or "Ressentiment" in ressentiment["presence"]
+        assert (
+            "Strong Ressentiment" in ressentiment["presence"]
+            or "Ressentiment" in ressentiment["presence"]
+        )
 
     def test_victimhood_detection(self):
         """Test detection of victimhood (breeding ground for ressentiment)."""
@@ -323,7 +346,9 @@ class TestNietzscheRessentiment:
         result = nietzsche.reason(prompt)
 
         ressentiment = result["ressentiment"]
-        assert "Victimhood" in ressentiment["presence"] or ressentiment["level"] != "None"
+        assert (
+            "Victimhood" in ressentiment["presence"] or ressentiment["level"] != "None"
+        )
 
     def test_no_ressentiment_detection(self):
         """Test detection of no ressentiment (self-responsibility)."""
@@ -355,7 +380,10 @@ class TestNietzscheAmorFati:
         result = nietzsche.reason(prompt)
 
         amor_fati = result["amor_fati"]
-        assert "Amor Fati Present" in amor_fati["presence"] or "Affirmation" in amor_fati["presence"]
+        assert (
+            "Amor Fati Present" in amor_fati["presence"]
+            or "Affirmation" in amor_fati["presence"]
+        )
         assert amor_fati["level"] != "None"
 
     def test_rejection_of_fate(self):
@@ -383,7 +411,9 @@ class TestNietzscheDionysianApollonian:
     def test_dionysian_detection(self):
         """Test detection of Dionysian spirit."""
         nietzsche = Nietzsche()
-        prompt = "Wild chaos and ecstatic passion, intoxication and dance, frenzy and music!"
+        prompt = (
+            "Wild chaos and ecstatic passion, intoxication and dance, frenzy and music!"
+        )
         result = nietzsche.reason(prompt)
 
         dionysian_apollonian = result["dionysian_apollonian"]
@@ -405,7 +435,10 @@ class TestNietzscheDionysianApollonian:
         result = nietzsche.reason(prompt)
 
         dionysian_apollonian = result["dionysian_apollonian"]
-        assert "Balanced" in dionysian_apollonian["balance"] or dionysian_apollonian["type"] == "Dionysian-Apollonian"
+        assert (
+            "Balanced" in dionysian_apollonian["balance"]
+            or dionysian_apollonian["type"] == "Dionysian-Apollonian"
+        )
 
     def test_dionysian_apollonian_has_principle(self, simple_prompt):
         """Test that Dionysian-Apollonian includes principle."""
@@ -542,7 +575,10 @@ class TestNietzscheComprehensiveAnalysis:
         # Should show Übermensch orientation
         assert "Übermensch" in result["ubermensch"]["orientation"]
         # Should pass eternal recurrence or show affirmation
-        assert "Passes" in result["eternal_recurrence"]["test_result"] or "Present" in result["eternal_recurrence"]["test_result"]
+        assert (
+            "Passes" in result["eternal_recurrence"]["test_result"]
+            or "Present" in result["eternal_recurrence"]["test_result"]
+        )
         # Should show value creation
         assert "Value Creator" in result["value_creation"]["status"]
         # Should show amor fati
@@ -555,7 +591,10 @@ class TestNietzscheComprehensiveAnalysis:
         result = nietzsche.reason(prompt)
 
         # Should show Last Man or lower type
-        assert "Last Man" in result["ubermensch"]["orientation"] or "lower" in result["ubermensch"]["type"].lower()
+        assert (
+            "Last Man" in result["ubermensch"]["orientation"]
+            or "lower" in result["ubermensch"]["type"].lower()
+        )
 
 
 class TestNietzscheTensionField:

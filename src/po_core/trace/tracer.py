@@ -5,14 +5,14 @@ Comprehensive logging system for tracking philosophical reasoning processes.
 Integrates with PoTrace for persistent session-based logging.
 """
 
-from enum import Enum
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
-from datetime import datetime
-from dataclasses import dataclass, field
 import json
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:
-    from po_core.po_trace import PoTrace, EventType
+    from po_core.po_trace import EventType, PoTrace
 
 
 class TraceLevel(Enum):

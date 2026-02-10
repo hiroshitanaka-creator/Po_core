@@ -274,14 +274,18 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.safety.wethics_gate.policies.base import IntentionPolicy
 
 
-def _sort_intention_policies(policies: Iterable[IntentionPolicy]) -> List[IntentionPolicy]:
+def _sort_intention_policies(
+    policies: Iterable[IntentionPolicy],
+) -> List[IntentionPolicy]:
     """Sort policies by priority (smaller = earlier)."""
     ps = list(policies)
     ps.sort(key=lambda p: (getattr(p, "priority", 100), getattr(p, "rule_id", "")))
     return ps
 
 
-def _merge_verdicts(decision: Decision, verdicts: List[SafetyVerdict], stage: str) -> SafetyVerdict:
+def _merge_verdicts(
+    decision: Decision, verdicts: List[SafetyVerdict], stage: str
+) -> SafetyVerdict:
     """Merge multiple verdicts into one, collecting all rule_ids and reasons.
 
     Preserves meta from the first (highest-priority) verdict so that

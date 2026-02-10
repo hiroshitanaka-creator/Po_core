@@ -11,8 +11,13 @@ from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class WethicsGatePort(Protocol):
-    def judge_intent(self, ctx: Context, intent: Intent, tensors: TensorSnapshot, memory: MemorySnapshot) -> SafetyVerdict:
-        ...
+    def judge_intent(
+        self,
+        ctx: Context,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> SafetyVerdict: ...
 
     def judge_action(
         self,
@@ -21,5 +26,4 @@ class WethicsGatePort(Protocol):
         proposal: Proposal,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
-    ) -> SafetyVerdict:
-        ...
+    ) -> SafetyVerdict: ...

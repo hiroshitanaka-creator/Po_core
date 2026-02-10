@@ -9,6 +9,7 @@ Priority: 5 (very early - safety mode overrides most other policies)
 
 This is the intention-stage counterpart to WG.ACT.MODE.001.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,9 +18,9 @@ from typing import Optional
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 
 
 @dataclass(frozen=True)

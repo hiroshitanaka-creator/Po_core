@@ -8,6 +8,7 @@ Tests the audit logging system including:
 - Export functionality
 - Integration with Po_self
 """
+
 import json
 import tempfile
 from pathlib import Path
@@ -446,7 +447,9 @@ class TestPoTraceIntegration:
         session = po_self.po_trace.get_session(session_id)
 
         # Should have events for: start, each philosopher, completion
-        expected_events = 2 + len(result.philosophers)  # start + philosophers + completion
+        expected_events = 2 + len(
+            result.philosophers
+        )  # start + philosophers + completion
         assert len(session.events) == expected_events
 
         # Check event types

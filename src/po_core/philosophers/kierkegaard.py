@@ -33,10 +33,12 @@ class Kierkegaard(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Søren Kierkegaard",
-            description="Existential philosopher focused on individual existence, faith, and subjective truth"
+            description="Existential philosopher focused on individual existence, faith, and subjective truth",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Kierkegaard's existential perspective.
 
@@ -69,8 +71,8 @@ class Kierkegaard(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Existential analysis of individual existence",
-                "focus": "Faith, anxiety, despair, and the stages of life"
-            }
+                "focus": "Faith, anxiety, despair, and the stages of life",
+            },
         }
 
     def _analyze_existence(self, prompt: str) -> Dict[str, Any]:
@@ -125,7 +127,7 @@ class Kierkegaard(Philosopher):
             "individual": individual,
             "paradox": paradox,
             "leap": leap,
-            "moment": moment
+            "moment": moment,
         }
 
     def _determine_life_stage(self, text: str) -> Dict[str, Any]:
@@ -139,22 +141,49 @@ class Kierkegaard(Philosopher):
         text_lower = text.lower()
 
         # Aesthetic indicators
-        aesthetic_words = ["pleasure", "enjoy", "fun", "beautiful", "desire", "moment", "variety", "bored"]
+        aesthetic_words = [
+            "pleasure",
+            "enjoy",
+            "fun",
+            "beautiful",
+            "desire",
+            "moment",
+            "variety",
+            "bored",
+        ]
         has_aesthetic = sum(1 for word in aesthetic_words if word in text_lower)
 
         # Ethical indicators
-        ethical_words = ["duty", "responsibility", "commitment", "marriage", "moral", "ought", "should", "obligation"]
+        ethical_words = [
+            "duty",
+            "responsibility",
+            "commitment",
+            "marriage",
+            "moral",
+            "ought",
+            "should",
+            "obligation",
+        ]
         has_ethical = sum(1 for word in ethical_words if word in text_lower)
 
         # Religious indicators
-        religious_words = ["faith", "god", "believe", "trust", "prayer", "divine", "eternal", "religious"]
+        religious_words = [
+            "faith",
+            "god",
+            "believe",
+            "trust",
+            "prayer",
+            "divine",
+            "eternal",
+            "religious",
+        ]
         has_religious = sum(1 for word in religious_words if word in text_lower)
 
         # Determine dominant stage
         scores = {
             "Aesthetic": has_aesthetic,
             "Ethical": has_ethical,
-            "Religious": has_religious
+            "Religious": has_religious,
         }
         dominant = max(scores, key=scores.get)
 
@@ -164,7 +193,9 @@ class Kierkegaard(Philosopher):
             note = "No clear existential orientation"
         elif dominant == "Aesthetic":
             stage_type = "Aesthetic Stage"
-            description = "Living for pleasure and immediate experience - the rotation method"
+            description = (
+                "Living for pleasure and immediate experience - the rotation method"
+            )
             note = "Aesthetic existence leads to boredom and despair"
         elif dominant == "Ethical":
             stage_type = "Ethical Stage"
@@ -180,7 +211,7 @@ class Kierkegaard(Philosopher):
             "description": description,
             "scores": scores,
             "note": note,
-            "principle": "Three stages: Aesthetic (pleasure), Ethical (duty), Religious (faith)"
+            "principle": "Three stages: Aesthetic (pleasure), Ethical (duty), Religious (faith)",
         }
 
     def _assess_anxiety(self, text: str) -> Dict[str, Any]:
@@ -193,11 +224,26 @@ class Kierkegaard(Philosopher):
         text_lower = text.lower()
 
         # Anxiety indicators
-        anxiety_words = ["anxiety", "anxious", "dread", "angst", "worry", "fear", "nervous"]
+        anxiety_words = [
+            "anxiety",
+            "anxious",
+            "dread",
+            "angst",
+            "worry",
+            "fear",
+            "nervous",
+        ]
         has_anxiety = sum(1 for word in anxiety_words if word in text_lower)
 
         # Freedom/possibility indicators
-        freedom_words = ["freedom", "free", "possibility", "possible", "choice", "choose"]
+        freedom_words = [
+            "freedom",
+            "free",
+            "possibility",
+            "possible",
+            "choice",
+            "choose",
+        ]
         has_freedom = sum(1 for word in freedom_words if word in text_lower)
 
         # Dizziness/vertigo indicators
@@ -237,7 +283,7 @@ class Kierkegaard(Philosopher):
             "presence": presence,
             "description": description,
             "intensity": intensity,
-            "principle": "Anxiety is the dizziness of freedom - possibility before nothingness"
+            "principle": "Anxiety is the dizziness of freedom - possibility before nothingness",
         }
 
     def _detect_despair(self, text: str) -> Dict[str, Any]:
@@ -254,15 +300,32 @@ class Kierkegaard(Philosopher):
         has_despair = sum(1 for word in despair_words if word in text_lower)
 
         # Not wanting to be oneself
-        not_self_words = ["not myself", "want to be someone else", "escape myself", "hate myself"]
+        not_self_words = [
+            "not myself",
+            "want to be someone else",
+            "escape myself",
+            "hate myself",
+        ]
         has_not_self = sum(1 for phrase in not_self_words if phrase in text_lower)
 
         # Wanting to be oneself (defiant despair)
-        defiant_self_words = ["my own", "myself alone", "by myself", "self-made", "independent"]
+        defiant_self_words = [
+            "my own",
+            "myself alone",
+            "by myself",
+            "self-made",
+            "independent",
+        ]
         has_defiant = sum(1 for phrase in defiant_self_words if phrase in text_lower)
 
         # Unconscious despair (spiritlessness)
-        unconscious_words = ["unaware", "numb", "distracted", "entertainment", "conformity"]
+        unconscious_words = [
+            "unaware",
+            "numb",
+            "distracted",
+            "entertainment",
+            "conformity",
+        ]
         has_unconscious = sum(1 for word in unconscious_words if word in text_lower)
 
         # Self-awareness
@@ -275,7 +338,9 @@ class Kierkegaard(Philosopher):
             depth = "Conscious"
         elif has_despair >= 1 and has_defiant >= 1:
             type_despair = "Despair of Wanting to Be Oneself"
-            description = "Despair of defiance - wanting to be oneself by one's own power"
+            description = (
+                "Despair of defiance - wanting to be oneself by one's own power"
+            )
             depth = "Defiant"
         elif has_unconscious >= 2:
             type_despair = "Unconscious Despair"
@@ -294,7 +359,7 @@ class Kierkegaard(Philosopher):
             "type": type_despair,
             "description": description,
             "depth": depth,
-            "principle": "Despair is the sickness unto death - a sickness in the self"
+            "principle": "Despair is the sickness unto death - a sickness in the self",
         }
 
     def _evaluate_faith(self, text: str) -> Dict[str, Any]:
@@ -311,7 +376,14 @@ class Kierkegaard(Philosopher):
         has_faith = sum(1 for word in faith_words if word in text_lower)
 
         # Reason/knowledge indicators
-        reason_words = ["reason", "rational", "logical", "prove", "evidence", "knowledge"]
+        reason_words = [
+            "reason",
+            "rational",
+            "logical",
+            "prove",
+            "evidence",
+            "knowledge",
+        ]
         has_reason = sum(1 for word in reason_words if word in text_lower)
 
         # Paradox/absurd indicators
@@ -351,7 +423,7 @@ class Kierkegaard(Philosopher):
             "type": faith_type,
             "description": description,
             "status": status,
-            "principle": "Faith is the leap beyond reason into the paradox of the absolute"
+            "principle": "Faith is the leap beyond reason into the paradox of the absolute",
         }
 
     def _assess_subjectivity(self, text: str) -> Dict[str, Any]:
@@ -364,11 +436,25 @@ class Kierkegaard(Philosopher):
         text_lower = text.lower()
 
         # Subjectivity indicators
-        subjective_words = ["i feel", "i believe", "my experience", "personal", "individual", "my truth"]
+        subjective_words = [
+            "i feel",
+            "i believe",
+            "my experience",
+            "personal",
+            "individual",
+            "my truth",
+        ]
         has_subjective = sum(1 for phrase in subjective_words if phrase in text_lower)
 
         # Objectivity indicators
-        objective_words = ["objective", "fact", "evidence", "proven", "universal", "everyone"]
+        objective_words = [
+            "objective",
+            "fact",
+            "evidence",
+            "proven",
+            "universal",
+            "everyone",
+        ]
         has_objective = sum(1 for word in objective_words if word in text_lower)
 
         # Passion/inwardness indicators
@@ -400,7 +486,7 @@ class Kierkegaard(Philosopher):
             "orientation": orientation,
             "description": description,
             "approach": approach,
-            "principle": "Truth is subjectivity - individual passionate appropriation of truth"
+            "principle": "Truth is subjectivity - individual passionate appropriation of truth",
         }
 
     def _check_individual(self, text: str) -> Dict[str, Any]:
@@ -417,7 +503,15 @@ class Kierkegaard(Philosopher):
         has_individual = sum(1 for phrase in individual_words if phrase in text_lower)
 
         # Crowd/mass indicators
-        crowd_words = ["crowd", "everyone", "masses", "public", "they", "society", "conformity"]
+        crowd_words = [
+            "crowd",
+            "everyone",
+            "masses",
+            "public",
+            "they",
+            "society",
+            "conformity",
+        ]
         has_crowd = sum(1 for word in crowd_words if word in text_lower)
 
         # Before God indicators
@@ -449,7 +543,7 @@ class Kierkegaard(Philosopher):
             "status": status,
             "description": description,
             "stance": stance,
-            "principle": "The individual - single individual before God, against the crowd"
+            "principle": "The individual - single individual before God, against the crowd",
         }
 
     def _detect_paradox(self, text: str) -> Dict[str, Any]:
@@ -470,7 +564,12 @@ class Kierkegaard(Philosopher):
         has_eternal_temporal = sum(1 for word in eternal_temporal if word in text_lower)
 
         # Incarnation/God-man indicators
-        incarnation_words = ["incarnation", "god-man", "divine human", "eternal in time"]
+        incarnation_words = [
+            "incarnation",
+            "god-man",
+            "divine human",
+            "eternal in time",
+        ]
         has_incarnation = sum(1 for phrase in incarnation_words if phrase in text_lower)
 
         # Rational/logical indicators
@@ -502,7 +601,7 @@ class Kierkegaard(Philosopher):
             "presence": presence,
             "description": description,
             "type": type_paradox,
-            "principle": "The absolute paradox - eternal truth in temporal existence"
+            "principle": "The absolute paradox - eternal truth in temporal existence",
         }
 
     def _assess_leap(self, text: str) -> Dict[str, Any]:
@@ -551,7 +650,7 @@ class Kierkegaard(Philosopher):
             "status": status,
             "description": description,
             "mode": mode,
-            "principle": "The leap of faith - decisive movement beyond reason"
+            "principle": "The leap of faith - decisive movement beyond reason",
         }
 
     def _evaluate_moment(self, text: str) -> Dict[str, Any]:
@@ -604,7 +703,7 @@ class Kierkegaard(Philosopher):
             "significance": significance,
             "description": description,
             "urgency": urgency,
-            "principle": "The moment/instant - where eternal significance enters time"
+            "principle": "The moment/instant - where eternal significance enters time",
         }
 
     def _construct_reasoning(
@@ -613,7 +712,7 @@ class Kierkegaard(Philosopher):
         anxiety: Dict[str, Any],
         despair: Dict[str, Any],
         faith: Dict[str, Any],
-        subjectivity: Dict[str, Any]
+        subjectivity: Dict[str, Any],
     ) -> str:
         """Construct Kierkegaardian existential reasoning."""
         reasoning = (
@@ -703,5 +802,7 @@ class Kierkegaard(Philosopher):
         return {
             "level": level,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }

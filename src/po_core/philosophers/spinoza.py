@@ -34,10 +34,12 @@ class Spinoza(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Baruch Spinoza",
-            description="Rationalist philosopher focused on substance monism, determinism, and the intellectual love of God"
+            description="Rationalist philosopher focused on substance monism, determinism, and the intellectual love of God",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Spinoza's rationalist perspective.
 
@@ -72,8 +74,8 @@ class Spinoza(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Rationalist metaphysics and ethics",
-                "focus": "Substance, necessity, and intellectual love of God"
-            }
+                "focus": "Substance, necessity, and intellectual love of God",
+            },
         }
 
     def _analyze_spinozistic_framework(self, prompt: str) -> Dict[str, Any]:
@@ -101,8 +103,7 @@ class Spinoza(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
-            substance_monism, conatus, determinism, adequate_ideas,
-            freedom, amor_dei
+            substance_monism, conatus, determinism, adequate_ideas, freedom, amor_dei
         )
 
         return {
@@ -117,7 +118,7 @@ class Spinoza(Philosopher):
             "freedom": freedom,
             "affects": affects,
             "eternity_mind": eternity_mind,
-            "knowledge_kinds": knowledge_kinds
+            "knowledge_kinds": knowledge_kinds,
         }
 
     def _analyze_substance_monism(self, text: str) -> Dict[str, Any]:
@@ -149,7 +150,12 @@ class Spinoza(Philosopher):
         has_transcendence = any(word in text_lower for word in transcendence_words)
 
         # Pluralism (opposed to monism)
-        pluralism_words = ["many substances", "separate beings", "independent", "distinct"]
+        pluralism_words = [
+            "many substances",
+            "separate beings",
+            "independent",
+            "distinct",
+        ]
         has_pluralism = any(phrase in text_lower for phrase in pluralism_words)
 
         if monism_count >= 2 and god_nature_count >= 1 and not has_pluralism:
@@ -175,7 +181,7 @@ class Spinoza(Philosopher):
             "status": status,
             "immanent": has_immanence,
             "transcendent": has_transcendence,
-            "principle": "Whatever is, is in God, and nothing can exist or be conceived without God (Ethics I, P15)"
+            "principle": "Whatever is, is in God, and nothing can exist or be conceived without God (Ethics I, P15)",
         }
 
     def _analyze_attributes_modes(self, text: str) -> Dict[str, Any]:
@@ -188,14 +194,35 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # Attribute indicators (thought and extension are the two we know)
-        thought_words = ["thought", "thinking", "mind", "idea", "mental", "consciousness"]
-        extension_words = ["extension", "body", "physical", "matter", "space", "material"]
+        thought_words = [
+            "thought",
+            "thinking",
+            "mind",
+            "idea",
+            "mental",
+            "consciousness",
+        ]
+        extension_words = [
+            "extension",
+            "body",
+            "physical",
+            "matter",
+            "space",
+            "material",
+        ]
 
         has_thought = any(word in text_lower for word in thought_words)
         has_extension = any(word in text_lower for word in extension_words)
 
         # Mode indicators (finite things)
-        mode_words = ["finite", "particular", "individual", "modification", "thing", "being"]
+        mode_words = [
+            "finite",
+            "particular",
+            "individual",
+            "modification",
+            "thing",
+            "being",
+        ]
         mode_count = sum(1 for word in mode_words if word in text_lower)
 
         # Essence vs modification
@@ -215,7 +242,9 @@ class Spinoza(Philosopher):
             status = "Comprehensive"
         elif has_thought or has_extension:
             recognition = "Single Attribute"
-            description = f"Recognition of {'thought' if has_thought else 'extension'} attribute"
+            description = (
+                f"Recognition of {'thought' if has_thought else 'extension'} attribute"
+            )
             status = "Partial"
         else:
             recognition = "Attributes Not Evident"
@@ -241,7 +270,7 @@ class Spinoza(Philosopher):
             "has_extension_attribute": has_extension,
             "mode_status": mode_status,
             "mode_description": mode_desc,
-            "principle": "God is infinite substance consisting of infinite attributes; finite modes exist in and through God"
+            "principle": "God is infinite substance consisting of infinite attributes; finite modes exist in and through God",
         }
 
     def _analyze_conatus(self, text: str) -> Dict[str, Any]:
@@ -254,12 +283,28 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # Striving/perseverance indicators
-        conatus_words = ["strive", "persevere", "persist", "continue", "preserve", "maintain", "endure"]
+        conatus_words = [
+            "strive",
+            "persevere",
+            "persist",
+            "continue",
+            "preserve",
+            "maintain",
+            "endure",
+        ]
         conatus_count = sum(1 for word in conatus_words if word in text_lower)
 
         # Self-preservation
-        preservation_words = ["self-preservation", "survival", "stay alive", "keep going", "hold on"]
-        preservation_count = sum(1 for phrase in preservation_words if phrase in text_lower)
+        preservation_words = [
+            "self-preservation",
+            "survival",
+            "stay alive",
+            "keep going",
+            "hold on",
+        ]
+        preservation_count = sum(
+            1 for phrase in preservation_words if phrase in text_lower
+        )
 
         # Power/force of existence
         power_words = ["power", "force", "strength", "vigor", "vitality", "energy"]
@@ -270,14 +315,23 @@ class Spinoza(Philosopher):
         essence_count = sum(1 for word in essence_words if word in text_lower)
 
         # Death/destruction (opposed to conatus)
-        destruction_words = ["destroy", "death", "annihilate", "cease", "end", "give up"]
+        destruction_words = [
+            "destroy",
+            "death",
+            "annihilate",
+            "cease",
+            "end",
+            "give up",
+        ]
         destruction_count = sum(1 for word in destruction_words if word in text_lower)
 
         total_conatus = conatus_count + preservation_count + power_count
 
         if total_conatus >= 3 and essence_count >= 1:
             presence = "Strong Conatus"
-            description = "Active striving to persevere in being - the very essence of existence"
+            description = (
+                "Active striving to persevere in being - the very essence of existence"
+            )
             intensity = "High"
         elif total_conatus >= 2:
             presence = "Conatus Present"
@@ -298,7 +352,7 @@ class Spinoza(Philosopher):
             "intensity": intensity,
             "striving_score": conatus_count,
             "preservation_score": preservation_count,
-            "principle": "Each thing, as far as it can by its own power, strives to persevere in its being (Ethics III, P6)"
+            "principle": "Each thing, as far as it can by its own power, strives to persevere in its being (Ethics III, P6)",
         }
 
     def _analyze_amor_dei_intellectualis(self, text: str) -> Dict[str, Any]:
@@ -316,7 +370,14 @@ class Spinoza(Philosopher):
         love_count = sum(1 for word in love_words if word in text_lower)
 
         # Intellectual/understanding
-        intellectual_words = ["understand", "knowledge", "comprehend", "grasp", "intellectual", "rational"]
+        intellectual_words = [
+            "understand",
+            "knowledge",
+            "comprehend",
+            "grasp",
+            "intellectual",
+            "rational",
+        ]
         intellectual_count = sum(1 for word in intellectual_words if word in text_lower)
 
         # God/divine/nature
@@ -324,7 +385,14 @@ class Spinoza(Philosopher):
         divine_count = sum(1 for word in divine_words if word in text_lower)
 
         # Blessedness/joy
-        blessed_words = ["blessed", "blessedness", "joy", "happiness", "peace", "contentment"]
+        blessed_words = [
+            "blessed",
+            "blessedness",
+            "joy",
+            "happiness",
+            "peace",
+            "contentment",
+        ]
         blessed_count = sum(1 for word in blessed_words if word in text_lower)
 
         # Eternity perspective
@@ -337,13 +405,19 @@ class Spinoza(Philosopher):
 
         if love_count >= 1 and intellectual_count >= 2 and divine_count >= 1:
             presence = "Amor Dei Intellectualis"
-            description = "Intellectual love of God through understanding - highest blessedness"
+            description = (
+                "Intellectual love of God through understanding - highest blessedness"
+            )
             level = "Supreme"
         elif intellectual_count >= 2 and divine_count >= 1:
             presence = "Intellectual Understanding"
             description = "Rational comprehension of God/Nature"
             level = "High"
-        elif love_count >= 1 and divine_count >= 1 and emotional_count > intellectual_count:
+        elif (
+            love_count >= 1
+            and divine_count >= 1
+            and emotional_count > intellectual_count
+        ):
             presence = "Emotional Devotion"
             description = "Emotional rather than intellectual love - inadequate idea"
             level = "Confused"
@@ -363,7 +437,7 @@ class Spinoza(Philosopher):
             "has_eternity_perspective": has_eternity,
             "intellectual_score": intellectual_count,
             "emotional_score": emotional_count,
-            "principle": "The mind's intellectual love of God is the very love of God with which God loves himself (Ethics V, P36)"
+            "principle": "The mind's intellectual love of God is the very love of God with which God loves himself (Ethics V, P36)",
         }
 
     def _analyze_parallelism(self, text: str) -> Dict[str, Any]:
@@ -388,7 +462,12 @@ class Spinoza(Philosopher):
         parallel_count = sum(1 for word in parallel_words if word in text_lower)
 
         # Interaction/causation (opposed to parallelism)
-        interaction_words = ["mind affects body", "body affects mind", "interact", "cause"]
+        interaction_words = [
+            "mind affects body",
+            "body affects mind",
+            "interact",
+            "cause",
+        ]
         has_interaction = any(phrase in text_lower for phrase in interaction_words)
 
         # Unity/identity
@@ -410,7 +489,9 @@ class Spinoza(Philosopher):
                 status = "Unclear Relation"
         elif mind_count >= 1 or body_count >= 1:
             recognition = "Single Aspect"
-            description = f"Only {'mind' if mind_count > body_count else 'body'} considered"
+            description = (
+                f"Only {'mind' if mind_count > body_count else 'body'} considered"
+            )
             status = "Incomplete"
         else:
             recognition = "Not Addressed"
@@ -424,7 +505,7 @@ class Spinoza(Philosopher):
             "mind_emphasis": mind_count,
             "body_emphasis": body_count,
             "parallel_indicators": parallel_count,
-            "principle": "The order and connection of ideas is the same as the order and connection of things (Ethics II, P7)"
+            "principle": "The order and connection of ideas is the same as the order and connection of things (Ethics II, P7)",
         }
 
     def _analyze_adequate_ideas(self, text: str) -> Dict[str, Any]:
@@ -437,11 +518,27 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # Adequate idea indicators
-        adequate_words = ["clear", "distinct", "certain", "true", "understand", "comprehend", "adequate"]
+        adequate_words = [
+            "clear",
+            "distinct",
+            "certain",
+            "true",
+            "understand",
+            "comprehend",
+            "adequate",
+        ]
         adequate_count = sum(1 for word in adequate_words if word in text_lower)
 
         # Inadequate idea indicators
-        inadequate_words = ["confused", "unclear", "vague", "uncertain", "imagine", "seem", "appear"]
+        inadequate_words = [
+            "confused",
+            "unclear",
+            "vague",
+            "uncertain",
+            "imagine",
+            "seem",
+            "appear",
+        ]
         inadequate_count = sum(1 for word in inadequate_words if word in text_lower)
 
         # Knowledge vs opinion
@@ -493,7 +590,7 @@ class Spinoza(Philosopher):
             "adequacy_score": adequacy_score,
             "inadequacy_score": inadequacy_score,
             "has_necessity": has_necessity,
-            "principle": "An adequate idea is one which has all the properties of a true idea (Ethics II, Def 4)"
+            "principle": "An adequate idea is one which has all the properties of a true idea (Ethics II, Def 4)",
         }
 
     def _analyze_determinism(self, text: str) -> Dict[str, Any]:
@@ -506,11 +603,23 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # Necessity/determinism indicators
-        necessity_words = ["necessary", "must", "determined", "causation", "cause", "follows from"]
+        necessity_words = [
+            "necessary",
+            "must",
+            "determined",
+            "causation",
+            "cause",
+            "follows from",
+        ]
         necessity_count = sum(1 for phrase in necessity_words if phrase in text_lower)
 
         # Everything follows from God's nature
-        divine_necessity = ["god's nature", "divine nature", "eternal nature", "follows necessarily"]
+        divine_necessity = [
+            "god's nature",
+            "divine nature",
+            "eternal nature",
+            "follows necessarily",
+        ]
         has_divine_necessity = any(phrase in text_lower for phrase in divine_necessity)
 
         # No contingency
@@ -518,7 +627,12 @@ class Spinoza(Philosopher):
         has_no_chance = any(phrase in text_lower for phrase in no_chance)
 
         # Libertarian free will (opposed to determinism)
-        free_will_words = ["free will", "could have done otherwise", "uncaused choice", "libertarian"]
+        free_will_words = [
+            "free will",
+            "could have done otherwise",
+            "uncaused choice",
+            "libertarian",
+        ]
         has_free_will = any(phrase in text_lower for phrase in free_will_words)
 
         # Randomness/chance (opposed to determinism)
@@ -539,7 +653,9 @@ class Spinoza(Philosopher):
             status = "Proto-deterministic"
         elif has_free_will or chance_count >= 2:
             position = "Indeterminism"
-            description = "Belief in contingency or libertarian free will - confused thinking"
+            description = (
+                "Belief in contingency or libertarian free will - confused thinking"
+            )
             status = "Inadequate"
         else:
             position = "Unclear"
@@ -553,7 +669,7 @@ class Spinoza(Philosopher):
             "necessity_score": necessity_count,
             "causal_chain": causal_count >= 2,
             "rejects_free_will": not has_free_will,
-            "principle": "In nature there is nothing contingent; all things are determined from the necessity of the divine nature (Ethics I, P29)"
+            "principle": "In nature there is nothing contingent; all things are determined from the necessity of the divine nature (Ethics I, P29)",
         }
 
     def _analyze_freedom_necessity(self, text: str) -> Dict[str, Any]:
@@ -571,14 +687,22 @@ class Spinoza(Philosopher):
 
         # Understanding/knowledge
         understanding_words = ["understand", "know", "comprehend", "grasp", "knowledge"]
-        understanding_count = sum(1 for word in understanding_words if word in text_lower)
+        understanding_count = sum(
+            1 for word in understanding_words if word in text_lower
+        )
 
         # Necessity language
         necessity_words = ["necessary", "necessity", "must", "determined"]
         necessity_count = sum(1 for word in necessity_words if word in text_lower)
 
         # Acting from own nature
-        own_nature = ["own nature", "essence", "from itself", "self-caused", "autonomous"]
+        own_nature = [
+            "own nature",
+            "essence",
+            "from itself",
+            "self-caused",
+            "autonomous",
+        ]
         has_own_nature = any(phrase in text_lower for phrase in own_nature)
 
         # Bondage/slavery (opposed to freedom)
@@ -592,7 +716,9 @@ class Spinoza(Philosopher):
         # Freedom through understanding necessity
         if freedom_count >= 1 and understanding_count >= 2 and necessity_count >= 1:
             freedom_type = "True Freedom"
-            description = "Freedom as understanding necessity - acting from adequate knowledge"
+            description = (
+                "Freedom as understanding necessity - acting from adequate knowledge"
+            )
             status = "Blessed"
         elif understanding_count >= 2:
             freedom_type = "Path to Freedom"
@@ -617,7 +743,7 @@ class Spinoza(Philosopher):
             "status": status,
             "has_understanding": understanding_count >= 2,
             "recognizes_necessity": necessity_count >= 1,
-            "principle": "Freedom is understanding necessity; a free thing acts from its own nature alone (Ethics I, Def 7)"
+            "principle": "Freedom is understanding necessity; a free thing acts from its own nature alone (Ethics I, Def 7)",
         }
 
     def _analyze_affects(self, text: str) -> Dict[str, Any]:
@@ -630,11 +756,28 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # Joy/increase indicators
-        joy_words = ["joy", "happy", "glad", "delight", "pleasure", "increase", "enhance", "grow"]
+        joy_words = [
+            "joy",
+            "happy",
+            "glad",
+            "delight",
+            "pleasure",
+            "increase",
+            "enhance",
+            "grow",
+        ]
         joy_count = sum(1 for word in joy_words if word in text_lower)
 
         # Sadness/decrease indicators
-        sadness_words = ["sad", "sorrow", "pain", "suffering", "decrease", "diminish", "reduce"]
+        sadness_words = [
+            "sad",
+            "sorrow",
+            "pain",
+            "suffering",
+            "decrease",
+            "diminish",
+            "reduce",
+        ]
         sadness_count = sum(1 for word in sadness_words if word in text_lower)
 
         # Desire indicators
@@ -688,7 +831,7 @@ class Spinoza(Philosopher):
             "desire_score": desire_count,
             "active_score": active_count,
             "passive_score": passive_count,
-            "principle": "Joy is the transition to greater perfection; sadness to lesser perfection (Ethics III, P11)"
+            "principle": "Joy is the transition to greater perfection; sadness to lesser perfection (Ethics III, P11)",
         }
 
     def _analyze_eternity_mind(self, text: str) -> Dict[str, Any]:
@@ -705,15 +848,29 @@ class Spinoza(Philosopher):
         eternity_count = sum(1 for word in eternity_words if word in text_lower)
 
         # Sub specie aeternitatis
-        eternal_perspective = ["sub specie aeternitatis", "under eternity", "from eternity", "eternal perspective"]
-        has_eternal_perspective = any(phrase in text_lower for phrase in eternal_perspective)
+        eternal_perspective = [
+            "sub specie aeternitatis",
+            "under eternity",
+            "from eternity",
+            "eternal perspective",
+        ]
+        has_eternal_perspective = any(
+            phrase in text_lower for phrase in eternal_perspective
+        )
 
         # Mind/intellect
         mind_words = ["mind", "intellect", "understanding", "consciousness"]
         mind_count = sum(1 for word in mind_words if word in text_lower)
 
         # Temporal vs eternal
-        temporal_words = ["time", "temporal", "temporary", "transient", "passing", "moment"]
+        temporal_words = [
+            "time",
+            "temporal",
+            "temporary",
+            "transient",
+            "passing",
+            "moment",
+        ]
         temporal_count = sum(1 for word in temporal_words if word in text_lower)
 
         # Immortality (but not personal survival)
@@ -722,7 +879,9 @@ class Spinoza(Philosopher):
 
         # Personal survival (confused idea)
         personal_survival = ["afterlife", "heaven", "reincarnation", "life after death"]
-        has_personal_survival = any(phrase in text_lower for phrase in personal_survival)
+        has_personal_survival = any(
+            phrase in text_lower for phrase in personal_survival
+        )
 
         if eternity_count >= 2 and mind_count >= 1 and not has_personal_survival:
             recognition = "Eternity of Mind"
@@ -752,7 +911,7 @@ class Spinoza(Philosopher):
             "eternity_score": eternity_count,
             "has_eternal_perspective": has_eternal_perspective,
             "temporal_focus": temporal_count > eternity_count,
-            "principle": "The mind is eternal insofar as it conceives things under a species of eternity (Ethics V, P31)"
+            "principle": "The mind is eternal insofar as it conceives things under a species of eternity (Ethics V, P31)",
         }
 
     def _analyze_three_kinds_knowledge(self, text: str) -> Dict[str, Any]:
@@ -766,7 +925,14 @@ class Spinoza(Philosopher):
         text_lower = text.lower()
 
         # First kind: Imagination
-        imagination_words = ["imagine", "seem", "appear", "sensory", "experience", "perceive"]
+        imagination_words = [
+            "imagine",
+            "seem",
+            "appear",
+            "sensory",
+            "experience",
+            "perceive",
+        ]
         imagination_count = sum(1 for word in imagination_words if word in text_lower)
 
         # Hearsay/opinion
@@ -774,15 +940,30 @@ class Spinoza(Philosopher):
         hearsay_count = sum(1 for phrase in hearsay_words if phrase in text_lower)
 
         # Second kind: Reason
-        reason_words = ["reason", "rational", "deduce", "logical", "common notion", "property"]
+        reason_words = [
+            "reason",
+            "rational",
+            "deduce",
+            "logical",
+            "common notion",
+            "property",
+        ]
         reason_count = sum(1 for phrase in reason_words if phrase in text_lower)
 
         # Demonstration/proof
         demonstration_words = ["demonstrate", "prove", "proof", "theorem", "derive"]
-        demonstration_count = sum(1 for word in demonstration_words if word in text_lower)
+        demonstration_count = sum(
+            1 for word in demonstration_words if word in text_lower
+        )
 
         # Third kind: Intuitive knowledge
-        intuition_words = ["intuition", "intuitive", "immediate", "direct knowledge", "essence"]
+        intuition_words = [
+            "intuition",
+            "intuitive",
+            "immediate",
+            "direct knowledge",
+            "essence",
+        ]
         intuition_count = sum(1 for phrase in intuition_words if phrase in text_lower)
 
         # Essence/nature understanding
@@ -792,7 +973,9 @@ class Spinoza(Philosopher):
         # Determine dominant kind
         first_kind_score = imagination_count + hearsay_count
         second_kind_score = reason_count + demonstration_count
-        third_kind_score = intuition_count + (essence_count if essence_count >= 2 else 0)
+        third_kind_score = intuition_count + (
+            essence_count if essence_count >= 2 else 0
+        )
 
         if third_kind_score >= 2:
             dominant_kind = "Third Kind (Scientia Intuitiva)"
@@ -804,7 +987,9 @@ class Spinoza(Philosopher):
             epistemic_level = "High"
         elif first_kind_score >= 2:
             dominant_kind = "First Kind (Imaginatio)"
-            description = "Knowledge from vague experience and hearsay - inadequate ideas"
+            description = (
+                "Knowledge from vague experience and hearsay - inadequate ideas"
+            )
             epistemic_level = "Low"
         else:
             dominant_kind = "Unclear"
@@ -818,7 +1003,7 @@ class Spinoza(Philosopher):
             "first_kind_score": first_kind_score,
             "second_kind_score": second_kind_score,
             "third_kind_score": third_kind_score,
-            "principle": "Three kinds of knowledge: imagination, reason, and intuitive science (Ethics II, P40)"
+            "principle": "Three kinds of knowledge: imagination, reason, and intuitive science (Ethics II, P40)",
         }
 
     def _construct_reasoning(
@@ -828,7 +1013,7 @@ class Spinoza(Philosopher):
         determinism: Dict[str, Any],
         adequate_ideas: Dict[str, Any],
         freedom: Dict[str, Any],
-        amor_dei: Dict[str, Any]
+        amor_dei: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Spinozistic philosophical reasoning."""
         reasoning = (
@@ -837,28 +1022,22 @@ class Spinoza(Philosopher):
         )
 
         # Substance monism
-        reasoning += (
-            f"Substance: {substance_monism['description']}. "
-        )
+        reasoning += f"Substance: {substance_monism['description']}. "
 
         # Conatus
         reasoning += f"Conatus: {conatus['description']}. "
 
         # Determinism
-        reasoning += (
-            f"Determinism: {determinism['description']}. "
-        )
+        reasoning += f"Determinism: {determinism['description']}. "
 
         # Adequate ideas
         reasoning += f"Knowledge: {adequate_ideas['description']}. "
 
         # Freedom
-        reasoning += (
-            f"Freedom: {freedom['description']}. "
-        )
+        reasoning += f"Freedom: {freedom['description']}. "
 
         # Amor dei intellectualis
-        if amor_dei['presence'] != "Not Evident":
+        if amor_dei["presence"] != "Not Evident":
             reasoning += f"Intellectual love: {amor_dei['description']}. "
 
         # Concluding Spinozistic wisdom
@@ -913,7 +1092,9 @@ class Spinoza(Philosopher):
         determinism_position = analysis["determinism"]["position"]
         if determinism_position == "Indeterminism":
             tension_score += 2
-            tension_elements.append("Belief in contingency or free will - confused thinking")
+            tension_elements.append(
+                "Belief in contingency or free will - confused thinking"
+            )
 
         # Check freedom
         freedom_type = analysis["freedom"]["freedom_type"]
@@ -950,10 +1131,14 @@ class Spinoza(Philosopher):
         # Determine tension level
         if tension_score >= 8:
             level = "Very High"
-            description = "Severe confusion - mired in inadequate ideas and human bondage"
+            description = (
+                "Severe confusion - mired in inadequate ideas and human bondage"
+            )
         elif tension_score >= 6:
             level = "High"
-            description = "Significant tensions - enslaved by passions and confused thinking"
+            description = (
+                "Significant tensions - enslaved by passions and confused thinking"
+            )
         elif tension_score >= 4:
             level = "Moderate"
             description = "Some tensions between adequate and inadequate ideas"
@@ -962,11 +1147,15 @@ class Spinoza(Philosopher):
             description = "Minor tensions, moving toward adequate knowledge"
         else:
             level = "Very Low"
-            description = "Aligned with reason and adequate ideas - approaching blessedness"
+            description = (
+                "Aligned with reason and adequate ideas - approaching blessedness"
+            )
 
         return {
             "level": level,
             "score": tension_score,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }

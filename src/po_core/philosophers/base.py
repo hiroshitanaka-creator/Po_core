@@ -194,7 +194,9 @@ class Philosopher(ABC):
         self._context: Dict[str, Any] = {}
 
     @abstractmethod
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Generate philosophical reasoning for the given prompt.
 
@@ -301,8 +303,7 @@ class Philosopher(ABC):
                 "perspective": perspective,
                 "tension": tension,
                 "normalized_response": {
-                    k: v for k, v in normalized.items()
-                    if k not in ("reasoning",)
+                    k: v for k, v in normalized.items() if k not in ("reasoning",)
                 },
             },
         )
@@ -312,7 +313,8 @@ class Philosopher(ABC):
 
 # ── New Protocol-based interface for hexagonal architecture ──────────
 
-from typing import Protocol as TypingProtocol, List
+from typing import List
+from typing import Protocol as TypingProtocol
 
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.intent import Intent

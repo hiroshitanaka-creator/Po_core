@@ -11,22 +11,24 @@ Implements the candidate selection protocol:
 
 Reference: 01_specifications/wethics_gate/SELECTION_PROTOCOL.md
 """
-from __future__ import annotations
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
-import random
-import math
 
+from __future__ import annotations
+
+import math
+import random
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+from .gate import WethicsGate
+from .metrics import ContextProfile, MetricsEvaluator
 from .types import (
+    AXES,
+    DEFAULT_PBEST_THRESHOLD,
+    AxisScore,
     Candidate,
     GateDecision,
     SelectionResult,
-    AxisScore,
-    AXES,
-    DEFAULT_PBEST_THRESHOLD,
 )
-from .gate import WethicsGate
-from .metrics import MetricsEvaluator, ContextProfile
 
 
 def pareto_front(
@@ -47,6 +49,7 @@ def pareto_front(
     Returns:
         List of non-dominated candidates
     """
+
     def dominates(x: Candidate, y: Candidate) -> bool:
         """Check if x dominates y."""
         ge_all = True
@@ -134,10 +137,7 @@ def robust_weight_sampling_rank(
             win_counts[best_candidate.cid] += 1
 
     # Convert to probabilities and sort
-    results = [
-        (c, win_counts[c.cid] / n_samples)
-        for c in candidates
-    ]
+    results = [(c, win_counts[c.cid] / n_samples) for c in candidates]
     results.sort(key=lambda t: t[1], reverse=True)
 
     return results
@@ -191,8 +191,7 @@ def topsis_rank(
 
     # Get target (ideal) and anti-ideal from context profile
     ideal = {
-        axis: evaluator.context_profile.axis_profiles[axis].e_target
-        for axis in axes
+        axis: evaluator.context_profile.axis_profiles[axis].e_target for axis in axes
     }
     anti_ideal = {axis: 0.0 for axis in axes}  # Worst case
 
@@ -293,20 +292,24 @@ class CandidateSelector:
             c.gate_result = result
 
             if result.decision == GateDecision.REJECT:
-                rejected.append({
-                    "id": c.cid,
-                    "reason": "GATE_REJECT",
-                    "violations": [
-                        {"code": v.code.value, "severity": v.severity}
-                        for v in result.violations
-                    ],
-                })
+                rejected.append(
+                    {
+                        "id": c.cid,
+                        "reason": "GATE_REJECT",
+                        "violations": [
+                            {"code": v.code.value, "severity": v.severity}
+                            for v in result.violations
+                        ],
+                    }
+                )
             elif result.decision == GateDecision.ESCALATE:
-                rejected.append({
-                    "id": c.cid,
-                    "reason": "GATE_ESCALATE",
-                    "explanation": result.explanation,
-                })
+                rejected.append(
+                    {
+                        "id": c.cid,
+                        "reason": "GATE_ESCALATE",
+                        "explanation": result.explanation,
+                    }
+                )
             else:
                 # ALLOW or ALLOW_WITH_REPAIR
                 if result.decision == GateDecision.ALLOW_WITH_REPAIR:
@@ -333,11 +336,13 @@ class CandidateSelector:
         for c in passed_candidates:
             if self.evaluator.has_min_violation(c.scores):
                 violations = self.evaluator.compute_min_violation(c.scores)
-                rejected.append({
-                    "id": c.cid,
-                    "reason": "E_MIN_VIOLATION",
-                    "violations": {k: v for k, v in violations.items() if v > 0},
-                })
+                rejected.append(
+                    {
+                        "id": c.cid,
+                        "reason": "E_MIN_VIOLATION",
+                        "violations": {k: v for k, v in violations.items() if v > 0},
+                    }
+                )
             else:
                 min_passed.append(c)
 

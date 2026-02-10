@@ -4,6 +4,7 @@ Vertical Slice Test
 
 Tests the full pipeline through run_turn.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

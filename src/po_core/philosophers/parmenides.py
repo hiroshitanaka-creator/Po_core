@@ -53,7 +53,9 @@ class Parmenides(Philosopher):
             "unity",
         ]
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Apply Parmenidean ontological reasoning to the prompt.
 
@@ -97,8 +99,15 @@ class Parmenides(Philosopher):
         logical = self._derive_logical_analysis(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, being, non_being, truth, opinion,
-            monism, immutability, completeness, appearance_reality
+            prompt,
+            being,
+            non_being,
+            truth,
+            opinion,
+            monism,
+            immutability,
+            completeness,
+            appearance_reality,
         )
 
         return {
@@ -410,8 +419,16 @@ class Parmenides(Philosopher):
         }
 
     def _construct_reasoning(
-        self, prompt: str, being: Dict, non_being: Dict, truth: Dict, opinion: Dict,
-        monism: Dict, immutability: Dict, completeness: Dict, appearance_reality: Dict
+        self,
+        prompt: str,
+        being: Dict,
+        non_being: Dict,
+        truth: Dict,
+        opinion: Dict,
+        monism: Dict,
+        immutability: Dict,
+        completeness: Dict,
+        appearance_reality: Dict,
     ) -> str:
         """Construct comprehensive Parmenidean reasoning."""
         return f"""Eleatic Inquiry: "{prompt}"

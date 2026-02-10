@@ -8,14 +8,15 @@ Tests that each philosopher can be instantiated and reason correctly.
 
 import sys
 import time
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 # Try to import rich for nice output, fall back to plain text
 try:
     from rich.console import Console
-    from rich.table import Table
     from rich.panel import Panel
     from rich.progress import Progress, SpinnerColumn, TextColumn
+    from rich.table import Table
+
     RICH_AVAILABLE = True
     console = Console()
 except ImportError:
@@ -30,7 +31,6 @@ ALL_PHILOSOPHERS = [
     ("plato", "Plato", "Classical Greek"),
     ("parmenides", "Parmenides", "Pre-Socratic"),
     ("peirce", "Peirce", "American Pragmatism"),
-
     # German Idealism & Phenomenology (6)
     ("kant", "Kant", "German Idealism"),
     ("hegel", "Hegel", "German Idealism"),
@@ -38,44 +38,35 @@ ALL_PHILOSOPHERS = [
     ("heidegger", "Heidegger", "Phenomenology"),
     ("schopenhauer", "Schopenhauer", "German Pessimism"),
     ("merleau_ponty", "Merleau-Ponty", "Phenomenology"),
-
     # Rationalism & Empiricism (2)
     ("descartes", "Descartes", "Rationalism"),
     ("spinoza", "Spinoza", "Rationalism"),
-
     # Existentialism (3)
     ("kierkegaard", "Kierkegaard", "Existentialism"),
     ("nietzsche", "Nietzsche", "Existentialism"),
     ("sartre", "Sartre", "Existentialism"),
-
     # Post-structuralism & Critical Theory (5)
     ("derrida", "Derrida", "Post-structuralism"),
     ("deleuze", "Deleuze", "Post-structuralism"),
     ("foucault", "Foucault", "Post-structuralism"),
     ("badiou", "Badiou", "Continental"),
     ("lacan", "Lacan", "Psychoanalysis"),
-
     # Feminist & Gender Theory (2)
     ("beauvoir", "Beauvoir", "Feminist Existentialism"),
     ("butler", "Butler", "Gender Theory"),
-
     # Ethics & Political (4)
     ("levinas", "Levinas", "Ethics"),
     ("arendt", "Arendt", "Political Philosophy"),
     ("jonas", "Jonas", "Responsibility Ethics"),
     ("weil", "Weil", "Mysticism/Ethics"),
-
     # Ancient Schools (2)
     ("marcus_aurelius", "Marcus Aurelius", "Stoicism"),
     ("epicurus", "Epicurus", "Epicureanism"),
-
     # Analytic & Pragmatism (2)
     ("wittgenstein", "Wittgenstein", "Analytic"),
     ("dewey", "Dewey", "Pragmatism"),
-
     # Psychology (1)
     ("jung", "Jung", "Analytical Psychology"),
-
     # Eastern Philosophy (7)
     ("confucius", "Confucius", "Confucianism"),
     ("zhuangzi", "Zhuangzi", "Daoism"),
@@ -84,7 +75,6 @@ ALL_PHILOSOPHERS = [
     ("nishida", "Nishida", "Kyoto School"),
     ("dogen", "Dogen", "Zen Buddhism"),
     ("nagarjuna", "Nagarjuna", "Madhyamaka Buddhism"),
-
     # Japanese Aesthetics (1)
     ("wabi_sabi", "Wabi-Sabi", "Japanese Aesthetics"),
 ]
@@ -212,15 +202,11 @@ def run_full_test() -> Tuple[int, int, List[Dict]]:
 
     # Test prompt
     test_prompt = TEST_PROMPTS[0]
-    print_info(f"Test prompt: \"{test_prompt}\"\n")
+    print_info(f'Test prompt: "{test_prompt}"\n')
 
     # Create table for results if rich is available
     if RICH_AVAILABLE:
-        table = Table(
-            title="Test Results",
-            show_header=True,
-            header_style="bold cyan"
-        )
+        table = Table(title="Test Results", show_header=True, header_style="bold cyan")
         table.add_column("#", style="dim", width=4)
         table.add_column("Philosopher", style="cyan", width=20)
         table.add_column("Tradition", style="yellow", width=22)
@@ -234,7 +220,9 @@ def run_full_test() -> Tuple[int, int, List[Dict]]:
 
         # Test reason if import succeeded
         if import_ok and philosopher:
-            reason_ok, reason_msg, result = test_philosopher_reason(philosopher, test_prompt)
+            reason_ok, reason_msg, result = test_philosopher_reason(
+                philosopher, test_prompt
+            )
         else:
             reason_ok = False
             reason_msg = "Skipped (import failed)"
@@ -247,23 +235,27 @@ def run_full_test() -> Tuple[int, int, List[Dict]]:
         else:
             failed += 1
 
-        results.append({
-            "key": key,
-            "name": name,
-            "tradition": tradition,
-            "import_ok": import_ok,
-            "import_msg": import_msg,
-            "reason_ok": reason_ok,
-            "reason_msg": reason_msg,
-            "result": result,
-        })
+        results.append(
+            {
+                "key": key,
+                "name": name,
+                "tradition": tradition,
+                "import_ok": import_ok,
+                "import_msg": import_msg,
+                "reason_ok": reason_ok,
+                "reason_msg": reason_msg,
+                "result": result,
+            }
+        )
 
         # Add to table or print
         if RICH_AVAILABLE:
             import_status = "[green]✓[/green]" if import_ok else "[red]✗[/red]"
             reason_status = "[green]✓[/green]" if reason_ok else "[red]✗[/red]"
             details = reason_msg if test_passed else f"[red]{reason_msg}[/red]"
-            table.add_row(str(i), name, tradition, import_status, reason_status, details)
+            table.add_row(
+                str(i), name, tradition, import_status, reason_status, details
+            )
         else:
             status = "PASS" if test_passed else "FAIL"
             print(f"{i:3}. [{status}] {name:20} ({tradition})")
@@ -303,6 +295,7 @@ def run_pipeline_test():
     except Exception as e:
         print_error(f"Pipeline test failed: {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False, None
 
@@ -321,17 +314,21 @@ def print_summary(passed: int, failed: int):
 [bold]Success Rate:[/bold] {(passed/total)*100:.1f}%
 """
         if failed == 0:
-            console.print(Panel(
-                summary + "\n[bold green]All tests passed! 🎉[/bold green]",
-                title="[bold cyan]Test Results[/bold cyan]",
-                border_style="green"
-            ))
+            console.print(
+                Panel(
+                    summary + "\n[bold green]All tests passed! 🎉[/bold green]",
+                    title="[bold cyan]Test Results[/bold cyan]",
+                    border_style="green",
+                )
+            )
         else:
-            console.print(Panel(
-                summary + "\n[bold red]Some tests failed[/bold red]",
-                title="[bold cyan]Test Results[/bold cyan]",
-                border_style="red"
-            ))
+            console.print(
+                Panel(
+                    summary + "\n[bold red]Some tests failed[/bold red]",
+                    title="[bold cyan]Test Results[/bold cyan]",
+                    border_style="red",
+                )
+            )
     else:
         print(f"Total Tests: {total}")
         print(f"Passed: {passed}")

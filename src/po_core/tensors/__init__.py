@@ -19,20 +19,20 @@ Tensor classes are available for advanced use but the engine
 provides the preferred interface.
 """
 
-# Engine API (preferred)
-from po_core.tensors.engine import (
-    compute_tensors,
-    compute_freedom_pressure,
-    compute_semantic_delta,
-    compute_blocked_tensor,
-)
-
 # Tensor classes (for advanced use)
 from po_core.tensors.base import Tensor
 from po_core.tensors.blocked_tensor import BlockedTensor
 from po_core.tensors.concept_quantifier import (
     ConceptQuantifier,
     PhilosophicalConcept,
+)
+
+# Engine API (preferred)
+from po_core.tensors.engine import (
+    compute_blocked_tensor,
+    compute_freedom_pressure,
+    compute_semantic_delta,
+    compute_tensors,
 )
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
 from po_core.tensors.interaction_tensor import (

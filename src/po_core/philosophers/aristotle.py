@@ -32,10 +32,12 @@ class Aristotle(Philosopher):
     def __init__(self) -> None:
         super().__init__(
             name="Aristotle (Ἀριστοτέλης)",
-            description="Ancient Greek philosopher focused on virtue ethics, the golden mean, and eudaimonia"
+            description="Ancient Greek philosopher focused on virtue ethics, the golden mean, and eudaimonia",
         )
 
-    def reason(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def reason(
+        self, prompt: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Analyze the prompt from Aristotle's perspective.
 
@@ -67,8 +69,8 @@ class Aristotle(Philosopher):
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Virtue ethics and teleological analysis",
-                "focus": "Excellence (arete), golden mean, and human flourishing"
-            }
+                "focus": "Excellence (arete), golden mean, and human flourishing",
+            },
         }
 
     def _analyze_virtue(self, prompt: str) -> Dict[str, Any]:
@@ -119,7 +121,7 @@ class Aristotle(Philosopher):
             "potential_actual": potential_actual,
             "phronesis": phronesis,
             "telos": telos,
-            "character": character
+            "character": character,
         }
 
     def _assess_virtues(self, text: str) -> Dict[str, Any]:
@@ -135,78 +137,111 @@ class Aristotle(Philosopher):
         # Courage (ἀνδρεία/andreia) - mean between cowardice and recklessness
         courage_words = ["brave", "courage", "face", "confront", "stand up", "dare"]
         if any(word in text_lower for word in courage_words):
-            virtues_present.append({
-                "virtue": "Courage (ἀνδρεία)",
-                "description": "Facing fear appropriately - mean between cowardice and recklessness"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Courage (ἀνδρεία)",
+                    "description": "Facing fear appropriately - mean between cowardice and recklessness",
+                }
+            )
 
         # Temperance (σωφροσύνη/sophrosyne) - mean between insensibility and intemperance
-        temperance_words = ["moderate", "restrain", "control", "temperance", "discipline"]
+        temperance_words = [
+            "moderate",
+            "restrain",
+            "control",
+            "temperance",
+            "discipline",
+        ]
         if any(word in text_lower for word in temperance_words):
-            virtues_present.append({
-                "virtue": "Temperance (σωφροσύνη)",
-                "description": "Self-control regarding pleasures - mean between insensibility and intemperance"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Temperance (σωφροσύνη)",
+                    "description": "Self-control regarding pleasures - mean between insensibility and intemperance",
+                }
+            )
 
         # Justice (δικαιοσύνη/dikaiosyne) - giving each their due
         justice_words = ["just", "fair", "right", "deserve", "equal", "justice"]
         if any(word in text_lower for word in justice_words):
-            virtues_present.append({
-                "virtue": "Justice (δικαιοσύνη)",
-                "description": "Giving each person their due - the complete virtue in relation to others"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Justice (δικαιοσύνη)",
+                    "description": "Giving each person their due - the complete virtue in relation to others",
+                }
+            )
 
         # Practical Wisdom (φρόνησις/phronesis) - right judgment in particular cases
-        wisdom_words = ["wise", "prudent", "judgment", "discern", "understand", "practical"]
+        wisdom_words = [
+            "wise",
+            "prudent",
+            "judgment",
+            "discern",
+            "understand",
+            "practical",
+        ]
         if any(word in text_lower for word in wisdom_words):
-            virtues_present.append({
-                "virtue": "Practical Wisdom (φρόνησις)",
-                "description": "Right judgment in particular situations - intellectual virtue"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Practical Wisdom (φρόνησις)",
+                    "description": "Right judgment in particular situations - intellectual virtue",
+                }
+            )
 
         # Generosity (ἐλευθεριότης/eleutheriotes) - mean in giving and taking
         generosity_words = ["generous", "give", "share", "charitable", "donate"]
         if any(word in text_lower for word in generosity_words):
-            virtues_present.append({
-                "virtue": "Generosity (ἐλευθεριότης)",
-                "description": "Appropriate giving and taking - mean between stinginess and wastefulness"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Generosity (ἐλευθεριότης)",
+                    "description": "Appropriate giving and taking - mean between stinginess and wastefulness",
+                }
+            )
 
         # Magnanimity (μεγαλοψυχία/megalopsychia) - greatness of soul
         magnanimity_words = ["great", "noble", "honor", "dignity", "worthy"]
         if any(word in text_lower for word in magnanimity_words):
-            virtues_present.append({
-                "virtue": "Magnanimity (μεγαλοψυχία)",
-                "description": "Greatness of soul - proper attitude toward honor and dishonor"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Magnanimity (μεγαλοψυχία)",
+                    "description": "Greatness of soul - proper attitude toward honor and dishonor",
+                }
+            )
 
         # Friendship (φιλία/philia) - various forms of love and affection
         friendship_words = ["friend", "friendship", "love", "affection", "companion"]
         if any(word in text_lower for word in friendship_words):
-            virtues_present.append({
-                "virtue": "Friendship (φιλία)",
-                "description": "Mutual goodwill and affection - essential to eudaimonia"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Friendship (φιλία)",
+                    "description": "Mutual goodwill and affection - essential to eudaimonia",
+                }
+            )
 
         # Truthfulness (ἀλήθεια/aletheia) - mean in self-expression
         truthfulness_words = ["truth", "honest", "sincere", "genuine", "authentic"]
         if any(word in text_lower for word in truthfulness_words):
-            virtues_present.append({
-                "virtue": "Truthfulness (ἀλήθεια)",
-                "description": "Honesty about oneself - mean between boastfulness and self-deprecation"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "Truthfulness (ἀλήθεια)",
+                    "description": "Honesty about oneself - mean between boastfulness and self-deprecation",
+                }
+            )
 
         if not virtues_present:
-            virtues_present.append({
-                "virtue": "No specific virtue detected",
-                "description": "The text may concern matters outside the sphere of virtue"
-            })
+            virtues_present.append(
+                {
+                    "virtue": "No specific virtue detected",
+                    "description": "The text may concern matters outside the sphere of virtue",
+                }
+            )
 
         return {
             "virtues": virtues_present,
-            "count": len([v for v in virtues_present if "No specific" not in v["virtue"]]),
+            "count": len(
+                [v for v in virtues_present if "No specific" not in v["virtue"]]
+            ),
             "primary": virtues_present[0]["virtue"],
-            "note": "Virtue (ἀρετή) is excellence achieved through habituation"
+            "note": "Virtue (ἀρετή) is excellence achieved through habituation",
         }
 
     def _evaluate_golden_mean(self, text: str) -> Dict[str, Any]:
@@ -218,20 +253,44 @@ class Aristotle(Philosopher):
         text_lower = text.lower()
 
         # Excess indicators
-        excess_words = ["too much", "excessive", "extreme", "overwhelm", "overdo", "too many"]
+        excess_words = [
+            "too much",
+            "excessive",
+            "extreme",
+            "overwhelm",
+            "overdo",
+            "too many",
+        ]
         has_excess = any(phrase in text_lower for phrase in excess_words)
 
         # Deficiency indicators
-        deficiency_words = ["too little", "not enough", "insufficient", "lack", "deficient", "inadequate"]
+        deficiency_words = [
+            "too little",
+            "not enough",
+            "insufficient",
+            "lack",
+            "deficient",
+            "inadequate",
+        ]
         has_deficiency = any(phrase in text_lower for phrase in deficiency_words)
 
         # Mean/balance indicators
-        mean_words = ["balance", "moderate", "middle", "appropriate", "fitting", "right amount", "enough"]
+        mean_words = [
+            "balance",
+            "moderate",
+            "middle",
+            "appropriate",
+            "fitting",
+            "right amount",
+            "enough",
+        ]
         has_mean = any(phrase in text_lower for phrase in mean_words)
 
         if has_mean:
             position = "The Mean (μεσότης)"
-            description = "Virtuous middle path - the appropriate response to the situation"
+            description = (
+                "Virtuous middle path - the appropriate response to the situation"
+            )
             status = "Virtuous"
         elif has_excess and has_deficiency:
             position = "Oscillating"
@@ -254,7 +313,7 @@ class Aristotle(Philosopher):
             "position": position,
             "description": description,
             "status": status,
-            "principle": "Virtue is a mean between two vices - one of excess, one of deficiency"
+            "principle": "Virtue is a mean between two vices - one of excess, one of deficiency",
         }
 
     def _assess_eudaimonia(self, text: str) -> Dict[str, Any]:
@@ -267,15 +326,36 @@ class Aristotle(Philosopher):
         text_lower = text.lower()
 
         # Eudaimonia indicators
-        flourishing_words = ["flourish", "thrive", "excellence", "fulfill", "realize", "achieve"]
+        flourishing_words = [
+            "flourish",
+            "thrive",
+            "excellence",
+            "fulfill",
+            "realize",
+            "achieve",
+        ]
         has_flourishing = sum(1 for word in flourishing_words if word in text_lower)
 
         # Virtue practice indicators
-        virtue_practice = ["practice", "habit", "cultivate", "develop", "exercise", "train"]
+        virtue_practice = [
+            "practice",
+            "habit",
+            "cultivate",
+            "develop",
+            "exercise",
+            "train",
+        ]
         has_practice = sum(1 for word in virtue_practice if word in text_lower)
 
         # Rational activity indicators
-        rational_words = ["think", "reason", "rational", "contemplate", "wisdom", "understanding"]
+        rational_words = [
+            "think",
+            "reason",
+            "rational",
+            "contemplate",
+            "wisdom",
+            "understanding",
+        ]
         has_rational = sum(1 for word in rational_words if word in text_lower)
 
         # Complete life indicators
@@ -287,11 +367,15 @@ class Aristotle(Philosopher):
 
         if total_score >= 4:
             level = "High Eudaimonia"
-            description = "Strong indication of human flourishing - virtuous activity of the soul"
+            description = (
+                "Strong indication of human flourishing - virtuous activity of the soul"
+            )
             achievement = "Approaching the highest good"
         elif total_score >= 2:
             level = "Moderate Eudaimonia"
-            description = "Some elements of flourishing present - incomplete actualization"
+            description = (
+                "Some elements of flourishing present - incomplete actualization"
+            )
             achievement = "On the path to the good life"
         elif total_score >= 1:
             level = "Low Eudaimonia"
@@ -306,7 +390,7 @@ class Aristotle(Philosopher):
             "level": level,
             "description": description,
             "achievement": achievement,
-            "note": "Eudaimonia is the highest human good - activity in accordance with virtue"
+            "note": "Eudaimonia is the highest human good - activity in accordance with virtue",
         }
 
     def _analyze_four_causes(self, text: str) -> Dict[str, List[str]]:
@@ -319,27 +403,41 @@ class Aristotle(Philosopher):
         4. Final Cause (τέλος): Its purpose or end
         """
         text_lower = text.lower()
-        causes = {
-            "material": [],
-            "formal": [],
-            "efficient": [],
-            "final": []
-        }
+        causes = {"material": [], "formal": [], "efficient": [], "final": []}
 
         # Material cause - composition, matter
-        if any(word in text_lower for word in ["made of", "consist", "material", "substance", "compose"]):
+        if any(
+            word in text_lower
+            for word in ["made of", "consist", "material", "substance", "compose"]
+        ):
             causes["material"].append("Material composition mentioned")
 
         # Formal cause - definition, essence, what it is
-        if any(word in text_lower for word in ["is", "are", "being", "nature", "essence", "form"]):
+        if any(
+            word in text_lower
+            for word in ["is", "are", "being", "nature", "essence", "form"]
+        ):
             causes["formal"].append("Formal essence or definition present")
 
         # Efficient cause - agent, what made it
-        if any(word in text_lower for word in ["cause", "create", "make", "produce", "bring about", "result"]):
+        if any(
+            word in text_lower
+            for word in ["cause", "create", "make", "produce", "bring about", "result"]
+        ):
             causes["efficient"].append("Efficient causation indicated")
 
         # Final cause - purpose, end, goal
-        if any(word in text_lower for word in ["purpose", "goal", "aim", "end", "for the sake of", "in order to"]):
+        if any(
+            word in text_lower
+            for word in [
+                "purpose",
+                "goal",
+                "aim",
+                "end",
+                "for the sake of",
+                "in order to",
+            ]
+        ):
             causes["final"].append("Final cause/purpose identified")
 
         # Add defaults if empty
@@ -363,11 +461,27 @@ class Aristotle(Philosopher):
         text_lower = text.lower()
 
         # Potentiality indicators
-        potential_words = ["can", "could", "able", "possible", "potential", "capacity", "latent"]
+        potential_words = [
+            "can",
+            "could",
+            "able",
+            "possible",
+            "potential",
+            "capacity",
+            "latent",
+        ]
         has_potential = sum(1 for word in potential_words if word in text_lower)
 
         # Actuality indicators
-        actual_words = ["is", "actual", "realize", "achieve", "accomplish", "fulfill", "manifest"]
+        actual_words = [
+            "is",
+            "actual",
+            "realize",
+            "achieve",
+            "accomplish",
+            "fulfill",
+            "manifest",
+        ]
         has_actual = sum(1 for word in actual_words if word in text_lower)
 
         # Process/becoming indicators
@@ -390,7 +504,7 @@ class Aristotle(Philosopher):
         return {
             "state": state,
             "description": description,
-            "note": "Actuality is prior to potentiality in substance and definition"
+            "note": "Actuality is prior to potentiality in substance and definition",
         }
 
     def _assess_phronesis(self, text: str) -> Dict[str, Any]:
@@ -407,7 +521,14 @@ class Aristotle(Philosopher):
         has_judgment = sum(1 for word in judgment_words if word in text_lower)
 
         # Situational awareness
-        situation_words = ["situation", "context", "circumstance", "case", "particular", "specific"]
+        situation_words = [
+            "situation",
+            "context",
+            "circumstance",
+            "case",
+            "particular",
+            "specific",
+        ]
         has_situation = sum(1 for word in situation_words if word in text_lower)
 
         # Action orientation
@@ -436,7 +557,7 @@ class Aristotle(Philosopher):
         return {
             "level": level,
             "description": description,
-            "note": "Phronesis is the intellectual virtue that guides right action"
+            "note": "Phronesis is the intellectual virtue that guides right action",
         }
 
     def _identify_telos(self, text: str) -> Dict[str, Any]:
@@ -473,7 +594,7 @@ class Aristotle(Philosopher):
         return {
             "type": telos_type,
             "description": description,
-            "principle": "All things aim at some good - the ultimate telos is eudaimonia"
+            "principle": "All things aim at some good - the ultimate telos is eudaimonia",
         }
 
     def _evaluate_character(self, text: str) -> Dict[str, Any]:
@@ -489,7 +610,13 @@ class Aristotle(Philosopher):
         has_habit = sum(1 for word in habit_words if word in text_lower)
 
         # Character indicators
-        character_words = ["character", "who i am", "type of person", "nature", "disposition"]
+        character_words = [
+            "character",
+            "who i am",
+            "type of person",
+            "nature",
+            "disposition",
+        ]
         has_character = sum(1 for word in character_words if word in text_lower)
 
         # Development indicators
@@ -511,7 +638,7 @@ class Aristotle(Philosopher):
         return {
             "formation": formation,
             "description": description,
-            "note": "We become virtuous by performing virtuous acts - character follows action"
+            "note": "We become virtuous by performing virtuous acts - character follows action",
         }
 
     def _calculate_tension(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -532,7 +659,9 @@ class Aristotle(Philosopher):
         mean_status = analysis["mean"]["status"]
         if mean_status in ["Vicious (excess)", "Vicious (deficiency)"]:
             tension_score += 2
-            tension_elements.append(f"Deviation from mean: {analysis['mean']['position']}")
+            tension_elements.append(
+                f"Deviation from mean: {analysis['mean']['position']}"
+            )
         elif mean_status == "Unstable":
             tension_score += 1
             tension_elements.append("Oscillating between excess and deficiency")
@@ -565,7 +694,9 @@ class Aristotle(Philosopher):
         # Determine tension level
         if tension_score >= 5:
             level = "Very High"
-            description = "Significant deviation from Aristotelian virtue and flourishing"
+            description = (
+                "Significant deviation from Aristotelian virtue and flourishing"
+            )
         elif tension_score >= 3:
             level = "High"
             description = "Notable tensions in virtue and eudaimonia"
@@ -582,7 +713,9 @@ class Aristotle(Philosopher):
         return {
             "level": level,
             "description": description,
-            "elements": tension_elements if tension_elements else ["No significant tensions"]
+            "elements": (
+                tension_elements if tension_elements else ["No significant tensions"]
+            ),
         }
 
     def _construct_reasoning(
@@ -592,7 +725,7 @@ class Aristotle(Philosopher):
         eudaimonia: Dict[str, Any],
         causes: Dict[str, List[str]],
         phronesis: Dict[str, Any],
-        telos: Dict[str, Any]
+        telos: Dict[str, Any],
     ) -> str:
         """Construct Aristotelian ethical reasoning."""
         primary_virtue = virtue["primary"]
@@ -610,8 +743,13 @@ class Aristotle(Philosopher):
         reasoning += f"The telos (purpose): {telos['description']}. "
 
         # Add final cause if present
-        if "purpose" in causes["final"][0].lower() or "identified" in causes["final"][0].lower():
-            reasoning += "A final cause is recognized, indicating teleological thinking. "
+        if (
+            "purpose" in causes["final"][0].lower()
+            or "identified" in causes["final"][0].lower()
+        ):
+            reasoning += (
+                "A final cause is recognized, indicating teleological thinking. "
+            )
 
         # Conclude with Aristotelian principle
         reasoning += (

@@ -11,7 +11,16 @@ from datetime import datetime, timezone
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
-from po_core.domain.keys import PO_CORE, PARETO_DEBUG, FRONT, WINNER, CONFLICTS, WEIGHTS, MODE, FREEDOM_PRESSURE
+from po_core.domain.keys import (
+    CONFLICTS,
+    FREEDOM_PRESSURE,
+    FRONT,
+    MODE,
+    PARETO_DEBUG,
+    PO_CORE,
+    WEIGHTS,
+    WINNER,
+)
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 from po_core.domain.tensor_snapshot import TensorSnapshot
@@ -23,7 +32,9 @@ def test_pareto_aggregator_attaches_pareto_debug_payload():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r1", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2}
+    )
 
     ps = [
         Proposal("p1", "answer", "短い答え", confidence=0.6),
@@ -49,7 +60,9 @@ def test_pareto_debug_has_mode_and_freedom_pressure():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r2", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.75})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.75}
+    )
 
     ps = [
         Proposal("p1", "answer", "答え", confidence=0.8),
@@ -72,7 +85,9 @@ def test_pareto_debug_front_has_content_hash():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r3", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.3})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.3}
+    )
 
     ps = [
         Proposal("p1", "answer", "テスト回答A", confidence=0.6),
@@ -98,7 +113,9 @@ def test_pareto_debug_winner_has_scores():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r4", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.1})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.1}
+    )
 
     ps = [
         Proposal("p1", "answer", "勝者の回答", confidence=0.9),
@@ -125,7 +142,9 @@ def test_pareto_debug_conflicts_has_top():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r5", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.2}
+    )
 
     ps = [
         Proposal("p1", "answer", "はい、可能です", confidence=0.8),
@@ -149,7 +168,9 @@ def test_pareto_debug_weights_present():
     agg = ParetoAggregator(cfg)
 
     ctx = Context("r6", datetime.now(timezone.utc), "x")
-    tensors = TensorSnapshot(datetime.now(timezone.utc), metrics={"freedom_pressure": 0.9})
+    tensors = TensorSnapshot(
+        datetime.now(timezone.utc), metrics={"freedom_pressure": 0.9}
+    )
 
     ps = [
         Proposal("p1", "answer", "回答", confidence=0.7),

@@ -3,17 +3,18 @@ Tests for Safety Modules
 
 Comprehensive tests for ethical boundaries and philosopher safety profiles.
 """
+
 import pytest
 
-from po_core.safety.w_ethics import (
-    ViolationType,
-    ViolationPattern,
-    VIOLATION_PATTERNS,
-)
 from po_core.safety.philosopher_profiles import (
-    SafetyTier,
-    EthicalRiskPattern,
     PHILOSOPHER_SAFETY_PROFILES,
+    EthicalRiskPattern,
+    SafetyTier,
+)
+from po_core.safety.w_ethics import (
+    VIOLATION_PATTERNS,
+    ViolationPattern,
+    ViolationType,
 )
 
 
@@ -135,7 +136,8 @@ class TestPhilosopherSafetyProfiles:
     def test_trusted_philosophers_exist(self):
         """Test that trusted philosophers are defined."""
         trusted = [
-            name for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
+            name
+            for name, profile in PHILOSOPHER_SAFETY_PROFILES.items()
             if profile["tier"] == SafetyTier.TRUSTED
         ]
         assert len(trusted) > 0
@@ -317,7 +319,8 @@ class TestSafetyConsistency:
     def test_trusted_tier_consistent(self):
         """Test that TRUSTED tier is used consistently."""
         trusted_count = sum(
-            1 for profile in PHILOSOPHER_SAFETY_PROFILES.values()
+            1
+            for profile in PHILOSOPHER_SAFETY_PROFILES.values()
             if profile["tier"] == SafetyTier.TRUSTED
         )
 

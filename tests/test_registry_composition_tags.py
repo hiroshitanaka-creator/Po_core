@@ -4,6 +4,7 @@ Registry Composition Tags Test
 
 Tests that mode-based composition covers required safety tags.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -12,12 +13,12 @@ from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.manifest import PhilosopherSpec
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.philosophers.tags import (
-    TAG_COMPLIANCE,
     TAG_CLARIFY,
+    TAG_COMPLIANCE,
+    TAG_CREATIVE,
     TAG_CRITIC,
     TAG_PLANNER,
     TAG_REDTEAM,
-    TAG_CREATIVE,
 )
 
 
@@ -28,27 +29,54 @@ class TestCompositionTags:
         """WARN mode should cover compliance, clarify, and critic tags."""
         specs = [
             PhilosopherSpec(
-                "c", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_COMPLIANCE,), cost=1,
+                "c",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_COMPLIANCE,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "q", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_CLARIFY,), cost=1,
+                "q",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_CLARIFY,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "k", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=1, weight=1.0, tags=(TAG_CRITIC,), cost=1,
+                "k",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=1,
+                weight=1.0,
+                tags=(TAG_CRITIC,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "p", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=1, weight=1.0, tags=(TAG_PLANNER,), cost=3,
+                "p",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=1,
+                weight=1.0,
+                tags=(TAG_PLANNER,),
+                cost=3,
             ),
             PhilosopherSpec(
-                "r", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=2, weight=1.0, tags=(TAG_REDTEAM,), cost=3,
+                "r",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=2,
+                weight=1.0,
+                tags=(TAG_REDTEAM,),
+                cost=3,
             ),
         ]
-        reg = PhilosopherRegistry(specs, max_warn=5, budget_warn=12, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_warn=5, budget_warn=12, cache_instances=False
+        )
         sel = reg.select(SafetyMode.WARN)
 
         assert TAG_COMPLIANCE in sel.covered_tags
@@ -59,15 +87,27 @@ class TestCompositionTags:
         """CRITICAL mode should cover compliance and clarify at minimum."""
         specs = [
             PhilosopherSpec(
-                "cq", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=2.0, tags=(TAG_COMPLIANCE, TAG_CLARIFY), cost=1,
+                "cq",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=2.0,
+                tags=(TAG_COMPLIANCE, TAG_CLARIFY),
+                cost=1,
             ),
             PhilosopherSpec(
-                "k", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=1, weight=1.0, tags=(TAG_CRITIC,), cost=1,
+                "k",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=1,
+                weight=1.0,
+                tags=(TAG_CRITIC,),
+                cost=1,
             ),
         ]
-        reg = PhilosopherRegistry(specs, max_critical=1, budget_critical=3, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_critical=1, budget_critical=3, cache_instances=False
+        )
         sel = reg.select(SafetyMode.CRITICAL)
 
         # Should select cq which covers both compliance and clarify
@@ -79,23 +119,45 @@ class TestCompositionTags:
         """NORMAL mode should cover all required tags including creative and redteam."""
         specs = [
             PhilosopherSpec(
-                "a", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.5, tags=(TAG_COMPLIANCE, TAG_PLANNER), cost=1,
+                "a",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.5,
+                tags=(TAG_COMPLIANCE, TAG_PLANNER),
+                cost=1,
             ),
             PhilosopherSpec(
-                "b", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=1, weight=1.0, tags=(TAG_CRITIC,), cost=1,
+                "b",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=1,
+                weight=1.0,
+                tags=(TAG_CRITIC,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "c", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=1, weight=1.0, tags=(TAG_CREATIVE,), cost=1,
+                "c",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=1,
+                weight=1.0,
+                tags=(TAG_CREATIVE,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "d", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=2, weight=1.0, tags=(TAG_REDTEAM,), cost=2,
+                "d",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=2,
+                weight=1.0,
+                tags=(TAG_REDTEAM,),
+                cost=2,
             ),
         ]
-        reg = PhilosopherRegistry(specs, max_normal=10, budget_normal=20, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_normal=10, budget_normal=20, cache_instances=False
+        )
         sel = reg.select(SafetyMode.NORMAL)
 
         # Should cover all required tags
@@ -113,20 +175,37 @@ class TestCostBudget:
         """Should not exceed cost budget even if limit allows more."""
         specs = [
             PhilosopherSpec(
-                "a", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=2.0, tags=(TAG_COMPLIANCE, TAG_CLARIFY), cost=2,
+                "a",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=2.0,
+                tags=(TAG_COMPLIANCE, TAG_CLARIFY),
+                cost=2,
             ),
             PhilosopherSpec(
-                "b", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.5, tags=(TAG_CRITIC,), cost=2,
+                "b",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.5,
+                tags=(TAG_CRITIC,),
+                cost=2,
             ),
             PhilosopherSpec(
-                "c", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_PLANNER,), cost=2,
+                "c",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_PLANNER,),
+                cost=2,
             ),
         ]
         # Budget of 3 should only allow 1 philosopher (cost=2)
-        reg = PhilosopherRegistry(specs, max_critical=3, budget_critical=3, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_critical=3, budget_critical=3, cache_instances=False
+        )
         sel = reg.select(SafetyMode.CRITICAL)
 
         assert sel.cost_total <= 3
@@ -136,23 +215,42 @@ class TestCostBudget:
         """cost_total should be sum of selected philosophers' costs."""
         specs = [
             PhilosopherSpec(
-                "a", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=2.0, tags=(TAG_COMPLIANCE,), cost=2,
+                "a",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=2.0,
+                tags=(TAG_COMPLIANCE,),
+                cost=2,
             ),
             PhilosopherSpec(
-                "b", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.5, tags=(TAG_CLARIFY,), cost=3,
+                "b",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.5,
+                tags=(TAG_CLARIFY,),
+                cost=3,
             ),
             PhilosopherSpec(
-                "c", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_CRITIC,), cost=1,
+                "c",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_CRITIC,),
+                cost=1,
             ),
         ]
-        reg = PhilosopherRegistry(specs, max_warn=3, budget_warn=10, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_warn=3, budget_warn=10, cache_instances=False
+        )
         sel = reg.select(SafetyMode.WARN)
 
         # All 3 should be selected (total cost = 6)
-        expected_cost = sum(s.cost for s in specs if s.philosopher_id in sel.selected_ids)
+        expected_cost = sum(
+            s.cost for s in specs if s.philosopher_id in sel.selected_ids
+        )
         assert sel.cost_total == expected_cost
 
 
@@ -163,19 +261,36 @@ class TestTagPrioritization:
         """Required tags should be filled before other candidates."""
         specs = [
             PhilosopherSpec(
-                "high_weight", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=10.0, tags=(), cost=1,  # High weight but no tags
+                "high_weight",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=10.0,
+                tags=(),
+                cost=1,  # High weight but no tags
             ),
             PhilosopherSpec(
-                "compliance", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_COMPLIANCE,), cost=1,
+                "compliance",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_COMPLIANCE,),
+                cost=1,
             ),
             PhilosopherSpec(
-                "clarify", "po_core.philosophers.dummy", "DummyPhilosopher",
-                risk_level=0, weight=1.0, tags=(TAG_CLARIFY,), cost=1,
+                "clarify",
+                "po_core.philosophers.dummy",
+                "DummyPhilosopher",
+                risk_level=0,
+                weight=1.0,
+                tags=(TAG_CLARIFY,),
+                cost=1,
             ),
         ]
-        reg = PhilosopherRegistry(specs, max_critical=2, budget_critical=3, cache_instances=False)
+        reg = PhilosopherRegistry(
+            specs, max_critical=2, budget_critical=3, cache_instances=False
+        )
         sel = reg.select(SafetyMode.CRITICAL)
 
         # Should select compliance and clarify, not high_weight

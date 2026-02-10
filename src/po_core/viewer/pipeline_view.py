@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 
-
 # Pipeline step definitions: (step_number, event_type, label)
 PIPELINE_STEPS = [
     (1, "MemorySnapshotted", "Memory Read"),

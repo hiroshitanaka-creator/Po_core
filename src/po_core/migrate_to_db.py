@@ -4,6 +4,7 @@ Migration Utility: JSON to Database
 
 Migrate existing JSON-based Po_trace data to database
 """
+
 from pathlib import Path
 from typing import Optional
 
@@ -18,7 +19,9 @@ console = Console()
 
 
 def migrate_json_to_db(
-    json_storage_dir: Optional[Path] = None, db_url: Optional[str] = None, verbose: bool = False
+    json_storage_dir: Optional[Path] = None,
+    db_url: Optional[str] = None,
+    verbose: bool = False,
 ) -> dict:
     """
     Migrate JSON-based Po_trace data to database.
@@ -52,7 +55,8 @@ def migrate_json_to_db(
         console=console,
     ) as progress:
         task = progress.add_task(
-            f"[cyan]Migrating {stats['total_sessions']} sessions...", total=stats["total_sessions"]
+            f"[cyan]Migrating {stats['total_sessions']} sessions...",
+            total=stats["total_sessions"],
         )
 
         for session_meta in sessions_list:
@@ -63,7 +67,9 @@ def migrate_json_to_db(
                 session = json_trace.get_session(session_id)
                 if session is None:
                     if verbose:
-                        console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
+                        console.print(
+                            f"[yellow]Warning: Session {session_id} not found[/yellow]"
+                        )
                     stats["errors"] += 1
                     continue
 
@@ -103,7 +109,9 @@ def migrate_json_to_db(
             except Exception as e:
                 stats["errors"] += 1
                 if verbose:
-                    console.print(f"[red]✗[/red] Error migrating session {session_id}: {e}")
+                    console.print(
+                        f"[red]✗[/red] Error migrating session {session_id}: {e}"
+                    )
 
             progress.update(task, advance=1)
 
@@ -126,7 +134,9 @@ def migrate(
     console.print("\n[bold cyan]Po_trace Migration: JSON → Database[/bold cyan]\n")
 
     # Run migration
-    stats = migrate_json_to_db(json_storage_dir=json_dir, db_url=db_url, verbose=verbose)
+    stats = migrate_json_to_db(
+        json_storage_dir=json_dir, db_url=db_url, verbose=verbose
+    )
 
     # Display results
     console.print("\n[bold green]Migration Complete![/bold green]\n")

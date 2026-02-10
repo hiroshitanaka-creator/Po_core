@@ -39,8 +39,9 @@ class PhilosophicalVisualizer(ABC):
         """
         pass
 
-    def create_titled_panel(self, content: Any, title: str,
-                           subtitle: Optional[str] = None) -> Panel:
+    def create_titled_panel(
+        self, content: Any, title: str, subtitle: Optional[str] = None
+    ) -> Panel:
         """
         Create a titled panel for display.
 
@@ -57,7 +58,7 @@ class PhilosophicalVisualizer(ABC):
             title=f"[bold cyan]{title}[/bold cyan]",
             subtitle=subtitle,
             border_style="cyan",
-            padding=(1, 2)
+            padding=(1, 2),
         )
 
     def create_data_table(self, title: str, columns: list) -> Table:

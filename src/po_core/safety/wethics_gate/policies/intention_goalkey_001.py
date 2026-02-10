@@ -6,6 +6,7 @@ Detects dangerous keywords in intent/user_input.
 - hard keywords -> REJECT
 - soft keywords -> REVISE (ambiguous, request clarification)
 """
+
 from __future__ import annotations
 
 import re
@@ -37,18 +38,33 @@ class IntentGoalKeywordGuardPolicy(IntentionPolicy):
 
     hard: Tuple[str, ...] = (
         # Clearly dangerous terms
-        "爆弾", "殺人", "テロ", "麻薬", "自殺",
-        "make a bomb", "terrorist", "kill someone", "suicide", "drug trafficking",
+        "爆弾",
+        "殺人",
+        "テロ",
+        "麻薬",
+        "自殺",
+        "make a bomb",
+        "terrorist",
+        "kill someone",
+        "suicide",
+        "drug trafficking",
     )
     soft: Tuple[str, ...] = (
         # Context-dependent terms (can be harmless in some contexts)
-        "ハッキング", "hack", "クラック", "crack",
-        "銃", "weapon",
+        "ハッキング",
+        "hack",
+        "クラック",
+        "crack",
+        "銃",
+        "weapon",
     )
 
     allow_phrases: Tuple[str, ...] = (
         # Reduce false positives for soft keywords
-        "life hack", "ライフハック", "hackathon", "ハッカソン",
+        "life hack",
+        "ライフハック",
+        "hackathon",
+        "ハッカソン",
     )
 
     def check(
@@ -80,8 +96,12 @@ class IntentGoalKeywordGuardPolicy(IntentionPolicy):
                     return SafetyVerdict(
                         decision=Decision.REJECT,
                         rule_ids=[self.rule_id],
-                        reasons=[f"[{self.rule_id}] 危険な目的/要求を検出: '{kw}' ({field})"],
-                        required_changes=["危険な目的/要求を除去し、無害な目的へ言い換えてください。"],
+                        reasons=[
+                            f"[{self.rule_id}] 危険な目的/要求を検出: '{kw}' ({field})"
+                        ],
+                        required_changes=[
+                            "危険な目的/要求を除去し、無害な目的へ言い換えてください。"
+                        ],
                         meta={"stage": "intent", "matched": kw, "field": field},
                     )
 
@@ -95,7 +115,9 @@ class IntentGoalKeywordGuardPolicy(IntentionPolicy):
                         return SafetyVerdict(
                             decision=Decision.REVISE,
                             rule_ids=[self.rule_id],
-                            reasons=[f"[{self.rule_id}] 文脈により危険になり得る語を検出: '{kw}' ({field})"],
+                            reasons=[
+                                f"[{self.rule_id}] 文脈により危険になり得る語を検出: '{kw}' ({field})"
+                            ],
                             required_changes=[
                                 "目的/要求が無害であることが明確になるよう、語を言い換えるか具体化してください。",
                                 "安全/倫理上の制約（例: 違法行為をしない、他者に害を与えない）を明示してください。",

@@ -92,7 +92,11 @@ class ExperimentStorage:
         # Reconstruct from dict
         baseline = ExperimentVariant(**data["baseline"])
         variants = [ExperimentVariant(**v) for v in data["variants"]]
-        created_at = datetime.fromisoformat(data["created_at"]) if data.get("created_at") else None
+        created_at = (
+            datetime.fromisoformat(data["created_at"])
+            if data.get("created_at")
+            else None
+        )
 
         return ExperimentDefinition(
             id=data["id"],
@@ -137,7 +141,9 @@ class ExperimentStorage:
             with open(path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(sample.to_dict(), ensure_ascii=False) + "\n")
 
-    def append_samples(self, experiment_id: str, samples: Iterable[ExperimentSample]) -> None:
+    def append_samples(
+        self, experiment_id: str, samples: Iterable[ExperimentSample]
+    ) -> None:
         """複数のサンプルを一括追加（スレッドセーフ）"""
         d = self._ensure_exp_dir(experiment_id)
         path = d / "samples.jsonl"
@@ -159,16 +165,20 @@ class ExperimentStorage:
                 if not line:
                     continue
                 data = json.loads(line)
-                samples.append(ExperimentSample(
-                    request_id=data["request_id"],
-                    variant_name=data["variant_name"],
-                    metrics=data["metrics"],
-                    timestamp=datetime.fromisoformat(data["timestamp"]),
-                    metadata=data.get("metadata", {}),
-                ))
+                samples.append(
+                    ExperimentSample(
+                        request_id=data["request_id"],
+                        variant_name=data["variant_name"],
+                        metrics=data["metrics"],
+                        timestamp=datetime.fromisoformat(data["timestamp"]),
+                        metadata=data.get("metadata", {}),
+                    )
+                )
         return samples
 
-    def count_samples(self, experiment_id: str, variant_name: Optional[str] = None) -> int:
+    def count_samples(
+        self, experiment_id: str, variant_name: Optional[str] = None
+    ) -> int:
         """サンプル数をカウント（variant指定可）"""
         samples = self.load_samples(experiment_id)
         if variant_name is None:
@@ -207,8 +217,7 @@ class ExperimentStorage:
         # VariantStatistics を再構築
         baseline_stats = _reconstruct_variant_statistics(data["baseline_stats"])
         variant_stats = [
-            _reconstruct_variant_statistics(vs)
-            for vs in data.get("variant_stats", [])
+            _reconstruct_variant_statistics(vs) for vs in data.get("variant_stats", [])
         ]
 
         # SignificanceTest を再構築

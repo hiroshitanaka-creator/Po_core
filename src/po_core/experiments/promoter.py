@@ -51,7 +51,9 @@ class ExperimentPromoter:
         self.backup_dir = Path(backup_dir)
         self.backup_dir.mkdir(parents=True, exist_ok=True)
 
-    def promote(self, experiment_id: str, *, force: bool = False, dry_run: bool = False) -> bool:
+    def promote(
+        self, experiment_id: str, *, force: bool = False, dry_run: bool = False
+    ) -> bool:
         """
         実験の勝者を main に昇格する。
 
@@ -77,7 +79,9 @@ class ExperimentPromoter:
 
         # 2. 推奨アクションを確認（型安全にアクセス）
         if not force and analysis.recommendation != "promote":
-            print(f"[{experiment_id}] Recommendation is '{analysis.recommendation}', not 'promote'. Skipping.")
+            print(
+                f"[{experiment_id}] Recommendation is '{analysis.recommendation}', not 'promote'. Skipping."
+            )
             return False
 
         winner_name = analysis.winner
@@ -97,7 +101,9 @@ class ExperimentPromoter:
 
         winner_config_path = Path(winner_variant.config_path)
         if not winner_config_path.exists():
-            raise FileNotFoundError(f"Winner config file not found: {winner_config_path}")
+            raise FileNotFoundError(
+                f"Winner config file not found: {winner_config_path}"
+            )
 
         # 4. バックアップを作成
         if self.main_config_path.exists():
@@ -105,17 +111,23 @@ class ExperimentPromoter:
             backup_path = self.backup_dir / f"pareto_table_{timestamp}.yaml"
 
             if dry_run:
-                print(f"[DRY RUN] Would backup {self.main_config_path} -> {backup_path}")
+                print(
+                    f"[DRY RUN] Would backup {self.main_config_path} -> {backup_path}"
+                )
             else:
                 shutil.copy2(self.main_config_path, backup_path)
                 print(f"[{experiment_id}] Backed up to {backup_path}")
 
         # 5. 勝者の設定を main にコピー
         if dry_run:
-            print(f"[DRY RUN] Would promote {winner_config_path} -> {self.main_config_path}")
+            print(
+                f"[DRY RUN] Would promote {winner_config_path} -> {self.main_config_path}"
+            )
         else:
             shutil.copy2(winner_config_path, self.main_config_path)
-            print(f"[{experiment_id}] Promoted {winner_name} to {self.main_config_path}")
+            print(
+                f"[{experiment_id}] Promoted {winner_name} to {self.main_config_path}"
+            )
 
         # 6. 実験のステータスを PROMOTED に更新
         if not dry_run:
@@ -150,7 +162,10 @@ class ExperimentPromoter:
 
     def list_backups(self) -> List[str]:
         """バックアップの一覧を返す"""
-        return [b.name for b in sorted(self.backup_dir.glob("pareto_table_*.yaml"), reverse=True)]
+        return [
+            b.name
+            for b in sorted(self.backup_dir.glob("pareto_table_*.yaml"), reverse=True)
+        ]
 
 
 __all__ = ["ExperimentPromoter"]

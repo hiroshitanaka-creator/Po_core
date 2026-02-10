@@ -13,7 +13,6 @@ import json
 
 import pytest
 
-from po_core.po_self import PhilosophicalEnsemble
 from po_core.philosophers import (
     Derrida,
     Heidegger,
@@ -21,6 +20,7 @@ from po_core.philosophers import (
     Sartre,
     Wittgenstein,
 )
+from po_core.po_self import PhilosophicalEnsemble
 from po_core.trace import TraceLevel
 
 
@@ -91,7 +91,9 @@ class TestPhilosophicalEnsembleReasoning:
 
         context = {"previous_discussion": "We were discussing freedom"}
 
-        result = ensemble.reason("How does freedom relate to responsibility?", context=context)
+        result = ensemble.reason(
+            "How does freedom relate to responsibility?", context=context
+        )
 
         assert "response" in result
         # Context should influence reasoning (hard to verify programmatically)
@@ -283,7 +285,9 @@ class TestPhilosophicalEnsembleTracing:
         trace_entries = result["trace"]["entries"]
 
         # Should have tensor computation entries
-        tensor_entries = [e for e in trace_entries if e["event"] == "tensor_computation"]
+        tensor_entries = [
+            e for e in trace_entries if e["event"] == "tensor_computation"
+        ]
         assert len(tensor_entries) >= 3  # FP, SP, Blocked
 
     def test_trace_can_be_exported(self):
@@ -500,7 +504,9 @@ class TestPhilosophicalEnsembleRealWorldScenarios:
         philosophers = [Wittgenstein(), Heidegger()]
         ensemble = PhilosophicalEnsemble(philosophers)
 
-        result = ensemble.reason("How does language shape our understanding of reality?")
+        result = ensemble.reason(
+            "How does language shape our understanding of reality?"
+        )
 
         assert result["response"] is not None
         # Wittgenstein should be involved

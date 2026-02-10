@@ -20,7 +20,10 @@ class TestPeirceBasicFunctionality:
         """Test that Peirce initializes correctly."""
         peirce = Peirce()
         assert peirce.name == "Charles Sanders Peirce"
-        assert "pragmatist" in peirce.description.lower() or "semiotic" in peirce.description.lower()
+        assert (
+            "pragmatist" in peirce.description.lower()
+            or "semiotic" in peirce.description.lower()
+        )
 
     def test_peirce_repr(self):
         """Test string representation."""
@@ -128,7 +131,10 @@ class TestPeirceCategories:
         result = peirce.reason("Pure quality and feeling without relation")
 
         categories = result["categories"]
-        assert "Firstness" in categories["dominant"] or "firstness" in categories["description"].lower()
+        assert (
+            "Firstness" in categories["dominant"]
+            or "firstness" in categories["description"].lower()
+        )
 
 
 class TestPeirceBeliefDoubt:
@@ -150,7 +156,10 @@ class TestPeirceBeliefDoubt:
         result = peirce.reason("I doubt and question this uncertain claim")
 
         belief_doubt = result["belief_doubt"]
-        assert "Doubt" in belief_doubt["state"] or "doubt" in belief_doubt["description"].lower()
+        assert (
+            "Doubt" in belief_doubt["state"]
+            or "doubt" in belief_doubt["description"].lower()
+        )
 
 
 class TestPeirceInquiry:
@@ -191,7 +200,9 @@ class TestPeircePragmaticMaxim:
     def test_practical_effects_detection(self):
         """Test detection of practical effects."""
         peirce = Peirce()
-        result = peirce.reason("What practical effects and consequences does this have?")
+        result = peirce.reason(
+            "What practical effects and consequences does this have?"
+        )
 
         maxim = result["pragmatic_maxim"]
         assert "application" in maxim
@@ -216,7 +227,9 @@ class TestPeirceFallibilism:
         result = peirce.reason("We may be mistaken and our knowledge is fallible")
 
         fallibilism = result["fallibilism"]
-        assert "fallible" in fallibilism["description"].lower() or "stance" in fallibilism
+        assert (
+            "fallible" in fallibilism["description"].lower() or "stance" in fallibilism
+        )
 
 
 class TestPeirceCommunity:
@@ -281,7 +294,11 @@ class TestPeirceReasoningText:
         result = peirce.reason(simple_prompt)
 
         reasoning = result["reasoning"]
-        assert "Peirce" in reasoning or "pragmatic" in reasoning.lower() or "sign" in reasoning.lower()
+        assert (
+            "Peirce" in reasoning
+            or "pragmatic" in reasoning.lower()
+            or "sign" in reasoning.lower()
+        )
 
 
 class TestPeirceEdgeCases:

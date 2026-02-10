@@ -25,13 +25,14 @@ This test suite validates all 20 philosopher modules across 4 critical layers:
    - Ensures no contradictions between reasoning and analysis
 """
 
-import pytest
-from typing import Type, Dict, Any, List
+from typing import Any, Dict, List, Type
 
-from po_core.philosophers.base import Philosopher
+import pytest
+
 from po_core.philosophers.arendt import Arendt
 from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.badiou import Badiou
+from po_core.philosophers.base import Philosopher
 from po_core.philosophers.confucius import Confucius
 from po_core.philosophers.deleuze import Deleuze
 from po_core.philosophers.derrida import Derrida
@@ -50,10 +51,10 @@ from po_core.philosophers.watsuji import Watsuji
 from po_core.philosophers.wittgenstein import Wittgenstein
 from po_core.philosophers.zhuangzi import Zhuangzi
 
-
 # ============================================================================
 # LAYER 1: API / SCHEMA LAYER
 # ============================================================================
+
 
 class TestLayer1_APISchema:
     """
@@ -63,24 +64,65 @@ class TestLayer1_APISchema:
     without breaking and with proper schema.
     """
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_reason_returns_dict(self, philosopher_class: Type[Philosopher]):
         """Test that reason() returns a dictionary for all philosophers."""
         philosopher = philosopher_class()
         result = philosopher.reason("Test text")
 
-        assert isinstance(result, dict), \
-            f"{philosopher.name}: reason() must return a dict, got {type(result)}"
+        assert isinstance(
+            result, dict
+        ), f"{philosopher.name}: reason() must return a dict, got {type(result)}"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_required_top_level_fields(self, philosopher_class: Type[Philosopher]):
         """Test that all required top-level fields are present."""
         philosopher = philosopher_class()
@@ -88,18 +130,41 @@ class TestLayer1_APISchema:
 
         # Core required fields that should be in all philosopher responses
         # Note: Some philosophers use "summary" instead of "reasoning"
-        assert "perspective" in result, \
-            f"{philosopher.name}: Missing required field 'perspective'"
-        assert "tension" in result, \
-            f"{philosopher.name}: Missing required field 'tension'"
-        assert ("reasoning" in result or "summary" in result), \
-            f"{philosopher.name}: Missing required field 'reasoning' or 'summary'"
+        assert (
+            "perspective" in result
+        ), f"{philosopher.name}: Missing required field 'perspective'"
+        assert (
+            "tension" in result
+        ), f"{philosopher.name}: Missing required field 'tension'"
+        assert (
+            "reasoning" in result or "summary" in result
+        ), f"{philosopher.name}: Missing required field 'reasoning' or 'summary'"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_reasoning_field_is_string(self, philosopher_class: Type[Philosopher]):
         """Test that reasoning field is a non-empty string."""
         philosopher = philosopher_class()
@@ -108,51 +173,96 @@ class TestLayer1_APISchema:
         # Some philosophers use "summary" instead of "reasoning"
         reasoning_field = result.get("reasoning") or result.get("summary")
 
-        assert reasoning_field is not None, \
-            f"{philosopher.name}: Missing 'reasoning' or 'summary' field"
-        assert isinstance(reasoning_field, str), \
-            f"{philosopher.name}: reasoning field must be a string"
-        assert len(reasoning_field) > 0, \
-            f"{philosopher.name}: reasoning field cannot be empty"
+        assert (
+            reasoning_field is not None
+        ), f"{philosopher.name}: Missing 'reasoning' or 'summary' field"
+        assert isinstance(
+            reasoning_field, str
+        ), f"{philosopher.name}: reasoning field must be a string"
+        assert (
+            len(reasoning_field) > 0
+        ), f"{philosopher.name}: reasoning field cannot be empty"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_tension_field_structure(self, philosopher_class: Type[Philosopher]):
         """Test that tension field has correct structure."""
         philosopher = philosopher_class()
         result = philosopher.reason("Test text")
 
-        assert "tension" in result, \
-            f"{philosopher.name}: Missing 'tension' field"
+        assert "tension" in result, f"{philosopher.name}: Missing 'tension' field"
 
         tension = result["tension"]
-        assert isinstance(tension, dict), \
-            f"{philosopher.name}: 'tension' must be a dict"
+        assert isinstance(
+            tension, dict
+        ), f"{philosopher.name}: 'tension' must be a dict"
 
         # Validate tension structure
-        assert "level" in tension, \
-            f"{philosopher.name}: tension missing 'level'"
-        assert "description" in tension, \
-            f"{philosopher.name}: tension missing 'description'"
-        assert "elements" in tension, \
-            f"{philosopher.name}: tension missing 'elements'"
+        assert "level" in tension, f"{philosopher.name}: tension missing 'level'"
+        assert (
+            "description" in tension
+        ), f"{philosopher.name}: tension missing 'description'"
+        assert "elements" in tension, f"{philosopher.name}: tension missing 'elements'"
 
         # Validate tension types
-        assert isinstance(tension["level"], str), \
-            f"{philosopher.name}: tension level must be string"
-        assert isinstance(tension["description"], str), \
-            f"{philosopher.name}: tension description must be string"
-        assert isinstance(tension["elements"], list), \
-            f"{philosopher.name}: tension elements must be list"
+        assert isinstance(
+            tension["level"], str
+        ), f"{philosopher.name}: tension level must be string"
+        assert isinstance(
+            tension["description"], str
+        ), f"{philosopher.name}: tension description must be string"
+        assert isinstance(
+            tension["elements"], list
+        ), f"{philosopher.name}: tension elements must be list"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_tension_level_is_valid(self, philosopher_class: Type[Philosopher]):
         """Test that tension level is one of the valid values."""
         philosopher = philosopher_class()
@@ -161,14 +271,35 @@ class TestLayer1_APISchema:
         tension = result["tension"]
         valid_levels = ["Very Low", "Low", "Moderate", "High", "Very High"]
 
-        assert tension["level"] in valid_levels, \
-            f"{philosopher.name}: tension level '{tension['level']}' not in {valid_levels}"
+        assert (
+            tension["level"] in valid_levels
+        ), f"{philosopher.name}: tension level '{tension['level']}' not in {valid_levels}"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_context_parameter_accepted(self, philosopher_class: Type[Philosopher]):
         """Test that context parameter is accepted without errors."""
         philosopher = philosopher_class()
@@ -178,11 +309,31 @@ class TestLayer1_APISchema:
         result = philosopher.reason("Test text", context=context)
         assert isinstance(result, dict)
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Badiou, Confucius, Deleuze, Derrida, Dewey,
-        Heidegger, Jung, Kierkegaard, Lacan, Levinas, MerleauPonty,
-        Nietzsche, Peirce, Sartre, WabiSabi, Watsuji, Wittgenstein, Zhuangzi
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [
+            Arendt,
+            Aristotle,
+            Badiou,
+            Confucius,
+            Deleuze,
+            Derrida,
+            Dewey,
+            Heidegger,
+            Jung,
+            Kierkegaard,
+            Lacan,
+            Levinas,
+            MerleauPonty,
+            Nietzsche,
+            Peirce,
+            Sartre,
+            WabiSabi,
+            Watsuji,
+            Wittgenstein,
+            Zhuangzi,
+        ],
+    )
     def test_empty_text_handling(self, philosopher_class: Type[Philosopher]):
         """Test that empty text is handled gracefully."""
         philosopher = philosopher_class()
@@ -190,13 +341,14 @@ class TestLayer1_APISchema:
         # Should not raise any errors
         result = philosopher.reason("")
         assert isinstance(result, dict)
-        assert ("reasoning" in result or "summary" in result)
+        assert "reasoning" in result or "summary" in result
         assert "tension" in result
 
 
 # ============================================================================
 # LAYER 2: CONCEPT DETECTION LAYER
 # ============================================================================
+
 
 class TestLayer2_ConceptDetection:
     """
@@ -230,7 +382,9 @@ class TestLayer2_ConceptDetection:
     def test_arendt_vita_activa_action_detection(self):
         """Test Arendt detects action in vita activa."""
         arendt = Arendt()
-        text = "We act together in the public political sphere, beginning new initiatives"
+        text = (
+            "We act together in the public political sphere, beginning new initiatives"
+        )
         result = arendt.reason(text)
 
         assert "vita_activa" in result
@@ -290,7 +444,9 @@ class TestLayer2_ConceptDetection:
     def test_arendt_totalitarianism_detection(self):
         """Test Arendt detects totalitarian elements."""
         arendt = Arendt()
-        text = "Total control through terror and ideology, dominating all aspects of life"
+        text = (
+            "Total control through terror and ideology, dominating all aspects of life"
+        )
         result = arendt.reason(text)
 
         assert "totalitarian_elements" in result
@@ -336,12 +492,17 @@ class TestLayer2_ConceptDetection:
 
         assert "ubermensch" in result
         uber = result["ubermensch"]
-        assert "Übermensch" in uber["orientation"] or uber["orientation"] == "Potential Übermensch"
+        assert (
+            "Übermensch" in uber["orientation"]
+            or uber["orientation"] == "Potential Übermensch"
+        )
 
     def test_nietzsche_eternal_recurrence_detection(self):
         """Test Nietzsche detects eternal recurrence affirmation."""
         nietzsche = Nietzsche()
-        text = "I would gladly live this life again eternally, saying yes to every moment"
+        text = (
+            "I would gladly live this life again eternally, saying yes to every moment"
+        )
         result = nietzsche.reason(text)
 
         assert "eternal_recurrence" in result
@@ -402,7 +563,9 @@ class TestLayer2_ConceptDetection:
     def test_confucius_ren_detection(self):
         """Test Confucius detects ren (benevolence)."""
         confucius = Confucius()
-        text = "I show compassion and kindness to others with loving care and benevolence"
+        text = (
+            "I show compassion and kindness to others with loving care and benevolence"
+        )
         result = confucius.reason(text)
 
         assert "analysis" in result
@@ -442,7 +605,9 @@ class TestLayer2_ConceptDetection:
     def test_confucius_junzi_detection(self):
         """Test Confucius detects junzi (exemplary person)."""
         confucius = Confucius()
-        text = "The exemplary gentleman cultivates virtue and wisdom with noble character"
+        text = (
+            "The exemplary gentleman cultivates virtue and wisdom with noble character"
+        )
         result = confucius.reason(text)
 
         assert "analysis" in result
@@ -537,7 +702,9 @@ class TestLayer2_ConceptDetection:
     def test_sartre_bad_faith_detection(self):
         """Test Sartre detects bad faith (self-deception)."""
         sartre = Sartre()
-        text = "I have no choice, this is just who I am, I must follow what others expect"
+        text = (
+            "I have no choice, this is just who I am, I must follow what others expect"
+        )
         result = sartre.reason(text)
 
         assert "bad_faith_indicators" in result
@@ -697,7 +864,9 @@ class TestLayer2_ConceptDetection:
     def test_peirce_basic_detection(self):
         """Test Peirce basic concept detection."""
         peirce = Peirce()
-        text = "Pragmatic inquiry uses abductive reasoning to interpret signs and symbols"
+        text = (
+            "Pragmatic inquiry uses abductive reasoning to interpret signs and symbols"
+        )
         result = peirce.reason(text)
 
         # Basic structure test
@@ -719,7 +888,9 @@ class TestLayer2_ConceptDetection:
     def test_watsuji_basic_detection(self):
         """Test Watsuji basic concept detection."""
         watsuji = Watsuji()
-        text = "Human existence is fundamentally relational, shaped by climate and culture"
+        text = (
+            "Human existence is fundamentally relational, shaped by climate and culture"
+        )
         result = watsuji.reason(text)
 
         # Basic structure test
@@ -763,6 +934,7 @@ class TestLayer2_ConceptDetection:
 # ============================================================================
 # LAYER 3: TENSION / CONTRADICTION LAYER
 # ============================================================================
+
 
 class TestLayer3_TensionDetection:
     """
@@ -819,7 +991,9 @@ class TestLayer3_TensionDetection:
     def test_nietzsche_passive_nihilism_tension(self):
         """Test Nietzsche detects tension from passive nihilism."""
         nietzsche = Nietzsche()
-        text = "Everything is meaningless and pointless, nothing matters anymore, despair"
+        text = (
+            "Everything is meaningless and pointless, nothing matters anymore, despair"
+        )
         result = nietzsche.reason(text)
 
         tension = result["tension"]
@@ -831,7 +1005,9 @@ class TestLayer3_TensionDetection:
     def test_nietzsche_slave_morality_tension(self):
         """Test Nietzsche detects tension from slave morality."""
         nietzsche = Nietzsche()
-        text = "Those people are evil and sinful, we must humbly obey and submit to duty"
+        text = (
+            "Those people are evil and sinful, we must humbly obey and submit to duty"
+        )
         result = nietzsche.reason(text)
 
         tension = result["tension"]
@@ -887,6 +1063,7 @@ class TestLayer3_TensionDetection:
 # ============================================================================
 # LAYER 4: REASONING TEXT LAYER
 # ============================================================================
+
 
 class TestLayer4_ReasoningTextValidation:
     """
@@ -962,7 +1139,11 @@ class TestLayer4_ReasoningTextValidation:
         will_power = result["will_to_power"]
 
         # Reasoning should mention will to power or its description
-        assert "will" in reasoning or "power" in reasoning or will_power["description"].lower() in reasoning
+        assert (
+            "will" in reasoning
+            or "power" in reasoning
+            or will_power["description"].lower() in reasoning
+        )
 
     def test_nietzsche_reasoning_mentions_ubermensch(self):
         """Test Nietzsche's reasoning mentions Übermensch orientation."""
@@ -974,7 +1155,10 @@ class TestLayer4_ReasoningTextValidation:
         ubermensch = result["ubermensch"]
 
         # Reasoning should reference Übermensch or value creation
-        assert "übermensch" in reasoning or ubermensch["description"].lower()[:30] in reasoning
+        assert (
+            "übermensch" in reasoning
+            or ubermensch["description"].lower()[:30] in reasoning
+        )
 
     def test_nietzsche_reasoning_mentions_nihilism(self):
         """Test Nietzsche's reasoning mentions nihilism type."""
@@ -986,7 +1170,9 @@ class TestLayer4_ReasoningTextValidation:
         nihilism = result["nihilism"]
 
         # Reasoning should mention nihilism
-        assert "nihilism" in reasoning or nihilism["description"].lower()[:30] in reasoning
+        assert (
+            "nihilism" in reasoning or nihilism["description"].lower()[:30] in reasoning
+        )
 
     def test_nietzsche_reasoning_no_contradiction_with_morality(self):
         """Test Nietzsche's reasoning doesn't contradict morality analysis."""
@@ -999,7 +1185,11 @@ class TestLayer4_ReasoningTextValidation:
 
         if "Slave" in morality["type"]:
             # Should not praise this as master morality
-            assert "slave" in reasoning or "reactive" in reasoning or "resentment" in reasoning
+            assert (
+                "slave" in reasoning
+                or "reactive" in reasoning
+                or "resentment" in reasoning
+            )
 
     def test_confucius_reasoning_mentions_key_virtues(self):
         """Test Confucius's reasoning mentions detected virtues."""
@@ -1016,7 +1206,9 @@ class TestLayer4_ReasoningTextValidation:
 
         # Should mention li if present
         if analysis["li_ritual_propriety"]["li_present"]:
-            assert "li" in reasoning or "ritual" in reasoning or "propriety" in reasoning
+            assert (
+                "li" in reasoning or "ritual" in reasoning or "propriety" in reasoning
+            )
 
     def test_confucius_reasoning_reflects_virtue_level(self):
         """Test Confucius's reasoning reflects overall virtue level."""
@@ -1032,11 +1224,14 @@ class TestLayer4_ReasoningTextValidation:
         # For high virtue, summary should be positive and tension low
         if tension["level"] in ["Very Low", "Low"]:
             # Should have positive language
-            assert "embodies" in summary or "emphasizes" in summary or "values" in summary
+            assert (
+                "embodies" in summary or "emphasizes" in summary or "values" in summary
+            )
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Nietzsche, Confucius, Aristotle, Sartre, Heidegger
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [Arendt, Nietzsche, Confucius, Aristotle, Sartre, Heidegger],
+    )
     def test_reasoning_text_is_substantive(self, philosopher_class: Type[Philosopher]):
         """Test that reasoning text is substantive (not just template)."""
         philosopher = philosopher_class()
@@ -1047,27 +1242,33 @@ class TestLayer4_ReasoningTextValidation:
         reasoning = result.get("reasoning") or result.get("summary", "")
 
         # Should be substantive
-        assert len(reasoning) > 30, \
-            f"{philosopher.name}: reasoning too short ({len(reasoning)} chars)"
+        assert (
+            len(reasoning) > 30
+        ), f"{philosopher.name}: reasoning too short ({len(reasoning)} chars)"
 
         # Should contain actual content, not just templates
-        assert reasoning.count(" ") > 5, \
-            f"{philosopher.name}: reasoning should contain multiple words"
+        assert (
+            reasoning.count(" ") > 5
+        ), f"{philosopher.name}: reasoning should contain multiple words"
 
 
 # ============================================================================
 # CROSS-LAYER INTEGRATION TESTS
 # ============================================================================
 
+
 class TestCrossLayerIntegration:
     """
     Cross-layer integration tests that validate consistency across all layers.
     """
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Confucius, Nietzsche, Sartre, Heidegger
-    ])
-    def test_high_tension_reflected_in_reasoning(self, philosopher_class: Type[Philosopher]):
+    @pytest.mark.parametrize(
+        "philosopher_class",
+        [Arendt, Aristotle, Confucius, Nietzsche, Sartre, Heidegger],
+    )
+    def test_high_tension_reflected_in_reasoning(
+        self, philosopher_class: Type[Philosopher]
+    ):
         """Test that high tension is reflected in the reasoning text."""
         philosopher = philosopher_class()
 
@@ -1080,12 +1281,13 @@ class TestCrossLayerIntegration:
 
         if tension["level"] in ["High", "Very High"]:
             # Reasoning should reflect problems/issues
-            assert len(tension["elements"]) > 0, \
-                f"{philosopher.name}: High tension should have elements"
+            assert (
+                len(tension["elements"]) > 0
+            ), f"{philosopher.name}: High tension should have elements"
 
-    @pytest.mark.parametrize("philosopher_class", [
-        Arendt, Aristotle, Confucius, Nietzsche
-    ])
+    @pytest.mark.parametrize(
+        "philosopher_class", [Arendt, Aristotle, Confucius, Nietzsche]
+    )
     def test_concept_detection_consistency(self, philosopher_class: Type[Philosopher]):
         """Test that concept detection is consistent across multiple calls."""
         philosopher = philosopher_class()
@@ -1097,8 +1299,9 @@ class TestCrossLayerIntegration:
         result2 = philosopher.reason(text)
 
         # Should get same tension level
-        assert result1["tension"]["level"] == result2["tension"]["level"], \
-            f"{philosopher.name}: Inconsistent tension detection"
+        assert (
+            result1["tension"]["level"] == result2["tension"]["level"]
+        ), f"{philosopher.name}: Inconsistent tension detection"
 
 
 if __name__ == "__main__":

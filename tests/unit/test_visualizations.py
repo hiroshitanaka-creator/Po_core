@@ -8,14 +8,15 @@ Tests the advanced visualization capabilities including:
 - Interactive dashboards
 - Export functionality
 """
+
 import tempfile
 from pathlib import Path
 
+import plotly.graph_objects as go
 import pytest
 from matplotlib.figure import Figure
-import plotly.graph_objects as go
 
-from po_core.po_trace import PoTrace, EventType
+from po_core.po_trace import EventType, PoTrace
 from po_core.visualizations import PoVisualizer
 
 
@@ -87,37 +88,36 @@ class TestTensionMap:
         visualizer = PoVisualizer(po_trace=po_trace)
 
         fig = visualizer.create_tension_map(
-            session_id=test_session_id,
-            output_path=None
+            session_id=test_session_id, output_path=None
         )
 
         assert isinstance(fig, Figure)
 
-    def test_create_tension_map_saves_file(self, po_trace, test_session_id, temp_storage):
+    def test_create_tension_map_saves_file(
+        self, po_trace, test_session_id, temp_storage
+    ):
         """Test tension map saves to file."""
         visualizer = PoVisualizer(po_trace=po_trace)
         output_path = temp_storage / "tension_map.png"
 
         result = visualizer.create_tension_map(
-            session_id=test_session_id,
-            output_path=output_path,
-            format='png'
+            session_id=test_session_id, output_path=output_path, format="png"
         )
 
         assert result is None  # Should return None when saving
         assert output_path.exists()
         assert output_path.stat().st_size > 0
 
-    def test_create_tension_map_different_formats(self, po_trace, test_session_id, temp_storage):
+    def test_create_tension_map_different_formats(
+        self, po_trace, test_session_id, temp_storage
+    ):
         """Test tension map supports different formats."""
         visualizer = PoVisualizer(po_trace=po_trace)
 
-        for fmt in ['png', 'svg', 'pdf']:
+        for fmt in ["png", "svg", "pdf"]:
             output_path = temp_storage / f"tension_map.{fmt}"
             visualizer.create_tension_map(
-                session_id=test_session_id,
-                output_path=output_path,
-                format=fmt
+                session_id=test_session_id, output_path=output_path, format=fmt
             )
             assert output_path.exists()
 
@@ -180,21 +180,20 @@ class TestMetricsTimeline:
         visualizer = PoVisualizer(po_trace=po_trace)
 
         fig = visualizer.create_metrics_timeline(
-            session_ids=test_session_ids,
-            output_path=None
+            session_ids=test_session_ids, output_path=None
         )
 
         assert isinstance(fig, go.Figure)
 
-    def test_create_metrics_timeline_saves_html(self, po_trace, test_session_ids, temp_storage):
+    def test_create_metrics_timeline_saves_html(
+        self, po_trace, test_session_ids, temp_storage
+    ):
         """Test metrics timeline saves to HTML."""
         visualizer = PoVisualizer(po_trace=po_trace)
         output_path = temp_storage / "timeline.html"
 
         result = visualizer.create_metrics_timeline(
-            session_ids=test_session_ids,
-            output_path=output_path,
-            format='html'
+            session_ids=test_session_ids, output_path=output_path, format="html"
         )
 
         assert result is None
@@ -208,7 +207,7 @@ class TestMetricsTimeline:
         fig = visualizer.create_metrics_timeline(
             session_ids=test_session_ids,
             output_path=None,
-            title="Custom Timeline Title"
+            title="Custom Timeline Title",
         )
 
         assert isinstance(fig, go.Figure)
@@ -281,21 +280,20 @@ class TestPhilosopherNetwork:
         visualizer = PoVisualizer(po_trace=po_trace)
 
         fig = visualizer.create_philosopher_network(
-            session_id=test_session_id,
-            output_path=None
+            session_id=test_session_id, output_path=None
         )
 
         assert isinstance(fig, Figure)
 
-    def test_create_philosopher_network_saves_file(self, po_trace, test_session_id, temp_storage):
+    def test_create_philosopher_network_saves_file(
+        self, po_trace, test_session_id, temp_storage
+    ):
         """Test philosopher network saves to file."""
         visualizer = PoVisualizer(po_trace=po_trace)
         output_path = temp_storage / "network.png"
 
         result = visualizer.create_philosopher_network(
-            session_id=test_session_id,
-            output_path=output_path,
-            format='png'
+            session_id=test_session_id, output_path=output_path, format="png"
         )
 
         assert result is None
@@ -378,8 +376,7 @@ class TestComprehensiveDashboard:
         visualizer = PoVisualizer(po_trace=po_trace)
 
         fig = visualizer.create_comprehensive_dashboard(
-            session_id=test_session_id,
-            output_path=None
+            session_id=test_session_id, output_path=None
         )
 
         assert isinstance(fig, go.Figure)
@@ -390,9 +387,7 @@ class TestComprehensiveDashboard:
         output_path = temp_storage / "dashboard.html"
 
         result = visualizer.create_comprehensive_dashboard(
-            session_id=test_session_id,
-            output_path=output_path,
-            format='html'
+            session_id=test_session_id, output_path=output_path, format="html"
         )
 
         assert result is None
@@ -450,15 +445,15 @@ class TestExportFunctionality:
 
         return session_id
 
-    def test_export_session_visualizations(self, po_trace, test_session_id, temp_storage):
+    def test_export_session_visualizations(
+        self, po_trace, test_session_id, temp_storage
+    ):
         """Test exporting all visualizations for a session."""
         visualizer = PoVisualizer(po_trace=po_trace)
         output_dir = temp_storage / "exports"
 
         results = visualizer.export_session_visualizations(
-            session_id=test_session_id,
-            output_dir=output_dir,
-            formats=['png', 'html']
+            session_id=test_session_id, output_dir=output_dir, formats=["png", "html"]
         )
 
         assert isinstance(results, dict)
@@ -477,14 +472,14 @@ class TestExportFunctionality:
         assert not output_dir.exists()
 
         visualizer.export_session_visualizations(
-            session_id=test_session_id,
-            output_dir=output_dir,
-            formats=['png']
+            session_id=test_session_id, output_dir=output_dir, formats=["png"]
         )
 
         assert output_dir.exists()
 
-    def test_export_with_multiple_formats(self, po_trace, test_session_id, temp_storage):
+    def test_export_with_multiple_formats(
+        self, po_trace, test_session_id, temp_storage
+    ):
         """Test export with multiple formats."""
         visualizer = PoVisualizer(po_trace=po_trace)
         output_dir = temp_storage / "multi_format"
@@ -492,12 +487,12 @@ class TestExportFunctionality:
         results = visualizer.export_session_visualizations(
             session_id=test_session_id,
             output_dir=output_dir,
-            formats=['png', 'svg', 'html']
+            formats=["png", "svg", "html"],
         )
 
         # Should have files in multiple formats
         extensions = {path.suffix for path in results.values()}
-        assert '.png' in extensions or '.svg' in extensions or '.html' in extensions
+        assert ".png" in extensions or ".svg" in extensions or ".html" in extensions
 
 
 class TestVisualizerIntegration:
@@ -528,14 +523,29 @@ class TestVisualizerIntegration:
         visualizer = PoVisualizer()
 
         default_philosophers = [
-            'aristotle', 'sartre', 'heidegger', 'nietzsche',
-            'derrida', 'wittgenstein', 'jung', 'dewey',
-            'deleuze', 'kierkegaard', 'lacan', 'levinas',
-            'badiou', 'peirce', 'merleau_ponty', 'arendt',
-            'watsuji', 'wabi_sabi', 'confucius', 'zhuangzi'
+            "aristotle",
+            "sartre",
+            "heidegger",
+            "nietzsche",
+            "derrida",
+            "wittgenstein",
+            "jung",
+            "dewey",
+            "deleuze",
+            "kierkegaard",
+            "lacan",
+            "levinas",
+            "badiou",
+            "peirce",
+            "merleau_ponty",
+            "arendt",
+            "watsuji",
+            "wabi_sabi",
+            "confucius",
+            "zhuangzi",
         ]
 
         for phil in default_philosophers:
             assert phil in visualizer.philosopher_colors
             assert isinstance(visualizer.philosopher_colors[phil], str)
-            assert visualizer.philosopher_colors[phil].startswith('#')
+            assert visualizer.philosopher_colors[phil].startswith("#")
