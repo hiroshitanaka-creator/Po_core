@@ -117,7 +117,7 @@ def analyze_conflicts(proposals: Sequence[Proposal]) -> ConflictReport:
         penalty[pid] = penalty.get(pid, 0.0) + 0.15 * float(sev)
 
     def mk_id(kind: str, ids: List[str]) -> str:
-        h = hashlib.sha1(
+        h = hashlib.sha256(
             ("|".join(sorted(ids)) + ":" + kind).encode("utf-8")
         ).hexdigest()[:10]
         return f"C.{kind}.{h}"
