@@ -142,8 +142,8 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 │  └─────────────┘  └─────────────┘  └─────────────┘                │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Philosophers: 39 modules + PhilosopherBridge adapter          │ │
-│  │  Legacy Philosopher.reason() → PhilosopherProtocol.propose() │ │
+│  │ Philosophers: 39 modules (PhilosopherProtocol)                │ │
+│  │  propose(DomainContext) → List[Proposal]                     │ │
 │  │                                                              │ │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │ │
 │  │  │Heidegger │  │ Derrida  │  │  Sartre  │  ...              │ │
@@ -284,53 +284,43 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Alpha (v0.1.0)**
+**Current Phase: Alpha (v0.1.0) — Foundation Complete, Heading to v1.0**
+
+### Completed (Phase 0–4)
 
 | Component | Status | Completion |
 |-----------|--------|------------|
 | Philosophical Framework | Complete | 100% (39 philosophers) |
 | Documentation | Complete | 100% (120+ specs) |
-| Architecture Design | Complete | 100% |
-| Hexagonal Architecture | Complete | 100% |
-| `run_turn` Pipeline | **Complete** | 100% (10-step hex pipeline) |
-| PhilosopherBridge | **Complete** | 100% (all 39 → `PhilosopherProtocol`) |
-| TensorEngine (3 metrics) | **Complete** | 100% (freedom_pressure, semantic_delta, blocked_tensor) |
+| Hexagonal Architecture | Complete | 100% (`run_turn` 10-step pipeline) |
+| PhilosopherBridge | Complete | 100% (all 39 → `PhilosopherProtocol`) |
+| TensorEngine (3 metrics) | Complete | 100% (freedom_pressure, semantic_delta, blocked_tensor) |
 | Pareto Optimization | Complete | 100% (config-driven) |
-| Battalion System | Complete | 100% |
-| Trace/Audit Contract | Complete | 100% (schema validation) |
 | Safety System (3-layer) | Complete | 100% (IntentionGate → PolicyPrecheck → ActionGate) |
-| Pipeline Tests | **Complete** | 100% (125+ tests, CI-gated) |
+| Pipeline Tests | Complete | 100% (125+ tests, CI-gated) |
 | Experiment Management | Complete | 100% (A/B testing framework) |
-| Visualization (Viewer) | In Progress | 50% |
 
-**What's Working:**
-- **`run_turn` hexagonal pipeline** — 10-step deliberation, fully operational
-- **`po_core.run()`** — Recommended public API entry point
-- **`PoSelf.generate()`** — High-level wrapper, migrated to `run_turn` internally
-- **PhilosopherBridge** — Adapts all 39 legacy `Philosopher.reason()` → `PhilosopherProtocol.propose()`
-- **TensorEngine with 3 real metrics** — Freedom Pressure (6D keyword), Semantic Delta (token overlap), Blocked Tensor (harm detection)
-- **3-layer safety** — IntentionGate (pre-deliberation) → PolicyPrecheck → ActionGate (W0–W4 post-check)
-- **SafetyMode transitions** — NORMAL/WARN/CRITICAL from freedom_pressure thresholds
-- **125+ pipeline tests** — E2E (37), PoSelf (40), Bridge (19), Tensor (29), CI-gated as must-pass
-- 39 philosopher modules (full reasoning implementations)
-- Pareto optimization (config-driven via pareto_table.yaml)
-- Battalion system (config-driven via battalion_table.yaml)
-- Trace audit contract (schema validation with config_version tracking)
-- Shadow Pareto A/B with ShadowGuard autonomous brake
-- Experiment Management Framework (A/B testing with statistical analysis)
-- CI/CD pipeline (pytest, coverage, linting, security checks, 2-stage testing)
-- Solar Will experiments (experimental)
+### Roadmap to v1.0 — Five Phases
 
-**Removed in v0.3:**
-- `run_ensemble()` — Removed. Use `po_core.run()` or `PoSelf.generate()` instead
-- `PhilosophicalEnsemble` — Deprecated. Use `PoSelf` instead
+```
+Phase 1         Phase 2           Phase 3          Phase 4         Phase 5
+基盤固め    →   知性強化      →   可視化       →   防御強化    →   配布
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+技術負債清算     ML テンソル       WebUI            Red Team        REST API
+39人スケール     Deliberation     Explainable AI   Grey Zone       Docker
+テスト基盤       Interaction T.   リアルタイム      CI防御指標      Streaming
+二重IF除去       Semantic Prof.   Argument Graph   LLM Detector    PyPI
+```
 
-**What's Next:**
-- **Production experiment runs** — Validate statistical methods with real philosophy comparisons
-- Viewer UI polish and frontend integration
-- Performance optimization for large philosopher ensembles
-- Package publishing (PyPI)
-- Full API reference documentation
+| Phase | Name | Focus | Status |
+|-------|------|-------|--------|
+| **1** | Resonance Calibration | 39-philosopher scaling + tech debt cleanup | **Next** |
+| **2** | Tensor Intelligence | ML tensors + Deliberation Engine (emergence) | Planned |
+| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate | Planned |
+| **4** | Adversarial Hardening | Red team expansion + ethical stress testing | Planned |
+| **5** | Productization | REST API, Docker, streaming, PyPI publish | Planned |
+
+See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics.
 

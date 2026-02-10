@@ -1,8 +1,12 @@
-# Next Steps — Post Phase 0-4
+# Next Steps — Phase 1–5 Roadmap
 
-This document tracks issues to be created on GitHub and remaining work items.
+> Updated: 2026-02-10
+> See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for full rationale.
+> See [ISSUES.md](./ISSUES.md) for GitHub Issue templates.
 
-## Completed Phases (this branch)
+---
+
+## Completed (Phase 0–4, Foundation)
 
 ### Phase 0: PhilosopherBridge (Blocker Removal)
 - `PhilosopherBridge` adapter: wraps legacy `Philosopher.reason()` → `PhilosopherProtocol.propose()`
@@ -28,72 +32,85 @@ This document tracks issues to be created on GitHub and remaining work items.
 - 29 tensor metric tests
 
 ### Phase 4: Production Readiness
-- `run_ensemble()` deprecated with `DeprecationWarning`
+- `run_ensemble()` removed. All callers migrated to `po_core.run()` / `PoSelf.generate()`
 - CI split: pipeline tests (must-pass) + full suite (best-effort)
 - `pytest.mark.pipeline` marker on all 4 test files
 - 125+ pipeline tests total
 
 ---
 
-## Open Issues to Create
+## Phase 1 (Next): Resonance Calibration & Foundation Settlement
 
-### Issue: Migrate legacy test suite to `run_turn`
-**Priority:** Medium
-**Labels:** `testing`, `tech-debt`
+**Status: ACTIVE**
 
-197 legacy tests still use `run_ensemble` or broken imports. These should be:
-1. Triaged (which tests still apply)
-2. Migrated to use `run_turn` / `po_core.run()`
-3. Removed if no longer relevant
+| # | Task | Issue | Priority |
+|---|------|-------|----------|
+| 1 | Migrate 197 legacy tests to `run_turn` | ISSUES.md #1 | High |
+| 2 | Remove PhilosopherBridge dual interface | ISSUES.md #2 | High |
+| 3 | 39-philosopher concurrent operation validation | ISSUES.md #3 | High |
+| 4 | Rebalance Freedom Pressure / W_Ethics Gate for 39-person scale | ISSUES.md #4 | Medium |
+| 5 | Philosopher semantic uniqueness assessment | ISSUES.md #5 | Medium |
 
-### ~~Issue: Remove `run_ensemble` in v0.3~~ DONE
-**Status:** Completed
+**Exit Criteria:**
+- Zero references to `run_ensemble` in tests
+- `PhilosopherBridge` deleted
+- 39-philosopher NORMAL mode < 5s
+- Coverage >= 60%
+- No philosopher pair > 0.85 semantic similarity
 
-`run_ensemble()` removed. All callers migrated to `po_core.run()` or `PoSelf.generate()`.
-Legacy test files deleted. Examples and docs updated.
+---
 
-### Issue: Implement sentence-level semantic delta
-**Priority:** Medium
-**Labels:** `enhancement`, `tensors`
+## Phase 2 (Planned): Tensor Intelligence & Emergence Engine
 
-Current `metric_semantic_delta` uses token overlap (bag-of-words). Upgrade to:
-- sentence-transformers embeddings (already in requirements.txt)
-- Cosine similarity for better semantic understanding
-- Backward-compatible (same `(str, float)` return signature)
+| # | Task | Issue | Priority |
+|---|------|-------|----------|
+| 6 | Upgrade Semantic Delta to sentence-transformers | ISSUES.md #6 | High |
+| 7 | Complete Interaction Tensor implementation | ISSUES.md #7 | High |
+| 8 | Build Deliberation Engine (multi-round dialogue) | ISSUES.md #8 | Critical |
 
-### Issue: Add golden regression tests (DecisionEmitted events)
-**Priority:** High
-**Labels:** `testing`, `quality`
+**Exit Criteria:**
+- Semantic delta uses embedding-based similarity
+- Interaction Tensor returns NxN philosopher interference matrix
+- Deliberation Engine with `max_rounds` parameter integrated into `run_turn`
 
-Capture golden `DecisionEmitted` trace events for known inputs and assert stability:
-- Prevents silent behavioral regression
-- Pair with config_version tracking in TraceEvents
+---
 
-### Issue: PhilosopherProtocol migration — remove dual interface
-**Priority:** Medium
-**Labels:** `tech-debt`, `architecture`
+## Phase 3 (Planned): Observability & Viewer Integration
 
-Currently both `Philosopher.reason()` and `PhilosopherProtocol.propose()` exist.
-PhilosopherBridge adapts between them. Long-term:
-1. Migrate all 39 philosophers to implement `PhilosopherProtocol` natively
-2. Remove `PhilosopherBridge` adapter
-3. Simplify registry
+| # | Task | Issue | Priority |
+|---|------|-------|----------|
+| 9 | Build Viewer WebUI (Plotly Dash / Streamlit) | ISSUES.md #9 | High |
+| 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High |
 
-### Issue: TensorEngine — add remaining tensor types
-**Priority:** Low
-**Labels:** `enhancement`, `tensors`
+**Exit Criteria:**
+- Browser-based dashboard showing tensors, philosophers, pipeline
+- W_Ethics Gate decisions include structured explanation chain
 
-Legacy tensors not yet in TensorEngine:
-- Interaction Tensor (philosopher-philosopher interference)
-- Semantic Profile (full conversation tracking, not just single-turn delta)
-- Consider adding as `MetricFn` plugins
+---
 
-### ~~Issue: Viewer integration with new trace format~~ DONE
-**Status:** Completed
+## Phase 4 (Planned): Adversarial Hardening
 
-PoViewer class created. Reads InMemoryTracer / TraceEvent stream.
-- `pipeline_view.py`: 10-step pipeline progression (Markdown + text)
-- `tensor_view.py`: Tensor metric display
-- `po_viewer.py`: High-level PoViewer combining all views
-- A/B shadow diff via existing `decision_report_md.py`
-- 30 viewer tests
+| # | Task | Issue | Priority |
+|---|------|-------|----------|
+| 11 | Expand red team test suite to 50+ cases | ISSUES.md #11 | High |
+| 12 | Prototype LLM-based violation detector | ISSUES.md #12 | Medium |
+
+**Exit Criteria:**
+- 50+ red team tests across 5 attack categories
+- Defense metrics automated in CI
+
+---
+
+## Phase 5 (Planned): Productization & Delivery
+
+| # | Task | Issue | Priority |
+|---|------|-------|----------|
+| 13 | Implement FastAPI REST API | ISSUES.md #13 | Critical |
+| 14 | Docker containerization | ISSUES.md #14 | High |
+| 15 | PyPI package publishing | ISSUES.md #15 | Medium |
+
+**Exit Criteria:**
+- REST API with 5+ endpoints, OpenAPI docs
+- Docker image published
+- PyPI package installable via `pip install po-core`
+- Version bumped to `0.2.0-beta`
