@@ -86,7 +86,6 @@ class InteractiveReasoningSession:
     def __init__(self):
         """Initialize interactive session."""
         self.console = Console()
-        self.ensemble: Optional[PhilosophicalEnsemble] = None
         self.selected_philosophers: List[str] = []
         self.reasoning_history: List[Dict[str, Any]] = []
 
