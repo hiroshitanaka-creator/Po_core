@@ -77,7 +77,8 @@ def cmd_analyze(experiment_id: str):
 
         print(f"\nAnalysis completed:")
         print(
-            f"  Baseline: {analysis.baseline_stats.variant_name} (n={analysis.baseline_stats.n})"
+            f"  Baseline: {analysis.baseline_stats.variant_name}"
+            f" (n={analysis.baseline_stats.n})"
         )
         for vs in analysis.variant_stats:
             print(f"  Variant: {vs.variant_name} (n={vs.n})")
@@ -86,7 +87,9 @@ def cmd_analyze(experiment_id: str):
         for test in analysis.significance_tests:
             sig = "✓" if test.is_significant else "✗"
             print(
-                f"  {sig} {test.metric_name}: baseline={test.baseline_mean:.4f}, variant={test.variant_mean:.4f}, delta={test.delta:+.4f} ({test.delta_percent:+.2f}%), p={test.p_value:.4f}"
+                f"  {sig} {test.metric_name}: baseline={test.baseline_mean:.4f},"
+                f" variant={test.variant_mean:.4f}, delta={test.delta:+.4f}"
+                f" ({test.delta_percent:+.2f}%), p={test.p_value:.4f}"
             )
 
         print(f"\nRecommendation: {analysis.recommendation}")
