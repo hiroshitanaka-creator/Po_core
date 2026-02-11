@@ -35,6 +35,8 @@ class Dewey(Philosopher):
             name="John Dewey",
             description="American pragmatist focused on experience, inquiry, democracy, and education",
         )
+        self.tradition = "American Pragmatism"
+        self.key_concepts = ['experience', 'inquiry', 'democracy as way of life', 'instrumentalism', 'growth']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -63,6 +65,11 @@ class Dewey(Philosopher):
             "habit_formation": analysis["habit"],
             "instrumentalism": analysis["instrumentalism"],
             "continuity_interaction": analysis["continuity_interaction"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between individual growth and social conditions",
+                "elements": ['Experience is both personal and shaped by environment', 'Democracy requires both freedom and shared inquiry', 'Education aims at growth yet must prepare for existing society'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Pragmatism and experimentalism",

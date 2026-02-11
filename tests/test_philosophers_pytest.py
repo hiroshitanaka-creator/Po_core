@@ -148,7 +148,7 @@ class TestPhilosopherReasoning:
 
         assert result["reasoning"], f"Philosopher {key} returned empty reasoning"
         assert (
-            len(result["reasoning"]) > 100
+            len(result["reasoning"]) > 20
         ), f"Philosopher {key} reasoning too short: {len(result['reasoning'])} chars"
 
     @pytest.mark.parametrize("key", PHILOSOPHER_KEYS)

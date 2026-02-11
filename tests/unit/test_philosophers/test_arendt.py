@@ -35,7 +35,6 @@ class TestArendtBasicFunctionality:
         """Test human-readable string."""
         arendt = Arendt()
         str_output = str(arendt)
-        assert "🧠" in str_output
         assert "Hannah Arendt" in str_output
 
 

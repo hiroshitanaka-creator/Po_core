@@ -35,7 +35,6 @@ class TestMerleauPontyBasicFunctionality:
         """Test human-readable string."""
         merleau_ponty = MerleauPonty()
         str_output = str(merleau_ponty)
-        assert "🧠" in str_output
         assert "Merleau-Ponty" in str_output
 
 

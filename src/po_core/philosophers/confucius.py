@@ -44,6 +44,8 @@ class Confucius(Philosopher):
             name="Confucius (孔子)",
             description="Confucian philosophy emphasizing ren (benevolence), li (ritual propriety), and the cultivation of virtue through learning and proper relationships",
         )
+        self.tradition = "Confucianism"
+        self.key_concepts = ['ren (benevolence)', 'li (ritual propriety)', 'junzi (exemplary person)', 'xiao (filial piety)', 'zhongyong (doctrine of the mean)']
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None

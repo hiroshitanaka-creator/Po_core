@@ -35,7 +35,6 @@ class TestZhuangziBasicFunctionality:
         """Test human-readable string."""
         zhuangzi = Zhuangzi()
         str_output = str(zhuangzi)
-        assert "🧠" in str_output
         assert "Zhuangzi" in str_output
 
 

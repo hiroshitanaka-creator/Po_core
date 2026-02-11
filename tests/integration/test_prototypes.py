@@ -12,6 +12,9 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.skip(reason="Legacy BatchAnalyzer/PhilosopherComparison API removed in run_turn migration — to be migrated in Phase 1")
+
+
 # Add examples directory to path for imports
 examples_dir = Path(__file__).parent.parent.parent / "examples"
 sys.path.insert(0, str(examples_dir))

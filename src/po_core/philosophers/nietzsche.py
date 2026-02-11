@@ -37,6 +37,8 @@ class Nietzsche(Philosopher):
             name="Friedrich Nietzsche",
             description="German philosopher focused on will to power, Übermensch, and revaluation of values",
         )
+        self.tradition = "Existentialism / Nihilism"
+        self.key_concepts = ['will to power', 'Ubermensch', 'eternal recurrence', 'amor fati', 'revaluation of all values']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

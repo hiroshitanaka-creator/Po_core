@@ -36,6 +36,8 @@ class Foucault(Philosopher):
             name="Michel Foucault",
             description="Post-structuralist focused on power/knowledge, discourse, discipline, and biopower",
         )
+        self.tradition = "Post-Structuralism / Critical Theory"
+        self.key_concepts = ['power/knowledge', 'discourse', 'discipline and punish', 'biopower', 'genealogy']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -67,6 +69,11 @@ class Foucault(Philosopher):
             "governmentality": analysis["governmentality"],
             "care_of_self": analysis["care_of_self"],
             "episteme": analysis["episteme"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between power and resistance, knowledge and control",
+                "elements": ['Power produces knowledge yet knowledge reinforces power', 'Discourse shapes subjects who may resist that shaping', 'Freedom exists only within relations of power'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Genealogical and archaeological analysis",

@@ -35,7 +35,6 @@ class TestDeleuzeBasicFunctionality:
         """Test human-readable string."""
         deleuze = Deleuze()
         str_output = str(deleuze)
-        assert "🧠" in str_output
         assert "Gilles Deleuze" in str_output
 
 

@@ -36,6 +36,8 @@ class Hegel(Philosopher):
             name="Georg Wilhelm Friedrich Hegel",
             description="German Idealist focused on dialectical development, Absolute Spirit, and historical reason",
         )
+        self.tradition = "German Idealism / Dialectics"
+        self.key_concepts = ['dialectic (thesis-antithesis-synthesis)', 'Absolute Spirit', 'Aufhebung (sublation)', 'master-slave dialectic', 'philosophy of history']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

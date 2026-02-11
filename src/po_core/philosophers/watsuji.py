@@ -33,6 +33,8 @@ class Watsuji(Philosopher):
             name="和辻哲郎 (Watsuji Tetsurō)",
             description="Japanese philosopher focused on ningen (betweenness), climate theory, and relational ethics",
         )
+        self.tradition = "Kyoto School / Japanese Ethics"
+        self.key_concepts = ['ningen (betweenness)', 'fūdo (climate)', 'aidagara (relationality)', 'rinri (ethics)', 'kūkan (spatiality)']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -60,6 +62,11 @@ class Watsuji(Philosopher):
             "ethical_dimension": analysis["ethics"],
             "spatial_temporal": analysis["spatiotemporal"],
             "japanese_characteristics": analysis["japanese_traits"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between individual and relational existence",
+                "elements": ['Ningen as dual: individual person and relational being', 'Climate shapes ethical sensibility', 'Betweenness (aidagara) resists pure individuality'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Ethics of betweenness and climate theory",

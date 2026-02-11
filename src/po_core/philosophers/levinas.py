@@ -39,6 +39,8 @@ class Levinas(Philosopher):
             name="Emmanuel Levinas",
             description="Ethical philosopher focused on the Other, the face, and infinite responsibility",
         )
+        self.tradition = "Phenomenology / Ethics of Alterity"
+        self.key_concepts = ['the Other', 'the face', 'infinite responsibility', 'totality and infinity', 'ethics as first philosophy']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -68,6 +70,11 @@ class Levinas(Philosopher):
             "third_party": analysis["third_party"],
             "saying_vs_said": analysis["saying_said"],
             "il_y_a": analysis["il_y_a"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between totality and infinity, self and Other",
+                "elements": ['The face of the Other demands infinite responsibility', 'Totality seeks to reduce the Other to the Same', 'Ethical relation precedes ontological comprehension'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Ethics of the Other and face-to-face encounter",

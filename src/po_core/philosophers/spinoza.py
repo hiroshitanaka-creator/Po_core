@@ -36,6 +36,8 @@ class Spinoza(Philosopher):
             name="Baruch Spinoza",
             description="Rationalist philosopher focused on substance monism, determinism, and the intellectual love of God",
         )
+        self.tradition = "Rationalism / Monism"
+        self.key_concepts = ['substance monism', 'conatus', 'intellectual love of God', 'determinism', 'Ethics (geometric method)']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

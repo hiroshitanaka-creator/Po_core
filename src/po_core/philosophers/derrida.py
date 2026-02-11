@@ -41,6 +41,8 @@ class Derrida(Philosopher):
             name="Jacques Derrida",
             description="Deconstructionist focusing on différance, trace, supplementarity, and the instability of meaning",
         )
+        self.tradition = "Deconstruction / Post-Structuralism"
+        self.key_concepts = ['differance', 'trace', 'deconstruction', 'supplementarity', 'logocentrism']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

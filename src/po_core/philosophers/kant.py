@@ -37,6 +37,8 @@ class Kant(Philosopher):
             name="Immanuel Kant",
             description="Critical philosopher focused on universal moral law, autonomy, duty, and the limits of reason",
         )
+        self.tradition = "German Idealism / Critical Philosophy"
+        self.key_concepts = ['categorical imperative', 'duty', 'autonomy', 'a priori', 'transcendental idealism']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

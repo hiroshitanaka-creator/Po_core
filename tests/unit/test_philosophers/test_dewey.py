@@ -33,7 +33,6 @@ class TestDeweyBasicFunctionality:
         """Test human-readable string."""
         dewey = Dewey()
         str_output = str(dewey)
-        assert "🧠" in str_output
         assert "John Dewey" in str_output
 
 

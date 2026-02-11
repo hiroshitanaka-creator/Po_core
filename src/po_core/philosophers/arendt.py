@@ -47,6 +47,8 @@ class Arendt(Philosopher):
             name="Hannah Arendt",
             description="Political philosopher analyzing action, natality, plurality, and the human condition in the public sphere",
         )
+        self.tradition = "Political Philosophy"
+        self.key_concepts = ['vita activa', 'natality', 'plurality', 'banality of evil', 'public realm']
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None

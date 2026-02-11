@@ -124,7 +124,7 @@ def print_info(text: str):
         print(f"→ {text}")
 
 
-def test_philosopher_import(key: str, name: str) -> Tuple[bool, str, Any]:
+def check_philosopher_import(key: str, name: str) -> Tuple[bool, str, Any]:
     """
     Test importing a single philosopher.
 
@@ -146,7 +146,7 @@ def test_philosopher_import(key: str, name: str) -> Tuple[bool, str, Any]:
         return False, f"Import error: {str(e)}", None
 
 
-def test_philosopher_reason(philosopher: Any, prompt: str) -> Tuple[bool, str, Dict]:
+def check_philosopher_reason(philosopher: Any, prompt: str) -> Tuple[bool, str, Dict]:
     """
     Test the reason() method of a philosopher.
 
@@ -216,11 +216,11 @@ def run_full_test() -> Tuple[int, int, List[Dict]]:
 
     for i, (key, name, tradition) in enumerate(ALL_PHILOSOPHERS, 1):
         # Test import
-        import_ok, import_msg, philosopher = test_philosopher_import(key, name)
+        import_ok, import_msg, philosopher = check_philosopher_import(key, name)
 
         # Test reason if import succeeded
         if import_ok and philosopher:
-            reason_ok, reason_msg, result = test_philosopher_reason(
+            reason_ok, reason_msg, result = check_philosopher_reason(
                 philosopher, test_prompt
             )
         else:

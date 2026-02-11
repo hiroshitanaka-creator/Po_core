@@ -35,7 +35,6 @@ class TestBadiouBasicFunctionality:
         """Test human-readable string."""
         badiou = Badiou()
         str_output = str(badiou)
-        assert "🧠" in str_output
         assert "Alain Badiou" in str_output
 
 

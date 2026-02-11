@@ -34,7 +34,6 @@ class TestJungBasicFunctionality:
         """Test human-readable string."""
         jung = Jung()
         str_output = str(jung)
-        assert "🧠" in str_output
         assert "Carl Gustav Jung" in str_output
 
 

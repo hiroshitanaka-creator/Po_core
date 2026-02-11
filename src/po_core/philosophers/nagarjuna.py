@@ -35,6 +35,8 @@ class Nagarjuna(Philosopher):
             name="Nagarjuna",
             description="Madhyamaka philosopher focused on emptiness (sunyata), dependent origination, and the Middle Way",
         )
+        self.tradition = "Madhyamaka Buddhism"
+        self.key_concepts = ['sunyata (emptiness)', 'pratityasamutpada (dependent origination)', 'two truths doctrine', 'middle way', 'catuskoti (tetralemma)']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

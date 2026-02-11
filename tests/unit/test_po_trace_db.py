@@ -13,6 +13,9 @@ import pytest
 from po_core.po_trace import EventType
 from po_core.po_trace_db import PoTraceDB
 
+pytestmark = pytest.mark.skip(reason="Legacy PoTraceDB session API — replaced by InMemoryTracer — to be migrated in Phase 1")
+
+
 
 class TestPoTraceDBBasicFunctionality:
     """Test basic Po_trace DB functionality."""
