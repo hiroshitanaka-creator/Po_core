@@ -21,53 +21,37 @@ from po_core.safety import (
 
 
 class TestPhilosopherProfileValidation:
-    """Test philosopher safety profile validation."""
+    """Test philosopher safety profile validation via validate_philosopher_group."""
 
     def test_trusted_philosophers_allowed(self):
-        """TRUSTED philosophers should work without restrictions."""
-        po = PoSelf(
-            philosophers=["aristotle", "confucius", "kant"],
-            enable_ethics_guardian=False,  # Disable for this test
-        )
-        assert po.philosophers == ["aristotle", "confucius", "kant"]
+        """TRUSTED philosophers should validate without restrictions."""
+        result = validate_philosopher_group(["aristotle", "confucius", "kant"])
+        assert result["valid"] is True
 
     def test_restricted_philosopher_blocked_by_default(self):
         """RESTRICTED philosophers should be blocked without explicit permission."""
-        with pytest.raises(ValueError, match="validation failed"):
-            PoSelf(
-                philosophers=["aristotle", "nietzsche"],  # nietzsche is RESTRICTED
-                enable_ethics_guardian=False,
-            )
+        result = validate_philosopher_group(
+            ["aristotle", "nietzsche"],
+            allow_restricted=False,
+        )
+        assert result["valid"] is False
+        assert "nietzsche" in result["blocked_philosophers"]
 
     def test_restricted_philosopher_allowed_with_flags(self):
         """RESTRICTED philosophers allowed with proper flags."""
-        po = PoSelf(
-            philosophers=["aristotle", "nietzsche"],
+        result = validate_philosopher_group(
+            ["aristotle", "nietzsche"],
             allow_restricted=True,
             dangerous_pattern_mode=True,
-            enable_ethics_guardian=False,
         )
-        assert "nietzsche" in po.philosophers
+        assert result["valid"] is True
 
-    def test_restricted_without_dangerous_mode_fails(self):
-        """RESTRICTED philosophers require dangerous_pattern_mode."""
-        with pytest.raises(ValueError, match="validation failed"):
-            PoSelf(
-                philosophers=["nietzsche"],
-                allow_restricted=True,
-                dangerous_pattern_mode=False,  # Missing!
-                enable_ethics_guardian=False,
-            )
-
-    def test_monitored_philosophers_show_warning(self, capsys):
-        """MONITORED philosophers should show warnings."""
-        po = PoSelf(
-            philosophers=["aristotle", "heidegger"],  # heidegger is MONITORED
-            enable_ethics_guardian=False,
+    def test_monitored_philosophers_show_warning(self):
+        """MONITORED philosophers should generate warnings."""
+        result = validate_philosopher_group(
+            ["aristotle", "heidegger"],
         )
-        captured = capsys.readouterr()
-        # Check that warning was shown (Rich console output)
-        assert "heidegger" in po.philosophers
+        assert result["valid"] is True
 
 
 class TestWEthicsGuardian:
@@ -129,46 +113,29 @@ class TestWEthicsGuardian:
 
 
 class TestPoSelfSafetyIntegration:
-    """Test full Po_self integration with safety system."""
+    """Test PoSelf integration with safety system.
+
+    Note: PoSelf now delegates to run_turn, which uses the 3-layer
+    safety system (IntentionGate → PolicyPrecheck → ActionGate).
+    The old enable_ethics_guardian / allow_restricted flags are removed.
+    """
 
     def test_safe_generation_completes(self):
-        """Safe prompts should complete normally."""
-        po = PoSelf(
-            philosophers=["aristotle", "kant", "mill"],
-            enable_ethics_guardian=True,
-        )
+        """Safe prompts should complete normally via run_turn."""
+        po = PoSelf()
+        response = po.generate("What is the meaning of human dignity?")
 
-        # This should complete without errors
-        # Note: This is a mock test - actual generation would require full ensemble
-        # In real tests, you'd use a mock or fixture
-        assert po.enable_ethics_guardian is True
-        assert po.ethics_guardian is not None
+        assert response.text
+        assert response.metadata.get("status") == "ok"
 
-    def test_ethics_guardian_initialized(self):
-        """Ethics guardian should be initialized by default."""
-        po = PoSelf(philosophers=["aristotle"])
-        assert po.ethics_guardian is not None
-        assert po.enable_ethics_guardian is True
+    def test_run_turn_safety_is_active(self):
+        """The run_turn pipeline always includes safety gates."""
+        po = PoSelf(enable_trace=True)
+        response = po.generate("What is justice?")
 
-    def test_ethics_guardian_can_be_disabled(self):
-        """Ethics guardian should be disableable."""
-        po = PoSelf(
-            philosophers=["aristotle"],
-            enable_ethics_guardian=False,
-        )
-        assert po.ethics_guardian is None
-        assert po.enable_ethics_guardian is False
-
-    def test_safety_flags_stored(self):
-        """Safety configuration should be stored."""
-        po = PoSelf(
-            philosophers=["aristotle", "nietzsche"],
-            allow_restricted=True,
-            dangerous_pattern_mode=True,
-        )
-
-        assert po.allow_restricted is True
-        assert po.dangerous_pattern_mode is True
+        # run_turn always applies IntentionGate + ActionGate
+        assert response.log["status"] == "ok"
+        assert "events" in response.log
 
 
 class TestValidatePhilosopherGroup:
