@@ -29,7 +29,6 @@ if TYPE_CHECKING:
     from po_core.runtime.battalion_table import BattalionModePlan
 
 from po_core.philosophers.base import Philosopher, PhilosopherProtocol
-from po_core.philosophers.bridge import PhilosopherBridge
 from po_core.philosophers.manifest import SPECS, PhilosopherSpec
 from po_core.philosophers.tags import (
     TAG_CLARIFY,
@@ -245,15 +244,13 @@ class PhilosopherRegistry:
                 mod = importlib.import_module(spec.module)
                 obj = getattr(mod, spec.symbol)
                 ph = obj() if callable(obj) else obj  # class or factory or instance
-                # Philosopher subclasses now natively implement propose()/info
-                # via the base class. PhilosopherBridge is only needed for
-                # non-Philosopher objects that lack propose().
+                # All Philosopher subclasses implement propose()/info
+                # natively via the base class.
                 if not hasattr(ph, "propose") or not hasattr(ph, "info"):
-                    if isinstance(ph, Philosopher):
-                        # Shouldn't happen: base class provides propose()/info
-                        ph = PhilosopherBridge(ph)
-                    else:
-                        raise TypeError("not_a_philosopher")
+                    raise TypeError(
+                        f"{pid} does not implement PhilosopherProtocol "
+                        f"(missing propose() or info)"
+                    )
                 out.append(ph)
                 if self._cache:
                     self._instances[pid] = ph

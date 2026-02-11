@@ -1,9 +1,11 @@
 """
-PhilosopherBridge Tests
-========================
+Philosopher Protocol Tests (Native propose())
+===============================================
 
-Tests that the bridge adapter correctly converts legacy Philosopher.reason()
-to PhilosopherProtocol.propose(), enabling the run_turn pipeline.
+Tests that all Philosopher subclasses implement PhilosopherProtocol natively
+via the base class — no bridge adapter needed.
+
+Previously tested PhilosopherBridge, which has been removed in Phase 1.
 """
 
 from __future__ import annotations
@@ -12,8 +14,6 @@ import pytest
 
 pytestmark = pytest.mark.pipeline
 
-from datetime import datetime, timezone
-
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
@@ -21,7 +21,6 @@ from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.philosophers.base import Philosopher, PhilosopherInfo
-from po_core.philosophers.bridge import PhilosopherBridge, bridge
 from po_core.philosophers.manifest import SPECS
 from po_core.philosophers.registry import PhilosopherRegistry
 
@@ -42,51 +41,53 @@ def _make_memory() -> MemorySnapshot:
     return MemorySnapshot.empty()
 
 
-# ── Bridge wrapping tests ──────────────────────────────────────────────
+# ── Native PhilosopherProtocol tests ──────────────────────────────────
 
 
-class TestBridgeBasics:
-    """Test that PhilosopherBridge correctly wraps a legacy philosopher."""
+class TestNativeProtocol:
+    """Test that Philosopher subclasses implement PhilosopherProtocol natively."""
 
-    def test_bridge_has_info(self):
+    def test_philosopher_has_info(self):
         from po_core.philosophers.aristotle import Aristotle
 
-        bridged = PhilosopherBridge(Aristotle())
-        assert isinstance(bridged.info, PhilosopherInfo)
-        assert "Aristotle" in bridged.info.name
+        ph = Aristotle()
+        assert isinstance(ph.info, PhilosopherInfo)
+        assert "Aristotle" in ph.info.name
 
-    def test_bridge_has_propose(self):
+    def test_philosopher_has_propose(self):
         from po_core.philosophers.kant import Kant
 
-        bridged = PhilosopherBridge(Kant())
-        assert hasattr(bridged, "propose")
-        assert callable(bridged.propose)
+        ph = Kant()
+        assert hasattr(ph, "propose")
+        assert callable(ph.propose)
 
-    def test_bridge_has_name(self):
+    def test_philosopher_has_name(self):
         from po_core.philosophers.confucius import Confucius
 
-        bridged = PhilosopherBridge(Confucius())
-        assert hasattr(bridged, "name")
-        assert isinstance(bridged.name, str)
-        assert len(bridged.name) > 0
+        ph = Confucius()
+        assert hasattr(ph, "name")
+        assert isinstance(ph.name, str)
+        assert len(ph.name) > 0
 
-    def test_bridge_factory_function(self):
+    def test_philosopher_is_not_wrapped(self):
+        """Philosophers should NOT be wrapped — they implement propose() natively."""
         from po_core.philosophers.sartre import Sartre
 
-        bridged = bridge(Sartre())
-        assert isinstance(bridged, PhilosopherBridge)
-        assert hasattr(bridged, "propose")
-        assert hasattr(bridged, "info")
+        ph = Sartre()
+        # Should be the actual philosopher class, not a wrapper
+        assert isinstance(ph, Philosopher)
+        assert hasattr(ph, "propose")
+        assert hasattr(ph, "info")
 
 
-class TestBridgePropose:
-    """Test that propose() returns valid Proposal objects."""
+class TestNativePropose:
+    """Test that native propose() returns valid Proposal objects."""
 
     def test_propose_returns_list(self):
         from po_core.philosophers.aristotle import Aristotle
 
-        bridged = PhilosopherBridge(Aristotle())
-        result = bridged.propose(
+        ph = Aristotle()
+        result = ph.propose(
             _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
         )
         assert isinstance(result, list)
@@ -95,8 +96,8 @@ class TestBridgePropose:
     def test_propose_returns_proposals(self):
         from po_core.philosophers.kant import Kant
 
-        bridged = PhilosopherBridge(Kant())
-        result = bridged.propose(
+        ph = Kant()
+        result = ph.propose(
             _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
         )
         for p in result:
@@ -105,8 +106,8 @@ class TestBridgePropose:
     def test_proposal_has_required_fields(self):
         from po_core.philosophers.nietzsche import Nietzsche
 
-        bridged = PhilosopherBridge(Nietzsche())
-        result = bridged.propose(
+        ph = Nietzsche()
+        result = ph.propose(
             _make_ctx("What is power?"), _make_intent(), _make_tensors(), _make_memory()
         )
         p = result[0]
@@ -119,28 +120,27 @@ class TestBridgePropose:
         from po_core.philosophers.heidegger import Heidegger
 
         ctx = _make_ctx("What is being?")
-        bridged = PhilosopherBridge(Heidegger())
-        result = bridged.propose(ctx, _make_intent(), _make_tensors(), _make_memory())
+        ph = Heidegger()
+        result = ph.propose(ctx, _make_intent(), _make_tensors(), _make_memory())
         assert ctx.request_id in result[0].proposal_id
 
     def test_proposal_content_is_reasoning(self):
         from po_core.philosophers.dewey import Dewey
 
-        bridged = PhilosopherBridge(Dewey())
-        result = bridged.propose(
+        ph = Dewey()
+        result = ph.propose(
             _make_ctx("What is education?"),
             _make_intent(),
             _make_tensors(),
             _make_memory(),
         )
-        # Content should come from the philosopher's reasoning
         assert len(result[0].content) > 10
 
     def test_proposal_extra_has_philosopher_info(self):
         from po_core.philosophers.wittgenstein import Wittgenstein
 
-        bridged = PhilosopherBridge(Wittgenstein())
-        result = bridged.propose(
+        ph = Wittgenstein()
+        result = ph.propose(
             _make_ctx(), _make_intent(), _make_tensors(), _make_memory()
         )
         extra = result[0].extra
@@ -148,15 +148,15 @@ class TestBridgePropose:
         assert "perspective" in extra
 
 
-class TestBridgeWithConfucius:
-    """Confucius returns a non-standard dict (analysis/summary instead of reasoning).
-    Bridge must handle this via normalize_response()."""
+class TestNonStandardReason:
+    """Confucius returns analysis/summary instead of reasoning.
+    Native propose() must handle this via normalize_response()."""
 
-    def test_confucius_bridge_works(self):
+    def test_confucius_propose_works(self):
         from po_core.philosophers.confucius import Confucius
 
-        bridged = PhilosopherBridge(Confucius())
-        result = bridged.propose(
+        ph = Confucius()
+        result = ph.propose(
             _make_ctx("What is virtue?"),
             _make_intent(),
             _make_tensors(),
@@ -168,14 +168,14 @@ class TestBridgeWithConfucius:
         assert p.action_type == "answer"
 
 
-# ── Registry auto-bridge tests ──────────────────────────────────────────
+# ── Registry loading tests ──────────────────────────────────────────
 
 
-class TestRegistryAutoBridge:
-    """Test that PhilosopherRegistry.load() auto-bridges legacy philosophers."""
+class TestRegistryNativeLoading:
+    """Test that PhilosopherRegistry loads native PhilosopherProtocol instances."""
 
-    def test_registry_loads_with_bridge(self):
-        """All 39 philosophers should load successfully via auto-bridge."""
+    def test_registry_loads_all(self):
+        """All 39 philosophers should load successfully."""
         registry = PhilosopherRegistry(cache_instances=False)
         sel = registry.select(SafetyMode.NORMAL)
         philosophers, errors = registry.load(sel.selected_ids)
@@ -211,7 +211,7 @@ class TestRegistryAutoBridge:
             ), f"{ph.info.name} returned non-Proposal"
 
     def test_warn_mode_loads_subset(self):
-        """WARN mode should load fewer philosophers, all bridged."""
+        """WARN mode should load fewer philosophers."""
         registry = PhilosopherRegistry(cache_instances=False)
         sel = registry.select(SafetyMode.WARN)
         philosophers, errors = registry.load(sel.selected_ids)
@@ -221,7 +221,7 @@ class TestRegistryAutoBridge:
             assert hasattr(ph, "propose")
 
     def test_critical_mode_loads_one(self):
-        """CRITICAL mode should load exactly 1 philosopher, bridged."""
+        """CRITICAL mode should load exactly 1 philosopher."""
         registry = PhilosopherRegistry(cache_instances=False)
         sel = registry.select(SafetyMode.CRITICAL)
         philosophers, errors = registry.load(sel.selected_ids)
@@ -229,24 +229,26 @@ class TestRegistryAutoBridge:
         assert len(philosophers) == 1
         assert hasattr(philosophers[0], "propose")
 
-    def test_dummy_philosopher_not_bridged(self):
-        """DummyPhilosopher already implements PhilosopherProtocol natively."""
+    def test_no_philosopher_needs_adapter(self):
+        """All philosophers should implement PhilosopherProtocol natively."""
         registry = PhilosopherRegistry(cache_instances=False)
-        philosophers, errors = registry.load(["dummy"])
-        assert len(errors) == 0
-        assert len(philosophers) == 1
-        # DummyPhilosopher should NOT be wrapped in a bridge
-        assert not isinstance(philosophers[0], PhilosopherBridge)
+        sel = registry.select(SafetyMode.NORMAL)
+        philosophers, _ = registry.load(sel.selected_ids)
+        for ph in philosophers:
+            # Must have propose() and info — either via Philosopher base or native impl
+            assert hasattr(ph, "propose") and hasattr(ph, "info"), (
+                f"{ph.info.name} does not implement PhilosopherProtocol"
+            )
 
 
 # ── Full pipeline smoke test ──────────────────────────────────────────
 
 
-class TestBridgeInPipeline:
-    """Test that bridged philosophers work in the full run_turn pipeline."""
+class TestNativeInPipeline:
+    """Test that native philosophers work in the full run_turn pipeline."""
 
-    def test_run_with_bridged_philosophers(self):
-        """Full pipeline should work with bridged philosophers."""
+    def test_run_with_native_philosophers(self):
+        """Full pipeline should work with native PhilosopherProtocol."""
         from po_core.app.api import run
 
         result = run("What is the meaning of life?")
@@ -256,11 +258,10 @@ class TestBridgeInPipeline:
             assert len(result["proposal"]["content"]) > 0
 
     def test_run_proposal_not_dummy(self):
-        """With bridge, proposals should contain real philosopher reasoning."""
+        """Proposals should contain real philosopher reasoning."""
         from po_core.app.api import run
 
         result = run("Is AI conscious?")
         if result["status"] == "ok":
             content = result["proposal"]["content"]
-            # Should NOT be dummy stub "[dummy]..."
             assert not content.startswith("[dummy]")
