@@ -12,8 +12,11 @@ Tests the advanced visualization capabilities including:
 import tempfile
 from pathlib import Path
 
-import plotly.graph_objects as go
 import pytest
+
+plotly = pytest.importorskip("plotly", reason="plotly not installed")
+import plotly.graph_objects as go
+matplotlib = pytest.importorskip("matplotlib", reason="matplotlib not installed")
 from matplotlib.figure import Figure
 
 from po_core.po_trace import EventType, PoTrace

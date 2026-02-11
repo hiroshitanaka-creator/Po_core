@@ -297,7 +297,7 @@ class CandidateSelector:
                         "id": c.cid,
                         "reason": "GATE_REJECT",
                         "violations": [
-                            {"code": v.code.value, "severity": v.severity}
+                            {"code": v.code.value if hasattr(v.code, "value") else str(v.code), "severity": v.severity}
                             for v in result.violations
                         ],
                     }
