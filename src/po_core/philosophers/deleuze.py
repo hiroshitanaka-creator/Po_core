@@ -36,6 +36,8 @@ class Deleuze(Philosopher):
             name="Gilles Deleuze",
             description="Post-structuralist focused on difference, rhizomes, becoming, and concept creation",
         )
+        self.tradition = "Post-Structuralism / Philosophy of Difference"
+        self.key_concepts = ['rhizome', 'difference and repetition', 'becoming', 'deterritorialization', 'immanence']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -65,6 +67,11 @@ class Deleuze(Philosopher):
             "smooth_striated": analysis["space"],
             "desire": analysis["desire"],
             "virtuality": analysis["virtuality"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between deterritorialization and reterritorialization",
+                "elements": ['Lines of flight create new possibilities yet risk capture', 'Difference resists representation yet must be expressed', 'Becoming opposes being yet requires actual occasions'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Creative difference and multiplicity",

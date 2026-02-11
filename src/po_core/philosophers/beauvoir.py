@@ -39,6 +39,8 @@ class Beauvoir(Philosopher):
             name="Simone de Beauvoir",
             description="Existentialist feminist focused on gender as constructed, the Other, and situated freedom",
         )
+        self.tradition = "Existentialist Feminism"
+        self.key_concepts = ['situated freedom', 'the Other (gendered)', 'ambiguity', 'becoming woman', 'ethics of liberation']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

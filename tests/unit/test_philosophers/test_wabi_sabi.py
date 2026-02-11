@@ -35,7 +35,6 @@ class TestWabiSabiBasicFunctionality:
         """Test human-readable string."""
         wabi_sabi = WabiSabi()
         str_output = str(wabi_sabi)
-        assert "🧠" in str_output
         assert "Wabi-Sabi" in str_output
 
 

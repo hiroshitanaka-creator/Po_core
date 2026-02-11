@@ -34,6 +34,8 @@ class Aristotle(Philosopher):
             name="Aristotle (Ἀριστοτέλης)",
             description="Ancient Greek philosopher focused on virtue ethics, the golden mean, and eudaimonia",
         )
+        self.tradition = "Ancient Greek / Virtue Ethics"
+        self.key_concepts = ['eudaimonia', 'phronesis (practical wisdom)', 'golden mean', 'telos', 'four causes']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

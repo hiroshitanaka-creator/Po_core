@@ -35,6 +35,8 @@ class Nishida(Philosopher):
             name="西田幾多郎 (Nishida Kitarō)",
             description="Founder of Kyoto School - Pure Experience, Absolute Nothingness, Place (basho), and self-contradictory identity",
         )
+        self.tradition = "Kyoto School"
+        self.key_concepts = ['pure experience', 'absolute nothingness', 'basho (place/topos)', 'self-contradictory identity', 'acting intuition']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

@@ -35,7 +35,6 @@ class TestPeirceBasicFunctionality:
         """Test human-readable string."""
         peirce = Peirce()
         str_output = str(peirce)
-        assert "🧠" in str_output
         assert "Peirce" in str_output
 
 

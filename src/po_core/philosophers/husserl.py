@@ -39,6 +39,8 @@ class Husserl(Philosopher):
             name="Edmund Husserl",
             description="Founder of phenomenology - focused on consciousness, intentionality, and transcendental constitution",
         )
+        self.tradition = "Phenomenology"
+        self.key_concepts = ['intentionality', 'epoché (bracketing)', 'lifeworld (Lebenswelt)', 'transcendental reduction', 'noema and noesis']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

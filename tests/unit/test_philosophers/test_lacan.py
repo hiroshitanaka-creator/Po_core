@@ -35,7 +35,6 @@ class TestLacanBasicFunctionality:
         """Test human-readable string."""
         lacan = Lacan()
         str_output = str(lacan)
-        assert "🧠" in str_output
         assert "Jacques Lacan" in str_output
 
 

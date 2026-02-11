@@ -39,6 +39,8 @@ class Badiou(Philosopher):
             name="Alain Badiou",
             description="Philosopher of the event, truth, and mathematical being",
         )
+        self.tradition = "Rationalism / Platonism"
+        self.key_concepts = ['event', 'truth procedure', 'fidelity', 'subject', 'mathematical ontology']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -68,6 +70,11 @@ class Badiou(Philosopher):
             "generic": analysis["generic"],
             "forcing": analysis["forcing"],
             "subtraction": analysis["subtraction"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between situation and event, being and truth",
+                "elements": ['Events rupture the situation yet require fidelity to sustain', 'Truth is universal yet emerges from particular situations', 'The subject arises through commitment yet risks betrayal'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Mathematical ontology and truth procedures",

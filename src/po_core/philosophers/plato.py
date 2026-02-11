@@ -35,6 +35,8 @@ class Plato(Philosopher):
             name="Plato (Πλάτων)",
             description="Ancient Greek philosopher focused on Forms, justice, and the ascent from illusion to truth",
         )
+        self.tradition = "Ancient Greek / Idealism"
+        self.key_concepts = ['theory of Forms', 'the Good', 'philosopher-king', 'anamnesis (recollection)', 'allegory of the cave']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

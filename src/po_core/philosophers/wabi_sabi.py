@@ -37,6 +37,8 @@ class WabiSabi(Philosopher):
             name="侘び寂び (Wabi-Sabi)",
             description="Japanese aesthetic focused on imperfection, impermanence, and simple natural beauty",
         )
+        self.tradition = "Japanese Aesthetics"
+        self.key_concepts = ['wabi (rustic simplicity)', 'sabi (patina of age)', 'mono no aware (pathos of things)', 'fukinsei (asymmetry)', 'kanso (simplicity)']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -67,6 +69,11 @@ class WabiSabi(Philosopher):
             "ma": analysis["ma"],
             "mono_no_aware": analysis["mono_no_aware"],
             "overall_wabi_sabi": analysis["overall"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between perfection and impermanence",
+                "elements": ['Beauty found in imperfection conflicts with desire for completeness', 'Transience gives meaning yet evokes loss', 'Simplicity opposes the complexity of modern existence'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Aesthetic appreciation of imperfection and transience",

@@ -59,6 +59,8 @@ class Dogen(Philosopher):
             name="Dogen Zenji (道元禅師)",
             description="Zen Buddhist philosophy emphasizing practice-enlightenment unity (修証一如), being-time (有時), Buddha-nature (仏性), and just-sitting (只管打坐)",
         )
+        self.tradition = "Zen Buddhism / Sōtō"
+        self.key_concepts = ['shikantaza (just sitting)', 'uji (being-time)', 'shusho-itto (practice-enlightenment unity)', 'busshō (Buddha-nature)', 'genjōkōan (actualizing the fundamental point)']
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None

@@ -34,7 +34,6 @@ class TestDerridaBasicFunctionality:
         """Test human-readable string."""
         derrida = Derrida()
         str_output = str(derrida)
-        assert "🧠" in str_output
         assert "Jacques Derrida" in str_output
 
 

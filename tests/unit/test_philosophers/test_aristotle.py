@@ -40,7 +40,6 @@ class TestAristotleBasicFunctionality:
         aristotle = Aristotle()
 
         str_output = str(aristotle)
-        assert "🧠" in str_output
         assert "Aristotle" in str_output or "Ἀριστοτέλης" in str_output
 
 

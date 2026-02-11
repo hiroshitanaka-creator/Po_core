@@ -35,6 +35,8 @@ class Laozi(Philosopher):
             name="Laozi",
             description="Daoist sage focused on the Tao (Way), wu wei (non-action), and natural simplicity",
         )
+        self.tradition = "Daoism"
+        self.key_concepts = ['dao (the Way)', 'wu wei (non-action)', 'de (virtue/power)', 'pu (uncarved block)', 'ziran (naturalness)']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

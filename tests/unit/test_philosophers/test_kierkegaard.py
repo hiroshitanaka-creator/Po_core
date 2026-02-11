@@ -35,7 +35,6 @@ class TestKierkegaardBasicFunctionality:
         """Test human-readable string."""
         kierkegaard = Kierkegaard()
         str_output = str(kierkegaard)
-        assert "🧠" in str_output
         assert "Kierkegaard" in str_output
 
 

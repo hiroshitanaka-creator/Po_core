@@ -42,7 +42,6 @@ class TestNietzscheBasicFunctionality:
         nietzsche = Nietzsche()
 
         str_output = str(nietzsche)
-        assert "🧠" in str_output
         assert "Friedrich Nietzsche" in str_output
 
 

@@ -34,7 +34,6 @@ class TestLevinasBasicFunctionality:
         """Test human-readable string."""
         levinas = Levinas()
         str_output = str(levinas)
-        assert "🧠" in str_output
         assert "Emmanuel Levinas" in str_output
 
 

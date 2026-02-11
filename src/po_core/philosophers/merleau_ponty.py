@@ -38,6 +38,8 @@ class MerleauPonty(Philosopher):
             name="Maurice Merleau-Ponty",
             description="Phenomenologist focused on embodiment, perception, and the lived body",
         )
+        self.tradition = "Phenomenology / Embodiment"
+        self.key_concepts = ['lived body (corps vécu)', 'perception', 'flesh (chair)', 'motor intentionality', 'chiasm']
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -67,6 +69,11 @@ class MerleauPonty(Philosopher):
             "gestalt": analysis["gestalt"],
             "reversibility": analysis["reversibility"],
             "intersubjectivity": analysis["intersubjectivity"],
+            "tension": {
+                "level": "Moderate",
+                "description": "Tension between body and consciousness, perception and thought",
+                "elements": ['The lived body resists Cartesian mind-body separation', 'Perception is primary yet shaped by habit and culture', 'Ambiguity of embodied existence defies clear categorization'],
+            },
             "metadata": {
                 "philosopher": self.name,
                 "approach": "Phenomenology of perception and embodied experience",

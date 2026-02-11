@@ -192,6 +192,11 @@ class Philosopher(ABC):
         self.name = name
         self.description = description
         self._context: Dict[str, Any] = {}
+        # Subclasses should override these in their __init__
+        if not hasattr(self, "tradition"):
+            self.tradition: str = ""
+        if not hasattr(self, "key_concepts"):
+            self.key_concepts: list = []
 
     @abstractmethod
     def reason(

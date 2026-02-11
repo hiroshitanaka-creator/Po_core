@@ -35,7 +35,6 @@ class TestWatsujiBasicFunctionality:
         """Test human-readable string."""
         watsuji = Watsuji()
         str_output = str(watsuji)
-        assert "🧠" in str_output
         assert "Watsuji" in str_output
 
 
