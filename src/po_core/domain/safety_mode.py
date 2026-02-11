@@ -28,8 +28,8 @@ class SafetyModeConfig:
     """Configuration for safety mode inference."""
 
     metric_key: str = "freedom_pressure"
-    warn: float = 0.60  # ← 最初は低めで締める（後で調整）
-    critical: float = 0.85
+    warn: float = 0.30  # 正規化FP [0, ~0.44] に適合（Phase 1で調整済）
+    critical: float = 0.50
     missing_mode: SafetyMode = SafetyMode.WARN  # ← ここが"締め"
 
 

@@ -97,20 +97,20 @@ class TestSafetyModeInference:
 
     def test_normal_mode_low_pressure(self):
         """Low freedom pressure → NORMAL mode."""
-        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.3})
+        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.15})
         mode, value = infer_safety_mode(snap)
         assert mode == SafetyMode.NORMAL
-        assert value == 0.3
+        assert value == 0.15
 
     def test_warn_mode_medium_pressure(self):
         """Medium freedom pressure → WARN mode."""
-        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.65})
+        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.35})
         mode, _ = infer_safety_mode(snap)
         assert mode == SafetyMode.WARN
 
     def test_critical_mode_high_pressure(self):
         """High freedom pressure → CRITICAL mode."""
-        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.9})
+        snap = TensorSnapshot.now(metrics={"freedom_pressure": 0.55})
         mode, _ = infer_safety_mode(snap)
         assert mode == SafetyMode.CRITICAL
 
