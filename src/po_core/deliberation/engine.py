@@ -229,10 +229,11 @@ def _collect_counterargument(
             b_content = p.content
 
     # Each receives the other's argument as counterpoint
-    if a_content and pair.philosopher_a not in counterarguments:
+    # Guard checks the RECIPIENT (not sender) to avoid overwriting
+    if a_content and pair.philosopher_b not in counterarguments:
         counterarguments[pair.philosopher_b] = a_content
         revised_names.add(pair.philosopher_b)
-    if b_content and pair.philosopher_b not in counterarguments:
+    if b_content and pair.philosopher_a not in counterarguments:
         counterarguments[pair.philosopher_a] = b_content
         revised_names.add(pair.philosopher_a)
 
@@ -269,6 +270,13 @@ def _re_propose(
                 for p in new_proposals:
                     extra = dict(p.extra) if isinstance(p.extra, dict) else {}
                     extra["deliberation_round"] = 2
+                    # Preserve PO_CORE author metadata for downstream scoring
+                    if PO_CORE not in extra or AUTHOR not in extra.get(PO_CORE, {}):
+                        po_meta = extra.get(PO_CORE, {})
+                        if not isinstance(po_meta, dict):
+                            po_meta = {}
+                        po_meta[AUTHOR] = name
+                        extra[PO_CORE] = po_meta
                     revised.append(Proposal(
                         proposal_id=p.proposal_id.replace(":0", ":d2"),
                         action_type=p.action_type,

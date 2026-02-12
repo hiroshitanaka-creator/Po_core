@@ -166,7 +166,8 @@ class InteractionMatrix:
             for p in self.pairs
         ]
         scored.sort(key=lambda x: x[1], reverse=True)
-        return [p for p, _ in scored[:top_k]]
+        # Filter out zero-interference pairs to avoid unnecessary deliberation
+        return [p for p, score in scored[:top_k] if score > 0.0]
 
     def summary(self) -> Dict[str, Any]:
         """Summary statistics for the interaction matrix."""

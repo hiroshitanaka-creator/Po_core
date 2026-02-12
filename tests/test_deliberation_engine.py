@@ -284,3 +284,116 @@ class TestRealDeliberation:
         settings = Settings()
         engine = _build_deliberation_engine(settings)
         assert engine is None  # max_rounds=1 → no engine
+
+
+# ── Regression tests for bugfixes ─────────────────────────────────
+
+
+class TestCounterargumentRecipientKey:
+    """Regression: _collect_counterargument must be bilateral."""
+
+    def test_both_philosophers_receive_counterarguments(self):
+        """Both A and B should receive each other's proposals."""
+        from po_core.deliberation.engine import _collect_counterargument
+        from po_core.tensors.interaction_tensor import InteractionPair
+
+        pair = InteractionPair(
+            philosopher_a="Sartre",
+            philosopher_b="Hegel",
+            harmony=0.2,
+            tension=0.8,
+            synthesis=0.16,
+        )
+        proposals = [
+            _proposal("Sartre", "freedom is absolute"),
+            _proposal("Hegel", "spirit determines history"),
+        ]
+        counterarguments: dict = {}
+        revised_names: set = set()
+
+        _collect_counterargument(pair, proposals, counterarguments, revised_names)
+
+        # Both philosophers must receive the other's argument
+        assert "Sartre" in counterarguments, "Sartre should receive Hegel's argument"
+        assert "Hegel" in counterarguments, "Hegel should receive Sartre's argument"
+        assert counterarguments["Sartre"] == "spirit determines history"
+        assert counterarguments["Hegel"] == "freedom is absolute"
+        assert revised_names == {"Sartre", "Hegel"}
+
+    def test_revised_proposals_are_bilateral(self):
+        """Both philosophers in an opposing pair should be revised."""
+        philosophers = [
+            FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
+            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+        ]
+        proposals = [
+            _proposal("Sartre", "individual freedom is absolute and subjective"),
+            _proposal("Hegel", "collective determinism is relative and objective"),
+        ]
+        e = DeliberationEngine(max_rounds=2, top_k_pairs=5)
+        result = e.deliberate(
+            philosophers, _ctx(), _intent(), _tensors(), _memory(), proposals
+        )
+        # Both should be revised (not just one)
+        revised = [p for p in result.proposals if "revised" in p.content]
+        assert len(revised) == 2, f"Expected 2 revised proposals, got {len(revised)}"
+
+
+class TestZeroInterferenceFilter:
+    """Regression: zero-interference pairs must not trigger deliberation."""
+
+    def test_no_deliberation_when_all_interference_zero(self):
+        """Identical proposals should have zero interference → no round 2."""
+        philosophers = [
+            FakePhilosopher("A", "virtue is excellence"),
+            FakePhilosopher("B", "virtue is excellence"),
+        ]
+        proposals = [
+            _proposal("A", "virtue is excellence"),
+            _proposal("B", "virtue is excellence"),
+        ]
+        e = DeliberationEngine(max_rounds=2, top_k_pairs=5)
+        result = e.deliberate(
+            philosophers, _ctx(), _intent(), _tensors(), _memory(), proposals
+        )
+        # No interference → round 2 should have n_revised=0
+        if result.n_rounds == 2:
+            assert result.rounds[1].n_revised == 0
+
+    def test_high_interference_pairs_empty_for_identical(self):
+        """InteractionMatrix.high_interference_pairs returns [] for zero scores."""
+        from po_core.tensors.interaction_tensor import InteractionMatrix
+
+        proposals = [
+            _proposal("A", "virtue is excellence of character"),
+            _proposal("B", "virtue is excellence of character"),
+        ]
+        m = InteractionMatrix.from_proposals(proposals)
+        pairs = m.high_interference_pairs(top_k=5)
+        assert len(pairs) == 0, "Zero-interference pairs should be filtered out"
+
+
+class TestAuthorMetadataPreservation:
+    """Regression: revised proposals must preserve PO_CORE.AUTHOR metadata."""
+
+    def test_revised_proposals_have_author(self):
+        """All revised proposals must carry _po_core.author."""
+        from po_core.domain.keys import AUTHOR, PO_CORE
+
+        philosophers = [
+            FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
+            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+        ]
+        proposals = [
+            _proposal("Sartre", "individual freedom is absolute and subjective"),
+            _proposal("Hegel", "collective determinism is relative and objective"),
+        ]
+        e = DeliberationEngine(max_rounds=2, top_k_pairs=5)
+        result = e.deliberate(
+            philosophers, _ctx(), _intent(), _tensors(), _memory(), proposals
+        )
+        for p in result.proposals:
+            extra = p.extra if isinstance(p.extra, dict) else {}
+            po_meta = extra.get(PO_CORE, {})
+            author = po_meta.get(AUTHOR, "")
+            assert author, f"Proposal {p.proposal_id} missing {PO_CORE}.{AUTHOR}"
