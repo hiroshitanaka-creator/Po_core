@@ -69,7 +69,7 @@ class TestManifestIntegrity:
     """Verify manifest SPECS are consistent."""
 
     def test_manifest_has_40_specs(self):
-        assert len(SPECS) == 40, f"Expected 40 specs (39 + dummy), got {len(SPECS)}"
+        assert len(SPECS) == 40, f"Expected 40 specs (39 + disabled dummy), got {len(SPECS)}"
 
     def test_39_non_dummy_philosophers(self):
         non_dummy = [s for s in SPECS if s.philosopher_id != "dummy"]

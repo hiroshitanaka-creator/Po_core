@@ -199,16 +199,20 @@ class TestPhilosopherRegistrySmoke:
             assert len(result) > 0
 
     def test_manifest_has_40_specs(self) -> None:
-        """Manifest SPECS includes 39 + dummy = 40."""
+        """Manifest SPECS includes 39 real + 1 disabled dummy = 40."""
         from po_core.philosophers.manifest import SPECS
 
         assert len(SPECS) == 40
 
-    def test_manifest_all_enabled(self) -> None:
+    def test_manifest_all_real_enabled(self) -> None:
+        """All 39 real philosophers are enabled; dummy is disabled."""
         from po_core.philosophers.manifest import SPECS
 
         enabled = [s for s in SPECS if s.enabled]
-        assert len(enabled) == 40
+        assert len(enabled) == 39
+        disabled = [s for s in SPECS if not s.enabled]
+        assert len(disabled) == 1
+        assert disabled[0].philosopher_id == "dummy"
 
 
 # ══════════════════════════════════════════════════════════════════════════

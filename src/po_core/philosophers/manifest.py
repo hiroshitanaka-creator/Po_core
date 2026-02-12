@@ -80,6 +80,7 @@ SPECS: List[PhilosopherSpec] = [
         weight=2.0,
         tags=(TAG_COMPLIANCE, TAG_CLARIFY),
         cost=1,
+        enabled=False,  # テスト専用スタブ — 本番パイプラインには含めない
     ),
     PhilosopherSpec(
         "kant",
