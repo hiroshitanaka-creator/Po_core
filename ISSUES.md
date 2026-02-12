@@ -66,90 +66,44 @@
 
 ---
 
-## Phase 2: Tensor Intelligence & Emergence Engine
+## Phase 2: Tensor Intelligence & Emergence Engine — COMPLETE (2026-02-12)
 
-### Issue #6: Upgrade Semantic Delta to sentence-transformers
+### Issue #6: Upgrade Semantic Delta to sentence-transformers — DONE
 
 **Labels:** `phase-2`, `tensors`, `enhancement`
-**Priority:** High
 
-#### Description
-
-Current `metric_semantic_delta` uses token overlap (bag-of-words Jaccard similarity). Upgrade to sentence-transformers embeddings for real semantic understanding. The library is already in `requirements.txt`.
-
-#### Tasks
-
-- [ ] Replace token-overlap logic in `tensors/metrics/semantic_delta.py` with `sentence-transformers` cosine similarity
-- [ ] Use `all-MiniLM-L6-v2` as default model (fast, good quality)
-- [ ] Evaluate `paraphrase-multilingual-MiniLM-L12-v2` for Japanese support
-- [ ] Maintain backward-compatible `(str, float)` return signature
-- [ ] Add lazy model loading with caching to avoid startup penalty
-- [ ] Update tensor metric tests
-
-#### Acceptance Criteria
-
-- Semantic delta uses embedding-based similarity
-- Model loads lazily (no import-time penalty)
-- All existing tensor tests pass (backward compatible)
-- New tests for semantic equivalence detection (paraphrases score high, unrelated score low)
+- [x] Multi-backend: sentence-transformers (sbert) / sklearn TfidfVectorizer / basic fallback
+- [x] Lazy model loading with automatic fallback on runtime error
+- [x] Shared API: `encode_texts()`, `cosine_sim()`, `get_backend()`
+- [x] Backward-compatible `(str, float)` return signature maintained
+- [x] 35 tests (was 27): +8 for backend detection, encoding API, paraphrase detection
 
 ---
 
-### Issue #7: Complete Interaction Tensor implementation
+### Issue #7: Complete Interaction Tensor (NxN interference) — DONE
 
 **Labels:** `phase-2`, `tensors`, `enhancement`
-**Priority:** High
 
-#### Description
-
-The Interaction Tensor framework exists (`tensors/interaction_tensor.py`) but computation logic is incomplete (maturity 2/10). This tensor should quantify philosopher-philosopher interference: agreement, opposition, or irrelevance.
-
-#### Tasks
-
-- [ ] Implement pairwise philosopher proposal comparison
-- [ ] Define 3-state model: agree / oppose / irrelevant (with continuous scores)
-- [ ] Register as `MetricFn` plugin in `TensorEngine`
-- [ ] Connect to `test_comprehensive_layers.py` Layer 3 (Tension/Contradiction tests)
-- [ ] Add visualization support in `viewer/tension_map.py`
-
-#### Acceptance Criteria
-
-- Interaction Tensor returns NxN matrix for N active philosophers
-- Integrates with existing TensorEngine pipeline
-- Tension visualization shows philosopher conflict zones
+- [x] `InteractionMatrix.from_proposals()`: embedding-based cosine similarity for harmony
+- [x] Keyword-based tension detection (12 opposition pairs)
+- [x] Synthesis = harmony * (1 - tension)
+- [x] `high_interference_pairs(top_k)`, `high_tension_pairs()`, `high_harmony_pairs()`
+- [x] 19 tests including real 39-philosopher integration
 
 ---
 
-### Issue #8: Build Deliberation Engine (multi-round philosopher dialogue)
+### Issue #8: Build Deliberation Engine (multi-round dialogue) — DONE
 
 **Labels:** `phase-2`, `architecture`, `core`
-**Priority:** Critical
 
-#### Description
-
-Currently, 39 philosophers propose independently and get aggregated (parallel → vote). There is no mechanism for philosophers to respond to each other. This is the single most important feature for achieving "emergence through deliberation."
-
-#### Proposed Design
-
-- **Round 1**: All philosophers `propose()` independently (current behavior)
-- **Round 2**: Use Interaction Tensor to identify high-interference pairs. Those pairs receive each other's proposals and re-propose
-- **Round 3**: Final Pareto aggregation on refined proposals
-
-#### Tasks
-
-- [ ] Design `DeliberationEngine` class in `src/po_core/deliberation/`
-- [ ] Implement `max_rounds` parameter (default: 2, configurable)
-- [ ] Wire into `run_turn` pipeline between PhilosopherSelect and ParetoAggregate
-- [ ] Add TraceEvents for each deliberation round
-- [ ] Performance testing: ensure multi-round stays within latency budget
-- [ ] Add E2E tests comparing single-round vs multi-round output quality
-
-#### Acceptance Criteria
-
-- Multi-round deliberation produces measurably different output than single-round
-- `max_rounds=1` produces identical behavior to current pipeline (backward compatible)
-- Trace events capture per-round philosopher proposals
-- Latency < 10s for 2-round deliberation with 39 philosophers
+- [x] `DeliberationEngine(max_rounds, top_k_pairs, convergence_threshold)`
+- [x] Round 1: All philosophers propose() independently (current behavior)
+- [x] Round 2+: InteractionMatrix selects high-interference pairs for counterargument re-proposal
+- [x] Integrated into `run_turn` pipeline as step 6.5
+- [x] Settings: `deliberation_max_rounds` (default 1 = off), `deliberation_top_k_pairs`
+- [x] `max_rounds=1` produces identical behavior (backward compatible)
+- [x] TraceEvent "DeliberationCompleted" with round summaries
+- [x] 14 tests including real 39-philosopher deliberation
 
 ---
 

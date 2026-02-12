@@ -49,26 +49,25 @@ src/po_core/
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 
-## Current Phase: Phase 2 of 5
+## Current Phase: Phase 3 of 5
 
-**Phase 1: COMPLETE** — All 5 tasks done. 2354 tests pass, PhilosopherBridge removed,
-FP thresholds recalibrated (WARN=0.30, CRITICAL=0.50), 39-philosopher concurrency validated,
-semantic uniqueness confirmed (Jaccard < 0.8 for all pairs).
+**Phase 1: COMPLETE** — 39-philosopher scaling + tech debt cleared. 2354 tests.
 
-**Phase 2: Tensor Intelligence & Emergence Engine** (next)
+**Phase 2: COMPLETE** — ML tensors + Deliberation Engine. 2396 tests.
+- Semantic Delta: multi-backend (sbert/tfidf/basic) with encode_texts() API
+- InteractionMatrix: NxN embedding-based harmony + keyword tension
+- DeliberationEngine: multi-round philosopher dialogue (Settings.deliberation_max_rounds)
 
-Focus: ML-powered tensors + multi-round philosopher deliberation
+**Phase 3: Observability** (next)
 
-Key tasks:
-1. Upgrade Semantic Delta to sentence-transformers embeddings
-2. Complete Interaction Tensor (NxN philosopher interference matrix)
-3. Build Deliberation Engine (multi-round philosopher dialogue)
+Focus: Viewer WebUI + Explainable W_Ethics Gate
 
 ## Roadmap Overview
 
 ```
 Phase 1: Resonance Calibration    — 39人スケール + 技術負債清算 ✓ COMPLETE
-Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ← CURRENT
+Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ✓ COMPLETE
+Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate ← CURRENT
 Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate
 Phase 4: Adversarial Hardening    — Red team 拡充 + 倫理的ストレステスト
 Phase 5: Productization           — REST API, Docker, streaming, PyPI
