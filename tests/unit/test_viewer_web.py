@@ -67,7 +67,12 @@ def _make_events():
         TraceEvent.now(
             "DecisionEmitted",
             rid,
-            {"stage": "decision", "origin": "pareto", "degraded": False, "final": "answer"},
+            {
+                "stage": "decision",
+                "origin": "pareto",
+                "degraded": False,
+                "final": "answer",
+            },
         ),
     ]
 
