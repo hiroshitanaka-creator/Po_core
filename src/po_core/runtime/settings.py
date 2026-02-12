@@ -76,6 +76,11 @@ class Settings:
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
 
+    # ---- Deliberation Engine (Phase 2) ----
+    # 1 = no deliberation (backward compatible), 2+ = multi-round
+    deliberation_max_rounds: int = 1
+    deliberation_top_k_pairs: int = 5
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -99,6 +104,8 @@ class Settings:
             "philosopher_cost_budget_normal": self.philosopher_cost_budget_normal,
             "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
+            "deliberation_max_rounds": self.deliberation_max_rounds,
+            "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
         }
 
 

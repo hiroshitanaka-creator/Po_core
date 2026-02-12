@@ -176,6 +176,7 @@ class PoSelf:
             registry=system.registry,
             settings=system.settings,
             shadow_guard=system.shadow_guard,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
         )
 
         result = run_turn(ctx, deps)

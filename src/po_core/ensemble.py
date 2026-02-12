@@ -137,6 +137,7 @@ class EnsembleDeps:
     registry: PhilosopherRegistry  # SafetyMode-based selection
     settings: Settings  # Worker/timeout settings
     shadow_guard: Optional[object]  # ShadowGuard (自律ブレーキ)
+    deliberation_engine: Optional[object] = None  # DeliberationEngine (Phase 2)
 
 
 def _get_swarm_params(mode: SafetyMode, settings: Settings) -> tuple[int, float]:
@@ -428,7 +429,23 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             )
         )
 
-    # 6.5 Enrich proposals with policy/trace/freedom signals
+    # 6.5 Deliberation Engine (multi-round philosopher dialogue)
+    if deps.deliberation_engine is not None and hasattr(
+        deps.deliberation_engine, "deliberate"
+    ):
+        delib_result = deps.deliberation_engine.deliberate(
+            philosophers, ctx, intent, tensors, memory, raw_proposals
+        )
+        raw_proposals = delib_result.proposals
+        tracer.emit(
+            TraceEvent.now(
+                "DeliberationCompleted",
+                ctx.request_id,
+                delib_result.summary(),
+            )
+        )
+
+    # 6.6 Enrich proposals with policy/trace/freedom signals
     author_stat = {r.philosopher_id: r for r in run_results}
     fp_val = tensors.metrics.get("freedom_pressure")
     fp_str = "" if fp_val is None else f"{float(fp_val):.4f}"
