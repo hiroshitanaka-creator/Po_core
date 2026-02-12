@@ -502,6 +502,9 @@ class TestExportFunctionality:
 class TestVisualizerIntegration:
     """Test visualizer integration with Po_self."""
 
+    @pytest.mark.skip(
+        reason="Legacy PoTrace session_id API — PoSelf uses run_turn/InMemoryTracer now (Phase 3 scope)"
+    )
     def test_visualizer_with_po_self_session(self):
         """Test visualizer with real Po_self session."""
         from po_core.po_self import PoSelf

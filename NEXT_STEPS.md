@@ -72,12 +72,27 @@
 
 ---
 
-## Phase 3 (Next): Observability & Viewer Integration
+## Phase 3 (Current): Observability & Viewer Integration
 
-| # | Task | Issue | Priority |
-|---|------|-------|----------|
-| 9 | Build Viewer WebUI (Plotly Dash / Streamlit) | ISSUES.md #9 | High |
-| 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High |
+| # | Task | Issue | Priority | Status |
+|---|------|-------|----------|--------|
+| 9 | Build Viewer WebUI (Dash) | ISSUES.md #9 | High | **IN PROGRESS** — Scaffold: `viewer/web/app.py`, 3-tab Dash layout |
+| 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High | **IN PROGRESS** — Scaffold: `ExplanationChain` + `build_explanation_chain()`, 16 tests |
+
+**Phase 3 Preparation (complete):**
+- `observability` pytest marker registered
+- `ExplanationChain` data model: GateResult → structured chain (violations, repairs, drift)
+- `build_explanation_chain()` function with `to_markdown()` and `to_dict()` outputs
+- Viewer WebUI scaffold: Dash app with Pipeline/Philosophers/W_Ethics tabs
+- 22 new Phase 3 tests (all passing)
+- Legacy `test_visualizer_with_po_self_session` skipped (Phase 3 scope)
+
+**Remaining Work:**
+- Dash callbacks for interactive tensor/philosopher/ethics views
+- Plotly figure integration (tensor chart, interaction heatmap, drift gauge)
+- W_Ethics explanation chain rendering in WebUI
+- Trace database (SQLite) for historical query support
+- End-to-end integration: `run_turn` → Trace → Viewer WebUI
 
 **Exit Criteria:**
 - Browser-based dashboard showing tensors, philosophers, pipeline
