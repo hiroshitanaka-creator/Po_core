@@ -1,13 +1,15 @@
 """
-Semantic Delta Metric Tests (TF-IDF)
-=====================================
+Semantic Delta Metric Tests
+============================
 
-Tests for the TF-IDF based semantic delta metric.
-Verifies the upgrade from token-overlap to TF-IDF cosine similarity.
+Tests for the embedding-based semantic delta metric.
+Tests are backend-agnostic: they work with sentence-transformers,
+sklearn TF-IDF, or the basic fallback.
 """
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from po_core.domain.context import Context
@@ -18,6 +20,9 @@ from po_core.tensors.metrics.semantic_delta import (
     _cosine_similarity,
     _tfidf_vector,
     _tokenize,
+    cosine_sim,
+    encode_texts,
+    get_backend,
     metric_semantic_delta,
 )
 
@@ -48,7 +53,42 @@ def _empty_memory() -> MemorySnapshot:
     return MemorySnapshot(items=[])
 
 
-# ── Tokenizer tests ──────────────────────────────────────────────────
+# ── Backend detection ────────────────────────────────────────────────
+
+
+class TestBackend:
+    def test_backend_detected(self):
+        backend = get_backend()
+        assert backend in ("sbert", "tfidf", "basic")
+
+    def test_encode_texts_returns_2d_array(self):
+        result = encode_texts(["hello world", "foo bar"])
+        assert isinstance(result, np.ndarray)
+        assert result.ndim == 2
+        assert result.shape[0] == 2
+
+    def test_encode_texts_consistent_dim(self):
+        r1 = encode_texts(["hello", "world", "test"])
+        assert r1.shape[0] == 3
+        # All vectors same dimension
+        assert r1.shape[1] > 0
+
+    def test_cosine_sim_identical(self):
+        v = np.array([1.0, 2.0, 3.0])
+        assert cosine_sim(v, v) == pytest.approx(1.0)
+
+    def test_cosine_sim_orthogonal(self):
+        v1 = np.array([1.0, 0.0])
+        v2 = np.array([0.0, 1.0])
+        assert cosine_sim(v1, v2) == pytest.approx(0.0)
+
+    def test_cosine_sim_zero_vector(self):
+        v1 = np.array([0.0, 0.0])
+        v2 = np.array([1.0, 2.0])
+        assert cosine_sim(v1, v2) == 0.0
+
+
+# ── Tokenizer tests (basic backend internals) ───────────────────────
 
 
 class TestTokenizer:
@@ -104,14 +144,12 @@ class TestTFIDF:
     def test_compute_idf(self):
         docs = [["truth", "beauty"], ["truth", "justice"], ["beauty", "justice"]]
         idf = _compute_idf(docs)
-        # "truth" in 2/3 docs, "beauty" in 2/3 docs, "justice" in 2/3 docs
-        # All have same IDF since they appear in same number of docs
+        # All appear in same number of docs
         assert idf["truth"] == idf["beauty"] == idf["justice"]
 
     def test_idf_rare_term_higher(self):
         docs = [["common", "rare"], ["common", "other"], ["common", "yet"]]
         idf = _compute_idf(docs)
-        # "common" in all 3 docs, "rare" in 1 doc
         assert idf["rare"] > idf["common"]
 
     def test_idf_empty_docs(self):
@@ -120,13 +158,11 @@ class TestTFIDF:
     def test_tfidf_vector(self):
         idf = {"truth": 1.0, "beauty": 0.5}
         vec = _tfidf_vector(["truth", "beauty", "truth"], idf)
-        # TF("truth") = 2/3, IDF = 1.0 -> TF-IDF = 2/3
         assert vec["truth"] == pytest.approx(2 / 3 * 1.0)
-        # TF("beauty") = 1/3, IDF = 0.5 -> TF-IDF = 1/6
         assert vec["beauty"] == pytest.approx(1 / 3 * 0.5)
 
 
-# ── Cosine similarity tests ─────────────────────────────────────────
+# ── Cosine similarity (dict) tests ──────────────────────────────────
 
 
 class TestCosineSimilarity:
@@ -181,7 +217,7 @@ class TestMetricSemanticDelta:
             _memory("cooking pasta recipe ingredients tomato"),
         )
         assert name == "semantic_delta"
-        assert val > 0.7  # Very different
+        assert val > 0.5  # Very different
 
     def test_partial_overlap(self):
         """Partially overlapping content should give moderate delta."""
@@ -190,7 +226,7 @@ class TestMetricSemanticDelta:
             _memory("Philosophical analysis of beauty and truth"),
         )
         assert name == "semantic_delta"
-        assert 0.1 < val < 0.9  # Moderate
+        assert 0.01 < val < 0.95  # Moderate
 
     def test_multiple_memory_items(self):
         """Memory with multiple items — closer to one should reduce delta."""
@@ -203,7 +239,6 @@ class TestMetricSemanticDelta:
             ),
         )
         assert name == "semantic_delta"
-        # Should find some similarity with the freedom item
         assert val < 1.0
 
     def test_value_range(self):
@@ -218,9 +253,8 @@ class TestMetricSemanticDelta:
             name, val = metric_semantic_delta(ctx, mem)
             assert 0.0 <= val <= 1.0, f"Delta {val} out of range for {ctx.user_input}"
 
-    def test_tfidf_weights_rare_terms(self):
-        """TF-IDF should weight rare terms more than common terms."""
-        # Input shares a rare term with memory item 1 but common terms with memory item 2
+    def test_similar_content_lower_delta(self):
+        """Sharing vocabulary should give lower delta than completely different."""
         name1, val1 = metric_semantic_delta(
             _ctx("existentialism phenomenology hermeneutics"),
             _memory("existentialism phenomenology hermeneutics epistemology"),
@@ -229,7 +263,6 @@ class TestMetricSemanticDelta:
             _ctx("existentialism phenomenology hermeneutics"),
             _memory("weather sports traffic news"),
         )
-        # Sharing philosophical terms should give lower delta than completely different
         assert val1 < val2
 
     def test_stopword_invariance(self):
@@ -242,8 +275,39 @@ class TestMetricSemanticDelta:
             _ctx("the truth and the beauty of justice"),
             _memory("truth beauty justice"),
         )
-        # Should be similar since stopwords are filtered
-        assert abs(val1 - val2) < 0.2
+        # Should be similar since both backends handle stopwords
+        assert abs(val1 - val2) < 0.3
+
+
+# ── Embedding API tests ──────────────────────────────────────────────
+
+
+class TestEncodeTexts:
+    def test_similar_texts_closer(self):
+        """Semantically similar texts should have higher cosine similarity."""
+        embs = encode_texts([
+            "philosophy of mind consciousness",
+            "philosophy of mind awareness",
+            "cooking pasta recipe tomato sauce",
+        ])
+        sim_close = cosine_sim(embs[0], embs[1])
+        sim_far = cosine_sim(embs[0], embs[2])
+        assert sim_close > sim_far
+
+    def test_paraphrase_detection(self):
+        """Paraphrases should have reasonable similarity."""
+        embs = encode_texts([
+            "freedom is essential for human dignity",
+            "liberty is fundamental to human worth",
+        ])
+        sim = cosine_sim(embs[0], embs[1])
+        # Even TF-IDF should find some similarity (shared words: human)
+        assert sim > 0.0
+
+    def test_empty_text_handled(self):
+        """Empty texts should not crash."""
+        embs = encode_texts(["", "hello world"])
+        assert embs.shape[0] == 2
 
 
 # ── Integration with pipeline ───────────────────────────────────────

@@ -2,11 +2,11 @@
 Philosopher Tests via Pipeline (migrated from test_philosophers_pytest.py)
 ==========================================================================
 
-Tests all 39 philosophers through the PhilosopherBridge → run_turn path.
+Tests all 39 philosophers through native PhilosopherProtocol.propose().
 Validates that every philosopher:
 1. Can be loaded via PhilosopherRegistry
 2. Has correct attributes (name, tradition, key_concepts)
-3. Produces valid proposals via PhilosopherBridge.propose()
+3. Produces valid proposals via native propose()
 4. Can reason() individually (unit-level, still valid)
 
 Original tests used PHILOSOPHER_REGISTRY + run_ensemble (removed in v0.3).
@@ -56,7 +56,7 @@ def registry():
 
 @pytest.fixture
 def all_loaded_philosophers(registry):
-    """Load all philosophers via registry (uses PhilosopherBridge)."""
+    """Load all philosophers via registry (native PhilosopherProtocol)."""
     return registry.select_and_load(SafetyMode.NORMAL)
 
 
@@ -90,7 +90,7 @@ class TestManifestIntegrity:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 2. Loading via PhilosopherBridge
+# 2. Loading via PhilosopherProtocol (native)
 # ══════════════════════════════════════════════════════════════════════════
 
 
@@ -113,16 +113,13 @@ class TestPhilosopherLoading:
             assert phil.info.name, f"info.name is empty for {phil}"
             assert phil.info.version, f"info.version is empty for {phil}"
 
-    def test_no_bridge_needed_for_philosopher_subclasses(self, registry):
-        """Philosopher subclasses should implement propose() natively (no Bridge)."""
-        from po_core.philosophers.base import Philosopher
-        from po_core.philosophers.bridge import PhilosopherBridge
-
+    def test_all_implement_protocol_natively(self, registry):
+        """All philosophers should implement PhilosopherProtocol natively."""
         loaded = registry.select_and_load(SafetyMode.NORMAL)
         for phil in loaded:
-            assert not isinstance(
-                phil, PhilosopherBridge
-            ), f"{phil.info.name} should not need PhilosopherBridge"
+            assert hasattr(phil, "propose") and hasattr(phil, "info"), (
+                f"{phil.info.name} does not implement PhilosopherProtocol"
+            )
 
     def test_propose_returns_proposals(self, all_loaded_philosophers):
         """propose() should return a list of Proposal objects."""

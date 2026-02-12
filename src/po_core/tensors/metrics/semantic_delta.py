@@ -8,125 +8,162 @@ Higher value = more novel/divergent input relative to history.
 0.0 = identical to memory (maximum alignment)
 1.0 = completely new topic (maximum divergence)
 
-Uses TF-IDF cosine similarity between user input and memory items.
-This is a significant upgrade from the original token-overlap approach:
-TF-IDF weights rare/informative terms more heavily, producing better
-semantic distance measurements.
+Uses embedding-based cosine similarity between user input and memory items.
+
+**Backends** (selected automatically, first available wins):
+
+1. sentence-transformers  — real semantic embeddings (requires torch)
+2. sklearn TfidfVectorizer — TF-IDF sparse vectors (lighter, no GPU)
+
+Both backends produce the same (str, float) return signature.
 """
 
 from __future__ import annotations
 
 import math
 from collections import Counter
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
+
+import numpy as np
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 
+# ── Backend Detection ────────────────────────────────────────────────
+
+_BACKEND: Optional[str] = None  # set on first call
+
+
+def _detect_backend() -> str:
+    """Detect best available backend. Result is cached."""
+    global _BACKEND
+    if _BACKEND is not None:
+        return _BACKEND
+    try:
+        from sentence_transformers import SentenceTransformer  # noqa: F401
+
+        _BACKEND = "sbert"
+    except (ImportError, Exception):
+        try:
+            from sklearn.feature_extraction.text import TfidfVectorizer  # noqa: F401
+
+            _BACKEND = "tfidf"
+        except ImportError:
+            _BACKEND = "basic"
+    return _BACKEND
+
+
+def _has_sklearn() -> bool:
+    """Check if sklearn is available."""
+    try:
+        from sklearn.feature_extraction.text import TfidfVectorizer  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+# ── Shared Encoder API ───────────────────────────────────────────────
+
+_sbert_model = None
+
+
+def _get_sbert_model():
+    """Lazy-load sentence-transformers model (cached singleton)."""
+    global _sbert_model
+    if _sbert_model is None:
+        from sentence_transformers import SentenceTransformer
+
+        _sbert_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _sbert_model
+
+
+def encode_texts(texts: List[str]) -> np.ndarray:
+    """
+    Encode a list of texts into dense vectors.
+
+    Returns a 2D array of shape (len(texts), dim).
+    This function is reusable by other metrics (InteractionTensor, etc.).
+
+    Automatically falls back if the preferred backend fails at runtime
+    (e.g., model download blocked, GPU unavailable).
+    """
+    global _BACKEND
+    backend = _detect_backend()
+
+    if backend == "sbert":
+        try:
+            model = _get_sbert_model()
+            return model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
+        except Exception:
+            # Model download failed or runtime error — fall back
+            _BACKEND = "tfidf" if _has_sklearn() else "basic"
+            backend = _BACKEND
+
+    if backend == "tfidf":
+        return _encode_tfidf(texts)
+
+    # Fallback: basic token overlap vectors
+    return _encode_basic(texts)
+
+
+def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
+    """
+    Cosine similarity between two 1D vectors.
+
+    Returns value in [-1.0, 1.0], clamped to [0.0, 1.0] for delta use.
+    """
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / (norm_a * norm_b))
+
+
+def get_backend() -> str:
+    """Return the active backend name. Useful for tests and diagnostics."""
+    return _detect_backend()
+
+
+# ── TF-IDF Backend ───────────────────────────────────────────────────
+
+
+def _encode_tfidf(texts: List[str]) -> np.ndarray:
+    """Encode texts using sklearn TfidfVectorizer → dense numpy array."""
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
+    if not texts or all(not t.strip() for t in texts):
+        return np.zeros((len(texts), 1))
+
+    vectorizer = TfidfVectorizer(
+        stop_words="english",
+        min_df=1,
+        max_df=1.0,
+        sublinear_tf=True,
+    )
+    try:
+        tfidf_matrix = vectorizer.fit_transform(texts)
+        return tfidf_matrix.toarray()
+    except ValueError:
+        # All texts are stop-words or empty after preprocessing
+        return np.zeros((len(texts), 1))
+
+
+# ── Basic (legacy) Backend ───────────────────────────────────────────
+
 # Common English stopwords (low semantic value)
 _STOPWORDS: Set[str] = {
-    "a",
-    "an",
-    "the",
-    "is",
-    "it",
-    "in",
-    "on",
-    "at",
-    "to",
-    "for",
-    "of",
-    "and",
-    "or",
-    "but",
-    "not",
-    "with",
-    "as",
-    "by",
-    "was",
-    "are",
-    "be",
-    "been",
-    "being",
-    "have",
-    "has",
-    "had",
-    "do",
-    "does",
-    "did",
-    "will",
-    "would",
-    "could",
-    "should",
-    "may",
-    "might",
-    "can",
-    "this",
-    "that",
-    "these",
-    "those",
-    "i",
-    "you",
-    "he",
-    "she",
-    "we",
-    "they",
-    "me",
-    "him",
-    "her",
-    "us",
-    "them",
-    "my",
-    "your",
-    "his",
-    "its",
-    "our",
-    "their",
-    "what",
-    "which",
-    "who",
-    "whom",
-    "how",
-    "when",
-    "where",
-    "why",
-    "if",
-    "then",
-    "so",
-    "no",
-    "yes",
-    "all",
-    "each",
-    "every",
-    "both",
-    "few",
-    "more",
-    "most",
-    "some",
-    "any",
-    "from",
-    "about",
-    "into",
-    "over",
-    "after",
-    "before",
-    "between",
-    "through",
-    "during",
-    "above",
-    "below",
-    "up",
-    "down",
-    "out",
-    "off",
-    "just",
-    "only",
-    "very",
-    "also",
-    "too",
-    "than",
-    "here",
-    "there",
+    "a", "an", "the", "is", "it", "in", "on", "at", "to", "for", "of",
+    "and", "or", "but", "not", "with", "as", "by", "was", "are", "be",
+    "been", "being", "have", "has", "had", "do", "does", "did", "will",
+    "would", "could", "should", "may", "might", "can", "this", "that",
+    "these", "those", "i", "you", "he", "she", "we", "they", "me",
+    "him", "her", "us", "them", "my", "your", "his", "its", "our",
+    "their", "what", "which", "who", "whom", "how", "when", "where",
+    "why", "if", "then", "so", "no", "yes", "all", "each", "every",
+    "both", "few", "more", "most", "some", "any", "from", "about",
+    "into", "over", "after", "before", "between", "through", "during",
+    "above", "below", "up", "down", "out", "off", "just", "only",
+    "very", "also", "too", "than", "here", "there",
 }
 
 
@@ -152,21 +189,14 @@ def _compute_idf(documents: List[List[str]]) -> Dict[str, float]:
     Compute inverse document frequency (IDF) across documents.
 
     IDF(t) = log(1 + N / (1 + df(t)))
-    where N = total docs, df(t) = docs containing term t.
-    Uses smoothed variant to ensure non-negative values with small doc sets.
     """
     n_docs = len(documents)
     if n_docs == 0:
         return {}
-
-    # Document frequency: how many documents contain each term
     df: Dict[str, int] = {}
     for doc in documents:
-        unique_terms = set(doc)
-        for term in unique_terms:
+        for term in set(doc):
             df[term] = df.get(term, 0) + 1
-
-    # Smoothed IDF: ensures non-negative values even with 2 documents
     return {term: math.log(1 + n_docs / (1 + freq)) for term, freq in df.items()}
 
 
@@ -177,35 +207,51 @@ def _tfidf_vector(tokens: List[str], idf: Dict[str, float]) -> Dict[str, float]:
 
 
 def _cosine_similarity(v1: Dict[str, float], v2: Dict[str, float]) -> float:
-    """
-    Compute cosine similarity between two sparse vectors.
-
-    Returns value in [0.0, 1.0].
-    """
+    """Cosine similarity between two sparse dict vectors. Returns [0.0, 1.0]."""
     if not v1 or not v2:
         return 0.0
-
-    # Dot product
-    common_terms = set(v1) & set(v2)
-    dot = sum(v1[t] * v2[t] for t in common_terms)
-
-    # Magnitudes
+    common = set(v1) & set(v2)
+    dot = sum(v1[t] * v2[t] for t in common)
     mag1 = math.sqrt(sum(v * v for v in v1.values()))
     mag2 = math.sqrt(sum(v * v for v in v2.values()))
-
     if mag1 == 0.0 or mag2 == 0.0:
         return 0.0
-
     return dot / (mag1 * mag2)
+
+
+def _encode_basic(texts: List[str]) -> np.ndarray:
+    """Fallback: encode using hand-rolled TF-IDF into dense numpy arrays."""
+    if not texts:
+        return np.zeros((0, 1))
+
+    all_tokens = [_tokenize(t) for t in texts]
+    idf = _compute_idf(all_tokens)
+
+    if not idf:
+        return np.zeros((len(texts), 1))
+
+    vocab = sorted(idf.keys())
+    vocab_idx = {term: i for i, term in enumerate(vocab)}
+    dim = len(vocab)
+    result = np.zeros((len(texts), dim))
+    for i, tokens in enumerate(all_tokens):
+        vec = _tfidf_vector(tokens, idf)
+        for term, val in vec.items():
+            if term in vocab_idx:
+                result[i, vocab_idx[term]] = val
+    return result
+
+
+# ── Main Metric Function ─────────────────────────────────────────────
 
 
 def metric_semantic_delta(ctx: Context, memory: MemorySnapshot) -> Tuple[str, float]:
     """
-    Compute semantic_delta metric using TF-IDF cosine similarity.
+    Compute semantic_delta metric using embedding cosine similarity.
 
-    Measures semantic divergence between current user input
-    and conversation memory. If no memory exists, returns 1.0
-    (maximum divergence — completely new context).
+    Measures semantic divergence between current user input and conversation
+    memory. Automatically selects the best available backend:
+    sentence-transformers (dense embeddings) or TF-IDF (sparse vectors).
 
     Args:
         ctx: Request context with user_input
@@ -214,38 +260,35 @@ def metric_semantic_delta(ctx: Context, memory: MemorySnapshot) -> Tuple[str, fl
     Returns:
         ("semantic_delta", value) where value in [0.0, 1.0]
     """
-    input_tokens = _tokenize(ctx.user_input)
+    user_input = ctx.user_input.strip()
 
-    if not input_tokens:
+    if not user_input:
         return "semantic_delta", 0.5  # Neutral for empty input
 
     if not memory.items:
         return "semantic_delta", 1.0  # No history = maximum divergence
 
-    # Tokenize each memory item as a separate document
-    memory_docs = [_tokenize(item.text) for item in memory.items]
-
-    # Flatten all memory tokens into one combined document
-    all_memory_tokens: List[str] = []
-    for doc in memory_docs:
-        all_memory_tokens.extend(doc)
-
-    if not all_memory_tokens:
+    memory_texts = [item.text for item in memory.items if item.text.strip()]
+    if not memory_texts:
         return "semantic_delta", 1.0
 
-    # Build IDF from all documents (input + each memory item)
-    all_docs = [input_tokens] + memory_docs
-    idf = _compute_idf(all_docs)
+    # Combine all memory into one aggregate document
+    combined_memory = " ".join(memory_texts)
 
-    # Compute TF-IDF vectors
-    input_vec = _tfidf_vector(input_tokens, idf)
-    memory_vec = _tfidf_vector(all_memory_tokens, idf)
+    # Encode input + memory together for consistent vectorization
+    embeddings = encode_texts([user_input, combined_memory])
 
-    # Similarity -> delta
-    similarity = _cosine_similarity(input_vec, memory_vec)
+    similarity = cosine_sim(embeddings[0], embeddings[1])
+    # Clamp to [0, 1] then invert
+    similarity = max(0.0, min(1.0, similarity))
     delta = round(1.0 - similarity, 4)
 
     return "semantic_delta", delta
 
 
-__all__ = ["metric_semantic_delta"]
+__all__ = [
+    "metric_semantic_delta",
+    "encode_texts",
+    "cosine_sim",
+    "get_backend",
+]

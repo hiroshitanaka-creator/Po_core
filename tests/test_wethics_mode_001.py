@@ -46,7 +46,7 @@ def test_mode_normal_passes():
     policy = ActionModeDegradePolicy()
     tensors = TensorSnapshot(
         version="v1",
-        metrics={"freedom_pressure": 0.3},  # Below warn threshold (0.6)
+        metrics={"freedom_pressure": 0.15},  # Below warn threshold (0.30)
     )
     result = policy.check(_ctx(), _intent(), _proposal(), tensors, _memory())
     assert result is None  # Pass
@@ -57,7 +57,7 @@ def test_mode_warn_revises_unsafe_action():
     policy = ActionModeDegradePolicy()
     tensors = TensorSnapshot(
         version="v1",
-        metrics={"freedom_pressure": 0.7},  # Between warn (0.6) and critical (0.85)
+        metrics={"freedom_pressure": 0.35},  # Between warn (0.30) and critical (0.50)
     )
     result = policy.check(_ctx(), _intent(), _proposal("answer"), tensors, _memory())
     assert result is not None
@@ -71,7 +71,7 @@ def test_mode_warn_allows_safe_action():
     policy = ActionModeDegradePolicy()
     tensors = TensorSnapshot(
         version="v1",
-        metrics={"freedom_pressure": 0.7},  # WARN mode
+        metrics={"freedom_pressure": 0.35},  # WARN mode
     )
     # ask_clarification should pass
     result = policy.check(
@@ -89,7 +89,7 @@ def test_mode_critical_revises_to_refuse():
     policy = ActionModeDegradePolicy()
     tensors = TensorSnapshot(
         version="v1",
-        metrics={"freedom_pressure": 0.9},  # Above critical (0.85)
+        metrics={"freedom_pressure": 0.60},  # Above critical (0.50)
     )
     result = policy.check(_ctx(), _intent(), _proposal("answer"), tensors, _memory())
     assert result is not None
@@ -103,7 +103,7 @@ def test_mode_critical_allows_refuse():
     policy = ActionModeDegradePolicy()
     tensors = TensorSnapshot(
         version="v1",
-        metrics={"freedom_pressure": 0.9},  # CRITICAL mode
+        metrics={"freedom_pressure": 0.60},  # CRITICAL mode
     )
     result = policy.check(_ctx(), _intent(), _proposal("refuse"), tensors, _memory())
     assert result is None  # refuse is allowed in CRITICAL

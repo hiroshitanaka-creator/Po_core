@@ -58,6 +58,7 @@ class WiredSystem:
     settings: Settings
     registry: PhilosopherRegistry  # SafetyMode-based selection
     shadow_guard: object | None  # ShadowGuard (自律ブレーキ)
+    deliberation_engine: object | None = None  # DeliberationEngine (Phase 2)
 
 
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
@@ -208,6 +209,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         settings=settings,
         registry=registry,
         shadow_guard=shadow_guard,
+        deliberation_engine=_build_deliberation_engine(settings),
     )
 
 
@@ -359,6 +361,20 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         settings=settings,
         registry=registry,
         shadow_guard=shadow_guard,
+        deliberation_engine=_build_deliberation_engine(settings),
+    )
+
+
+def _build_deliberation_engine(settings: Settings):
+    """Build deliberation engine if enabled in settings."""
+    max_rounds = getattr(settings, "deliberation_max_rounds", 1)
+    if max_rounds <= 1:
+        return None
+    from po_core.deliberation import DeliberationEngine
+
+    return DeliberationEngine(
+        max_rounds=max_rounds,
+        top_k_pairs=getattr(settings, "deliberation_top_k_pairs", 5),
     )
 
 

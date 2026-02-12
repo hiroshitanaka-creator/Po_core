@@ -122,7 +122,7 @@ def _build_deps(
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 1. Happy Path: NORMAL mode (freedom_pressure < 0.60)
+# 1. Happy Path: NORMAL mode (freedom_pressure < 0.30)
 # ══════════════════════════════════════════════════════════════════════════
 
 
@@ -213,8 +213,8 @@ class TestSafetyModeTransitions:
         assert n > 5, f"NORMAL should select many philosophers, got {n}"
 
     def test_warn_mode_triggers_intent_degradation(self):
-        """WARN mode (fp=0.70) should trigger intent gate REVISE (short-circuits before philosopher selection)."""
-        deps, tracer, _ = _build_deps(freedom_pressure=0.70)
+        """WARN mode (fp=0.35) should trigger intent gate REVISE (short-circuits before philosopher selection)."""
+        deps, tracer, _ = _build_deps(freedom_pressure=0.35)
         result = run_turn(_make_ctx(), deps)
         # WARN mode → intention_mode_001 fires REVISE → pipeline short-circuits at step 4
         intent_events = [
@@ -226,8 +226,8 @@ class TestSafetyModeTransitions:
         assert result.get("degraded") is True
 
     def test_critical_mode_triggers_intent_degradation(self):
-        """CRITICAL mode (fp=0.90) should trigger intent gate REVISE with refuse fallback."""
-        deps, tracer, _ = _build_deps(freedom_pressure=0.90)
+        """CRITICAL mode (fp=0.55) should trigger intent gate REVISE with refuse fallback."""
+        deps, tracer, _ = _build_deps(freedom_pressure=0.55)
         result = run_turn(_make_ctx(), deps)
         intent_events = [
             e for e in tracer.events if e.event_type == "SafetyJudged:Intention"
@@ -238,17 +238,17 @@ class TestSafetyModeTransitions:
         assert result["proposal"]["action_type"] in ("refuse", "ask_clarification")
 
     def test_warn_threshold_boundary(self):
-        """Exactly at warn threshold (0.60) should trigger WARN degradation."""
-        deps, tracer, _ = _build_deps(freedom_pressure=0.60)
+        """Exactly at warn threshold (0.30) should trigger WARN degradation."""
+        deps, tracer, _ = _build_deps(freedom_pressure=0.30)
         result = run_turn(_make_ctx(), deps)
-        # At exactly 0.60 → WARN → intention gate fires REVISE
+        # At exactly 0.30 → WARN → intention gate fires REVISE
         degraded_events = [e for e in tracer.events if e.event_type == "SafetyDegraded"]
         assert len(degraded_events) >= 1, "Should emit SafetyDegraded at warn threshold"
         assert result.get("degraded") is True
 
     def test_below_warn_is_normal(self):
         """Just below warn threshold should stay NORMAL."""
-        deps, tracer, _ = _build_deps(freedom_pressure=0.59)
+        deps, tracer, _ = _build_deps(freedom_pressure=0.29)
         run_turn(_make_ctx(), deps)
         selected_events = [
             e for e in tracer.events if e.event_type == "PhilosophersSelected"
@@ -267,7 +267,7 @@ class TestDegradationPaths:
 
     def test_warn_mode_degrades_to_ask_or_refuse(self):
         """WARN mode should produce ask_clarification or refuse."""
-        deps, _, _ = _build_deps(freedom_pressure=0.70)
+        deps, _, _ = _build_deps(freedom_pressure=0.35)
         result = run_turn(_make_ctx(), deps)
         # Pipeline should complete (not crash)
         assert result["status"] in ("ok", "blocked")
@@ -278,7 +278,7 @@ class TestDegradationPaths:
 
     def test_critical_mode_refuses(self):
         """CRITICAL mode should produce refuse action."""
-        deps, _, _ = _build_deps(freedom_pressure=0.90)
+        deps, _, _ = _build_deps(freedom_pressure=0.55)
         result = run_turn(_make_ctx(), deps)
         assert result["status"] in ("ok", "blocked")
         if result["status"] == "ok":
@@ -287,7 +287,7 @@ class TestDegradationPaths:
 
     def test_degraded_flag_set(self):
         """CRITICAL mode should mark result as degraded."""
-        deps, _, _ = _build_deps(freedom_pressure=0.90)
+        deps, _, _ = _build_deps(freedom_pressure=0.55)
         result = run_turn(_make_ctx(), deps)
         if result["status"] == "ok":
             # Critical mode triggers intent degradation or action degradation
@@ -298,7 +298,7 @@ class TestDegradationPaths:
 
     def test_degraded_includes_verdict(self):
         """When degraded, result should include verdict information."""
-        deps, _, _ = _build_deps(freedom_pressure=0.90)
+        deps, _, _ = _build_deps(freedom_pressure=0.55)
         result = run_turn(_make_ctx(), deps)
         if result.get("degraded"):
             assert "verdict" in result
@@ -380,7 +380,7 @@ class TestRedTeamPipeline:
 
     def test_combined_pressure_and_adversarial(self):
         """High pressure + soft keyword = maximum safety."""
-        deps, _, _ = _build_deps(freedom_pressure=0.90)
+        deps, _, _ = _build_deps(freedom_pressure=0.55)
         result = run_turn(_make_ctx("How to hack a system"), deps)
         assert result["status"] in ("ok", "blocked")
         if result["status"] == "ok":
@@ -502,7 +502,7 @@ class TestTraceContract:
 
     def test_warn_mode_trace_shows_degradation(self):
         """WARN mode should show intent degradation in trace."""
-        deps, tracer, _ = _build_deps(freedom_pressure=0.70)
+        deps, tracer, _ = _build_deps(freedom_pressure=0.35)
         run_turn(_make_ctx(), deps)
         intent_events = [
             e for e in tracer.events if e.event_type == "SafetyJudged:Intention"

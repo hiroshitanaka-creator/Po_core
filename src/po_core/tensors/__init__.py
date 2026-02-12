@@ -32,7 +32,12 @@ from po_core.tensors.engine import (
     compute_tensors,
 )
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
-from po_core.tensors.interaction_tensor import InteractionTensor, PhilosopherInteraction
+from po_core.tensors.interaction_tensor import (
+    InteractionMatrix,
+    InteractionPair,
+    InteractionTensor,
+    PhilosopherInteraction,
+)
 from po_core.tensors.semantic_profile import SemanticProfile
 
 __all__ = [
@@ -48,6 +53,8 @@ __all__ = [
     "BlockedTensor",
     "ConceptQuantifier",
     "PhilosophicalConcept",
+    "InteractionMatrix",
+    "InteractionPair",
     "InteractionTensor",
     "PhilosopherInteraction",
 ]

@@ -47,8 +47,12 @@ class Settings:
     shadow_guard_disable_on_override_increase: bool = True
 
     # SafetyMode（単一真実）- SolarWillとGateが同じ閾値を見る
-    freedom_pressure_warn: float = 0.60
-    freedom_pressure_critical: float = 0.85
+    # Calibrated for normalized FP range [0.0, ~0.44]:
+    #   NORMAL < 0.30 → 39 philosophers (most prompts)
+    #   WARN 0.30-0.50 → 5 philosophers (ethically dense prompts)
+    #   CRITICAL > 0.50 → 1 philosopher (extreme + memory boost)
+    freedom_pressure_warn: float = 0.30
+    freedom_pressure_critical: float = 0.50
     freedom_pressure_missing_mode: SafetyMode = SafetyMode.WARN
 
     # Philosopher Swarm 制御（増殖の蛇口）
@@ -71,6 +75,11 @@ class Settings:
     philosopher_cost_budget_normal: int = 80
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
+
+    # ---- Deliberation Engine (Phase 2) ----
+    # 1 = no deliberation (backward compatible), 2+ = multi-round
+    deliberation_max_rounds: int = 1
+    deliberation_top_k_pairs: int = 5
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -95,6 +104,8 @@ class Settings:
             "philosopher_cost_budget_normal": self.philosopher_cost_budget_normal,
             "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
+            "deliberation_max_rounds": self.deliberation_max_rounds,
+            "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
         }
 
 

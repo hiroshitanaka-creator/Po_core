@@ -251,8 +251,7 @@ class Philosopher(ABC):
         return f"{self.name}: {self.description}"
 
     # ── PhilosopherProtocol conformance ─────────────────────────────
-    # These methods allow Philosopher subclasses to be used directly
-    # as PhilosopherProtocol without needing PhilosopherBridge.
+    # All Philosopher subclasses implement PhilosopherProtocol natively.
 
     @property
     def info(self) -> "PhilosopherInfo":
@@ -269,8 +268,7 @@ class Philosopher(ABC):
         """
         PhilosopherProtocol.propose(): generate proposals from this philosopher.
 
-        Calls legacy reason(), normalizes the result, and wraps it as a Proposal.
-        This replaces the need for PhilosopherBridge for all Philosopher subclasses.
+        Calls reason(), normalizes the result, and wraps it as a Proposal.
         """
         # Build lightweight context for legacy reason() interface
         legacy_context = {

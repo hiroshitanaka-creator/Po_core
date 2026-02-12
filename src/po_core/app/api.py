@@ -87,6 +87,7 @@ def run(
         registry=system.registry,  # SafetyMode-based selection
         settings=system.settings,  # Worker/timeout config
         shadow_guard=system.shadow_guard,  # ShadowGuard (自律ブレーキ)
+        deliberation_engine=getattr(system, "deliberation_engine", None),
     )
 
     # Run the full pipeline
