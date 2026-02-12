@@ -33,11 +33,12 @@ from po_core.viewer.web.figures import (
     decision_badge_style,
 )
 
-
 # ── Tab builders ─────────────────────────────────────────────────
 
 
-def _build_pipeline_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]) -> html.Div:
+def _build_pipeline_tab(
+    viewer: Optional[PoViewer], events: Sequence[TraceEvent]
+) -> html.Div:
     """Pipeline & Tensors tab layout with charts."""
     tensor_fig = build_tensor_chart(events) if events else None
     pipeline_fig = build_pipeline_chart(events) if events else None
@@ -51,10 +52,12 @@ def _build_pipeline_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]
     else:
         children.append(html.P("No pipeline data loaded."))
 
-    children.extend([
-        html.Hr(),
-        html.H3("Tensor Metrics"),
-    ])
+    children.extend(
+        [
+            html.Hr(),
+            html.H3("Tensor Metrics"),
+        ]
+    )
 
     if tensor_fig:
         children.append(dcc.Graph(id="tensor-chart", figure=tensor_fig))
@@ -62,36 +65,50 @@ def _build_pipeline_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]
         children.append(html.P("No tensor data loaded."))
 
     # Text details (collapsible)
-    children.extend([
-        html.Hr(),
-        html.Details(
-            [
-                html.Summary("Raw Pipeline Text"),
-                html.Pre(
-                    viewer.pipeline_text() if viewer else "No data.",
-                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
-                           "backgroundColor": "#16213e", "padding": "12px",
-                           "borderRadius": "4px", "color": "#e0e0e0"},
-                ),
-            ],
-        ),
-        html.Details(
-            [
-                html.Summary("Raw Tensor Text"),
-                html.Pre(
-                    viewer.tensor_text() if viewer else "No data.",
-                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
-                           "backgroundColor": "#16213e", "padding": "12px",
-                           "borderRadius": "4px", "color": "#e0e0e0"},
-                ),
-            ],
-        ),
-    ])
+    children.extend(
+        [
+            html.Hr(),
+            html.Details(
+                [
+                    html.Summary("Raw Pipeline Text"),
+                    html.Pre(
+                        viewer.pipeline_text() if viewer else "No data.",
+                        style={
+                            "whiteSpace": "pre-wrap",
+                            "fontFamily": "monospace",
+                            "backgroundColor": "#16213e",
+                            "padding": "12px",
+                            "borderRadius": "4px",
+                            "color": "#e0e0e0",
+                        },
+                    ),
+                ],
+            ),
+            html.Details(
+                [
+                    html.Summary("Raw Tensor Text"),
+                    html.Pre(
+                        viewer.tensor_text() if viewer else "No data.",
+                        style={
+                            "whiteSpace": "pre-wrap",
+                            "fontFamily": "monospace",
+                            "backgroundColor": "#16213e",
+                            "padding": "12px",
+                            "borderRadius": "4px",
+                            "color": "#e0e0e0",
+                        },
+                    ),
+                ],
+            ),
+        ]
+    )
 
     return html.Div(children, style={"padding": "20px"})
 
 
-def _build_philosopher_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]) -> html.Div:
+def _build_philosopher_tab(
+    viewer: Optional[PoViewer], events: Sequence[TraceEvent]
+) -> html.Div:
     """Philosophers tab layout with charts."""
     ph_fig = build_philosopher_chart(events) if events else None
 
@@ -108,31 +125,42 @@ def _build_philosopher_tab(viewer: Optional[PoViewer], events: Sequence[TraceEve
     if viewer:
         battalion = viewer.battalion_info()
         if battalion:
-            children.extend([
-                html.Hr(),
-                html.H4("Battalion Selection"),
-                html.Ul([
-                    html.Li(f"Mode: {battalion.get('mode', '?')}"),
-                    html.Li(f"Selected: {battalion.get('n', 0)} philosophers"),
-                    html.Li(f"Cost: {battalion.get('cost_total', 0)}"),
-                ]),
-            ])
+            children.extend(
+                [
+                    html.Hr(),
+                    html.H4("Battalion Selection"),
+                    html.Ul(
+                        [
+                            html.Li(f"Mode: {battalion.get('mode', '?')}"),
+                            html.Li(f"Selected: {battalion.get('n', 0)} philosophers"),
+                            html.Li(f"Cost: {battalion.get('cost_total', 0)}"),
+                        ]
+                    ),
+                ]
+            )
 
     # Raw text
-    children.extend([
-        html.Hr(),
-        html.Details(
-            [
-                html.Summary("Raw Philosopher Text"),
-                html.Pre(
-                    viewer.philosopher_text() if viewer else "No data.",
-                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
-                           "backgroundColor": "#16213e", "padding": "12px",
-                           "borderRadius": "4px", "color": "#e0e0e0"},
-                ),
-            ],
-        ),
-    ])
+    children.extend(
+        [
+            html.Hr(),
+            html.Details(
+                [
+                    html.Summary("Raw Philosopher Text"),
+                    html.Pre(
+                        viewer.philosopher_text() if viewer else "No data.",
+                        style={
+                            "whiteSpace": "pre-wrap",
+                            "fontFamily": "monospace",
+                            "backgroundColor": "#16213e",
+                            "padding": "12px",
+                            "borderRadius": "4px",
+                            "color": "#e0e0e0",
+                        },
+                    ),
+                ],
+            ),
+        ]
+    )
 
     return html.Div(children, style={"padding": "20px"})
 
@@ -185,7 +213,11 @@ def _build_ethics_tab(
                             header,
                             style={"fontWeight": "bold", "cursor": "pointer"},
                         ),
-                        html.Ul(evidence_items) if evidence_items else html.P("No evidence details."),
+                        (
+                            html.Ul(evidence_items)
+                            if evidence_items
+                            else html.P("No evidence details.")
+                        ),
                     ],
                     open=True,
                     style={"marginBottom": "8px"},
@@ -196,9 +228,7 @@ def _build_ethics_tab(
     if explanation.repairs:
         children.append(html.Hr())
         children.append(html.H4("Repairs Applied"))
-        children.append(
-            html.Ol([html.Li(r.description) for r in explanation.repairs])
-        )
+        children.append(html.Ol([html.Li(r.description) for r in explanation.repairs]))
 
     # Drift gauge
     children.append(html.Hr())
@@ -220,9 +250,14 @@ def _build_ethics_tab(
                 html.Summary("Raw Markdown"),
                 html.Pre(
                     explanation.to_markdown(),
-                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
-                           "backgroundColor": "#16213e", "padding": "12px",
-                           "borderRadius": "4px", "color": "#e0e0e0"},
+                    style={
+                        "whiteSpace": "pre-wrap",
+                        "fontFamily": "monospace",
+                        "backgroundColor": "#16213e",
+                        "padding": "12px",
+                        "borderRadius": "4px",
+                        "color": "#e0e0e0",
+                    },
                 ),
             ],
         )

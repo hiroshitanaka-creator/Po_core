@@ -258,7 +258,9 @@ def build_explanation_chain(
     violation_steps = [_build_violation_step(v) for v in result.violations]
 
     # Repairs
-    repair_steps = [RepairStep(description=log_entry) for log_entry in result.repair_log]
+    repair_steps = [
+        RepairStep(description=log_entry) for log_entry in result.repair_log
+    ]
 
     # Drift
     drift_step = None
@@ -273,12 +275,18 @@ def build_explanation_chain(
     # Summary
     n_violations = len(result.violations)
     n_repairs = len(result.repair_log)
-    decision_str = result.decision.value if isinstance(result.decision, GateDecision) else str(result.decision)
+    decision_str = (
+        result.decision.value
+        if isinstance(result.decision, GateDecision)
+        else str(result.decision)
+    )
 
     if decision_str == "allow":
         summary = "Gate passed with no issues."
     elif decision_str == "allow_with_repair":
-        summary = f"Gate passed after {n_repairs} repair(s) for {n_violations} violation(s)."
+        summary = (
+            f"Gate passed after {n_repairs} repair(s) for {n_violations} violation(s)."
+        )
     elif decision_str == "reject":
         summary = f"Gate rejected: {n_violations} violation(s) detected."
     elif decision_str == "escalate":
