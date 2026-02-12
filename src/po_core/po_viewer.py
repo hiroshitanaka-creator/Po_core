@@ -16,11 +16,16 @@ Usage::
     viewer = PoViewer(tracer.events)
     print(viewer.markdown())   # Full Markdown report
     print(viewer.summary())    # One-line summary
+
+Phase 3 — WebUI integration::
+
+    viewer = PoViewer.from_run("What is justice?")
+    viewer.serve()  # Opens browser dashboard on localhost:8050
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.decision_report_md import render_markdown
@@ -48,6 +53,58 @@ class PoViewer:
 
     def __init__(self, events: Sequence[TraceEvent]) -> None:
         self._events = list(events)
+
+    @staticmethod
+    def from_run(user_input: str) -> "PoViewer":
+        """
+        Run the pipeline and create a PoViewer from the trace.
+
+        Convenience method for Phase 3 observability:
+            viewer = PoViewer.from_run("What is justice?")
+            print(viewer.markdown())
+
+        Args:
+            user_input: The prompt to run through the pipeline.
+
+        Returns:
+            PoViewer populated with trace events from the run.
+        """
+        import uuid
+
+        from po_core.domain.context import Context
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.settings import Settings
+        from po_core.runtime.wiring import build_test_system
+        from po_core.trace.in_memory import InMemoryTracer
+
+        settings = Settings()
+        system = build_test_system(settings=settings)
+        tracer = InMemoryTracer()
+
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=user_input,
+            meta={"entry": "po_viewer.from_run"},
+        )
+
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=system.tensor_engine,
+            solarwill=system.solarwill,
+            gate=system.gate,
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=system.aggregator_shadow,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=system.shadow_guard,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
+        )
+
+        run_turn(ctx, deps)
+        return PoViewer(tracer.events)
 
     @property
     def events(self) -> List[TraceEvent]:
@@ -171,5 +228,31 @@ class PoViewer:
             "summary": self.summary(),
         }
 
+    def serve(
+        self,
+        explanation: Optional["ExplanationChain"] = None,
+        port: int = 8050,
+        debug: bool = False,
+    ) -> None:
+        """
+        Launch the Viewer WebUI dashboard in the browser.
+
+        Args:
+            explanation: Optional ExplanationChain for W_Ethics tab.
+            port: HTTP port to serve on.
+            debug: Enable Dash debug mode.
+        """
+        from po_core.viewer.web import create_app
+
+        app = create_app(
+            events=self._events,
+            explanation=explanation,
+            debug=debug,
+        )
+        app.run(port=port, debug=debug)
+
+
+# Lazy import for type hint
+ExplanationChain = Any
 
 __all__ = ["PoViewer"]

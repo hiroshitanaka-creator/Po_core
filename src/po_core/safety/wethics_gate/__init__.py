@@ -89,6 +89,7 @@ from .select import (
     robust_weight_sampling_rank,
     topsis_rank,
 )
+from .explanation import ExplanationChain, build_explanation_chain
 from .semantic_drift import DriftReport, semantic_drift
 from .types import (  # Enums; Data classes; Constants
     AXES,
@@ -165,6 +166,9 @@ __all__ = [
     "topsis_rank",
     "CandidateSelector",
     "create_candidate_selector",
+    # Explanation Chain (new in Phase 3)
+    "ExplanationChain",
+    "build_explanation_chain",
     # 2-Stage Gate (new in v0.3)
     "IntentionDecision",
     "IntentionVerdict",

@@ -85,6 +85,9 @@ seaborn>=0.13.0
 # Interactive Visualizations
 plotly>=5.18.0
 
+# Dashboard (Phase 3: Viewer WebUI)
+dash>=2.14.0
+
 # Graph Visualization
 networkx>=3.2.0
 

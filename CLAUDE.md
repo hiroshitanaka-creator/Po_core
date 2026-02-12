@@ -58,9 +58,14 @@ src/po_core/
 - InteractionMatrix: NxN embedding-based harmony + keyword tension
 - DeliberationEngine: multi-round philosopher dialogue (Settings.deliberation_max_rounds)
 
-**Phase 3: Observability** (next)
+**Phase 3: Observability** (current — scaffold ready)
 
 Focus: Viewer WebUI + Explainable W_Ethics Gate
+
+Key files:
+- `src/po_core/viewer/web/app.py` — Dash app factory (3-tab layout)
+- `src/po_core/safety/wethics_gate/explanation.py` — ExplanationChain
+- Tests: `tests/unit/test_explanation_chain.py`, `tests/unit/test_viewer_web.py`
 
 ## Roadmap Overview
 
@@ -88,6 +93,9 @@ pytest tests/unit/test_philosophers/test_aristotle.py -v
 
 # Red team
 pytest tests/redteam/ -v
+
+# Phase 3 observability tests
+pytest -m observability -v
 ```
 
 ## Do NOT
