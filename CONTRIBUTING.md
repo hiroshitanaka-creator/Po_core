@@ -113,9 +113,26 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt  # For development tools
 
+# Set up pre-commit hooks
+pre-commit install --install-hooks
+
 # Run tests to verify installation
 pytest tests/
 ```
+
+### Formatter Version Policy
+
+All formatters are **version-pinned** to ensure consistent output across local, pre-commit, and CI environments:
+
+| Tool | Pinned Version | Defined In |
+|------|---------------|------------|
+| black | **25.11.0** | `pyproject.toml`, `requirements-dev.txt`, `.pre-commit-config.yaml` |
+| isort | **5.13.2** | `pyproject.toml`, `requirements-dev.txt`, `.pre-commit-config.yaml` |
+
+**Rules:**
+- Do **not** upgrade these versions without team consensus.
+- When upgrading, reformat **all** files (`black src tests && isort src tests`) and include the result in the same PR.
+- CI will reject any PR where `black --check` or `isort --check-only` fails.
 
 ### Project Structure
 
@@ -184,6 +201,9 @@ git commit -m "feat: add Nietzsche's eternal recurrence tensor"
 ### 4. Test Your Changes
 
 ```bash
+# Run all pre-commit hooks (formatting + lint + type check)
+pre-commit run --all-files
+
 # Run all tests
 pytest
 
@@ -191,11 +211,6 @@ pytest
 pytest tests/unit/
 pytest tests/integration/
 pytest tests/philosophical/  # Philosophical consistency tests
-
-# Check code style
-black src/ tests/
-flake8 src/ tests/
-mypy src/
 ```
 
 ### 5. Update Documentation
@@ -477,7 +492,7 @@ Before submitting a PR, ensure:
 
 - [ ] **Code compiles and runs**
 - [ ] **All tests pass** (`pytest`)
-- [ ] **Code style checked** (`black`, `flake8`)
+- [ ] **Pre-commit hooks pass** (`pre-commit run --all-files`)
 - [ ] **Type hints added** (`mypy` passes)
 - [ ] **Documentation updated**
 - [ ] **Philosophical justification provided** (if applicable)

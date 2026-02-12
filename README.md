@@ -346,6 +346,42 @@ pip install -e .
 
 ---
 
+## Development Setup
+
+To contribute or run from source, set up the development environment:
+
+```bash
+# Install production + development dependencies
+pip install -e ".[dev]"
+
+# Or install from requirements files
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+### Formatter Versions (pinned)
+
+| Tool | Version | Config |
+|------|---------|--------|
+| Python | 3.10+ (CI tests on 3.10/3.11/3.12, lint on 3.12) | `pyproject.toml` |
+| black | **25.11.0** | `pyproject.toml [tool.black]` |
+| isort | **5.13.2** | `pyproject.toml [tool.isort]` |
+
+### Pre-commit Hooks
+
+```bash
+# Install hooks (one-time)
+pip install pre-commit
+pre-commit install --install-hooks
+
+# Run all hooks manually
+pre-commit run --all-files
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full development workflow.
+
+---
+
 ## Quick Start
 
 Once installed, you can use the `po-core` command:

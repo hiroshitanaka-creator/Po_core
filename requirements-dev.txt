@@ -27,7 +27,7 @@ coverage[toml]>=7.3.0
 # ==================
 
 # Code Formatting
-black==23.12.1
+black==25.11.0
 isort==5.13.2
 
 # Linting
