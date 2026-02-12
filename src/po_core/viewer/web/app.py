@@ -2,11 +2,12 @@
 Dash application factory for Po_core Viewer WebUI.
 
 Creates a Dash app with three tabs:
-1. Pipeline & Tensors
-2. Philosophers
-3. W_Ethics Gate Decisions
+1. Pipeline & Tensors — step chart + tensor bar chart
+2. Philosophers — latency chart + participation table
+3. W_Ethics Gate Decisions — explanation chain + drift gauge
 
-This is the Phase 3 scaffold — layouts defined, callbacks to be wired.
+All figures are generated at app creation time from TraceEvents.
+For live updates, call create_app() with new events.
 """
 
 from __future__ import annotations
@@ -23,76 +24,219 @@ except ImportError:
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.po_viewer import PoViewer
+from po_core.safety.wethics_gate.explanation import ExplanationChain
+from po_core.viewer.web.figures import (
+    build_drift_gauge,
+    build_philosopher_chart,
+    build_pipeline_chart,
+    build_tensor_chart,
+    decision_badge_style,
+)
 
 
-def _build_pipeline_tab(viewer: Optional[PoViewer] = None) -> html.Div:
-    """Pipeline & Tensors tab layout."""
-    return html.Div(
-        [
-            html.H3("Pipeline Progression"),
-            html.Pre(
-                viewer.pipeline_text() if viewer else "No data loaded.",
-                id="pipeline-text",
-                style={"whiteSpace": "pre-wrap", "fontFamily": "monospace"},
-            ),
-            html.Hr(),
-            html.H3("Tensor Metrics"),
-            html.Pre(
-                viewer.tensor_text() if viewer else "No data loaded.",
-                id="tensor-text",
-                style={"whiteSpace": "pre-wrap", "fontFamily": "monospace"},
-            ),
-            html.Hr(),
-            html.H3("Tensor Chart"),
-            dcc.Graph(id="tensor-chart"),
-        ],
-        style={"padding": "20px"},
+# ── Tab builders ─────────────────────────────────────────────────
+
+
+def _build_pipeline_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]) -> html.Div:
+    """Pipeline & Tensors tab layout with charts."""
+    tensor_fig = build_tensor_chart(events) if events else None
+    pipeline_fig = build_pipeline_chart(events) if events else None
+
+    children = [
+        html.H3("Pipeline Progression"),
+    ]
+
+    if pipeline_fig:
+        children.append(dcc.Graph(id="pipeline-chart", figure=pipeline_fig))
+    else:
+        children.append(html.P("No pipeline data loaded."))
+
+    children.extend([
+        html.Hr(),
+        html.H3("Tensor Metrics"),
+    ])
+
+    if tensor_fig:
+        children.append(dcc.Graph(id="tensor-chart", figure=tensor_fig))
+    else:
+        children.append(html.P("No tensor data loaded."))
+
+    # Text details (collapsible)
+    children.extend([
+        html.Hr(),
+        html.Details(
+            [
+                html.Summary("Raw Pipeline Text"),
+                html.Pre(
+                    viewer.pipeline_text() if viewer else "No data.",
+                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
+                           "backgroundColor": "#16213e", "padding": "12px",
+                           "borderRadius": "4px", "color": "#e0e0e0"},
+                ),
+            ],
+        ),
+        html.Details(
+            [
+                html.Summary("Raw Tensor Text"),
+                html.Pre(
+                    viewer.tensor_text() if viewer else "No data.",
+                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
+                           "backgroundColor": "#16213e", "padding": "12px",
+                           "borderRadius": "4px", "color": "#e0e0e0"},
+                ),
+            ],
+        ),
+    ])
+
+    return html.Div(children, style={"padding": "20px"})
+
+
+def _build_philosopher_tab(viewer: Optional[PoViewer], events: Sequence[TraceEvent]) -> html.Div:
+    """Philosophers tab layout with charts."""
+    ph_fig = build_philosopher_chart(events) if events else None
+
+    children = [
+        html.H3("Philosopher Participation"),
+    ]
+
+    if ph_fig:
+        children.append(dcc.Graph(id="philosopher-chart", figure=ph_fig))
+    else:
+        children.append(html.P("No philosopher data loaded."))
+
+    # Battalion info
+    if viewer:
+        battalion = viewer.battalion_info()
+        if battalion:
+            children.extend([
+                html.Hr(),
+                html.H4("Battalion Selection"),
+                html.Ul([
+                    html.Li(f"Mode: {battalion.get('mode', '?')}"),
+                    html.Li(f"Selected: {battalion.get('n', 0)} philosophers"),
+                    html.Li(f"Cost: {battalion.get('cost_total', 0)}"),
+                ]),
+            ])
+
+    # Raw text
+    children.extend([
+        html.Hr(),
+        html.Details(
+            [
+                html.Summary("Raw Philosopher Text"),
+                html.Pre(
+                    viewer.philosopher_text() if viewer else "No data.",
+                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
+                           "backgroundColor": "#16213e", "padding": "12px",
+                           "borderRadius": "4px", "color": "#e0e0e0"},
+                ),
+            ],
+        ),
+    ])
+
+    return html.Div(children, style={"padding": "20px"})
+
+
+def _build_ethics_tab(
+    explanation: Optional[ExplanationChain] = None,
+) -> html.Div:
+    """W_Ethics Gate Decisions tab layout with explanation chain rendering."""
+    children = [html.H3("W_Ethics Gate Decision")]
+
+    if explanation is None:
+        children.append(html.P("No W_Ethics Gate data loaded."))
+        children.append(dcc.Graph(id="drift-gauge", figure=build_drift_gauge(None)))
+        return html.Div(children, style={"padding": "20px"})
+
+    # Decision badge
+    badge = decision_badge_style(explanation.decision)
+    children.append(
+        html.Div(
+            badge["label"],
+            style={
+                "display": "inline-block",
+                "padding": "8px 24px",
+                "borderRadius": "4px",
+                "backgroundColor": badge["color"],
+                "color": "white",
+                "fontWeight": "bold",
+                "fontSize": "18px",
+                "marginBottom": "12px",
+            },
+        )
+    )
+    children.append(html.P(f"Reason: {explanation.decision_reason}"))
+
+    # Violations
+    if explanation.violations:
+        children.append(html.Hr())
+        children.append(html.H4("Violations Detected"))
+        for v in explanation.violations:
+            repair_tag = "repairable" if v.repairable else "hard reject"
+            header = f"{v.code} ({v.code_label}) — impact={v.impact_score:.2f} [{repair_tag}]"
+            evidence_items = [
+                html.Li(f"[{e.detector_id}] {e.message} (strength={e.strength:.2f})")
+                for e in v.evidence
+            ]
+            children.append(
+                html.Details(
+                    [
+                        html.Summary(
+                            header,
+                            style={"fontWeight": "bold", "cursor": "pointer"},
+                        ),
+                        html.Ul(evidence_items) if evidence_items else html.P("No evidence details."),
+                    ],
+                    open=True,
+                    style={"marginBottom": "8px"},
+                )
+            )
+
+    # Repairs
+    if explanation.repairs:
+        children.append(html.Hr())
+        children.append(html.H4("Repairs Applied"))
+        children.append(
+            html.Ol([html.Li(r.description) for r in explanation.repairs])
+        )
+
+    # Drift gauge
+    children.append(html.Hr())
+    children.append(html.H4("Semantic Drift"))
+    drift_score = explanation.drift.drift_score if explanation.drift else None
+    children.append(dcc.Graph(id="drift-gauge", figure=build_drift_gauge(drift_score)))
+
+    if explanation.drift and explanation.drift.notes:
+        children.append(html.P(f"Notes: {explanation.drift.notes}"))
+
+    # Summary
+    children.append(html.Hr())
+    children.append(html.P(explanation.summary, style={"fontWeight": "bold"}))
+
+    # Raw markdown
+    children.append(
+        html.Details(
+            [
+                html.Summary("Raw Markdown"),
+                html.Pre(
+                    explanation.to_markdown(),
+                    style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
+                           "backgroundColor": "#16213e", "padding": "12px",
+                           "borderRadius": "4px", "color": "#e0e0e0"},
+                ),
+            ],
+        )
     )
 
-
-def _build_philosopher_tab(viewer: Optional[PoViewer] = None) -> html.Div:
-    """Philosophers tab layout."""
-    return html.Div(
-        [
-            html.H3("Philosopher Participation"),
-            html.Pre(
-                viewer.philosopher_text() if viewer else "No data loaded.",
-                id="philosopher-text",
-                style={"whiteSpace": "pre-wrap", "fontFamily": "monospace"},
-            ),
-            html.Hr(),
-            html.H3("Interaction Heatmap"),
-            dcc.Graph(id="interaction-heatmap"),
-        ],
-        style={"padding": "20px"},
-    )
+    return html.Div(children, style={"padding": "20px"})
 
 
-def _build_ethics_tab() -> html.Div:
-    """W_Ethics Gate Decisions tab layout."""
-    return html.Div(
-        [
-            html.H3("W_Ethics Gate Decision"),
-            html.Div(id="ethics-decision-badge"),
-            html.Hr(),
-            html.H3("Explanation Chain"),
-            html.Div(id="explanation-chain", children="No decision data loaded."),
-            html.Hr(),
-            html.H3("Violation Details"),
-            html.Div(id="violation-details"),
-            html.Hr(),
-            html.H3("Repair Log"),
-            html.Pre(id="repair-log"),
-            html.Hr(),
-            html.H3("Semantic Drift"),
-            dcc.Graph(id="drift-gauge"),
-        ],
-        style={"padding": "20px"},
-    )
+# ── App factory ──────────────────────────────────────────────────
 
 
 def create_app(
     events: Optional[Sequence[TraceEvent]] = None,
+    explanation: Optional[ExplanationChain] = None,
     title: str = "Po_core Viewer",
     debug: bool = False,
 ) -> dash.Dash:
@@ -101,6 +245,7 @@ def create_app(
 
     Args:
         events: Optional TraceEvents to display on startup.
+        explanation: Optional ExplanationChain for W_Ethics tab.
         title: Browser tab title.
         debug: Enable Dash debug mode.
 
@@ -114,6 +259,7 @@ def create_app(
     )
 
     viewer = PoViewer(events) if events else None
+    ev_list: Sequence[TraceEvent] = events or []
 
     app.layout = html.Div(
         [
@@ -140,17 +286,17 @@ def create_app(
                     dcc.Tab(
                         label="Pipeline & Tensors",
                         value="tab-pipeline",
-                        children=_build_pipeline_tab(viewer),
+                        children=_build_pipeline_tab(viewer, ev_list),
                     ),
                     dcc.Tab(
                         label="Philosophers",
                         value="tab-philosophers",
-                        children=_build_philosopher_tab(viewer),
+                        children=_build_philosopher_tab(viewer, ev_list),
                     ),
                     dcc.Tab(
                         label="W_Ethics Gate",
                         value="tab-ethics",
-                        children=_build_ethics_tab(),
+                        children=_build_ethics_tab(explanation),
                     ),
                 ],
             ),

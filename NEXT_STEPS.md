@@ -76,27 +76,37 @@
 
 | # | Task | Issue | Priority | Status |
 |---|------|-------|----------|--------|
-| 9 | Build Viewer WebUI (Dash) | ISSUES.md #9 | High | **IN PROGRESS** — Scaffold: `viewer/web/app.py`, 3-tab Dash layout |
-| 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High | **IN PROGRESS** — Scaffold: `ExplanationChain` + `build_explanation_chain()`, 16 tests |
+| 9 | Build Viewer WebUI (Dash) | ISSUES.md #9 | High | **IN PROGRESS** — Dash app + Plotly figures (pipeline, tensors, philosophers, drift gauge) |
+| 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High | **IN PROGRESS** — `ExplanationChain` + WebUI rendering (violation tree, repair log, drift gauge) |
 
-**Phase 3 Preparation (complete):**
+**Phase 3 Implementation Progress:**
 - `observability` pytest marker registered
-- `ExplanationChain` data model: GateResult → structured chain (violations, repairs, drift)
-- `build_explanation_chain()` function with `to_markdown()` and `to_dict()` outputs
-- Viewer WebUI scaffold: Dash app with Pipeline/Philosophers/W_Ethics tabs
-- 22 new Phase 3 tests (all passing)
+- **ExplanationChain** data model: GateResult → structured chain (violations, repairs, drift)
+  - `build_explanation_chain()` with `to_markdown()` and `to_dict()` outputs
+  - Violation tree with code labels and evidence attribution
+  - Drift status classification (acceptable / escalated / rejected)
+- **Viewer WebUI** (Dash app):
+  - 3-tab layout: Pipeline & Tensors / Philosophers / W_Ethics Gate
+  - Plotly figures: tensor bar chart, pipeline step chart, philosopher latency chart, drift gauge
+  - Decision badge with color coding (ALLOW/REPAIR/REJECT/ESCALATE)
+  - ExplanationChain rendering: violations, repairs, drift, raw markdown
+  - Collapsible raw text views for detailed inspection
+- **E2E Integration**:
+  - `PoViewer.from_run("prompt")` — one-liner pipeline → viewer
+  - `PoViewer.serve()` — launch Dash dashboard from viewer
+  - `create_app(events, explanation)` — full app factory
+- 53 new Phase 3 tests (2477 total, 0 failures)
 - Legacy `test_visualizer_with_po_self_session` skipped (Phase 3 scope)
 
 **Remaining Work:**
-- Dash callbacks for interactive tensor/philosopher/ethics views
-- Plotly figure integration (tensor chart, interaction heatmap, drift gauge)
-- W_Ethics explanation chain rendering in WebUI
 - Trace database (SQLite) for historical query support
-- End-to-end integration: `run_turn` → Trace → Viewer WebUI
+- Interaction heatmap (NxN philosopher tensor visualization)
+- WebSocket streaming for real-time event delivery
+- Human review interface for ESCALATE decisions
 
 **Exit Criteria:**
-- Browser-based dashboard showing tensors, philosophers, pipeline
-- W_Ethics Gate decisions include structured explanation chain
+- Browser-based dashboard showing tensors, philosophers, pipeline ← **DONE**
+- W_Ethics Gate decisions include structured explanation chain ← **DONE**
 
 ---
 
