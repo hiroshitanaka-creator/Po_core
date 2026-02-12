@@ -18,7 +18,6 @@ from po_core.viewer.philosopher_view import extract_philosopher_data
 from po_core.viewer.pipeline_view import PIPELINE_STEPS
 from po_core.viewer.tensor_view import extract_tensor_values
 
-
 # ── Color constants ──────────────────────────────────────────────
 
 _COLORS = {
@@ -165,9 +164,7 @@ def build_pipeline_chart(events: Sequence[TraceEvent]) -> go.Figure:
         if event_type in event_types_present:
             # Check for blocking / degradation
             if event_type == "SafetyJudged:Intention":
-                ev = next(
-                    (e for e in events if e.event_type == event_type), None
-                )
+                ev = next((e for e in events if e.event_type == event_type), None)
                 if ev and ev.payload.get("decision") != "allow":
                     statuses.append(-1)
                     colors.append(_COLORS["danger"])
