@@ -68,7 +68,6 @@ Focus: Viewer WebUI + Explainable W_Ethics Gate
 Phase 1: Resonance Calibration    — 39人スケール + 技術負債清算 ✓ COMPLETE
 Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ✓ COMPLETE
 Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate ← CURRENT
-Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate
 Phase 4: Adversarial Hardening    — Red team 拡充 + 倫理的ストレステスト
 Phase 5: Productization           — REST API, Docker, streaming, PyPI
 ```
