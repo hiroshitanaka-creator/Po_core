@@ -33,7 +33,13 @@ class Jung(Philosopher):
             description="Analytical psychologist focused on archetypes, collective unconscious, and individuation",
         )
         self.tradition = "Analytical Psychology"
-        self.key_concepts = ['collective unconscious', 'archetypes', 'individuation', 'shadow', 'anima/animus']
+        self.key_concepts = [
+            "collective unconscious",
+            "archetypes",
+            "individuation",
+            "shadow",
+            "anima/animus",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

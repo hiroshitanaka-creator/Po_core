@@ -36,7 +36,13 @@ class Schopenhauer(Philosopher):
             description="Pessimist philosopher focused on the Will, suffering, compassion, and denial",
         )
         self.tradition = "Pessimism / Voluntarism"
-        self.key_concepts = ['Will (Wille)', 'representation', 'suffering', 'compassion', 'aesthetic contemplation']
+        self.key_concepts = [
+            "Will (Wille)",
+            "representation",
+            "suffering",
+            "compassion",
+            "aesthetic contemplation",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

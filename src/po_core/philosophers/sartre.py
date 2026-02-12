@@ -43,7 +43,13 @@ class Sartre(Philosopher):
             description="Existentialist focused on freedom, responsibility, and 'existence precces essence'",
         )
         self.tradition = "Existentialism"
-        self.key_concepts = ['existence precedes essence', 'radical freedom', 'bad faith (mauvaise foi)', 'being-for-itself', 'anguish']
+        self.key_concepts = [
+            "existence precedes essence",
+            "radical freedom",
+            "bad faith (mauvaise foi)",
+            "being-for-itself",
+            "anguish",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

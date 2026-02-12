@@ -36,7 +36,13 @@ class Descartes(Philosopher):
             description="Rationalist philosopher focused on certainty through doubt, clear ideas, and mind-body dualism",
         )
         self.tradition = "Rationalism"
-        self.key_concepts = ['cogito ergo sum', 'methodic doubt', 'mind-body dualism', 'clear and distinct ideas', 'res cogitans / res extensa']
+        self.key_concepts = [
+            "cogito ergo sum",
+            "methodic doubt",
+            "mind-body dualism",
+            "clear and distinct ideas",
+            "res cogitans / res extensa",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

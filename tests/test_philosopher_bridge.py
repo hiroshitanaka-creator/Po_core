@@ -236,9 +236,9 @@ class TestRegistryNativeLoading:
         philosophers, _ = registry.load(sel.selected_ids)
         for ph in philosophers:
             # Must have propose() and info — either via Philosopher base or native impl
-            assert hasattr(ph, "propose") and hasattr(ph, "info"), (
-                f"{ph.info.name} does not implement PhilosopherProtocol"
-            )
+            assert hasattr(ph, "propose") and hasattr(
+                ph, "info"
+            ), f"{ph.info.name} does not implement PhilosopherProtocol"
 
 
 # ── Full pipeline smoke test ──────────────────────────────────────────

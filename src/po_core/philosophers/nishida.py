@@ -36,7 +36,13 @@ class Nishida(Philosopher):
             description="Founder of Kyoto School - Pure Experience, Absolute Nothingness, Place (basho), and self-contradictory identity",
         )
         self.tradition = "Kyoto School"
-        self.key_concepts = ['pure experience', 'absolute nothingness', 'basho (place/topos)', 'self-contradictory identity', 'acting intuition']
+        self.key_concepts = [
+            "pure experience",
+            "absolute nothingness",
+            "basho (place/topos)",
+            "self-contradictory identity",
+            "acting intuition",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -1122,9 +1128,7 @@ class Nishida(Philosopher):
         )
 
         # Add acting intuition
-        reasoning += (
-            f"Concerning 行為的直観 (acting intuition): {acting_intuition['description']}. "
-        )
+        reasoning += f"Concerning 行為的直観 (acting intuition): {acting_intuition['description']}. "
 
         # Add Zen influence if significant
         if zen_influence["zen_score"] >= 1 or zen_influence["nondual_score"] >= 1:

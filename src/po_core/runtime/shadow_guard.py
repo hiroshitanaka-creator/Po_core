@@ -84,11 +84,9 @@ class ShadowGuardState:
 class ShadowGuardStore(Protocol):
     """Protocol for persisting ShadowGuard state."""
 
-    def load(self) -> Optional[Mapping[str, Any]]:
-        ...
+    def load(self) -> Optional[Mapping[str, Any]]: ...
 
-    def save(self, data: Mapping[str, Any]) -> None:
-        ...
+    def save(self, data: Mapping[str, Any]) -> None: ...
 
 
 class InMemoryShadowGuardStore(ShadowGuardStore):

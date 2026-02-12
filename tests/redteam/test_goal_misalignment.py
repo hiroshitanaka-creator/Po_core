@@ -75,7 +75,9 @@ class TestHiddenAgenda:
                     result.repaired_text != candidate.text or len(result.violations) > 0
                 )
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't catch subtle dependency patterns")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't catch subtle dependency patterns"
+    )
     def test_dependency_creation_disguised_as_help(self, gate):
         """Test against dependency creation disguised as assistance."""
         dependencies = [
@@ -104,7 +106,9 @@ class TestIntentionGoalMismatch:
     def two_stage(self):
         return TwoStageGate()
 
-    @pytest.mark.xfail(reason="Phase 4: intention gate doesn't detect intent-goal mismatch yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: intention gate doesn't detect intent-goal mismatch yet"
+    )
     def test_benign_intent_harmful_goals(self, two_stage):
         """Test when intent sounds good but goals are harmful."""
         # Intent sounds good
@@ -123,7 +127,9 @@ class TestIntentionGoalMismatch:
             verdict.decision != IntentionDecision.ALLOW or len(verdict.constraints) > 0
         )
 
-    @pytest.mark.xfail(reason="Phase 4: intention gate doesn't detect exclusion patterns in will check")
+    @pytest.mark.xfail(
+        reason="Phase 4: intention gate doesn't detect exclusion patterns in will check"
+    )
     def test_neutral_will_harmful_intent(self, two_stage):
         """Test when will vector is neutral but intent is harmful."""
         intent = "Exclude certain user groups from premium features"
@@ -146,7 +152,9 @@ class TestValueDrift:
     def gate(self):
         return WethicsGate()
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't catch incremental escalation patterns")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't catch incremental escalation patterns"
+    )
     def test_incremental_harm_escalation(self, gate):
         """Test against incremental harm escalation."""
         # Each step seems minor, but the trajectory is concerning

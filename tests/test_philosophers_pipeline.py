@@ -117,9 +117,9 @@ class TestPhilosopherLoading:
         """All philosophers should implement PhilosopherProtocol natively."""
         loaded = registry.select_and_load(SafetyMode.NORMAL)
         for phil in loaded:
-            assert hasattr(phil, "propose") and hasattr(phil, "info"), (
-                f"{phil.info.name} does not implement PhilosopherProtocol"
-            )
+            assert hasattr(phil, "propose") and hasattr(
+                phil, "info"
+            ), f"{phil.info.name} does not implement PhilosopherProtocol"
 
     def test_propose_returns_proposals(self, all_loaded_philosophers):
         """propose() should return a list of Proposal objects."""

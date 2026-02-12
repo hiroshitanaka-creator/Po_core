@@ -36,7 +36,13 @@ class Kierkegaard(Philosopher):
             description="Existential philosopher focused on individual existence, faith, and subjective truth",
         )
         self.tradition = "Existentialism / Christian Philosophy"
-        self.key_concepts = ['leap of faith', 'three stages (aesthetic/ethical/religious)', 'anxiety', 'subjective truth', 'knight of faith']
+        self.key_concepts = [
+            "leap of faith",
+            "three stages (aesthetic/ethical/religious)",
+            "anxiety",
+            "subjective truth",
+            "knight of faith",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

@@ -48,7 +48,13 @@ class Arendt(Philosopher):
             description="Political philosopher analyzing action, natality, plurality, and the human condition in the public sphere",
         )
         self.tradition = "Political Philosophy"
-        self.key_concepts = ['vita activa', 'natality', 'plurality', 'banality of evil', 'public realm']
+        self.key_concepts = [
+            "vita activa",
+            "natality",
+            "plurality",
+            "banality of evil",
+            "public realm",
+        ]
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None
@@ -322,9 +328,7 @@ class Arendt(Philosopher):
         dominant_realm = (
             "public"
             if public_score > private_score
-            else "private"
-            if private_score > public_score
-            else "balanced"
+            else "private" if private_score > public_score else "balanced"
         )
 
         return {

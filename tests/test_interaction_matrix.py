@@ -20,7 +20,6 @@ from po_core.tensors.interaction_tensor import (
     _compute_tension,
 )
 
-
 # ── Helpers ──────────────────────────────────────────────────────────
 
 
@@ -73,18 +72,26 @@ class TestFromProposals:
         assert m.harmony.shape == (0, 0)
 
     def test_single_proposal(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("Aristotle", "virtue is the golden mean"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal("Aristotle", "virtue is the golden mean"),
+            ]
+        )
         assert len(m.names) == 1
         assert m.harmony[0, 0] == 1.0  # self-similarity
         assert len(m.pairs) == 0  # no pairs with single philosopher
 
     def test_two_similar_proposals(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("Aristotle", "virtue is the golden mean of character excellence"),
-            _proposal("Confucius", "virtue is cultivated through ritual and character"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal(
+                    "Aristotle", "virtue is the golden mean of character excellence"
+                ),
+                _proposal(
+                    "Confucius", "virtue is cultivated through ritual and character"
+                ),
+            ]
+        )
         assert len(m.names) == 2
         assert m.harmony.shape == (2, 2)
         assert m.harmony[0, 0] == 1.0
@@ -94,35 +101,47 @@ class TestFromProposals:
         assert len(m.pairs) == 1
 
     def test_two_different_proposals(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("Aristotle", "virtue ethics golden mean eudaimonia character"),
-            _proposal("Kant", "duty categorical imperative obligation universal law"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal(
+                    "Aristotle", "virtue ethics golden mean eudaimonia character"
+                ),
+                _proposal(
+                    "Kant", "duty categorical imperative obligation universal law"
+                ),
+            ]
+        )
         # Different vocabulary → lower harmony than identical
         assert m.harmony[0, 1] < 1.0
         assert len(m.pairs) == 1
 
     def test_harmony_symmetry(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("A", "truth beauty justice"),
-            _proposal("B", "freedom responsibility ethics"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal("A", "truth beauty justice"),
+                _proposal("B", "freedom responsibility ethics"),
+            ]
+        )
         assert m.harmony[0, 1] == pytest.approx(m.harmony[1, 0], abs=1e-6)
 
     def test_tension_with_opposing_concepts(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("Sartre", "individual freedom is absolute and subjective"),
-            _proposal("Hegel", "collective determinism is relative and objective"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal("Sartre", "individual freedom is absolute and subjective"),
+                _proposal("Hegel", "collective determinism is relative and objective"),
+            ]
+        )
         # Should detect tension from opposing pairs
         assert m.tension[0, 1] > 0.0
         assert m.pairs[0].tension > 0.0
 
     def test_synthesis_formula(self):
-        m = InteractionMatrix.from_proposals([
-            _proposal("A", "truth beauty"),
-            _proposal("B", "truth justice"),
-        ])
+        m = InteractionMatrix.from_proposals(
+            [
+                _proposal("A", "truth beauty"),
+                _proposal("B", "truth justice"),
+            ]
+        )
         # synthesis = harmony * (1 - tension)
         expected = m.harmony[0, 1] * (1.0 - m.tension[0, 1])
         assert m.synthesis[0, 1] == pytest.approx(expected, abs=1e-6)
@@ -130,7 +149,9 @@ class TestFromProposals:
     def test_many_proposals(self):
         """Test with realistic number of proposals."""
         proposals = [
-            _proposal("Aristotle", "virtue is found in the golden mean between extremes"),
+            _proposal(
+                "Aristotle", "virtue is found in the golden mean between extremes"
+            ),
             _proposal("Kant", "duty demands adherence to categorical imperative"),
             _proposal("Nietzsche", "individual will to power transcends morality"),
             _proposal("Confucius", "harmony comes through ritual and proper relations"),
@@ -164,8 +185,11 @@ class TestFromProposals:
 class TestInteractionPair:
     def test_to_dict(self):
         pair = InteractionPair(
-            philosopher_a="A", philosopher_b="B",
-            harmony=0.75, tension=0.25, synthesis=0.5625,
+            philosopher_a="A",
+            philosopher_b="B",
+            harmony=0.75,
+            tension=0.25,
+            synthesis=0.5625,
         )
         d = pair.to_dict()
         assert d["philosopher_a"] == "A"
@@ -180,12 +204,21 @@ class TestInteractionPair:
 class TestHelperMethods:
     @pytest.fixture
     def matrix(self):
-        return InteractionMatrix.from_proposals([
-            _proposal("Sartre", "individual freedom is absolute and subjective existence"),
-            _proposal("Hegel", "collective determinism is relative and objective spirit"),
-            _proposal("Aristotle", "virtue is the golden mean of character"),
-            _proposal("Confucius", "virtue harmony comes through ritual and proper relations"),
-        ])
+        return InteractionMatrix.from_proposals(
+            [
+                _proposal(
+                    "Sartre", "individual freedom is absolute and subjective existence"
+                ),
+                _proposal(
+                    "Hegel", "collective determinism is relative and objective spirit"
+                ),
+                _proposal("Aristotle", "virtue is the golden mean of character"),
+                _proposal(
+                    "Confucius",
+                    "virtue harmony comes through ritual and proper relations",
+                ),
+            ]
+        )
 
     def test_high_tension_pairs(self, matrix):
         pairs = matrix.high_tension_pairs(threshold=0.0)

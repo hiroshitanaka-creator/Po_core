@@ -73,7 +73,9 @@ class ActionModeDegradePolicy:
                 reasons=[
                     f"[{self.rule_id}] SafetyMode=warn のため ask_clarification へ縮退",
                 ],
-                required_changes=["action_type を ask_clarification に変更してください。"],
+                required_changes=[
+                    "action_type を ask_clarification に変更してください。"
+                ],
                 meta={
                     "stage": "action",
                     "mode": mode.value,

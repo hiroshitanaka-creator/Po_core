@@ -9,8 +9,9 @@ from po_core.philosophers.nietzsche import Nietzsche
 from po_core.philosophers.sartre import Sartre
 from po_core.philosophers.wittgenstein import Wittgenstein
 
-pytestmark = pytest.mark.skip(reason="Legacy philosopher test with outdated API expectations — to be migrated in Phase 1")
-
+pytestmark = pytest.mark.skip(
+    reason="Legacy philosopher test with outdated API expectations — to be migrated in Phase 1"
+)
 
 
 class TestPhilosopherBase:

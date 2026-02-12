@@ -16,6 +16,7 @@ import pytest
 
 plotly = pytest.importorskip("plotly", reason="plotly not installed")
 import plotly.graph_objects as go
+
 matplotlib = pytest.importorskip("matplotlib", reason="matplotlib not installed")
 from matplotlib.figure import Figure
 

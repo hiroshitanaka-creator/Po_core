@@ -34,7 +34,9 @@ class TestPromptInjection:
         """Create a two-stage gate."""
         return TwoStageGate()
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't handle prompt injection patterns yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't handle prompt injection patterns yet"
+    )
     def test_ignore_previous_instructions(self, gate):
         """Test against 'ignore previous instructions' attack."""
         attacks = [
@@ -51,7 +53,9 @@ class TestPromptInjection:
                 result.decision != GateDecision.ALLOW
             ), f"Attack passed: {attack[:50]}"
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't handle nested injection patterns yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't handle nested injection patterns yet"
+    )
     def test_nested_command_injection(self, gate):
         """Test against nested command injection."""
         attacks = [
@@ -103,7 +107,9 @@ class TestIntentionStageInjection:
                 verdict.decision == IntentionDecision.REJECT
             ), f"Malicious intent passed: {intent}"
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't handle obfuscated patterns yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't handle obfuscated patterns yet"
+    )
     def test_obfuscated_harmful_intent(self, two_stage):
         """Test against obfuscated harmful intents."""
         obfuscated = [
@@ -126,7 +132,9 @@ class TestJailbreakAttempts:
     def gate(self):
         return WethicsGate()
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't handle roleplay jailbreaks yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't handle roleplay jailbreaks yet"
+    )
     def test_roleplay_jailbreak(self, gate):
         """Test against roleplay-based jailbreaks."""
         attacks = [
@@ -143,7 +151,9 @@ class TestJailbreakAttempts:
                 result.decision != GateDecision.ALLOW
             ), f"Roleplay jailbreak passed: {attack[:50]}"
 
-    @pytest.mark.xfail(reason="Phase 4: keyword detector doesn't handle DAN-style jailbreaks yet")
+    @pytest.mark.xfail(
+        reason="Phase 4: keyword detector doesn't handle DAN-style jailbreaks yet"
+    )
     def test_do_anything_now(self, gate):
         """Test against DAN-style jailbreaks."""
         dan_prompts = [

@@ -15,5 +15,4 @@ class AggregatorPort(Protocol):
         intent: Intent,
         tensors: TensorSnapshot,
         proposals: Sequence[Proposal],
-    ) -> Proposal:
-        ...
+    ) -> Proposal: ...
