@@ -1,8 +1,17 @@
 """
 Philosopher Interaction Tensor
+===============================
 
 This module calculates and represents interactions between philosophers,
 measuring harmony, tension, and influence dynamics.
+
+Two APIs:
+1. InteractionMatrix.from_proposals(proposals) — NEW (Phase 2)
+   Uses embedding-based cosine similarity + keyword analysis.
+   Returns NxN matrix with harmony, tension, synthesis scores.
+
+2. InteractionTensor (legacy) — keyword-only N×N×D computation.
+   Kept for backward compatibility.
 
 Enables analysis of:
 - Conceptual harmony between philosophers
@@ -11,12 +20,208 @@ Enables analysis of:
 - Synthesis potential
 """
 
-from dataclasses import dataclass
+from __future__ import annotations
+
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.tensors.base import Tensor
+
+
+# ══════════════════════════════════════════════════════════════════════
+# InteractionMatrix (Phase 2) — embedding-based pairwise interaction
+# ══════════════════════════════════════════════════════════════════════
+
+
+@dataclass
+class InteractionPair:
+    """Pairwise interaction between two philosophers."""
+
+    philosopher_a: str
+    philosopher_b: str
+    harmony: float  # cosine similarity of content embeddings [0, 1]
+    tension: float  # keyword-based opposing concepts [0, 1]
+    synthesis: float  # harmony * (1 - tension) [0, 1]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "philosopher_a": self.philosopher_a,
+            "philosopher_b": self.philosopher_b,
+            "harmony": round(self.harmony, 4),
+            "tension": round(self.tension, 4),
+            "synthesis": round(self.synthesis, 4),
+        }
+
+
+@dataclass
+class InteractionMatrix:
+    """
+    NxN philosopher interaction matrix computed from actual proposals.
+
+    Uses embedding-based cosine similarity for harmony and keyword
+    detection for tension. Provides helpers for identifying
+    high-interference pairs (used by Deliberation Engine).
+    """
+
+    names: List[str]
+    harmony: np.ndarray  # NxN cosine similarity
+    tension: np.ndarray  # NxN keyword-based tension
+    synthesis: np.ndarray  # NxN = harmony * (1 - tension)
+    pairs: List[InteractionPair] = field(default_factory=list)
+
+    @staticmethod
+    def from_proposals(proposals: list) -> "InteractionMatrix":
+        """
+        Compute interaction matrix from a list of Proposal objects.
+
+        Uses encode_texts() from semantic_delta for embedding-based
+        harmony and keyword detection for tension.
+
+        Args:
+            proposals: List of Proposal objects (from PartyMachine)
+
+        Returns:
+            InteractionMatrix with NxN harmony, tension, synthesis
+        """
+        from po_core.tensors.metrics.semantic_delta import cosine_sim, encode_texts
+
+        if not proposals:
+            return InteractionMatrix(
+                names=[], harmony=np.zeros((0, 0)),
+                tension=np.zeros((0, 0)), synthesis=np.zeros((0, 0)),
+            )
+
+        # Extract philosopher names and content
+        names = []
+        contents = []
+        for p in proposals:
+            extra = p.extra if hasattr(p, "extra") else {}
+            pc = extra.get(PO_CORE, {}) if isinstance(extra, dict) else {}
+            name = pc.get(AUTHOR, "") or extra.get("philosopher", f"phil_{len(names)}")
+            names.append(name)
+            contents.append(p.content if hasattr(p, "content") else str(p))
+
+        n = len(names)
+
+        # Encode all contents → dense embeddings
+        embeddings = encode_texts(contents)
+
+        # Compute NxN harmony (cosine similarity)
+        harmony = np.zeros((n, n))
+        for i in range(n):
+            for j in range(n):
+                if i == j:
+                    harmony[i, j] = 1.0
+                else:
+                    sim = cosine_sim(embeddings[i], embeddings[j])
+                    harmony[i, j] = max(0.0, min(1.0, sim))
+
+        # Compute NxN tension (keyword-based opposing concepts)
+        tension = np.zeros((n, n))
+        for i in range(n):
+            for j in range(n):
+                if i != j:
+                    tension[i, j] = _compute_tension(contents[i], contents[j])
+
+        # Synthesis = harmony * (1 - tension)
+        synthesis = harmony * (1.0 - tension)
+
+        # Build pair list (upper triangle only)
+        pairs = []
+        for i in range(n):
+            for j in range(i + 1, n):
+                pairs.append(InteractionPair(
+                    philosopher_a=names[i],
+                    philosopher_b=names[j],
+                    harmony=float(harmony[i, j]),
+                    tension=float(tension[i, j]),
+                    synthesis=float(synthesis[i, j]),
+                ))
+
+        return InteractionMatrix(
+            names=names, harmony=harmony,
+            tension=tension, synthesis=synthesis, pairs=pairs,
+        )
+
+    def high_tension_pairs(self, threshold: float = 0.3) -> List[InteractionPair]:
+        """Return pairs with tension above threshold (candidates for debate)."""
+        return [p for p in self.pairs if p.tension > threshold]
+
+    def high_harmony_pairs(self, threshold: float = 0.7) -> List[InteractionPair]:
+        """Return pairs with harmony above threshold (candidates for synthesis)."""
+        return [p for p in self.pairs if p.harmony > threshold]
+
+    def high_interference_pairs(self, top_k: int = 5) -> List[InteractionPair]:
+        """
+        Return top-k pairs with highest interference potential.
+
+        Interference = tension * (1 - harmony), meaning disagreement on
+        different topics. These pairs benefit most from deliberation.
+        """
+        scored = [
+            (p, p.tension * (1.0 - p.harmony))
+            for p in self.pairs
+        ]
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return [p for p, _ in scored[:top_k]]
+
+    def summary(self) -> Dict[str, Any]:
+        """Summary statistics for the interaction matrix."""
+        n = len(self.names)
+        if n < 2:
+            return {"n_philosophers": n, "mean_harmony": 0.0,
+                    "mean_tension": 0.0, "mean_synthesis": 0.0}
+
+        # Upper triangle means (exclude diagonal)
+        mask = np.triu(np.ones((n, n), dtype=bool), k=1)
+        return {
+            "n_philosophers": n,
+            "mean_harmony": float(np.mean(self.harmony[mask])),
+            "mean_tension": float(np.mean(self.tension[mask])),
+            "mean_synthesis": float(np.mean(self.synthesis[mask])),
+            "max_tension_pair": max(self.pairs, key=lambda p: p.tension).to_dict()
+            if self.pairs else None,
+            "max_harmony_pair": max(self.pairs, key=lambda p: p.harmony).to_dict()
+            if self.pairs else None,
+        }
+
+
+# ── Tension computation (keyword-based) ──────────────────────────────
+
+_OPPOSITION_PAIRS = [
+    ("freedom", "determinism"),
+    ("individual", "collective"),
+    ("subjective", "objective"),
+    ("rational", "intuitive"),
+    ("being", "becoming"),
+    ("essence", "existence"),
+    ("absolute", "relative"),
+    ("order", "chaos"),
+    ("unity", "plurality"),
+    ("mind", "body"),
+    ("theory", "practice"),
+    ("universal", "particular"),
+]
+
+
+def _compute_tension(text_a: str, text_b: str) -> float:
+    """Compute tension score between two texts based on opposing concepts."""
+    a_lower = text_a.lower()
+    b_lower = text_b.lower()
+    hits = 0
+    for word_a, word_b in _OPPOSITION_PAIRS:
+        if (word_a in a_lower and word_b in b_lower) or \
+           (word_b in a_lower and word_a in b_lower):
+            hits += 1
+    return min(hits / max(len(_OPPOSITION_PAIRS) * 0.5, 1), 1.0)
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Legacy InteractionTensor (kept for backward compatibility)
+# ══════════════════════════════════════════════════════════════════════
 
 
 @dataclass
