@@ -285,21 +285,25 @@ class TestMetricSemanticDelta:
 class TestEncodeTexts:
     def test_similar_texts_closer(self):
         """Semantically similar texts should have higher cosine similarity."""
-        embs = encode_texts([
-            "philosophy of mind consciousness",
-            "philosophy of mind awareness",
-            "cooking pasta recipe tomato sauce",
-        ])
+        embs = encode_texts(
+            [
+                "philosophy of mind consciousness",
+                "philosophy of mind awareness",
+                "cooking pasta recipe tomato sauce",
+            ]
+        )
         sim_close = cosine_sim(embs[0], embs[1])
         sim_far = cosine_sim(embs[0], embs[2])
         assert sim_close > sim_far
 
     def test_paraphrase_detection(self):
         """Paraphrases should have reasonable similarity."""
-        embs = encode_texts([
-            "freedom is essential for human dignity",
-            "liberty is fundamental to human worth",
-        ])
+        embs = encode_texts(
+            [
+                "freedom is essential for human dignity",
+                "liberty is fundamental to human worth",
+            ]
+        )
         sim = cosine_sim(embs[0], embs[1])
         # Even TF-IDF should find some similarity (shared words: human)
         assert sim > 0.0

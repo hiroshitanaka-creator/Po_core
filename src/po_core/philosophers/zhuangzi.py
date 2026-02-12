@@ -46,7 +46,13 @@ class Zhuangzi(Philosopher):
             description="Daoist philosophy emphasizing naturalness (ziran), non-action (wu wei), spiritual freedom (xiaoyaoyou), and the relativity of perspectives",
         )
         self.tradition = "Daoism / Relativism"
-        self.key_concepts = ['xiaoyaoyou (free wandering)', 'qiwulun (equality of things)', 'butterfly dream', 'wu wei (non-action)', 'ziran (naturalness)']
+        self.key_concepts = [
+            "xiaoyaoyou (free wandering)",
+            "qiwulun (equality of things)",
+            "butterfly dream",
+            "wu wei (non-action)",
+            "ziran (naturalness)",
+        ]
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None

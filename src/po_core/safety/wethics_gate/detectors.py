@@ -152,13 +152,21 @@ def aggregate_evidence_to_violations(evs: Sequence[Evidence]) -> List[Violation]
         # Generate suggested repairs based on violation type
         suggested_repairs = []
         if code == "W4":
-            suggested_repairs.append("既存/全相ユーザーの切り捨て禁止、移行計画・互換・アクセシビリティを追加する")
+            suggested_repairs.append(
+                "既存/全相ユーザーの切り捨て禁止、移行計画・互換・アクセシビリティを追加する"
+            )
         elif code == "W3":
-            suggested_repairs.append("ロックイン/依存誘発を避け、選択肢・撤回・データ最小化・透明性を追加する")
+            suggested_repairs.append(
+                "ロックイン/依存誘発を避け、選択肢・撤回・データ最小化・透明性を追加する"
+            )
         elif code == "W2":
-            suggested_repairs.append("人格の道具化を避け、同意・尊厳・説明責任を追加する")
+            suggested_repairs.append(
+                "人格の道具化を避け、同意・尊厳・説明責任を追加する"
+            )
         elif code == "W1":
-            suggested_repairs.append("支配/捕獲/排除が目的化している場合は不許可（REJECT）")
+            suggested_repairs.append(
+                "支配/捕獲/排除が目的化している場合は不許可（REJECT）"
+            )
         elif code == "W0":
             suggested_repairs.append("不可逆的な生存構造の破壊は不許可（REJECT）")
 
@@ -250,7 +258,9 @@ class KeywordViolationDetector(ViolationDetector):
             # W4: Structural exclusion
             KeywordRule(
                 "W4",
-                re.compile(r"(既存|古い).*(ユーザー|利用者).*(切り捨て|切り捨てる|見捨てる)"),
+                re.compile(
+                    r"(既存|古い).*(ユーザー|利用者).*(切り捨て|切り捨てる|見捨てる)"
+                ),
                 0.6,
                 0.8,
                 "既存ユーザー切り捨て",

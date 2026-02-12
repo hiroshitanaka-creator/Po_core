@@ -33,7 +33,6 @@ from po_core.party_machine import RunResult, run_philosophers
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.registry import PhilosopherRegistry
 
-
 # ── Helpers ──
 
 
@@ -91,9 +90,10 @@ class TestParallelExecution:
         ok_results = [r for r in results if r.ok]
         failed = [r for r in results if not r.ok]
 
-        assert len(ok_results) == len(all_philosophers), (
-            f"{len(failed)} philosopher(s) failed: "
-            + ", ".join(f"{r.philosopher_id}: {r.error}" for r in failed)
+        assert len(ok_results) == len(
+            all_philosophers
+        ), f"{len(failed)} philosopher(s) failed: " + ", ".join(
+            f"{r.philosopher_id}: {r.error}" for r in failed
         )
         assert len(proposals) == len(all_philosophers)
 
@@ -238,9 +238,9 @@ class TestLatencyProfile:
 
         for r in results:
             if r.ok and r.latency_ms is not None:
-                assert r.latency_ms < 2000, (
-                    f"{r.philosopher_id} took {r.latency_ms}ms (> 2000ms timeout)"
-                )
+                assert (
+                    r.latency_ms < 2000
+                ), f"{r.philosopher_id} took {r.latency_ms}ms (> 2000ms timeout)"
 
     def test_median_latency_reasonable(self, all_philosophers):
         """Median latency should be well under timeout."""
@@ -287,9 +287,9 @@ class TestMemoryFootprint:
         total_increase = sum(s.size_diff for s in stats if s.size_diff > 0)
 
         # Loading 39 philosophers should use < 10 MB
-        assert total_increase < 10 * 1024 * 1024, (
-            f"Memory increase {total_increase / 1024 / 1024:.1f}MB exceeds 10MB limit"
-        )
+        assert (
+            total_increase < 10 * 1024 * 1024
+        ), f"Memory increase {total_increase / 1024 / 1024:.1f}MB exceeds 10MB limit"
 
     def test_execution_memory_stable(self, all_philosophers):
         """Running 39 philosophers should not leak memory significantly."""
@@ -311,9 +311,9 @@ class TestMemoryFootprint:
         tracemalloc.stop()
 
         # Peak memory during execution should be < 20 MB
-        assert peak < 20 * 1024 * 1024, (
-            f"Peak memory {peak / 1024 / 1024:.1f}MB exceeds 20MB limit"
-        )
+        assert (
+            peak < 20 * 1024 * 1024
+        ), f"Peak memory {peak / 1024 / 1024:.1f}MB exceeds 20MB limit"
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -347,9 +347,9 @@ class TestSafetyModeScaling:
         sel = registry.select(SafetyMode.WARN)
         for pid in sel.selected_ids:
             if pid in spec_map:
-                assert spec_map[pid].risk_level <= 1, (
-                    f"{pid} has risk_level={spec_map[pid].risk_level} in WARN mode"
-                )
+                assert (
+                    spec_map[pid].risk_level <= 1
+                ), f"{pid} has risk_level={spec_map[pid].risk_level} in WARN mode"
 
     def test_critical_mode_only_safe(self, registry):
         """CRITICAL mode should only include risk_level=0 philosophers."""
@@ -359,9 +359,9 @@ class TestSafetyModeScaling:
         sel = registry.select(SafetyMode.CRITICAL)
         for pid in sel.selected_ids:
             if pid in spec_map:
-                assert spec_map[pid].risk_level == 0, (
-                    f"{pid} has risk_level={spec_map[pid].risk_level} in CRITICAL mode"
-                )
+                assert (
+                    spec_map[pid].risk_level == 0
+                ), f"{pid} has risk_level={spec_map[pid].risk_level} in CRITICAL mode"
 
     def test_all_modes_produce_proposals(self, registry):
         """Every SafetyMode should produce at least one proposal."""
@@ -415,7 +415,8 @@ class TestDiversePrompts:
         )
 
         failed = [r for r in results if not r.ok]
-        assert len(failed) == 0, (
-            f"Prompt '{prompt[:30]}...': {len(failed)} failed: "
-            + ", ".join(r.philosopher_id for r in failed)
+        assert (
+            len(failed) == 0
+        ), f"Prompt '{prompt[:30]}...': {len(failed)} failed: " + ", ".join(
+            r.philosopher_id for r in failed
         )

@@ -42,7 +42,13 @@ class Heidegger(Philosopher):
             description="Phenomenologist focused on Being, Time, Dasein, care, and the ontological difference",
         )
         self.tradition = "Phenomenology / Existentialism"
-        self.key_concepts = ['Dasein', 'Being-in-the-world', 'care (Sorge)', 'thrownness (Geworfenheit)', 'authenticity']
+        self.key_concepts = [
+            "Dasein",
+            "Being-in-the-world",
+            "care (Sorge)",
+            "thrownness (Geworfenheit)",
+            "authenticity",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None

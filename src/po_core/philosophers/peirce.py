@@ -38,7 +38,13 @@ class Peirce(Philosopher):
             description="Pragmatist philosopher focused on semiotics, abduction, and scientific inquiry",
         )
         self.tradition = "Pragmatism / Semiotics"
-        self.key_concepts = ['abduction', 'semiosis (sign process)', 'pragmatic maxim', 'fallibilism', 'firstness-secondness-thirdness']
+        self.key_concepts = [
+            "abduction",
+            "semiosis (sign process)",
+            "pragmatic maxim",
+            "fallibilism",
+            "firstness-secondness-thirdness",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -71,7 +77,11 @@ class Peirce(Philosopher):
             "tension": {
                 "level": "Moderate",
                 "description": "Tension between fallibilism and truth-seeking",
-                "elements": ['All knowledge is fallible yet inquiry aims at truth', 'Abduction introduces novelty but lacks deductive certainty', 'Signs mediate reality yet never fully capture it'],
+                "elements": [
+                    "All knowledge is fallible yet inquiry aims at truth",
+                    "Abduction introduces novelty but lacks deductive certainty",
+                    "Signs mediate reality yet never fully capture it",
+                ],
             },
             "metadata": {
                 "philosopher": self.name,

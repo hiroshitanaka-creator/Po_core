@@ -60,7 +60,13 @@ class Dogen(Philosopher):
             description="Zen Buddhist philosophy emphasizing practice-enlightenment unity (修証一如), being-time (有時), Buddha-nature (仏性), and just-sitting (只管打坐)",
         )
         self.tradition = "Zen Buddhism / Sōtō"
-        self.key_concepts = ['shikantaza (just sitting)', 'uji (being-time)', 'shusho-itto (practice-enlightenment unity)', 'busshō (Buddha-nature)', 'genjōkōan (actualizing the fundamental point)']
+        self.key_concepts = [
+            "shikantaza (just sitting)",
+            "uji (being-time)",
+            "shusho-itto (practice-enlightenment unity)",
+            "busshō (Buddha-nature)",
+            "genjōkōan (actualizing the fundamental point)",
+        ]
 
     def reason(
         self, text: str, context: Dict[str, Any] | None = None
@@ -1299,7 +1305,9 @@ class Dogen(Philosopher):
             )
 
         if genjo_koan["genjo_koan_present"]:
-            parts.append(f"Genjo koan (現成公案) manifests: {genjo_koan['interpretation']}")
+            parts.append(
+                f"Genjo koan (現成公案) manifests: {genjo_koan['interpretation']}"
+            )
 
         if dropping_body_mind["dropping_present"]:
             parts.append(

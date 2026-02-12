@@ -38,7 +38,13 @@ class Lacan(Philosopher):
             description="Psychoanalyst focused on desire, the symbolic, and structural analysis of the unconscious",
         )
         self.tradition = "Psychoanalysis / Structuralism"
-        self.key_concepts = ['the Real/Symbolic/Imaginary', 'desire of the Other', 'mirror stage', 'objet petit a', 'jouissance']
+        self.key_concepts = [
+            "the Real/Symbolic/Imaginary",
+            "desire of the Other",
+            "mirror stage",
+            "objet petit a",
+            "jouissance",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -71,7 +77,11 @@ class Lacan(Philosopher):
             "tension": {
                 "level": "Moderate",
                 "description": "Tension between desire and the symbolic order",
-                "elements": ['Desire is structured by language yet exceeds it', 'The subject is split between conscious and unconscious', 'The Real resists symbolization yet insists on expression'],
+                "elements": [
+                    "Desire is structured by language yet exceeds it",
+                    "The subject is split between conscious and unconscious",
+                    "The Real resists symbolization yet insists on expression",
+                ],
             },
             "metadata": {
                 "philosopher": self.name,

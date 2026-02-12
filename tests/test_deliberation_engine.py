@@ -19,7 +19,6 @@ from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.tensor_snapshot import TensorSnapshot
 
-
 # ── Helpers ──────────────────────────────────────────────────────────
 
 
@@ -68,13 +67,15 @@ class FakePhilosopher:
         # If counterargument present, append acknowledgement
         if "[Counterargument" in ctx.user_input:
             content = f"{self._response} [revised after considering counterargument]"
-        return [Proposal(
-            proposal_id=f"{ctx.request_id}:{self.name}:0",
-            action_type="answer",
-            content=content,
-            confidence=0.5,
-            extra={"_po_core": {"author": self.name}, "philosopher": self.name},
-        )]
+        return [
+            Proposal(
+                proposal_id=f"{ctx.request_id}:{self.name}:0",
+                action_type="answer",
+                content=content,
+                confidence=0.5,
+                extra={"_po_core": {"author": self.name}, "philosopher": self.name},
+            )
+        ]
 
 
 # ── Constructor tests ────────────────────────────────────────────────
@@ -119,7 +120,11 @@ class TestSingleRound:
     def test_single_proposal_no_deliberation(self):
         e = DeliberationEngine(max_rounds=2)
         result = e.deliberate(
-            [], _ctx(), _intent(), _tensors(), _memory(),
+            [],
+            _ctx(),
+            _intent(),
+            _tensors(),
+            _memory(),
             [_proposal("Aristotle", "virtue")],
         )
         assert result.n_rounds == 1
@@ -133,7 +138,9 @@ class TestMultiRound:
     def test_two_rounds_with_opposing_proposals(self):
         philosophers = [
             FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
-            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+            FakePhilosopher(
+                "Hegel", "collective determinism is relative and objective"
+            ),
         ]
         proposals = [
             _proposal("Sartre", "individual freedom is absolute and subjective"),
@@ -151,7 +158,9 @@ class TestMultiRound:
     def test_revised_proposals_replace_originals(self):
         philosophers = [
             FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
-            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+            FakePhilosopher(
+                "Hegel", "collective determinism is relative and objective"
+            ),
         ]
         proposals = [
             _proposal("Sartre", "individual freedom is absolute and subjective"),
@@ -184,6 +193,7 @@ class TestMultiRound:
         )
         # Count unique authors
         from po_core.deliberation.engine import _get_author
+
         authors = [_get_author(p) for p in result.proposals]
         assert len(authors) == len(set(authors))
 
@@ -324,7 +334,9 @@ class TestCounterargumentRecipientKey:
         """Both philosophers in an opposing pair should be revised."""
         philosophers = [
             FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
-            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+            FakePhilosopher(
+                "Hegel", "collective determinism is relative and objective"
+            ),
         ]
         proposals = [
             _proposal("Sartre", "individual freedom is absolute and subjective"),
@@ -382,7 +394,9 @@ class TestAuthorMetadataPreservation:
 
         philosophers = [
             FakePhilosopher("Sartre", "individual freedom is absolute and subjective"),
-            FakePhilosopher("Hegel", "collective determinism is relative and objective"),
+            FakePhilosopher(
+                "Hegel", "collective determinism is relative and objective"
+            ),
         ]
         proposals = [
             _proposal("Sartre", "individual freedom is absolute and subjective"),

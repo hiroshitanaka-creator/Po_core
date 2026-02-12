@@ -22,8 +22,9 @@ from rich.tree import Tree
 from po_core.po_trace import EventType, PoTrace
 from po_core.po_viewer import PoViewer
 
-pytestmark = pytest.mark.skip(reason="Legacy PoViewer with PoTrace session API — needs Viewer WebUI (Phase 3) — to be migrated in Phase 1")
-
+pytestmark = pytest.mark.skip(
+    reason="Legacy PoViewer with PoTrace session API — needs Viewer WebUI (Phase 3) — to be migrated in Phase 1"
+)
 
 
 class TestPoViewerBasicFunctionality:

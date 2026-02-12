@@ -30,7 +30,6 @@ import numpy as np
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.tensors.base import Tensor
 
-
 # ══════════════════════════════════════════════════════════════════════
 # InteractionMatrix (Phase 2) — embedding-based pairwise interaction
 # ══════════════════════════════════════════════════════════════════════
@@ -90,8 +89,10 @@ class InteractionMatrix:
 
         if not proposals:
             return InteractionMatrix(
-                names=[], harmony=np.zeros((0, 0)),
-                tension=np.zeros((0, 0)), synthesis=np.zeros((0, 0)),
+                names=[],
+                harmony=np.zeros((0, 0)),
+                tension=np.zeros((0, 0)),
+                synthesis=np.zeros((0, 0)),
             )
 
         # Extract philosopher names and content
@@ -133,17 +134,22 @@ class InteractionMatrix:
         pairs = []
         for i in range(n):
             for j in range(i + 1, n):
-                pairs.append(InteractionPair(
-                    philosopher_a=names[i],
-                    philosopher_b=names[j],
-                    harmony=float(harmony[i, j]),
-                    tension=float(tension[i, j]),
-                    synthesis=float(synthesis[i, j]),
-                ))
+                pairs.append(
+                    InteractionPair(
+                        philosopher_a=names[i],
+                        philosopher_b=names[j],
+                        harmony=float(harmony[i, j]),
+                        tension=float(tension[i, j]),
+                        synthesis=float(synthesis[i, j]),
+                    )
+                )
 
         return InteractionMatrix(
-            names=names, harmony=harmony,
-            tension=tension, synthesis=synthesis, pairs=pairs,
+            names=names,
+            harmony=harmony,
+            tension=tension,
+            synthesis=synthesis,
+            pairs=pairs,
         )
 
     def high_tension_pairs(self, threshold: float = 0.3) -> List[InteractionPair]:
@@ -161,10 +167,7 @@ class InteractionMatrix:
         Interference = tension * (1 - harmony), meaning disagreement on
         different topics. These pairs benefit most from deliberation.
         """
-        scored = [
-            (p, p.tension * (1.0 - p.harmony))
-            for p in self.pairs
-        ]
+        scored = [(p, p.tension * (1.0 - p.harmony)) for p in self.pairs]
         scored.sort(key=lambda x: x[1], reverse=True)
         # Filter out zero-interference pairs to avoid unnecessary deliberation
         return [p for p, score in scored[:top_k] if score > 0.0]
@@ -173,8 +176,12 @@ class InteractionMatrix:
         """Summary statistics for the interaction matrix."""
         n = len(self.names)
         if n < 2:
-            return {"n_philosophers": n, "mean_harmony": 0.0,
-                    "mean_tension": 0.0, "mean_synthesis": 0.0}
+            return {
+                "n_philosophers": n,
+                "mean_harmony": 0.0,
+                "mean_tension": 0.0,
+                "mean_synthesis": 0.0,
+            }
 
         # Upper triangle means (exclude diagonal)
         mask = np.triu(np.ones((n, n), dtype=bool), k=1)
@@ -183,10 +190,16 @@ class InteractionMatrix:
             "mean_harmony": float(np.mean(self.harmony[mask])),
             "mean_tension": float(np.mean(self.tension[mask])),
             "mean_synthesis": float(np.mean(self.synthesis[mask])),
-            "max_tension_pair": max(self.pairs, key=lambda p: p.tension).to_dict()
-            if self.pairs else None,
-            "max_harmony_pair": max(self.pairs, key=lambda p: p.harmony).to_dict()
-            if self.pairs else None,
+            "max_tension_pair": (
+                max(self.pairs, key=lambda p: p.tension).to_dict()
+                if self.pairs
+                else None
+            ),
+            "max_harmony_pair": (
+                max(self.pairs, key=lambda p: p.harmony).to_dict()
+                if self.pairs
+                else None
+            ),
         }
 
 
@@ -214,8 +227,9 @@ def _compute_tension(text_a: str, text_b: str) -> float:
     b_lower = text_b.lower()
     hits = 0
     for word_a, word_b in _OPPOSITION_PAIRS:
-        if (word_a in a_lower and word_b in b_lower) or \
-           (word_b in a_lower and word_a in b_lower):
+        if (word_a in a_lower and word_b in b_lower) or (
+            word_b in a_lower and word_a in b_lower
+        ):
             hits += 1
     return min(hits / max(len(_OPPOSITION_PAIRS) * 0.5, 1), 1.0)
 
@@ -374,10 +388,10 @@ class InteractionTensor(Tensor):
                     # Cache interaction object
                     phil_a = persp_a.get("philosopher", f"phil_{i}")
                     phil_b = persp_b.get("philosopher", f"phil_{j}")
-                    self.interactions[
-                        (phil_a, phil_b)
-                    ] = self._create_interaction_object(
-                        phil_a, phil_b, interaction_vector
+                    self.interactions[(phil_a, phil_b)] = (
+                        self._create_interaction_object(
+                            phil_a, phil_b, interaction_vector
+                        )
                     )
 
         # Flatten for return

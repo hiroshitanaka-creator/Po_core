@@ -40,7 +40,13 @@ class Wittgenstein(Philosopher):
             description="Language philosopher focused on language games, forms of life, and meaning as use",
         )
         self.tradition = "Analytic Philosophy / Language"
-        self.key_concepts = ['language games', 'forms of life', 'family resemblance', 'meaning as use', 'private language argument']
+        self.key_concepts = [
+            "language games",
+            "forms of life",
+            "family resemblance",
+            "meaning as use",
+            "private language argument",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -72,7 +78,11 @@ class Wittgenstein(Philosopher):
             "tension": {
                 "level": "Moderate",
                 "description": "Tension between saying and showing, rule and practice",
-                "elements": ['Language games have boundaries yet resist precise definition', 'Rules require interpretation yet cannot be infinitely regressed', 'What can be shown cannot always be said'],
+                "elements": [
+                    "Language games have boundaries yet resist precise definition",
+                    "Rules require interpretation yet cannot be infinitely regressed",
+                    "What can be shown cannot always be said",
+                ],
             },
             "metadata": {
                 "philosopher": self.name,

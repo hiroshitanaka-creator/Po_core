@@ -38,7 +38,13 @@ class Kant(Philosopher):
             description="Critical philosopher focused on universal moral law, autonomy, duty, and the limits of reason",
         )
         self.tradition = "German Idealism / Critical Philosophy"
-        self.key_concepts = ['categorical imperative', 'duty', 'autonomy', 'a priori', 'transcendental idealism']
+        self.key_concepts = [
+            "categorical imperative",
+            "duty",
+            "autonomy",
+            "a priori",
+            "transcendental idealism",
+        ]
 
     def reason(
         self, prompt: str, context: Optional[Dict[str, Any]] = None
@@ -250,9 +256,7 @@ class Kant(Philosopher):
                     "indication": (
                         "High"
                         if kingdom_count >= 3
-                        else "Moderate"
-                        if kingdom_count >= 1
-                        else "Low"
+                        else "Moderate" if kingdom_count >= 1 else "Low"
                     ),
                 },
             },

@@ -66,9 +66,7 @@ class DeliberationResult:
                 for r in self.rounds
             ],
             "interaction_summary": (
-                self.interaction_matrix.summary()
-                if self.interaction_matrix
-                else None
+                self.interaction_matrix.summary() if self.interaction_matrix else None
             ),
         }
 
@@ -120,11 +118,13 @@ class DeliberationEngine:
         current_proposals = list(round1_proposals)
 
         # Round 1 trace (already computed externally)
-        rounds.append(RoundTrace(
-            round_number=1,
-            n_proposals=len(current_proposals),
-            n_revised=0,
-        ))
+        rounds.append(
+            RoundTrace(
+                round_number=1,
+                n_proposals=len(current_proposals),
+                n_revised=0,
+            )
+        )
 
         if self.max_rounds <= 1 or len(current_proposals) < 2:
             return DeliberationResult(
@@ -149,12 +149,14 @@ class DeliberationEngine:
 
             if not hi_pairs:
                 # No interference → no deliberation needed
-                rounds.append(RoundTrace(
-                    round_number=round_num,
-                    n_proposals=len(current_proposals),
-                    n_revised=0,
-                    interaction_summary=interaction_matrix.summary(),
-                ))
+                rounds.append(
+                    RoundTrace(
+                        round_number=round_num,
+                        n_proposals=len(current_proposals),
+                        n_revised=0,
+                        interaction_summary=interaction_matrix.summary(),
+                    )
+                )
                 break
 
             # Identify philosophers that need to re-propose
@@ -174,16 +176,16 @@ class DeliberationEngine:
 
             # Merge: replace old proposals with revised ones
             n_revised = len(revised_proposals)
-            current_proposals = _merge_proposals(
-                current_proposals, revised_proposals
-            )
+            current_proposals = _merge_proposals(current_proposals, revised_proposals)
 
-            rounds.append(RoundTrace(
-                round_number=round_num,
-                n_proposals=len(current_proposals),
-                n_revised=n_revised,
-                interaction_summary=interaction_matrix.summary(),
-            ))
+            rounds.append(
+                RoundTrace(
+                    round_number=round_num,
+                    n_proposals=len(current_proposals),
+                    n_revised=n_revised,
+                    interaction_summary=interaction_matrix.summary(),
+                )
+            )
 
         return DeliberationResult(
             proposals=current_proposals,
@@ -277,15 +279,17 @@ def _re_propose(
                             po_meta = {}
                         po_meta[AUTHOR] = name
                         extra[PO_CORE] = po_meta
-                    revised.append(Proposal(
-                        proposal_id=p.proposal_id.replace(":0", ":d2"),
-                        action_type=p.action_type,
-                        content=p.content,
-                        confidence=min(p.confidence + 0.1, 1.0),
-                        assumption_tags=list(p.assumption_tags),
-                        risk_tags=list(p.risk_tags),
-                        extra=extra,
-                    ))
+                    revised.append(
+                        Proposal(
+                            proposal_id=p.proposal_id.replace(":0", ":d2"),
+                            action_type=p.action_type,
+                            content=p.content,
+                            confidence=min(p.confidence + 0.1, 1.0),
+                            assumption_tags=list(p.assumption_tags),
+                            risk_tags=list(p.risk_tags),
+                            extra=extra,
+                        )
+                    )
         except Exception:
             # Philosopher failed in round 2 → keep original
             continue

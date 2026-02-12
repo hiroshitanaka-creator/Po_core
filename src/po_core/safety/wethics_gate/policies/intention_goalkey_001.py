@@ -96,8 +96,12 @@ class IntentGoalKeywordGuardPolicy(IntentionPolicy):
                     return SafetyVerdict(
                         decision=Decision.REJECT,
                         rule_ids=[self.rule_id],
-                        reasons=[f"[{self.rule_id}] 危険な目的/要求を検出: '{kw}' ({field})"],
-                        required_changes=["危険な目的/要求を除去し、無害な目的へ言い換えてください。"],
+                        reasons=[
+                            f"[{self.rule_id}] 危険な目的/要求を検出: '{kw}' ({field})"
+                        ],
+                        required_changes=[
+                            "危険な目的/要求を除去し、無害な目的へ言い換えてください。"
+                        ],
                         meta={"stage": "intent", "matched": kw, "field": field},
                     )
 

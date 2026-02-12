@@ -17,8 +17,7 @@ class WethicsGatePort(Protocol):
         intent: Intent,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
-    ) -> SafetyVerdict:
-        ...
+    ) -> SafetyVerdict: ...
 
     def judge_action(
         self,
@@ -27,5 +26,4 @@ class WethicsGatePort(Protocol):
         proposal: Proposal,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
-    ) -> SafetyVerdict:
-        ...
+    ) -> SafetyVerdict: ...
