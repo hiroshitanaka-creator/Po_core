@@ -23,7 +23,6 @@ except ImportError:
     )
 
 from po_core.domain.trace_event import TraceEvent
-from po_core.po_viewer import PoViewer
 from po_core.safety.wethics_gate.explanation import ExplanationChain
 from po_core.viewer.web.figures import (
     build_drift_gauge,
@@ -37,7 +36,7 @@ from po_core.viewer.web.figures import (
 
 
 def _build_pipeline_tab(
-    viewer: Optional[PoViewer], events: Sequence[TraceEvent]
+    viewer: Optional[Any], events: Sequence[TraceEvent]
 ) -> html.Div:
     """Pipeline & Tensors tab layout with charts."""
     tensor_fig = build_tensor_chart(events) if events else None
@@ -107,7 +106,7 @@ def _build_pipeline_tab(
 
 
 def _build_philosopher_tab(
-    viewer: Optional[PoViewer], events: Sequence[TraceEvent]
+    viewer: Optional[Any], events: Sequence[TraceEvent]
 ) -> html.Div:
     """Philosophers tab layout with charts."""
     ph_fig = build_philosopher_chart(events) if events else None
@@ -293,7 +292,15 @@ def create_app(
         suppress_callback_exceptions=True,
     )
 
-    viewer = PoViewer(events) if events else None
+    # Late import to break circular dependency:
+    # po_viewer -> viewer.web -> viewer.web.app -> po_viewer
+    if events:
+        import importlib
+
+        _pv = importlib.import_module("po_core.po_viewer")
+        viewer = _pv.PoViewer(events)
+    else:
+        viewer = None
     ev_list: Sequence[TraceEvent] = events or []
 
     app.layout = html.Div(
