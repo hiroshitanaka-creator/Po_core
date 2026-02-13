@@ -41,7 +41,7 @@ src/po_core/
 
 ## Conventions
 
-- **Python 3.10+**, formatted with **black 23.12.1**, imports sorted with **isort**
+- **Python 3.10+**, formatted with **black 26.1.0**, imports sorted with **isort 5.13.2**
 - **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`
 - CI requires **pipeline-marked tests to pass**; full suite is best-effort
 - Philosopher risk levels: 0 (safe), 1 (standard), 2 (risky) — defined in `manifest.py`

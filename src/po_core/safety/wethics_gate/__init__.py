@@ -61,6 +61,7 @@ from .detectors import (
     aggregate_evidence_to_violations,
     create_default_registry,
 )
+from .explanation import ExplanationChain, build_explanation_chain
 from .gate import RuleBasedRepairEngine, WethicsGate, create_wethics_gate
 
 # 2-Stage Gate (new in v0.3)
@@ -89,7 +90,6 @@ from .select import (
     robust_weight_sampling_rank,
     topsis_rank,
 )
-from .explanation import ExplanationChain, build_explanation_chain
 from .semantic_drift import DriftReport, semantic_drift
 from .types import (  # Enums; Data classes; Constants
     AXES,
