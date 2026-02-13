@@ -1,13 +1,14 @@
 """
 Dash application factory for Po_core Viewer WebUI.
 
-Creates a Dash app with three tabs:
+Creates a Dash app with four tabs:
 1. Pipeline & Tensors — step chart + tensor bar chart
-2. Philosophers — latency chart + participation table
+2. Philosophers — latency chart + participation table + interaction heatmap
 3. W_Ethics Gate Decisions — explanation chain + drift gauge
+4. Event Log — filterable event stream with type selector
 
 All figures are generated at app creation time from TraceEvents.
-For live updates, call create_app() with new events.
+Callbacks enable interactive filtering without full-page refresh.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ from typing import Any, Dict, List, Optional, Sequence
 
 try:
     import dash
-    from dash import dcc, html
+    from dash import Input, Output, callback, dcc, html
 except ImportError:
     raise ImportError(
         "Dash is required for Viewer WebUI. Install with: pip install dash>=2.14.0"
@@ -26,9 +27,11 @@ from po_core.domain.trace_event import TraceEvent
 from po_core.safety.wethics_gate.explanation import ExplanationChain
 from po_core.viewer.web.figures import (
     build_drift_gauge,
+    build_evolution_timeline,
     build_philosopher_chart,
     build_pipeline_chart,
     build_tensor_chart,
+    build_tension_heatmap,
     decision_badge_style,
 )
 
@@ -265,6 +268,85 @@ def _build_ethics_tab(
     return html.Div(children, style={"padding": "20px"})
 
 
+# ── Event Log tab (Phase 3: interactive filtering) ───────────────
+
+_PRE_STYLE = {
+    "whiteSpace": "pre-wrap",
+    "fontFamily": "monospace",
+    "backgroundColor": "#16213e",
+    "padding": "12px",
+    "borderRadius": "4px",
+    "color": "#e0e0e0",
+    "maxHeight": "600px",
+    "overflow": "auto",
+}
+
+
+def _build_event_log_tab(events: Sequence[TraceEvent]) -> html.Div:
+    """Event Log tab with type-filter dropdown (callback-driven)."""
+    event_types = sorted({e.event_type for e in events}) if events else []
+
+    children = [
+        html.H3("Event Log"),
+        html.Label("Filter by event type:", style={"color": "#e0e0e0"}),
+        dcc.Dropdown(
+            id="event-type-filter",
+            options=[{"label": "All", "value": "__all__"}]
+            + [{"label": t, "value": t} for t in event_types],
+            value="__all__",
+            clearable=False,
+            style={"marginBottom": "12px"},
+        ),
+        html.Div(id="event-log-content"),
+    ]
+    return html.Div(children, style={"padding": "20px"})
+
+
+def _render_event_rows(
+    events: Sequence[TraceEvent], type_filter: str = "__all__"
+) -> List[Any]:
+    """Render filtered event rows as HTML."""
+    filtered = (
+        events
+        if type_filter == "__all__"
+        else [e for e in events if e.event_type == type_filter]
+    )
+
+    if not filtered:
+        return [html.P("No events match the filter.")]
+
+    rows = []
+    for e in filtered:
+        ts = e.occurred_at.strftime("%H:%M:%S.%f")[:-3] if e.occurred_at else "?"
+        payload_str = ", ".join(
+            f"{k}={v}" for k, v in (e.payload or {}).items()
+        )[:200]
+        rows.append(
+            html.Div(
+                [
+                    html.Span(
+                        f"[{ts}] ",
+                        style={"color": "#888", "fontFamily": "monospace"},
+                    ),
+                    html.Span(
+                        e.event_type,
+                        style={
+                            "fontWeight": "bold",
+                            "color": "#4ecdc4",
+                            "fontFamily": "monospace",
+                        },
+                    ),
+                    html.Span(
+                        f"  {payload_str}" if payload_str else "",
+                        style={"color": "#aaa", "fontFamily": "monospace"},
+                    ),
+                ],
+                style={"marginBottom": "4px"},
+            )
+        )
+    return rows
+
+
 # ── App factory ──────────────────────────────────────────────────
 
 
@@ -340,10 +422,23 @@ def create_app(
                         value="tab-ethics",
                         children=_build_ethics_tab(explanation),
                     ),
+                    dcc.Tab(
+                        label="Event Log",
+                        value="tab-events",
+                        children=_build_event_log_tab(ev_list),
+                    ),
                 ],
             ),
         ]
     )
+
+    # ── Callbacks (interactive filtering) ────────────────────────
+    @app.callback(
+        Output("event-log-content", "children"),
+        Input("event-type-filter", "value"),
+    )
+    def _update_event_log(type_filter: str) -> List[Any]:
+        return _render_event_rows(ev_list, type_filter)
 
     return app
 

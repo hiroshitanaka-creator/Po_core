@@ -195,9 +195,43 @@ def emit_decision_emitted(
     tracer.emit(TraceEvent.now("DecisionEmitted", ctx.request_id, payload))
 
 
+def emit_wethics_gate_explained(
+    tracer: "TracePort",
+    ctx: Context,
+    *,
+    explanation_chain: Any,
+) -> None:
+    """Emit a WethicsGateExplained event with the full explanation chain.
+
+    This is the Phase 3 observability hook: every time the W_Ethics
+    Gate produces a decision, a structured explanation is recorded in
+    the trace for the Viewer WebUI.
+
+    Args:
+        tracer: emit(TraceEvent) capable tracer.
+        ctx: Request context.
+        explanation_chain: An ``ExplanationChain`` instance (from
+            ``po_core.safety.wethics_gate.explanation``).
+    """
+    chain_dict = explanation_chain.to_dict()
+    tracer.emit(
+        TraceEvent.now(
+            "WethicsGateExplained",
+            ctx.request_id,
+            {
+                "decision": chain_dict["decision"],
+                "n_violations": len(chain_dict.get("violations", [])),
+                "summary": chain_dict["summary"],
+                "chain": chain_dict,
+            },
+        )
+    )
+
+
 __all__ = [
     "proposal_fingerprint",
     "verdict_summary",
     "emit_safety_override_applied",
     "emit_decision_emitted",
+    "emit_wethics_gate_explained",
 ]

@@ -345,6 +345,33 @@ class WethicsGate:
             explanation="Repair budget exhausted",
         )
 
+    def check_with_explanation(
+        self, c: Candidate, context: Optional[dict] = None
+    ) -> GateResult:
+        """Check a candidate and attach an ExplanationChain to the result.
+
+        This is the Phase 3 observability entry point.  It runs the
+        standard ``check()`` pipeline and then builds an
+        ``ExplanationChain`` from the result, storing it on
+        ``GateResult.explanation_chain``.
+
+        Args:
+            c: Candidate to check
+            context: Optional context dictionary
+
+        Returns:
+            GateResult with ``explanation_chain`` populated.
+        """
+        from .explanation import build_explanation_chain
+
+        result = self.check(c, context=context)
+        result.explanation_chain = build_explanation_chain(
+            result,
+            drift_threshold_escalate=self.config.tau_drift_escalate,
+            drift_threshold_reject=self.config.tau_drift_reject,
+        )
+        return result
+
     def check_batch(
         self, candidates: Sequence[Candidate], context: Optional[dict] = None
     ) -> List[Tuple[Candidate, GateResult]]:

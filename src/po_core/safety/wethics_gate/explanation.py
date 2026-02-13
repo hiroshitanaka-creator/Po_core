@@ -304,6 +304,75 @@ def build_explanation_chain(
     )
 
 
+def build_explanation_from_verdict(
+    verdict: "SafetyVerdict",
+) -> ExplanationChain:
+    """Build an ExplanationChain from a domain-level SafetyVerdict.
+
+    Used in the ensemble pipeline where the gate produces
+    ``SafetyVerdict`` (ALLOW/REJECT/REVISE) rather than the internal
+    ``GateResult``.
+
+    Args:
+        verdict: A ``po_core.domain.safety_verdict.SafetyVerdict``.
+
+    Returns:
+        ExplanationChain with available information.
+    """
+    decision_str = (
+        verdict.decision.value
+        if hasattr(verdict.decision, "value")
+        else str(verdict.decision)
+    )
+
+    # Build violation steps from rule_ids + reasons
+    violations: List[ViolationStep] = []
+    for i, rule_id in enumerate(verdict.rule_ids):
+        reason = verdict.reasons[i] if i < len(verdict.reasons) else rule_id
+        code = rule_id.split("_")[0].upper() if "_" in rule_id else rule_id
+        violations.append(
+            ViolationStep(
+                code=code,
+                severity=1.0 if decision_str == "reject" else 0.5,
+                confidence=1.0,
+                repairable=decision_str != "reject",
+                evidence=[
+                    EvidenceSummary(
+                        detector_id=rule_id,
+                        message=reason,
+                        strength=1.0 if decision_str == "reject" else 0.5,
+                        confidence=1.0,
+                    )
+                ],
+                suggested_repairs=list(verdict.required_changes),
+            )
+        )
+
+    # Summary
+    n_violations = len(violations)
+    if decision_str == "allow":
+        summary = "Gate passed with no issues."
+    elif decision_str == "revise":
+        summary = f"Gate requires revision: {n_violations} rule(s) triggered."
+    elif decision_str == "reject":
+        summary = f"Gate rejected: {n_violations} rule(s) triggered."
+    else:
+        summary = f"Gate decision: {decision_str}"
+
+    reason_text = (
+        "; ".join(verdict.reasons) if verdict.reasons else "No reasons provided."
+    )
+
+    return ExplanationChain(
+        decision=decision_str,
+        decision_reason=reason_text,
+        violations=violations,
+        repairs=[],
+        drift=None,
+        summary=summary,
+    )
+
+
 __all__ = [
     "EvidenceSummary",
     "ViolationStep",
@@ -311,4 +380,5 @@ __all__ = [
     "DriftStep",
     "ExplanationChain",
     "build_explanation_chain",
+    "build_explanation_from_verdict",
 ]

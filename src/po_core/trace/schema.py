@@ -50,6 +50,8 @@ SPECS: List[EventSpec] = [
     EventSpec("TensorComputed", ["metrics"]),
     EventSpec("IntentGenerated", []),  # payload は任意
     EventSpec("AggregateCompleted", ["proposal_id", "action_type"]),
+    # Observability events (Phase 3)
+    EventSpec("WethicsGateExplained", ["decision", "n_violations", "summary"]),
 ]
 
 

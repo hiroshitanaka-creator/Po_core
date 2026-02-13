@@ -238,6 +238,7 @@ class GateResult:
     drift_score: Optional[float] = None
     drift_notes: Optional[str] = None
     explanation: str = ""
+    explanation_chain: Optional[Any] = None  # ExplanationChain (attached by gate)
 
     @property
     def was_repaired(self) -> bool:

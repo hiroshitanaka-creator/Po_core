@@ -92,6 +92,7 @@ from po_core.trace.decision_compare import emit_decision_comparison
 from po_core.trace.decision_events import (
     emit_decision_emitted,
     emit_safety_override_applied,
+    emit_wethics_gate_explained,
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
 
@@ -528,6 +529,20 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         variant="main",
         origin="pareto",
     )
+
+    # 8.5 Observability: emit WethicsGateExplained (Phase 3)
+    try:
+        from po_core.safety.wethics_gate.explanation import (
+            build_explanation_from_verdict,
+        )
+
+        _final_verdict = deps.gate.judge_action(
+            ctx, intent, final_main, tensors, memory
+        )
+        _explanation = build_explanation_from_verdict(_final_verdict)
+        emit_wethics_gate_explained(tracer, ctx, explanation_chain=_explanation)
+    except Exception:
+        pass  # observability must never break the pipeline
 
     # 9. Shadow Pareto A/B evaluation（オプショナル）
     if deps.aggregator_shadow is not None:

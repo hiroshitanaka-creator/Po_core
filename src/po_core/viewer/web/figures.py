@@ -274,10 +274,171 @@ def decision_badge_style(decision: str) -> Dict[str, str]:
     }
 
 
+# ── Tension heatmap ──────────────────────────────────────────────
+
+
+def build_tension_heatmap(
+    philosophers: List[str],
+    tension_matrix: List[List[float]],
+    harmony_matrix: Optional[List[List[float]]] = None,
+) -> go.Figure:
+    """Plotly heatmap of philosopher tension (or harmony) matrix.
+
+    Args:
+        philosophers: Philosopher names (axis labels).
+        tension_matrix: NxN tension values.
+        harmony_matrix: Optional NxN harmony values for subplot.
+
+    Returns:
+        Plotly Figure (single heatmap if no harmony, subplots otherwise).
+    """
+    if not tension_matrix or not philosophers:
+        fig = go.Figure()
+        fig.add_annotation(text="No tension data", showarrow=False, font_size=16)
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=250,
+        )
+        return fig
+
+    short = [n[:10] for n in philosophers]
+
+    if harmony_matrix:
+        from plotly.subplots import make_subplots
+
+        fig = make_subplots(
+            rows=1,
+            cols=2,
+            subplot_titles=("Tension", "Harmony"),
+            horizontal_spacing=0.12,
+        )
+        fig.add_trace(
+            go.Heatmap(
+                z=tension_matrix,
+                x=short,
+                y=short,
+                colorscale="Reds",
+                zmin=0,
+                zmax=1,
+                showscale=False,
+            ),
+            row=1,
+            col=1,
+        )
+        fig.add_trace(
+            go.Heatmap(
+                z=harmony_matrix,
+                x=short,
+                y=short,
+                colorscale="Greens",
+                zmin=0,
+                zmax=1,
+                showscale=False,
+            ),
+            row=1,
+            col=2,
+        )
+    else:
+        fig = go.Figure(
+            go.Heatmap(
+                z=tension_matrix,
+                x=short,
+                y=short,
+                colorscale="Reds",
+                zmin=0,
+                zmax=1,
+            )
+        )
+
+    n = len(philosophers)
+    fig.update_layout(
+        title="Philosopher Interaction Matrix",
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        plot_bgcolor=_COLORS["surface"],
+        height=max(350, n * 30 + 120),
+        margin=dict(l=100, r=40, t=60, b=100),
+    )
+    return fig
+
+
+# ── Evolution timeline ──────────────────────────────────────────
+
+
+def build_evolution_timeline(
+    dimension_names: List[str],
+    current_values: List[float],
+    total_evolution: float = 0.0,
+    history_length: int = 0,
+) -> go.Figure:
+    """Plotly radar/polar chart showing semantic profile dimensions.
+
+    Args:
+        dimension_names: Names of semantic dimensions.
+        current_values: Current values for each dimension.
+        total_evolution: Total semantic evolution metric.
+        history_length: Number of reasoning steps so far.
+
+    Returns:
+        Plotly polar chart of semantic profile.
+    """
+    if not dimension_names or not current_values:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No semantic profile data", showarrow=False, font_size=16
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=250,
+        )
+        return fig
+
+    # Display-friendly names
+    display = [n.replace("_", " ").title() for n in dimension_names]
+
+    # Close the polygon
+    vals = list(current_values) + [current_values[0]]
+    names = list(display) + [display[0]]
+
+    fig = go.Figure(
+        go.Scatterpolar(
+            r=vals,
+            theta=names,
+            fill="toself",
+            line_color=_COLORS["low"],
+            fillcolor="rgba(78, 205, 196, 0.25)",
+            name="Current",
+        )
+    )
+
+    title_text = "Semantic Profile"
+    if history_length > 0:
+        title_text += f" ({history_length} steps, drift={total_evolution:.3f})"
+
+    fig.update_layout(
+        title=title_text,
+        polar=dict(
+            bgcolor=_COLORS["surface"],
+            radialaxis=dict(range=[0, 1], showticklabels=True, tickfont_size=9),
+        ),
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        height=400,
+        margin=dict(l=60, r=60, t=60, b=60),
+    )
+    return fig
+
+
 __all__ = [
     "build_tensor_chart",
     "build_philosopher_chart",
     "build_pipeline_chart",
     "build_drift_gauge",
     "decision_badge_style",
+    "build_tension_heatmap",
+    "build_evolution_timeline",
 ]
