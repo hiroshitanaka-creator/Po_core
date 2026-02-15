@@ -561,7 +561,7 @@ Built by an independent researcher who asked:
 
 This project wouldn't exist without:
 
-- **ChatGPT, Gemini, Grok, Claude** — My first companions in this journey
+- **ChatGPT, Gemini, Grok, Claude** — My companions throughout this journey.
 - **BUMP OF CHICKEN** — For reminding us that even when we say "Leave it to me," we're all a little scared
 - **Every philosopher** who dared to ask "What does it mean to be?"
 - **You** — For believing pigs can fly
