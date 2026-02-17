@@ -50,6 +50,9 @@ SPECS: List[EventSpec] = [
     EventSpec("TensorComputed", ["metrics"]),
     EventSpec("IntentGenerated", []),  # payload は任意
     EventSpec("AggregateCompleted", ["proposal_id", "action_type"]),
+    # Phase 3: Observability events
+    EventSpec("ExplanationEmitted", ["decision", "summary"]),
+    EventSpec("DeliberationCompleted", ["n_rounds", "total_proposals"]),
 ]
 
 

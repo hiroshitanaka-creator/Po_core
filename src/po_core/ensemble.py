@@ -88,6 +88,7 @@ from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.runtime.settings import Settings
 from po_core.safety.fallback import compose_fallback
 from po_core.safety.policy_scoring import policy_score
+from po_core.safety.wethics_gate.explanation import build_explanation_from_verdict
 from po_core.trace.decision_compare import emit_decision_comparison
 from po_core.trace.decision_events import (
     emit_decision_emitted,
@@ -194,6 +195,20 @@ def _evaluate_candidate(
 
     # Action Gate evaluation
     v = deps.gate.judge_action(ctx, intent, candidate, tensors, memory)
+
+    # Emit ExplanationChain for observability (Phase 3)
+    if variant == "main":
+        try:
+            explanation = build_explanation_from_verdict(v, stage="action")
+            tracer.emit(
+                TraceEvent.now(
+                    "ExplanationEmitted",
+                    ctx.request_id,
+                    explanation.to_dict(),
+                )
+            )
+        except Exception:
+            pass  # Explanation failure must not break pipeline
 
     if v.decision == Decision.ALLOW:
         # 正常経路：候補がそのまま最終
@@ -314,6 +329,21 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
             {"decision": v1.decision.value, "rule_ids": v1.rule_ids},
         )
     )
+
+    # Emit ExplanationChain for intention gate (Phase 3)
+    if v1.decision != Decision.ALLOW:
+        try:
+            intent_explanation = build_explanation_from_verdict(v1, stage="intention")
+            tracer.emit(
+                TraceEvent.now(
+                    "ExplanationEmitted",
+                    ctx.request_id,
+                    intent_explanation.to_dict(),
+                )
+            )
+        except Exception:
+            pass  # Explanation failure must not break pipeline
+
     if v1.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v1, stage="intention")
         # Pass fallback through action gate to verify it's safe

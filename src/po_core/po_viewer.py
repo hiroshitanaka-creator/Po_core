@@ -124,6 +124,33 @@ class PoViewer:
             return self._events[0].correlation_id
         return "unknown"
 
+    def explanation(self) -> Optional[Any]:
+        """
+        Extract ExplanationChain from trace events.
+
+        Looks for an ExplanationEmitted event and reconstructs the chain.
+
+        Returns:
+            ExplanationChain if found in trace, None otherwise
+        """
+        from po_core.safety.wethics_gate.explanation import (
+            extract_explanation_from_events,
+        )
+
+        return extract_explanation_from_events(self._events)
+
+    def deliberation_data(self) -> Optional[Dict[str, Any]]:
+        """
+        Extract deliberation summary from trace events.
+
+        Returns:
+            Dict with round data and interaction summary, or None
+        """
+        for e in self._events:
+            if e.event_type == "DeliberationCompleted":
+                return dict(e.payload)
+        return None
+
     def markdown(self) -> str:
         """
         Full Markdown report combining all views.
@@ -132,7 +159,7 @@ class PoViewer:
             Markdown string with pipeline + tensors + decision report
         """
         parts: List[str] = []
-        parts.append(f"# Po_core Run Report")
+        parts.append("# Po_core Run Report")
         parts.append(f"- request_id: `{self.request_id}`")
         parts.append(f"- events: {len(self._events)}")
         parts.append("")
@@ -148,6 +175,28 @@ class PoViewer:
 
         # Full decision report (includes Pareto, A/B, etc.)
         parts.append(render_markdown(self._events))
+
+        # Explanation chain (Phase 3)
+        expl = self.explanation()
+        if expl:
+            parts.append("")
+            parts.append(expl.to_markdown())
+
+        # Deliberation summary (Phase 3)
+        delib = self.deliberation_data()
+        if delib and delib.get("n_rounds", 0) > 1:
+            parts.append("")
+            parts.append("## Deliberation")
+            parts.append(f"- Rounds: {delib.get('n_rounds', 0)}")
+            parts.append(f"- Total proposals: {delib.get('total_proposals', 0)}")
+            interaction = delib.get("interaction_summary")
+            if interaction:
+                parts.append(
+                    f"- Mean harmony: {interaction.get('mean_harmony', 0):.3f}"
+                )
+                parts.append(
+                    f"- Mean tension: {interaction.get('mean_tension', 0):.3f}"
+                )
 
         return "\n".join(parts)
 
@@ -218,7 +267,7 @@ class PoViewer:
         Returns:
             Dict with pipeline_steps, tensor_values, event_types, summary
         """
-        return {
+        result: Dict[str, Any] = {
             "request_id": self.request_id,
             "n_events": len(self._events),
             "event_types": self.event_types,
@@ -228,21 +277,40 @@ class PoViewer:
             "summary": self.summary(),
         }
 
+        # Include explanation chain if available
+        expl = self.explanation()
+        if expl:
+            result["explanation"] = expl.to_dict()
+
+        # Include deliberation data if available
+        delib = self.deliberation_data()
+        if delib:
+            result["deliberation"] = delib
+
+        return result
+
     def serve(
         self,
-        explanation: Optional["ExplanationChain"] = None,
+        explanation: Optional[Any] = None,
         port: int = 8050,
         debug: bool = False,
     ) -> None:
         """
         Launch the Viewer WebUI dashboard in the browser.
 
+        If no explanation is provided, auto-extracts from trace events.
+
         Args:
             explanation: Optional ExplanationChain for W_Ethics tab.
+                         If None, extracted from trace events automatically.
             port: HTTP port to serve on.
             debug: Enable Dash debug mode.
         """
         from po_core.viewer.web import create_app
+
+        # Auto-extract explanation from trace events if not provided
+        if explanation is None:
+            explanation = self.explanation()
 
         app = create_app(
             events=self._events,
@@ -251,8 +319,5 @@ class PoViewer:
         )
         app.run(port=port, debug=debug)
 
-
-# Lazy import for type hint
-ExplanationChain = Any
 
 __all__ = ["PoViewer"]

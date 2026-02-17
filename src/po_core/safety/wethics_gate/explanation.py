@@ -30,9 +30,13 @@ Design Notes:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence
 
 from .types import GateDecision, GateResult, Violation
+
+if TYPE_CHECKING:
+    from po_core.domain.safety_verdict import SafetyVerdict
+    from po_core.domain.trace_event import TraceEvent
 
 
 @dataclass(frozen=True)
@@ -304,6 +308,170 @@ def build_explanation_chain(
     )
 
 
+def build_explanation_from_verdict(
+    verdict: SafetyVerdict,
+    stage: str = "action",
+) -> ExplanationChain:
+    """
+    Build an ExplanationChain from a domain-level SafetyVerdict.
+
+    This is the pipeline-integrated path: the WethicsGatePort returns
+    SafetyVerdict, so we construct an explanation from the available
+    data (decision, rule_ids, reasons, required_changes).
+
+    For richer explanations with full violation/evidence/repair data,
+    use ``build_explanation_chain()`` with a GateResult instead.
+
+    Args:
+        verdict: SafetyVerdict from WethicsGatePort.judge_action()
+        stage: Pipeline stage ("intention" or "action")
+
+    Returns:
+        ExplanationChain with audit trail derived from verdict
+    """
+    from po_core.domain.safety_verdict import Decision
+
+    decision_str = (
+        verdict.decision.value
+        if hasattr(verdict.decision, "value")
+        else str(verdict.decision)
+    )
+
+    # Map REVISE → allow_with_repair for explanation consistency
+    display_decision = {
+        "allow": "allow",
+        "reject": "reject",
+        "revise": "allow_with_repair",
+    }.get(decision_str, decision_str)
+
+    # Build violation steps from rule_ids + reasons
+    violations: List[ViolationStep] = []
+    for i, rule_id in enumerate(verdict.rule_ids):
+        reason = verdict.reasons[i] if i < len(verdict.reasons) else rule_id
+        violations.append(
+            ViolationStep(
+                code=rule_id.split("_")[0].upper() if "_" in rule_id else rule_id,
+                severity=1.0 if verdict.decision == Decision.REJECT else 0.5,
+                confidence=0.8,
+                repairable=verdict.decision != Decision.REJECT,
+                evidence=[
+                    EvidenceSummary(
+                        detector_id=f"policy:{rule_id}",
+                        message=reason,
+                        strength=(1.0 if verdict.decision == Decision.REJECT else 0.5),
+                        confidence=0.8,
+                    )
+                ],
+                suggested_repairs=list(verdict.required_changes),
+            )
+        )
+
+    # Build repair steps from required_changes
+    repairs: List[RepairStep] = [
+        RepairStep(description=change, stage=stage)
+        for change in verdict.required_changes
+    ]
+
+    # Summary
+    n_v = len(violations)
+    n_r = len(repairs)
+    if display_decision == "allow":
+        summary = "Gate passed with no issues."
+    elif display_decision == "allow_with_repair":
+        summary = f"Gate passed after {n_r} repair(s) for {n_v} policy trigger(s)."
+    elif display_decision == "reject":
+        summary = f"Gate rejected: {n_v} policy violation(s) detected."
+    else:
+        summary = f"Gate decision: {display_decision}"
+
+    decision_reason = (
+        "; ".join(verdict.reasons)
+        if verdict.reasons
+        else f"{stage} gate {display_decision}"
+    )
+
+    return ExplanationChain(
+        decision=display_decision,
+        decision_reason=decision_reason,
+        violations=violations,
+        repairs=repairs,
+        drift=None,
+        summary=summary,
+    )
+
+
+def extract_explanation_from_events(
+    events: Sequence[TraceEvent],
+) -> Optional[ExplanationChain]:
+    """
+    Extract an ExplanationChain from a sequence of TraceEvents.
+
+    Looks for an ``ExplanationEmitted`` event and reconstructs the
+    ExplanationChain from its payload.
+
+    Args:
+        events: TraceEvents from a pipeline run
+
+    Returns:
+        ExplanationChain if found, None otherwise
+    """
+    for e in reversed(events):
+        if e.event_type != "ExplanationEmitted":
+            continue
+        p = e.payload
+        if not isinstance(p, dict) or "decision" not in p:
+            continue
+
+        violations = [
+            ViolationStep(
+                code=v.get("code", ""),
+                severity=v.get("severity", 0.0),
+                confidence=v.get("confidence", 0.0),
+                repairable=v.get("repairable", True),
+                evidence=[
+                    EvidenceSummary(
+                        detector_id=ev.get("detector_id", ""),
+                        message=ev.get("message", ""),
+                        strength=ev.get("strength", 0.0),
+                        confidence=ev.get("confidence", 0.0),
+                        tags=ev.get("tags", []),
+                    )
+                    for ev in v.get("evidence", [])
+                ],
+                suggested_repairs=v.get("suggested_repairs", []),
+            )
+            for v in p.get("violations", [])
+        ]
+
+        repairs = [
+            RepairStep(description=r.get("description", ""), stage=r.get("stage", ""))
+            for r in p.get("repairs", [])
+        ]
+
+        drift_data = p.get("drift")
+        drift = (
+            DriftStep(
+                drift_score=drift_data.get("drift_score", 0.0),
+                threshold_escalate=drift_data.get("threshold_escalate", 0.4),
+                threshold_reject=drift_data.get("threshold_reject", 0.7),
+                notes=drift_data.get("notes", ""),
+            )
+            if drift_data
+            else None
+        )
+
+        return ExplanationChain(
+            decision=p["decision"],
+            decision_reason=p.get("decision_reason", ""),
+            violations=violations,
+            repairs=repairs,
+            drift=drift,
+            summary=p.get("summary", ""),
+        )
+
+    return None
+
+
 __all__ = [
     "EvidenceSummary",
     "ViolationStep",
@@ -311,4 +479,6 @@ __all__ = [
     "DriftStep",
     "ExplanationChain",
     "build_explanation_chain",
+    "build_explanation_from_verdict",
+    "extract_explanation_from_events",
 ]

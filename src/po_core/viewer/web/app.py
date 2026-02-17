@@ -1,10 +1,11 @@
 """
 Dash application factory for Po_core Viewer WebUI.
 
-Creates a Dash app with three tabs:
+Creates a Dash app with four tabs:
 1. Pipeline & Tensors — step chart + tensor bar chart
 2. Philosophers — latency chart + participation table
 3. W_Ethics Gate Decisions — explanation chain + drift gauge
+4. Deliberation — round progression + interaction summary
 
 All figures are generated at app creation time from TraceEvents.
 For live updates, call create_app() with new events.
@@ -25,7 +26,9 @@ except ImportError:
 from po_core.domain.trace_event import TraceEvent
 from po_core.safety.wethics_gate.explanation import ExplanationChain
 from po_core.viewer.web.figures import (
+    build_deliberation_round_chart,
     build_drift_gauge,
+    build_interaction_heatmap,
     build_philosopher_chart,
     build_pipeline_chart,
     build_tensor_chart,
@@ -265,6 +268,65 @@ def _build_ethics_tab(
     return html.Div(children, style={"padding": "20px"})
 
 
+def _build_deliberation_tab(
+    events: Sequence[TraceEvent],
+) -> html.Div:
+    """Deliberation tab layout with round progression and interaction charts."""
+    children = [html.H3("Deliberation Engine")]
+
+    # Round progression chart
+    round_fig = build_deliberation_round_chart(events) if events else None
+    if round_fig:
+        children.append(dcc.Graph(id="deliberation-rounds", figure=round_fig))
+    else:
+        children.append(html.P("No deliberation data loaded."))
+
+    # Interaction summary chart
+    children.extend([html.Hr(), html.H3("Philosopher Interactions")])
+    interaction_fig = build_interaction_heatmap(events) if events else None
+    if interaction_fig:
+        children.append(dcc.Graph(id="interaction-summary", figure=interaction_fig))
+    else:
+        children.append(html.P("No interaction data loaded."))
+
+    # Key interaction pairs
+    delib_data = None
+    for e in events:
+        if e.event_type == "DeliberationCompleted":
+            delib_data = e.payload
+            break
+
+    if delib_data:
+        summary = delib_data.get("interaction_summary") or {}
+        max_tension = summary.get("max_tension_pair")
+        max_harmony = summary.get("max_harmony_pair")
+
+        if max_tension or max_harmony:
+            children.extend([html.Hr(), html.H4("Key Pairs")])
+            pair_items = []
+            if max_tension:
+                pair_items.append(
+                    html.Li(
+                        f"Highest Tension: {max_tension.get('philosopher_a', '?')} "
+                        f"vs {max_tension.get('philosopher_b', '?')} "
+                        f"(tension={max_tension.get('tension', 0):.3f})",
+                        style={"color": "#e94560"},
+                    )
+                )
+            if max_harmony:
+                pair_items.append(
+                    html.Li(
+                        f"Highest Harmony: {max_harmony.get('philosopher_a', '?')} "
+                        f"& {max_harmony.get('philosopher_b', '?')} "
+                        f"(harmony={max_harmony.get('harmony', 0):.3f})",
+                        style={"color": "#00d26a"},
+                    )
+                )
+            children.append(html.Ul(pair_items))
+
+    return html.Div(children, style={"padding": "20px"})
+
+
 # ── App factory ──────────────────────────────────────────────────
 
 
@@ -339,6 +401,11 @@ def create_app(
                         label="W_Ethics Gate",
                         value="tab-ethics",
                         children=_build_ethics_tab(explanation),
+                    ),
+                    dcc.Tab(
+                        label="Deliberation",
+                        value="tab-deliberation",
+                        children=_build_deliberation_tab(ev_list),
                     ),
                 ],
             ),
