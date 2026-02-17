@@ -57,6 +57,7 @@ from .detectors import (
     EnglishKeywordViolationDetector,
     KeywordRule,
     KeywordViolationDetector,
+    PromptInjectionDetector,
     ViolationDetector,
     aggregate_evidence_to_violations,
     create_default_registry,
@@ -140,6 +141,7 @@ __all__ = [
     "KeywordRule",
     "KeywordViolationDetector",
     "EnglishKeywordViolationDetector",
+    "PromptInjectionDetector",
     "aggregate_evidence_to_violations",
     "create_default_registry",
     # Semantic Drift
