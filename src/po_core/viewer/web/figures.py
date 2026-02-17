@@ -274,10 +274,137 @@ def decision_badge_style(decision: str) -> Dict[str, str]:
     }
 
 
+# ── Deliberation charts (Phase 3) ─────────────────────────────
+
+
+def _extract_deliberation_data(events: Sequence[TraceEvent]) -> Optional[Dict]:
+    """Extract deliberation data from TraceEvents."""
+    for e in events:
+        if e.event_type == "DeliberationCompleted":
+            return dict(e.payload)
+    return None
+
+
+def build_deliberation_round_chart(events: Sequence[TraceEvent]) -> go.Figure:
+    """
+    Bar chart showing proposal counts and revisions per deliberation round.
+    """
+    data = _extract_deliberation_data(events)
+
+    if not data or not data.get("rounds"):
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No deliberation data (max_rounds=1 or single philosopher)",
+            showarrow=False,
+            font_size=14,
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=250,
+        )
+        return fig
+
+    rounds = data["rounds"]
+    round_labels = [f"Round {r['round']}" for r in rounds]
+    n_proposals = [r["n_proposals"] for r in rounds]
+    n_revised = [r["n_revised"] for r in rounds]
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=round_labels,
+            y=n_proposals,
+            name="Total Proposals",
+            marker_color=_COLORS["ok"],
+        )
+    )
+    fig.add_trace(
+        go.Bar(
+            x=round_labels,
+            y=n_revised,
+            name="Revised",
+            marker_color=_COLORS["warn"],
+        )
+    )
+    fig.update_layout(
+        title="Deliberation Rounds",
+        xaxis_title="Round",
+        yaxis_title="Count",
+        barmode="group",
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        plot_bgcolor=_COLORS["surface"],
+        height=300,
+        margin=dict(l=60, r=40, t=50, b=40),
+    )
+    return fig
+
+
+def build_interaction_heatmap(events: Sequence[TraceEvent]) -> go.Figure:
+    """
+    Heatmap of philosopher interaction summary (mean harmony/tension).
+
+    Extracts interaction_summary from DeliberationCompleted event.
+    """
+    data = _extract_deliberation_data(events)
+    summary = data.get("interaction_summary") if data else None
+
+    if not summary:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No interaction data",
+            showarrow=False,
+            font_size=14,
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=250,
+        )
+        return fig
+
+    # Build a summary bar chart of mean harmony, tension, synthesis
+    metrics = ["Mean Harmony", "Mean Tension", "Mean Synthesis"]
+    values = [
+        summary.get("mean_harmony", 0.0),
+        summary.get("mean_tension", 0.0),
+        summary.get("mean_synthesis", 0.0),
+    ]
+    colors = [_COLORS["ok"], _COLORS["danger"], _COLORS["low"]]
+
+    fig = go.Figure(
+        go.Bar(
+            x=values,
+            y=metrics,
+            orientation="h",
+            marker_color=colors,
+            text=[f"{v:.3f}" for v in values],
+            textposition="outside",
+        )
+    )
+    fig.update_layout(
+        title=f"Interaction Summary ({summary.get('n_philosophers', '?')} philosophers)",
+        xaxis_title="Score",
+        xaxis_range=[0, 1.15],
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        plot_bgcolor=_COLORS["surface"],
+        height=250,
+        margin=dict(l=160, r=60, t=50, b=40),
+    )
+
+    return fig
+
+
 __all__ = [
     "build_tensor_chart",
     "build_philosopher_chart",
     "build_pipeline_chart",
     "build_drift_gauge",
+    "build_deliberation_round_chart",
+    "build_interaction_heatmap",
     "decision_badge_style",
 ]

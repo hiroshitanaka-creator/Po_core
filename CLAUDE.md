@@ -58,14 +58,28 @@ src/po_core/
 - InteractionMatrix: NxN embedding-based harmony + keyword tension
 - DeliberationEngine: multi-round philosopher dialogue (Settings.deliberation_max_rounds)
 
-**Phase 3: Observability** (current — scaffold ready)
+**Phase 3: Observability** (current — implementation in progress)
 
-Focus: Viewer WebUI + Explainable W_Ethics Gate
+Focus: Viewer WebUI + Explainable W_Ethics Gate + Deliberation Visualization
+
+Completed:
+- Dash WebUI with **4-tab layout** (Pipeline, Philosophers, W_Ethics Gate, Deliberation)
+- `ExplanationChain` integrated into pipeline via `ExplanationEmitted` TraceEvent
+- `build_explanation_from_verdict()` bridges SafetyVerdict → ExplanationChain
+- `extract_explanation_from_events()` reconstructs from trace events
+- Deliberation round chart + InteractionMatrix summary chart in figures.py
+- `PoViewer.explanation()` auto-extracts from trace; `serve()` auto-passes to WebUI
+- `InMemoryTracer` listener/callback mechanism (real-time streaming foundation)
+- TraceEvent schema: `ExplanationEmitted`, `DeliberationCompleted` registered
+- 87+ observability tests passing
 
 Key files:
-- `src/po_core/viewer/web/app.py` — Dash app factory (3-tab layout)
-- `src/po_core/safety/wethics_gate/explanation.py` — ExplanationChain
-- Tests: `tests/unit/test_explanation_chain.py`, `tests/unit/test_viewer_web.py`
+- `src/po_core/viewer/web/app.py` — Dash app factory (4-tab layout)
+- `src/po_core/viewer/web/figures.py` — Plotly chart builders (incl. deliberation)
+- `src/po_core/safety/wethics_gate/explanation.py` — ExplanationChain + verdict bridge
+- `src/po_core/trace/in_memory.py` — InMemoryTracer with listener support
+- `src/po_core/po_viewer.py` — PoViewer with auto-extraction
+- Tests: `tests/unit/test_phase3_observability.py` (34 tests)
 
 ## Roadmap Overview
 
