@@ -30,9 +30,13 @@ Design Notes:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence
 
 from .types import GateDecision, GateResult, Violation
+
+if TYPE_CHECKING:
+    from po_core.domain.safety_verdict import SafetyVerdict
+    from po_core.domain.trace_event import TraceEvent
 
 
 @dataclass(frozen=True)
@@ -305,7 +309,7 @@ def build_explanation_chain(
 
 
 def build_explanation_from_verdict(
-    verdict: "SafetyVerdict",
+    verdict: SafetyVerdict,
     stage: str = "action",
 ) -> ExplanationChain:
     """
@@ -397,7 +401,7 @@ def build_explanation_from_verdict(
 
 
 def extract_explanation_from_events(
-    events: "Sequence[TraceEvent]",
+    events: Sequence[TraceEvent],
 ) -> Optional[ExplanationChain]:
     """
     Extract an ExplanationChain from a sequence of TraceEvents.
