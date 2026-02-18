@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "po-core"
-version = "0.1.0-alpha"
+version = "0.2.0-beta"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
 license = {text = "MIT"}
@@ -26,7 +26,7 @@ keywords = [
     "existentialism",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -179,6 +179,9 @@ markers = [
     "unit: marks tests as unit tests",
     "pipeline: marks tests as pipeline tests (must-pass in CI)",
     "observability: marks tests for Phase 3 observability features",
+    "redteam: marks tests as adversarial red team tests (Phase 4)",
+    "phase4: marks tests for Phase 4 adversarial hardening",
+    "phase5: marks tests for Phase 5 productization (REST API, Docker, PyPI)",
 ]
 filterwarnings = [
     "error",

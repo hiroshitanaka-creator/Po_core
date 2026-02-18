@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0-beta] - 2026-02-18
+
+### Phase 5: Productization & Delivery
+
+#### Added — REST API (Issue #13)
+- `POST /v1/reason` — synchronous philosophical reasoning endpoint
+- `POST /v1/reason/stream` — Server-Sent Events (SSE) streaming reasoning
+- `GET /v1/philosophers` — full philosopher manifest (39 philosophers)
+- `GET /v1/trace/{session_id}` — trace event retrieval per session
+- `GET /v1/health` — health check with version + uptime
+- OpenAPI/Swagger auto-generated at `/docs` and `/redoc`
+- API key authentication via `X-API-Key` header (`PO_API_KEY` env var)
+- `PO_SKIP_AUTH=true` bypass for local development
+- `APISettings` via `pydantic-settings` (all config via env vars / `.env`)
+- In-process LRU trace store (`max_trace_sessions` configurable)
+- 17 unit tests covering all endpoints, auth, SSE, and OpenAPI schema
+- `python -m po_core.app.rest` CLI entry point (uvicorn)
+
+#### Added — Docker (Issue #14)
+- `Dockerfile` — multi-stage build (builder + slim runtime)
+- Non-root `pocore` user for security
+- `docker-compose.yml` — API + named volumes + health check
+- `.env.example` — documented environment variable reference
+- `QUICKSTART.md` updated with Docker and REST API sections
+- `HEALTHCHECK` every 30s via `/v1/health`
+
+#### Changed — PyPI / Package (Issue #15)
+- Version bumped from `0.1.0-alpha` → `0.2.0-beta`
+- Development Status classifier updated to `4 - Beta`
+- `pytest.ini` + `pyproject.toml` markers: added `phase5`, `redteam`, `phase4`
+
+---
+
 ## [Unreleased]
 
 ### Added

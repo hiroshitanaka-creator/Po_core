@@ -264,6 +264,83 @@ pip install click rich
 
 ---
 
+## REST API (Phase 5)
+
+### Docker で起動する（推奨）
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+
+# .env を設定
+cp .env.example .env
+# 必要に応じて PO_API_KEY を設定 (ローカル開発は PO_SKIP_AUTH=true のまま)
+
+# Docker Compose で起動
+docker compose up
+
+# ブラウザで Swagger UI を確認
+open http://localhost:8000/docs
+```
+
+### ローカルで起動する
+
+```bash
+pip install -e .
+
+# 環境変数を設定
+export PO_SKIP_AUTH=true   # 開発時はAPIキー不要
+
+# サーバー起動
+python -m po_core.app.rest
+# → http://localhost:8000
+```
+
+### エンドポイント一覧
+
+| Method | Path | 説明 |
+|--------|------|------|
+| `POST` | `/v1/reason` | 同期的な哲学的推論 |
+| `POST` | `/v1/reason/stream` | SSE ストリーミング推論 |
+| `GET`  | `/v1/philosophers` | 哲学者マニフェスト一覧 |
+| `GET`  | `/v1/trace/{session_id}` | トレースイベント取得 |
+| `GET`  | `/v1/health` | ヘルスチェック |
+
+### 使用例
+
+```bash
+# 同期推論
+curl -X POST http://localhost:8000/v1/reason \
+  -H "Content-Type: application/json" \
+  -d '{"input": "What is justice?"}'
+
+# SSE ストリーミング
+curl -N -X POST http://localhost:8000/v1/reason/stream \
+  -H "Content-Type: application/json" \
+  -d '{"input": "What is the good life?"}'
+
+# 哲学者一覧
+curl http://localhost:8000/v1/philosophers
+
+# ヘルスチェック
+curl http://localhost:8000/v1/health
+```
+
+### 環境変数
+
+`.env.example` をコピーして `.env` を作成し、必要な変数を設定してください。
+
+| 変数 | デフォルト | 説明 |
+|------|-----------|------|
+| `PO_API_KEY` | `""` | APIキー（空の場合は認証スキップ） |
+| `PO_SKIP_AUTH` | `false` | `true` で認証をバイパス（開発用） |
+| `PO_PORT` | `8000` | サーバーポート |
+| `PO_WORKERS` | `1` | uvicorn ワーカー数 |
+| `PO_LOG_LEVEL` | `info` | ログレベル |
+
+---
+
 **🐷🎈 Flying Pig Philosophy**
 
 「豚は飛べない」と言われています。でも、哲学という風船をつければ飛べるかもしれません。
