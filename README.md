@@ -4,9 +4,14 @@
 
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
+[![PyPI version](https://badge.fury.io/py/po-core.svg)](https://badge.fury.io/py/po-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./License.md)
-[![Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)]()
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-blue.svg)]()
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
+
+```bash
+pip install po-core
+```
 
 ---
 > **Feedback welcome:** [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) ·

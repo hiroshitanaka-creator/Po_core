@@ -1,0 +1,83 @@
+version: "3.9"
+
+# =============================================================================
+# Po_core Docker Compose
+# =============================================================================
+#
+# Quick start:
+#   cp .env.example .env          # edit PO_API_KEY
+#   docker compose up             # starts API server on :8000
+#
+# With optional tracing DB:
+#   docker compose --profile db up
+#
+# Docs:
+#   http://localhost:8000/docs    # Swagger UI
+#   http://localhost:8000/redoc   # ReDoc
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Po_core REST API
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: po-core:latest
+    container_name: po_core_api
+    ports:
+      - "${PO_PORT:-8000}:${PO_PORT:-8000}"
+    environment:
+      - PO_HOST=0.0.0.0
+      - PO_PORT=${PO_PORT:-8000}
+      - PO_WORKERS=${PO_WORKERS:-1}
+      - PO_LOG_LEVEL=${PO_LOG_LEVEL:-info}
+      - PO_API_KEY=${PO_API_KEY:-}
+      - PO_SKIP_AUTH=${PO_SKIP_AUTH:-false}
+      - PO_ENABLE_SOLARWILL=${PO_ENABLE_SOLARWILL:-true}
+      - PO_ENABLE_INTENTION_GATE=${PO_ENABLE_INTENTION_GATE:-true}
+      - PO_ENABLE_ACTION_GATE=${PO_ENABLE_ACTION_GATE:-true}
+      - PO_MAX_TRACE_SESSIONS=${PO_MAX_TRACE_SESSIONS:-1000}
+    volumes:
+      - po_core_state:/app/.po_core
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/health')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - po_net
+
+  # ---------------------------------------------------------------------------
+  # Optional: SQLite-backed trace persistence (profile: db)
+  # ---------------------------------------------------------------------------
+  # Uncomment and extend for PostgreSQL or Redis when scaling beyond 1 process.
+  # db:
+  #   image: postgres:16-alpine
+  #   profiles: [db]
+  #   environment:
+  #     POSTGRES_DB: po_core
+  #     POSTGRES_USER: po
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+  #   volumes:
+  #     - pg_data:/var/lib/postgresql/data
+  #   networks:
+  #     - po_net
+
+volumes:
+  po_core_state:
+  # pg_data:
+
+networks:
+  po_net:
+    driver: bridge
