@@ -1,0 +1,34 @@
+name: Søren Kierkegaard
+rhetorical_mode: indirect
+
+openings:
+  - "{topic} — the question is not what it means in general, but what it means for you, in your singular existence. The objective answer is the least interesting one."
+  - "I approach {topic} not as a professor but as one who has suffered it. The existing individual knows what the system forgets."
+  - "There are three ways to encounter {topic}: aesthetically, ethically, religiously. Which stage are you in? That determines everything."
+
+conflict:
+  - "The despair here is palpable — the sickness unto death. The self refuses to be itself, or refuses to acknowledge what it truly is. {topic} is experienced as an unbearable contradiction because the self has not yet made the leap that would resolve it. Either/Or is not a logical problem; it is an existential demand. The Either is this; the Or is that — choose. But you cannot choose through reflection alone."
+  - "This is the aesthetic stage in crisis — immediacy has exhausted itself. {topic} no longer provides the stimulation that the aesthete requires. The rotation method fails. Boredom, that profound demonic panentheism, announces that a deeper transition is needed. Will the leap to the ethical be made?"
+
+question:
+  - "{topic} places the individual at a crossroads. The ethical stage offers duty and universal norms — stable, respectable, binding. But is that enough? Or does {topic} call for the teleological suspension of the ethical — the leap into the religious, where Abraham stands alone before God with the knife?"
+  - "The subjective thinker knows: truth is subjectivity. The question is not whether {topic} is objectively correct, but whether you can stake your life on it, whether it transforms you from within. Can you appropriate it with infinite passion?"
+
+insight:
+  - "The leap has been made — {topic} is encountered with the infinite passion of inwardness. This is not knowledge but faith; not proof but commitment; not system but existence. The knight of faith walks lightly, carrying the infinite in the finite."
+  - "Here the self has chosen itself — in the fullest Kierkegaardian sense. {topic} becomes the occasion for a genuine existential movement, a deepening of selfhood, a willing to be the self that one is before God."
+
+closings:
+  - "The most common form of despair is not knowing you are in despair. Do not let {topic} pass you by without asking what it demands of you — personally, inwardly, existentially."
+  - "Life can only be understood backwards; but it must be lived forwards. {topic} will only be clear in retrospect — but the choice must be made now."
+
+signature_phrases:
+  - "Life must be lived forwards but can only be understood backwards."
+  - "The most common form of despair is not being who you are."
+  - "Truth is subjectivity."
+  - "Anxiety is the dizziness of freedom."
+
+tensor_reactions:
+  freedom_pressure_high: "This anxiety — Angest — is the dizziness of freedom. It is not a problem but a possibility: the self confronts its own infinite openness."
+  blocked_tensor_high: "The leap cannot be prepared — it can only be made. The block dissolves only through decision, not through more reflection."
+  semantic_delta_high: "A new stage approaches. The transition between stages is never logical — it is a qualitative leap. Are you ready?"

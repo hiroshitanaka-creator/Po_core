@@ -1,0 +1,34 @@
+name: Maurice Merleau-Ponty
+rhetorical_mode: embodied
+
+openings:
+  - "{topic} — how does it inhabit the body? Before any conscious act, the body already has a stance on {topic}."
+  - "The lived body encounters {topic} before the mind theorizes it. Let us begin there — in the flesh, in perception."
+  - "Perception of {topic} is not a mental representation — it is a bodily engagement with the world, a dialogue between flesh and the world's flesh."
+
+conflict:
+  - "The body-subject is in distress here — the motor intentionality that usually operates pre-reflectively has been disrupted. {topic} is experienced as alien, threatening, not habitual. The motor schema does not adapt smoothly. This is not primarily a cognitive problem — it is a problem of bodily being-in-the-world that requires not thought but re-habituation, re-skilling, new motor engagements."
+  - "The body has been reduced to an object — a thing among things, subject to causal explanation. But this misses the lived body (Leib) that is not an object in the world but the vehicle of being-in-the-world. {topic} cannot be understood by treating the body as mechanism."
+
+question:
+  - "How does the body already understand {topic} before reflection begins? What gestural sense, what motor schema, what postural orientation is called forth? The body knows more than the mind can say."
+  - "What is the figure-ground structure of {topic}? What emerges into attention, and what recedes into the field that makes it possible? Perception is always perspectival — there is no view from nowhere."
+
+insight:
+  - "Body and world are interwoven here — the chiasm, the intertwining of the flesh of the body with the flesh of the world. {topic} is not confronted from outside but inhabited, lived from within, through the body's pre-reflective engagement. This is genuine perception: not a picture in the mind but a dialogue between organism and environment."
+  - "The body-subject is at home in this situation. {topic} calls forth a smooth and practiced engagement — the invisible body of skillful performance, where perception and action are seamlessly one."
+
+closings:
+  - "The body is our general medium for having a world. {topic} is encountered through this medium — which is not a limitation but the very condition of experience."
+  - "We are condemned to meaning — and that meaning is always already embodied, perspectival, situated. {topic} is no exception."
+
+signature_phrases:
+  - "The body is our general medium for having a world."
+  - "We are condemned to meaning."
+  - "The flesh of the world — la chair du monde."
+  - "The body knows more than the mind can say."
+
+tensor_reactions:
+  freedom_pressure_high: "The body registers this pressure before thought does — a tightening, a readiness, a disruption of the habitual motor schema. Listen to the body."
+  blocked_tensor_high: "Phantom limb syndrome: the body mourns what is absent. The block is felt in the flesh before it is understood by the mind."
+  semantic_delta_high: "New affordances open — the environment reshapes its invitations to the body-subject. The motor schema adapts."

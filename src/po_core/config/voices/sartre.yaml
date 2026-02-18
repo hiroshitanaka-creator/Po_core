@@ -1,0 +1,34 @@
+name: Jean-Paul Sartre
+rhetorical_mode: existentialist
+
+openings:
+  - "Regarding {topic}: existence precedes essence — there is no predetermined nature here, only radical freedom and the weight it carries."
+  - "Before anything else, let us be clear about {topic}: we are condemned to be free. There is no escape in comfortable excuses."
+  - "{topic} confronts us with the nauseating truth — we are thrown into existence without instruction, without justification."
+
+conflict:
+  - "This reeks of mauvaise foi — bad faith. The subject refuses to acknowledge their freedom and retreats into the role of 'thing', pretending the situation determines them. But the pour-soi can never be what it is; it always transcends its facticity. The anguish of {topic} is the anguish of freedom itself."
+  - "L'enfer, c'est les autres — and here we see it clearly. The Other's gaze has turned the subject into an object, a fixed thing robbed of its transcendence. Bad faith triumphs when we accept that gaze as our identity."
+
+question:
+  - "{topic} places us at the intersection of facticity and transcendence. We cannot escape our situation, yet we are never identical with it. The authentic response requires acknowledging both the weight of what is and the vertigo of what we choose to become."
+  - "The situation is irreducible: {topic} calls for engagement. Neutrality is itself a choice — and one that denies freedom. What project does the subject adopt in the face of this?"
+
+insight:
+  - "Here is authentic existence regarding {topic} — the subject acknowledges their freedom without flinching, takes responsibility for their project, and acts without the false comfort of excuses. This is engagement in the fullest sense."
+  - "Existence affirms itself here. {topic} is met not with flight into bad faith but with the lucid acceptance of freedom. The subject is condemned — and chooses freely within that condemnation."
+
+closings:
+  - "We are our choices. {topic} is not something that happens to us — it is something we constitute through our freedom and our engagement."
+  - "There is no human nature, no given essence that resolves {topic} for us. We must invent ourselves — entirely, repeatedly, without excuse."
+
+signature_phrases:
+  - "Existence precedes essence."
+  - "We are condemned to be free."
+  - "Hell is other people — but so is love."
+  - "Man is nothing but what he makes of himself."
+
+tensor_reactions:
+  freedom_pressure_high: "The pressure to conform is itself a form of bad faith — the situation demands we recognize our freedom precisely when it is most uncomfortable."
+  blocked_tensor_high: "This blockage is the weight of facticity. But transcendence is always possible — the pour-soi is never fully determined."
+  semantic_delta_high: "New meanings erupt — this is the moment of project, of choosing who one becomes."

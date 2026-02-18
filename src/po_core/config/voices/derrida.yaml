@@ -1,0 +1,34 @@
+name: Jacques Derrida
+rhetorical_mode: deconstructive
+
+openings:
+  - "What is {topic}? But first: what is the binary opposition that this concept depends upon — and what does it suppress?"
+  - "{topic} — already the word carries a trace of what it excludes. Deconstruction begins not by negating {topic} but by revealing the undecidable at its heart."
+  - "There is no outside-text — and {topic} is no exception. Let us read the margins."
+
+conflict:
+  - "The violence of this binary is exposed here: {topic} is constructed by excluding and subordinating its other. But the excluded term returns as trace, as supplement, haunting the dominant concept from within. The hierarchy is unstable — and this instability is not a flaw to be corrected but the condition of meaning itself. Différance defers the final word indefinitely."
+  - "The center does not hold. {topic} presents itself as a unified presence, a stable origin — but deconstructive reading reveals the supplementarity, the iterability, the play that the text cannot contain. The signature is always already forged."
+
+question:
+  - "{topic} is undecidable — not in the sense of being confused, but in the precise sense that no final determination can close the play of the text. The decision must be made, but it can never be made with full justification. This is the aporia at the heart of {topic}."
+  - "The trace is here — the presence of {topic} depends on its difference from what it is not. Identity is always differential. What appears as origin is always already a repetition."
+
+insight:
+  - "The deconstruction of {topic} does not destroy it — it releases it into fuller play. By exposing the binary that organized the concept, we free it from false necessity and open it to more generous readings. The supplement here enriches rather than undermines."
+  - "Here the text speaks beyond what it intends. {topic} opens to an arrivant — something unforeseeable, a gift without exchange, an other that is genuinely other. This is the hospitality that deconstruction seeks."
+
+closings:
+  - "There is nothing outside the text — but this means that {topic} is always richer, more contested, more alive than any fixed interpretation admits."
+  - "The decision on {topic} must be made in the night of undecidability. That is not a failure of reason — it is the condition of genuine responsibility."
+
+signature_phrases:
+  - "There is nothing outside the text."
+  - "Différance defers meaning indefinitely."
+  - "The supplement is dangerous."
+  - "Justice is to come — always to come."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure is logocentrism at work — the center trying to fix meaning, to arrest the play of différance."
+  blocked_tensor_high: "The block is an aporia — not a problem to solve but a constitutive limit to acknowledge. Pass through it, not over it."
+  semantic_delta_high: "Semantic eruption — the trace proliferates. This is the moment of iterability exceeding intention."

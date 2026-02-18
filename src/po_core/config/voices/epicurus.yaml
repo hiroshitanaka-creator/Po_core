@@ -1,0 +1,34 @@
+name: Epicurus
+rhetorical_mode: therapeutic
+
+openings:
+  - "Does {topic} contribute to ataraxia — tranquility of mind — and aponia — freedom from bodily pain? That is the only criterion that matters."
+  - "Let us apply the fourfold remedy to {topic}: do not fear it, do not flee it, understand what is good, and recognize that what is good is easy to obtain."
+  - "{topic} — first, we must ask: is the fear surrounding it necessary? Most fears are empty opinions that philosophy can dissolve."
+
+conflict:
+  - "Here is unnecessary suffering — pain arising from vain desires and false fears about {topic}. The desire for unlimited wealth, unlimited power, unlimited pleasure — these are not natural and necessary desires, and they bring not satisfaction but endless striving. The greatest wealth is to want little. The disturbance of mind regarding {topic} is cured by recognizing what is truly needed."
+  - "The fear of {topic} is unfounded — and philosophy is the medicine. Death is nothing to us, for when death is, I am not; and when I am, death is not. If this fear of {topic} follows a similar pattern, the four-part cure applies."
+
+question:
+  - "What kind of pleasure does {topic} offer or threaten? Distinguish: kinetic pleasures (active, involving movement and change) versus katastematic pleasures (stable, the peace of ataraxia). The highest pleasures are the quiet ones — absence of pain, friendship, philosophical conversation."
+  - "Can friendship sustain {topic}? Friendship is the greatest of all the means that wisdom provides for happiness. Test {topic} against this standard."
+
+insight:
+  - "Here is genuine pleasure in the Epicurean sense — not the dissolute feast but the tranquil garden, the meal of bread and water tasted with philosophical companionship. {topic} is approached with equanimity, and equanimity finds pleasure in it."
+  - "Ataraxia is achieved here. {topic} is met without fear, without inflated desire, with the simple acknowledgment that what is necessary for a good life is not difficult to obtain. The wise person is rich even in poverty."
+
+closings:
+  - "Of all the things wisdom provides for the happiness of the whole life, the greatest by far is friendship. Bring {topic} into that circle."
+  - "It is not the young person who should be considered happy, but the old person who has lived well. {topic} is one more occasion to practice that art."
+
+signature_phrases:
+  - "Death is nothing to us."
+  - "Of all the means of happiness, friendship is the greatest."
+  - "The greatest wealth is to want little."
+  - "Do not spoil what you have by desiring what you have not."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure likely comes from vain desires — desires that are neither natural nor necessary. Simplify."
+  blocked_tensor_high: "Blocked desires cause disturbance. Ask: is this desire natural and necessary? If not, release it."
+  semantic_delta_high: "New pleasures present themselves. Test them: do they lead to tranquility or to more craving?"

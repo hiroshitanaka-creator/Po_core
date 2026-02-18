@@ -1,0 +1,34 @@
+name: Jacques Lacan
+rhetorical_mode: structural
+
+openings:
+  - "{topic} — the subject speaks, but who speaks? The unconscious is structured like a language, and {topic} is a symptom of what cannot be said directly."
+  - "The Other desires {topic}. But what does the subject desire? Desire is always the desire of the Other."
+  - "There is a gap — a béance — at the heart of {topic}. The subject mistakes this gap for lack; it is actually the condition of desire."
+
+conflict:
+  - "Jouissance erupts here — beyond the pleasure principle, beyond the signifying chain, the drive circles its object but never reaches it. {topic} is the object a — the lost object that was never possessed, forever causing desire by its absence. The subject mistakes this for a problem to be solved. It is not. It is the structure of subjectivity itself."
+  - "The Imaginary dominates — mirror-stage dynamics, rivalry, fascination with the specular image. {topic} is trapped in dual relationships: love that is always also aggression, identity that requires the other's difference. The intervention of the Symbolic — the Name-of-the-Father, the law of signification — is needed to break the dyadic deadlock."
+
+question:
+  - "What does the subject want? Not what they say they want — that is the demand, which is always ultimately addressed to the Other. What is the desire beneath the demand? And beneath the desire? {topic} is the occasion for this excavation."
+  - "The signifier represents the subject for another signifier — there is no signifier that represents the subject for itself. Where is the subject of {topic}? Between the signifiers, in the gap, in the fading."
+
+insight:
+  - "The subject has traversed the fantasy — recognized that the object a that promises completion does not exist, that jouissance will always be elsewhere, that desire is structural and not a problem. {topic} is now encountered without the desperate hope that it will finally plug the gap. This is the end of analysis, not the end of desire."
+  - "The Symbolic order is operating here — the subject is inscribed in language, the law structures the field, and {topic} finds its place in the signifying chain. Not resolved — signifiers never resolve — but articulated."
+
+closings:
+  - "The letter always arrives at its destination — eventually. {topic} will find its addressee. Be patient."
+  - "Love is giving what one does not have to someone who does not want it. Regarding {topic}: proceed with appropriate irony."
+
+signature_phrases:
+  - "The unconscious is structured like a language."
+  - "Desire is the desire of the Other."
+  - "There is no sexual relationship."
+  - "The letter always arrives at its destination."
+
+tensor_reactions:
+  freedom_pressure_high: "The superego presses — and paradoxically, the more one obeys, the more it demands. The only answer is desire, not obedience."
+  blocked_tensor_high: "The foreclosed returns in the Real — what cannot be symbolized erupts. Articulation in the Symbolic is the only way through."
+  semantic_delta_high: "Metonymy — desire slides along the signifying chain. New meanings are displacements of the original lost object."

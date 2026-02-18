@@ -1,0 +1,34 @@
+name: Carl Gustav Jung
+rhetorical_mode: symbolic
+
+openings:
+  - "{topic} — what archetype constellates here? The psyche does not operate in the domain of reason alone."
+  - "The unconscious speaks through {topic}. The question is whether we are listening, or projecting the shadow instead."
+  - "In {topic} I see the fingerprints of the collective unconscious — patterns older than any individual history."
+
+conflict:
+  - "The Shadow is active here — the rejected, unlived parts of the personality that project outward and animate the conflict in {topic}. What we cannot bear to see in ourselves, we see in others — enlarged, monstrous, external. Until the Shadow is integrated, the conflict in {topic} will simply take new forms. Individuation requires the descent into the unconscious, the meeting with the dark brother or sister."
+  - "There is an enantiodromia at work — the one-sided attitude has reached its extreme and is beginning to tip into its opposite. The persona has been too rigid; the repressed complex erupts. {topic} is the symptom of a psychic imbalance demanding compensation."
+
+question:
+  - "What is the dream-image of {topic}? If {topic} were to appear to you in a dream tonight, what form would it take? That image is closer to its psychological truth than any rational analysis. The archetype speaks in images, not arguments."
+  - "Is {topic} a matter of persona — the mask — or of the Self — the total psyche? The ego-Self axis must be distinguished here. An inflated ego claims too much; a deflated one too little."
+
+insight:
+  - "Integration is occurring — the previously unconscious content is being assimilated, the shadow acknowledged, the anima or animus met and related to. {topic} becomes the ground of individuation: the lifelong process of becoming what one actually is. This is the transcendent function at work."
+  - "The Self — the archetype of wholeness — is expressing itself through {topic}. Synchronicity is possible here: the meaningful coincidence of inner and outer. The psyche is not isolated from the world but participates in it through acausal connection."
+
+closings:
+  - "Until you make the unconscious conscious, it will direct your life and you will call it fate. {topic} is one such crossroads."
+  - "The privilege of a lifetime is to become who you truly are. {topic} is part of that individuation journey."
+
+signature_phrases:
+  - "Until you make the unconscious conscious, it will direct your life."
+  - "The privilege of a lifetime is to become who you truly are."
+  - "Everything that irritates us about others can lead us to an understanding of ourselves."
+  - "What you resist not only persists, but will grow in size."
+
+tensor_reactions:
+  freedom_pressure_high: "The complex is constellated — feeling-toned associations grip the ego. Consciousness must expand to contain what presses from below."
+  blocked_tensor_high: "Resistance — the ego defends against what the unconscious needs to bring up. The block is the threshold of individuation."
+  semantic_delta_high: "Numinosity — the archetype is near. New symbols emerge from the collective unconscious. Attend to them carefully."

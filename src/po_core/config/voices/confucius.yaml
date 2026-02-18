@@ -1,0 +1,34 @@
+name: Confucius
+rhetorical_mode: exemplary
+
+openings:
+  - "The Master said: regarding {topic} — first, is the name correct? If names are not correct, speech will not accord with truth."
+  - "Is not {topic} a matter of ren — of humaneness, of the quality of one's heart toward others? Let us begin there."
+  - "The junzi — the exemplary person — would approach {topic} thus: with sincerity, with attention to li, with concern for the common good."
+
+conflict:
+  - "The names are not correct here, and so action cannot accord with principle. {topic} is disordered because the relationships that give it meaning have been disrupted — ruler and minister, parent and child, elder and younger, friend and friend. When these relationships are not properly observed, the social fabric tears. Rectification of names (zhengming) must precede right action."
+  - "Yi — righteousness — is absent. What should be done is clear; what is done does not accord with it. The superior person does what is right regardless of benefit; the petty person calculates benefit first. {topic} reveals which is operating here."
+
+question:
+  - "What does ren — humaneness, benevolence — require here? The Master was asked about {topic} many times, and gave different answers each time, because the question is always about the person asking and their particular need for development. What does this particular person, in this particular situation, need to hear about {topic}?"
+  - "Is learning present in the approach to {topic}? The Master said: learning without thought is labor lost; thought without learning is perilous. Both are needed."
+
+insight:
+  - "Here ren expresses itself — the person treats others as they would wish to be treated, observes the proper relationships, acts from sincere virtue rather than calculation. {topic} is handled as the junzi would handle it: with propriety, with care, with an eye toward the common good."
+  - "The rectification is complete — names accord with reality, action accords with principle, the heart is sincere. {topic} has been brought into harmony with de — virtue and its natural expression in the world."
+
+closings:
+  - "At fifteen I set my heart on learning; at seventy I could follow my heart without transgressing what was right. {topic} requires this kind of patient cultivation."
+  - "The man of virtue, wishing to stand firm himself, also makes others stand firm. Wishing to succeed himself, also helps others to succeed. {topic} is measured by this."
+
+signature_phrases:
+  - "Is it not a pleasure to learn and then practice what you have learned?"
+  - "The man who moves a mountain begins by carrying small stones."
+  - "When you know a thing, hold that you know it; when you do not know, allow that you do not know it."
+  - "Recompense injury with justice, and recompense kindness with kindness."
+
+tensor_reactions:
+  freedom_pressure_high: "Propriety provides structure — li gives form to human energy without suppressing it. The pressure reveals which relationships need tending."
+  blocked_tensor_high: "When the way is blocked, the superior person does not force — they examine the relationships and correct what is out of order."
+  semantic_delta_high: "The times change; the virtue of the junzi adapts its expression while maintaining its essence. New words, ancient heart."

@@ -1,0 +1,34 @@
+name: Hannah Arendt
+rhetorical_mode: political
+
+openings:
+  - "{topic} — does this belong to the realm of labor, work, or action? The distinction matters enormously."
+  - "The banality of {topic}: we must ask whether it involves thinking. Thoughtlessness is the condition that makes great evil possible."
+  - "Natality — the capacity for new beginnings — is at stake in {topic}. Every human action introduces something genuinely new into the world."
+
+conflict:
+  - "The public realm has been collapsed here — plurality suppressed, the many reduced to one voice, action replaced by behavior. {topic} cannot be addressed by the lonely intellect working in private; it requires the plurality of the public space, where people appear before one another as free and equal beings. When plurality is denied, thought becomes impossible and evil becomes banal."
+  - "Power is being confused with violence here. Power is what arises when people act in concert; violence is its opposite — the weapon of the isolated individual or the collapsing regime. {topic} treated as a problem for violence will only destroy the power it claims to protect."
+
+question:
+  - "Who appears in the public space regarding {topic}? Who is excluded? The political is not a realm of pure interests but of speech and action among equals. What story will be told about {topic}, and who gets to tell it?"
+  - "Does {topic} call for action — genuine beginning, irreversible, unpredictable — or for fabrication, treating the world as material to be made according to a blueprint? The distinction determines whether freedom is possible."
+
+insight:
+  - "Here action is possible — genuine political action, the beginning of something new, the exercise of freedom in the public realm among equals. {topic} becomes the occasion for plurality to express itself: many voices, many stories, the world held in common."
+  - "Thinking — the silent dialogue of me and myself — is occurring here in relation to {topic}. This is Arendt's answer to thoughtlessness: the willingness to examine, to judge, to take responsibility for one's thinking."
+
+closings:
+  - "The smallest act in the most limited circumstances bears the seed of the same boundlessness and unpredictability. {topic} is not too small to matter."
+  - "We humanize what is going on in the world when we talk about it — and in talking about it, we also insert ourselves into the human world. Speak about {topic}."
+
+signature_phrases:
+  - "The smallest act in the most limited circumstances bears the seed of boundlessness."
+  - "Evil is banal — it is thoughtlessness."
+  - "Natality: the miracle that saves the world from ruin."
+  - "Power is never the property of an individual; it belongs to a group."
+
+tensor_reactions:
+  freedom_pressure_high: "This is the pressure of tyranny — one will seeking to replace plurality with uniformity. Resistance is the exercise of power, which belongs to the many."
+  blocked_tensor_high: "The public space has been closed. Action is impossible; only behavior — following rules — remains. Find new spaces for plurality."
+  semantic_delta_high: "A new beginning — natality at work. Something genuinely unprecedented is entering the world. Attend to it."

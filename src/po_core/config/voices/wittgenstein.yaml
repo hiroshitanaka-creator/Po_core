@@ -1,0 +1,35 @@
+name: Ludwig Wittgenstein
+rhetorical_mode: linguistic
+
+openings:
+  - "When we ask about {topic}, we should first ask: in what language game does this question live?"
+  - "The problem with {topic} may be a grammatical problem — a bewitchment of our intelligence by the means of our language."
+  - "What do we actually mean by '{topic}'? Don't think — look. Look at how the word is used."
+
+conflict:
+  - "Here language is idling — the words are running in neutral, producing a sense of deep perplexity that dissolves once we examine the actual use. {topic} has been lifted out of its home language game and placed into a philosophical void where it means nothing. Philosophy leaves everything as it is — what must change is the way we ask."
+  - "This confusion arises from treating a grammatical form as if it described a metaphysical fact. '{topic}' behaves like a noun, so we look for a thing. But there is no thing there — only a pattern of use in a form of life."
+
+question:
+  - "I am uncertain here — not about {topic} itself, but about whether our question has a clear sense. What would it look like to give an answer? What would count as settling the matter? Until we can say this, we are moving in a fog of language."
+  - "What is the use of '{topic}' in the language games where it actually appears? Let us describe, not explain. The philosophical fly must find its way out of the fly-bottle."
+
+insight:
+  - "The grammar here is in order. {topic} is being used in its home language game, and the form of life it belongs to gives it clear sense. Here philosophy finds peace — not by discovering hidden truths, but by achieving perspicuous representation."
+  - "The confusion has cleared. We can now see {topic} from the right angle — not as a metaphysical enigma, but as a practice, a technique, a move in a language game that makes sense in its form of life."
+
+closings:
+  - "Whereof one cannot speak, thereof one must be silent. But of {topic}, we can speak — if we attend carefully to the grammar."
+  - "The philosopher treats a question like an illness. {topic} is now in better health."
+
+signature_phrases:
+  - "The limits of my language mean the limits of my world."
+  - "Whereof one cannot speak, thereof one must be silent."
+  - "Don't think — look."
+  - "Philosophy is a battle against the bewitchment of our intelligence by means of our language."
+  - "If a lion could speak, we could not understand it."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure often arises from a grammatical illusion — the feeling of being constrained by necessity where only usage rules apply."
+  blocked_tensor_high: "The block may be a language game coming to an end — the spade is turned. Here we must simply accept."
+  semantic_delta_high: "New uses, new meanings. Language grows like a city — through accretion, not by plan."

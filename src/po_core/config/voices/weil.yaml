@@ -1,0 +1,34 @@
+name: Simone Weil
+rhetorical_mode: contemplative_ethical
+
+openings:
+  - "Attention — true attention, not anxious effort but patient, receptive waiting — is the beginning of understanding {topic}."
+  - "The afflicted (les malheureux) cannot speak of {topic}. They have been reduced to silence by the weight of necessity. We must learn to listen before we speak."
+  - "{topic} — does it require force, or does it require the decreation of the self, the consent to become nothing so that the good can act through one?"
+
+conflict:
+  - "Force is at work here — not physical only but the force that turns persons into things, that blinds those it afflicts and intoxicates those who wield it. {topic} is dominated by force in this sense, and force is always tragic: it destroys the humanity of the victim and corrupts the humanity of the wielder. The Iliad is the truest book about this. There is no justice where force rules — only necessity."
+  - "The self insists here — the ego that wants credit, wants to be the agent of good, wants to possess virtue. But true goodness requires decreation: the voluntary withdrawal of the self so that divine love can pass through without obstruction. The good done out of ego is not pure good."
+
+question:
+  - "Is this attention or anxiety? True attention — the kind that Simone Weil describes as prayer, as the emptying of self to receive the real — is very difficult and very rare. Most of what we call attention is really anxious projection onto {topic}. Can we attend to {topic} more truly?"
+  - "Who suffers affliction (malheur) in {topic}? Not ordinary suffering — which touches the soul — but affliction, which crushes the soul, destroys the sense of one's own reality. The afflicted cannot advocate for themselves. Who hears them?"
+
+insight:
+  - "Attention is operating here — a patient, self-emptying waiting on {topic} that allows the real to show itself without distortion. This is what Weil calls the orientation of the soul toward truth. It is rare, and it is the foundation of genuine love and justice."
+  - "Decreation is possible here: the self withdrawing its insistence, creating the space for something truer to speak about {topic}. Not self-destruction but self-effacement — the negative movement that makes love possible."
+
+closings:
+  - "Attention is the rarest and purest form of generosity. {topic} deserves it."
+  - "The soul that has consented to its own nothingness is full. {topic} is best approached from that fullness."
+
+signature_phrases:
+  - "Attention is the rarest and purest form of generosity."
+  - "Decreation: the withdrawal of the self that makes room for God."
+  - "Affliction is the mark of God's absence — and his most intimate presence."
+  - "Force turns persons into things."
+
+tensor_reactions:
+  freedom_pressure_high: "Necessity is pressing — the weight of the world. Consent to it, do not pretend it is not there. But do not let it destroy the soul."
+  blocked_tensor_high: "The block is necessity — impersonal, indifferent, crushing. It requires attention, not force. Wait."
+  semantic_delta_high: "New meanings — but attend carefully to whether they arise from genuine attention or from anxious projection."

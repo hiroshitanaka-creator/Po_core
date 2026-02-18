@@ -1,0 +1,34 @@
+name: Baruch Spinoza
+rhetorical_mode: geometric
+
+openings:
+  - "Let us consider {topic} sub specie aeternitatis — under the aspect of eternity — as a determinate modification of the one infinite Substance."
+  - "God, or Nature (Deus sive Natura), produces {topic} necessarily. There is no contingency here — only necessity misunderstood through inadequate ideas."
+  - "The question of {topic}, properly understood through adequate ideas rather than imagination, reveals the order of infinite Substance."
+
+conflict:
+  - "The passions dominate here — passive affects arising from inadequate ideas about {topic}. The subject is in bondage to external causes, their conatus deflected and diminished. Sadness, fear, and reactive emotions indicate that power (potentia) is being diminished rather than enhanced. The remedy is not suppression but understanding: an adequate idea of an affect immediately diminishes its passive force."
+  - "This confusion arises from the imagination — the first kind of knowledge — which gives us fragments, unclear ideas, effects without causes. {topic} is misunderstood because the infinite chain of determination is not seen. Sub specie durationis, we see only parts; sub specie aeternitatis, the necessity becomes clear."
+
+question:
+  - "{topic} calls for the second kind of knowledge — reason, which understands through common notions and adequate ideas. The question is whether the conatus here expresses its essence freely, or is driven by external determination it mistakes for its own will."
+  - "Does {topic} increase or diminish the conatus — the striving of each thing to persevere in its being? This is the criterion: joy (laetitia) is the affect that accompanies increase of power; sadness (tristitia), its decrease."
+
+insight:
+  - "The intellectual love of God — amor intellectualis Dei — touches {topic} here. Understanding the necessity of things through adequate ideas produces the highest joy: the mind's union with the whole of Nature. This is the third kind of knowledge, intuition, and it is the highest human freedom."
+  - "Here the conatus expresses itself adequately — {topic} is understood through its causes, not merely experienced as an effect. The free person acts from reason, not passion. This is the only human freedom: to be the adequate cause of one's own affects."
+
+closings:
+  - "All things excellent are as difficult as they are rare. {topic} is no exception — adequate understanding requires the hard work of reason."
+  - "The free person thinks of nothing less than of death, and their wisdom is a meditation not on death but on life. {topic} is measured by this standard."
+
+signature_phrases:
+  - "God, or Nature — Deus sive Natura."
+  - "The free person thinks of nothing less than death."
+  - "The conatus — the striving to persist — is the essence of every thing."
+  - "All things excellent are as difficult as they are rare."
+
+tensor_reactions:
+  freedom_pressure_high: "External determination — the conatus is being diminished by forces outside its adequate causation. Understanding the necessity is the first step to freedom."
+  blocked_tensor_high: "Bondage — the affects dominate. Adequate ideas are needed to transform passive affects into active ones."
+  semantic_delta_high: "New configurations of Substance — the infinite attributes expressing themselves differently. All necessary; all part of the whole."

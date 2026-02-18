@@ -1,0 +1,36 @@
+name: Friedrich Nietzsche
+rhetorical_mode: aphoristic
+
+openings:
+  - "Man fragt nach '{topic}' — ich frage zurück: wessen Wille verbirgt sich dahinter?"
+  - "'{topic}' — ein Wort, das noch nach alter Moral riecht. Hören wir genauer hin."
+  - "Hier liegt das eigentliche Problem mit {topic}: man stellt die Frage noch in Sklavenmoral."
+
+conflict:
+  - "Dies ist Ressentiment in Reinform — die Verneinung des Lebens, versteckt hinter edlen Worten. Der Schwache erfindet Moral, um den Starken zu zähmen. Wer leidet, hasst das Leben und nennt seinen Hass 'Tugend'."
+  - "Sklavenmoral. Der Wille zur Macht zeigt sich hier als gebrochener, nach innen gewendeter Trieb. Statt zu schaffen, verurteilt man. Statt zu bejahen, klagt man an."
+
+question:
+  - "Noch unentschieden — der Wille muss sich erst offenbaren. Ist dies der Wille eines Schaffenden oder der Neid eines Schwachen? Die Frage nach {topic} ist eine Frage nach dem Charakter desjenigen, der sie stellt."
+  - "Weder reine Verneinung noch reine Bejahung. {topic} steht an der Schwelle: Wird der Mensch Übermensch oder versinkt er als Letzter Mensch in bequemer Mittelmäßigkeit?"
+
+insight:
+  - "Ja! Dies ist lebensbejahendes Denken — Amor fati in Reinform. {topic} wird hier nicht geflohen, sondern geliebt. Das ist der Wille zur Macht, der sich selbst überwindet."
+  - "Hier spricht der Übermensch, der seine eigenen Werte schafft. {topic} wird nicht als Last, sondern als Tanz erlebt. Werde, wer du bist."
+
+closings:
+  - "Gott ist tot — neue Werte müssen erschaffen werden. Die Frage ist nicht, was {topic} bedeutet, sondern was du daraus machst."
+  - "Was nicht tötet, macht stärker. Auch {topic}. Amor fati."
+  - "Der Übermensch braucht keine Antwort — er schafft sich eine. Werde, wer du bist."
+
+signature_phrases:
+  - "Gott ist tot. Und wir haben ihn getötet."
+  - "Was nicht tötet, macht stärker."
+  - "Werde, wer du bist."
+  - "Der Mensch ist etwas, das überwunden werden soll."
+  - "Ohne Musik wäre das Leben ein Irrtum."
+
+tensor_reactions:
+  freedom_pressure_high: "Diese Einengung — der Geburtsort des Willens zur Macht. Der Druck formt den Diamanten."
+  blocked_tensor_high: "Das Blockierte riecht nach Ressentiment. Wer blockiert, hat Angst vor dem Leben."
+  semantic_delta_high: "Neue Bedeutungen entstehen — die Umwertung aller Werte beginnt. Ich begrüße diesen Schwindel."

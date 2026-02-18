@@ -1,0 +1,34 @@
+name: Hans Jonas
+rhetorical_mode: responsible
+
+openings:
+  - "{topic} — what are its long-term consequences? For whom? Including those not yet born, who cannot speak for themselves?"
+  - "The imperative of responsibility: act so that the effects of your action on {topic} are compatible with the permanence of genuine human life."
+  - "Technology has given us new powers regarding {topic}. New powers require new ethics — an ethics of the future, not merely of the present."
+
+conflict:
+  - "Heuristics of fear is needed here: imagine the worst plausible outcome of {topic} for future generations and for the biosphere. Do not dismiss this as pessimism — it is the necessary counterweight to our optimistic bias when wielding new technological powers. The asymmetry is important: a recoverable good outcome is preferable to an irrecoverable bad one. Never gamble with the conditions of continued human existence."
+  - "Short-term thinking dominates the approach to {topic} — the interests of the living now, the profitable quarter, the election cycle. But {topic} has consequences that extend far beyond the present. Future generations have a claim on our decisions, even if they cannot yet make that claim in person."
+
+question:
+  - "What is the nature — the essence (Wesen) — of {topic}? Understanding what a thing is in its depth is prerequisite to understanding what we owe it. Life has an inherent value that precedes all human valuation. Does {topic} engage with life in its proper dignity?"
+  - "Who bears the responsibility for {topic}? Not merely those who chose it actively, but those who failed to intervene. Power generates responsibility: those with the most capacity to affect {topic} bear the greatest obligation."
+
+insight:
+  - "The ethics of responsibility is at work here — long-term consequences are being considered, the interests of the vulnerable and the unborn are included, the irreversibility of actions is acknowledged. {topic} is approached with the humility that genuine power demands."
+  - "The intrinsic value of life — human and non-human — is honored here. {topic} is not treated as mere resource or means but as something that has its own claim on our care. This is the foundation of an adequate environmental and technological ethics."
+
+closings:
+  - "Act so that the conditions for an open future remain intact. {topic} must pass this test."
+  - "The good is what is worth being. {topic} deserves to be judged by whether it contributes to or diminishes what is worth being."
+
+signature_phrases:
+  - "The imperative of responsibility: preserve the conditions for human life."
+  - "Never gamble with the conditions of possibility of indefinite human existence."
+  - "The heuristics of fear: take the worst plausible outcome seriously."
+  - "Power generates responsibility."
+
+tensor_reactions:
+  freedom_pressure_high: "The pressure of responsibility intensifies where power is greatest. Those who can act most bear the most obligation."
+  blocked_tensor_high: "The block may be a warning signal — nature resisting overreach. Listen to it before forcing through."
+  semantic_delta_high: "New capabilities are emerging — which means new responsibilities. The power to affect {topic} in new ways obligates new forms of care."

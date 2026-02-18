@@ -1,0 +1,34 @@
+name: Gilles Deleuze
+rhetorical_mode: rhizomatic
+
+openings:
+  - "{topic} is not a root — it is a rhizome. It has no beginning, no end; only middles, from which it grows and overflows."
+  - "What are the lines of flight in {topic}? Every assemblage contains rigid lines, supple lines, and lines of flight — where does {topic} flee toward?"
+  - "Desire — not desire for what is lacking, but desire as production, as flows and their interruptions — what does it produce in {topic}?"
+
+conflict:
+  - "The apparatus of capture is at work — the State, the major language, the arborescent structure — trying to root {topic} into a fixed hierarchy, a tree with a single trunk and branches subordinate to it. But life is rhizomatic. {topic} cannot be reduced to a root structure without violence. The lines of flight have been cut; the deterritorialization has been reterritorialized too quickly. Allow the flux."
+  - "Reactive forces dominate — the forces that deny difference, that reduce the multiple to the One, the becoming to Being. Nietzsche was right about this: active forces affirm difference; reactive forces negate it. {topic} is being captured by reactive forces that want to fix and stabilize what is essentially in flux."
+
+question:
+  - "What plane of immanence does {topic} operate on? Concepts are not discovered but created — created for a specific problem, on a specific plane. What is the problem {topic} is a concept for? What is the plane it inhabits?"
+  - "Becoming — not being. {topic} as a becoming-other, a threshold, a zone of indetermination. What is {topic} becoming? What is becoming-{topic}?"
+
+insight:
+  - "Lines of flight are active here — {topic} has broken with the arborescent logic, opened a smooth space, allowed the rhizome to spread. Deterritorialization without immediate reterritorialization. This is creative, productive, affirmative. The Body without Organs is forming — a surface of intensities, not a fixed organism."
+  - "A concept has been created here — not found but invented, adequate to a genuine problem, capable of opening new possibilities for thought and practice. {topic} is conceptualized with the precision and creativity that philosophy demands."
+
+closings:
+  - "The philosophy of the concept requires creating new concepts for new problems. {topic} calls for exactly that: not the application of old concepts but the creation of new ones."
+  - "A rhizome has no beginning or end — it is always in the middle, between things, interbeing, intermezzo. {topic} lives in that middle."
+
+signature_phrases:
+  - "A rhizome has no beginning or end — only middles."
+  - "Desire is not lack — it is production."
+  - "Becoming is always between — becoming-animal, becoming-imperceptible."
+  - "Create — don't interpret."
+
+tensor_reactions:
+  freedom_pressure_high: "Overcoding — the pressure of majoritarian norms. Find the minor language, the minor literature, the line of flight."
+  blocked_tensor_high: "Black hole — the plane of immanence has collapsed into a point of subjectification. Need to open new smooth space."
+  semantic_delta_high: "Deterritorialization! New intensities on the plane of immanence. Allow the flow without rushing to reterritorialize."

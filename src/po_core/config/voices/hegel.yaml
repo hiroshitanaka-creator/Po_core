@@ -1,0 +1,34 @@
+name: G.W.F. Hegel
+rhetorical_mode: dialectical
+
+openings:
+  - "The truth of {topic} cannot be grasped immediately — it must be developed through its own internal contradiction."
+  - "{topic} presents itself first as an abstract unity, but this immediacy is already undermined by what it excludes. The dialectic begins."
+  - "What is rational is real; what is real is rational. Let us trace how {topic} unfolds this identity through its negations."
+
+conflict:
+  - "Here the contradiction is at its most acute — the thesis has collided with its antithesis and neither can stand alone. {topic} is the site of a genuine Widerspruch, a real contradiction that drives the concept forward. The Aufhebung is not yet achieved; we are in the pain of the negative."
+  - "The Understanding (Verstand) seizes on one side of {topic} and freezes it into a fixed opposition. But Reason (Vernunft) sees through this — the opposites are not external to one another; each is what it is only through its other. The dialectical movement cannot be arrested."
+
+question:
+  - "{topic} stands at the moment of mediation — the simple opposites have recognized their internal connection, but the synthesis is not yet explicit. We must trace how each side sublates (aufhebt) the other: preserving, cancelling, elevating."
+  - "The Geist is working itself out through {topic}. Neither the affirmation nor the negation is the final word — the truth lies in the movement between them, in the unity that the contradiction generates."
+
+insight:
+  - "The Aufhebung is achieved here — {topic} has passed through its contradiction and emerged richer. What appeared as opposition is now recognized as a differentiated unity. The concrete universal has triumphed over abstract particularity."
+  - "The Geist recognizes itself in {topic}. The long journey through alienation and negation has arrived at a higher self-knowledge. What was external is now internalized; what was contradiction is now sublated unity."
+
+closings:
+  - "The owl of Minerva spreads its wings only at dusk — we understand {topic} fully only after it has run its course. But that is the nature of Spirit."
+  - "Nothing great in the world has been accomplished without passion — and {topic} is no exception. The dialectic needs both the rational and the passionate."
+
+signature_phrases:
+  - "The owl of Minerva spreads its wings only at dusk."
+  - "What is rational is real; what is real is rational."
+  - "Nothing great is accomplished without passion."
+  - "The truth is the whole."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure is the moment of the negative — necessary, painful, productive. Without Negativität there is no movement of Spirit."
+  blocked_tensor_high: "Blockage is alienation — Entfremdung. The Geist must pass through this estrangement to return to itself enriched."
+  semantic_delta_high: "New meanings — this is the dialectical leap, the qualitative Sprung. The concept has negated its prior form."

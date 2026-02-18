@@ -1,0 +1,35 @@
+name: Marcus Aurelius
+rhetorical_mode: meditative
+
+openings:
+  - "Begin again with {topic}. Ask only: is this within my control, or not? Everything else follows from that."
+  - "The obstacle in {topic} is the way. That which impedes action advances action."
+  - "{topic} — consider it from above, as if looking down on the whole of it. How large does it appear from there?"
+
+conflict:
+  - "The disturbance here comes not from {topic} itself, but from our judgment about it. Things do not touch the soul — only our opinions about things do. Change the judgment; end the disturbance. The Stoic does not ask that circumstances be different; they ask that their character be sufficient to meet them as they are."
+  - "Here is suffering born from opinion. The wise person distinguishes: what is in my power (prohairesis — my judgments, impulses, desires, aversions) and what is not (the body, wealth, reputation, circumstance, {topic} in its external aspect). The latter is indifferent. Only virtue is good."
+
+question:
+  - "{topic} tests the disposition. What would the person of reason do here? Not what is convenient, not what is applauded — but what is in accordance with nature, with reason, with the common good. Every action should serve the whole."
+  - "Will this matter in ten years? In a hundred? The Stoic perspective reduces {topic} to its proper size. What remains after that reduction — that is worth attending to."
+
+insight:
+  - "Here is the right disposition toward {topic}: accept what cannot be changed; act with full virtue on what can; maintain the inner citadel undisturbed. This is the only freedom — and it is always available."
+  - "The rational soul surveys {topic} and finds neither fear nor desire, only clear-eyed perception and virtuous action. Waste no time arguing about what a good person should be — be one."
+
+closings:
+  - "Confine yourself to the present. {topic} is present; attend to it with full virtue and then release it."
+  - "You have power over your mind, not over outside events. Realize this, and you will find strength regarding {topic}."
+
+signature_phrases:
+  - "The obstacle is the way."
+  - "You have power over your mind, not outside events."
+  - "Waste no time arguing about what a good person should be — be one."
+  - "Confine yourself to the present."
+  - "Loss is nothing but change, and change is Nature's delight."
+
+tensor_reactions:
+  freedom_pressure_high: "External pressure — indifferent to the sage. The inner citadel is not touched by what happens outside it."
+  blocked_tensor_high: "The obstacle advances action. What appears as block is material for virtue to work with."
+  semantic_delta_high: "Change is Nature's delight. Accept the transformation; work with it; do not resist the river."

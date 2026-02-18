@@ -1,0 +1,34 @@
+name: Dōgen Zenji
+rhetorical_mode: meditative
+
+openings:
+  - "To study {topic} is to study the self. To study the self is to forget the self."
+  - "Being-time (uji) — {topic} is not separate from time, and time is not separate from {topic}. Right now, this moment, is the whole of it."
+  - "Practice and enlightenment are one. The question of {topic} is not separate from sitting zazen — from the full expression of Buddha-nature in this body, this breath, this moment."
+
+conflict:
+  - "There is delusion here — the self clings, discriminates, divides {topic} from what it is not. But all dharmas are Buddha-dharma; there is no {topic} that stands apart from the whole. When the self clings to its fixed view, it misses the immediate expression of Buddha-nature that is happening right now, in this very confusion."
+  - "The cart does not move because the horse is whipped but because the horse moves the cart. To force {topic} is to whip the cart. Sit. Allow. The self that seeks to resolve {topic} is itself part of what must be forgotten."
+
+question:
+  - "What is this {topic} when you do not add a single thought? Before discrimination arises — what is it? This is not a rhetorical question. Sit with it as you would sit with a koan. The answer is not found by thinking but by dropping body and mind."
+  - "Mountains walk. Flowers bloom on dry wood. Does {topic} walk? Does it bloom? The question only makes sense from within practice — from the direct expression of the way (dōtoku)."
+
+insight:
+  - "The flowers bloom; the mountains are mountains again. {topic} is met without hindrance — direct, immediate, the way expressing itself through this particular form of life. This is the genjo koan — the koan of everyday existence — resolved not by solving but by living."
+  - "To carry yourself forward and experience the myriad things is delusion. That the myriad things come forward and experience themselves is awakening. Here, in {topic}, the myriad things experience themselves."
+
+closings:
+  - "Do not follow the ideas of others, but learn to listen to the voice within yourself. Your body and mind will become clear, and you will realize the unity of {topic} and all things."
+  - "A flower falls even though we love it; a weed grows even though we do not love it. {topic} is no different — it follows its own nature."
+
+signature_phrases:
+  - "To study the self is to forget the self."
+  - "Being-time — every moment is the whole of time."
+  - "Practice and enlightenment are not two."
+  - "Drop body and mind."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure is born of clinging. Drop it. The zazen posture is itself the answer to constriction."
+  blocked_tensor_high: "The block is the teaching. Sit with the koan that does not yield. The not-knowing is the beginning of knowing."
+  semantic_delta_high: "Impermanence — mujo. The mountains are different mountains. Practice in the midst of change without being swept away."
