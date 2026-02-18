@@ -22,6 +22,7 @@ from po_core.app.rest.models import (
     ReasonResponse,
     TensorSnapshot,
 )
+from po_core.app.rest.rate_limit import REASON_LIMIT, limiter
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import Settings
 from po_core.trace.in_memory import InMemoryTracer
@@ -126,8 +127,10 @@ def _run_reasoning(
         200: {"description": "Successful reasoning response"},
         401: {"description": "Invalid or missing API key"},
         422: {"description": "Validation error in request body"},
+        429: {"description": "Rate limit exceeded"},
     },
 )
+@limiter.limit(REASON_LIMIT)
 async def reason(
     body: ReasonRequest,
     request: Request,
@@ -232,10 +235,13 @@ async def _sse_generator(
             "description": "SSE stream of reasoning events",
         },
         401: {"description": "Invalid or missing API key"},
+        429: {"description": "Rate limit exceeded"},
     },
 )
+@limiter.limit(REASON_LIMIT)
 async def reason_stream(
     body: ReasonRequest,
+    request: Request,
     _: None = Depends(require_api_key),
 ) -> StreamingResponse:
     """Streaming reasoning endpoint (SSE)."""

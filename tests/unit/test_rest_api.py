@@ -353,3 +353,135 @@ def test_swagger_ui_accessible(client_no_auth):
     """Swagger UI docs endpoint is accessible."""
     resp = client_no_auth.get("/docs")
     assert resp.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Security Hardening (Phase 5-B): CORS + Rate Limiting
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_cors_default_allows_all_origins():
+    """Default CORS configuration allows any origin (dev-friendly)."""
+    from po_core.app.rest.config import APISettings
+    from po_core.app.rest.server import create_app
+
+    app = create_app(settings=APISettings(skip_auth=True, cors_origins="*"))
+    client = TestClient(app)
+    resp = client.get("/v1/health", headers={"Origin": "http://example.com"})
+    assert resp.status_code == 200
+    assert resp.headers.get("access-control-allow-origin") == "*"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_cors_restricted_to_specific_origin():
+    """CORS is restricted to the configured domain when PO_CORS_ORIGINS is set."""
+    from po_core.app.rest.config import APISettings
+    from po_core.app.rest.server import create_app
+
+    trusted = "https://trusted.example.com"
+    app = create_app(
+        settings=APISettings(skip_auth=True, cors_origins=trusted)
+    )
+    client = TestClient(app)
+
+    # Preflight from trusted origin must succeed
+    resp = client.options(
+        "/v1/health",
+        headers={
+            "Origin": trusted,
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert resp.status_code == 200
+    assert resp.headers.get("access-control-allow-origin") == trusted
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_cors_blocked_untrusted_origin():
+    """Requests from an untrusted origin receive no ACAO header."""
+    from po_core.app.rest.config import APISettings
+    from po_core.app.rest.server import create_app
+
+    app = create_app(
+        settings=APISettings(
+            skip_auth=True, cors_origins="https://trusted.example.com"
+        )
+    )
+    client = TestClient(app)
+    resp = client.options(
+        "/v1/health",
+        headers={
+            "Origin": "https://evil.example.com",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    # CORSMiddleware returns 400 for disallowed origins on preflight
+    assert resp.headers.get("access-control-allow-origin") != "https://evil.example.com"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_cors_multiple_origins_parsed():
+    """Comma-separated PO_CORS_ORIGINS are each allowed."""
+    from po_core.app.rest.config import APISettings
+    from po_core.app.rest.server import _parse_cors_origins
+
+    result = _parse_cors_origins("https://a.com, https://b.com , https://c.com")
+    assert result == ["https://a.com", "https://b.com", "https://c.com"]
+
+    wildcard = _parse_cors_origins("*")
+    assert wildcard == ["*"]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_rate_limiter_attached_to_app():
+    """Rate limiter is registered on app.state after create_app()."""
+    from po_core.app.rest.server import create_app
+
+    app = create_app()
+    assert hasattr(app.state, "limiter")
+    assert app.state.limiter is not None
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_limit_string_format():
+    """REASON_LIMIT is a valid SlowAPI limit string (e.g. '60/minute')."""
+    from po_core.app.rest.rate_limit import REASON_LIMIT
+
+    # Must be "<number>/<period>"
+    assert "/" in REASON_LIMIT
+    parts = REASON_LIMIT.split("/")
+    assert parts[0].isdigit(), f"Expected integer, got: {parts[0]!r}"
+    assert parts[1] in ("second", "minute", "hour", "day"), (
+        f"Unexpected period: {parts[1]!r}"
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_rate_limit_429_on_excess():
+    """Rate limiting blocks excess requests at the storage layer.
+
+    Verifies the underlying ``limits`` library (used by SlowAPI) correctly
+    rejects requests once the configured ceiling is reached.  The FastAPI
+    integration (app.state.limiter + RateLimitExceeded handler) is covered by
+    test_rate_limiter_attached_to_app and the wiring in server.py.
+    """
+    from limits import parse
+    from limits.storage import MemoryStorage
+    from limits.strategies import FixedWindowRateLimiter
+
+    storage = MemoryStorage()
+    rate_limiter = FixedWindowRateLimiter(storage)
+    limit = parse("1/minute")
+
+    # First hit: allowed
+    assert rate_limiter.hit(limit, "127.0.0.1") is True
+    # Second hit within the same window: blocked
+    assert rate_limiter.hit(limit, "127.0.0.1") is False

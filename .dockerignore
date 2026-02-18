@@ -1,0 +1,75 @@
+# =============================================================================
+# Po_core .dockerignore
+# =============================================================================
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# Tests & CI
+tests/
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.coveragerc
+
+# Development tools
+.pre-commit-config.yaml
+.mypy_cache/
+.ruff_cache/
+.flake8
+
+# Notebooks & scratch
+notebooks/
+*.ipynb
+*.ipynb_checkpoints
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Local config / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Misc
+*.log
+*.sqlite
+*.db
+tmp/
+scratch/

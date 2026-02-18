@@ -10,6 +10,11 @@ Usage:
 
     # Or run directly:
     uvicorn po_core.app.rest.server:app --host 0.0.0.0 --port 8000
+
+Security:
+    CORS origins  — PO_CORS_ORIGINS (default: "*" for local dev)
+    Rate limiting — PO_RATE_LIMIT_PER_MINUTE (default: 60/min per IP)
+    API key auth  — PO_API_KEY + X-API-Key header
 """
 
 from __future__ import annotations
@@ -18,8 +23,11 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-from po_core.app.rest.config import get_api_settings
+from po_core.app.rest.config import APISettings, get_api_settings
+from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.routers import health, philosophers, reason, trace
 
 logger = logging.getLogger(__name__)
@@ -28,14 +36,29 @@ logger = logging.getLogger(__name__)
 app: FastAPI | None = None
 
 
-def create_app() -> FastAPI:
+def _parse_cors_origins(cors_origins: str) -> list[str]:
+    """
+    Parse a comma-separated CORS origins string into a list.
+
+    "*" is returned as-is (allow all).  Whitespace around each entry is stripped.
+    """
+    if cors_origins.strip() == "*":
+        return ["*"]
+    return [o.strip() for o in cors_origins.split(",") if o.strip()]
+
+
+def create_app(settings: APISettings | None = None) -> FastAPI:
     """
     Create and configure the FastAPI application.
+
+    Args:
+        settings: Optional APISettings override (useful for testing).
+                  Defaults to the singleton returned by get_api_settings().
 
     Returns:
         Configured FastAPI instance with all routers registered.
     """
-    settings = get_api_settings()
+    settings = settings or get_api_settings()
 
     application = FastAPI(
         title="Po_core REST API",
@@ -88,14 +111,23 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
         ],
     )
 
-    # CORS — allow all origins by default (restrict in production via env)
+    # CORS — restrict origins in production via PO_CORS_ORIGINS.
+    # Default "*" allows all origins (convenient for local dev).
+    # When specific origins are set, credentials are also allowed.
+    allowed_origins = _parse_cors_origins(settings.cors_origins)
+    allow_credentials = allowed_origins != ["*"]
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
+        allow_origins=allowed_origins,
+        allow_credentials=allow_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Rate limiting — SlowAPI per-IP limiter.
+    # Limit is configured via PO_RATE_LIMIT_PER_MINUTE (default: 60/min).
+    application.state.limiter = limiter
+    application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     # Register routers
     application.include_router(reason.router)
@@ -111,6 +143,8 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
                 "host": settings.host,
                 "port": settings.port,
                 "auth_enabled": bool(settings.api_key) and not settings.skip_auth,
+                "cors_origins": settings.cors_origins,
+                "rate_limit_per_minute": settings.rate_limit_per_minute,
             },
         )
 
