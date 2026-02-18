@@ -130,11 +130,7 @@ class VoiceRenderer:
             parts.append(opening)
 
         # 2. Body (tension-aware, fall back through categories)
-        body_items = (
-            self.config.get(cat)
-            or self.config.get("question")
-            or []
-        )
+        body_items = self.config.get(cat) or self.config.get("question") or []
         body = _pick(body_items, topic, full_topic)
         if body:
             parts.append(body)

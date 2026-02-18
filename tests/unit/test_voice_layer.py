@@ -21,7 +21,6 @@ from po_core.runtime.voice_loader import (
     get_voice,
 )
 
-
 # ---------------------------------------------------------------------------
 # _extract_topic
 # ---------------------------------------------------------------------------
@@ -116,20 +115,29 @@ def test_render_contains_topic(nietzsche_renderer):
 
 def test_render_conflict_contains_german(nietzsche_renderer):
     """High tension should produce Nietzsche's German-inflected output."""
-    result = nietzsche_renderer.render(
-        prompt="What is justice?", tension_level="High"
-    )
+    result = nietzsche_renderer.render(prompt="What is justice?", tension_level="High")
     # One of the conflict templates uses German
     assert any(
         word in result
-        for word in ["Ressentiment", "Sklavenmoral", "Wille", "Übermensch", "Werde", "Gott"]
+        for word in [
+            "Ressentiment",
+            "Sklavenmoral",
+            "Wille",
+            "Übermensch",
+            "Werde",
+            "Gott",
+        ]
     )
 
 
 def test_render_tensor_freedom_pressure(nietzsche_renderer):
     result = nietzsche_renderer.render(
         prompt="justice",
-        tensor_snapshot={"freedom_pressure": 0.9, "semantic_delta": 0.1, "blocked_tensor": 0.0},
+        tensor_snapshot={
+            "freedom_pressure": 0.9,
+            "semantic_delta": 0.1,
+            "blocked_tensor": 0.0,
+        },
     )
     assert "Druck" in result or "Macht" in result or "Einengung" in result
 
@@ -137,9 +145,19 @@ def test_render_tensor_freedom_pressure(nietzsche_renderer):
 def test_render_tensor_blocked(nietzsche_renderer):
     result = nietzsche_renderer.render(
         prompt="justice",
-        tensor_snapshot={"freedom_pressure": 0.1, "semantic_delta": 0.1, "blocked_tensor": 0.8},
+        tensor_snapshot={
+            "freedom_pressure": 0.1,
+            "semantic_delta": 0.1,
+            "blocked_tensor": 0.8,
+        },
     )
-    assert "Ressentiment" in result or "Angst" in result or "blockiert" in result.lower() or "Blocked" in result or "Ressentiment" in result
+    assert (
+        "Ressentiment" in result
+        or "Angst" in result
+        or "blockiert" in result.lower()
+        or "Blocked" in result
+        or "Ressentiment" in result
+    )
 
 
 def test_render_insight_different_from_conflict(nietzsche_renderer):
@@ -152,7 +170,14 @@ def test_render_insight_different_from_conflict(nietzsche_renderer):
 
 def test_sartre_voice_uses_existentialist_language(sartre_renderer):
     result = sartre_renderer.render(prompt="What is freedom?")
-    keywords = ["freedom", "bad faith", "existence", "condemned", "mauvaise", "pour-soi"]
+    keywords = [
+        "freedom",
+        "bad faith",
+        "existence",
+        "condemned",
+        "mauvaise",
+        "pour-soi",
+    ]
     assert any(kw.lower() in result.lower() for kw in keywords)
 
 
@@ -161,14 +186,45 @@ def test_sartre_voice_uses_existentialist_language(sartre_renderer):
 # ---------------------------------------------------------------------------
 
 PHILOSOPHER_IDS = [
-    "arendt", "aristotle", "badiou", "beauvoir", "butler",
-    "confucius", "deleuze", "derrida", "descartes", "dewey",
-    "dogen", "epicurus", "foucault", "hegel", "heidegger",
-    "husserl", "jonas", "jung", "kant", "kierkegaard",
-    "lacan", "laozi", "levinas", "marcus_aurelius", "merleau_ponty",
-    "nagarjuna", "nietzsche", "nishida", "parmenides", "peirce",
-    "plato", "sartre", "schopenhauer", "spinoza", "wabi_sabi",
-    "watsuji", "weil", "wittgenstein", "zhuangzi",
+    "arendt",
+    "aristotle",
+    "badiou",
+    "beauvoir",
+    "butler",
+    "confucius",
+    "deleuze",
+    "derrida",
+    "descartes",
+    "dewey",
+    "dogen",
+    "epicurus",
+    "foucault",
+    "hegel",
+    "heidegger",
+    "husserl",
+    "jonas",
+    "jung",
+    "kant",
+    "kierkegaard",
+    "lacan",
+    "laozi",
+    "levinas",
+    "marcus_aurelius",
+    "merleau_ponty",
+    "nagarjuna",
+    "nietzsche",
+    "nishida",
+    "parmenides",
+    "peirce",
+    "plato",
+    "sartre",
+    "schopenhauer",
+    "spinoza",
+    "wabi_sabi",
+    "watsuji",
+    "weil",
+    "wittgenstein",
+    "zhuangzi",
 ]
 
 
@@ -185,9 +241,9 @@ def test_all_voices_render(phil_id):
     renderer = get_voice(phil_id)
     assert renderer is not None
     result = renderer.render(prompt="What is justice?", tension_level="Moderate")
-    assert isinstance(result, str) and len(result) > 10, (
-        f"{phil_id} produced an empty/short response"
-    )
+    assert (
+        isinstance(result, str) and len(result) > 10
+    ), f"{phil_id} produced an empty/short response"
 
 
 # ---------------------------------------------------------------------------
@@ -204,7 +260,11 @@ def test_reason_with_context_applies_voice():
     n = Nietzsche()
     ctx = Context(
         prompt="What is justice?",
-        tensor_snapshot={"freedom_pressure": 0.5, "semantic_delta": 0.5, "blocked_tensor": 0.1},
+        tensor_snapshot={
+            "freedom_pressure": 0.5,
+            "semantic_delta": 0.5,
+            "blocked_tensor": 0.1,
+        },
     )
     resp = n.reason_with_context(ctx)
     reasoning = resp["reasoning"]
