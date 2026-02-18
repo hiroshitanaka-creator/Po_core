@@ -74,7 +74,9 @@ def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
     for p in proposals[:5]:  # top 5
         if isinstance(p, dict):
             name: str = str(p.get("philosopher_id") or p.get("name") or "unknown")
-            weight_raw = p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+            weight_raw = (
+                p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+            )
             contribs.append(
                 PhilosopherContribution(
                     name=name,
