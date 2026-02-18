@@ -382,9 +382,7 @@ def test_cors_restricted_to_specific_origin():
     from po_core.app.rest.server import create_app
 
     trusted = "https://trusted.example.com"
-    app = create_app(
-        settings=APISettings(skip_auth=True, cors_origins=trusted)
-    )
+    app = create_app(settings=APISettings(skip_auth=True, cors_origins=trusted))
     client = TestClient(app)
 
     # Preflight from trusted origin must succeed
@@ -407,9 +405,7 @@ def test_cors_blocked_untrusted_origin():
     from po_core.app.rest.server import create_app
 
     app = create_app(
-        settings=APISettings(
-            skip_auth=True, cors_origins="https://trusted.example.com"
-        )
+        settings=APISettings(skip_auth=True, cors_origins="https://trusted.example.com")
     )
     client = TestClient(app)
     resp = client.options(
@@ -450,17 +446,29 @@ def test_rate_limiter_attached_to_app():
 
 @pytest.mark.unit
 @pytest.mark.phase5
-def test_reason_limit_string_format():
-    """REASON_LIMIT is a valid SlowAPI limit string (e.g. '60/minute')."""
-    from po_core.app.rest.rate_limit import REASON_LIMIT
+def test_reason_limit_callable_returns_valid_format():
+    """_reason_limit returns a valid SlowAPI limit string derived from settings.
+
+    create_app(settings=...) calls set_api_settings so that _reason_limit()
+    (a zero-arg callable) reads the injected value rather than os.environ.
+    """
+    from po_core.app.rest.config import APISettings, set_api_settings
+    from po_core.app.rest.routers.reason import _reason_limit
+
+    set_api_settings(APISettings(rate_limit_per_minute=30))
+    limit = _reason_limit()
 
     # Must be "<number>/<period>"
-    assert "/" in REASON_LIMIT
-    parts = REASON_LIMIT.split("/")
+    assert "/" in limit
+    parts = limit.split("/")
     assert parts[0].isdigit(), f"Expected integer, got: {parts[0]!r}"
-    assert parts[1] in ("second", "minute", "hour", "day"), (
-        f"Unexpected period: {parts[1]!r}"
-    )
+    assert parts[1] in (
+        "second",
+        "minute",
+        "hour",
+        "day",
+    ), f"Unexpected period: {parts[1]!r}"
+    assert parts[0] == "30", f"Expected 30 from settings, got {parts[0]!r}"
 
 
 @pytest.mark.unit

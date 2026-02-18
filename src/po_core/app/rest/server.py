@@ -21,12 +21,13 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from po_core.app.rest.config import APISettings, get_api_settings
+from po_core.app.rest.config import APISettings, get_api_settings, set_api_settings
 from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.routers import health, philosophers, reason, trace
 
@@ -34,6 +35,11 @@ logger = logging.getLogger(__name__)
 
 # Module-level app instance (for uvicorn direct invocation)
 app: FastAPI | None = None
+
+
+def _rate_limit_handler(request: Request, exc: Exception) -> Response:
+    """Typed wrapper so mypy accepts the handler signature for add_exception_handler."""
+    return _rate_limit_exceeded_handler(request, exc)  # type: ignore[arg-type]
 
 
 def _parse_cors_origins(cors_origins: str) -> list[str]:
@@ -58,7 +64,9 @@ def create_app(settings: APISettings | None = None) -> FastAPI:
     Returns:
         Configured FastAPI instance with all routers registered.
     """
-    settings = settings or get_api_settings()
+    if settings is not None:
+        set_api_settings(settings)
+    settings = get_api_settings()
 
     application = FastAPI(
         title="Po_core REST API",
@@ -125,9 +133,12 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
     )
 
     # Rate limiting — SlowAPI per-IP limiter.
-    # Limit is configured via PO_RATE_LIMIT_PER_MINUTE (default: 60/min).
+    # settings is stored on app.state so the dynamic limit callable in
+    # reason.py can read rate_limit_per_minute at request time rather than
+    # from a frozen os.environ value.
     application.state.limiter = limiter
-    application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    application.state.settings = settings
+    application.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
     # Register routers
     application.include_router(reason.router)

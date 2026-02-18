@@ -22,12 +22,29 @@ from po_core.app.rest.models import (
     ReasonResponse,
     TensorSnapshot,
 )
-from po_core.app.rest.rate_limit import REASON_LIMIT, limiter
+from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import Settings
 from po_core.trace.in_memory import InMemoryTracer
 
 router = APIRouter(tags=["reason"])
+
+
+def _reason_limit() -> str:
+    """Return the SlowAPI limit string derived from the current APISettings.
+
+    SlowAPI 0.1.x callable limits are invoked with no arguments (or with the
+    remote key when the parameter is named ``key``).  Using a zero-arg callable
+    that reads from ``get_api_settings()`` — the singleton that
+    ``create_app(settings=...)`` updates via ``set_api_settings`` — ensures
+    that .env configuration and test overrides are honoured instead of a value
+    frozen in ``os.environ`` at import time.
+    """
+    from po_core.app.rest.config import get_api_settings
+
+    rpm: int = get_api_settings().rate_limit_per_minute
+    return f"{rpm}/minute"
+
 
 # Internal run() returns "ok" on success; map to the published API contract.
 _STATUS_MAP: dict[str, str] = {
@@ -130,7 +147,7 @@ def _run_reasoning(
         429: {"description": "Rate limit exceeded"},
     },
 )
-@limiter.limit(REASON_LIMIT)
+@limiter.limit(_reason_limit)
 async def reason(
     body: ReasonRequest,
     request: Request,
@@ -238,7 +255,7 @@ async def _sse_generator(
         429: {"description": "Rate limit exceeded"},
     },
 )
-@limiter.limit(REASON_LIMIT)
+@limiter.limit(_reason_limit)
 async def reason_stream(
     body: ReasonRequest,
     request: Request,

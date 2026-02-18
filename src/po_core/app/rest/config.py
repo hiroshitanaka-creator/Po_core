@@ -75,3 +75,15 @@ def get_api_settings() -> APISettings:
     if _settings is None:
         _settings = APISettings()
     return _settings
+
+
+def set_api_settings(settings: APISettings) -> None:
+    """Override the cached settings singleton.
+
+    Used by ``create_app(settings=...)`` so that runtime overrides
+    (e.g. test fixtures, programmatic configuration) are visible to
+    components that call ``get_api_settings()`` — including the
+    dynamic rate-limit callable in reason.py.
+    """
+    global _settings
+    _settings = settings
