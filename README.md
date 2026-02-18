@@ -289,23 +289,28 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Alpha (v0.1.0) — Foundation Complete, Heading to v1.0**
+**Current Phase: Beta (v0.2.0-beta) — All 5 Phases Underway, Heading to v1.0**
 
-### Completed (Phase 0–4)
+### Completed Components
 
-| Component | Status | Completion |
-|-----------|--------|------------|
-| Philosophical Framework | Complete | 100% (39 philosophers) |
-| Documentation | Complete | 100% (120+ specs) |
-| Hexagonal Architecture | Complete | 100% (`run_turn` 10-step pipeline) |
-| PhilosopherBridge | Complete | 100% (all 39 → `PhilosopherProtocol`) |
-| TensorEngine (3 metrics) | Complete | 100% (freedom_pressure, semantic_delta, blocked_tensor) |
-| Pareto Optimization | Complete | 100% (config-driven) |
-| Safety System (3-layer) | Complete | 100% (IntentionGate → PolicyPrecheck → ActionGate) |
-| Pipeline Tests | Complete | 100% (125+ tests, CI-gated) |
-| Experiment Management | Complete | 100% (A/B testing framework) |
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Philosophical Framework | ✅ Complete | 39 philosophers, risk levels, tags |
+| Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
+| TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
+| ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
+| Pareto Optimization | ✅ Complete | Config-driven (`pareto_table.yaml`) |
+| Safety System (3-layer W_Ethics) | ✅ Complete | IntentionGate → PolicyPrecheck → ActionGate |
+| Viewer WebUI | ✅ Complete | Dash 4-tab layout + Plotly charts |
+| Explainable AI (ExplanationChain) | ✅ Complete | Verdict → ExplanationChain bridge |
+| Adversarial Hardening | ✅ Complete | 100% injection detection, 85 new tests |
+| **REST API** | ✅ Complete | FastAPI, 5 endpoints, SSE streaming, auth |
+| **Docker** | ✅ Complete | Multi-stage build, docker-compose, health check |
+| **Security** | ✅ Complete | CORS env config, SlowAPI rate limiting |
+| Async PartyMachine | 🔄 Planned | SSE via threadpool now; true async TBD |
+| PyPI Publish | 🔄 Ready | `publish.yml` OIDC workflow ready; not yet published |
 
-### Roadmap to v1.0 — Five Phases
+### Five-Phase Roadmap
 
 ```
 Phase 1         Phase 2           Phase 3          Phase 4         Phase 5
@@ -319,11 +324,11 @@ Phase 1         Phase 2           Phase 3          Phase 4         Phase 5
 
 | Phase | Name | Focus | Status |
 |-------|------|-------|--------|
-| **1** | Resonance Calibration | 39-philosopher scaling + tech debt cleanup | **Next** |
-| **2** | Tensor Intelligence | ML tensors + Deliberation Engine (emergence) | Planned |
-| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate | Planned |
-| **4** | Adversarial Hardening | Red team expansion + ethical stress testing | Planned |
-| **5** | Productization | REST API, Docker, streaming, PyPI publish | Planned |
+| **1** | Resonance Calibration | 39-philosopher scaling + tech debt cleanup | ✅ **COMPLETE** |
+| **2** | Tensor Intelligence | ML tensors + Deliberation Engine (emergence) | ✅ **COMPLETE** |
+| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate | ✅ **COMPLETE** |
+| **4** | Adversarial Hardening | Red team expansion + ethical stress testing | ✅ **COMPLETE** |
+| **5** | Productization | REST API ✅ Docker ✅ Security ✅ / Async・PyPI 🔄 | 🚀 **IN PROGRESS** |
 
 See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
 
@@ -333,53 +338,83 @@ See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
 
 ## Installation
 
-**Alpha Status Notice:**
-Po_core is in active development. The `run_turn` hexagonal pipeline, 39 philosopher modules, tensor metrics, and 3-layer safety system are fully operational. Viewer and legacy test migration are in progress.
-
 ```bash
-# Clone the repository
+# Install from PyPI (beta)
+pip install po-core
+
+# Or install from source in development mode
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
-
-# Create virtual environment (recommended)
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install Po_core in development mode
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ---
 
 ## Quick Start
 
-Once installed, you can use the `po-core` command:
+### Python API
+
+```python
+from po_core import run
+
+result = run("What is justice?")
+print(result["proposal"])   # Winning philosopher's response
+print(result["status"])     # "ok" or "blocked"
+```
+
+### CLI
 
 ```bash
-# Welcome message
-po-core hello
-
-# Check project status
+po-core version   # v0.2.0-beta
 po-core status
-
-# Show version information
-po-core version
-
-# Get help
 po-core --help
 ```
 
-**Example Output:**
+### REST API
 
-```
-$ po-core version
+```bash
+# Start the server
+python -m po_core.app.rest
+# → http://localhost:8000  (OpenAPI docs at /docs)
 
-  Po_core    v0.1.0-alpha
-  Author          Flying Pig Project
-  Email           flyingpig0229+github@gmail.com
-  Philosophy      Flying Pig - When Pigs Fly
-  Motto           A frog in a well may not know the ocean, but it can know the sky.
+# Reason
+curl -X POST http://localhost:8000/v1/reason \
+     -H "Content-Type: application/json" \
+     -d '{"input": "What is justice?"}'
+
+# Streaming (SSE)
+curl -N http://localhost:8000/v1/reason/stream \
+     -X POST -H "Content-Type: application/json" \
+     -d '{"input": "What is freedom?"}'
+
+# Philosopher manifest
+curl http://localhost:8000/v1/philosophers
+
+# Health
+curl http://localhost:8000/v1/health
 ```
+
+### Docker
+
+```bash
+# Copy env template and start
+cp .env.example .env
+docker compose up
+
+# API available at http://localhost:8000
+# Swagger UI at  http://localhost:8000/docs
+```
+
+Key environment variables (see `.env.example`):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PO_API_KEY` | `""` | API key for `X-API-Key` auth (empty = no auth) |
+| `PO_CORS_ORIGINS` | `"*"` | Comma-separated allowed CORS origins |
+| `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
+| `PO_PORT` | `8000` | Server port |
 
 ---
 

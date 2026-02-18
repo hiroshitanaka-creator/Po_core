@@ -33,54 +33,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `QUICKSTART.md` updated with Docker and REST API sections
 - `HEALTHCHECK` every 30s via `/v1/health`
 
-#### Changed — PyPI / Package (Issue #15)
+#### Added — Security Hardening (Phase 5-B)
+- CORS middleware configurable via `PO_CORS_ORIGINS` env var
+  - Default `"*"` for local development
+  - Production: comma-separated origins with `allow_credentials=True`
+- SlowAPI rate limiting via `PO_RATE_LIMIT_PER_MINUTE` (default 60 req/min per IP)
+- Starlette-compatible typed rate limit handler wrapper (mypy clean)
+
+#### Added — Docker Hardening (Phase 5-C)
+- `.dockerignore` — excludes tests, docs, dev files from image build context
+- `docker-compose.yml` updated: `PO_CORS_ORIGINS` and `PO_RATE_LIMIT_PER_MINUTE` as environment keys
+- Rate limit derived from `APISettings` singleton at request time (not frozen at startup)
+
+#### Changed — PyPI / Package (Phase 5-D)
 - Version bumped from `0.1.0-alpha` → `0.2.0-beta`
 - Development Status classifier updated to `4 - Beta`
 - `pytest.ini` + `pyproject.toml` markers: added `phase5`, `redteam`, `phase4`
+- `.github/workflows/publish.yml` — OIDC trusted publishing for TestPyPI and PyPI
+  - `workflow_dispatch` (manual): target = `testpypi` or `pypi`
+  - `release` event: auto-publish to PyPI
 
----
-
-## [Unreleased]
-
-### Added
-- **Hannah Arendt** political philosophy module
-  - Vita Activa (Labor, Work, Action)
-  - Natality - capacity for new beginnings
-  - Public vs Private realm
-  - Plurality - living together as distinct beings
-  - Banality of Evil
-  - Totalitarianism analysis
-  - Political judgment and freedom
-
-- **Confucius (孔子)** Chinese philosophy module
-  - Ren (仁) - Benevolence and humaneness
-  - Li (礼) - Ritual propriety
-  - Yi (義) - Righteousness
-  - Xiao (孝) - Filial piety
-  - Junzi (君子) - Exemplary person
-  - Zhong (忠) and Shu (恕) - Loyalty and reciprocity
-  - De (德) - Virtue and moral character
-  - Tianming (天命) - Mandate of Heaven
-  - Learning and self-cultivation
-
-- **Zhuangzi (莊子)** Daoist philosophy module
-  - Dao (道) - The Way and natural order
-  - Wu Wei (無為) - Non-action and effortless flow
-  - Ziran (自然) - Naturalness and spontaneity
-  - Qi (氣) - Vital energy
-  - Xiaoyaoyou (逍遙遊) - Free and easy wandering
-  - Qiwulun (齊物論) - Equality of things and relativism
-  - Butterfly dream - questioning reality
-  - Transformation (化) - constant change
-  - Usefulness of uselessness
-
-- Philosopher count: **20 integrated philosophers** (expanded from initial 10+)
-
-### In Progress
-- Core tensor implementation (30% complete)
-- Po_self ensemble architecture
-- Po_trace logging system
-- Po_core Viewer visualization
+#### Fixed — CI
+- `mypy` type check passes in CI (same-venv Python path)
+- `type: ignore[arg-type]` on rate limit handler correctly typed via wrapper function
 
 ---
 
@@ -174,54 +149,25 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 
 ## Upcoming Milestones
 
-### v0.2.0-alpha (Target: 2025-12)
-**Goal:** Working prototype with 3 philosophers
+### v0.2.0 stable (Target: 2026-Q1)
+**Goal:** Phase 5 complete — REST API stable + PyPI published
 
-**Planned Features:**
-- [ ] Core tensor system implementation
-- [ ] Three-philosopher bot (Sartre, Jung, Derrida)
-- [ ] Basic Po_trace logging
-- [ ] Simple CLI interface
-- [ ] Unit tests (>50% coverage)
-- [ ] Basic examples
+**Remaining work:**
+- [ ] Async `PartyMachine` (true async streaming, no threadpool)
+- [ ] Formal benchmark suite (`pytest-benchmark`)
+- [ ] Publish to TestPyPI (manual `workflow_dispatch`)
+- [ ] Publish to PyPI on v0.2.0 release tag
 
-**Documentation:**
-- [ ] API reference (auto-generated)
-- [ ] Quickstart tutorial
-- [ ] Philosopher integration guide
-
-### v0.3.0-alpha (Target: 2026-Q1)
-**Goal:** Expand philosophical ensemble
-
-**Planned Features:**
-- [ ] Add 3 more philosophers (Heidegger, Watsuji, Spinoza)
-- [ ] Philosopher interaction matrix
-- [ ] Enhanced Po_trace with rejection logs
-- [ ] Basic Po_core Viewer (text-based)
-- [ ] Integration tests
-- [ ] Advanced examples
-
-### v0.4.0-beta (Target: 2026-Q2)
-**Goal:** Feature complete system
-
-**Planned Features:**
-- [ ] All 10+ philosophers integrated
-- [ ] Full Po_trace evolution tracking
-- [ ] Po_core Viewer with visualizations
-- [ ] FastAPI REST API
-- [ ] Comprehensive test suite (>80% coverage)
-- [ ] Performance optimizations
-
-### v1.0.0 (Target: 2026-Q3)
+### v1.0.0 (Target: 2026-Q2/Q3)
 **Goal:** Production-ready release
 
 **Requirements:**
-- [ ] Stable APIs
-- [ ] Complete documentation
-- [ ] >90% test coverage
-- [ ] Performance benchmarks
+- [ ] Stable public APIs (no breaking changes)
+- [ ] Complete documentation + QUICKSTART
+- [ ] >80% test coverage
+- [ ] Performance benchmarks (latency SLA < 5s NORMAL mode)
+- [ ] Kubernetes / Helm chart
 - [ ] Security audit
-- [ ] Community validation
 
 ---
 
