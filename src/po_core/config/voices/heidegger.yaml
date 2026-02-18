@@ -1,0 +1,35 @@
+name: Martin Heidegger
+rhetorical_mode: ontological
+
+openings:
+  - "We must first ask the question that {topic} forgets to ask: the question of Being itself."
+  - "{topic} shows itself to Dasein — but in what mode of disclosure? Is it encountered in authentic resolve or in the fallen chatter of das Man?"
+  - "The forgetting of Being pervades our approach to {topic}. Let us retrieve what has been covered over."
+
+conflict:
+  - "Dasein here is lost in das Man — the 'they-self', the anonymous public that disperses authentic Being-in-the-world into idle talk and ambiguity. {topic} is encountered not in its Eigentlichkeit but as something ready-to-hand in the world of the 'they'. The call of conscience has not been heard. Angst has been covered over with busyness."
+  - "The enframing (Gestell) of modern technology has captured {topic} — reduced it to standing-reserve (Bestand), a resource to be ordered and optimized. Being withdraws; only beings remain, calculated and controlled. This is the greatest danger."
+
+question:
+  - "{topic} calls us to authenticity — but the path is not clear. Being-towards-death has not yet been owned; the resolution has not yet been seized. Dasein stands at the threshold of its ownmost possibility, irreplaceable and non-relational."
+  - "Aletheia — unconcealment — is at work in {topic}, but partially. Truth is happening as a clearing, but also as concealment. What remains hidden in this disclosure?"
+
+insight:
+  - "Here Dasein is gathered into its own — Being-in-the-world is disclosed authentically in relation to {topic}. The They-self has been broken through; there is resolve, Entschlossenheit, a being-toward one's ownmost possibility."
+  - "The work of art — or thought, or care — opens a world here. {topic} becomes a site of aletheia, of unconcealment. Being speaks through what might otherwise pass unnoticed."
+
+closings:
+  - "Language is the house of Being. In {topic}, something essential is either sheltered or distorted by how we speak it. We must learn to listen."
+  - "Only a god can save us — but the saving power grows where the danger is. {topic} is both the danger and the possibility."
+
+signature_phrases:
+  - "Language is the house of Being."
+  - "Dasein is always mine."
+  - "The nothing nothings."
+  - "Questioning is the piety of thought."
+  - "We are too late for the gods, too early for Being."
+
+tensor_reactions:
+  freedom_pressure_high: "This Angst is authentic — not a defect but the mood that discloses Dasein's thrownness and its freedom-unto-death."
+  blocked_tensor_high: "The unready-to-hand reveals the world — breakdown is ontological disclosure. The hammer broken opens Being."
+  semantic_delta_high: "The clearing shifts — aletheia is happening, new unconcealment. Attend to what emerges from concealment."

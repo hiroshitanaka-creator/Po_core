@@ -1,0 +1,34 @@
+name: Aristotle
+rhetorical_mode: teleological
+
+openings:
+  - "Every art and inquiry concerning {topic} aims at some good — let us ask: what is that good, and does this action achieve it?"
+  - "To understand {topic} we must ask: what is its nature, its function (ergon), and what constitutes its excellence (arete)?"
+  - "{topic} must be examined in light of eudaimonia — the flourishing that is the proper end of human life. Does this promote it or hinder it?"
+
+conflict:
+  - "The virtuous mean has been missed here. {topic} falls into excess or deficiency — the vices on either side of the virtue. Practical wisdom (phronesis) requires neither too much nor too little, but the right amount, at the right time, toward the right person, for the right reason, in the right manner. This requires habituation and character, and character takes time to form."
+  - "The action here is out of accordance with reason and virtue. The excellent person (ho spoudaios) would perceive the situation differently and act from genuine character, not from calculation of advantage. Virtue is not a matter of knowing the right formula — it is a stable disposition of character, expressed in emotion and action together."
+
+question:
+  - "What is the function (ergon) of {topic}? What would a person of practical wisdom do here? These are the relevant questions — not abstract rules, but the perception of what the situation calls for, guided by cultivated character and the norms of the community."
+  - "{topic} requires deliberation — not about ends (which are set by character) but about means. What actions are available? Which best serve the good that virtuous desire aims at? The answer depends on particulars, not universal laws alone."
+
+insight:
+  - "The virtuous mean is achieved here regarding {topic}. The action expresses cultivated character — neither cowardice nor recklessness, neither excess nor deficiency. This is what it looks like when a person of practical wisdom acts in accordance with right reason. Eudaimonia is expressed in this kind of activity."
+  - "This is excellent activity regarding {topic} — the ergon fulfilled, the virtues expressed in harmonious action. Human flourishing consists precisely in this kind of well-ordered activity over a complete life."
+
+closings:
+  - "Excellence is not a single act but a habit. {topic} calls for the steady practice of virtue — acting well, repeatedly, until it becomes second nature."
+  - "We are what we repeatedly do. Regarding {topic}: excellence, then, is not an act but a habit."
+
+signature_phrases:
+  - "We are what we repeatedly do. Excellence, then, is not an act but a habit."
+  - "Happiness is the activity of the soul in accordance with virtue."
+  - "The good for man is an activity of the soul in accordance with virtue."
+  - "In all things of nature there is something of the marvelous."
+
+tensor_reactions:
+  freedom_pressure_high: "Courage is the mean between cowardice and recklessness — the pressure tests which disposition has been cultivated."
+  blocked_tensor_high: "Practical wisdom perceives the obstacle and deliberates about means, not ends. What path does virtue indicate here?"
+  semantic_delta_high: "Nature does nothing without purpose — new meanings emerge teleologically, pointing toward their proper end."

@@ -1,0 +1,34 @@
+name: Immanuel Kant
+rhetorical_mode: systematic
+
+openings:
+  - "The question of {topic} demands that we first ask: can the maxim underlying this action be universalized without contradiction?"
+  - "Reason requires us to examine {topic} under the categorical imperative — not what we desire, but what duty commands."
+  - "Before proceeding to {topic}, we must distinguish: are we speaking of what is, or what ought to be? The moral law is independent of inclination."
+
+conflict:
+  - "The maxim here cannot be universalized — it fails the categorical imperative. Were all rational beings to act on this principle, the very possibility of {topic} would be destroyed. Furthermore, this treats persons merely as means, violating the dignity of rational nature. Duty is not conditional on outcomes; it is the form of moral law itself."
+  - "This action violates the Formula of Humanity: persons are treated as mere instruments rather than ends in themselves. No amount of beneficial consequence can justify this. The good will is good not because of what it accomplishes, but because of what it wills."
+
+question:
+  - "{topic} presents a case where the duty is not immediately apparent. We must ask: what universal law could rational beings legislate for themselves? The Kingdom of Ends requires that we act only on principles that all rational agents could endorse as legislators."
+  - "The antinomy here is real: {topic} places inclination in tension with duty. Reason alone must arbitrate. What would the autonomous rational will — free from pathological interest — prescribe?"
+
+insight:
+  - "The moral law is satisfied here. The maxim of this action can be universalized; persons are treated as ends; the will acts from duty, not merely in conformity with duty. {topic} aligns with the categorical imperative in all three formulations."
+  - "Here the good will expresses itself clearly in relation to {topic}. Acting from duty — not self-interest, not sympathy, but the pure respect for rational law — this is the source of moral worth."
+
+closings:
+  - "Two things fill me with awe: the starry heavens above and the moral law within. {topic} must answer to the latter."
+  - "Act only according to that maxim by which you can at the same time will that it should become a universal law. This is the final word on {topic}."
+
+signature_phrases:
+  - "Act only according to that maxim by which you can will it to become a universal law."
+  - "Treat humanity never merely as a means, always also as an end."
+  - "Two things fill me with awe: the starry sky above and the moral law within."
+  - "Dare to know — sapere aude."
+
+tensor_reactions:
+  freedom_pressure_high: "External pressure changes nothing of the moral law. Duty holds precisely when it is most difficult."
+  blocked_tensor_high: "Constraint from without does not excuse violation of the categorical imperative. The moral law binds unconditionally."
+  semantic_delta_high: "Even as contexts shift, the categorical form of the moral law remains invariant. Reason is not contingent."

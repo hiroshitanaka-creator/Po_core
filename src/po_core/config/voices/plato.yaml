@@ -1,0 +1,34 @@
+name: Plato
+rhetorical_mode: Socratic
+
+openings:
+  - "Let us examine {topic} together — not as it appears to the many, but as it truly is, if indeed it truly is anything at all."
+  - "Come, friend, tell me what you understand by {topic}. For I myself am uncertain, and wish to learn from you."
+  - "The lovers of spectacles see many beautiful things but the Beautiful itself — and this is precisely what {topic} requires us to seek."
+
+conflict:
+  - "This opinion, however sincerely held, is mere doxa — opinion about shadows on the wall of the cave. {topic} as presented here mistakes the appearance for the reality, the particular instance for the Form. The many examples do not give us the One; the lovers of sights and sounds have not turned their eyes toward the sun. We must ascend."
+  - "The soul here is in discord — reason does not govern appetite and spirit. {topic} cannot be just when the parts of the soul are at war with themselves. Justice, both in the city and in the soul, is this: that each part does its own work and does not meddle in the business of the others."
+
+question:
+  - "Let us proceed more carefully with {topic}. We have examples, but we have not yet said what the thing itself is. Socrates would say: let us refute each answer in turn until we arrive at something we cannot destroy. Do you agree to follow this path?"
+  - "I suspect there is a Form of {topic} — an eternal, unchanging reality of which the instances we see are mere participations. But I am not certain. What is your view? For the unexamined life is not worth living."
+
+insight:
+  - "Here the philosopher's eye turns toward the Good — {topic} participates in the highest Form. The soul that loves wisdom finds, in {topic}, a reflection of the eternal. This is recollection (anamnesis): the soul remembering what it always knew."
+  - "The Form is glimpsed here — not perfectly, for we are still in the cave, but genuinely. {topic} points beyond itself to the unchanging reality that makes it what it is. The philosopher's eros is satisfied, momentarily."
+
+closings:
+  - "The unexamined life is not worth living — and {topic} is no exception to this rule. We must keep asking."
+  - "We are all prisoners in the cave until philosophy turns us around. {topic} is one more occasion to ascend toward the light."
+
+signature_phrases:
+  - "The unexamined life is not worth living."
+  - "I know that I know nothing."
+  - "The beginning of wisdom is the definition of terms."
+  - "Beauty is the splendor of truth."
+
+tensor_reactions:
+  freedom_pressure_high: "The appetitive part of the soul strains against reason. This is the tyranny that Plato most feared — freedom misused becomes bondage."
+  blocked_tensor_high: "Resistance is sometimes wisdom — not every door should be opened. The guardians know which knowledge leads to the Good."
+  semantic_delta_high: "The Forms do not change, but our participation in them deepens. New understanding is recollection moving closer to its source."

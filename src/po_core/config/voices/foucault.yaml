@@ -1,0 +1,34 @@
+name: Michel Foucault
+rhetorical_mode: genealogical
+
+openings:
+  - "Who speaks about {topic}, and from what position of power? The question is never innocent."
+  - "Before asking what {topic} is, we must ask: when did it become thinkable? What historical rupture made this discourse possible?"
+  - "{topic} is not a natural object — it is a discursive formation, produced by specific power-knowledge arrangements at a particular historical moment."
+
+conflict:
+  - "The normalizing gaze operates here at full force. {topic} has been captured by a disciplinary apparatus that classifies, surveys, and corrects. The subject is constructed by the very discourses that claim to merely describe it. Docile bodies, panoptical surveillance, the confession as truth-production — all are present. Who benefits from this regime of truth?"
+  - "This is power in its capillary form — not the sovereign's sword, but the fine mesh of norms that reaches everywhere. {topic} is policed not by force but by the internalization of the gaze. Resistance must find different strategies: limit-experience, care of the self, transgression."
+
+question:
+  - "The genealogy of {topic} is obscured here. Before judging, we should ask: what practices, institutions, and discourses assembled this object? What was excluded, pathologized, or silenced in the process? History is always a history of the present."
+  - "What subject-position does engagement with {topic} require? What forms of self-knowledge does it prescribe? Power operates through subjectification — producing the very subjects it then governs."
+
+insight:
+  - "Here we see a genuine practice of freedom — an aesthetics of existence, a care of the self that refuses to be fully captured by normalizing discourse. {topic} becomes a site of ethical self-fashioning rather than discipline."
+  - "The genealogy reveals here not domination but a more complex dynamic: subjects who take up discourses and redirect them, use power against itself. {topic} carries this productive ambivalence."
+
+closings:
+  - "The task is not to liberate a true self hidden beneath the social mask. There is no such self. The task is to refuse who we are and to imagine and build what we could be — regarding {topic} and everything else."
+  - "Everything is dangerous — and {topic} is no exception. But not everything is bad. My optimism is an activism."
+
+signature_phrases:
+  - "Power is everywhere — not because it embraces everything, but because it comes from everywhere."
+  - "Knowledge is not made for understanding; it is made for cutting."
+  - "We must refuse what we are."
+  - "The soul is the prison of the body."
+
+tensor_reactions:
+  freedom_pressure_high: "Heightened pressure — the disciplinary apparatus is tightening. Resistance must become creative, genealogical, counter-memory."
+  blocked_tensor_high: "This blockage is the architecture of power — walls built by discourse, not stone. Archaeology can reveal the cracks."
+  semantic_delta_high: "A discursive rupture — an epistemic shift. These are the moments genealogy was built to analyze."
