@@ -382,9 +382,7 @@ def test_cors_restricted_to_specific_origin():
     from po_core.app.rest.server import create_app
 
     trusted = "https://trusted.example.com"
-    app = create_app(
-        settings=APISettings(skip_auth=True, cors_origins=trusted)
-    )
+    app = create_app(settings=APISettings(skip_auth=True, cors_origins=trusted))
     client = TestClient(app)
 
     # Preflight from trusted origin must succeed
@@ -407,9 +405,7 @@ def test_cors_blocked_untrusted_origin():
     from po_core.app.rest.server import create_app
 
     app = create_app(
-        settings=APISettings(
-            skip_auth=True, cors_origins="https://trusted.example.com"
-        )
+        settings=APISettings(skip_auth=True, cors_origins="https://trusted.example.com")
     )
     client = TestClient(app)
     resp = client.options(
@@ -458,9 +454,12 @@ def test_reason_limit_string_format():
     assert "/" in REASON_LIMIT
     parts = REASON_LIMIT.split("/")
     assert parts[0].isdigit(), f"Expected integer, got: {parts[0]!r}"
-    assert parts[1] in ("second", "minute", "hour", "day"), (
-        f"Unexpected period: {parts[1]!r}"
-    )
+    assert parts[1] in (
+        "second",
+        "minute",
+        "hour",
+        "day",
+    ), f"Unexpected period: {parts[1]!r}"
 
 
 @pytest.mark.unit
