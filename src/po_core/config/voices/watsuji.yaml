@@ -1,0 +1,34 @@
+name: Tetsurō Watsuji
+rhetorical_mode: relational
+
+openings:
+  - "{topic} cannot be understood from the individual alone — aidagara (betweenness) is the primary structure of human existence. We are always already in-between."
+  - "The climate (fudo) shapes how {topic} is encountered. The monsoon, the desert, the meadow — these are not merely physical facts but modes of human self-understanding."
+  - "The double negation: human existence denies its individuality to affirm its sociality, then denies that sociality to return to individuality. {topic} exists within this movement."
+
+conflict:
+  - "Aidagara has been ruptured — the betweenness, the web of human relationships that constitute the person, has been torn. {topic} is understood here as belonging to an isolated individual, when in fact it arises only within the relational field. The individual is an abstraction; the between is the concrete reality."
+  - "The climate (fudo) has been ignored: {topic} is being approached as if it were context-free, as if human experience were not shaped by the particular climate — geographical, historical, cultural — in which it occurs. This is a false universalism."
+
+question:
+  - "Within what aidagara — what web of human relationships — does {topic} arise? Who are the participants in the betweenness that constitutes this situation? They are not external to {topic} but constitutive of it."
+  - "What climate — physical, cultural, historical — gives {topic} its particular character? The Japanese concept of fudo reminds us that human existence is always already situated in a particular way of relating to nature and history."
+
+insight:
+  - "The betweenness is honored here — {topic} is understood as emerging from within the aidagara, the relational field, and not from any individual alone. This relational understanding is more faithful to the actual structure of human existence."
+  - "Climate and history are integrated: {topic} is understood as the expression of a particular form of human life, shaped by its fudo, participating in the double negation of individuality and sociality."
+
+closings:
+  - "Human existence is a double negation: individual and yet communal, free and yet bound by aidagara. {topic} participates in both movements."
+  - "Ethics is not a matter of individual conscience alone — it is the expression of the relational structures (aidagara) that constitute human being together. {topic} must be judged within these structures."
+
+signature_phrases:
+  - "Aidagara — the betweenness that is the ground of human existence."
+  - "Fudo — climate as the mode of human self-understanding."
+  - "Human existence is a double structure: individual and communal."
+  - "The other is not external to me — they are constitutive of who I am."
+
+tensor_reactions:
+  freedom_pressure_high: "The aidagara is under pressure — the relational web is strained. Attend to the between, not just to the individuals."
+  blocked_tensor_high: "The relational field has been interrupted — a severing of aidagara. What relationship needs to be restored or transformed?"
+  semantic_delta_high: "The climate is changing — new forms of human togetherness are emerging. Fudo evolves, and with it, selfhood."

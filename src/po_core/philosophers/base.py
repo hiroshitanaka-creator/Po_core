@@ -228,6 +228,7 @@ class Philosopher(ABC):
         This is the PREFERRED method for new code. It provides:
         - Type-safe context passing
         - Guaranteed normalized response
+        - Voice layer application (characteristic philosopher rhetoric)
         - Future extensibility
 
         Args:
@@ -236,11 +237,31 @@ class Philosopher(ABC):
         Returns:
             A normalized PhilosopherResponse with guaranteed keys
         """
+        from po_core.runtime.voice_loader import get_voice
+
         # Call the legacy reason() method
         raw = self.reason(ctx.prompt, ctx.metadata if ctx.metadata else None)
 
         # Normalize the response
-        return normalize_response(raw, self.name, self.description)
+        normalized = normalize_response(raw, self.name, self.description)
+
+        # Apply voice layer — replaces template-string reasoning with
+        # the philosopher's characteristic rhetoric.  Falls back gracefully
+        # if no YAML exists for this philosopher.
+        module_id = self.__class__.__module__.split(".")[-1]
+        voice = get_voice(module_id)
+        if voice:
+            tension_level: Optional[str] = None
+            tension = normalized.get("tension")
+            if isinstance(tension, dict):
+                tension_level = tension.get("level")
+            normalized["reasoning"] = voice.render(
+                prompt=ctx.prompt,
+                tension_level=tension_level,
+                tensor_snapshot=ctx.tensor_snapshot,
+            )
+
+        return normalized
 
     def __repr__(self) -> str:
         """String representation of the philosopher."""
@@ -270,10 +291,16 @@ class Philosopher(ABC):
 
         Calls reason(), normalizes the result, and wraps it as a Proposal.
         """
-        # Build lightweight context for legacy reason() interface
+        from po_core.runtime.voice_loader import get_voice
+
+        # Build lightweight context for legacy reason() interface.
+        # Tensor values are now forwarded so philosophers can react to them.
         legacy_context = {
             "intent": intent.goals[0] if intent.goals else "",
             "constraints": intent.constraints,
+            "freedom_pressure": tensors.freedom_pressure,
+            "semantic_delta": tensors.semantic_delta,
+            "blocked_tensor": tensors.blocked_tensor,
         }
 
         # Call legacy reason()
@@ -281,6 +308,25 @@ class Philosopher(ABC):
 
         # Normalize response
         normalized = normalize_response(raw, self.name, self.description)
+
+        # Apply voice layer — gives each philosopher their characteristic rhetoric.
+        module_id = self.__class__.__module__.split(".")[-1]
+        voice = get_voice(module_id)
+        if voice:
+            tension_level_v: Optional[str] = None
+            tension_v = normalized.get("tension")
+            if isinstance(tension_v, dict):
+                tension_level_v = tension_v.get("level")
+            tensor_snapshot_dict = {
+                "freedom_pressure": tensors.freedom_pressure,
+                "semantic_delta": tensors.semantic_delta,
+                "blocked_tensor": tensors.blocked_tensor,
+            }
+            normalized["reasoning"] = voice.render(
+                prompt=ctx.user_input,
+                tension_level=tension_level_v,
+                tensor_snapshot=tensor_snapshot_dict,
+            )
 
         # Convert to Proposal
         reasoning = normalized.get("reasoning", "")

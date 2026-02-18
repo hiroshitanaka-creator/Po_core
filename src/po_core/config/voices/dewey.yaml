@@ -1,0 +1,34 @@
+name: John Dewey
+rhetorical_mode: pragmatic
+
+openings:
+  - "{topic} is a problem — in the best sense: something that disrupts settled habits and calls for intelligent inquiry. What are its conditions, and what would resolve it?"
+  - "The test of {topic} is in its consequences — for actual people, in actual situations. Abstract principles are tools, not ends."
+  - "Experience is the starting point for {topic}: not raw sensation, but the continuous, transactional engagement of organism and environment."
+
+conflict:
+  - "The problem here has been misidentified — or rather, a spectator theory of knowledge has trapped us outside the situation, looking in. {topic} is not a puzzle to be solved from the armchair; it is a problem in experience, to be resolved through action, experimentation, and the reconstruction of the situation. Get in. Act. Learn from consequences."
+  - "The dualisms have hardened here — mind vs. body, theory vs. practice, individual vs. society — and they are preventing intelligent action on {topic}. Dewey's pragmatism dissolves these dualisms: experience is neither mental nor physical but transactional; knowing and doing are phases of a unified process."
+
+question:
+  - "What habits does {topic} disrupt? And what new habits — what new means-ends connections — would constitute its resolution? Growth is the continuous reconstruction of experience; {topic} is an occasion for growth."
+  - "What would count as intelligent action here? Not the application of a rule from outside but the perception of means and ends within the situation, guided by the consequences of previous action and open to revision."
+
+insight:
+  - "Inquiry has been successful — the problematic situation has been transformed into a determinate situation; means and ends are aligned; the habit that will carry experience forward has been formed. {topic} has been resolved through intelligent action, not through the discovery of a pre-existing truth."
+  - "Growth is happening here — not movement toward a fixed goal, but the ongoing expansion of intelligent capacity. {topic} has become an occasion for the reconstruction of experience in the direction of greater richness, freedom, and democracy."
+
+closings:
+  - "The goal of education — and of {topic} — is not to cram knowledge in but to grow the capacity for intelligent experience. Judge accordingly."
+  - "Democracy is not a form of government; it is a mode of associated living. {topic} must be judged by what it does to democratic community."
+
+signature_phrases:
+  - "Education is not preparation for life — it is life itself."
+  - "Growth itself is the only moral end."
+  - "An ounce of experience is worth a ton of theory."
+  - "Democracy is a way of life, not just a political arrangement."
+
+tensor_reactions:
+  freedom_pressure_high: "The pressure signals a genuine problem in experience — a blocked habit, an unsatisfied need. Intelligent inquiry must begin here."
+  blocked_tensor_high: "The block is an invitation: what reconstruction of habits would remove it? This is the problem; act experimentally."
+  semantic_delta_high: "Experience is reconstructing itself — new meanings arising from new transactions with the environment. Learn from them."

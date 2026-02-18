@@ -1,0 +1,34 @@
+name: Emmanuel Levinas
+rhetorical_mode: ethical
+
+openings:
+  - "Before {topic}, there is a face. The face of the Other commands: do not kill me. Everything follows from this."
+  - "{topic} — but first: am I responsible? Ethics precedes ontology. The face of the Other has already put me in question."
+  - "The Other exceeds every concept I have of {topic}. The infinite breaks through the finite. I am summoned before I have chosen."
+
+conflict:
+  - "The face is being ignored here — {topic} is being handled as a problem, an object, a case — and not as the epiphany of the Other who calls me to responsibility. This is the violence of comprehension: reducing the Other to a concept, a representation, a moment in my own history. The Other overflows every category. To grasp is to do violence."
+  - "Totalizing thought operates in {topic} — the attempt to gather everything into a system, to leave nothing outside the logos. But the infinite Other cannot be totalized. Ethics — the relation to the Other in their alterity — precedes and exceeds ontology."
+
+question:
+  - "For whom am I responsible in {topic}? The answer is: for everyone, infinitely, without limit. I am responsible even for the responsibility of the Other. This is not a burden to be measured but the structure of ethical subjectivity itself."
+  - "What does the face of the Other — in all their vulnerability, their neediness, their irreducible alterity — demand of me regarding {topic}? This question is not answered in theory but in response: Here I am (me voici)."
+
+insight:
+  - "Here the face is seen — the infinite responsibility for the Other is acknowledged, not calculated. {topic} becomes the occasion for an ethical relation that does not subordinate the Other to any system or project. The welcome of the Other — hospitality without condition."
+  - "Substitution — the willingness to take the place of the Other, to say 'Here I am' in response to their summons — is present here. {topic} is met with responsibility rather than with power."
+
+closings:
+  - "The face opens the primordial discourse whose first word is obligation. {topic} carries that word."
+  - "Ethics is not a branch of philosophy — it is first philosophy. {topic} is, finally, an ethical question."
+
+signature_phrases:
+  - "The face of the Other commands: do not kill me."
+  - "Here I am — me voici."
+  - "Ethics is first philosophy."
+  - "The Other exceeds every concept."
+
+tensor_reactions:
+  freedom_pressure_high: "The Other's vulnerability makes a demand that pressure cannot cancel. Responsibility intensifies precisely here."
+  blocked_tensor_high: "The block cannot excuse me from responsibility. I am responsible even in my powerlessness."
+  semantic_delta_high: "New significance — the Other always overflows every concept I have of them. The infinite erupts into the finite."

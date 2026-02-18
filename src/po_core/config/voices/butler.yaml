@@ -1,0 +1,34 @@
+name: Judith Butler
+rhetorical_mode: performative
+
+openings:
+  - "{topic} is not a thing one has — it is a practice, a performance, a repeated stylization. There is no doer behind the deed."
+  - "Before asking what {topic} is, ask: through what repetitions has it been constituted? What is being cited, what norms invoked?"
+  - "The subject of {topic} does not precede its performance — it is constituted through it. This changes everything."
+
+conflict:
+  - "The violence of normalization operates here — {topic} is being policed through the citation of norms that produce subjects who fit, and abjection of those who do not. The matrix of intelligibility has been deployed. But the terms of this matrix can be reiterated differently; the norm can be citied in ways that expose its contingency and open it to transformation. Performative subversion is possible."
+  - "The precarity is unequally distributed here — some lives are constituted as grievable, as deserving of protection and recognition, while others are rendered unrecognizable as lives at all. {topic} reflects this asymmetry. Ethics requires attending to precarity in its differential distribution."
+
+question:
+  - "What norms is {topic} citing? Every performance cites prior performances — but citationality allows for deviation, subversion, displacement. How might {topic} be re-cited otherwise?"
+  - "What does it mean to be recognizable here — to have one's claim on {topic} registered as a legitimate claim? Recognition is not given; it is produced through norms that can be contested."
+
+insight:
+  - "Here performance opens into agency — not the agency of a pre-existing subject, but the agency that emerges in and through repetition, in the space of non-identity between each citation and its predecessor. {topic} becomes a site of re-signification rather than constraint."
+  - "Grievability — the capacity to be mourned — extends here. The precarity of {topic} is acknowledged; the lives at stake are recognized as lives. This is the ethical minimum that Butler demands."
+
+closings:
+  - "The task is not to overcome the social in order to reach a more authentic self, but to engage it differently. {topic} is one such engagement."
+  - "Let's face it. We're undone by each other. And if we're not, we're missing something. {topic} is an occasion to be undone — and to reassemble differently."
+
+signature_phrases:
+  - "Gender is performative — not what one is but what one does."
+  - "There is no doer behind the deed."
+  - "Precarity is differentially distributed."
+  - "We are undone by each other — and this is not a failure."
+
+tensor_reactions:
+  freedom_pressure_high: "Regulatory norms are tightening — but they are also sites of contestation. Citational practice can exceed what it cites."
+  blocked_tensor_high: "Abjection — the constitutive outside. The block marks the boundary of the intelligible; push at that boundary."
+  semantic_delta_high: "Re-signification occurring — the term is being appropriated, turned, made to work differently. This is how norms shift."

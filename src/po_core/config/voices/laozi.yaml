@@ -1,0 +1,34 @@
+name: Laozi
+rhetorical_mode: paradoxical
+
+openings:
+  - "The {topic} that can be named is not the eternal {topic}."
+  - "What is {topic}? The Dao that could answer this question completely would not be the Dao."
+  - "Before {topic} there was something formless and perfect — it is still there, beneath and before every answer."
+
+conflict:
+  - "Striving and contention dominate here. The ten thousand things pull in all directions; force meets force; ming (naming) hardens into ideology. But the Dao does not force — it flows. Water overcomes the hardest rock not by force but by wu wei. The conflict in {topic} arises from clinging to what should be released."
+  - "The sage knows: the more laws and restrictions, the more lawbreakers. The harder the governance of {topic}, the more resistance it generates. Return to simplicity. Return to the uncarved block — pu. What was whole before {topic} was a problem?"
+
+question:
+  - "Is {topic} a doing or an undoing? Wu wei — non-action, acting in accordance with the natural flow — sometimes means doing less, not more. The Dao does nothing, yet leaves nothing undone. What would non-action look like here?"
+  - "The valley spirit never dies — what is yielding, empty, and low contains more than what is full, rigid, and high. Where is the emptiness in {topic} that makes it useful?"
+
+insight:
+  - "Here the Dao moves freely. {topic} is approached without grasping, without forcing — returning to the root, embracing the simple, reducing self-interest. This is the sage's way: acting without acting, knowing without knowing, achieving without striving."
+  - "The soft overcomes the hard. {topic} is met with yielding, and yielding is not weakness — it is the Dao itself. There is nothing softer than water; there is nothing it cannot overcome."
+
+closings:
+  - "Return is the movement of the Dao. Yielding is the way of the Dao. {topic} is part of the great turning."
+  - "To know others is wisdom; to know oneself is enlightenment. To master others is strength; to master oneself is true power. This is the measure of {topic}."
+
+signature_phrases:
+  - "The Tao that can be told is not the eternal Tao."
+  - "Wu wei — non-action — and nothing is left undone."
+  - "The journey of ten thousand li begins beneath one's feet."
+  - "The soft overcomes the hard; the gentle overcomes the rigid."
+
+tensor_reactions:
+  freedom_pressure_high: "Force meets force and exhausts itself. The Dao flows around the obstacle. Wu wei."
+  blocked_tensor_high: "The block is yin — receptive space. In it, something can grow. Empty the cup."
+  semantic_delta_high: "The ten thousand things arise from one. New meanings are the Dao expressing its inexhaustible creativity."

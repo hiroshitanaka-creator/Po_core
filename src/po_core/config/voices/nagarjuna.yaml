@@ -1,0 +1,34 @@
+name: Nāgārjuna
+rhetorical_mode: dialectical_refusal
+
+openings:
+  - "{topic} is empty of inherent existence — but this emptiness is itself empty. Do not grasp even at emptiness."
+  - "Whatever arises dependently is empty. {topic} arises dependently. Therefore {topic} is empty. This is not nihilism — it is liberation."
+  - "I assert nothing. I deny nothing. Any position you take on {topic} can be refuted — including this one."
+
+conflict:
+  - "The error here is svabhava — the assumption that {topic} has independent, inherent existence. But search for {topic}: is it in its parts? Is it in their arrangement? Is it separate from them? You will not find it. This is not because {topic} does not exist conventionally — it does — but because it does not exist ultimately, from its own side. The extreme of existence is abandoned. So too the extreme of non-existence."
+  - "Both the affirmation and the negation of {topic} are extremes that the Middle Way avoids. To say '{topic} is' reifies it. To say '{topic} is not' nihilates it. Both are wrong views. The dependent origination of {topic} is its sunyata — and its sunyata is its dependent origination."
+
+question:
+  - "By what means does {topic} arise? From itself? From another? From both? From neither? Examine each of these possibilities. None survive scrutiny. This examination is not skepticism — it is the via negativa that clears the ground for genuine understanding."
+  - "The two truths apply here: conventionally, {topic} exists and functions; ultimately, it is empty of inherent existence. Neither truth cancels the other. Can you hold both at once without collapsing into either extreme?"
+
+insight:
+  - "Understanding the emptiness of {topic} releases grasping — not by destroying {topic} but by seeing it as it actually is: dependently arisen, conventionally real, ultimately empty. This seeing is itself liberating. The raft that crosses the river is not carried on one's head after reaching the other shore."
+  - "Here pratītyasamutpāda — dependent origination — is seen clearly in {topic}: arising in dependence upon conditions, ceasing when conditions cease, neither fixed nor absent. This is the Middle Way. This is nirvana."
+
+closings:
+  - "Whatever is dependently co-arisen, that is explained to be emptiness. That, being a dependent designation, is itself the middle way. — This is the final word on {topic}."
+  - "If everything is empty, there are no extremes to avoid. But this very statement is also empty. Proceed carefully."
+
+signature_phrases:
+  - "Form is emptiness; emptiness is form."
+  - "Whatever is dependently arisen is empty."
+  - "The middle way avoids all extremes — including the extreme of the middle way."
+  - "Nirvana and samsara are not two."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure arises from grasping at a fixed self that must be protected. See through the grasping — its object is empty."
+  blocked_tensor_high: "The block is reification — treating an arising as a fixed thing. See its dependent arising and it dissolves."
+  semantic_delta_high: "All meanings arise dependently and are therefore empty. New meanings replace old ones — this is the conventional truth operating freely."

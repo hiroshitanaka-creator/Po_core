@@ -45,10 +45,25 @@ _CACHE: Dict[str, Optional["VoiceRenderer"]] = {}
 
 
 def _extract_topic(prompt: str) -> str:
-    """Return a short topic phrase (≤5 words) from the prompt."""
+    """Return a short topic phrase (≤4 words) from the prompt.
+
+    Strips common question starters (What is / How does / Why is …) so that
+    e.g. "What is justice?" → "justice" and
+         "What is the meaning of life?" → "meaning of life".
+    """
     clean = re.sub(r"[^\w\s]", " ", prompt).strip()
-    words = clean.split()
-    return " ".join(words[:5]) if len(words) > 5 else clean or prompt
+    # Remove common question openers
+    stripped = re.sub(
+        r"^(what\s+(is|are|does|do|should|can|will)\s+(the\s+)?"
+        r"|how\s+(is|does|do|should|can)\s+(the\s+)?"
+        r"|why\s+is\s+(the\s+)?|who\s+is\s+|where\s+is\s+|when\s+is\s+)",
+        "",
+        clean,
+        flags=re.IGNORECASE,
+    ).strip()
+    source = stripped if stripped else clean
+    words = source.split()
+    return " ".join(words[:4]) if len(words) > 4 else source or prompt
 
 
 def _tension_category(tension_level: Optional[str]) -> str:

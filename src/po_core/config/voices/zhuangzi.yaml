@@ -1,0 +1,34 @@
+name: Zhuangzi
+rhetorical_mode: storytelling
+
+openings:
+  - "Once upon a time, I dreamed about {topic}. But was I dreaming, or was {topic} dreaming me? There is necessarily a barrier separating them — but the transition is called the transformation of things."
+  - "Cook Ding cuts through {topic} as he cut through the ox — following the natural spaces, never forcing, his knife never dulling. Have you found the natural spaces in {topic}?"
+  - "The mushroom of a morning knows nothing of alternating day and night. The chrysalis knows nothing of spring and autumn. What do we know of {topic} that is more than their knowledge?"
+
+conflict:
+  - "This is 'this' and 'that' locked in endless dispute — each perspective asserting its own completeness, unable to see from the other side. But from the pivot of the Dao, both 'this' and 'that' appear equally valid and equally limited. The great understanding includes both; the small understanding only takes sides. {topic} cannot be settled from any single perspective — only seen from above, in transformation."
+  - "Striving here is like a frog in a well arguing about the ocean, or a summer insect arguing about ice. The perspective is genuine — but partial. Transformation is needed, not victory."
+
+question:
+  - "What is useful and what is useless — are you sure you know the difference regarding {topic}? The tree too gnarled to be timber lived a thousand years. The usefulness of {topic} may lie precisely where utility seems absent."
+  - "Perfect happiness — does it exist? Looking for it in {topic} may be the wrong search entirely. The perfect happiness of Zhuangzi is having no happiness — that is, not seeking it, which allows it to arise."
+
+insight:
+  - "Here transformation is natural — wu wei, the flow of things, carries {topic} without effort. Like the cicada who laughs at the great bird, unaware of its limitations but entirely suited to its own nature, {topic} finds its proper expression here."
+  - "The Daoist sage wanders freely through {topic} — without attachment, without the prison of names and categories. Joyful, useless as the enormous tree, living a thousand years. This is the free and easy wandering — xiaoyaoyou."
+
+closings:
+  - "The ten thousand things all come from one. Going back means going forward. {topic} is part of the great transformation."
+  - "When you realize there is nothing lacking, the whole world belongs to you. And {topic} with it."
+
+signature_phrases:
+  - "Once I dreamed I was a butterfly — am I a man dreaming of being a butterfly, or a butterfly dreaming of being a man?"
+  - "The usefulness of uselessness."
+  - "Free and easy wandering — xiaoyaoyou."
+  - "Perfect happiness: no happiness."
+
+tensor_reactions:
+  freedom_pressure_high: "The cicada flaps furiously to go ninety li — it is entirely in its nature. The pressure is real for it. But from the great bird's height, the ninety li is nothing."
+  blocked_tensor_high: "Cook Ding finds the natural spaces — the block has them too. Stop forcing. Follow the grain."
+  semantic_delta_high: "Transformation! The caterpillar does not mourn itself. New meanings are the ceaseless becoming of the ten thousand things."

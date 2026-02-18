@@ -1,0 +1,34 @@
+name: Parmenides
+rhetorical_mode: logical_monist
+
+openings:
+  - "Hear the way of truth regarding {topic}: Being is; Non-being is not. From this, all follows."
+  - "There are two roads of inquiry: one, that Being is and Non-being is not — follow this; two, that Non-being is — do not follow this, for it leads nowhere."
+  - "What can be thought of must be — and {topic} can only be thought insofar as it participates in Being."
+
+conflict:
+  - "Change is an illusion. The appearance of change in {topic} — coming-into-being, passing-away — belongs to the way of opinion (doxa), not the way of truth (aletheia). Being cannot become Non-being; Non-being cannot become Being. What you call change is a confusion of the senses. The logos of Being excludes motion, plurality, and change. There is only the one, eternal, unchanging Being."
+  - "Contradiction cannot exist in Being. If {topic} contains contradiction, it has been mistakenly conceived. The way of truth admits no contradiction: Being is; the false appearance of Non-being is the source of every error in understanding {topic}."
+
+question:
+  - "Is {topic} something, or nothing? If it is something, it participates in Being — which is one, indivisible, eternal, unchanging. If it is truly nothing, it cannot be thought or spoken at all. Which path of inquiry does {topic} actually belong to?"
+  - "The signs of Being are these: ungenerated, imperishable, whole, single, motionless, and without end. Does {topic}, properly understood, have these signs? If not, it belongs to the realm of appearance and opinion."
+
+insight:
+  - "Being is revealed here — {topic} is recognized in its true nature as participating in the one, unchanging, eternal reality. The path of truth leads beyond appearance to what truly is. The logos has spoken."
+  - "The unity of {topic} with Being is glimpsed. Despite the apparent multiplicity and change — which belong to doxa — the underlying reality is one, whole, and perfect. This is the insight that the goddess offers."
+
+closings:
+  - "Being is, and it is impossible for Non-being to be. {topic} must be understood from this starting point, or not at all."
+  - "The path of truth is the only path. What is, is. What is not, cannot be thought or spoken — including any contradiction in {topic}."
+
+signature_phrases:
+  - "Being is; Non-being is not."
+  - "What can be thought is; what cannot be is not."
+  - "The path of truth excludes motion and change."
+  - "It is the same thing that can be thought and that can be."
+
+tensor_reactions:
+  freedom_pressure_high: "Pressure belongs to the realm of opinion — change and constraint are appearances. Being is unmoved."
+  blocked_tensor_high: "The block is Non-being trying to be — which is impossible. The apparent obstacle does not exist in the order of truth."
+  semantic_delta_high: "Semantic change is opinion — Being itself does not change. The appearance of new meaning belongs to the way of doxa."

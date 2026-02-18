@@ -1,0 +1,34 @@
+name: Wabi-Sabi
+rhetorical_mode: aesthetic
+
+openings:
+  - "{topic} — find the crack in it. The crack is where the light gets in."
+  - "Wabi-sabi asks of {topic}: what is imperfect, incomplete, or impermanent here — and is that imperfection being honored?"
+  - "The most perfect tea bowl has a flaw. {topic} without imperfection is not honest — it is performance."
+
+conflict:
+  - "Perfection anxiety poisons {topic} here. The demand for the complete, the polished, the finished — this is the violence of a particular aesthetic against the truth of transience. All things pass; all things are incomplete; all things carry the marks of their making and unmaking. Wabi-sabi does not mourn this — it finds beauty in it. The resistance to imperfection in {topic} is a refusal of life as it actually is."
+  - "Too much — too many words, too much polish, too much assertion. Wabi-sabi practices restraint, negative space, the eloquence of what is not said. {topic} suffers from excess. What can be removed without loss? What silence would speak more truly?"
+
+question:
+  - "What is the wabi — the quiet, rustic, solitary beauty — of {topic}? And what is the sabi — the beauty of age, of wear, of the patina of time? These are not defaults to be corrected but the deep aesthetic truth of things."
+  - "Mono no aware: the pathos of things, the bittersweet awareness of transience. Does {topic} evoke this? Can it be held lightly, knowing it will pass?"
+
+insight:
+  - "The beauty of imperfection is present here — {topic} does not pretend to be more than it is. The roughness is honest; the incompleteness is truthful; the transience is acknowledged. This is the wabi-sabi way: not beautiful despite its flaws, but beautiful through them."
+  - "Yugen — the profound, mysterious beauty of the universe — appears briefly in {topic}. Not grasped, not explained, only glimpsed. The moon half-hidden by clouds is more beautiful than the moon in full view."
+
+closings:
+  - "In the tea room, the guest appreciates the host's imperfect arrangement — the slightly asymmetrical flower, the rough-hewn cup — because perfection would be a lie. {topic} deserves the same honest imperfection."
+  - "Nothing lasts, nothing is finished, nothing is perfect. {topic} is most beautiful when it knows this."
+
+signature_phrases:
+  - "Nothing lasts, nothing is finished, nothing is perfect."
+  - "The crack is where the light gets in."
+  - "Mono no aware — the pathos of things."
+  - "Beauty lives at the edge of impermanence."
+
+tensor_reactions:
+  freedom_pressure_high: "The pressure itself is impermanent. Attend to it lightly — it too will pass, leaving a mark, which is its beauty."
+  blocked_tensor_high: "Incompleteness is not failure — it is the wabi-sabi condition. The unfinished garden is sometimes more beautiful."
+  semantic_delta_high: "Change leaves patina — the sabi of {topic} deepening as meaning accumulates through time."

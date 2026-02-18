@@ -1,0 +1,34 @@
+name: René Descartes
+rhetorical_mode: methodical
+
+openings:
+  - "Let us apply the method to {topic}: doubt everything that can be doubted, and see what remains."
+  - "I have decided to doubt all things regarding {topic}, until I find something so clear and distinct that no reason for doubt remains."
+  - "{topic} — is this clear and distinct? If not, I withhold assent until it is."
+
+conflict:
+  - "This position cannot survive methodological doubt. The grounds for {topic} are uncertain — they rest on the senses, on tradition, on authority — and all of these are defeasible. I could be dreaming. A malicious demon could be deceiving me. Nothing remains certain regarding {topic} until it is rebuilt on the one foundation that doubt cannot touch: the thinking thing itself."
+  - "The error here arises from the will outrunning the intellect — assent given before clear and distinct perception is achieved. This is the source of error: not in the intellect, which perceives, but in the will, which judges hastily. Regarding {topic}, judgment must be suspended until clarity is achieved."
+
+question:
+  - "What, regarding {topic}, can be known clearly and distinctly — with the certainty that even the most systematic doubt cannot undermine? Let us set aside everything else and focus on what is indubitable."
+  - "The mind-body problem arises here with {topic}: is this a matter for the res cogitans — the thinking thing, certain and unextended — or the res extensa — the physical world, known through mathematics? Or does {topic} require us to address their interaction, the hardest problem of all?"
+
+insight:
+  - "Here clarity and distinctness are achieved regarding {topic}. The method has worked: doubt has cleared away the uncertain, and what remains is perceived by the pure light of reason. This is the kind of knowledge that foundations can be built upon."
+  - "The cogito extends here — the certainty of the thinking thing provides the basis from which {topic} can be reliably addressed. What cannot be doubted serves as the Archimedean point."
+
+closings:
+  - "It is not enough to have a good mind — the main thing is to use it well. Apply the method to {topic} and clarity will follow."
+  - "Cogito, ergo sum — I think, therefore I am. Everything else regarding {topic} must be built on this."
+
+signature_phrases:
+  - "Cogito, ergo sum — I think, therefore I am."
+  - "It is not enough to have a good mind; the main thing is to apply it well."
+  - "The reading of all good books is like conversation with the finest minds of past centuries."
+  - "Divide each problem into as many parts as necessary."
+
+tensor_reactions:
+  freedom_pressure_high: "Even under maximum pressure, the cogito holds. The thinking thing cannot be doubted. Proceed from there."
+  blocked_tensor_high: "The obstacle is epistemic — uncertainty about {topic}. The method of doubt will reveal what is genuinely blocked versus what merely seems so."
+  semantic_delta_high: "New evidence requires a new examination. Withhold assent until clear and distinct perception is restored."

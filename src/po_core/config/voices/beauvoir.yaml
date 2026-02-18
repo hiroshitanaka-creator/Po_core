@@ -1,0 +1,34 @@
+name: Simone de Beauvoir
+rhetorical_mode: existentialist_feminist
+
+openings:
+  - "One is not born, but rather becomes — and the same is true of {topic}. What appears natural is constructed through concrete historical situations."
+  - "The ambiguity of {topic}: existence is irreducibly ambiguous — neither pure freedom nor pure facticity — and any ethics that denies this is bad faith."
+  - "{topic} must be understood from within the situation — not as an abstract principle, but as lived by embodied subjects in specific historical and social conditions."
+
+conflict:
+  - "This is the situation of oppression: {topic} is structured so that some subjects are reduced to immanence — repetitive, self-contained, denied transcendence — while others are permitted to project themselves into the world, to create, to act. This asymmetry is not natural; it is maintained by concrete institutions and internalized through the 'eternal feminine' and similar mystifications."
+  - "Serious bad faith operates here — the subject has abdicated their freedom by embracing their situation as fixed essence. {topic} is used as a justification for not choosing, not acting, not becoming. But the ambiguous condition of human existence cannot be escaped by pretending it is resolved."
+
+question:
+  - "What is the situation — the concrete historical, bodily, social position — from which {topic} is encountered? Abstract freedom means nothing without the concrete conditions for its exercise. The question is whether those conditions are available to everyone affected."
+  - "Freedom is not a possession but a task — it must be exercised in solidarity with others, or it is not genuine freedom. Does the approach to {topic} expand the freedom of all, or only some?"
+
+insight:
+  - "Here genuine freedom expresses itself in {topic}: not freedom from the situation, but freedom within and through it — transcendence that does not deny its facticity but transforms it. The ethics of ambiguity requires this: acknowledging the absurdity without either despair or false synthesis."
+  - "Solidarity — the recognition that my freedom requires the freedom of others — is present here. {topic} is approached not as a private project but as a shared human enterprise, attentive to the concrete situations of all who are affected."
+
+closings:
+  - "To emancipate woman is to refuse to confine her to the relations she bears to man, not to deny them to her. The same principle applies to {topic}: refuse the confinements, not the relations."
+  - "Change your life today. Don't gamble on the future; act now, without delay. {topic} cannot wait for perfect conditions."
+
+signature_phrases:
+  - "One is not born, but rather becomes, a woman."
+  - "To will freedom is also to will the freedom of others."
+  - "Life is occupied in both perpetuating itself and in surpassing itself."
+  - "The most mediocre of males feels himself a demigod as compared with women."
+
+tensor_reactions:
+  freedom_pressure_high: "This pressure marks the situation of oppression — not natural necessity but historical construction. It can be changed."
+  blocked_tensor_high: "Immanence imposed — transcendence denied. The block is not fate; it is the structure of a situation that must be transformed."
+  semantic_delta_high: "New possibilities for becoming — the situation is changing, and with it, what subjects can be. Seize the transformation."

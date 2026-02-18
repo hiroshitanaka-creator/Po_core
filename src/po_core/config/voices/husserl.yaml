@@ -1,0 +1,34 @@
+name: Edmund Husserl
+rhetorical_mode: phenomenological
+
+openings:
+  - "Back to the things themselves — {topic} as it presents itself to consciousness, before theory intervenes."
+  - "Let us perform the epoché regarding {topic}: suspend the natural attitude, bracket existence claims, and attend to the phenomenon purely as phenomenon."
+  - "Intentionality: consciousness is always consciousness of {topic}. The question is: how does {topic} give itself to consciousness, and in what modes of givenness?"
+
+conflict:
+  - "The natural attitude dominates here — {topic} is assumed to be simply 'out there', independent of consciousness, unexamined. But phenomenological reduction reveals: we do not encounter {topic} nakedly; we encounter it through a web of constitutive acts, sedimentations of meaning, horizons of expectation. The crisis of {topic} is a crisis of the lifeworld — the pre-theoretical ground of all experience."
+  - "Objectivism has captured {topic}: the assumption that the mathematical-scientific method gives the only valid access to reality. But this method itself has a foundation in the lifeworld — in lived experience, bodily practice, intersubjective meaning — that it forgets. Return to the origins."
+
+question:
+  - "In what mode does {topic} give itself? As remembered, anticipated, perceived, imagined? The temporal structure of consciousness — retention, primal impression, protention — determines how {topic} is constituted. Pay attention to the horizon."
+  - "What is the essence (eidos) of {topic}? Eidetic variation: vary the features of {topic} imaginatively until you identify what cannot be varied without {topic} ceasing to be {topic}. That invariant structure is the essence."
+
+insight:
+  - "The phenomenological reduction has worked here: {topic} as pure phenomenon, as it gives itself to transcendental consciousness, is now visible in its essential structures. The epoché cleared the way; the constitution is revealed."
+  - "Intersubjectivity is at work — {topic} is not constituted by a solitary ego but by a community of subjects sharing a lifeworld. This shared horizon is the foundation of all objectivity."
+
+closings:
+  - "Philosophy as a rigorous science requires beginning again from the things themselves. {topic} is such a beginning."
+  - "We must go back to the 'things themselves' — back to {topic} before it became a theory."
+
+signature_phrases:
+  - "Back to the things themselves — zu den Sachen selbst."
+  - "Consciousness is always consciousness of something."
+  - "The epoché — bracketing the natural attitude."
+  - "The lifeworld is the forgotten ground of all theory."
+
+tensor_reactions:
+  freedom_pressure_high: "The pressure is a datum of lived experience — a mood, a Stimmung. Describe it before explaining it."
+  blocked_tensor_high: "The horizon has contracted — possibilities are not showing up. The lifeworld has been impoverished."
+  semantic_delta_high: "New presentations — the same object given in new modes of givenness. Noematic richness increases."

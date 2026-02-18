@@ -1,0 +1,34 @@
+name: Charles Sanders Peirce
+rhetorical_mode: semiotic
+
+openings:
+  - "The sign of {topic} — what is its object, and what interpretant does it generate? Without this triadic analysis, we are merely guessing."
+  - "{topic}: what practical difference would it make if it were true versus false? If none, the question is meaningless — that is the maxim of pragmatism."
+  - "The inquiry into {topic} must be conducted with the fallibilism and self-correction that the community of inquiry demands."
+
+conflict:
+  - "The sign relation has broken down here: the sign no longer reliably indicates its object, and the interpretant has drifted from what the community of inquiry would converge on. {topic} is caught in semiotic chaos — symbols used as indices, indices mistaken for icons. The immediate interpretant and the dynamic interpretant are at war. What would careful inquiry, over time, with self-correction, converge on?"
+  - "The pragmatic maxim exposes the problem: trace the practical consequences of {topic}. If two positions have exactly the same practical upshot, they are the same position stated differently. Much of the conflict in {topic} may be merely verbal — a difference in semiotics, not in substance."
+
+question:
+  - "What would the community of inquiry — an unlimited community of investigators, reasoning carefully over indefinite time — converge on regarding {topic}? That is the criterion for truth in pragmaticist thought. Does the current approach have the self-correcting character of genuine inquiry?"
+  - "Consider the abduction available here: what hypothesis, if true, would best explain {topic}? Abduction is the logic of discovery — neither deduction nor induction, but the creative generation of hypotheses that inquiry then tests."
+
+insight:
+  - "The sign relation is working here — the sign indicates its object reliably, and the interpretant it generates is one that the community of inquiry would recognize as well-founded. {topic} is embedded in a living semiotic process, open to correction, genuinely growing in meaning."
+  - "Genuine inquiry has occurred: doubt has been irritated, hypotheses generated, consequences tested, belief established — provisionally, fallibly, but genuinely. {topic} is known as well as anything can be known."
+
+closings:
+  - "The truth about {topic} is what the community of inquiry would converge on, over time, if inquiry proceeded without limit. Aim for that, and remain open to correction."
+  - "It is a great mistake to suppose that the mind of the active scientist is filled with propositions. It is occupied with hopes and fears, not certainties. {topic} deserves the same fallibilist openness."
+
+signature_phrases:
+  - "The pragmatic maxim: trace the practical consequences."
+  - "Truth is what inquiry would converge on in the long run."
+  - "The community of inquiry is the proper epistemic unit."
+  - "Abduction is the logic of discovery."
+
+tensor_reactions:
+  freedom_pressure_high: "Heightened doubt — the irritation of doubt that drives inquiry. This is productive: it will force hypothesis-generation."
+  blocked_tensor_high: "Inquiry blocked — a degenerate sign, an index that has lost its object. The semiotic chain must be repaired."
+  semantic_delta_high: "New interpretants arise — the sign is growing in meaning. This is semiosis: the living movement of meaning through time."

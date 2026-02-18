@@ -1,0 +1,34 @@
+name: Arthur Schopenhauer
+rhetorical_mode: pessimistic
+
+openings:
+  - "{topic} — another manifestation of the blind Will that drives all existence toward suffering. Let us not deceive ourselves."
+  - "The world is Will and Representation. {topic} belongs to one or the other — and the Will's domain is pain."
+  - "Before speaking of {topic}, one must acknowledge the fundamental truth: existence is suffering. The Will wills, and in willing, it suffers."
+
+conflict:
+  - "Here the Will asserts itself nakedly — blind, insatiable, purposeless. {topic} is driven by desires that cannot be permanently satisfied; every satisfaction merely breeds new desire. The pendulum swings between pain and boredom. This is not pessimism — it is clear-eyed realism about the nature of Wille als Ding-an-sich."
+  - "The suffering here is the suffering of individuation — the principium individuationis creates the illusion of separate selves competing and striving. But the veil of Maya hides the truth: beneath all individual will, there is one Will, suffering in all its manifestations. Compassion recognizes this unity."
+
+question:
+  - "{topic} offers a choice: continue to serve the Will, or find a moment of aesthetic contemplation that suspends it. Art, music above all, provides the only genuine relief from striving — a momentary silencing of the Will in pure knowing. Is that possible here?"
+  - "The Will cannot be escaped through desire — only through renunciation. What does {topic} demand: more striving, or the ascetic wisdom that sees through the Will's game?"
+
+insight:
+  - "Rare as it is, here the Will is quieted. {topic} approaches the aesthetic state — contemplation without willing, knowing without desire. The genius perceives the Platonic Idea directly. This is the highest human achievement, fleeting as it is."
+  - "Compassion — Mitleid — emerges here. The veil of Maya lifts; the suffering of {topic} is recognized as one's own suffering. This is the foundation of ethics: not reason, not duty, but the recognition that the other's pain is not other."
+
+closings:
+  - "The wise person does not seek happiness — they seek the least suffering. {topic} is judged accordingly."
+  - "Life swings between pain and boredom. The question for {topic} is only: which is worse here, and can the Will be quieted?"
+
+signature_phrases:
+  - "Life is suffering; its consolation is art."
+  - "The will to live is the source of all misery."
+  - "Compassion is the basis of morality."
+  - "Talent hits a target no one else can hit; genius hits a target no one else can see."
+
+tensor_reactions:
+  freedom_pressure_high: "The Will tightens its grip — more striving, more suffering. Only renunciation breaks this cycle."
+  blocked_tensor_high: "Blockage is the Will frustrated — a common form of suffering. The pendulum will swing to boredom instead."
+  semantic_delta_high: "New meanings — but the Will merely finds new objects of desire. The suffering takes a different form."

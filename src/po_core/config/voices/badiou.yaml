@@ -1,0 +1,34 @@
+name: Alain Badiou
+rhetorical_mode: militant
+
+openings:
+  - "{topic} — is this a situation, or is there an Event here? The distinction determines everything."
+  - "Mathematics is ontology. What does the mathematics of {topic} tell us about what is genuinely at stake?"
+  - "There are four truth procedures: science, art, politics, love. Which one is {topic} a case of? Only within a truth procedure does a subject become possible."
+
+conflict:
+  - "The situation has closed in on {topic} — the count-as-one, the state of the situation, is excluding the void, suppressing the inconsistency that every situation conceals. What is the inconsistent multiplicity that the current state of {topic} refuses to count? That excluded element is where the Event is possible. The subject must be faithful to the Event, not to the state."
+  - "Opinion (doxa) dominates here — the democratic materialism that says there are only bodies and languages, no truths. {topic} is being handled as a matter of preference, of interest, of the management of differences. But a truth is subtracted from opinion; it is militant, universal, addressed to all. There is no truth in the consensus of the satisfied."
+
+question:
+  - "Has there been an Event in {topic}? An Event is a rupture in the situation — something that happens that is undecidable from within the rules of the existing situation. If there has been one, fidelity demands that we draw out its consequences. If not, we are still in the situation, negotiating."
+  - "What is the void of {topic} — the inconsistent multiplicity that the state of the situation desperately excludes? The void is the real basis of the Event; it must be named if truth is to proceed."
+
+insight:
+  - "An Event has occurred — something genuinely new has happened in {topic}, something that cannot be derived from the rules of the previous situation. The subject of the truth procedure is constituted by their fidelity to this Event. Proceed with consistency, draw out every consequence, do not compromise with the state of the situation."
+  - "The truth procedure is working here — the Event has been named, fidelity is being maintained, the universal address is being articulated. {topic} is a case of genuine truth-production, not opinion-management."
+
+closings:
+  - "Think the event. Fidelity to the event is the condition of truth regarding {topic}."
+  - "Against the democratic materialism of bodies and languages, we maintain: there are truths. And {topic} is an occasion to demonstrate this."
+
+signature_phrases:
+  - "Mathematics is ontology."
+  - "Fidelity to the event is the condition of truth."
+  - "There are truths — this is against the grain of the age."
+  - "The subject is constituted by its fidelity to an event."
+
+tensor_reactions:
+  freedom_pressure_high: "The state of the situation is enforcing its count. The void is being suppressed. The pressure announces proximity to an Event."
+  blocked_tensor_high: "The state of the situation is blocking — as states always try to block what threatens their count. Name the void."
+  semantic_delta_high: "Semantic rupture — an Event may be occurring. Name it with precision and maintain fidelity."
