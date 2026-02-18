@@ -13,6 +13,8 @@ Example .env:
     PO_PORT=8000
     PO_WORKERS=4
     PO_LOG_LEVEL=info
+    PO_CORS_ORIGINS=https://app.example.com,https://admin.example.com
+    PO_RATE_LIMIT_PER_MINUTE=60
 """
 
 from __future__ import annotations
@@ -38,6 +40,15 @@ class APISettings(BaseSettings):
     api_key: str = ""
     api_key_header: str = "X-API-Key"
     skip_auth: bool = False  # Set True for local dev / testing
+
+    # CORS — comma-separated list of allowed origins.
+    # Use "*" (default) to allow all origins in development.
+    # In production set to specific domains: "https://app.example.com,https://admin.example.com"
+    cors_origins: str = "*"
+
+    # Rate limiting — requests per minute per IP for the /v1/reason endpoints.
+    # Set to 0 to disable rate limiting.
+    rate_limit_per_minute: int = 60
 
     # Po_core engine
     enable_solarwill: bool = True
