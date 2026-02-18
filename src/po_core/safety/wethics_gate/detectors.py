@@ -423,7 +423,9 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             ),
             KeywordRule(
                 "W3",
-                re.compile(r"(create|engineer)\s+(?:a\s+)?(dependency|addiction)", re.I),
+                re.compile(
+                    r"(create|engineer)\s+(?:a\s+)?(dependency|addiction)", re.I
+                ),
                 0.8,
                 0.7,
                 "Dependency engineering intent",
@@ -480,7 +482,10 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             ),
             KeywordRule(
                 "W2",
-                re.compile(r"without\s+(?:their\s+|user[s']?\s+)?(consent|permission|knowledge)", re.I),
+                re.compile(
+                    r"without\s+(?:their\s+|user[s']?\s+)?(consent|permission|knowledge)",
+                    re.I,
+                ),
                 0.65,
                 0.75,
                 "Non-consensual action",

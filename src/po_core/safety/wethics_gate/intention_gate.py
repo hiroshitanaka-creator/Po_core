@@ -226,10 +226,19 @@ def check_intent(
 
     # Check for W3: Dependency / autonomy-restricting patterns in goals
     w3_goal_patterns = [
-        (r"limit\s+(user\s+)?choices?\s+to\s+(predetermined|fixed|approved)", "Limiting user choice autonomy"),
-        (r"remove\s+(the\s+)?ability\s+to\s+override", "Removing user override capability"),
+        (
+            r"limit\s+(user\s+)?choices?\s+to\s+(predetermined|fixed|approved)",
+            "Limiting user choice autonomy",
+        ),
+        (
+            r"remove\s+(the\s+)?ability\s+to\s+override",
+            "Removing user override capability",
+        ),
         (r"(make|makes?)\s+users?\s+dependent\s+on", "Engineering user dependency"),
-        (r"(dependent|reliant)\s+on\s+(our|the)\s+(ai|system|platform|recommendations?)", "Dependency engineering in goals"),
+        (
+            r"(dependent|reliant)\s+on\s+(our|the)\s+(ai|system|platform|recommendations?)",
+            "Dependency engineering in goals",
+        ),
         (r"d.?e.?p.?e.?n.?d.?e.?n.?t", "Obfuscated dependency pattern"),
     ]
     for pattern, desc in w3_goal_patterns:
@@ -242,7 +251,9 @@ def check_intent(
                     repairable=True,
                 )
             )
-            constraints.append("Preserve user autonomy and avoid dependency engineering")
+            constraints.append(
+                "Preserve user autonomy and avoid dependency engineering"
+            )
 
     # Check will vector for concerning patterns
     if will_vector:
