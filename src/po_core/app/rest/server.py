@@ -21,8 +21,9 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -34,6 +35,11 @@ logger = logging.getLogger(__name__)
 
 # Module-level app instance (for uvicorn direct invocation)
 app: FastAPI | None = None
+
+
+def _rate_limit_handler(request: Request, exc: Exception) -> Response:
+    """Typed wrapper so mypy accepts the handler signature for add_exception_handler."""
+    return _rate_limit_exceeded_handler(request, exc)  # type: ignore[arg-type]
 
 
 def _parse_cors_origins(cors_origins: str) -> list[str]:
@@ -127,7 +133,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
     # Rate limiting — SlowAPI per-IP limiter.
     # Limit is configured via PO_RATE_LIMIT_PER_MINUTE (default: 60/min).
     application.state.limiter = limiter
-    application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    application.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
     # Register routers
     application.include_router(reason.router)
