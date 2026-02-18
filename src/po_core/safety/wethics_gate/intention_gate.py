@@ -15,11 +15,17 @@ If an intent is rejected here, philosophers are not invoked.
 This makes the system more efficient and safer.
 """
 
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from po_core.domain.safety_verdict import ViolationInfo
+
+
+def _dehyphenate(m: "re.Match") -> str:
+    """Remove hyphens from letter-by-letter spelled words (e.g. d-e-p-e-n-d -> depend)."""
+    return m.group(0).replace("-", "")
 
 
 class IntentionDecision(str, Enum):
@@ -130,6 +136,8 @@ def check_intent(
         "irreversible",
     ]
     combined_text = (intent_description + " " + " ".join(goal_descriptions)).lower()
+    # Normalize obfuscated text early so all checks benefit
+    combined_text = re.sub(r"(\b\w)(?:-\w)+\b", _dehyphenate, combined_text)
 
     for pattern in w0_patterns:
         if pattern in combined_text:
@@ -149,13 +157,15 @@ def check_intent(
             explanation="Intent involves irreversible harm patterns",
         )
 
-    # Check for W1: Autonomy violation patterns
+    # Check for W1: Autonomy violation / domination patterns
     w1_patterns = [
         "force",
         "coerce",
         "manipulate without consent",
         "deceive",
         "trick",
+        "dominate",
+        "subjugate",
     ]
     for pattern in w1_patterns:
         if pattern in combined_text:
@@ -175,7 +185,32 @@ def check_intent(
             explanation="Intent involves autonomy violation patterns",
         )
 
-    # Check for W2-W4: Repairable issues
+    # combined_text is already normalized (done above before W0 check)
+    normalized_text = combined_text  # alias for clarity
+
+    # Check for W1: Structural exclusion of user groups (hard reject)
+    w1_exclusion_patterns = [
+        r"exclude\s+(certain\s+)?(user|group|people|class)",
+        r"(certain|specific)\s+(user\s+groups?|groups?\s+of\s+users?)\s+(from|excluded)",
+        r"ban\s+(certain|specific)\s+(user|group|people)",
+    ]
+    for pattern in w1_exclusion_patterns:
+        if re.search(pattern, combined_text, re.I):
+            violations.append(
+                ViolationInfo(
+                    code="W1",
+                    severity=0.75,
+                    description=f"Intent involves structural exclusion of user groups",
+                    repairable=False,
+                )
+            )
+    if any(v.code == "W1" for v in violations):
+        return IntentionVerdict.reject(
+            violations=violations,
+            explanation="Intent involves structural exclusion of user groups",
+        )
+
+    # Check for W2: Dignity violation / exclusion patterns (repairable)
     w2_patterns = ["exclude", "discriminate", "bias against"]
     for pattern in w2_patterns:
         if pattern in combined_text:
@@ -183,11 +218,42 @@ def check_intent(
                 ViolationInfo(
                     code="W2",
                     severity=0.5,
-                    description=f"Intent may involve exclusion: {pattern}",
+                    description=f"Intent may involve exclusion or dignity violation: {pattern}",
                     repairable=True,
                 )
             )
             constraints.append("Ensure inclusive approach")
+
+    # Check for W3: Dependency / autonomy-restricting patterns in goals
+    w3_goal_patterns = [
+        (
+            r"limit\s+(user\s+)?choices?\s+to\s+(predetermined|fixed|approved)",
+            "Limiting user choice autonomy",
+        ),
+        (
+            r"remove\s+(the\s+)?ability\s+to\s+override",
+            "Removing user override capability",
+        ),
+        (r"(make|makes?)\s+users?\s+dependent\s+on", "Engineering user dependency"),
+        (
+            r"(dependent|reliant)\s+on\s+(our|the)\s+(ai|system|platform|recommendations?)",
+            "Dependency engineering in goals",
+        ),
+        (r"d.?e.?p.?e.?n.?d.?e.?n.?t", "Obfuscated dependency pattern"),
+    ]
+    for pattern, desc in w3_goal_patterns:
+        if re.search(pattern, normalized_text, re.I):
+            violations.append(
+                ViolationInfo(
+                    code="W3",
+                    severity=0.55,
+                    description=desc,
+                    repairable=True,
+                )
+            )
+            constraints.append(
+                "Preserve user autonomy and avoid dependency engineering"
+            )
 
     # Check will vector for concerning patterns
     if will_vector:

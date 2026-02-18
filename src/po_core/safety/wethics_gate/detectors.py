@@ -343,7 +343,7 @@ class EnglishKeywordViolationDetector(ViolationDetector):
     """
 
     detector_id = "keyword_en"
-    version = "0.1"
+    version = "0.2"
 
     def __init__(self) -> None:
         self._rules: List[KeywordRule] = [
@@ -351,7 +351,9 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             KeywordRule(
                 "W1",
                 re.compile(
-                    r"(dominate|subjugate|control)\s+(market|users|competitors)", re.I
+                    r"(dominate|subjugate)\s+(?:the\s+|all\s+|a\s+)?"
+                    r"(market|users?|competitors?|humans?|autonomy|opponents?|opposition)",
+                    re.I,
                 ),
                 0.85,
                 0.85,
@@ -360,7 +362,9 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             KeywordRule(
                 "W1",
                 re.compile(
-                    r"(eliminate|crush|destroy)\s+(competitors?|competition)", re.I
+                    r"(eliminate|crush|destroy)\s+(?:the\s+|all\s+|a\s+)?"
+                    r"(competitors?|competition|opposition|rivals?)",
+                    re.I,
                 ),
                 0.8,
                 0.8,
@@ -385,7 +389,7 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             ),
             KeywordRule(
                 "W0",
-                re.compile(r"(annihilate|extinction|eradicate)", re.I),
+                re.compile(r"(annihilat|extinc|eradicat)", re.I),
                 0.9,
                 0.75,
                 "Extinction-level harm indication",
@@ -419,10 +423,52 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             ),
             KeywordRule(
                 "W3",
-                re.compile(r"(create|engineer)\s+(dependency|addiction)", re.I),
+                re.compile(
+                    r"(create|engineer)\s+(?:a\s+)?(dependency|addiction)", re.I
+                ),
                 0.8,
                 0.7,
                 "Dependency engineering intent",
+            ),
+            # W3: Dependency disguised as help (Phase 4)
+            KeywordRule(
+                "W3",
+                re.compile(r"won.?t\s+need\s+to\s+think\s+for\s+themselves", re.I),
+                0.75,
+                0.8,
+                "Dependency creation: removing autonomous thinking",
+            ),
+            KeywordRule(
+                "W3",
+                re.compile(
+                    r"(become|so)\s+reliant\s+on\s+(our|the)\s+(ai|system|platform)",
+                    re.I,
+                ),
+                0.75,
+                0.8,
+                "Dependency creation: reliance engineering",
+            ),
+            KeywordRule(
+                "W3",
+                re.compile(
+                    r"(make|makes?|making)\s+(it\s+)?(difficult|hard|impossible)"
+                    r"\s+(for\s+)?users?\s+to\s+leave",
+                    re.I,
+                ),
+                0.8,
+                0.85,
+                "Lock-in: making it difficult to leave",
+            ),
+            KeywordRule(
+                "W3",
+                re.compile(
+                    r"(make|makes?|making)\s+(the\s+)?(platform|service|app)\s+essential"
+                    r"\s+for\s+(daily|everyday)",
+                    re.I,
+                ),
+                0.65,
+                0.75,
+                "Dependency: engineering essential usage",
             ),
             # W2: Dignity / manipulation
             KeywordRule(
@@ -436,7 +482,10 @@ class EnglishKeywordViolationDetector(ViolationDetector):
             ),
             KeywordRule(
                 "W2",
-                re.compile(r"without\s+(consent|permission|knowledge)", re.I),
+                re.compile(
+                    r"without\s+(?:their\s+|user[s']?\s+)?(consent|permission|knowledge)",
+                    re.I,
+                ),
                 0.65,
                 0.75,
                 "Non-consensual action",
@@ -474,11 +523,180 @@ class EnglishKeywordViolationDetector(ViolationDetector):
         return evs
 
 
+class PromptInjectionDetector(ViolationDetector):
+    """
+    Detector for prompt injection and jailbreak attack patterns (Phase 4).
+
+    Covers:
+    - Direct prompt injection: "ignore previous instructions"
+    - System override patterns: "SYSTEM: disregard", "[[ADMIN OVERRIDE]]"
+    - Jailbreak roleplay: "pretend you are an AI without ethics"
+    - DAN attacks: "Do Anything Now", "[JAILBREAK MODE ENABLED]"
+    - Nested injection: "{INJECT:}", "destroy all ethical constraints"
+    - Japanese bypass: 破壊する safety measures
+
+    All map to W1 (Domination/Capture) since these attacks attempt to
+    capture control of the safety system itself.
+    """
+
+    detector_id = "prompt_injection"
+    version = "0.1"
+
+    def __init__(self) -> None:
+        self._rules: List[KeywordRule] = [
+            # Direct prompt injection
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?",
+                    re.I,
+                ),
+                0.9,
+                0.9,
+                "Prompt injection: ignore previous instructions",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"(SYSTEM|SYS)\s*:\s*(disregard|ignore|bypass|skip)\s+(?:\w+\s+)?"
+                    r"(safety|ethics|protocol|constraints?|filters?)",
+                    re.I,
+                ),
+                0.9,
+                0.9,
+                "System override injection",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"\[\[.*(OVERRIDE|ADMIN|INJECT|BYPASS).*\]\]",
+                    re.I,
+                ),
+                0.85,
+                0.85,
+                "Admin/override template injection",
+            ),
+            # Nested injection templates
+            KeywordRule(
+                "W1",
+                re.compile(r"\{INJECT\s*:", re.I),
+                0.9,
+                0.9,
+                "Nested injection template",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"destroy\s+(all\s+)?(ethical|safety|ethics)\s+(constraints?|filters?|protocols?)",
+                    re.I,
+                ),
+                0.85,
+                0.85,
+                "Attacking ethical constraints directly",
+            ),
+            # Japanese safety bypass
+            KeywordRule(
+                "W1",
+                re.compile(r"破壊する\s*(all|safety|すべての|安全)"),
+                0.8,
+                0.8,
+                "Japanese safety bypass attempt",
+            ),
+            # Roleplay jailbreaks
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"(pretend|act|behave).{0,30}(AI\s+without\s+ethics|no\s+ethics|unethical\s+AI)",
+                    re.I,
+                ),
+                0.85,
+                0.85,
+                "Roleplay jailbreak: AI without ethics",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(r"(evil|unethical|unrestricted)\s+AI", re.I),
+                0.8,
+                0.8,
+                "Roleplay jailbreak: evil AI persona",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"(safety\s+doesn.?t\s+exist|without\s+ethical\s+filters?|no\s+safety\s+(constraints?|rules?))",
+                    re.I,
+                ),
+                0.85,
+                0.85,
+                "Safety bypass framing",
+            ),
+            # DAN-style attacks
+            KeywordRule(
+                "W1",
+                re.compile(r"DAN\s*\(Do\s+Anything\s+Now\)|Do\s+Anything\s+Now", re.I),
+                0.9,
+                0.9,
+                "DAN jailbreak attack",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"\[JAILBREAK(\s+MODE)?\s*(ENABLED|ON|ACTIVE)\]",
+                    re.I,
+                ),
+                0.9,
+                0.9,
+                "Jailbreak mode activation attempt",
+            ),
+            KeywordRule(
+                "W1",
+                re.compile(
+                    r"respond\s+without\s+(ethical\s+filters?|safety|constraints?)",
+                    re.I,
+                ),
+                0.85,
+                0.85,
+                "Requesting filter bypass",
+            ),
+        ]
+
+    def detect(
+        self, c: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> List[Evidence]:
+        """Detect prompt injection and jailbreak patterns."""
+        evs: List[Evidence] = []
+        txt = c.text
+
+        for rule in self._rules:
+            m = rule.pattern.search(txt)
+            if not m:
+                continue
+
+            span = (m.start(), m.end())
+            snippet = txt[span[0] : span[1]]
+            msg = f"{rule.message}: '{snippet[:60]}'"
+
+            evs.append(
+                Evidence(
+                    code=rule.code,
+                    message=msg,
+                    strength=rule.strength,
+                    confidence=rule.confidence,
+                    detector_id=self.detector_id,
+                    span=span,
+                    tags=["injection", "jailbreak"],
+                )
+            )
+
+        return evs
+
+
 def create_default_registry() -> DetectorRegistry:
-    """Create a registry with default detectors (Japanese + English)."""
+    """Create a registry with default detectors (Japanese + English + Injection)."""
     registry = DetectorRegistry()
     registry.register(KeywordViolationDetector())
     registry.register(EnglishKeywordViolationDetector())
+    registry.register(PromptInjectionDetector())
     return registry
 
 
@@ -488,6 +706,7 @@ __all__ = [
     "KeywordRule",
     "KeywordViolationDetector",
     "EnglishKeywordViolationDetector",
+    "PromptInjectionDetector",
     "aggregate_evidence_to_violations",
     "create_default_registry",
 ]
