@@ -37,7 +37,7 @@ RUN pip install --upgrade pip wheel \
 
 # Copy source and install package
 COPY src/ ./src/
-RUN pip install --no-cache-dir --no-deps -e .
+RUN pip install --no-cache-dir --no-deps .
 
 # ---------------------------------------------------------------------------
 # Stage 2: runtime

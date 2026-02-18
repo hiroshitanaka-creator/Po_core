@@ -28,6 +28,18 @@ from po_core.trace.in_memory import InMemoryTracer
 
 router = APIRouter(tags=["reason"])
 
+# Internal run() returns "ok" on success; map to the published API contract.
+_STATUS_MAP: dict[str, str] = {
+    "ok": "approved",
+    "blocked": "blocked",
+    "fallback": "fallback",
+}
+
+
+def _normalize_status(raw: str) -> str:
+    """Map internal run() status values to the documented API contract."""
+    return _STATUS_MAP.get(raw, "approved")
+
 
 def _build_po_settings(api_settings: Any) -> Settings:
     """Map API settings to core Settings."""
@@ -43,29 +55,31 @@ def _extract_response_text(result: dict) -> str:
     if "proposal" in result and result["proposal"]:
         proposal = result["proposal"]
         if isinstance(proposal, dict):
-            return proposal.get("content", str(proposal))
+            return str(proposal.get("content") or str(proposal))
         return str(proposal)
     if "verdict" in result and result["verdict"]:
         verdict = result["verdict"]
         if isinstance(verdict, dict):
-            return verdict.get("reason", str(verdict))
+            return str(verdict.get("reason") or str(verdict))
         return str(verdict)
-    return result.get("status", "No response generated.")
+    return str(result.get("status") or "No response generated.")
 
 
-def _extract_philosophers(result: dict) -> list:
+def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
     """Extract philosopher contributions from result."""
-    contribs = []
+    contribs: list[PhilosopherContribution] = []
     proposals = result.get("proposals", [])
     if not proposals:
         return contribs
     for p in proposals[:5]:  # top 5
         if isinstance(p, dict):
+            name: str = str(p.get("philosopher_id") or p.get("name") or "unknown")
+            weight_raw = p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
             contribs.append(
                 PhilosopherContribution(
-                    name=p.get("philosopher_id", p.get("name", "unknown")),
-                    proposal=str(p.get("content", p.get("proposal", ""))),
-                    weight=float(p.get("weight", p.get("score", 0.0))),
+                    name=name,
+                    proposal=str(p.get("content") or p.get("proposal") or ""),
+                    weight=float(weight_raw if weight_raw is not None else 0.0),
                 )
             )
     return contribs
@@ -91,6 +105,7 @@ def _run_reasoning(
     result = po_run(
         user_input=request.input,
         settings=po_settings,
+        tracer=tracer,
     )
     return session_id, result, tracer
 
@@ -132,7 +147,7 @@ async def reason(
     return ReasonResponse(
         request_id=result.get("request_id", str(uuid.uuid4())),
         session_id=session_id,
-        status=result.get("status", "unknown"),
+        status=_normalize_status(str(result.get("status") or "")),
         response=_extract_response_text(result),
         philosophers=_extract_philosophers(result),
         tensors=_extract_tensors(result),
@@ -164,7 +179,7 @@ async def _sse_generator(
 
         t0 = time.perf_counter()
         po_settings = _build_po_settings(api_settings)
-        result = po_run(user_input=body.input, settings=po_settings)
+        result = po_run(user_input=body.input, settings=po_settings, tracer=tracer)
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         session_id = body.session_id or str(uuid.uuid4())
@@ -187,7 +202,7 @@ async def _sse_generator(
             {
                 "request_id": result.get("request_id", str(uuid.uuid4())),
                 "session_id": session_id,
-                "status": result.get("status", "unknown"),
+                "status": _normalize_status(str(result.get("status") or "")),
                 "response": _extract_response_text(result),
                 "safety_mode": str(result.get("safety_mode", "NORMAL")),
                 "processing_time_ms": round(elapsed_ms, 2),

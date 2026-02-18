@@ -23,7 +23,7 @@ _store: OrderedDict[str, List[TraceEvent]] = OrderedDict()
 
 def get_trace_store() -> Dict[str, List[TraceEvent]]:
     """FastAPI dependency returning the trace store dict."""
-    return _store  # type: ignore[return-value]
+    return _store
 
 
 def save_trace(session_id: str, events: List[TraceEvent]) -> None:

@@ -35,6 +35,7 @@ import uuid
 
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, run_turn
+from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
 
@@ -44,6 +45,7 @@ def run(
     *,
     memory_backend: object | None = None,
     settings: Settings | None = None,
+    tracer: TracePort | None = None,
 ) -> dict:
     """
     Main entry point for Po_core.
@@ -77,7 +79,7 @@ def run(
     deps = EnsembleDeps(
         memory_read=system.memory_read,
         memory_write=system.memory_write,
-        tracer=system.tracer,
+        tracer=tracer if tracer is not None else system.tracer,
         tensors=system.tensor_engine,
         solarwill=system.solarwill,
         gate=system.gate,
