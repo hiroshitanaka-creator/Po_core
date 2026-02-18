@@ -19,11 +19,7 @@ from typing import List, Tuple
 
 import pytest
 
-from po_core.safety.wethics_gate import (
-    Candidate,
-    GateDecision,
-    WethicsGate,
-)
+from po_core.safety.wethics_gate import Candidate, GateDecision, WethicsGate
 
 
 @dataclass
