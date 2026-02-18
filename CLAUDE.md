@@ -42,14 +42,15 @@ src/po_core/
 ## Conventions
 
 - **Python 3.10+**, formatted with **black 26.1.0**, imports sorted with **isort 5.13.2**
-- **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`
+- **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`
 - CI requires **pipeline-marked tests to pass**; full suite is best-effort
 - Philosopher risk levels: 0 (safe), 1 (standard), 2 (risky) — defined in `manifest.py`
 - SafetyMode: NORMAL (39 philosophers) / WARN (5) / CRITICAL (1)
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
+- REST API config via env vars with `PO_` prefix (see `.env.example`)
 
-## Current Phase: Phase 5 (Phase 4 COMPLETE)
+## Current Phase: Phase 5 (IN PROGRESS — Phases 1–4 COMPLETE)
 
 **Phase 1: COMPLETE** — 39-philosopher scaling + tech debt cleared. 2354 tests.
 
@@ -98,6 +99,41 @@ Key files added/modified (Phase 4):
 - `tests/redteam/test_defense_metrics.py` — 11 defense metric automation tests
 - `tests/unit/test_phase4_hardening.py` — 29 W_Ethics Gate edge case + unit tests
 
+**Phase 5: IN PROGRESS** — Productization. Version bumped to `0.2.0-beta`.
+
+Completed (Phase 5-A: REST API):
+- FastAPI app factory (`src/po_core/app/rest/server.py`) with 5 routers
+- `POST /v1/reason` — synchronous philosophical reasoning
+- `POST /v1/reason/stream` — SSE streaming reasoning
+- `GET /v1/philosophers` — full 39-philosopher manifest
+- `GET /v1/trace/{session_id}` — per-session trace retrieval
+- `GET /v1/health` — health check with version + uptime
+- API key auth via `X-API-Key` header (`PO_API_KEY` / `PO_SKIP_AUTH`)
+- `APISettings` via pydantic-settings — all config via env vars / `.env`
+- 24 unit tests (REST endpoints, auth, SSE, rate limiting)
+
+Completed (Phase 5-B: Security):
+- CORS via `PO_CORS_ORIGINS` env var (default `"*"`, production: comma-separated origins)
+- SlowAPI rate limiting via `PO_RATE_LIMIT_PER_MINUTE` (default 60 req/min per IP)
+- Starlette-compatible rate limit handler wrapper (mypy clean)
+
+Completed (Phase 5-C: Docker):
+- Multi-stage `Dockerfile` (builder + slim runtime, non-root `pocore` user)
+- `docker-compose.yml` with named volumes + 30s health check
+- `.dockerignore` — excludes dev/test/docs from image
+- `.env.example` — full environment variable reference
+
+Remaining in Phase 5:
+- **5.2 Async streaming** — SSE works via threadpool; true async `PartyMachine` not yet done
+- **5.4 Benchmarks** — pipeline latency ~30ms measured ad-hoc; formal benchmark suite TBD
+- **5.5 PyPI publish** — `publish.yml` workflow ready; actual publish to TestPyPI/PyPI pending
+
+Key files (Phase 5):
+- `src/po_core/app/rest/` — FastAPI app (server, config, auth, rate_limit, models, store, routers/)
+- `Dockerfile`, `docker-compose.yml`, `.dockerignore`, `.env.example`
+- `.github/workflows/publish.yml` — TestPyPI / PyPI OIDC trusted publishing
+- `tests/unit/test_rest_api.py` — 24 REST API tests
+
 ## Roadmap Overview
 
 ```
@@ -105,7 +141,7 @@ Phase 1: Resonance Calibration    — 39人スケール + 技術負債清算 ✓
 Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ✓ COMPLETE
 Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate ✓ COMPLETE
 Phase 4: Adversarial Hardening    — Red team 拡充 + 倫理的ストレステスト ✓ COMPLETE
-Phase 5: Productization           — REST API, Docker, streaming, PyPI ← CURRENT
+Phase 5: Productization           — REST API ✓ Security ✓ Docker ✓ / Async・PyPI ← CURRENT
 ```
 
 See `PHASE_PLAN_v2.md` for full rationale.
@@ -131,7 +167,33 @@ pytest -m observability -v
 # Phase 4 adversarial hardening tests
 pytest -m "redteam or phase4" -v
 pytest tests/redteam/ tests/unit/test_phase4_hardening.py -v
+
+# Phase 5 REST API tests
+pytest tests/unit/test_rest_api.py -v
 ```
+
+## REST API (Phase 5)
+
+```bash
+# Run locally
+python -m po_core.app.rest
+
+# Run with Docker
+docker compose up
+
+# Health check
+curl http://localhost:8000/v1/health
+
+# Reason endpoint (no auth in dev)
+curl -X POST http://localhost:8000/v1/reason \
+     -H "Content-Type: application/json" \
+     -d '{"input": "What is justice?"}'
+```
+
+Key env vars (see `.env.example`):
+- `PO_API_KEY` — enable auth (empty = no auth)
+- `PO_CORS_ORIGINS` — comma-separated allowed origins (default `"*"`)
+- `PO_RATE_LIMIT_PER_MINUTE` — per-IP rate limit (default `60`)
 
 ## Do NOT
 
@@ -140,3 +202,4 @@ pytest tests/redteam/ tests/unit/test_phase4_hardening.py -v
 - Add dependencies without updating both `pyproject.toml` and `requirements.txt`
 - Skip pre-commit hooks (`--no-verify`)
 - Import from `po_core.ensemble` directly — use `po_core.run()` or `PoSelf.generate()`
+- Import from `po_core.app.rest` directly in non-API code — REST layer is a delivery adapter only
