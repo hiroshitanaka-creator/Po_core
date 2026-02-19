@@ -52,7 +52,6 @@ if TYPE_CHECKING:
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 
@@ -719,10 +718,10 @@ class PhilosopherPartyMachine:
             f"🎯 Theme: {theme}",
             f"🎭 Mood: {mood.value}",
             f"👥 Party size: {len(philosophers)} philosophers",
-            f"",
+            "",
             f"⚡ Expected tension: {tension:.1%}",
             f"✨ Expected emergence: {emergence:.1%}",
-            f"",
+            "",
             "📊 Research basis:",
         ]
 
@@ -749,7 +748,7 @@ class PhilosopherPartyMachine:
         console.print(
             Panel(
                 config.reasoning,
-                title=f"[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
+                title="[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
                 border_style="magenta",
             )
         )
