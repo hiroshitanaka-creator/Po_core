@@ -34,6 +34,12 @@ class Settings:
     # 実験→本番の切替
     use_experimental_solarwill: bool = False
 
+    # ---- Phase 6-A: FreedomPressureV2 (ML-native テンソル) ----
+    # False = FreedomPressureTensor v1 (keyword-based, 後退互換)
+    # True  = FreedomPressureV2 (embedding-based, ML-native)
+    # 環境変数: PO_FREEDOM_PRESSURE_V2=true
+    use_freedom_pressure_v2: bool = False
+
     # ---- Shadow Guard (自律ブレーキ) ----
     enable_shadow_guard: bool = True
     shadow_guard_state_path: str = ".po_core/shadow_guard_state.json"
@@ -106,6 +112,7 @@ class Settings:
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
             "deliberation_max_rounds": self.deliberation_max_rounds,
             "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
+            "use_freedom_pressure_v2": self.use_freedom_pressure_v2,
         }
 
 

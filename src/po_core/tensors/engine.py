@@ -22,6 +22,7 @@ USAGE:
     print(snapshot.freedom_pressure)  # 0.7
 """
 
+import os
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
@@ -29,6 +30,7 @@ from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.tensor_snapshot import TensorSnapshot, TensorValue
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
+from po_core.tensors.freedom_pressure_v2 import FreedomPressureV2, create_freedom_pressure_v2
 
 # Type alias for metric functions
 MetricFn = Callable[[Context, MemorySnapshot], Tuple[str, float]]
@@ -85,21 +87,32 @@ def compute_tensors(
     values: Dict[str, TensorValue] = {}
 
     # Compute Freedom Pressure
-    fp_tensor = FreedomPressureTensor()
-    fp_array = fp_tensor.compute(
-        prompt,
-        context=context,
-        philosopher_perspectives=philosopher_perspectives,
-    )
-    fp_value = float(fp_tensor.norm())  # Overall pressure is the norm
+    # Feature flag: PO_FREEDOM_PRESSURE_V2=true → ML-native FreedomPressureV2
+    _use_v2 = os.getenv("PO_FREEDOM_PRESSURE_V2", "").lower() in ("1", "true", "yes")
+    if _use_v2:
+        _fp_v2 = create_freedom_pressure_v2()
+        memory_depth = len(context.get("memory_items", [])) if context else 0
+        _fp_snapshot = _fp_v2.compute_v2(prompt, memory_depth=memory_depth)
+        fp_value = _fp_snapshot.overall
+        fp_dimensions: Dict[str, float] = dict(_fp_snapshot.values)
+        fp_dimensions["coherence_score"] = _fp_snapshot.coherence_score
+        fp_source = f"FreedomPressureV2/{_fp_snapshot.backend}"
+    else:
+        fp_tensor = FreedomPressureTensor()
+        fp_tensor.compute(
+            prompt,
+            context=context,
+            philosopher_perspectives=philosopher_perspectives,
+        )
+        fp_value = float(fp_tensor.norm())  # Overall pressure is the norm
+        fp_dimensions = fp_tensor.get_pressure_summary()
+        fp_source = "FreedomPressureTensor"
 
-    # Create TensorValue with dimension breakdown
-    fp_dimensions = fp_tensor.get_pressure_summary()
     values["freedom_pressure"] = TensorValue(
         name="freedom_pressure",
         value=fp_value,
         dimensions=fp_dimensions,
-        source="FreedomPressureTensor",
+        source=fp_source,
     )
 
     # Compute Semantic Delta (simple token-based)
@@ -277,6 +290,9 @@ __all__ = [
     "compute_freedom_pressure",
     "compute_semantic_delta",
     "compute_blocked_tensor",
+    # Phase 6-A: ML-native Freedom Pressure
+    "FreedomPressureV2",
+    "create_freedom_pressure_v2",
     # Backward compat (will be deprecated)
     "compute_freedom_pressure_simple",
     "compute_semantic_delta_simple",
