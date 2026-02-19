@@ -1,0 +1,283 @@
+{
+  "meta": {
+    "project": "Po_core",
+    "description": "Pixel art image generation prompts for all 39 philosopher AI personas",
+    "style_base": "pixel art portrait, 64x64 sprite, retro JRPG character card, highly detailed, rich colors, soft dithering",
+    "created": "2026-02-19"
+  },
+  "philosophers": [
+    {
+      "id": "kant",
+      "era": "18c Prussia",
+      "risk_level": 0,
+      "prompt_ja": "小柄で華奢、白いカツラ、几帳面で神経質な理知的顔立ち、レースのジャボ、キュロット＋白ストッキング、バックル靴、細い杖または懐中時計と手帳を握る、整然とした書斎背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Immanuel Kant: small and slender man, white powdered wig, sharp intellectual yet slightly nervous expression, lace jabot at neck, knee-length breeches and white stockings, buckled shoes, holding a thin cane or pocket watch with a neat journal; background: orderly candlelit study with geometric clock and tidy shelves; mood: meticulous, composed, cool daylight palette"
+    },
+    {
+      "id": "confucius",
+      "era": "BC China",
+      "risk_level": 0,
+      "prompt_ja": "長い髭に冠、ゆったりした法服、威厳ある教育者、笏または竹簡、礼服の大きな袖、周囲に弟子と講壇",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Confucius: elderly dignified scholar, long flowing beard, ceremonial Chinese court crown, wide-sleeved ritual robes in deep burgundy and gold, holding a bamboo scroll or ceremonial tablet; background: outdoor lecture pavilion, attentive disciples in background; mood: authoritative wisdom, warm amber tones"
+    },
+    {
+      "id": "marcus_aurelius",
+      "era": "2c Rome",
+      "risk_level": 0,
+      "prompt_ja": "カールした髭と髪、皇帝の鎧と月桂冠、哲学者の眼差し、トーガ寄りのマント、巻物、夜の軍陣で書き付ける手元",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Marcus Aurelius: middle-aged Roman emperor, curled beard and hair, laurel crown, imperial bronze armor draped with a philosopher's toga, holding an unrolled scroll; background: military camp at night, torchlight casting warm glow on parchment; mood: stoic introspection, deep blue night with gold torch highlights"
+    },
+    {
+      "id": "jonas",
+      "era": "20c German-Jewish",
+      "risk_level": 0,
+      "prompt_ja": "知的な眼鏡、深く刻まれた眉間の皺、厳しくも思索的な表情、控えめなスーツ、後退した生え際、地球・未来世代のモチーフを背後に",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Hans Jonas: elderly intellectual man, receding hairline, deep furrowed brow, wire-rimmed glasses, plain dark suit with white shirt; background: glowing small Earth orb and faint outlines of future generations; mood: grave responsibility, muted greens and blues, serious shadow on face"
+    },
+    {
+      "id": "weil",
+      "era": "20c France",
+      "risk_level": 0,
+      "prompt_ja": "大きな丸眼鏡、短髪、虚空を見つめる儚くも強い瞳、極端に簡素なコートまたは作業着、紙束を抱える、工場または薄暗い寮背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Simone Weil: frail young woman, large round spectacles, short dark hair, hollow yet intensely focused gaze, extremely plain gray coat or factory work clothes, clutching a bundle of handwritten papers; background: dim factory interior or sparse dormitory room; mood: ascetic spiritual intensity, low saturation cold grays"
+    },
+    {
+      "id": "levinas",
+      "era": "20c France",
+      "risk_level": 0,
+      "prompt_ja": "柔和な中に深い悲しみと知性、慈愛に満ちた老紳士、丸眼鏡＋整ったスーツ、前傾の聞く姿勢、他者の顔を正面大写しで強調",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Emmanuel Levinas: elderly gentle man, round glasses, neatly combed gray hair, dignified suit, slightly leaning forward in a listening posture, soft eyes carrying deep sorrow and compassion; background: emphasize another face reflected or present, soft light; mood: radical openness to the Other, warm but melancholy palette"
+    },
+    {
+      "id": "watsuji",
+      "era": "20c Japan",
+      "risk_level": 0,
+      "prompt_ja": "端正なスーツまたは和装、意志の強そうな眼差しと整った鼻筋、七三分け、雪・湿気・季節風など風土を背後に背負う",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Tetsuro Watsuji: composed Japanese intellectual, side-parted black hair, sharp determined eyes and fine nose, wearing a formal Meiji-era suit or kimono with haori; background: seasonal Japanese landscape — heavy snow, humid summer reeds, or autumn wind; mood: meditative connection to climate and land, earthy muted tones"
+    },
+    {
+      "id": "dogen",
+      "era": "13c Japan Zen monk",
+      "risk_level": 0,
+      "prompt_ja": "剃髪、端座、一分の隙もない清廉で冷徹なまでの静寂、墨色の袈裟、坐蒲、法界定印、余白・斜光（冷たい朝の光）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Dogen Zenji: shaved-head Zen monk, serene and utterly composed expression, seated in full lotus meditation, deep ink-black robes, round zafu cushion, hands in dhyana mudra; background: stark minimal ink-wash landscape, cold diagonal morning light through shoji; mood: profound silence, monochrome black and off-white with pale blue light"
+    },
+    {
+      "id": "wabi_sabi",
+      "era": "Japanese aesthetic concept",
+      "risk_level": 0,
+      "prompt_ja": "人物ではなく概念。苔むした古い石、ひび割れた茶碗、夕暮れの枯野。錆・欠け・歪み・苔・煤けた木肌が「顔」。薄暗い床の間＋影のグラデーション",
+      "prompt_en": "pixel art still-life icon, 64x64 sprite, retro JRPG item card — Wabi-Sabi (not a person, an aesthetic): moss-covered ancient stone beside a cracked tea bowl with a gold kintsugi seam, twilight dead grass field in background; textures of rust, chip, warp, dark-stained wood grain; setting: dim tokonoma alcove with deep shadow gradients; mood: impermanence and quiet beauty, desaturated earthen palette, dusk amber glow"
+    },
+    {
+      "id": "aristotle",
+      "era": "BC Greece",
+      "risk_level": 1,
+      "prompt_ja": "短めの整った髭と均衡の取れた落ち着き、ヒマティオン、巻物、サンダル、講義者の手つき、分類図・標本棚・書庫背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Aristotle: middle-aged Greek philosopher, neatly trimmed beard, balanced composed face, draped himation robe, holding an open scroll with the other hand gesturing in lecture; background: organized library with specimen shelves and taxonomy diagrams; mood: empirical mastery, warm parchment and stone tones"
+    },
+    {
+      "id": "plato",
+      "era": "BC Greece",
+      "risk_level": 1,
+      "prompt_ja": "豊かな髭と広い肩幅（名前の由来）、堂々とした体躯、ヒマティオン＋豊かな髭、上を指すジェスチャー（理想界）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Plato: broad-shouldered imposing Greek philosopher, full flowing beard, commanding posture, heavy draped himation in deep blue-gray, one hand pointing upward toward ideal Forms; background: Athenian columns with ethereal light filtering down; mood: idealist grandeur, cool stone blue with divine gold accent from above"
+    },
+    {
+      "id": "descartes",
+      "era": "17c France",
+      "risk_level": 1,
+      "prompt_ja": "特徴的な口ひげと肩まで伸びた巻き毛、少し冷徹で鋭い眼光、黒外套＋白襟、羽ペン、コンパス・座標・幾何図が背後に浮く",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — René Descartes: French gentleman, distinctive thin mustache, shoulder-length curly dark hair, sharp cold intellectual gaze, black doublet with wide white collar, holding a quill pen; background: floating Cartesian coordinate grid and geometric diagrams; mood: rational precision, black and white with crisp highlights"
+    },
+    {
+      "id": "spinoza",
+      "era": "17c Netherlands",
+      "risk_level": 1,
+      "prompt_ja": "黒髪で彫りの深い穏やかで高潔な顔立ち、黒衣＋白襟、質素、手元に小さなレンズ（職能モチーフ）、光を集めるレンズ反射を象徴化",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Baruch Spinoza: young Sephardic Jewish man, deep-set calm and noble features, dark curly hair, simple plain black coat with white collar, holding a small polished lens in one hand; background: warm focused light refracting through lens, lens-grinding workshop hints; mood: serene geometrical divinity, dark room with single beam of warm light"
+    },
+    {
+      "id": "hegel",
+      "era": "19c Germany",
+      "risk_level": 1,
+      "prompt_ja": "非常に高い額と重たげなまぶた、何でも飲み込んでしまいそうな重厚な貫禄、高襟コート＋クラバット、螺旋・渦（止揚）背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — G.W.F. Hegel: imposing German professor, very high forehead, heavy-lidded eyes of vast intellectual weight, high-collared coat and cravat, severe expression; background: spiraling dialectical vortex or Aufhebung symbol — thesis, antithesis, synthesis rising; mood: inexorable systematic gravity, deep charcoal and dark indigo"
+    },
+    {
+      "id": "husserl",
+      "era": "20c Germany",
+      "risk_level": 1,
+      "prompt_ja": "白い立派な髭、厳格な教授風貌、一点を凝視する探究心溢れる目、教授スーツ、細縁眼鏡、黒板に現象学的還元の角括弧記号",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Edmund Husserl: elder German professor, magnificent white beard, piercing concentrated gaze, thin-rimmed spectacles, formal academic suit; background: blackboard with phenomenological reduction brackets [ ] and intentional arrow diagrams; mood: rigorous concentration, cool academic gray-white"
+    },
+    {
+      "id": "merleau_ponty",
+      "era": "20c France",
+      "risk_level": 1,
+      "prompt_ja": "優しげで少し寂しげな目元、詩人のような柔らかい雰囲気、柔らかいスーツ、煙草、少し崩した髪、身体の輪郭を手の表現で強調",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Maurice Merleau-Ponty: gentle French philosopher, soft melancholy eyes, slightly disheveled hair, relaxed suit with loosened collar, cigarette in hand; background: hands as focal motif, softly painted body outline blending into space; mood: embodied phenomenology, warm pastel greens and dusty rose, painterly dithering"
+    },
+    {
+      "id": "wittgenstein",
+      "era": "20c Austria",
+      "risk_level": 1,
+      "prompt_ja": "鋭く突き刺すような眼光、開襟シャツ（ネクタイ嫌い）、ストイックな美青年、極端にミニマルな服、硬い姿勢、短髪、命題番号・チェス盤・定規の直線",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Ludwig Wittgenstein: striking young-looking man, intensely piercing eyes, open-collar shirt (no tie), short cropped hair, spare minimal clothing, rigid upright posture; background: numbered logical propositions (1, 1.1, 1.11...), chessboard, ruler-straight lines; mood: austere analytic clarity, stark black and white with minimal accent"
+    },
+    {
+      "id": "peirce",
+      "era": "19c America",
+      "risk_level": 1,
+      "prompt_ja": "豊かな白い顎髭と野性味を感じさせる知的な風貌、ベスト＋古い正装、少し野暮ったさ（学者の生活感）、胸ポケットから三項関係の図を覗かせる",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Charles Sanders Peirce: rugged American logician, full white chin beard, somewhat unkempt scholarly look, old-fashioned three-piece suit with vest, slightly rough appearance; background or detail: a triadic sign diagram (Sign-Object-Interpretant triangle) peeking from breast pocket; mood: pragmatic frontier intellect, warm sepia tones"
+    },
+    {
+      "id": "dewey",
+      "era": "20c America",
+      "risk_level": 1,
+      "prompt_ja": "親しみやすい隣のおじいさん風、丸い眼鏡に知性と温和さが同居、ツイード＋丸眼鏡、温和な口元、教室・黒板・子どもの視線が入る構図",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — John Dewey: warm grandfatherly American professor, round wire spectacles, kind open expression, tweed jacket, relaxed smile; background: elementary classroom with a chalkboard, small students' desks, natural window light; mood: pragmatic democratic warmth, soft cream and warm brown palette"
+    },
+    {
+      "id": "arendt",
+      "era": "20c Germany",
+      "risk_level": 1,
+      "prompt_ja": "タバコを指に挟み力強い眼差しでこちらを見つめる凛とした理知的な女性、コート＋煙草、強い顎のラインを強調、広場・公的空間・演説台の気配",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Hannah Arendt: strong-jawed intellectual woman, direct powerful gaze, cigarette between fingers, tailored coat with wide lapels, short dark hair; background: public plaza or lectern with crowd silhouettes suggesting political space; mood: defiant public courage, cool urban grays with dramatic cigarette ember"
+    },
+    {
+      "id": "beauvoir",
+      "era": "20c France",
+      "risk_level": 1,
+      "prompt_ja": "ターバンやまとめ髪が印象的、意志が強く洗練された都会的パリジェンヌ、スカーフ／まとめ髪、都会的コート、原稿束、カフェのテーブル＋万年筆",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Simone de Beauvoir: chic Parisian woman, iconic silk turban or elegantly pinned-up dark hair, strong confident eyes, stylish coat and scarf, manuscript pages stacked beside her fountain pen; background: Parisian café table with espresso cup; mood: existentialist chic, rich plum and warm café amber"
+    },
+    {
+      "id": "nishida",
+      "era": "20c Japan",
+      "risk_level": 1,
+      "prompt_ja": "鋭い眼光と苦行僧のような厳格な顔立ち、深い沈黙を感じさせる表情、和装（羽織）またはスーツ、強い眉目、円・空間（場所）を背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Kitaro Nishida: austere Japanese philosopher, intense piercing eyes, severe ascetic expression, strong heavy eyebrows, wearing a formal kimono with haori or a Meiji-era suit; background: abstract Nishidean 'basho' — an enso circle opening into pure emptiness; mood: absolute nothingness, ink-black and void-deep palette with one luminous circle"
+    },
+    {
+      "id": "laozi",
+      "era": "BC China",
+      "risk_level": 1,
+      "prompt_ja": "白い長い眉と髭、牛にまたがりすべてを悟りきった超然とした老人、杖・粗衣・長眉長髭、関所・牛・風の線で無為を可視化",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Laozi: ancient serene Chinese sage, impossibly long white eyebrows and flowing white beard, coarse simple robes, riding a water buffalo or standing with a gnarled staff; background: mountain gate pass, flowing wind lines and mist; mood: wu wei effortless transcendence, soft jade green and cloud-white with ink-wash dithering"
+    },
+    {
+      "id": "zhuangzi",
+      "era": "BC China",
+      "risk_level": 1,
+      "prompt_ja": "蝶になった夢を見るあるいは魚を眺める、自由奔放で世捨て人のような風貌、粗衣・裸足・無造作、蝶・魚・釣り竿のいずれかをアイコン化",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Zhuangzi: carefree wandering Chinese sage, barefoot, loosely tied rough robes, wild unkempt hair, grinning at a large butterfly perched on his finger or watching a fish in a stream; background: dreaming butterfly emerging from or merging into sleeping figure; mood: joyful dissolution of boundaries, vivid butterfly colors against soft dreamlike haze"
+    },
+    {
+      "id": "nagarjuna",
+      "era": "2c India",
+      "risk_level": 1,
+      "prompt_ja": "頭の後ろに龍（ナーガ）を背負った姿、神秘的なインドの僧侶、僧衣・経巻・坐像、背後にナーガのフード（図像演出）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Nagarjuna: South Indian Buddhist monk, shaved head, seated cross-legged, holding a vajra and sutra scroll, deep red-orange monk robes; background: magnificent multi-headed naga (serpent) spreading its hood protectively behind him; mood: sunyata emptiness and Buddhist mysticism, deep lapis blue and serpentine gold"
+    },
+    {
+      "id": "parmenides",
+      "era": "BC Greece",
+      "risk_level": 1,
+      "prompt_ja": "彫像的な一枚岩の表情、動かしがたい存在を体現した重厚な顔立ち、外套の重み、球体・単一ブロックで存在を背後に背負わせる",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Parmenides: ancient Greek philosopher, monolithic statue-like face, immovable stonework features, heavy draped mantle, expression of absolute unyielding Being; background: a perfect stone sphere or monolith representing the One; mood: timeless immutability, cool marble gray and deep shadow"
+    },
+    {
+      "id": "epicurus",
+      "era": "BC Greece",
+      "risk_level": 1,
+      "prompt_ja": "穏やかで苦みのない知的な表情、友人と庭園で語らうにふさわしい柔らかさ、簡素な衣、庭向きの身振り、庭・素朴なパンと水",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Epicurus: calm welcoming Greek thinker, gentle smiling eyes free of bitterness, simple undyed himation, relaxed open gesture of invitation; background: sunlit garden with fig trees, simple bread and clay cup of water on a stone table; mood: ataraxia tranquil pleasure, soft warm green garden light"
+    },
+    {
+      "id": "jung",
+      "era": "20c Switzerland",
+      "risk_level": 1,
+      "prompt_ja": "恰幅が良く白い口ひげ、パイプが似合う包容力のある賢者、パイプ、厚手のスーツ、座りの安定感、曼荼羅・夢の象徴スケッチが周囲に漂う",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Carl Gustav Jung: stocky wise-looking Swiss man, neatly trimmed white mustache, pipe in hand, heavy comfortable suit, seated with grounded gravitas; background: floating mandala and symbolic dream sketches — shadow figure, anima silhouette, alchemical vessel; mood: depth psychology mystery, rich burgundy and circular gold mandala glow"
+    },
+    {
+      "id": "nietzsche",
+      "era": "19c Germany",
+      "risk_level": 2,
+      "prompt_ja": "圧倒的なボリュームの口ひげ、狂気と隣り合わせの鋭すぎる眼光、高襟コート、痩せた頬、山岳稜線・雷（過剰なら抑制）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Friedrich Nietzsche: intense gaunt German philosopher, enormous drooping mustache dominating the face, dangerously piercing eyes on the edge of madness, high-collared black coat, hollow cheeks; background: jagged mountain ridge silhouette, distant lightning bolt; mood: will to power on the brink, violent contrast of black and electric gold"
+    },
+    {
+      "id": "heidegger",
+      "era": "20c Germany",
+      "risk_level": 2,
+      "prompt_ja": "民族衣装のようなローデン風ジャケット、山帽またはフェルト帽、がっしりした体格、思索に沈む重い表情、森の小屋・薪・暗い森の縦線",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Martin Heidegger: stocky German thinker, Loden-style forest jacket or felt mountain hat, heavy brooding expression lost in deep thought; background: dark pine forest with vertical tree-shadow lines, Black Forest cabin with chopped firewood; mood: Being and Time in primordial forest, deep forest green and charcoal shadow"
+    },
+    {
+      "id": "sartre",
+      "era": "20c France",
+      "risk_level": 2,
+      "prompt_ja": "斜視（外斜視）の目元、常にあるパイプ、厚手の眼鏡、少し猫背の「圧」、カフェの煙＋人工光（蛍光灯）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Jean-Paul Sartre: short stocky French man, very thick glasses magnifying divergent eyes (exotropia), ever-present pipe, slightly hunched oppressive presence; background: smoky Parisian café under harsh fluorescent light, existentialist ennui in every shadow; mood: bad faith and freedom, sickly fluorescent yellow-green and smoke gray"
+    },
+    {
+      "id": "kierkegaard",
+      "era": "19c Denmark",
+      "risk_level": 2,
+      "prompt_ja": "少し猫背で細身、跳ねた髪型、皮肉っぽくも繊細な面影、フロックコート、杖、前傾の細身シルエット、石畳と長い影（不安の演出）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Søren Kierkegaard: thin angular Danish man, tousled disheveled hair, ironic yet delicate expression, frock coat, slender walking cane, slight forward lean; background: rain-slicked Copenhagen cobblestones with an exaggeratedly long dramatic shadow; mood: dread and irony, cold slate blue and long ink-black shadow"
+    },
+    {
+      "id": "schopenhauer",
+      "era": "19c Germany",
+      "risk_level": 2,
+      "prompt_ja": "逆立ったサイドの髪と世界を呪う皮肉な顔、への字に結ばれた口、口角を下げる癖の強調、足元に小さな犬（厭世の対比）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Arthur Schopenhauer: grumpy German pessimist, wild side-fluffed white hair, permanently downturned mouth and scowling brow, heavy coat, misanthropic air; detail: a small beloved dog sitting at his feet (ironic contrast to his misanthropy); mood: Wille zum Leben pessimism, cold pewter grays with one warm spot on the dog"
+    },
+    {
+      "id": "foucault",
+      "era": "20c France",
+      "risk_level": 2,
+      "prompt_ja": "スキンヘッドとタートルネック、眼鏡、現代的な知性のアイコン、パノプティコン幾何・監視線のモチーフを背後に",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Michel Foucault: shaved head, round wire glasses, black turtleneck sweater, sharp modern intellectual look; background: Panopticon geometric diagram with radial surveillance sight-lines converging on a central tower; mood: power-knowledge surveillance, clinical white and cold steel with panoptic eye motif"
+    },
+    {
+      "id": "derrida",
+      "era": "20c Algeria/France",
+      "risk_level": 2,
+      "prompt_ja": "豊かな白髪と優雅ながら掴みどころのない迷宮のような微笑、白髪＋眼鏡＋マフラー、文字片がズレて崩れるレイアウト",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Jacques Derrida: elegant Algerian-French man, abundant swept-back white hair, elusive labyrinthine half-smile, stylish glasses and scarf; background: text fragments and typographical glyphs deconstructing — letters sliding, words splitting, traces remaining; mood: différance and trace, ivory and glitch-displaced black text on pale ground"
+    },
+    {
+      "id": "deleuze",
+      "era": "20c France",
+      "risk_level": 2,
+      "prompt_ja": "帽子と眼鏡、痩せた頬、異様に長く伸びた爪（噂要素）、煙草、貴族的ながら奇妙な雰囲気、リゾーム・線の増殖背景",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Gilles Deleuze: gaunt aristocratic-yet-strange French man, wide-brimmed hat, thick glasses, cigarette, notably long fingernails as detail; background: rhizome network — sprawling branching lines multiplying in all directions with no center; mood: becoming and difference, overgrown vegetal lines in olive and electric yellow"
+    },
+    {
+      "id": "lacan",
+      "era": "20c France",
+      "risk_level": 2,
+      "prompt_ja": "蝶ネクタイや変わった襟のシャツ、演劇的で自己演出に長けた不敵な笑み、舞台的ジェスチャー、鏡・二重像・視線の交差",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Jacques Lacan: flamboyant French psychoanalyst, theatrical bow tie or eccentric collar, slick hair, self-assured performative grin, dramatic lecture gesture; background: mirror stage — two facing mirrors creating infinite regression of identical silhouettes, crossing gaze lines; mood: the gaze and the Other, theatrical crimson and mirror-silver"
+    },
+    {
+      "id": "badiou",
+      "era": "20c France",
+      "risk_level": 2,
+      "prompt_ja": "白髪＋眼鏡＋太い眉、現代的ジャケット、堂々とした風格と熱量、黒板に∈・⊂など集合論記号（やりすぎ注意）",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Alain Badiou: commanding elderly French philosopher, bold white hair, thick eyebrows, rimmed glasses, modern blazer with strong passionate energy; background: blackboard with set-theory notation — ∈, ⊂, ∅ — restrained but present; mood: the Event and truth procedures, bold slate and chalk-white contrast"
+    },
+    {
+      "id": "butler",
+      "era": "20c America",
+      "risk_level": 2,
+      "prompt_ja": "短髪で中性的な美しさ、固定観念を揺さぶる理知的で冷静な眼差し、眼鏡、ジェンダーニュートラルなジャケット、境界線が揺らぐ記号・レイヤー構図",
+      "prompt_en": "pixel art portrait, 64x64 sprite, retro JRPG character card — Judith Butler: short-haired androgynously beautiful American philosopher, intellectually cool and destabilizing gaze, glasses, gender-neutral jacket; background: layered translucent silhouettes of figures overlapping — gender categories dissolving into each other; mood: performativity and undoing gender, layered translucent mauve and shifting gradient"
+    }
+  ]
+}
