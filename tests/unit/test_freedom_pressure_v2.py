@@ -220,13 +220,18 @@ class TestFreedomPressureV2EMA:
     def test_ema_smoothing_effect(self):
         """alpha=1.0 (即時更新) では EMA が入力と同じになる。"""
         fp = FreedomPressureV2(
-            ema_alpha=1.0, model_name="__force_keyword__"
+            ema_alpha=1.0, model_name="__nonexistent_force_keyword_fallback__"
         )
         fp.reset_state()
         result = fp.compute_v2("choose decide option should")
         # alpha=1.0 → ema_state = current → raw の EMA に相関行列を適用した値
         assert fp._ema_state is not None
-        assert np.allclose(np.array(list(result.values.values())), fp._ema_state)
+        # result.values は round(..., 4) で丸められるため atol=5e-4 で比較
+        assert np.allclose(
+            np.array(list(result.values.values())),
+            fp._ema_state,
+            atol=5e-4,
+        )
 
     def test_reset_state_clears_ema(self, fp_v2_keyword):
         """reset_state() で EMA 状態がクリアされる。"""
