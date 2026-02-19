@@ -16,8 +16,10 @@ When max_rounds=1, produces identical behavior to the current pipeline
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Tuple
 
+from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
+from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.intent import Intent
 from po_core.domain.keys import AUTHOR, PO_CORE
@@ -44,6 +46,8 @@ class DeliberationResult:
     proposals: List[Proposal]
     rounds: List[RoundTrace]
     interaction_matrix: Optional[InteractionMatrix] = None
+    emergence_signals: List[EmergenceSignal] = field(default_factory=list)
+    influence_weights: Dict[str, InfluenceWeight] = field(default_factory=dict)
 
     @property
     def n_rounds(self) -> int:
@@ -53,7 +57,24 @@ class DeliberationResult:
     def total_proposals(self) -> int:
         return len(self.proposals)
 
+    @property
+    def has_emergence(self) -> bool:
+        """True if any emergence signal was detected."""
+        return bool(self.emergence_signals)
+
+    @property
+    def peak_novelty(self) -> float:
+        """Highest novelty score across all emergence signals (0.0 if none)."""
+        if not self.emergence_signals:
+            return 0.0
+        return max(s.novelty_score for s in self.emergence_signals)
+
     def summary(self) -> Dict:
+        top_influencers = sorted(
+            [(n, w.total_influence()) for n, w in self.influence_weights.items()],
+            key=lambda x: x[1],
+            reverse=True,
+        )[:3]
         return {
             "n_rounds": self.n_rounds,
             "total_proposals": self.total_proposals,
@@ -68,6 +89,14 @@ class DeliberationResult:
             "interaction_summary": (
                 self.interaction_matrix.summary() if self.interaction_matrix else None
             ),
+            "emergence": {
+                "detected": self.has_emergence,
+                "n_signals": len(self.emergence_signals),
+                "peak_novelty": round(self.peak_novelty, 4),
+            },
+            "top_influencers": [
+                {"philosopher": n, "influence": round(s, 4)} for n, s in top_influencers
+            ],
         }
 
 
@@ -86,10 +115,19 @@ class DeliberationEngine:
         max_rounds: int = 2,
         top_k_pairs: int = 5,
         convergence_threshold: float = 0.1,
+        detect_emergence: bool = True,
+        emergence_threshold: float = 0.65,
+        track_influence: bool = True,
     ):
         self.max_rounds = max(1, max_rounds)
         self.top_k_pairs = top_k_pairs
         self.convergence_threshold = convergence_threshold
+        self._emergence_detector = (
+            EmergenceDetector(threshold=emergence_threshold)
+            if detect_emergence
+            else None
+        )
+        self._influence_tracker = InfluenceTracker() if track_influence else None
 
     def deliberate(
         self,
@@ -115,7 +153,9 @@ class DeliberationEngine:
             DeliberationResult with final proposals and round traces
         """
         rounds: List[RoundTrace] = []
+        all_emergence: List[EmergenceSignal] = []
         current_proposals = list(round1_proposals)
+        baseline_proposals = list(round1_proposals)  # Round 1 = baseline
 
         # Round 1 trace (already computed externally)
         rounds.append(
@@ -125,6 +165,11 @@ class DeliberationEngine:
                 n_revised=0,
             )
         )
+
+        # Seed influence tracker with round-1 baselines
+        if self._influence_tracker is not None:
+            self._influence_tracker.reset()
+            self._influence_tracker.set_baseline(baseline_proposals)
 
         if self.max_rounds <= 1 or len(current_proposals) < 2:
             return DeliberationResult(
@@ -160,13 +205,13 @@ class DeliberationEngine:
                 break
 
             # Identify philosophers that need to re-propose
-            revised_names = set()
+            # sender_map: {recipient_name → sender_name} for influence tracking
+            revised_names: set = set()
             counterarguments: Dict[str, str] = {}
+            sender_map: Dict[str, str] = {}
             for pair in hi_pairs:
-                # Each philosopher in a high-interference pair receives
-                # the other's proposal as a counterargument
                 _collect_counterargument(
-                    pair, current_proposals, counterarguments, revised_names
+                    pair, current_proposals, counterarguments, revised_names, sender_map
                 )
 
             # Re-propose for affected philosophers
@@ -178,6 +223,29 @@ class DeliberationEngine:
             n_revised = len(revised_proposals)
             current_proposals = _merge_proposals(current_proposals, revised_proposals)
 
+            # Emergence detection: compare revised proposals to round-1 baseline
+            if self._emergence_detector is not None and revised_proposals:
+                signals = self._emergence_detector.detect(
+                    baseline_proposals, revised_proposals, round_num
+                )
+                all_emergence.extend(signals)
+
+                # Strong emergence → stop deliberation, let this proposal win
+                if self._emergence_detector.has_strong_emergence(signals):
+                    rounds.append(
+                        RoundTrace(
+                            round_number=round_num,
+                            n_proposals=len(current_proposals),
+                            n_revised=n_revised,
+                            interaction_summary=interaction_matrix.summary(),
+                        )
+                    )
+                    break
+
+            # Influence tracking
+            if self._influence_tracker is not None and revised_proposals:
+                self._influence_tracker.update(revised_proposals, sender_map)
+
             rounds.append(
                 RoundTrace(
                     round_number=round_num,
@@ -187,10 +255,18 @@ class DeliberationEngine:
                 )
             )
 
+        influence_weights = (
+            self._influence_tracker.weights()
+            if self._influence_tracker is not None
+            else {}
+        )
+
         return DeliberationResult(
             proposals=current_proposals,
             rounds=rounds,
             interaction_matrix=interaction_matrix,
+            emergence_signals=all_emergence,
+            influence_weights=influence_weights,
         )
 
 
@@ -218,8 +294,14 @@ def _collect_counterargument(
     proposals: List[Proposal],
     counterarguments: Dict[str, str],
     revised_names: set,
+    sender_map: Optional[Dict[str, str]] = None,
 ) -> None:
-    """Collect counterarguments for both philosophers in a pair."""
+    """Collect counterarguments for both philosophers in a pair.
+
+    Args:
+        sender_map: If provided, also records {recipient → sender} for
+                    downstream influence tracking.
+    """
     # Find proposals by these philosophers
     a_content = ""
     b_content = ""
@@ -235,9 +317,13 @@ def _collect_counterargument(
     if a_content and pair.philosopher_b not in counterarguments:
         counterarguments[pair.philosopher_b] = a_content
         revised_names.add(pair.philosopher_b)
+        if sender_map is not None:
+            sender_map[pair.philosopher_b] = pair.philosopher_a
     if b_content and pair.philosopher_a not in counterarguments:
         counterarguments[pair.philosopher_a] = b_content
         revised_names.add(pair.philosopher_a)
+        if sender_map is not None:
+            sender_map[pair.philosopher_a] = pair.philosopher_b
 
 
 def _re_propose(
