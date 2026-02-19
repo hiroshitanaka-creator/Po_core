@@ -317,7 +317,9 @@ def _make_propose_inputs():
         created_at=datetime.now(timezone.utc),
     )
     intent = Intent.neutral()
-    tensors = TensorSnapshot.now({"freedom_pressure": 0.5, "semantic_delta": 0.3, "blocked_tensor": 0.1})
+    tensors = TensorSnapshot.now(
+        {"freedom_pressure": 0.5, "semantic_delta": 0.3, "blocked_tensor": 0.1}
+    )
     memory = MemorySnapshot(items=[], summary=None, meta={})
     return ctx, intent, tensors, memory
 
@@ -338,16 +340,18 @@ def test_propose_content_is_original_reasoning_not_voice_only():
     # Capture what voice.render() alone would produce for this prompt/tension
     voice = get_voice("nietzsche")
     assert voice is not None
-    voice_only = voice.render(prompt=ctx.user_input, tension_level=None, tensor_snapshot={})
+    voice_only = voice.render(
+        prompt=ctx.user_input, tension_level=None, tensor_snapshot={}
+    )
 
     proposals = n.propose(ctx, intent, tensors, memory)
     assert proposals, "propose() returned no proposals"
     content = proposals[0].content
 
     # content must not be identical to the lone voice output
-    assert content != voice_only, (
-        "Proposal.content equals voice.render() output — original reasoning was discarded"
-    )
+    assert (
+        content != voice_only
+    ), "Proposal.content equals voice.render() output — original reasoning was discarded"
     # content must be a meaningful string
     assert len(content) > 10
 
@@ -366,9 +370,9 @@ def test_propose_extra_has_voiced_reasoning_when_voice_exists():
 
     assert "voiced_reasoning" in extra, "extra missing 'voiced_reasoning' key"
     vr = extra["voiced_reasoning"]
-    assert isinstance(vr, str) and len(vr) > 10, (
-        f"voiced_reasoning is not a non-empty string: {vr!r}"
-    )
+    assert (
+        isinstance(vr, str) and len(vr) > 10
+    ), f"voiced_reasoning is not a non-empty string: {vr!r}"
 
 
 def test_propose_no_voice_extra_voiced_reasoning_is_none():
