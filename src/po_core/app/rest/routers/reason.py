@@ -5,6 +5,8 @@ POST /v1/reason/stream   — Streaming reasoning via SSE
 
 from __future__ import annotations
 
+import asyncio
+import functools
 import json
 import time
 import uuid
@@ -153,13 +155,16 @@ async def reason(
     request: Request,
     _: None = Depends(require_api_key),
 ) -> ReasonResponse:
-    """Synchronous reasoning endpoint."""
+    """Synchronous reasoning endpoint (non-blocking: offloaded to thread pool)."""
     from po_core.app.rest.config import get_api_settings
 
     api_settings = get_api_settings()
     t0 = time.perf_counter()
 
-    session_id, result, tracer = _run_reasoning(body, api_settings)
+    loop = asyncio.get_running_loop()
+    session_id, result, tracer = await loop.run_in_executor(
+        None, functools.partial(_run_reasoning, body, api_settings)
+    )
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
@@ -201,7 +206,13 @@ async def _sse_generator(
 
         t0 = time.perf_counter()
         po_settings = _build_po_settings(api_settings)
-        result = po_run(user_input=body.input, settings=po_settings, tracer=tracer)
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(
+            None,
+            functools.partial(
+                po_run, user_input=body.input, settings=po_settings, tracer=tracer
+            ),
+        )
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         session_id = body.session_id or str(uuid.uuid4())

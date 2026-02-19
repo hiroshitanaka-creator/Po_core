@@ -32,6 +32,7 @@ Parallel Execution:
 
 from __future__ import annotations
 
+import asyncio
 import random
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -51,7 +52,6 @@ if TYPE_CHECKING:
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 
@@ -250,6 +250,132 @@ def run_philosophers(
                         latency_ms=None,
                     )
                 )
+
+    return proposals, results
+
+
+async def async_run_philosophers(
+    philosophers: Sequence["PhilosopherProtocol"],
+    ctx: "Context",
+    intent: "Intent",
+    tensors: "TensorSnapshot",
+    memory: "MemorySnapshot",
+    *,
+    max_workers: int,
+    timeout_s: float,
+) -> Tuple[List["Proposal"], List[RunResult]]:
+    """Async-native version of run_philosophers using asyncio.gather.
+
+    Each philosopher's ``propose()`` call is offloaded to a ``ThreadPoolExecutor``
+    via ``loop.run_in_executor()``, so the FastAPI event loop is never blocked.
+    Per-philosopher timeouts are enforced with ``asyncio.wait_for()``.
+
+    Args:
+        philosophers: Sequence of philosopher instances to execute.
+        ctx: Context for the current request.
+        intent: Parsed intent from the intention stage.
+        tensors: Current tensor snapshot (safety metrics).
+        memory: Current memory snapshot.
+        max_workers: Maximum number of parallel threads.
+        timeout_s: Per-philosopher timeout in seconds.
+
+    Returns:
+        Tuple of:
+        - List[Proposal]: Successfully generated proposals.
+        - List[RunResult]: Execution results for each philosopher.
+    """
+    from po_core.domain.proposal import Proposal
+
+    proposals: List[Proposal] = []
+    results: List[RunResult] = []
+
+    if not philosophers:
+        return proposals, results
+
+    def _embed_author(p: "Proposal", author: str) -> "Proposal":
+        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+        pc = dict(extra.get(PO_CORE, {}))
+        pc[AUTHOR] = author
+        extra[PO_CORE] = pc
+        return Proposal(
+            proposal_id=p.proposal_id,
+            action_type=p.action_type,
+            content=p.content,
+            confidence=p.confidence,
+            assumption_tags=list(p.assumption_tags),
+            risk_tags=list(p.risk_tags),
+            extra=extra,
+        )
+
+    def _run_single(
+        ph: "PhilosopherProtocol",
+    ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
+        pid = getattr(ph, "name", ph.__class__.__name__)
+        t0 = perf_counter()
+        try:
+            ph_proposals = ph.propose(ctx, intent, tensors, memory)
+            dt = int((perf_counter() - t0) * 1000)
+            proposal = ph_proposals[0] if ph_proposals else None
+            if proposal is not None:
+                proposal = _embed_author(proposal, pid)
+            return proposal, len(ph_proposals), None, dt, pid
+        except Exception as e:
+            dt = int((perf_counter() - t0) * 1000)
+            tb = traceback.format_exc()
+            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+
+    loop = asyncio.get_running_loop()
+    executor = ThreadPoolExecutor(max_workers=max_workers)
+    try:
+        tasks = [
+            asyncio.wait_for(
+                loop.run_in_executor(executor, _run_single, ph),
+                timeout=timeout_s,
+            )
+            for ph in philosophers
+        ]
+        raw_results = await asyncio.gather(*tasks, return_exceptions=True)
+    finally:
+        executor.shutdown(wait=False)
+
+    for ph, outcome in zip(philosophers, raw_results):
+        pid = getattr(ph, "name", ph.__class__.__name__)
+        if isinstance(outcome, asyncio.TimeoutError):
+            results.append(
+                RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    n=0,
+                    timed_out=True,
+                    error=f"Timeout after {timeout_s}s",
+                    latency_ms=None,
+                )
+            )
+        elif isinstance(outcome, Exception):
+            results.append(
+                RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    n=0,
+                    timed_out=False,
+                    error=f"{type(outcome).__name__}: {outcome}",
+                    latency_ms=None,
+                )
+            )
+        else:
+            proposal, n, err, dt, author_id = outcome
+            results.append(
+                RunResult(
+                    philosopher_id=author_id,
+                    ok=(err is None),
+                    n=n,
+                    timed_out=False,
+                    error=err,
+                    latency_ms=dt,
+                )
+            )
+            if proposal is not None:
+                proposals.append(proposal)
 
     return proposals, results
 
@@ -592,10 +718,10 @@ class PhilosopherPartyMachine:
             f"🎯 Theme: {theme}",
             f"🎭 Mood: {mood.value}",
             f"👥 Party size: {len(philosophers)} philosophers",
-            f"",
+            "",
             f"⚡ Expected tension: {tension:.1%}",
             f"✨ Expected emergence: {emergence:.1%}",
-            f"",
+            "",
             "📊 Research basis:",
         ]
 
@@ -622,7 +748,7 @@ class PhilosopherPartyMachine:
         console.print(
             Panel(
                 config.reasoning,
-                title=f"[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
+                title="[bold magenta]🎉 Philosopher Party Configuration[/bold magenta]",
                 border_style="magenta",
             )
         )
