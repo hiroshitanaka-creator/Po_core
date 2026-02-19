@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0-beta] - 2026-02-19 (Phase 5 complete)
+
+### Phase 5-E: Performance Benchmarks (2026-02-19)
+
+#### Added — Benchmark Suite
+- `tests/benchmarks/test_pipeline_perf.py` — Phase 5-E formal benchmark suite
+- **7 benchmark tests** covering all safety modes, async, concurrency:
+  - `test_bench_normal_p50` — NORMAL (39 phil) p50 < 5 s → actual **~33 ms**
+  - `test_bench_warn_p50` — WARN (5 phil) p50 < 2 s → actual **~34 ms**
+  - `test_bench_critical_p50` — CRITICAL (1 phil) p50 < 1 s → actual **~35 ms**
+  - `test_bench_coldstart_vs_warmup` — cold-start ≤ 3× warm median
+  - `test_bench_async_philosophers` — `async_run_philosophers()` × 39 → **11 ms**
+  - `test_bench_concurrent_warn_requests` — 5 concurrent WARN → **181 ms** wall-clock
+  - `test_bench_summary_table` — Rich table with p50/p90/p99/req/s per mode
+- Rich-powered colored output (PASS/FAIL badges, table with status column)
+- `benchmark` marker added to `pytest.ini` and `pyproject.toml`
+- Usage: `pytest tests/benchmarks/ -v -s -m benchmark`
+
+### Phase 5-D: True Async PartyMachine (2026-02-19)
+
+#### Added — Async PartyMachine
+- `async_run_philosophers()` in `party_machine.py` — asyncio-native parallel execution
+  - `asyncio.gather` + `ThreadPoolExecutor` for non-blocking philosopher dispatch
+  - Per-philosopher timeout (`timeout_s`) via `asyncio.wait_for`
+  - `RunResult` dataclass: `philosopher_id`, `ok`, `timed_out`, `error`
+- REST layer (`routers/reason.py`) updated to use `run_in_executor` offload
+  - `reason()` and `_sse_generator()` no longer block the FastAPI event loop
+- 7 async unit tests in `tests/unit/test_phase5d_async.py`
+
+#### Fixed
+- Removed unused `from rich.table import Table` import (F401)
+- Replaced bare `f""` / `f"[...]"` f-strings without placeholders (F541)
+- Sorted imports per isort rules in `test_phase5d_async.py`
+
+---
+
 ## [0.2.0-beta] - 2026-02-18
 
 ### Phase 5: Productization & Delivery
