@@ -115,7 +115,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは20人の哲学者を利用できます：
+Po_coreでは **39人**の哲学者が並列で推論に参加します（SafetyMode により動員数が変動）：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -139,6 +139,7 @@ Po_coreでは20人の哲学者を利用できます：
 | 侘び寂び | `wabi_sabi` | 日本美学 |
 | 孔子 | `confucius` | 儒教 |
 | 荘子 | `zhuangzi` | 道教 |
+| … 他 19人 | `GET /v1/philosophers` | で完全一覧取得可能 |
 
 ## 📊 出力構造
 
@@ -264,7 +265,7 @@ pip install click rich
 
 ---
 
-## REST API (Phase 5)
+## 🚀 REST API (Phase 5)
 
 ### Docker で起動する（推奨）
 
@@ -280,14 +281,14 @@ cp .env.example .env
 # Docker Compose で起動
 docker compose up
 
-# ブラウザで Swagger UI を確認
+# Swagger UI で対話的に試す
 open http://localhost:8000/docs
 ```
 
 ### ローカルで起動する
 
 ```bash
-pip install -e .
+pip install -e ".[api]"
 
 # 環境変数を設定
 export PO_SKIP_AUTH=true   # 開発時はAPIキー不要
@@ -301,11 +302,11 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論 |
-| `POST` | `/v1/reason/stream` | SSE ストリーミング推論 |
-| `GET`  | `/v1/philosophers` | 哲学者マニフェスト一覧 |
-| `GET`  | `/v1/trace/{session_id}` | トレースイベント取得 |
-| `GET`  | `/v1/health` | ヘルスチェック |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（39人 → Pareto集約） |
+| `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
+| `GET`  | `/v1/philosophers` | 39人の哲学者マニフェスト一覧 |
+| `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
+| `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
 ### 使用例
 
@@ -315,16 +316,23 @@ curl -X POST http://localhost:8000/v1/reason \
   -H "Content-Type: application/json" \
   -d '{"input": "What is justice?"}'
 
-# SSE ストリーミング
+# SSE ストリーミング（true async offload）
 curl -N -X POST http://localhost:8000/v1/reason/stream \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
-# 哲学者一覧
+# 39人の哲学者一覧
 curl http://localhost:8000/v1/philosophers
 
 # ヘルスチェック
 curl http://localhost:8000/v1/health
+
+# API キー認証あり
+curl -X POST http://localhost:8000/v1/reason \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"input": "What is freedom?"}'
 ```
 
 ### 環境変数
@@ -335,9 +343,21 @@ curl http://localhost:8000/v1/health
 |------|-----------|------|
 | `PO_API_KEY` | `""` | APIキー（空の場合は認証スキップ） |
 | `PO_SKIP_AUTH` | `false` | `true` で認証をバイパス（開発用） |
+| `PO_CORS_ORIGINS` | `"*"` | 許可オリジン（本番: カンマ区切り） |
+| `PO_RATE_LIMIT_PER_MINUTE` | `60` | IP ごとのレート制限（req/min） |
 | `PO_PORT` | `8000` | サーバーポート |
 | `PO_WORKERS` | `1` | uvicorn ワーカー数 |
 | `PO_LOG_LEVEL` | `info` | ログレベル |
+
+### ⚡ パフォーマンス（Phase 5-E 実測値）
+
+| モード | 哲学者数 | p50 レイテンシ | req/s |
+|--------|---------|--------------|-------|
+| NORMAL | 39人 | ~33 ms | ~30 |
+| WARN | 5人 | ~34 ms | ~30 |
+| CRITICAL | 1人 | ~35 ms | ~29 |
+
+5 並列同時リクエスト（WARN）: 壁時計 **181 ms** 完了
 
 ---
 

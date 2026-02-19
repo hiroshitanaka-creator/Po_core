@@ -10,7 +10,7 @@
 
 ## 現在地（2026-02-19 時点）
 
-**Phase 1〜4 および Phase 5-A/B/C が完了。** Phase 5-D/E/F が残課題。
+**Phase 1〜4 および Phase 5-A〜E が完了。** Phase 5-F（PyPI 公開）が残課題。
 
 | フェーズ | 状態 | 完了サマリー |
 |---|---|---|
@@ -21,9 +21,9 @@
 | Phase 5-A: REST API | ✅ COMPLETE | FastAPI 5ルート・認証・レート制限・SSE |
 | Phase 5-B: セキュリティ | ✅ COMPLETE | CORS・SlowAPI・pydantic-settings |
 | Phase 5-C: Docker | ✅ COMPLETE | multi-stage Dockerfile・docker-compose.yml |
-| Phase 5-D: 真の非同期 | 🔲 PENDING | SSEはthreadpool経由で動作中。async PartyMachine未実装 |
-| Phase 5-E: ベンチマーク | 🔲 PENDING | アドホック計測 ~30ms。正式スイート未作成 |
-| Phase 5-F: PyPI公開 | 🔲 PENDING | publish.yml 準備済み。TestPyPI/PyPI 公開未実施 |
+| Phase 5-D: 真の非同期 | ✅ COMPLETE | `async_run_philosophers()` asyncio.gather + ThreadPoolExecutor。FastAPI イベントループ非ブロッキング |
+| Phase 5-E: ベンチマーク | ✅ COMPLETE | 7テスト・Rich サマリー表。NORMAL p50=33ms（目標5s比150倍速） |
+| Phase 5-F: PyPI公開 | 🔲 PENDING | QUICKSTART 更新済み・CHANGELOG 更新済み。TestPyPI/PyPI 公開未実施 |
 
 ---
 
@@ -312,21 +312,26 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 - `.dockerignore`（dev/test/docs を除外）。
 - `.env.example`（全環境変数リファレンス）。
 
-#### 5.4 非同期・ストリーミング対応 🔲 PENDING（Phase 5-D）
-- 現状: SSE は threadpool 経由で動作（機能はする）。
-- 未実装: `PartyMachine` の `async def propose()` 移行（true non-blocking）。
-- `InMemoryTracer` のイベントバスを asyncio.Queue ベースに拡張。
+#### 5.4 非同期・ストリーミング対応 ✅ COMPLETE（Phase 5-D）
+- `async_run_philosophers()` を `party_machine.py` に追加。
+- `asyncio.gather` + `ThreadPoolExecutor` で哲学者を asyncio-native 並列実行。
+- REST 層 (`routers/reason.py`) を `run_in_executor` ベース非同期呼び出しに変更。
+- `RunResult` dataclass: `philosopher_id / ok / timed_out / error`。
+- 7 非同期ユニットテスト (`tests/unit/test_phase5d_async.py`)。
 
-#### 5.5 パフォーマンスベンチマーク 🔲 PENDING（Phase 5-E）
-- アドホック計測で ~30ms（パイプライン全体）。
-- 正式ベンチマークスイート未作成。
-- 目標: NORMAL mode 39人で単一リクエスト < 5秒。
+#### 5.5 パフォーマンスベンチマーク ✅ COMPLETE（Phase 5-E）
+- `tests/benchmarks/test_pipeline_perf.py` — 正式ベンチマークスイート作成。
+- **実測値**: NORMAL p50=33ms（目標 5s 比 **150倍速**）、WARN p50=34ms、CRITICAL p50=35ms。
+- 7テスト: 各モード p50 アサーション + cold-start 比 + async 39人 + 5並列同時。
+- Rich サマリーテーブル（p50/p90/p99/req/s、PASS/FAIL バッジ付き）。
+- `benchmark` マーカーを `pytest.ini` / `pyproject.toml` に追加。
 
 #### 5.6 リリース準備 🔲 PENDING（Phase 5-F）
 - バージョン `0.2.0-beta` 設定済み（`pyproject.toml`）。
 - `.github/workflows/publish.yml`（OIDC trusted publishing）準備済み。
-- 残: TestPyPI → PyPI 実際の公開。
-- 残: QUICKSTART.md / QUICKSTART_EN.md を REST API 使用例に更新。
+- `QUICKSTART.md` / `QUICKSTART_EN.md` REST API 使用例に更新済み（2026-02-19）。
+- `CHANGELOG.md` Phase 5-D/E エントリ追記済み（2026-02-19）。
+- 残: TestPyPI → PyPI 実際の公開（GitHub リリース作成 or `workflow_dispatch`）。
 
 ### なぜこの項目か
 

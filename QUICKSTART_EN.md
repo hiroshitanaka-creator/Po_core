@@ -115,7 +115,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core provides 20 philosophers:
+Po_core deploys **39 philosophers** in parallel (the number mobilized varies by SafetyMode):
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -139,6 +139,7 @@ Po_core provides 20 philosophers:
 | Wabi-Sabi | `wabi_sabi` | Japanese aesthetics |
 | Confucius | `confucius` | Confucianism |
 | Zhuangzi | `zhuangzi` | Taoism |
+| … 19 more | `GET /v1/philosophers` | for the full manifest |
 
 ## 📊 Output Structure
 
@@ -255,6 +256,106 @@ pip install -e .
 # Install required dependencies
 pip install click rich
 ```
+
+---
+
+## 🚀 REST API (Phase 5)
+
+### Start with Docker (Recommended)
+
+```bash
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+
+# Configure environment
+cp .env.example .env
+# Set PO_API_KEY if needed; for local dev leave PO_SKIP_AUTH=true
+
+# Launch
+docker compose up
+
+# Explore the interactive Swagger UI
+open http://localhost:8000/docs
+```
+
+### Start Locally
+
+```bash
+pip install -e ".[api]"
+export PO_SKIP_AUTH=true   # skip auth in development
+
+python -m po_core.app.rest
+# → http://localhost:8000
+```
+
+### Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/v1/reason` | Synchronous philosophical reasoning (39 phil → Pareto) |
+| `POST` | `/v1/reason/stream` | SSE streaming reasoning (true async offload) |
+| `GET`  | `/v1/philosophers` | Full 39-philosopher manifest |
+| `GET`  | `/v1/trace/{session_id}` | Per-session trace events |
+| `GET`  | `/v1/health` | Health check (version + uptime) |
+
+### Examples
+
+```bash
+# Synchronous reasoning
+curl -X POST http://localhost:8000/v1/reason \
+  -H "Content-Type: application/json" \
+  -d '{"input": "What is justice?"}'
+
+# SSE streaming (true async, non-blocking event loop)
+curl -N -X POST http://localhost:8000/v1/reason/stream \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{"input": "What is the good life?"}'
+
+# List all 39 philosophers
+curl http://localhost:8000/v1/philosophers
+
+# Health check
+curl http://localhost:8000/v1/health
+
+# With API key authentication
+curl -X POST http://localhost:8000/v1/reason \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"input": "What is freedom?"}'
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and configure as needed.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PO_API_KEY` | `""` | API key (empty = no auth) |
+| `PO_SKIP_AUTH` | `false` | `true` bypasses auth (development) |
+| `PO_CORS_ORIGINS` | `"*"` | Allowed CORS origins (prod: comma-separated) |
+| `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit (req/min) |
+| `PO_PORT` | `8000` | Server port |
+| `PO_WORKERS` | `1` | uvicorn worker count |
+| `PO_LOG_LEVEL` | `info` | Log level |
+
+### ⚡ Performance (Phase 5-E Measured)
+
+| Mode | Philosophers | p50 Latency | req/s |
+|------|-------------|-------------|-------|
+| NORMAL | 39 | ~33 ms | ~30 |
+| WARN | 5 | ~34 ms | ~30 |
+| CRITICAL | 1 | ~35 ms | ~29 |
+
+5 concurrent WARN requests (via `asyncio.gather`): **181 ms** wall-clock
+
+Run the benchmark suite yourself:
+
+```bash
+pytest tests/benchmarks/ -v -s -m benchmark
+```
+
+---
 
 ## 🤝 Feedback
 
