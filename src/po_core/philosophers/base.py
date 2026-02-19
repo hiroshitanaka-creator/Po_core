@@ -310,6 +310,13 @@ class Philosopher(ABC):
         normalized = normalize_response(raw, self.name, self.description)
 
         # Apply voice layer — gives each philosopher their characteristic rhetoric.
+        # Voice is stored as a *stylistic wrapper* in extra["voiced_reasoning"] so
+        # that Proposal.content keeps the original analytical text.  This ensures
+        # InteractionMatrix._compute_tension and counterargument assembly in the
+        # deliberation engine operate on the full philosophical reasoning payload
+        # (with opposition keywords intact) rather than on the template-rendered
+        # voice output, which would produce zero-tension pairs and collapse
+        # multi-round deliberation into a no-op.
         module_id = self.__class__.__module__.split(".")[-1]
         voice = get_voice(module_id)
         if voice:
@@ -322,7 +329,7 @@ class Philosopher(ABC):
                 "semantic_delta": tensors.semantic_delta,
                 "blocked_tensor": tensors.blocked_tensor,
             }
-            normalized["reasoning"] = voice.render(
+            normalized["voiced_reasoning"] = voice.render(
                 prompt=ctx.user_input,
                 tension_level=tension_level_v,
                 tensor_snapshot=tensor_snapshot_dict,
@@ -351,8 +358,11 @@ class Philosopher(ABC):
                 "philosopher": self.name,
                 "perspective": perspective,
                 "tension": tension,
+                "voiced_reasoning": normalized.get("voiced_reasoning"),
                 "normalized_response": {
-                    k: v for k, v in normalized.items() if k not in ("reasoning",)
+                    k: v
+                    for k, v in normalized.items()
+                    if k not in ("reasoning", "voiced_reasoning")
                 },
             },
         )
