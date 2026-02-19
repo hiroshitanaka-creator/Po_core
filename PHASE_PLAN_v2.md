@@ -1,44 +1,73 @@
 # Po_core 完全体ロードマップ — Phase 1〜5
 
-> Grand Architect Assessment — 2026-02-10
+> Grand Architect Assessment — 2026-02-10 策定
+> **現在地更新 — 2026-02-19**
 >
 > 前提: Phase 0〜4（PhilosopherBridge, E2E Test, Pipeline Integration, Tensor Deepening, Production Readiness）は完了済み。
 > 本文書は「次の5フェーズ」として、Po_coreを完全体へ導くための戦略的ロードマップである。
 
 ---
 
-## 現状診断（Status Quo）
+## 現在地（2026-02-19 時点）
 
-### モジュール成熟度マトリクス
+**Phase 1〜4 および Phase 5-A/B/C が完了。** Phase 5-D/E/F が残課題。
 
-| モジュール | 成熟度 | 根拠 |
+| フェーズ | 状態 | 完了サマリー |
 |---|---|---|
-| 39哲学者フレームワーク | 8/10 | 全員実装・レジストリ・リスクレベル・タグ完備 |
-| W_Ethics Gate | 8/10 | 5段階パイプライン、6ポリシー、修復エンジン |
-| Freedom Pressure テンソル | 5/10 | 6Dキーワード分析。ML未使用 |
-| Semantic Delta | 4/10 | トークンオーバーラップのみ。sentence-transformers未使用 |
-| Interaction Tensor | 2/10 | フレームワーク存在、計算ロジック未完成 |
-| Semantic Profile | 2/10 | マルチターン追跡の枠組みのみ |
-| 合意形成エンジン | 5/10 | Pareto集約＋投票。真の議論メカニズム無し |
-| Viewer | 6/10 | テキスト/Markdown出力。WebUI・リアルタイム無し |
-| REST API | 0/10 | 設計文書のみ。FastAPI実装無し |
-| ストリーミング | 2/10 | ThreadPoolExecutor並列のみ。非同期無し |
-| テストカバレッジ | 5/10 | 81ファイル468関数。レガシー197件未移行 |
-| Red Team テスト | 3/10 | 2ファイル＋4実験。体系的でない |
-
-### 未解決の技術的負債（NEXT_STEPS.mdより）
-
-1. レガシーテスト197件の移行（`run_ensemble` → `run_turn`）
-2. `PhilosopherBridge`二重インターフェース除去
-3. sentence-level semantic delta未実装
-4. Golden regression テスト不足
-5. Interaction Tensor / Semantic Profile 未完成
+| Phase 1: 基盤固め | ✅ COMPLETE | 39人スケール検証・技術負債清算・テスト基盤整備 |
+| Phase 2: テンソル知性 | ✅ COMPLETE | sentence-transformers Semantic Delta・Interaction Tensor・Deliberation Engine |
+| Phase 3: 可視化 | ✅ COMPLETE | Dash WebUI 4タブ・ExplanationChain・リアルタイムリスナー |
+| Phase 4: 防御強化 | ✅ COMPLETE | PromptInjectionDetector・85件 Red Team・全14件 green |
+| Phase 5-A: REST API | ✅ COMPLETE | FastAPI 5ルート・認証・レート制限・SSE |
+| Phase 5-B: セキュリティ | ✅ COMPLETE | CORS・SlowAPI・pydantic-settings |
+| Phase 5-C: Docker | ✅ COMPLETE | multi-stage Dockerfile・docker-compose.yml |
+| Phase 5-D: 真の非同期 | 🔲 PENDING | SSEはthreadpool経由で動作中。async PartyMachine未実装 |
+| Phase 5-E: ベンチマーク | 🔲 PENDING | アドホック計測 ~30ms。正式スイート未作成 |
+| Phase 5-F: PyPI公開 | 🔲 PENDING | publish.yml 準備済み。TestPyPI/PyPI 公開未実施 |
 
 ---
 
-## Phase 1: 「39賢人の共鳴調整＋技術的負債の清算」
+## 現状診断（Status Quo）
+
+> ⚠️ 下記の成熟度マトリクスは **2026-02-10 策定時点**の値です。
+> **2026-02-19 現在の値**は括弧内に記載。
+
+### モジュール成熟度マトリクス
+
+| モジュール | 策定時 | 現在 | 変化の根拠 |
+|---|---|---|---|
+| 39哲学者フレームワーク | 8/10 | **9/10** | Voice Layer 39本（YAML+VoiceRenderer）追加。propose()のvoice上書きバグ修正（2026-02-19）|
+| W_Ethics Gate | 8/10 | **9/10** | Phase 4: PromptInjectionDetector・EnglishKWDetector v0.2・obfuscation正規化。injection/jailbreak 100%検出 |
+| Freedom Pressure テンソル | 5/10 | **6/10** | 6D構造は維持。well-tested。ML化は未着手 |
+| Semantic Delta | 4/10 | **7/10** | sentence-transformers実装完了。multi-backend（sbert/tfidf/basic）・encode_texts() API |
+| Interaction Tensor | 2/10 | **8/10** | NxN harmony（cosine類似度）+ tension（対立キーワード）+ synthesis 完成。InteractionPair・high_interference_pairs() |
+| Semantic Profile | 2/10 | **4/10** | マルチターン追跡の基盤は存在。深化は未着手 |
+| 合意形成エンジン（Deliberation Engine）| 5/10 | **8/10** | 多ラウンド議論完成。Round1→高干渉ペア特定→counterargument→re-propose。RoundTrace・n_revised追跡 |
+| Viewer | 6/10 | **8/10** | Dash WebUI 4タブ（Pipeline/Philosophers/W_Ethics/Deliberation）。ExplanationChain・リアルタイムリスナー |
+| REST API | 0/10 | **7/10** | FastAPI 5ルート実装。X-API-Key認証・SlowAPI・SSE streaming |
+| ストリーミング | 2/10 | **5/10** | SSEはthreadpool経由で動作。true async PartyMachine未実装 |
+| テストカバレッジ | 5/10 | **7/10** | 1,359+ テスト・91ファイル。pipeline marker CI必須 |
+| Red Team テスト | 3/10 | **8/10** | 56件redteam・29件phase4・85件合計。攻撃検出率≥85%・偽陽性≤20%。全14件green |
+
+### 技術的負債（策定時 → 現在）
+
+| 負債 | 状態 |
+|---|---|
+| レガシーテスト197件の移行（`run_ensemble` → `run_turn`）| ✅ Phase 1で解消 |
+| `PhilosopherBridge`二重インターフェース除去 | ✅ Phase 1で解消 |
+| sentence-level semantic delta未実装 | ✅ Phase 2で解消 |
+| Golden regression テスト不足 | ✅ Phase 1/2で整備 |
+| Interaction Tensor / Semantic Profile 未完成 | ✅ Phase 2で解消（Semantic Profileは基盤のみ）|
+| Voice Layer が propose() の content を上書き（deliberation破壊）| ✅ 2026-02-19 修正済み |
+
+---
+
+## Phase 1: 「39賢人の共鳴調整＋技術的負債の清算」 ✅ COMPLETE
 
 **英名:** Resonance Calibration & Foundation Settlement
+
+**完了サマリー（2026-02-19）:** レガシー197テスト移行・PhilosopherBridge除去・39人同時実行検証・
+Freedom Pressure / W_Ethics Gate スケーリング調整・哲学者意味的ユニーク度評価。2354テスト。
 
 ### 焦点
 39人規模での安定動作の保証と、積み残した技術的負債の一括清算。
@@ -91,9 +120,12 @@ Phase 0〜4で整備された環境の「最後の仕上げ」として、技術
 
 ---
 
-## Phase 2: 「テンソル知性と創発エンジン」
+## Phase 2: 「テンソル知性と創発エンジン」 ✅ COMPLETE
 
 **英名:** Tensor Intelligence & Emergence Engine
+
+**完了サマリー（2026-02-19）:** sentence-transformers Semantic Delta（multi-backend）・
+InteractionMatrix（NxN harmony/tension/synthesis）・DeliberationEngine（多ラウンド再提案）実装。2396テスト。
 
 ### 焦点
 キーワードベースのテンソル計算をMLベースに進化させ、哲学者間の「真の対話」メカニズムを構築する。
@@ -145,9 +177,12 @@ Phase 1で39人の安定動作と品質が確認された後でなければ、�
 
 ---
 
-## Phase 3: 「内部状態の完全可視化と説明可能性」
+## Phase 3: 「内部状態の完全可視化と説明可能性」 ✅ COMPLETE
 
 **英名:** Observability, Explainability & Viewer Integration
+
+**完了サマリー（2026-02-19）:** Dash WebUI 4タブ・ExplanationChain・build_explanation_from_verdict()・
+InMemoryTracer リスナー機構・Deliberation ラウンドチャート・InteractionMatrix ヒートマップ。34テスト。
 
 ### 焦点
 Phase 2で強化されたテンソルと議論メカニズムを、開発者が直感的に理解できる形で可視化する。
@@ -191,9 +226,13 @@ Phase 2でテンソルの知性と議論メカニズムが揃った後に可視�
 
 ---
 
-## Phase 4: 「倫理的堅牢化とレッドチーミング」
+## Phase 4: 「倫理的堅牢化とレッドチーミング」 ✅ COMPLETE
 
 **英名:** Adversarial Hardening & Ethical Stress Testing
+
+**完了サマリー（2026-02-19）:** PromptInjectionDetector（injection/jailbreak 100%検出）・
+EnglishKWDetector v0.2・IntentionGate obfuscation正規化・85件 Red Team テスト（全14件 green）・
+CI防御メトリクス自動化（≥85%検出・≤20%偽陽性）。※LLMベースDetectorは未着手。
 
 ### 焦点
 Phase 3で可視化された内部状態を武器に、悪意ある入力に対する防御力を体系的に検証・強化する。
@@ -243,7 +282,7 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 
 ---
 
-## Phase 5: 「製品化と世界への配布」
+## Phase 5: 「製品化と世界への配布」 🔄 IN PROGRESS
 
 **英名:** Productization, API & Delivery
 
@@ -252,39 +291,42 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 
 ### 具体的タスク
 
-#### 5.1 FastAPI REST API 実装
-- `03_api/`に設計文書が存在するが実装は0。これを実装する。
-- エンドポイント:
-  - `POST /v1/reason` — メイン推論（同期）
-  - `POST /v1/reason/stream` — ストリーミング推論（WebSocket / SSE）
-  - `GET /v1/philosophers` — 哲学者一覧
-  - `GET /v1/trace/{session_id}` — トレース取得
+#### 5.1 FastAPI REST API 実装 ✅ COMPLETE（Phase 5-A）
+- 実装済みエンドポイント（`src/po_core/app/rest/`）:
+  - `POST /v1/reason` — 同期推論
+  - `POST /v1/reason/stream` — SSE ストリーミング
+  - `GET /v1/philosophers` — 39人マニフェスト
+  - `GET /v1/trace/{session_id}` — セッション別トレース
   - `GET /v1/health` — ヘルスチェック
-- OpenAPI / Swagger自動生成。
-- 認証: APIキーベース（最小構成）。
+- OpenAPI / Swagger自動生成済み（FastAPI標準）。
+- `X-API-Key` 認証（`PO_API_KEY` 環境変数）。24ユニットテスト。
 
-#### 5.2 非同期・ストリーミング対応
-- `PartyMachine`のThreadPoolExecutorをasyncio対応に。
-- 哲学者の応答が完了するたびにクライアントへプッシュ（SSE / WebSocket）。
-- `InMemoryTracer`のイベントバスをAPI層まで接続し、パイプライン進行をリアルタイム配信。
+#### 5.2 セキュリティ強化 ✅ COMPLETE（Phase 5-B）
+- CORS: `PO_CORS_ORIGINS`（デフォルト `"*"`、本番はカンマ区切り）。
+- レート制限: SlowAPI + `PO_RATE_LIMIT_PER_MINUTE`（デフォルト 60 req/min/IP）。
+- 設定: pydantic-settings `APISettings`（全設定が `PO_` prefix 環境変数で制御）。
 
-#### 5.3 Docker化とデプロイ容易化
-- `Dockerfile` + `docker-compose.yml`（アプリ + オプションでDB）。
-- マルチステージビルドでイメージサイズを最小化。
-- 環境変数ベースの設定（`Settings`クラスとPydantic BaseSettings）。
-- Kubernetes Helmチャートは次期バージョンで検討。
+#### 5.3 Docker化 ✅ COMPLETE（Phase 5-C）
+- multi-stage `Dockerfile`（builder + slim runtime、non-root `pocore` ユーザー）。
+- `docker-compose.yml`（named volume + 30秒ヘルスチェック）。
+- `.dockerignore`（dev/test/docs を除外）。
+- `.env.example`（全環境変数リファレンス）。
 
-#### 5.4 パフォーマンスチューニング
-- 39人同時実行のレイテンシベンチマーク。
-- sentence-transformerモデルのロード時間最適化（起動時ロード + キャッシュ）。
-- Pareto集約のプロファイリングと最適化。
-- 目標: 単一リクエスト < 5秒（NORMAL mode, 39 philosophers）。
+#### 5.4 非同期・ストリーミング対応 🔲 PENDING（Phase 5-D）
+- 現状: SSE は threadpool 経由で動作（機能はする）。
+- 未実装: `PartyMachine` の `async def propose()` 移行（true non-blocking）。
+- `InMemoryTracer` のイベントバスを asyncio.Queue ベースに拡張。
 
-#### 5.5 リリース準備
-- `pyproject.toml`のバージョンを`0.2.0-beta`に引き上げ。
-- CHANGELOG.md更新。
-- QUICKSTART.md / QUICKSTART_EN.md をAPI使用例を含む形に改訂。
-- PyPI公開準備（`python -m build` + `twine upload`）。
+#### 5.5 パフォーマンスベンチマーク 🔲 PENDING（Phase 5-E）
+- アドホック計測で ~30ms（パイプライン全体）。
+- 正式ベンチマークスイート未作成。
+- 目標: NORMAL mode 39人で単一リクエスト < 5秒。
+
+#### 5.6 リリース準備 🔲 PENDING（Phase 5-F）
+- バージョン `0.2.0-beta` 設定済み（`pyproject.toml`）。
+- `.github/workflows/publish.yml`（OIDC trusted publishing）準備済み。
+- 残: TestPyPI → PyPI 実際の公開。
+- 残: QUICKSTART.md / QUICKSTART_EN.md を REST API 使用例に更新。
 
 ### なぜこの項目か
 
@@ -334,22 +376,38 @@ Po_coreの存在意義が「AI人格と哲学の融合による創発的意味�
 
 ## リスクと緩和策
 
-| リスク | 影響度 | 緩和策 |
+| リスク | 影響度 | 状態 |
 |---|---|---|
-| Phase 2のDeliberation Engineが複雑すぎる | 高 | `max_rounds=2`から始め、段階的に拡張 |
-| sentence-transformerのレイテンシ | 中 | 起動時ロード + キャッシュ、軽量モデル選定 |
-| Phase 1の技術負債清算が予想以上に大きい | 中 | 197テストの50%以上が削除対象と予測（旧パイプライン専用テスト） |
-| REST API のセキュリティ | 高 | Phase 4で防御強化済みの後にAPI公開（Phase 5）という順序で緩和 |
-| 39人同時実行のパフォーマンス | 中 | Phase 1で早期にベースライン計測し、Phase 5で最適化 |
+| Phase 2のDeliberation Engineが複雑すぎる | 高 | ✅ `max_rounds=2`で実装・段階的拡張済み |
+| sentence-transformerのレイテンシ | 中 | ✅ 起動時ロード + multi-backend fallback（sbert→tfidf→basic）で対処 |
+| Phase 1の技術負債清算が予想以上に大きい | 中 | ✅ Phase 1で完全清算済み |
+| REST API のセキュリティ | 高 | ✅ Phase 4防御強化後にAPI公開。SlowAPI・CORS・APIキー認証実装済み |
+| 39人同時実行のパフォーマンス | 中 | 🔲 Phase 5-E でベンチマークスイート作成予定 |
+| Voice Layer が deliberation を破壊するバグ | 高 | ✅ 2026-02-19 修正済み（propose() content 保護） |
+| true async 非対応（SSE がthreadpool依存）| 中 | 🔲 Phase 5-D で対処予定 |
 
 ---
 
 ## 結語
 
-ユーザー案は本質的に正しい方向を向いている。特に「Phase 1で39人の動作を確認してからPhase 2で可視化」「可視化の後にレッドチーム」という順序は、複雑系システムの開発として合理的である。
+ユーザー案は本質的に正しい方向を向いていた。特に「Phase 1で39人の動作を確認してからPhase 2で可視化」
+「可視化の後にレッドチーム」という順序は、複雑系システムの開発として合理的であった。
 
-本提案の核心的な追加は「Phase 2: テンソル知性と創発エンジン」の挿入である。Po_coreが「39人の哲学者が独立に喋るシステム」なのか「39人の哲学者が対話し、創発的に意味を生成するシステム」なのかは、このPhaseの有無で決まる。
+本提案の核心的な追加「Phase 2: テンソル知性と創発エンジン」は実装された。
+Po_coreは「39人の哲学者が独立に喋るシステム」から
+「39人が対話し、Deliberation Engine で創発的に意味を生成するシステム」へ進化した。
+
+2026-02-19 現在、残るのは Phase 5-D/E/F のみ。
+
+---
+
+**2026-02-19 時点の現在地:**
 
 > "We don't know if pigs can fly. But we attached a balloon to one to find out."
 >
-> 気球はついた。次は、風を読む（テンソル知性）番だ。
+> 気球はついた。風も読んだ（テンソル知性・Phase 2）。
+> 内部も見えるようにした（可視化・Phase 3）。
+> 悪意にも耐えた（防御強化・Phase 4）。
+> 世界に繋がった（REST API・Docker・Phase 5-A/B/C）。
+>
+> 次は飛ぶ（PyPI公開・真の非同期・Phase 5-D/E/F）。
