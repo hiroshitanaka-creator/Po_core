@@ -194,10 +194,11 @@ _MOCK_RESULT: dict[str, Any] = {
 
 @pytest.fixture()
 def _client_no_auth():
+    from fastapi.testclient import TestClient
+
     from po_core.app.rest import auth, config
     from po_core.app.rest.config import APISettings
     from po_core.app.rest.server import create_app
-    from fastapi.testclient import TestClient
 
     app = create_app()
     app.dependency_overrides[config.get_api_settings] = lambda: APISettings(
