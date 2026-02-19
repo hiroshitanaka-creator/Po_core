@@ -40,8 +40,8 @@ from po_core.runtime.settings import Settings
 # Constants
 # ---------------------------------------------------------------------------
 
-REPEAT_NORMAL = 5    # NORMAL is heavier — 5 samples keeps CI sane
-REPEAT_FAST = 8      # WARN/CRITICAL are cheap — more samples = stable p90
+REPEAT_NORMAL = 5  # NORMAL is heavier — 5 samples keeps CI sane
+REPEAT_FAST = 8  # WARN/CRITICAL are cheap — more samples = stable p90
 
 TARGET_NORMAL_S = 5.0
 TARGET_WARN_S = 2.0
@@ -114,9 +114,9 @@ def test_bench_normal_p50():
     )
     st = _stats(samples)
     _print_rich_row("NORMAL (39 phil)", st, TARGET_NORMAL_S)
-    assert st["p50"] < TARGET_NORMAL_S, (
-        f"NORMAL p50={st['p50']:.3f}s ≥ {TARGET_NORMAL_S}s"
-    )
+    assert (
+        st["p50"] < TARGET_NORMAL_S
+    ), f"NORMAL p50={st['p50']:.3f}s ≥ {TARGET_NORMAL_S}s"
 
 
 # ---------------------------------------------------------------------------
@@ -135,9 +135,7 @@ def test_bench_warn_p50():
     )
     st = _stats(samples)
     _print_rich_row("WARN (5 phil)", st, TARGET_WARN_S)
-    assert st["p50"] < TARGET_WARN_S, (
-        f"WARN p50={st['p50']:.3f}s ≥ {TARGET_WARN_S}s"
-    )
+    assert st["p50"] < TARGET_WARN_S, f"WARN p50={st['p50']:.3f}s ≥ {TARGET_WARN_S}s"
 
 
 # ---------------------------------------------------------------------------
@@ -156,9 +154,9 @@ def test_bench_critical_p50():
     )
     st = _stats(samples)
     _print_rich_row("CRITICAL (1 phil)", st, TARGET_CRITICAL_S)
-    assert st["p50"] < TARGET_CRITICAL_S, (
-        f"CRITICAL p50={st['p50']:.3f}s ≥ {TARGET_CRITICAL_S}s"
-    )
+    assert (
+        st["p50"] < TARGET_CRITICAL_S
+    ), f"CRITICAL p50={st['p50']:.3f}s ≥ {TARGET_CRITICAL_S}s"
 
 
 # ---------------------------------------------------------------------------
@@ -182,9 +180,9 @@ def test_bench_coldstart_vs_warmup():
         f"  [bold]Warm-median[/bold] [green]{warm:.3f}s[/green]"
         f"  ratio=[yellow]{cold/warm:.2f}x[/yellow]"
     )
-    assert cold <= warm * 3.0, (
-        f"Cold-start ({cold:.3f}s) > 3× warm median ({warm:.3f}s)"
-    )
+    assert (
+        cold <= warm * 3.0
+    ), f"Cold-start ({cold:.3f}s) > 3× warm median ({warm:.3f}s)"
 
 
 # ---------------------------------------------------------------------------
@@ -307,9 +305,7 @@ def test_bench_summary_table():
 
     all_pass = True
     for label, mode, n, target in modes:
-        samples = _timeit(
-            lambda s=_settings(mode): run(_BENCH_PROMPT, settings=s), n
-        )
+        samples = _timeit(lambda s=_settings(mode): run(_BENCH_PROMPT, settings=s), n)
         st = _stats(samples)
         passed = st["p50"] < target
         all_pass = all_pass and passed
