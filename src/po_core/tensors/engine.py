@@ -30,7 +30,10 @@ from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.tensor_snapshot import TensorSnapshot, TensorValue
 from po_core.tensors.freedom_pressure import FreedomPressureTensor
-from po_core.tensors.freedom_pressure_v2 import FreedomPressureV2, create_freedom_pressure_v2
+from po_core.tensors.freedom_pressure_v2 import (
+    FreedomPressureV2,
+    create_freedom_pressure_v2,
+)
 
 # Type alias for metric functions
 MetricFn = Callable[[Context, MemorySnapshot], Tuple[str, float]]

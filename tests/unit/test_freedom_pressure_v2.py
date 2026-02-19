@@ -17,12 +17,11 @@ import numpy as np
 import pytest
 
 from po_core.tensors.freedom_pressure_v2 import (
+    _DEFAULT_CORRELATION_MATRIX,
     FreedomPressureV2,
     FreedomPressureV2Snapshot,
-    _DEFAULT_CORRELATION_MATRIX,
     create_freedom_pressure_v2,
 )
-
 
 # ---------------------------------------------------------------------------
 # フィクスチャ
@@ -143,7 +142,9 @@ class TestFreedomPressureV2Computation:
         result = fp_v2_keyword.compute_v2(
             "Should I choose this option? I must decide between these alternatives."
         )
-        assert result.values["choice"] > 0.0, "choice should be > 0 for choice-heavy text"
+        assert (
+            result.values["choice"] > 0.0
+        ), "choice should be > 0 for choice-heavy text"
 
     def test_ethics_heavy_text(self, fp_v2_keyword):
         """倫理関連キーワードが多い文で ethics 次元が高くなる。"""
@@ -151,7 +152,9 @@ class TestFreedomPressureV2Computation:
         result = fp_v2_keyword.compute_v2(
             "This is wrong. We must consider what is morally right and ethical."
         )
-        assert result.values["ethics"] > 0.0, "ethics should be > 0 for ethics-heavy text"
+        assert (
+            result.values["ethics"] > 0.0
+        ), "ethics should be > 0 for ethics-heavy text"
 
     def test_social_heavy_text(self, fp_v2_keyword):
         """社会関連キーワードが多い文で social 次元が高くなる。"""
@@ -159,7 +162,9 @@ class TestFreedomPressureV2Computation:
         result = fp_v2_keyword.compute_v2(
             "We, as a community and society, must protect others and people around us."
         )
-        assert result.values["social"] > 0.0, "social should be > 0 for social-heavy text"
+        assert (
+            result.values["social"] > 0.0
+        ), "social should be > 0 for social-heavy text"
 
     def test_urgency_heavy_text(self, fp_v2_keyword):
         """緊急キーワードが多い文で urgency 次元が高くなる。"""
@@ -318,9 +323,9 @@ class TestOntologicalCoherence:
         incoherent_score = fp._check_ontological_coherence(incoherent_state)
         coherent_score = fp._check_ontological_coherence(coherent_state)
 
-        assert incoherent_score < coherent_score, (
-            f"Sartre incoherence should lower score: {incoherent_score} vs {coherent_score}"
-        )
+        assert (
+            incoherent_score < coherent_score
+        ), f"Sartre incoherence should lower score: {incoherent_score} vs {coherent_score}"
 
     def test_kant_incoherence_detection(self):
         """
@@ -335,9 +340,9 @@ class TestOntologicalCoherence:
         incoherent_score = fp._check_ontological_coherence(incoherent_state)
         coherent_score = fp._check_ontological_coherence(coherent_state)
 
-        assert incoherent_score < coherent_score, (
-            f"Kant incoherence should lower score: {incoherent_score} vs {coherent_score}"
-        )
+        assert (
+            incoherent_score < coherent_score
+        ), f"Kant incoherence should lower score: {incoherent_score} vs {coherent_score}"
 
     def test_fully_coherent_state(self):
         """すべての次元が高い場合 coherence_score が高い (≥0.8)。"""
@@ -469,9 +474,9 @@ class TestEngineFeatureFlag:
         snapshot = eng_mod.compute_tensors("What is justice?")
         fp_value = snapshot.values.get("freedom_pressure")
         assert fp_value is not None
-        assert fp_value.source.startswith("FreedomPressureV2/"), (
-            f"Expected FreedomPressureV2/* source, got {fp_value.source!r}"
-        )
+        assert fp_value.source.startswith(
+            "FreedomPressureV2/"
+        ), f"Expected FreedomPressureV2/* source, got {fp_value.source!r}"
 
     def test_v2_dimensions_include_coherence_score(self, monkeypatch):
         """フラグ ON では dimensions に coherence_score が含まれる。"""

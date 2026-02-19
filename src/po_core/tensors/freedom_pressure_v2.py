@@ -193,7 +193,9 @@ class FreedomPressureV2(Tensor):
             anchors = self._encoder.encode(_ANCHOR_PHRASES, show_progress_bar=False)
             self._anchor_embeddings = np.array(anchors, dtype=np.float64)
             self._backend = "sbert"
-            logger.debug("FreedomPressureV2: sbert backend initialized (%s)", self._model_name)
+            logger.debug(
+                "FreedomPressureV2: sbert backend initialized (%s)", self._model_name
+            )
         except Exception as exc:
             logger.info(
                 "FreedomPressureV2: sentence-transformers unavailable (%s), "
@@ -227,7 +229,9 @@ class FreedomPressureV2(Tensor):
         # Step 2: メモリ深度によるブースト
         if memory_depth > 0:
             boost = min(memory_depth * 0.03, 0.2)
-            raw_6d = np.clip(raw_6d + boost * np.array([0.2, 0.3, 0.1, 0.2, 0.1, 0.1]), 0.0, 1.0)
+            raw_6d = np.clip(
+                raw_6d + boost * np.array([0.2, 0.3, 0.1, 0.2, 0.1, 0.1]), 0.0, 1.0
+            )
 
         # Step 3: 哲学的相関テンソル適用
         correlated = self._apply_correlation(raw_6d)
@@ -275,7 +279,8 @@ class FreedomPressureV2(Tensor):
         """FreedomPressureTensor 互換: 次元名 → 値のdict を返す。"""
         if self._ema_state is not None:
             return {
-                dim: round(float(self._ema_state[i]), 4) for i, dim in enumerate(self.DIMS)
+                dim: round(float(self._ema_state[i]), 4)
+                for i, dim in enumerate(self.DIMS)
             }
         return {dim: 0.0 for dim in self.DIMS}
 
