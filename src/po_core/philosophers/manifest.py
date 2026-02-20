@@ -461,7 +461,7 @@ SPECS: List[PhilosopherSpec] = [
         "GrokXAI",
         risk_level=2,
         weight=1.1,
-        enabled=False,  # Slot 41 — awaiting user implementation
+        enabled=True,  # Slot 41
         tags=(TAG_REDTEAM, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),

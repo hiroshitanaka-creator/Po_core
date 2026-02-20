@@ -45,6 +45,7 @@ from po_core.philosophers.watsuji import Watsuji
 from po_core.philosophers.weil import Weil
 from po_core.philosophers.wittgenstein import Wittgenstein
 from po_core.philosophers.zhuangzi import Zhuangzi
+from po_core.philosophers.grok_xai import GrokXAI
 
 __all__ = [
     "Philosopher",
@@ -87,4 +88,5 @@ __all__ = [
     "Weil",
     "Wittgenstein",
     "Zhuangzi",
+    "GrokXAI",
 ]
