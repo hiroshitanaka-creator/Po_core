@@ -87,6 +87,7 @@ PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
     "weil": philosophers.Weil,
     "wittgenstein": philosophers.Wittgenstein,
     "zhuangzi": philosophers.Zhuangzi,
+    "grok_xai": philosophers.GrokXAI,
 }
 
 

@@ -148,7 +148,7 @@ class TestPoSelfInitialization:
 
     def test_default_has_39_philosophers(self):
         po = PoSelf()
-        assert len(po.philosophers) == 40
+        assert len(po.philosophers) == 41
 
     def test_custom_philosophers_stored(self):
         po = PoSelf(philosophers=["aristotle", "nietzsche"])
@@ -162,7 +162,7 @@ class TestPoSelfInitialization:
         po = PoSelf()
         available = po.get_available_philosophers()
         assert isinstance(available, list)
-        assert len(available) == 40
+        assert len(available) == 41
         assert "aristotle" in available
         assert "confucius" in available
 
