@@ -25,7 +25,9 @@ The normalize_response() function provides backward compatibility.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol as TypingProtocol, TypedDict
+from typing import Any, Dict, List, Optional
+from typing import Protocol as TypingProtocol
+from typing import TypedDict
 
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.intent import Intent

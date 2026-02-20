@@ -5,7 +5,6 @@ Tests for database layer (database.py)
 import tempfile
 from pathlib import Path
 
-
 from po_core.database import DatabaseManager
 
 

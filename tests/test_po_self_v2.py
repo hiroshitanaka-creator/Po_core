@@ -14,7 +14,6 @@ import warnings
 
 import pytest
 
-
 from po_core.po_self import PoSelf, PoSelfResponse
 
 pytestmark = pytest.mark.pipeline

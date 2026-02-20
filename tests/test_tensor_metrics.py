@@ -15,7 +15,6 @@ from datetime import datetime, timezone
 
 import pytest
 
-
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemoryItem, MemorySnapshot
 from po_core.tensors.metrics.blocked_tensor import metric_blocked_tensor

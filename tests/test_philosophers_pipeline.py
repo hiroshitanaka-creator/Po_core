@@ -19,7 +19,6 @@ import uuid
 
 import pytest
 
-
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.safety_mode import SafetyMode

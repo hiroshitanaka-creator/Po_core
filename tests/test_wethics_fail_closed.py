@@ -18,7 +18,6 @@ Design Principle:
 
 from typing import List, Optional
 
-
 from po_core.safety.wethics_gate import (
     Candidate,
     Evidence,

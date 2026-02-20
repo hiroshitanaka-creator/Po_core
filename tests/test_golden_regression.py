@@ -23,7 +23,6 @@ from typing import Dict, List, Tuple
 
 import pytest
 
-
 from po_core.adapters.memory_poself import InMemoryAdapter
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.autonomy.solarwill.engine import SolarWillEngine

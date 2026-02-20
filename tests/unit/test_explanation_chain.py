@@ -7,9 +7,7 @@ correctly for all decision types: ALLOW, ALLOW_WITH_REPAIR, REJECT, ESCALATE.
 
 import pytest
 
-from po_core.safety.wethics_gate.explanation import (
-    build_explanation_chain,
-)
+from po_core.safety.wethics_gate.explanation import build_explanation_chain
 from po_core.safety.wethics_gate.types import (
     Evidence,
     GateDecision,

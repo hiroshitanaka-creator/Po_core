@@ -8,7 +8,6 @@ participate in NORMAL mode.
 
 import json
 
-
 from po_core.po_self import PoSelf
 
 
