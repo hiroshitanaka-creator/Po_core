@@ -18,12 +18,12 @@ pip install po-core
 > **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
 
 ### TL;DR
-- **39 philosophers** as interacting **tensors** → accountable LLM reasoning
+- **43 philosophers** as interacting **tensors** → accountable LLM reasoning
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
-- **Real tensor metrics** — Freedom Pressure (6D), Semantic Delta, Blocked Tensor
+- **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
 - **A/B testing framework** for optimizing philosophy configurations with statistical rigor
-- 125+ pipeline tests; active experimentation phase
+- 3100+ tests; REST API + Docker production-ready
 
 ### Quick links
 [Modules](./04_modules) ·
@@ -85,14 +85,16 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 ## Key Features
 
 ### Philosophical Ensemble
-- **39 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi)
+- **43 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi) and AI (Claude/Anthropic, GPT/OpenAI, Gemini/Google, Grok/xAI)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
-- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, and Eastern wisdom traditions
+- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, Eastern wisdom traditions, and AI ethics
 
 ### Tensor-Based Architecture
-- **Freedom Pressure (6D)**: 6-dimensional keyword analysis (choice, responsibility, urgency, ethics, social impact, authenticity) with memory depth/refuse-tag boost
-- **Semantic Delta**: Token-overlap divergence between user input and memory history (1.0 = novel, 0.0 = seen before)
+- **FreedomPressureV2 (6D ML)**: ML-native 6-dimensional tensor (choice, responsibility, urgency, ethics, social impact, authenticity) with EMA smoothing and correlation matrix
+- **Semantic Delta**: Multi-backend divergence (sbert/tfidf/basic) between user input and memory history (1.0 = novel, 0.0 = seen before)
 - **Blocked Tensor**: Constraint/harm estimation via harmful keyword detection + vocabulary diversity scoring
+- **EmergenceDetector**: Detects emergent philosophical consensus and cross-philosopher influence patterns
+- **InteractionMatrix**: NxN embedding-based harmony + keyword tension between philosopher proposals
 
 ### Transparency by Design
 - **Po_trace**: Complete audit log of reasoning process
@@ -195,54 +197,76 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 ```
 src/po_core/
 ├── app/
-│   └── api.py           # Public entry point: run() (recommended API)
-├── domain/              # Immutable value objects
-│   ├── context.py       # Context for reasoning
-│   ├── proposal.py      # Philosopher proposals
-│   ├── pareto_config.py # Pareto weights/tuning types
+│   ├── api.py                 # Public entry point: run() (recommended API)
+│   └── rest/                  # FastAPI REST layer (Phase 5)
+│       ├── server.py          # App factory
+│       ├── config.py          # APISettings (pydantic-settings)
+│       ├── auth.py            # X-API-Key authentication
+│       ├── rate_limit.py      # SlowAPI rate limiting
+│       └── routers/           # 5 endpoint routers
+├── domain/                    # Immutable value objects
+│   ├── context.py
+│   ├── proposal.py
+│   ├── pareto_config.py
 │   ├── tensor_snapshot.py
 │   ├── memory_snapshot.py
 │   └── safety_verdict.py
-├── ports/               # Abstract interfaces
-│   └── memory.py        # MemoryPort interface
-├── adapters/            # Concrete implementations
-│   └── memory_poself.py # Po_self adapter
-├── runtime/             # Dependency injection
-│   ├── settings.py      # Configuration + feature flags
-│   ├── wiring.py        # DI Container (build_test_system)
-│   ├── pareto_table.py  # Pareto config loader (JSON-in-YAML)
-│   └── battalion_table.py # Battalion config loader
-├── aggregator/          # Multi-objective optimization
-│   └── pareto.py        # ParetoAggregator (config-driven)
-├── philosophers/        # 39 philosopher modules
-│   ├── manifest.py      # SPECS: 39 philosopher specs (risk/cost/tags)
-│   ├── registry.py      # SafetyMode-based selection + cost budget
-│   └── bridge.py        # PhilosopherBridge: legacy → PhilosopherProtocol
-├── tensors/             # Tensor computation
-│   ├── engine.py        # TensorEngine (MetricFn registry)
+├── ports/                     # Abstract interfaces
+│   └── memory.py
+├── adapters/                  # Concrete implementations
+│   └── memory_poself.py
+├── runtime/                   # Dependency injection
+│   ├── settings.py            # Configuration + feature flags
+│   ├── wiring.py              # DI Container
+│   ├── pareto_table.py
+│   └── battalion_table.py
+├── aggregator/                # Multi-objective optimization
+│   └── pareto.py
+├── philosophers/              # 43 philosopher modules (Phase 7: slots 40–43)
+│   ├── manifest.py            # 43 philosopher specs (risk/cost/tags)
+│   ├── registry.py            # SafetyMode-based selection
+│   ├── claude_anthropic.py    # AI slot 40: Claude/Anthropic
+│   ├── gpt_chatgpt.py         # AI slot 41: GPT/OpenAI
+│   ├── gemini_google.py       # AI slot 42: Gemini/Google
+│   └── grok_xai.py            # AI slot 43: Grok/xAI
+├── tensors/                   # Tensor computation
+│   ├── engine.py              # TensorEngine (MetricFn registry)
+│   ├── freedom_pressure_v2.py # ML-native 6D tensor (Phase 6-A)
+│   ├── interaction_tensor.py  # NxN philosopher harmony/tension
 │   └── metrics/
-│       ├── freedom_pressure.py  # 6D keyword analysis + memory boost
-│       ├── semantic_delta.py    # Token-overlap divergence vs memory
-│       └── blocked_tensor.py    # Harm keyword + constraint scoring
-├── safety/              # W-ethics gate system
+│       ├── freedom_pressure.py
+│       ├── semantic_delta.py
+│       └── blocked_tensor.py
+├── deliberation/              # Emergence & influence (Phase 6-B)
+│   ├── engine.py              # DeliberationEngine (multi-round)
+│   ├── emergence.py           # EmergenceDetector
+│   └── influence.py           # InfluenceTracker
+├── memory/                    # 3-Layer memory system (Phase 6-D/E)
+│   ├── philosophical_memory.py # Top-level memory orchestrator
+│   ├── semantic_store.py      # Semantic/episodic memory
+│   └── procedural_store.py    # Procedural memory
+├── meta/                      # Self-reflection (Phase 6-C)
+│   ├── ethics_monitor.py      # MetaEthicsMonitor
+│   └── philosopher_ledger.py  # PhilosopherQualityLedger
+├── safety/                    # W-ethics gate system
 │   └── wethics_gate/
 │       ├── gate.py            # W0-W4 violation detection + repair
 │       ├── intention_gate.py  # Stage 1 (pre-deliberation)
 │       └── action_gate.py     # Stage 2 (post-deliberation)
-├── trace/               # Audit trail
-│   ├── pareto_events.py # Emit pareto debug TraceEvents
-│   ├── decision_events.py # Emit decision audit events
-│   └── schema.py        # TraceEvent schema validation
-├── autonomy/            # Solar Will (experimental)
+├── trace/                     # Audit trail
+│   ├── pareto_events.py
+│   ├── decision_events.py
+│   └── schema.py
+├── autonomy/                  # Solar Will (experimental)
 │   └── solarwill/
-├── experiments/         # A/B testing framework
-│   ├── storage.py       # Experiment persistence (JSON Lines)
-│   ├── runner.py        # Execute experiments across variants
-│   ├── analyzer.py      # Statistical analysis (t-test, effect size)
-│   └── promoter.py      # Automatic winner promotion
-├── ensemble.py          # run_turn (hex pipeline) + PHILOSOPHER_REGISTRY
-├── po_self.py           # PoSelf: high-level API (uses run_turn internally)
-└── po_trace.py          # Execution tracing
+├── experiments/               # A/B testing framework
+│   ├── storage.py
+│   ├── runner.py
+│   ├── analyzer.py
+│   └── promoter.py
+├── ensemble.py                # run_turn (hex pipeline)
+├── po_self.py                 # PoSelf: high-level API
+└── po_trace.py                # Execution tracing
 ```
 
 ### Config-Driven Philosophy
@@ -289,7 +313,7 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Beta (v0.2.0-beta) — All 5 Phases Underway, Heading to v1.0**
+**Current Phase: Beta (v0.2.0-beta) — Phases 1–7 Complete, Heading to v1.0**
 
 ### Completed Components
 
@@ -307,19 +331,25 @@ experiments/
 | **REST API** | ✅ Complete | FastAPI, 5 endpoints, SSE streaming, auth |
 | **Docker** | ✅ Complete | Multi-stage build, docker-compose, health check |
 | **Security** | ✅ Complete | CORS env config, SlowAPI rate limiting |
-| Async PartyMachine | 🔄 Planned | SSE via threadpool now; true async TBD |
+| **Async PartyMachine** | ✅ Complete | `asyncio.gather` + ThreadPoolExecutor, true async SSE |
+| **Benchmarks** | ✅ Complete | ~33ms p50 NORMAL, 7 formal benchmark tests |
+| **FreedomPressureV2** | ✅ Complete | ML-native 6D tensor with EMA + correlation matrix |
+| **EmergenceDetector** | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
+| **MetaEthicsMonitor** | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
+| **3-Layer Memory** | ✅ Complete | Semantic + procedural + philosophical memory stores |
+| **AI Philosophers (40–43)** | ✅ Complete | Claude, GPT, Gemini, Grok as philosophical personas |
 | PyPI Publish | 🔄 Ready | `publish.yml` OIDC workflow ready; not yet published |
 
-### Five-Phase Roadmap
+### Roadmap
 
 ```
-Phase 1         Phase 2           Phase 3          Phase 4         Phase 5
-基盤固め    →   知性強化      →   可視化       →   防御強化    →   配布
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-技術負債清算     ML テンソル       WebUI            Red Team        REST API
-39人スケール     Deliberation     Explainable AI   Grey Zone       Docker
-テスト基盤       Interaction T.   リアルタイム      CI防御指標      Streaming
-二重IF除去       Semantic Prof.   Argument Graph   LLM Detector    PyPI
+Phase 1      Phase 2        Phase 3       Phase 4      Phase 5      Phase 6      Phase 7
+基盤固め  →  知性強化    →  可視化    →  防御強化  →  配布      →  自律進化  →  AI哲学者
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+技術負債清算  ML テンソル   WebUI         Red Team     REST API     FP-V2 ML     AI Slots
+39人スケール  Deliberation  Explainable   Grey Zone    Docker       Emergence    Claude/GPT
+テスト基盤    Interaction   リアルタイム   CI防御指標   Streaming    MetaEthics   Gemini/Grok
+二重IF除去    Semantic      Argument      LLM Detect   PyPI         3-Layer Mem  倫理比較
 ```
 
 | Phase | Name | Focus | Status |
@@ -328,11 +358,13 @@ Phase 1         Phase 2           Phase 3          Phase 4         Phase 5
 | **2** | Tensor Intelligence | ML tensors + Deliberation Engine (emergence) | ✅ **COMPLETE** |
 | **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate | ✅ **COMPLETE** |
 | **4** | Adversarial Hardening | Red team expansion + ethical stress testing | ✅ **COMPLETE** |
-| **5** | Productization | REST API ✅ Docker ✅ Security ✅ / Async・PyPI 🔄 | 🚀 **IN PROGRESS** |
+| **5** | Productization | REST API, Docker, Security, Async, Benchmarks | ✅ **COMPLETE** |
+| **6** | Autonomous Evolution | FreedomPressureV2, Emergence, MetaEthics, 3-Layer Memory | ✅ **COMPLETE** |
+| **7** | AI Philosopher Slots | Claude, GPT, Gemini, Grok as philosophical personas (40–43) | ✅ **COMPLETE** |
 
 See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
 
-**Want to contribute?** We need philosophers, engineers, designers, and skeptics.
+**Want to contribute?** We need philosophers, engineers, designers, and skeptics. Next frontier: PyPI publish, v1.0 stabilization, and academic paper.
 
 ---
 
