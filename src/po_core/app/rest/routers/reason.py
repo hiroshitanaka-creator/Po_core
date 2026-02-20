@@ -16,6 +16,7 @@ from typing import Any, AsyncGenerator, Dict
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 
+from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
 from po_core.app.rest.auth import require_api_key
 from po_core.app.rest.models import (
@@ -187,49 +188,86 @@ async def reason(
 async def _sse_generator(
     body: ReasonRequest, api_settings: Any
 ) -> AsyncGenerator[str, None]:
-    """Async generator yielding SSE-formatted event strings."""
+    """
+    Async generator yielding SSE-formatted event strings in real-time.
+
+    Architecture:
+    - ``async_run_turn`` (via ``po_async_run``) executes the pipeline in the
+      event loop, using ``async_run_philosophers`` for step 6.
+    - Each ``tracer.emit()`` call triggers a listener that puts the event into
+      an ``asyncio.Queue`` immediately, so SSE chunks arrive at the client as
+      each pipeline step (and each philosopher) completes.
+    - A sentinel object signals queue drain completion after the pipeline exits.
+
+    This replaces the old threadpool-batch approach where all events were
+    collected and emitted only after the full pipeline finished.
+    """
 
     def _fmt(event_type: str, payload: Dict[str, Any]) -> str:
         data = json.dumps({"chunk_type": event_type, "payload": payload})
         return f"data: {data}\n\n"
 
+    session_id = body.session_id or str(uuid.uuid4())
+
     try:
-        yield _fmt("started", {"session_id": body.session_id or "pending"})
+        yield _fmt("started", {"session_id": session_id})
+
+        # Queue-based real-time bridge: tracer → SSE client
+        queue: asyncio.Queue = asyncio.Queue()
+        _DONE = object()  # sentinel
 
         tracer = InMemoryTracer()
-        collected: list = []
 
         def _on_event(event: Any) -> None:
-            collected.append(event)
+            # Called synchronously inside async_run_turn (event loop context).
+            # put_nowait is safe here since we're already in the event loop.
+            queue.put_nowait(event)
 
         tracer.add_listener(_on_event)
 
         t0 = time.perf_counter()
         po_settings = _build_po_settings(api_settings)
-        loop = asyncio.get_running_loop()
-        result = await loop.run_in_executor(
-            None,
-            functools.partial(
-                po_run, user_input=body.input, settings=po_settings, tracer=tracer
-            ),
-        )
-        elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
-        session_id = body.session_id or str(uuid.uuid4())
-        save_trace(session_id, list(tracer.events))
+        result_box: list = []
+        exc_box: list = []
 
-        # Emit collected trace events
-        for ev in collected:
+        async def _run_and_signal() -> None:
+            try:
+                res = await po_async_run(
+                    user_input=body.input,
+                    settings=po_settings,
+                    tracer=tracer,
+                )
+                result_box.append(res)
+            except Exception as e:
+                exc_box.append(e)
+            finally:
+                await queue.put(_DONE)
+
+        asyncio.create_task(_run_and_signal())
+
+        # Drain queue: stream each trace event to the SSE client immediately
+        while True:
+            item = await queue.get()
+            if item is _DONE:
+                break
             yield _fmt(
                 "event",
                 {
-                    "event_type": ev.event_type,
-                    "occurred_at": ev.occurred_at.isoformat(),
-                    "payload": dict(ev.payload),
+                    "event_type": item.event_type,
+                    "occurred_at": item.occurred_at.isoformat(),
+                    "payload": dict(item.payload),
                 },
             )
 
-        # Final result chunk
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+        save_trace(session_id, list(tracer.events))
+
+        if exc_box:
+            yield _fmt("error", {"message": str(exc_box[0])})
+            return
+
+        result = result_box[0]
         yield _fmt(
             "result",
             {

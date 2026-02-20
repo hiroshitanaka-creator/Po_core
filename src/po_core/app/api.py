@@ -34,7 +34,7 @@ from __future__ import annotations
 import uuid
 
 from po_core.domain.context import Context
-from po_core.ensemble import EnsembleDeps, run_turn
+from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
@@ -96,4 +96,59 @@ def run(
     return run_turn(ctx, deps)
 
 
-__all__ = ["run"]
+async def async_run(
+    user_input: str,
+    *,
+    memory_backend: object | None = None,
+    settings: Settings | None = None,
+    tracer: TracePort | None = None,
+) -> dict:
+    """
+    Async entry point for Po_core — mirrors ``run()`` but uses
+    ``async_run_turn`` so the FastAPI event loop is freed during philosopher
+    execution (step 6).
+
+    Suitable for use inside ``async def`` endpoints and SSE generators.
+
+    Args:
+        user_input: The user's input prompt
+        memory_backend: Po_self or compatible memory backend (None for testing)
+        settings: Application settings (None for defaults)
+        tracer: Optional tracer; a default in-memory tracer is used if omitted
+
+    Returns:
+        Result dictionary with request_id, status, and proposal or verdict
+    """
+    settings = settings or Settings()
+
+    if memory_backend is not None:
+        system = build_system(memory=memory_backend, settings=settings)
+    else:
+        system = build_test_system(settings=settings)
+
+    ctx = Context.now(
+        request_id=str(uuid.uuid4()),
+        user_input=user_input,
+        meta={"entry": "app.api.async"},
+    )
+
+    deps = EnsembleDeps(
+        memory_read=system.memory_read,
+        memory_write=system.memory_write,
+        tracer=tracer if tracer is not None else system.tracer,
+        tensors=system.tensor_engine,
+        solarwill=system.solarwill,
+        gate=system.gate,
+        philosophers=system.philosophers,
+        aggregator=system.aggregator,
+        aggregator_shadow=system.aggregator_shadow,
+        registry=system.registry,
+        settings=system.settings,
+        shadow_guard=system.shadow_guard,
+        deliberation_engine=getattr(system, "deliberation_engine", None),
+    )
+
+    return await async_run_turn(ctx, deps)
+
+
+__all__ = ["run", "async_run"]
