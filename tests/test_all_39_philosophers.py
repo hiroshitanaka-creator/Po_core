@@ -14,7 +14,8 @@ from typing import Any, Dict, List, Tuple
 try:
     from rich.console import Console
     from rich.panel import Panel
-    from rich.progress import Progress, SpinnerColumn, TextColumn
+
+    pass  # rich.progress not needed here
     from rich.table import Table
 
     RICH_AVAILABLE = True

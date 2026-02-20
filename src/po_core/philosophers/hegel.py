@@ -18,7 +18,7 @@ Key Concepts:
 - Recognition (Anerkennung): Mutual recognition constituting self-consciousness
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -185,7 +185,7 @@ class Hegel(Philosopher):
             "become",
             "movement",
         ]
-        has_movement = sum(1 for word in movement_words if word in text_lower)
+        sum(1 for word in movement_words if word in text_lower)
 
         # Determine dialectical stage
         if has_synthesis >= 1 or has_aufhebung >= 2:
@@ -440,11 +440,11 @@ class Hegel(Philosopher):
 
         # Fear of death
         fear_words = ["fear", "death", "mortality", "afraid"]
-        has_fear = any(word in text_lower for word in fear_words)
+        any(word in text_lower for word in fear_words)
 
         # Independence/dependence
         independence_words = ["independent", "dependent", "dependence", "reliance"]
-        has_dependence = any(word in text_lower for word in independence_words)
+        any(word in text_lower for word in independence_words)
 
         # Reversal/transformation
         reversal_words = ["reversal", "transform", "become", "turn into"]
@@ -528,7 +528,7 @@ class Hegel(Philosopher):
             "self-actualization",
             "self-movement",
         ]
-        has_self_development = any(phrase in text_lower for phrase in self_dev_words)
+        any(phrase in text_lower for phrase in self_dev_words)
 
         # System/systematic
         system_words = ["system", "systematic", "whole", "complete", "science"]
@@ -755,7 +755,7 @@ class Hegel(Philosopher):
 
         # Stages/epochs
         stages_words = ["stage", "phase", "epoch", "period", "moment"]
-        has_stages = sum(1 for word in stages_words if word in text_lower)
+        sum(1 for word in stages_words if word in text_lower)
 
         # Rationality of history
         rational_words = ["reason", "rational", "necessity", "purpose", "end"]
@@ -763,7 +763,7 @@ class Hegel(Philosopher):
 
         # World history as world judgment
         judgment_words = ["judgment", "tribunal", "judge", "verdict"]
-        has_judgment = any(word in text_lower for word in judgment_words)
+        any(word in text_lower for word in judgment_words)
 
         if history_count >= 2 and has_progress >= 1 and freedom_count >= 1:
             view = "History as Progress of Freedom"
@@ -833,7 +833,7 @@ class Hegel(Philosopher):
 
         # Realization/actualization
         realization_words = ["realize", "actualize", "manifest", "achieve"]
-        has_realization = any(word in text_lower for word in realization_words)
+        any(word in text_lower for word in realization_words)
 
         if freedom_count >= 2 and has_rational >= 1 and has_state:
             conception = "Rational Freedom in State"
@@ -993,7 +993,7 @@ class Hegel(Philosopher):
 
         # Self and other
         self_other = ["self", "other", "i and you", "subject"]
-        self_other_count = sum(1 for phrase in self_other if phrase in text_lower)
+        sum(1 for phrase in self_other if phrase in text_lower)
 
         if recognition_count >= 2 and has_mutual >= 1 and has_community >= 1:
             status = "Mutual Recognition in Community"
@@ -1041,8 +1041,8 @@ class Hegel(Philosopher):
     ) -> str:
         """Construct comprehensive Hegelian philosophical reasoning."""
         reasoning = (
-            f"From Hegel's absolute idealist perspective, we must examine this text dialectically "
-            f"as a moment in Spirit's self-realization. "
+            "From Hegel's absolute idealist perspective, we must examine this text dialectically "
+            "as a moment in Spirit's self-realization. "
         )
 
         # Dialectical movement

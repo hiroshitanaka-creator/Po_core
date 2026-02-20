@@ -8,8 +8,6 @@ Tests Watsuji's Japanese ethics focusing on:
 - Ma (間) - relational space
 """
 
-import pytest
-
 from po_core.philosophers.watsuji import Watsuji
 
 

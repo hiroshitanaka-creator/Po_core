@@ -7,11 +7,10 @@ Tests the 1→5→39 philosopher scaling based on SafetyMode.
 
 from __future__ import annotations
 
-import pytest
 
 from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.manifest import SPECS, PhilosopherSpec
-from po_core.philosophers.registry import PhilosopherRegistry, Selection
+from po_core.philosophers.registry import PhilosopherRegistry
 
 
 class TestPhilosopherRegistrySelection:
@@ -187,7 +186,7 @@ class TestScalingRatios:
 
         critical_ids = set(registry.select(SafetyMode.CRITICAL).selected_ids)
         warn_ids = set(registry.select(SafetyMode.WARN).selected_ids)
-        normal_ids = set(registry.select(SafetyMode.NORMAL).selected_ids)
+        set(registry.select(SafetyMode.NORMAL).selected_ids)
 
         # CRITICAL is subset of WARN which is subset of NORMAL (in terms of risk)
         for pid in critical_ids:

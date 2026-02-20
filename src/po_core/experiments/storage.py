@@ -15,11 +15,10 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import json
-import os
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 from po_core.domain.experiment import (
     ExperimentAnalysis,

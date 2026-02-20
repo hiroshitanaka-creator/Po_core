@@ -8,7 +8,7 @@ only TraceEvent data (no implementation dependencies).
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import List, Optional, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 

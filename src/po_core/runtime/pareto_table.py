@@ -14,7 +14,6 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import json
-import os
 from typing import Any, Dict, Mapping, Set
 
 from po_core.domain.pareto_config import ParetoConfig, ParetoTuning, ParetoWeights

@@ -21,7 +21,7 @@ Key Concepts:
 - Trace of the Infinite: God as trace in the face of the Other
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 

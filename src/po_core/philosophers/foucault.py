@@ -18,7 +18,7 @@ Key Concepts:
 - Episteme: Underlying framework organizing knowledge in an era
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -197,7 +197,7 @@ class Foucault(Philosopher):
             "enable",
             "support",
         ]
-        has_mutual = sum(1 for word in mutual_words if word in text_lower)
+        sum(1 for word in mutual_words if word in text_lower)
 
         # Expert/professional knowledge
         expert_words = [
@@ -398,7 +398,7 @@ class Foucault(Philosopher):
             "controlled",
             "docile",
         ]
-        has_docile = sum(1 for word in docile_words if word in text_lower)
+        sum(1 for word in docile_words if word in text_lower)
 
         # Timetable/organization indicators
         organization_words = [
@@ -409,7 +409,7 @@ class Foucault(Philosopher):
             "routine",
             "ordered",
         ]
-        has_organization = sum(1 for word in organization_words if word in text_lower)
+        sum(1 for word in organization_words if word in text_lower)
 
         discipline_score = has_surveillance + has_normalization + has_examination
 
@@ -489,7 +489,7 @@ class Foucault(Philosopher):
 
         # Automatic functioning
         automatic_words = ["automatic", "constant", "always", "permanent", "continuous"]
-        has_automatic = sum(1 for word in automatic_words if word in text_lower)
+        sum(1 for word in automatic_words if word in text_lower)
 
         if has_panopticon >= 1:
             presence = "Direct Panopticon"
@@ -930,7 +930,7 @@ class Foucault(Philosopher):
             "efficiency",
             "rational",
         ]
-        has_rationality = sum(1 for word in rationality_words if word in text_lower)
+        sum(1 for word in rationality_words if word in text_lower)
 
         if has_govern >= 1 and has_conduct >= 1:
             type_gov = "Governmentality"
@@ -1004,7 +1004,7 @@ class Foucault(Philosopher):
 
         # Ancient ethics indicators
         ancient_words = ["greek", "ancient", "stoic", "epicurean", "philosophical life"]
-        has_ancient = sum(1 for phrase in ancient_words if phrase in text_lower)
+        sum(1 for phrase in ancient_words if phrase in text_lower)
 
         # Self-transformation
         transform_words = [
@@ -1066,7 +1066,7 @@ class Foucault(Philosopher):
 
         # Era/period indicators
         era_words = ["era", "age", "period", "epoch", "time", "modern", "classical"]
-        has_era = sum(1 for word in era_words if word in text_lower)
+        sum(1 for word in era_words if word in text_lower)
 
         # Knowledge/thought indicators
         knowledge_words = ["knowledge", "thought", "thinking", "know", "understand"]
@@ -1092,7 +1092,7 @@ class Foucault(Philosopher):
             "system",
             "structure",
         ]
-        has_order = sum(1 for word in order_words if word in text_lower)
+        sum(1 for word in order_words if word in text_lower)
 
         # Specific epistemes
         renaissance_words = [

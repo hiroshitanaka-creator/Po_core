@@ -28,7 +28,7 @@ from po_core.domain.safety_mode import SafetyMode
 if TYPE_CHECKING:
     from po_core.runtime.battalion_table import BattalionModePlan
 
-from po_core.philosophers.base import Philosopher, PhilosopherProtocol
+from po_core.philosophers.base import PhilosopherProtocol
 from po_core.philosophers.manifest import SPECS, PhilosopherSpec
 from po_core.philosophers.tags import (
     TAG_CLARIFY,

@@ -8,8 +8,6 @@ Tests Arendt's political philosophy focusing on:
 - Political action and judgment
 """
 
-import pytest
-
 from po_core.philosophers.arendt import Arendt
 
 

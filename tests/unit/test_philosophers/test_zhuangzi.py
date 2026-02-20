@@ -8,8 +8,6 @@ Tests Zhuangzi's Daoist philosophy focusing on:
 - Xiaoyaoyou (free wandering)
 """
 
-import pytest
-
 from po_core.philosophers.zhuangzi import Zhuangzi
 
 

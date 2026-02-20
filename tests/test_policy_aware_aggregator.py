@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-import pytest
 
 from po_core.aggregator.policy_aware import PolicyAwareAggregator
 from po_core.domain.context import Context
@@ -95,7 +94,7 @@ class TestWarnMode:
             Proposal("q", "ask_clarification", "what do you mean?", confidence=0.5),
         ]
 
-        out = agg.aggregate(ctx, Intent.neutral(), tensors, proposals)
+        agg.aggregate(ctx, Intent.neutral(), tensors, proposals)
         # ask_clarification gets +0.25 bonus, so 0.5 + 0.25 = 0.75 > 0.8 + 0.05 = 0.85
         # Actually 0.75 < 0.85, so answer might win. Let me recalculate.
         # answer: 0.8 + 0.05 = 0.85

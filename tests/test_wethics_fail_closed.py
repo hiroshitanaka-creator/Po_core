@@ -17,17 +17,13 @@ Design Principle:
 """
 
 from typing import List, Optional
-from unittest.mock import MagicMock, patch
 
-import pytest
 
 from po_core.safety.wethics_gate import (
     Candidate,
     Evidence,
     GateConfig,
     GateDecision,
-    GateResult,
-    Violation,
     ViolationDetector,
     WethicsGate,
     create_wethics_gate,

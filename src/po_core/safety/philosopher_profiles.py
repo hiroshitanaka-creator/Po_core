@@ -11,7 +11,7 @@ This prevents misuse while enabling legitimate research.
 """
 
 from enum import Enum
-from typing import Dict, List, Set
+from typing import Dict, List
 
 
 class SafetyTier(str, Enum):

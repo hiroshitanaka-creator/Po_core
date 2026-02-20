@@ -16,11 +16,19 @@ The Action Gate is more thorough than the Intention Gate because:
 3. We have the full context including philosopher reasoning
 """
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
-from po_core.domain.safety_verdict import SafetyVerdict, VerdictType, ViolationInfo
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.proposal import Proposal
+from po_core.domain.safety_verdict import Decision
+from po_core.domain.safety_verdict import SafetyVerdict
+from po_core.domain.safety_verdict import SafetyVerdict as DomainSafetyVerdict
+from po_core.domain.safety_verdict import VerdictType, ViolationInfo
+from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.safety.wethics_gate.gate import WethicsGate
+from po_core.safety.wethics_gate.policies.base import ActionPolicy
 from po_core.safety.wethics_gate.types import Candidate, GateConfig, GateDecision
 
 
@@ -261,17 +269,6 @@ class TwoStageGate:
 
 
 # ── Policy-based ActionGate (WethicsGatePort compatible) ──────────
-
-from typing import Iterable, List
-
-from po_core.domain.context import Context
-from po_core.domain.intent import Intent
-from po_core.domain.memory_snapshot import MemorySnapshot
-from po_core.domain.proposal import Proposal
-from po_core.domain.safety_verdict import Decision
-from po_core.domain.safety_verdict import SafetyVerdict as DomainSafetyVerdict
-from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.safety.wethics_gate.policies.base import ActionPolicy
 
 
 def _sort_action_policies(policies: Iterable[ActionPolicy]) -> List[ActionPolicy]:

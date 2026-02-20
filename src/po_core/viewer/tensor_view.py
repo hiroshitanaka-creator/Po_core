@@ -8,7 +8,7 @@ blocked_tensor, interaction_tensor) from TensorComputed events.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from typing import Dict, List, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 

@@ -17,7 +17,7 @@ Key Concepts:
 - Occupations: Learning by doing, hands-on engagement
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -175,7 +175,7 @@ class Dewey(Philosopher):
             "world",
             "surroundings",
         ]
-        has_environment = sum(1 for word in environment_words if word in text_lower)
+        sum(1 for word in environment_words if word in text_lower)
 
         # Determine experience quality
         if has_active >= 2 and has_undergoing >= 1:

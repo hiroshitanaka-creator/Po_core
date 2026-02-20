@@ -25,7 +25,7 @@ This test suite validates all 20 philosopher modules across 4 critical layers:
    - Ensures no contradictions between reasoning and analysis
 """
 
-from typing import Any, Dict, List, Type
+from typing import Type
 
 import pytest
 
@@ -1277,7 +1277,7 @@ class TestCrossLayerIntegration:
         result = philosopher.reason(text)
 
         tension = result["tension"]
-        reasoning = result.get("reasoning") or result.get("summary", "")
+        result.get("reasoning") or result.get("summary", "")
 
         if tension["level"] in ["High", "Very High"]:
             # Reasoning should reflect problems/issues

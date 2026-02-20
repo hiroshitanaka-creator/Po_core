@@ -19,7 +19,7 @@ Key Concepts:
 - Pragmatic Maxim: Consider practical effects to clarify ideas
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -168,7 +168,7 @@ class Peirce(Philosopher):
 
         # Relation indicators
         relation_words = ["relation", "between", "connect", "mediate"]
-        has_relation = sum(1 for word in relation_words if word in text_lower)
+        sum(1 for word in relation_words if word in text_lower)
 
         # Icon, Index, Symbol classification
         icon_words = ["resemble", "look like", "image", "similar"]

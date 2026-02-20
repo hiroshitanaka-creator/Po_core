@@ -8,8 +8,6 @@ Tests Kierkegaard's existentialist philosophy focusing on:
 - Subjectivity and individuality
 """
 
-import pytest
-
 from po_core.philosophers.kierkegaard import Kierkegaard
 
 

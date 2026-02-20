@@ -18,7 +18,7 @@ Key Concepts:
 - Concept Creation: Philosophy as creation of concepts, not contemplation
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -674,7 +674,7 @@ class Deleuze(Philosopher):
 
         # Negation indicators
         negate_words = ["no", "negative", "deny", "refuse", "reject"]
-        has_negate = sum(1 for word in negate_words if word in text_lower)
+        sum(1 for word in negate_words if word in text_lower)
 
         if has_productive >= 2 or (has_productive >= 1 and has_affirm >= 1):
             conception = "Productive Desire"

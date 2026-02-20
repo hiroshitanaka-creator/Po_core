@@ -24,8 +24,8 @@ from __future__ import annotations
 
 import logging
 from collections import deque
-from dataclasses import dataclass, field
-from typing import Any, Deque, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Deque, Dict, List, Optional
 
 import numpy as np
 
@@ -272,7 +272,7 @@ class FreedomPressureV2(Tensor):
 
         compute_v2() を内部で呼び出し、numpy array を返す。
         """
-        snapshot = self.compute_v2(prompt)
+        self.compute_v2(prompt)
         return self.data
 
     def get_pressure_summary(self) -> Dict[str, float]:

@@ -27,11 +27,11 @@ Usage::
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 import numpy as np
 
-from po_core.domain.keys import AUTHOR, PO_CORE
+from po_core.domain.keys import AUTHOR
 from po_core.domain.proposal import Proposal
 
 # ── Reuse the same encoder as EmergenceDetector ───────────────────────
@@ -46,7 +46,6 @@ except ImportError:
 
     def _encode(texts: List[str]) -> np.ndarray:  # type: ignore[misc]
         import re
-        from collections import Counter
 
         def tokenise(t: str) -> List[str]:
             return re.findall(r"[a-z]+", t.lower())

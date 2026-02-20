@@ -16,7 +16,7 @@ When max_rounds=1, produces identical behavior to the current pipeline
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence
 
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight

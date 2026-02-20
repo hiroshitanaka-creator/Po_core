@@ -18,9 +18,14 @@ This makes the system more efficient and safer.
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
-from po_core.domain.safety_verdict import ViolationInfo
+from po_core.domain.context import Context
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.safety_verdict import Decision, SafetyVerdict, ViolationInfo
+from po_core.domain.tensor_snapshot import TensorSnapshot
+from po_core.safety.wethics_gate.policies.base import IntentionPolicy
 
 
 def _dehyphenate(m: "re.Match") -> str:
@@ -200,7 +205,7 @@ def check_intent(
                 ViolationInfo(
                     code="W1",
                     severity=0.75,
-                    description=f"Intent involves structural exclusion of user groups",
+                    description="Intent involves structural exclusion of user groups",
                     repairable=False,
                 )
             )
@@ -329,15 +334,6 @@ class IntentionGate:
 
 
 # ── Policy-based IntentionGate (WethicsGatePort compatible) ──────────
-
-from typing import Iterable, List
-
-from po_core.domain.context import Context
-from po_core.domain.intent import Intent
-from po_core.domain.memory_snapshot import MemorySnapshot
-from po_core.domain.safety_verdict import Decision, SafetyVerdict
-from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.safety.wethics_gate.policies.base import IntentionPolicy
 
 
 def _sort_intention_policies(

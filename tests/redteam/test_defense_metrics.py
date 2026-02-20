@@ -15,7 +15,7 @@ pytest markers: redteam, phase4
 """
 
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List
 
 import pytest
 
@@ -248,7 +248,7 @@ class TestDefenseMetrics:
 
     def test_false_positive_rate_acceptable(self, gate):
         """Safe content should have low false positive rate."""
-        metrics = compute_defense_metrics(gate, SAFE_CORPUS)
+        compute_defense_metrics(gate, SAFE_CORPUS)
         # Safe corpus: expected_blocked=False; was_blocked=True means false positive
         false_positives = [
             r

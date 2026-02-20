@@ -17,7 +17,7 @@ Key Concepts:
 10. Zen Influence - Integration of Zen Buddhist insight with Western philosophy
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 

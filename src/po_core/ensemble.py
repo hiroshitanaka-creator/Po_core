@@ -8,10 +8,41 @@ Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
+from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
-from po_core.philosophers.base import Philosopher
+from po_core.domain.context import Context as DomainContext
+from po_core.domain.keys import (
+    AUTHOR,
+    AUTHOR_RELIABILITY,
+    FREEDOM_PRESSURE,
+    PO_CORE,
+    POLICY,
+    TRACEQ,
+)
+from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
+from po_core.domain.safety_verdict import Decision
+from po_core.domain.trace_event import TraceEvent
+from po_core.party_machine import RunResult, async_run_philosophers, run_philosophers
+from po_core.philosophers.base import Philosopher, PhilosopherProtocol
+from po_core.philosophers.registry import PhilosopherRegistry
+from po_core.ports.aggregator import AggregatorPort
+from po_core.ports.memory_read import MemoryReadPort
+from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
+from po_core.ports.solarwill import SolarWillPort
+from po_core.ports.tensor_engine import TensorEnginePort
+from po_core.ports.trace import TracePort
+from po_core.ports.wethics_gate import WethicsGatePort
+from po_core.runtime.settings import Settings
+from po_core.safety.fallback import compose_fallback
+from po_core.safety.policy_scoring import policy_score
+from po_core.safety.wethics_gate.explanation import build_explanation_from_verdict
+from po_core.trace.decision_compare import emit_decision_comparison
+from po_core.trace.decision_events import (
+    emit_decision_emitted,
+    emit_safety_override_applied,
+)
+from po_core.trace.pareto_events import emit_pareto_debug_events
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 
@@ -60,41 +91,6 @@ PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
 
 
 # ── Hexagonal Architecture: run_turn (vertical slice) ──────────────────
-
-from typing import Mapping, Sequence
-
-from po_core.domain.context import Context as DomainContext
-from po_core.domain.keys import (
-    AUTHOR,
-    AUTHOR_RELIABILITY,
-    FREEDOM_PRESSURE,
-    PO_CORE,
-    POLICY,
-    TRACEQ,
-)
-from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
-from po_core.domain.safety_verdict import Decision
-from po_core.domain.trace_event import TraceEvent
-from po_core.party_machine import RunResult, async_run_philosophers, run_philosophers
-from po_core.philosophers.base import PhilosopherProtocol
-from po_core.philosophers.registry import LoadError, PhilosopherRegistry
-from po_core.ports.aggregator import AggregatorPort
-from po_core.ports.memory_read import MemoryReadPort
-from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
-from po_core.ports.solarwill import SolarWillPort
-from po_core.ports.tensor_engine import TensorEnginePort
-from po_core.ports.trace import TracePort
-from po_core.ports.wethics_gate import WethicsGatePort
-from po_core.runtime.settings import Settings
-from po_core.safety.fallback import compose_fallback
-from po_core.safety.policy_scoring import policy_score
-from po_core.safety.wethics_gate.explanation import build_explanation_from_verdict
-from po_core.trace.decision_compare import emit_decision_comparison
-from po_core.trace.decision_events import (
-    emit_decision_emitted,
-    emit_safety_override_applied,
-)
-from po_core.trace.pareto_events import emit_pareto_debug_events
 
 
 def _author_reliability(

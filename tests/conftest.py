@@ -4,8 +4,6 @@ import pytest
 
 from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal
-from po_core.domain.safety_verdict import Decision, SafetyVerdict
-from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 @pytest.fixture

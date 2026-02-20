@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import uuid
 from collections import Counter
-from typing import Dict, List, Set
+from typing import List, Set
 
 import pytest
 

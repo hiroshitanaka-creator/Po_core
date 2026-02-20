@@ -7,7 +7,6 @@ Tests that mode-based composition covers required safety tags.
 
 from __future__ import annotations
 
-import pytest
 
 from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.manifest import PhilosopherSpec

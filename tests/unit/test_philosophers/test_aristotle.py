@@ -12,8 +12,6 @@ Tests Aristotle's virtue ethics and teleological philosophy focusing on:
 - Character Formation
 """
 
-import pytest
-
 from po_core.philosophers.aristotle import Aristotle
 
 

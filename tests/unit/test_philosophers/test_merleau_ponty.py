@@ -8,8 +8,6 @@ Tests Merleau-Ponty's phenomenology focusing on:
 - Being-in-the-world
 """
 
-import pytest
-
 from po_core.philosophers.merleau_ponty import MerleauPonty
 
 

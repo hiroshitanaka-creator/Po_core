@@ -21,7 +21,7 @@ Late Wittgenstein (Philosophical Investigations):
 - Philosophy as therapy: "Philosophical problems arise when language goes on holiday"
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 

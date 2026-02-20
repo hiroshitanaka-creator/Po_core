@@ -15,7 +15,6 @@ from datetime import datetime, timezone
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemoryItem, MemorySnapshot
@@ -27,6 +26,8 @@ from po_core.tensors.metrics.freedom_pressure import (
 )
 from po_core.tensors.metrics.interaction_tensor import metric_interaction_tensor
 from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
+
+pytestmark = pytest.mark.pipeline
 
 # ── Helpers ──
 

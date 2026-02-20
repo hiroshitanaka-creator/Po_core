@@ -13,7 +13,6 @@ import pytest
 
 from po_core.po_self import PoSelf
 from po_core.safety import (
-    SafetyTier,
     ViolationType,
     create_ethics_guardian,
     validate_philosopher_group,

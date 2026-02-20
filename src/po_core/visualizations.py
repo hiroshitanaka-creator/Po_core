@@ -10,20 +10,18 @@ Advanced visualization capabilities for Po_core including:
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import plotly.express as px
 import plotly.graph_objects as go
 from matplotlib.figure import Figure
 from plotly.subplots import make_subplots
 
-from po_core.po_trace import PoTrace, Session
+from po_core.po_trace import PoTrace
 
 
 class PoVisualizer:
@@ -137,7 +135,7 @@ class PoVisualizer:
         # Add values to cells
         for i in range(len(metrics)):
             for j in range(len(philosophers)):
-                text = ax.text(
+                ax.text(
                     j,
                     i,
                     f"{tension_matrix[i, j]:.2f}",
@@ -335,7 +333,7 @@ class PoVisualizer:
                 }
 
         if len(philosopher_data) < 2:
-            raise ValueError(f"Need at least 2 philosophers for network graph")
+            raise ValueError("Need at least 2 philosophers for network graph")
 
         # Create network graph
         G = nx.Graph()

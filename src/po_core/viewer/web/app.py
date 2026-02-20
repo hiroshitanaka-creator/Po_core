@@ -13,7 +13,7 @@ For live updates, call create_app() with new events.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Optional, Sequence
 
 try:
     import dash

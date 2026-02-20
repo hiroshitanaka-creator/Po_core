@@ -6,8 +6,6 @@ TraceEvent スキーマ契約のテスト。
 CI で折る（契約違反は即検出）。
 """
 
-from datetime import datetime, timezone
-
 from po_core.domain.trace_event import TraceEvent
 from po_core.trace.schema import SPECS, validate_event, validate_events
 

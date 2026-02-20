@@ -8,8 +8,6 @@ Tests Lacan's psychoanalytic philosophy focusing on:
 - Lack and objet petit a
 """
 
-import pytest
-
 from po_core.philosophers.lacan import Lacan
 
 
@@ -96,7 +94,7 @@ class TestLacanRegisters:
         lacan = Lacan()
         result = lacan.reason("Language and law structure our social reality")
 
-        register = result["register"]
+        result["register"]
         assert "register" in result
 
 

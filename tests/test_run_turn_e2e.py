@@ -17,23 +17,19 @@ Test categories:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
 from typing import Tuple
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.adapters.memory_poself import InMemoryAdapter
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.autonomy.solarwill.engine import SolarWillEngine
 from po_core.domain.context import Context
-from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.pareto_config import ParetoConfig
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.domain.trace_event import TraceEvent
 from po_core.ensemble import EnsembleDeps, run_turn
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.runtime.settings import Settings
@@ -44,10 +40,11 @@ from po_core.safety.wethics_gate.policies.presets import (
     default_intention_policies,
 )
 from po_core.safety.wethics_gate.policy_gate import PolicyWethicsGate
-from po_core.tensors.engine import TensorEngine
-from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
 from po_core.trace.in_memory import InMemoryTracer
 from po_core.trace.schema import validate_events
+
+pytestmark = pytest.mark.pipeline
+
 
 # ── Helpers ──────────────────────────────────────────────────────────────
 

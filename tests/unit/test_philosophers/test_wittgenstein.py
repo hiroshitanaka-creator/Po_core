@@ -11,8 +11,6 @@ Tests Wittgenstein's language philosophy focusing on:
 - Limits of Language
 """
 
-import pytest
-
 from po_core.philosophers.wittgenstein import Wittgenstein
 
 
@@ -32,7 +30,7 @@ class TestWittgensteinBasicFunctionality:
 
     def test_wittgenstein_str(self):
         """Test human-readable string."""
-        wittgenstein = Wittgenstein()
+        Wittgenstein()
 
 
 class TestWittgensteinReasonMethod:

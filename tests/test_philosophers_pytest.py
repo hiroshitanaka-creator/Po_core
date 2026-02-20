@@ -6,8 +6,6 @@ Pytest-compatible test suite for all 39 philosopher modules.
 Run with: pytest tests/test_philosophers_pytest.py -v
 """
 
-from typing import Any, Dict
-
 import pytest
 
 # All 39 philosophers in the registry

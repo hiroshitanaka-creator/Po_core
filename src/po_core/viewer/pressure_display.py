@@ -7,8 +7,6 @@ as bar charts and dimensional breakdowns.
 
 from typing import Any, Dict
 
-import numpy as np
-from rich.bar import Bar
 from rich.table import Table
 
 from po_core.viewer.visualizer import PhilosophicalVisualizer
@@ -210,7 +208,7 @@ class PressureDisplayVisualizer(PhilosophicalVisualizer):
 
         # Overall interpretation
         total = fp_data.get("pressure_summary", {}).get("total_pressure", 0)
-        self.console.print(f"\n[bold]Overall Interpretation:[/bold]")
+        self.console.print("\n[bold]Overall Interpretation:[/bold]")
 
         if total > 0.7:
             self.console.print(

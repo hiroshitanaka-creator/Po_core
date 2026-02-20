@@ -19,7 +19,6 @@ from __future__ import annotations
 import time
 import tracemalloc
 import uuid
-from unittest.mock import patch
 
 import pytest
 
@@ -29,7 +28,7 @@ from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.party_machine import RunResult, run_philosophers
+from po_core.party_machine import run_philosophers
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.registry import PhilosopherRegistry
 

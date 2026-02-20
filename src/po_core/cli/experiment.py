@@ -13,7 +13,6 @@ Usage:
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 # click は optional（なければ簡易実装）
 try:
@@ -75,7 +74,7 @@ def cmd_analyze(experiment_id: str):
         analysis = analyzer.analyze(experiment_id)
         storage.save_analysis(analysis)
 
-        print(f"\nAnalysis completed:")
+        print("\nAnalysis completed:")
         print(
             f"  Baseline: {analysis.baseline_stats.variant_name}"
             f" (n={analysis.baseline_stats.n})"
@@ -83,7 +82,7 @@ def cmd_analyze(experiment_id: str):
         for vs in analysis.variant_stats:
             print(f"  Variant: {vs.variant_name} (n={vs.n})")
 
-        print(f"\nSignificance Tests:")
+        print("\nSignificance Tests:")
         for test in analysis.significance_tests:
             sig = "✓" if test.is_significant else "✗"
             print(

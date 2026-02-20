@@ -184,9 +184,9 @@ class PoTestRunner:
         # Check 20 Modules Snapshot has 20 lines
         if "20 Modules Snapshot" in sections:
             lines = [
-                l
-                for l in sections["20 Modules Snapshot"].split("\n")
-                if l.strip() and ":" in l
+                line
+                for line in sections["20 Modules Snapshot"].split("\n")
+                if line.strip() and ":" in line
             ]
             compliance["20_modules_count"] = len(lines) >= 20
 
@@ -402,7 +402,7 @@ class PoTestRunner:
         results = []
         for key in concept_keys:
             for mode in constraint_modes:
-                prompt = build_stress_test_prompt(key, mode)
+                build_stress_test_prompt(key, mode)
                 result = self.run_single_test(
                     f"Stress: {STRESS_TEST_CONCEPTS[key]}",
                     mode,

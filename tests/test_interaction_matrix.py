@@ -224,7 +224,7 @@ class TestHelperMethods:
         pairs = matrix.high_tension_pairs(threshold=0.0)
         # Any pair with opposing concepts should appear
         # At least Sartre-Hegel should have tension
-        names_involved = {(p.philosopher_a, p.philosopher_b) for p in pairs}
+        {(p.philosopher_a, p.philosopher_b) for p in pairs}
         assert len(pairs) >= 0  # At least none crash
 
     def test_high_harmony_pairs(self, matrix):

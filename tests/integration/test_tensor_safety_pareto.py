@@ -4,12 +4,8 @@ Tests the key subsystems working together without mocking,
 ensuring that data flows correctly through the pipeline.
 """
 
-from datetime import datetime, timezone
-
 import pytest
 
-from po_core.domain.context import Context
-from po_core.domain.intent import Intent
 from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safety_mode
 from po_core.domain.safety_verdict import Decision, SafetyVerdict

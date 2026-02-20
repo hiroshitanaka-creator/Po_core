@@ -12,7 +12,7 @@ DEPENDENCY RULES:
 
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List, Mapping
+from typing import Any, Iterable, List
 
 from po_core.domain.trace_event import TraceEvent
 

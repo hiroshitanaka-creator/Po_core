@@ -19,7 +19,7 @@ Key Concepts:
 - Practical Reason: Primacy of practical over theoretical reason
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -301,7 +301,7 @@ class Kant(Philosopher):
             "surface",
             "underlying reality",
         ]
-        has_distinction = any(phrase in text_lower for phrase in distinction_words)
+        any(phrase in text_lower for phrase in distinction_words)
 
         # Limits of knowledge
         limits_words = [
@@ -562,7 +562,7 @@ class Kant(Philosopher):
             "independent of experience",
             "before experience",
         ]
-        apriori_explicit = any(phrase in text_lower for phrase in apriori_words)
+        any(phrase in text_lower for phrase in apriori_words)
 
         if (necessity_count >= 2 and informative_count >= 1) or has_mathematics:
             judgment_type = "Synthetic a Priori"
@@ -1026,7 +1026,7 @@ class Kant(Philosopher):
             "transcendent",
             "beyond experience",
         ]
-        has_speculation = any(phrase in text_lower for phrase in speculation_words)
+        any(phrase in text_lower for phrase in speculation_words)
 
         if knowledge_count >= 2 and recognizes_limits and transcendent_count >= 1:
             stance = "Critical"
@@ -1099,7 +1099,7 @@ class Kant(Philosopher):
             "must believe",
             "faith",
         ]
-        has_primacy = any(phrase in text_lower for phrase in primacy_words)
+        any(phrase in text_lower for phrase in primacy_words)
 
         if practical_count >= 3 and moral_law_count >= 1 and freedom_count >= 1:
             status = "Strong Practical Reason"
@@ -1142,8 +1142,8 @@ class Kant(Philosopher):
     ) -> str:
         """Construct comprehensive Kantian philosophical reasoning."""
         reasoning = (
-            f"From a Kantian critical perspective, this text must be examined through both "
-            f"theoretical and practical reason. "
+            "From a Kantian critical perspective, this text must be examined through both "
+            "theoretical and practical reason. "
         )
 
         # Categorical imperative analysis

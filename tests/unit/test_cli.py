@@ -8,18 +8,17 @@ not a click.Group. These tests assume a click-based CLI that doesn't exist yet.
 Will be rewritten in Phase 5 (Productization) when the CLI is rebuilt.
 """
 
-import pytest
-
-pytestmark = pytest.mark.skip(
-    reason="Legacy: CLI main is an interactive function, not click.Group (Phase 5 scope)"
-)
-
 import json
 
+import pytest
 from click.testing import CliRunner
 
 from po_core import __version__
 from po_core.cli import main
+
+pytestmark = pytest.mark.skip(
+    reason="Legacy: CLI main is an interactive function, not click.Group (Phase 5 scope)"
+)
 
 
 class TestCLIBasicCommands:

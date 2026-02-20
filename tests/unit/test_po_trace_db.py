@@ -31,7 +31,7 @@ class TestPoTraceDBBasicFunctionality:
         # Cleanup
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_potrace_db_initialization(self, temp_db):
@@ -111,7 +111,7 @@ class TestPoTraceDBSessionManagement:
         yield db_url
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_list_sessions(self, temp_db):
@@ -195,7 +195,7 @@ class TestPoTraceDBSearch:
         yield db_url
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_search_sessions_by_query(self, temp_db):
@@ -256,7 +256,7 @@ class TestPoTraceDBExport:
         yield db_url
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_export_session_json(self, temp_db):
@@ -325,7 +325,7 @@ class TestPoTraceDBStatistics:
         yield db_url
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_get_statistics(self, temp_db):
@@ -377,7 +377,7 @@ class TestPoTraceDBIntegration:
         yield db_url
         try:
             os.unlink(path)
-        except:
+        except Exception:
             pass
 
     def test_complete_reasoning_session(self, temp_db):

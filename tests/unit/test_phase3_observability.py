@@ -16,11 +16,6 @@ import pytest
 from po_core.domain.safety_verdict import Decision, SafetyVerdict
 from po_core.domain.trace_event import TraceEvent
 from po_core.safety.wethics_gate.explanation import (
-    DriftStep,
-    EvidenceSummary,
-    ExplanationChain,
-    RepairStep,
-    ViolationStep,
     build_explanation_from_verdict,
     extract_explanation_from_events,
 )
@@ -289,7 +284,10 @@ class TestInMemoryTracerListeners:
     def test_remove_listener(self):
         tracer = InMemoryTracer()
         received = []
-        listener = lambda e: received.append(e)
+
+        def listener(e):
+            return received.append(e)
+
         tracer.add_listener(listener)
         tracer.remove_listener(listener)
 
@@ -299,7 +297,10 @@ class TestInMemoryTracerListeners:
     def test_listener_count(self):
         tracer = InMemoryTracer()
         assert tracer.listener_count == 0
-        listener = lambda e: None
+
+        def listener(e):
+            return None
+
         tracer.add_listener(listener)
         assert tracer.listener_count == 1
         tracer.remove_listener(listener)

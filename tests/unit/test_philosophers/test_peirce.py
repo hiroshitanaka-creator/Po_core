@@ -8,8 +8,6 @@ Tests Peirce's pragmatist philosophy focusing on:
 - Community of inquiry
 """
 
-import pytest
-
 from po_core.philosophers.peirce import Peirce
 
 

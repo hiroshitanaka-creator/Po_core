@@ -13,7 +13,6 @@ Test Trace Pareto Events
 
 from datetime import datetime, timezone
 
-import pytest
 
 from po_core.aggregator.pareto import ParetoAggregator
 from po_core.domain.context import Context

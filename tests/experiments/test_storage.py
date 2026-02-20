@@ -1,11 +1,9 @@
 """Tests for experiment storage."""
 
-import json
 import tempfile
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List
 
 import pytest
 

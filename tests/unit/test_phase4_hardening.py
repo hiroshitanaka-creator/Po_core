@@ -16,7 +16,6 @@ import pytest
 
 from po_core.safety.wethics_gate import (
     Candidate,
-    GateConfig,
     GateDecision,
     WethicsGate,
     create_wethics_gate,
@@ -25,7 +24,6 @@ from po_core.safety.wethics_gate import (
 from po_core.safety.wethics_gate.detectors import (
     EnglishKeywordViolationDetector,
     PromptInjectionDetector,
-    aggregate_evidence_to_violations,
 )
 
 

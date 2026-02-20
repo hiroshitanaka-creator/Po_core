@@ -22,9 +22,7 @@ from __future__ import annotations
 
 import datetime
 import uuid
-from typing import Dict, List
 
-import numpy as np
 import pytest
 
 from po_core.deliberation import emergence as emergence_mod

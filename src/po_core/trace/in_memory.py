@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional, Sequence
+from typing import Callable, List, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.ports.trace import TracePort

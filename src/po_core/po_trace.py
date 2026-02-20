@@ -17,10 +17,9 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import click
 from rich.console import Console
-from rich.table import Table
 
 if TYPE_CHECKING:
-    from po_core.po_self import PoSelf, PoSelfResponse
+    from po_core.po_self import PoSelfResponse
 
 console = Console()
 
@@ -596,7 +595,7 @@ class PoTrace:
 def cli(prompt: List[str], trace_dir: Path) -> None:
     """Run the Po_self ensemble and persist a reasoning trace."""
     # Import at runtime to avoid circular import
-    from po_core.po_self import PoSelf, PoSelfResponse
+    from po_core.po_self import PoSelf
 
     text_prompt = " ".join(prompt).strip()
     if not text_prompt:

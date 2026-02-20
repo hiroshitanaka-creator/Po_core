@@ -11,8 +11,6 @@ Unit tests for FreedomPressureV2 — Phase 6-A
   - engine.py feature flag 統合の検証
 """
 
-import os
-
 import numpy as np
 import pytest
 

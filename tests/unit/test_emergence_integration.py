@@ -25,14 +25,13 @@ from __future__ import annotations
 
 import datetime
 import uuid
-from typing import Any, List, Optional, Sequence
+from typing import List
 
 import pytest
 
 from po_core.deliberation import emergence as emergence_mod
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.engine import DeliberationEngine
-from po_core.deliberation.influence import InfluenceTracker
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
@@ -267,9 +266,9 @@ class TestEmergenceDetectorIntegration:
         # With threshold=0.0 any non-zero distance generates a signal.
         # If re-proposing happened, we should have signals.
         if len(result.rounds) >= 2:
-            assert result.has_emergence, (
-                "threshold=0.0 should catch even paraphrased revisions"
-            )
+            assert (
+                result.has_emergence
+            ), "threshold=0.0 should catch even paraphrased revisions"
 
     # ── Test 5 ──────────────────────────────────────────────────────────
 
@@ -330,8 +329,7 @@ class TestEmergenceDetectorIntegration:
         # Some philosopher should have been influenced (if revision occurred)
         if len(result.rounds) >= 2 and result.rounds[-1].n_revised > 0:
             total = sum(
-                sum(w.influenced.values())
-                for w in result.influence_weights.values()
+                sum(w.influenced.values()) for w in result.influence_weights.values()
             )
             assert total >= 0.0  # non-negative influence totals
 
@@ -366,11 +364,11 @@ class TestEmergenceDetectorIntegration:
             # Strong emergence (novelty >= strong_threshold) triggers an early halt
             # *before* InfluenceTracker.update() is called, so influence_weights may
             # legitimately be empty in that scenario.
-            strong_halt = any(
-                s.novelty_score >= 0.85 for s in result.emergence_signals
-            )
+            strong_halt = any(s.novelty_score >= 0.85 for s in result.emergence_signals)
             if not strong_halt:
-                assert result.influence_weights, "Expected influence data when no early halt"
+                assert (
+                    result.influence_weights
+                ), "Expected influence data when no early halt"
 
     # ── Test 8 ──────────────────────────────────────────────────────────
 
@@ -426,15 +424,15 @@ class TestEmergenceDetectorIntegration:
         result = engine.deliberate(stubs, ctx, intent, tensors, memory, round1)
 
         for sig in result.emergence_signals:
-            assert isinstance(sig.catalyst_pair, tuple), (
-                f"catalyst_pair must be a tuple, got {type(sig.catalyst_pair)}"
-            )
-            assert len(sig.catalyst_pair) == 2, (
-                f"catalyst_pair must have 2 elements, got {len(sig.catalyst_pair)}"
-            )
-            assert all(isinstance(p, str) for p in sig.catalyst_pair), (
-                f"Both catalyst_pair elements must be strings: {sig.catalyst_pair}"
-            )
+            assert isinstance(
+                sig.catalyst_pair, tuple
+            ), f"catalyst_pair must be a tuple, got {type(sig.catalyst_pair)}"
+            assert (
+                len(sig.catalyst_pair) == 2
+            ), f"catalyst_pair must have 2 elements, got {len(sig.catalyst_pair)}"
+            assert all(
+                isinstance(p, str) for p in sig.catalyst_pair
+            ), f"Both catalyst_pair elements must be strings: {sig.catalyst_pair}"
 
     # ── Test 10 ─────────────────────────────────────────────────────────
 
@@ -449,7 +447,9 @@ class TestEmergenceDetectorIntegration:
         current = [_make_proposal(NOVEL_TEXT, "Sartre")]
 
         signals = detector.detect(baseline, current, round_num=2)
-        assert signals, "threshold=0.0 should generate a signal for any non-zero distance"
+        assert (
+            signals
+        ), "threshold=0.0 should generate a signal for any non-zero distance"
 
         # With strong_threshold=0.5, a score near 1.0 should be "strong"
         if signals[0].novelty_score >= 0.5:

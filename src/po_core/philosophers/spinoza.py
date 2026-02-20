@@ -235,13 +235,13 @@ class Spinoza(Philosopher):
 
         # Essence vs modification
         essence_words = ["essence", "essential", "fundamental", "constitute"]
-        essence_count = sum(1 for word in essence_words if word in text_lower)
+        sum(1 for word in essence_words if word in text_lower)
 
         # Infinite vs finite
         infinite_words = ["infinite", "eternal", "unlimited", "boundless"]
         finite_words = ["finite", "limited", "bounded", "temporal"]
 
-        has_infinite = any(word in text_lower for word in infinite_words)
+        any(word in text_lower for word in infinite_words)
         has_finite = any(word in text_lower for word in finite_words)
 
         if has_thought and has_extension:
@@ -568,7 +568,7 @@ class Spinoza(Philosopher):
         contingency_words = ["contingent", "accidental", "happen to", "could be"]
 
         has_necessity = any(word in text_lower for word in necessity_words)
-        has_contingency = any(phrase in text_lower for phrase in contingency_words)
+        any(phrase in text_lower for phrase in contingency_words)
 
         # Calculate adequacy
         adequacy_score = adequate_count + knowledge_count + reason_count
@@ -632,7 +632,7 @@ class Spinoza(Philosopher):
 
         # No contingency
         no_chance = ["no chance", "not contingent", "not random", "no accident"]
-        has_no_chance = any(phrase in text_lower for phrase in no_chance)
+        any(phrase in text_lower for phrase in no_chance)
 
         # Libertarian free will (opposed to determinism)
         free_will_words = [
@@ -711,7 +711,7 @@ class Spinoza(Philosopher):
             "self-caused",
             "autonomous",
         ]
-        has_own_nature = any(phrase in text_lower for phrase in own_nature)
+        any(phrase in text_lower for phrase in own_nature)
 
         # Bondage/slavery (opposed to freedom)
         bondage_words = ["bondage", "slave", "enslaved", "trapped", "passive"]
@@ -802,7 +802,7 @@ class Spinoza(Philosopher):
 
         # Power language
         power_words = ["power", "potency", "capacity", "ability", "strength"]
-        power_count = sum(1 for word in power_words if word in text_lower)
+        sum(1 for word in power_words if word in text_lower)
 
         # Determine dominant affect
         dominant_affect = "None"
@@ -883,7 +883,7 @@ class Spinoza(Philosopher):
 
         # Immortality (but not personal survival)
         immortal_words = ["immortal", "deathless", "imperishable"]
-        has_immortal = any(word in text_lower for word in immortal_words)
+        any(word in text_lower for word in immortal_words)
 
         # Personal survival (confused idea)
         personal_survival = ["afterlife", "heaven", "reincarnation", "life after death"]
@@ -1025,8 +1025,8 @@ class Spinoza(Philosopher):
     ) -> str:
         """Construct comprehensive Spinozistic philosophical reasoning."""
         reasoning = (
-            f"From a Spinozistic perspective, we must understand all things through the one infinite substance - "
-            f"God or Nature (Deus sive Natura). "
+            "From a Spinozistic perspective, we must understand all things through the one infinite substance - "
+            "God or Nature (Deus sive Natura). "
         )
 
         # Substance monism

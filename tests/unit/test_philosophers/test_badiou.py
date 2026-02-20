@@ -8,8 +8,6 @@ Tests Badiou's philosophy focusing on:
 - Subject formation
 """
 
-import pytest
-
 from po_core.philosophers.badiou import Badiou
 
 

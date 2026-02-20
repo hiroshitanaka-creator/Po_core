@@ -1,7 +1,5 @@
 import pytest
 
-from po_core.philosophers.sartre import Sartre
-
 
 @pytest.fixture()
 def sartre_instance(sartre):

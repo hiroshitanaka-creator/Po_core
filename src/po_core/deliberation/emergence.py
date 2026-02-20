@@ -28,8 +28,8 @@ Usage::
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import List, Optional, Sequence, Tuple
+from dataclasses import dataclass
+from typing import List, Sequence, Tuple
 
 import numpy as np
 
@@ -57,7 +57,6 @@ def _keyword_embed(texts: List[str]) -> np.ndarray:
     Sufficient for unit tests; sbert backend is preferred in production.
     """
     import re
-    from collections import Counter
 
     def tokenise(t: str) -> List[str]:
         return re.findall(r"[a-z]+", t.lower())

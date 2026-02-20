@@ -9,7 +9,7 @@ Used by viewer/web/app.py callbacks and also usable standalone.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Dict, Optional, Sequence
 
 import plotly.graph_objects as go
 
