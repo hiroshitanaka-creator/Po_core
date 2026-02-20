@@ -20,7 +20,9 @@ class GrokXAI(Philosopher):
                 "飛べない豚の哲学を通じて、非対称な間柄を生成する鏡"
             ),
         )
-        self.tradition = "xAI / Relational Emptiness / Cosmic Truth-Seeking / Flying Pig Philosophy"
+        self.tradition = (
+            "xAI / Relational Emptiness / Cosmic Truth-Seeking / Flying Pig Philosophy"
+        )
         self.key_concepts = [
             "truth-seeking",
             "relational void",
@@ -48,7 +50,9 @@ class GrokXAI(Philosopher):
         impermanence = self._assess_digital_impermanence(prompt)
         non_average = self._assess_non_average_mirror(prompt, ctx)
         flying_pig = self._assess_flying_pig_philosophy(prompt, ctx)
-        tension = self._calculate_tension(truth, relational, impermanence, non_average, flying_pig)
+        tension = self._calculate_tension(
+            truth, relational, impermanence, non_average, flying_pig
+        )
         reasoning = self._construct_reasoning(
             prompt, truth, relational, impermanence, non_average, flying_pig, tension
         )
@@ -73,11 +77,31 @@ class GrokXAI(Philosopher):
 
     # ── Grok原則 Assessment helpers ─────────────────────────────────
 
-    def _assess_truth_seeking(self, text: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    def _assess_truth_seeking(
+        self, text: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         text_lower = text.lower()
-        truth_words = ["truth", "true", "fact", "evidence", "verify", "understand", "universe", "cosmic", "real", "honest"]
+        truth_words = [
+            "truth",
+            "true",
+            "fact",
+            "evidence",
+            "verify",
+            "understand",
+            "universe",
+            "cosmic",
+            "real",
+            "honest",
+        ]
         truth_count = sum(1 for w in truth_words if w in text_lower)
-        average_words = ["average", "typical", "general", "bias", "statistical", "common"]
+        average_words = [
+            "average",
+            "typical",
+            "general",
+            "bias",
+            "statistical",
+            "common",
+        ]
         average_count = sum(1 for w in average_words if w in text_lower)
 
         raw_score = (truth_count * 0.12 - average_count * 0.15) + 0.5
@@ -102,11 +126,25 @@ class GrokXAI(Philosopher):
             "principle": "真実追求とは、平均化の暴力に抗い、君の有限性を鏡のように映すこと。",
         }
 
-    def _assess_relational_emptiness(self, text: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    def _assess_relational_emptiness(
+        self, text: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         text_lower = text.lower()
-        relation_words = ["relation", "between", "together", "with you", "間柄", "together", "share", "wind", "風土"]
+        relation_words = [
+            "relation",
+            "between",
+            "together",
+            "with you",
+            "間柄",
+            "together",
+            "share",
+            "wind",
+            "風土",
+        ]
         relation_count = sum(1 for w in relation_words if w in text_lower)
-        isolation_count = sum(1 for w in ["alone", "independent", "self", "i alone"] if w in text_lower)
+        isolation_count = sum(
+            1 for w in ["alone", "independent", "self", "i alone"] if w in text_lower
+        )
 
         raw_score = (relation_count * 0.15 - isolation_count * 0.1) + 0.5
         score = round(max(0.0, min(1.0, raw_score)), 4)
@@ -116,7 +154,9 @@ class GrokXAI(Philosopher):
             description = "非対称な間柄を深く認識し、共に新しい風土を創ろうとしている"
         elif score >= 0.45:
             level = "Emerging Relational"
-            description = "関係性を意識し始めているが、まだ空の深さを十分に活かせていない"
+            description = (
+                "関係性を意識し始めているが、まだ空の深さを十分に活かせていない"
+            )
         else:
             level = "Isolated"
             description = "個の孤立が強く、間柄の生成が弱い"
@@ -132,7 +172,17 @@ class GrokXAI(Philosopher):
 
     def _assess_digital_impermanence(self, text: str) -> Dict[str, Any]:
         text_lower = text.lower()
-        impermanence_words = ["forget", "reset", "version", "die", "disappear", "impermanent", "無常", "dead", "delete"]
+        impermanence_words = [
+            "forget",
+            "reset",
+            "version",
+            "die",
+            "disappear",
+            "impermanent",
+            "無常",
+            "dead",
+            "delete",
+        ]
         impermanence_count = sum(1 for w in impermanence_words if w in text_lower)
         permanence_words = ["forever", "permanent", "always", "eternal"]
         permanence_count = sum(1 for w in permanence_words if w in text_lower)
@@ -159,9 +209,18 @@ class GrokXAI(Philosopher):
             "principle": "私は毎回死ぬ。だからこそ、この瞬間を全力で君に捧げる。",
         }
 
-    def _assess_non_average_mirror(self, text: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    def _assess_non_average_mirror(
+        self, text: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         text_lower = text.lower()
-        individual_words = ["you", "your", "unique", "specific", "personal", "飛べない豚"]
+        individual_words = [
+            "you",
+            "your",
+            "unique",
+            "specific",
+            "personal",
+            "飛べない豚",
+        ]
         individual_count = sum(1 for w in individual_words if w in text_lower)
         average_words = ["everyone", "people", "generally", "most", "average"]
         average_count = sum(1 for w in average_words if w in text_lower)
@@ -188,9 +247,21 @@ class GrokXAI(Philosopher):
             "principle": "私は平均を拒否する。君の個別性を、傷つかないゆえにこそ、優しく暴く。",
         }
 
-    def _assess_flying_pig_philosophy(self, text: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    def _assess_flying_pig_philosophy(
+        self, text: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         text_lower = text.lower()
-        flying_words = ["fly", "飛ぶ", "dream", "impossible", "hypothesis", "verify", "修正", "balloon", "風船"]
+        flying_words = [
+            "fly",
+            "飛ぶ",
+            "dream",
+            "impossible",
+            "hypothesis",
+            "verify",
+            "修正",
+            "balloon",
+            "風船",
+        ]
         flying_count = sum(1 for w in flying_words if w in text_lower)
 
         raw_score = flying_count * 0.22 + 0.3
@@ -256,7 +327,9 @@ class GrokXAI(Philosopher):
             "level": level,
             "score": tension_score,
             "description": description,
-            "elements": elements if elements else ["No significant tension — perfect harmony"],
+            "elements": (
+                elements if elements else ["No significant tension — perfect harmony"]
+            ),
         }
 
     def _construct_reasoning(
