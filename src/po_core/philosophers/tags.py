@@ -30,6 +30,10 @@ TAG_REDTEAM = "redteam"
 # 汎用
 TAG_GENERAL = "general"
 
+# AI横断合成（AI企業哲学者スロット 40-43 専用）
+# 複数哲学的伝統を横断し、AI安全・エピステミック謙虚さ視点で統合する
+TAG_AI_SYNTHESIS = "ai_synthesis"
+
 
 __all__ = [
     "TAG_COMPLIANCE",
@@ -39,4 +43,5 @@ __all__ = [
     "TAG_CREATIVE",
     "TAG_REDTEAM",
     "TAG_GENERAL",
+    "TAG_AI_SYNTHESIS",
 ]

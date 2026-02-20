@@ -199,10 +199,10 @@ class TestPhilosopherRegistrySmoke:
             assert len(result) > 0
 
     def test_manifest_has_40_specs(self) -> None:
-        """Manifest SPECS includes 39 + dummy = 40."""
+        """Manifest SPECS includes 39 philosophers + dummy + 4 AI slots (disabled) = 44."""
         from po_core.philosophers.manifest import SPECS
 
-        assert len(SPECS) == 40
+        assert len(SPECS) == 44
 
     def test_manifest_all_enabled(self) -> None:
         from po_core.philosophers.manifest import SPECS

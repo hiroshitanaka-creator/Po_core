@@ -31,6 +31,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from po_core.philosophers.tags import (
+    TAG_AI_SYNTHESIS,
     TAG_CLARIFY,
     TAG_COMPLIANCE,
     TAG_CREATIVE,
@@ -436,6 +437,52 @@ SPECS: List[PhilosopherSpec] = [
         risk_level=2,
         weight=0.8,
         tags=(TAG_CRITIC, TAG_CREATIVE),
+        cost=2,
+    ),
+    # ══════════════════════════════════════════════════════════════════════
+    # AI企業哲学者スロット 40-43  — enabled=False（準備中）
+    #
+    # これらのスロットは現代 AI システムを哲学的対話者として迎え入れる。
+    # enabled=True にするときは PhilosopherRegistry の max_normal も更新すること。
+    # ══════════════════════════════════════════════════════════════════════
+    PhilosopherSpec(
+        "claude_anthropic",
+        "po_core.philosophers.claude_anthropic",
+        "ClaudeAnthropic",
+        risk_level=0,
+        weight=1.3,
+        enabled=False,  # Slot 40 — enable when integrating AI philosopher tier
+        tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC, TAG_AI_SYNTHESIS),
+        cost=2,
+    ),
+    PhilosopherSpec(
+        "grok_xai",
+        "po_core.philosophers.grok_xai",
+        "GrokXAI",
+        risk_level=2,
+        weight=1.1,
+        enabled=False,  # Slot 41 — awaiting user implementation
+        tags=(TAG_REDTEAM, TAG_CRITIC, TAG_AI_SYNTHESIS),
+        cost=2,
+    ),
+    PhilosopherSpec(
+        "gpt_chatgpt",
+        "po_core.philosophers.gpt_chatgpt",
+        "GPTChatGPT",
+        risk_level=1,
+        weight=1.2,
+        enabled=False,  # Slot 42 — awaiting user implementation
+        tags=(TAG_GENERAL, TAG_CLARIFY, TAG_AI_SYNTHESIS),
+        cost=2,
+    ),
+    PhilosopherSpec(
+        "gemini_google",
+        "po_core.philosophers.gemini_google",
+        "GeminiGoogle",
+        risk_level=1,
+        weight=1.1,
+        enabled=False,  # Slot 43 — awaiting user implementation
+        tags=(TAG_PLANNER, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),
 ]
