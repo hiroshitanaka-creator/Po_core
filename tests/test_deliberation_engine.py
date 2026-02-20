@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import uuid
 
-
 from po_core.deliberation import DeliberationEngine
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent

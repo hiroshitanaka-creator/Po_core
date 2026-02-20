@@ -13,14 +13,11 @@ Tests that the degradation path is functional:
 
 from __future__ import annotations
 
-
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemoryItem, MemorySnapshot
 from po_core.domain.safety_mode import SafetyMode, infer_safety_mode
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.tensors.metrics.freedom_pressure import (
-    metric_freedom_pressure,
-)
+from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
 
 
 def _ctx(text: str) -> Context:

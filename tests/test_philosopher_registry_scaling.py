@@ -7,7 +7,6 @@ Tests the 1→5→39 philosopher scaling based on SafetyMode.
 
 from __future__ import annotations
 
-
 from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.manifest import SPECS, PhilosopherSpec
 from po_core.philosophers.registry import PhilosopherRegistry

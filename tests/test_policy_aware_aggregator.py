@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-
 from po_core.aggregator.policy_aware import PolicyAwareAggregator
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent

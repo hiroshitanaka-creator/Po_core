@@ -15,7 +15,6 @@ import uuid
 
 import pytest
 
-
 from po_core.domain.context import Context
 from po_core.domain.trace_event import TraceEvent
 

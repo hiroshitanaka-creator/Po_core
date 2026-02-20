@@ -11,9 +11,7 @@ Validates:
 import pytest
 
 from po_core.domain.trace_event import TraceEvent
-from po_core.safety.wethics_gate.explanation import (
-    build_explanation_chain,
-)
+from po_core.safety.wethics_gate.explanation import build_explanation_chain
 from po_core.safety.wethics_gate.types import (
     Evidence,
     GateDecision,

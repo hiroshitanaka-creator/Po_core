@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import pytest
 
-
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot

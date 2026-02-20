@@ -139,8 +139,28 @@ def resolve_import(
     return f"{prefix}.{module}"
 
 
+def _type_checking_node_ids(tree: ast.AST) -> Set[int]:
+    """Return ids of AST nodes that live inside `if TYPE_CHECKING:` blocks."""
+    ids: Set[int] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.If):
+            continue
+        test = node.test
+        is_tc = (isinstance(test, ast.Name) and test.id == "TYPE_CHECKING") or (
+            isinstance(test, ast.Attribute) and test.attr == "TYPE_CHECKING"
+        )
+        if is_tc:
+            for child in ast.walk(node):
+                ids.add(id(child))
+    return ids
+
+
 def extract_deps(py_path: str, current_module: str, package: str) -> Set[str]:
-    """Extract po_core dependencies from a Python file."""
+    """Extract po_core dependencies from a Python file.
+
+    Imports inside ``if TYPE_CHECKING:`` blocks are skipped because they are
+    never evaluated at runtime and therefore cannot cause real import cycles.
+    """
     with open(py_path, "r", encoding="utf-8") as f:
         src = f.read()
 
@@ -149,9 +169,12 @@ def extract_deps(py_path: str, current_module: str, package: str) -> Set[str]:
     except SyntaxError:
         return set()
 
+    skip = _type_checking_node_ids(tree)
     deps: Set[str] = set()
 
     for node in ast.walk(tree):
+        if id(node) in skip:
+            continue
         if isinstance(node, ast.Import):
             for alias in node.names:
                 name = alias.name

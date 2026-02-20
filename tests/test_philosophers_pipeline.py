@@ -2,7 +2,7 @@
 Philosopher Tests via Pipeline (migrated from test_philosophers_pytest.py)
 ==========================================================================
 
-Tests all 39 philosophers through native PhilosopherProtocol.propose().
+Tests all 43 philosophers through native PhilosopherProtocol.propose().
 Validates that every philosopher:
 1. Can be loaded via PhilosopherRegistry
 2. Has correct attributes (name, tradition, key_concepts)
@@ -18,7 +18,6 @@ from __future__ import annotations
 import uuid
 
 import pytest
-
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
@@ -70,12 +69,12 @@ def all_loaded_philosophers(registry):
 class TestManifestIntegrity:
     """Verify manifest SPECS are consistent."""
 
-    def test_manifest_has_40_specs(self):
-        assert len(SPECS) == 40, f"Expected 40 specs (39 + dummy), got {len(SPECS)}"
+    def test_manifest_has_44_specs(self):
+        assert len(SPECS) == 44, f"Expected 44 specs (43 + dummy), got {len(SPECS)}"
 
-    def test_39_non_dummy_philosophers(self):
+    def test_43_non_dummy_philosophers(self):
         non_dummy = [s for s in SPECS if s.philosopher_id != "dummy"]
-        assert len(non_dummy) == 39
+        assert len(non_dummy) == 43
 
     def test_all_ids_unique(self):
         ids = [s.philosopher_id for s in SPECS]
@@ -100,7 +99,7 @@ class TestPhilosopherLoading:
     """Test that all philosophers load with native propose()/info."""
 
     def test_all_load_via_registry(self, registry):
-        """All 39 philosophers should load in NORMAL mode."""
+        """All 43 philosophers should load in NORMAL mode."""
         loaded = registry.select_and_load(SafetyMode.NORMAL)
         assert len(loaded) > 0
 
@@ -251,7 +250,7 @@ class TestPhilosopherDiversity:
             if content:
                 contents.append(content[:200])
 
-        # At least 30 out of 39 should be unique
+        # At least 30 out of 43 should be unique
         unique = len(set(contents))
         assert (
             unique >= 30
