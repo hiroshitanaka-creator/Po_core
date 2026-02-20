@@ -471,7 +471,7 @@ SPECS: List[PhilosopherSpec] = [
         "GPTChatGPT",
         risk_level=1,
         weight=1.2,
-        enabled=False,  # Slot 42 — awaiting user implementation
+        enabled=True,  # Slot 42
         tags=(TAG_GENERAL, TAG_CLARIFY, TAG_AI_SYNTHESIS),
         cost=2,
     ),
@@ -481,7 +481,7 @@ SPECS: List[PhilosopherSpec] = [
         "GeminiGoogle",
         risk_level=1,
         weight=1.1,
-        enabled=False,  # Slot 43 — awaiting user implementation
+        enabled=True,  # Slot 43
         tags=(TAG_PLANNER, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),

@@ -88,6 +88,8 @@ PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
     "wittgenstein": philosophers.Wittgenstein,
     "zhuangzi": philosophers.Zhuangzi,
     "grok_xai": philosophers.GrokXAI,
+    "gemini_google": philosophers.GeminiGoogle,
+    "gpt_chatgpt": philosophers.GPTChatGPT,
 }
 
 

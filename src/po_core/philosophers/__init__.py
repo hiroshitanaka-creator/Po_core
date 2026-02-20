@@ -46,6 +46,8 @@ from po_core.philosophers.weil import Weil
 from po_core.philosophers.wittgenstein import Wittgenstein
 from po_core.philosophers.zhuangzi import Zhuangzi
 from po_core.philosophers.grok_xai import GrokXAI
+from po_core.philosophers.gemini_google import GeminiGoogle
+from po_core.philosophers.gpt_chatgpt import GPTChatGPT
 
 __all__ = [
     "Philosopher",
@@ -89,4 +91,6 @@ __all__ = [
     "Wittgenstein",
     "Zhuangzi",
     "GrokXAI",
+    "GeminiGoogle",
+    "GPTChatGPT",
 ]
