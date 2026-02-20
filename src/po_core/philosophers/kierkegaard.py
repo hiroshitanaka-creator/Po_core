@@ -17,7 +17,7 @@ Key Concepts:
 - Indirect Communication: Pseudonymous authorship
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -338,7 +338,7 @@ class Kierkegaard(Philosopher):
 
         # Self-awareness
         awareness_words = ["aware", "conscious", "realize", "understand myself"]
-        has_awareness = sum(1 for phrase in awareness_words if phrase in text_lower)
+        sum(1 for phrase in awareness_words if phrase in text_lower)
 
         if has_despair >= 1 and has_not_self >= 1:
             type_despair = "Despair of Not Wanting to Be Oneself"

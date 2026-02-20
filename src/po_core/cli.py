@@ -243,7 +243,7 @@ def view(session_id: str, trace_dir: Path) -> None:
 
     # Display metrics
     if session.metrics:
-        console.print(f"[bold green]Metrics:[/bold green]")
+        console.print("[bold green]Metrics:[/bold green]")
         for key, value in session.metrics.items():
             console.print(f"  {key}: {value}")
 
@@ -259,7 +259,7 @@ def view(session_id: str, trace_dir: Path) -> None:
 
     # Display metadata
     if session.metadata:
-        console.print(f"\n[bold magenta]Metadata:[/bold magenta]")
+        console.print("\n[bold magenta]Metadata:[/bold magenta]")
         console.print(json.dumps(session.metadata, indent=2))
 
 
@@ -442,7 +442,7 @@ def party(theme: str, mood: str, quick: bool) -> None:
         # For now, just run interactive mode
         # Future: pass theme and mood as args
         console.print(
-            f"[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]"
+            "[yellow]Note: Starting interactive mode (theme/mood options coming soon)[/yellow]"
         )
 
     # Run the demo

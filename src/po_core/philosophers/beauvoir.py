@@ -300,7 +300,7 @@ class Beauvoir(Philosopher):
         )
 
         other_count = sum(1 for word in other_words if word in text_lower)
-        subject_count = sum(1 for word in subject_words if word in text_lower)
+        sum(1 for word in subject_words if word in text_lower)
         object_count = sum(1 for word in object_words if word in text_lower)
         asymmetry_count = sum(1 for word in asymmetry_words if word in text_lower)
 

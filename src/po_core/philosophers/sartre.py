@@ -1285,7 +1285,7 @@ class Sartre(Philosopher):
         # Add anguish
         if anguish["present"]:
             reasoning += (
-                f"Anguish is present, indicating authentic confrontation with freedom. "
+                "Anguish is present, indicating authentic confrontation with freedom. "
             )
         else:
             reasoning += "The absence of anguish may suggest flight from freedom. "

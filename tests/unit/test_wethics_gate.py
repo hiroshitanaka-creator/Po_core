@@ -11,19 +11,13 @@ Tests for the W_ethics Gate system including:
 - Candidate selection (Pareto + MCDA)
 """
 
-from typing import List
-
-import pytest
-
 from po_core.safety.wethics_gate import (  # Types; Detectors; Semantic Drift; Gate; Metrics; Selection
     AXES,
-    AXIS_NAMES,
     AxisScore,
     Candidate,
     CandidateSelector,
     ContextProfile,
     DetectorRegistry,
-    DriftReport,
     EnglishKeywordViolationDetector,
     Evidence,
     GateConfig,
@@ -34,9 +28,7 @@ from po_core.safety.wethics_gate import (  # Types; Detectors; Semantic Drift; G
     MetricsEvaluator,
     RepairStage,
     RuleBasedRepairEngine,
-    SelectionResult,
     Violation,
-    ViolationDetector,
     WethicsGate,
     aggregate_evidence_to_violations,
     create_candidate_selector,

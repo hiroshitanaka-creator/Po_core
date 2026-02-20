@@ -254,8 +254,6 @@ class TestPrototypeIntegration:
         """Test that PhilosopherComparison uses Po_self correctly."""
         from philosopher_comparison import PhilosopherComparison
 
-        from po_core.po_self import PoSelf
-
         comparison = PhilosopherComparison()
 
         # Run a comparison to create Po_self instance

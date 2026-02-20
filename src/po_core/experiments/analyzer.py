@@ -20,7 +20,6 @@ from typing import Any, Dict, List, Mapping, Optional
 
 from po_core.domain.experiment import (
     ExperimentAnalysis,
-    ExperimentDefinition,
     ExperimentSample,
     SignificanceTest,
     VariantStatistics,
@@ -113,7 +112,7 @@ def _t_test(
 
     t = (mean2 - mean1) / se
     # 自由度（Welch-Satterthwaite）
-    df = (var1 / n1 + var2 / n2) ** 2 / (
+    (var1 / n1 + var2 / n2) ** 2 / (
         (var1 / n1) ** 2 / (n1 - 1) + (var2 / n2) ** 2 / (n2 - 1)
     )
 

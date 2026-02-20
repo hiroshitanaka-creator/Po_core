@@ -13,8 +13,6 @@ Tests Confucian philosophy focusing on:
 - Learning and Self-Cultivation
 """
 
-import pytest
-
 from po_core.philosophers.confucius import Confucius
 
 
@@ -37,7 +35,7 @@ class TestConfuciusBasicFunctionality:
 
     def test_confucius_str(self):
         """Test human-readable string."""
-        confucius = Confucius()
+        Confucius()
 
 
 class TestConfuciusReasonMethod:

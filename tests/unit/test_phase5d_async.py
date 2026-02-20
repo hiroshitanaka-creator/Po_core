@@ -10,7 +10,6 @@ Markers: unit, phase5
 
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass, field
 from typing import Any, List, Mapping
 from unittest.mock import MagicMock, patch

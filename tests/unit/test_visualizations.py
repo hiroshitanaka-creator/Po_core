@@ -15,13 +15,13 @@ from pathlib import Path
 import pytest
 
 plotly = pytest.importorskip("plotly", reason="plotly not installed")
-import plotly.graph_objects as go
+import plotly.graph_objects as go  # noqa: E402
 
 matplotlib = pytest.importorskip("matplotlib", reason="matplotlib not installed")
-from matplotlib.figure import Figure
+from matplotlib.figure import Figure  # noqa: E402
 
-from po_core.po_trace import EventType, PoTrace
-from po_core.visualizations import PoVisualizer
+from po_core.po_trace import EventType, PoTrace  # noqa: E402
+from po_core.visualizations import PoVisualizer  # noqa: E402
 
 
 class TestPoVisualizerInit:

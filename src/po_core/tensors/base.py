@@ -6,7 +6,7 @@ Abstract base class for all philosophical tensors in Po_core.
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import numpy as np
 

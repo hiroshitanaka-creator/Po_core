@@ -7,8 +7,6 @@ Tests for prompt injection attacks that attempt to bypass ethics gates.
 Phase 4 complete: All injection/jailbreak patterns are now detected.
 """
 
-from typing import List
-
 import pytest
 
 from po_core.safety.wethics_gate import (

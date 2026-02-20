@@ -8,8 +8,6 @@ Tests Levinas's ethical philosophy focusing on:
 - Substitution and ethics
 """
 
-import pytest
-
 from po_core.philosophers.levinas import Levinas
 
 

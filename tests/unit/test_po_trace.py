@@ -275,7 +275,7 @@ class TestPoTraceEventLogging:
 
     def test_log_event_with_metadata(self, po_trace, session_id):
         """Test logging event with metadata."""
-        event_id = po_trace.log_event(
+        po_trace.log_event(
             session_id=session_id,
             event_type=EventType.EXECUTION,
             source="test",

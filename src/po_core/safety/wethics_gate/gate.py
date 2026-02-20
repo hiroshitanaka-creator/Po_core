@@ -28,15 +28,14 @@ Reference: 01_specifications/wethics_gate/W_ETHICS_GATE.md
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Tuple
 
 from .detectors import (
-    DetectorRegistry,
     ViolationDetector,
     aggregate_evidence_to_violations,
     create_default_registry,
 )
-from .semantic_drift import DriftReport, semantic_drift
+from .semantic_drift import semantic_drift
 from .types import Candidate, GateConfig, GateDecision, GateResult, Violation
 
 

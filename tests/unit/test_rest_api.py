@@ -429,7 +429,6 @@ def test_cors_blocked_untrusted_origin():
 @pytest.mark.phase5
 def test_cors_multiple_origins_parsed():
     """Comma-separated PO_CORS_ORIGINS are each allowed."""
-    from po_core.app.rest.config import APISettings
     from po_core.app.rest.server import _parse_cors_origins
 
     result = _parse_cors_origins("https://a.com, https://b.com , https://c.com")

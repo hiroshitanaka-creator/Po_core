@@ -14,9 +14,11 @@ import warnings
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.po_self import PoSelf, PoSelfResponse
+
+pytestmark = pytest.mark.pipeline
+
 
 # ══════════════════════════════════════════════════════════════════════════
 # 1. Basic Functionality

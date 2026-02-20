@@ -546,7 +546,7 @@ class Husserl(Philosopher):
 
         # Pole of identity indicators
         pole_words = ["pole", "center", "unity", "identical i", "same i"]
-        pole_count = sum(1 for phrase in pole_words if phrase in text_lower)
+        sum(1 for phrase in pole_words if phrase in text_lower)
 
         # Empirical self (contrasted with transcendental ego)
         empirical_words = [
@@ -1010,7 +1010,7 @@ class Husserl(Philosopher):
 
         # Adequate/inadequate indicators
         adequate_words = ["adequate", "inadequate", "complete givenness", "incomplete"]
-        adequate_count = sum(1 for word in adequate_words if word in text_lower)
+        sum(1 for word in adequate_words if word in text_lower)
 
         # Intuition indicators
         intuition_words = ["intuition", "intuit", "direct seeing", "immediate seeing"]
@@ -1182,7 +1182,7 @@ class Husserl(Philosopher):
 
         # Active vs passive
         active_passive = ["active", "passive", "receptivity", "spontaneity"]
-        active_passive_count = sum(1 for word in active_passive if word in text_lower)
+        sum(1 for word in active_passive if word in text_lower)
 
         # Association/genesis indicators
         genesis_words = [

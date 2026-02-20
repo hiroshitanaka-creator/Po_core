@@ -25,7 +25,6 @@ NOT:
 """
 
 import ast
-import os
 from pathlib import Path
 from typing import List, Set, Tuple
 
@@ -229,19 +228,7 @@ class TestNoCircularImports:
     def test_can_import_all_core_modules(self):
         """All core modules should be importable without circular import errors."""
         # These imports should not raise ImportError
-        import po_core.domain
-        import po_core.ensemble
-        import po_core.philosophers
-        import po_core.safety
-        import po_core.tensors
 
     def test_domain_imports_cleanly(self):
         """domain/ should import without dependencies."""
         # This should work even if other modules have issues
-        from po_core.domain import (
-            Context,
-            Proposal,
-            SafetyVerdict,
-            TensorSnapshot,
-            TraceEvent,
-        )

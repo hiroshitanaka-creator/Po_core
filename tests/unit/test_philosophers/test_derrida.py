@@ -8,8 +8,6 @@ Tests Derrida's deconstructionist analysis focusing on:
 - Contradictions
 """
 
-import pytest
-
 from po_core.philosophers.derrida import Derrida
 
 

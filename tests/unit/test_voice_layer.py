@@ -14,7 +14,6 @@ Tests cover:
 import pytest
 
 from po_core.runtime.voice_loader import (
-    VoiceRenderer,
     _extract_topic,
     _tension_category,
     clear_cache,
@@ -280,7 +279,6 @@ def test_reason_with_context_applies_voice():
 
 def test_reason_with_context_no_voice_graceful_degradation():
     """A philosopher without a voice YAML falls back to raw reasoning text."""
-    from po_core.philosophers.base import Context
 
     clear_cache()
     # Use a philosopher ID that has no YAML (we request it by name)

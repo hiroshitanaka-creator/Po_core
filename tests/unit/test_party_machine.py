@@ -4,10 +4,6 @@ Tests for Philosopher Party Machine
 Comprehensive tests for the automated philosopher combination system.
 """
 
-from unittest.mock import patch
-
-import pytest
-
 from po_core.party_machine import (
     HARMONIOUS_CLUSTERS,
     HIGH_TENSION_PAIRS,

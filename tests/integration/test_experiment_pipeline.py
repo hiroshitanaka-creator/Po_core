@@ -16,8 +16,6 @@ from po_core.domain.experiment import (
     ExperimentSample,
     ExperimentStatus,
     ExperimentVariant,
-    SignificanceTest,
-    VariantStatistics,
 )
 from po_core.experiments.analyzer import ExperimentAnalyzer
 from po_core.experiments.promoter import ExperimentPromoter
@@ -265,7 +263,7 @@ class TestExperimentLifecycle:
         storage.save_definition(exp2)
 
         # Add samples to each
-        now = datetime.now(timezone.utc)
+        datetime.now(timezone.utc)
         storage.append_sample(
             "pareto_safety_test", _make_sample("baseline", {"pareto_front_size": 5}, 0)
         )

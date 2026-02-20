@@ -19,11 +19,10 @@ affect users. Investigate before updating the golden expectations.
 from __future__ import annotations
 
 import uuid
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.adapters.memory_poself import InMemoryAdapter
 from po_core.aggregator.pareto import ParetoAggregator
@@ -50,6 +49,9 @@ from po_core.tensors.metrics.freedom_pressure import metric_freedom_pressure
 from po_core.tensors.metrics.semantic_delta import metric_semantic_delta
 from po_core.trace.in_memory import InMemoryTracer
 from po_core.trace.schema import validate_events
+
+pytestmark = pytest.mark.pipeline
+
 
 # ── Helpers ──────────────────────────────────────────────────────────────
 

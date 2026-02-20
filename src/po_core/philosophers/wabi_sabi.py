@@ -19,7 +19,7 @@ Key Concepts:
 - Mono no aware (物の哀れ): Awareness of transience, poignant beauty of impermanence
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 

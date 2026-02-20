@@ -44,7 +44,7 @@ class MockPoSelf:
 
     def __init__(self, enable_trace: bool = True):
         """Initialize mock Po_self with predefined philosophers."""
-        from po_core.po_trace import EventType, PoTrace
+        from po_core.po_trace import PoTrace
 
         self.enable_trace = enable_trace
         self.po_trace = PoTrace() if enable_trace else None

@@ -20,7 +20,7 @@ Key Concepts:
 - Reversibility (réversibilité): Touching-touched, seeing-seen
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -243,7 +243,7 @@ class MerleauPonty(Philosopher):
 
         # World/reality indicators
         world_words = ["world", "reality", "things", "objects"]
-        has_world = sum(1 for word in world_words if word in text_lower)
+        sum(1 for word in world_words if word in text_lower)
 
         # Meaning/significance in perception
         meaning_words = ["meaning", "significance", "sense", "understanding"]
@@ -313,9 +313,7 @@ class MerleauPonty(Philosopher):
 
         # Visible/invisible indicators
         visible_invisible = ["visible", "invisible", "seen", "unseen"]
-        has_visible_invisible = sum(
-            1 for word in visible_invisible if word in text_lower
-        )
+        sum(1 for word in visible_invisible if word in text_lower)
 
         if has_flesh >= 1 or (has_reversibility >= 1 and has_sensing_sensed >= 1):
             presence = "The Flesh (La Chair)"
@@ -636,9 +634,7 @@ class MerleauPonty(Philosopher):
 
         # Direct perception of others
         direct_perception = ["see them", "perceive others", "directly experience"]
-        has_direct_perception = sum(
-            1 for phrase in direct_perception if phrase in text_lower
-        )
+        sum(1 for phrase in direct_perception if phrase in text_lower)
 
         # Shared world indicators
         shared_world = ["shared world", "common world", "together", "collective"]

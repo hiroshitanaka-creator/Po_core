@@ -15,10 +15,12 @@ import uuid
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.domain.context import Context
 from po_core.domain.trace_event import TraceEvent
+
+pytestmark = pytest.mark.pipeline
+
 
 # ── Helpers ──
 

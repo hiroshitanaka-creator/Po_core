@@ -8,8 +8,6 @@ Tests Dewey's pragmatist philosophy focusing on:
 - Democratic quality
 """
 
-import pytest
-
 from po_core.philosophers.dewey import Dewey
 
 

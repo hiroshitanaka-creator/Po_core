@@ -9,7 +9,6 @@ Compatible with existing Po_trace API
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from po_core.database import DatabaseManager
@@ -177,7 +176,7 @@ class PoTraceDB:
             lines.append(f"Created: {session.created_at}")
             lines.append(f"Prompt: {session.prompt}")
             lines.append(f"Philosophers: {', '.join(session.philosophers)}")
-            lines.append(f"\nMetrics:")
+            lines.append("\nMetrics:")
             for key, value in session.metrics.items():
                 lines.append(f"  {key}: {value}")
             lines.append(f"\nEvents ({len(session.events)}):")

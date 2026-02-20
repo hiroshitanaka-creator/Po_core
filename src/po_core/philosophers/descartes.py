@@ -17,7 +17,7 @@ Key Concepts:
 - Mathematical Method: Apply geometric certainty to philosophy (mathesis universalis)
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -159,7 +159,7 @@ class Descartes(Philosopher):
 
         # Certainty indicators
         certainty_words = ["certain", "indubitable", "cannot doubt", "must be true"]
-        has_certainty = any(phrase in text_lower for phrase in certainty_words)
+        any(phrase in text_lower for phrase in certainty_words)
 
         # First-person perspective (essential to cogito)
         has_first_person = self_count >= 2 or "i " in text_lower
@@ -396,7 +396,7 @@ class Descartes(Philosopher):
 
         # Unextended/indivisible (mind properties)
         mind_properties = ["unextended", "indivisible", "non-spatial", "immaterial"]
-        has_mind_properties = any(phrase in text_lower for phrase in mind_properties)
+        any(phrase in text_lower for phrase in mind_properties)
 
         # Extended/divisible (body properties)
         body_properties = [
@@ -406,7 +406,7 @@ class Descartes(Philosopher):
             "has parts",
             "occupies space",
         ]
-        has_body_properties = any(phrase in text_lower for phrase in body_properties)
+        any(phrase in text_lower for phrase in body_properties)
 
         # Interaction problem
         interaction_words = ["interact", "connection", "how mind affects", "union"]
@@ -570,7 +570,7 @@ class Descartes(Philosopher):
 
         # Truth/reliability
         truth_words = ["truth", "true", "reliable", "trustworthy", "certain"]
-        truth_count = sum(1 for word in truth_words if word in text_lower)
+        sum(1 for word in truth_words if word in text_lower)
 
         # No deceiver (God's goodness prevents deception)
         no_deceiver = ["no deceiver", "god not deceive", "truthful god"]
@@ -748,7 +748,7 @@ class Descartes(Philosopher):
             "center",
             "point of contact",
         ]
-        has_location = any(phrase in text_lower for phrase in location_words)
+        any(phrase in text_lower for phrase in location_words)
 
         if has_pineal:
             status = "Pineal Gland Theory"
@@ -814,7 +814,7 @@ class Descartes(Philosopher):
             "follows necessarily",
             "demonstrate",
         ]
-        has_deduction = any(word in text_lower for word in deduction_words)
+        any(word in text_lower for word in deduction_words)
 
         # Senses unreliable (rationalist view)
         senses_unreliable = [
@@ -846,7 +846,7 @@ class Descartes(Philosopher):
 
         # Intuition (rational, not sensory)
         intuition_words = ["intuition", "self-evident", "immediately known", "grasp"]
-        has_intuition = any(phrase in text_lower for phrase in intuition_words)
+        any(phrase in text_lower for phrase in intuition_words)
 
         rationalism_score = (
             reason_count + (2 if has_apriori else 0) + (1 if distrusts_senses else 0)

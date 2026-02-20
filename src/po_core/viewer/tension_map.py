@@ -9,7 +9,6 @@ from typing import Any, Dict, List
 
 import numpy as np
 from rich.table import Table
-from rich.text import Text
 
 from po_core.viewer.visualizer import PhilosophicalVisualizer
 

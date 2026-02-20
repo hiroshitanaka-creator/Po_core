@@ -23,7 +23,7 @@ Key Concepts:
 - Justice: Justice vs Law (law is deconstructible, justice is not)
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from po_core.philosophers.base import Philosopher
 

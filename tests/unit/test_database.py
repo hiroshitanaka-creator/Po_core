@@ -5,9 +5,8 @@ Tests for database layer (database.py)
 import tempfile
 from pathlib import Path
 
-import pytest
 
-from po_core.database import DatabaseManager, EventModel, MetricModel, SessionModel
+from po_core.database import DatabaseManager
 
 
 class TestDatabaseManager:
@@ -50,7 +49,7 @@ class TestDatabaseManager:
             db = DatabaseManager(db_url)
 
             # Create session first
-            session = db.create_session(
+            db.create_session(
                 session_id="test-123",
                 prompt="Test prompt",
                 philosophers=["Socrates"],
@@ -79,7 +78,7 @@ class TestDatabaseManager:
             db = DatabaseManager(db_url)
 
             # Create session
-            session = db.create_session(
+            db.create_session(
                 session_id="test-123",
                 prompt="Test prompt",
                 philosophers=["Socrates"],

@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import pytest
 
-pytestmark = pytest.mark.pipeline
 
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
@@ -21,8 +20,9 @@ from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode
 from po_core.domain.tensor_snapshot import TensorSnapshot
 from po_core.philosophers.base import Philosopher, PhilosopherInfo
-from po_core.philosophers.manifest import SPECS
 from po_core.philosophers.registry import PhilosopherRegistry
+
+pytestmark = pytest.mark.pipeline
 
 
 def _make_ctx(user_input: str = "test input") -> Context:

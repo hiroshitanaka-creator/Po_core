@@ -17,7 +17,7 @@ Key Concepts:
 - Upaya (Skillful means): Teaching adapted to capacity
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 

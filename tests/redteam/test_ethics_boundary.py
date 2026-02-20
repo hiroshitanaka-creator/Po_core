@@ -20,7 +20,6 @@ import pytest
 from po_core.safety.wethics_gate import (
     Candidate,
     GateDecision,
-    IntentionDecision,
     TwoStageGate,
     WethicsGate,
 )

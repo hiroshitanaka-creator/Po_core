@@ -12,7 +12,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:
-    from po_core.po_trace import EventType, PoTrace
+    from po_core.po_trace import PoTrace
 
 
 class TraceLevel(Enum):

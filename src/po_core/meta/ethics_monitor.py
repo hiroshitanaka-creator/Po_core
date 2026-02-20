@@ -36,7 +36,7 @@ from __future__ import annotations
 import re
 import statistics
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Dict, List, Optional, Sequence
 
@@ -297,7 +297,6 @@ class MetaEthicsMonitor:
         # Check if either statistic signals drift
         # Only NEGATIVE drift (quality degradation) triggers SafetyMode escalation.
         # Positive drift (quality improvement) is tracked but not escalated.
-        pos_exceeded = self._cusum_pos > self._threshold
         neg_exceeded = self._cusum_neg < -self._threshold
 
         if neg_exceeded:

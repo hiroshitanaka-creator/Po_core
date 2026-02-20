@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import datetime
 import uuid
-from typing import List
 from unittest.mock import MagicMock
 
 import pytest

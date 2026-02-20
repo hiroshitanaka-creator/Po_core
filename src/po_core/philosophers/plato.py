@@ -17,7 +17,7 @@ Key Concepts:
 - The Good (τὸ ἀγαθόν): The Form of the Good - highest reality, source of truth and being
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -226,7 +226,7 @@ class Plato(Philosopher):
 
         # Check for material/particular awareness
         particular_words = ["physical", "material", "particular", "example", "instance"]
-        has_particular = any(word in text_lower for word in particular_words)
+        any(word in text_lower for word in particular_words)
 
         if not forms_identified:
             forms_identified.append(

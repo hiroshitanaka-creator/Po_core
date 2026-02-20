@@ -19,7 +19,7 @@ Key Concepts:
 - The Real: That which resists symbolization, traumatic kernel
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -465,7 +465,7 @@ class Lacan(Philosopher):
 
         # Signified/meaning indicators
         signified_words = ["meaning", "concept", "idea", "signified", "what it means"]
-        has_signified = sum(1 for phrase in signified_words if phrase in text_lower)
+        sum(1 for phrase in signified_words if phrase in text_lower)
 
         # Slippage/sliding indicators
         slippage_words = ["slip", "slide", "shift", "change meaning", "ambiguous"]

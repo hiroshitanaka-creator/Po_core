@@ -500,7 +500,7 @@ class Zhuangzi(Philosopher):
         ]
 
         has_uselessness = sum(1 for word in uselessness_words if word in text_lower)
-        has_paradox = sum(1 for phrase in paradox_phrases if phrase in text_lower)
+        sum(1 for phrase in paradox_phrases if phrase in text_lower)
 
         uselessness_present = has_uselessness >= 2
 

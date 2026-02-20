@@ -4,8 +4,6 @@ Tests for Safety Modules
 Comprehensive tests for ethical boundaries and philosopher safety profiles.
 """
 
-import pytest
-
 from po_core.safety.philosopher_profiles import (
     PHILOSOPHER_SAFETY_PROFILES,
     EthicalRiskPattern,

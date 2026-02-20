@@ -17,7 +17,7 @@ Key Concepts:
 - Nothingness: The goal of will-denial - better than existence
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -402,7 +402,7 @@ class Schopenhauer(Philosopher):
 
         # Platonic Ideas
         ideas_words = ["eternal", "universal", "essence", "form", "idea"]
-        has_ideas = sum(1 for word in ideas_words if word in text_lower)
+        sum(1 for word in ideas_words if word in text_lower)
 
         # Temporary/fleeting indicators
         temporary_words = ["moment", "temporary", "brief", "fleeting", "short"]
@@ -560,7 +560,7 @@ class Schopenhauer(Philosopher):
 
         # Saintly/holy indicators
         saintly_words = ["saint", "holy", "pure", "enlightened", "transcendent"]
-        has_saintly = sum(1 for word in saintly_words if word in text_lower)
+        sum(1 for word in saintly_words if word in text_lower)
 
         if has_denial >= 1 and has_ascetic >= 1:
             status = "Denial of the Will"
@@ -706,7 +706,7 @@ class Schopenhauer(Philosopher):
 
         # Highest/supreme indicators
         highest_words = ["highest", "supreme", "greatest", "above all", "most"]
-        has_highest = sum(1 for phrase in highest_words if phrase in text_lower)
+        sum(1 for phrase in highest_words if phrase in text_lower)
 
         if has_music >= 1 and (has_direct >= 1 or has_emotional >= 2):
             status = "Music as Will Objectified"

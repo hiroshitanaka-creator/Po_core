@@ -19,7 +19,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from po_core.domain.experiment import ExperimentAnalysis, ExperimentStatus
+from po_core.domain.experiment import ExperimentStatus
 from po_core.experiments.storage import ExperimentStorage
 
 

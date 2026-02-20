@@ -8,8 +8,6 @@ Tests Deleuze's philosophy focusing on:
 - Lines of flight
 """
 
-import pytest
-
 from po_core.philosophers.deleuze import Deleuze
 
 

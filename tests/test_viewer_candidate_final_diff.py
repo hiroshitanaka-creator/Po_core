@@ -5,8 +5,6 @@ test_viewer_candidate_final_diff.py
 viewer が DecisionEmitted / SafetyOverrideApplied を正しくレンダリングするかのテスト
 """
 
-from datetime import datetime, timezone
-
 from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.decision_report_md import render_markdown
 

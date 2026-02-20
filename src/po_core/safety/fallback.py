@@ -11,7 +11,6 @@ This prevents "silent death" - the system always responds.
 from __future__ import annotations
 
 import uuid
-from typing import Optional
 
 from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal

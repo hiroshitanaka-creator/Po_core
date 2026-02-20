@@ -21,7 +21,7 @@ Key Concepts:
 - Evental Site: Edge of the void, where events can occur
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -497,7 +497,7 @@ class Badiou(Philosopher):
 
         # Multiplicity indicators
         multiplicity_words = ["multiple", "multiplicity", "many", "plurality"]
-        has_multiplicity = sum(1 for word in multiplicity_words if word in text_lower)
+        sum(1 for word in multiplicity_words if word in text_lower)
 
         # Representation indicators
         represent_words = ["represent", "count", "recognize", "include"]

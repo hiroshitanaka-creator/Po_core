@@ -8,8 +8,6 @@ Tests Wabi-Sabi aesthetic philosophy focusing on:
 - Naturalness
 """
 
-import pytest
-
 from po_core.philosophers.wabi_sabi import WabiSabi
 
 

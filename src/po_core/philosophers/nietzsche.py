@@ -19,7 +19,7 @@ Key Concepts:
 - Perspectivism: No absolute truth, only perspectives
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from po_core.philosophers.base import Philosopher
 
@@ -653,7 +653,7 @@ class Nietzsche(Philosopher):
 
         # Synthesis indicators
         synthesis_words = ["both", "balance", "combine", "unite", "together"]
-        has_synthesis = sum(1 for word in synthesis_words if word in text_lower)
+        sum(1 for word in synthesis_words if word in text_lower)
 
         if has_dionysian >= 2 and has_apollonian == 0:
             type_spirit = "Dionysian"

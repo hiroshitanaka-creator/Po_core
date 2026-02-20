@@ -2,7 +2,6 @@
 
 import pytest
 
-from po_core.philosophers.base import Philosopher
 from po_core.philosophers.derrida import Derrida
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.nietzsche import Nietzsche

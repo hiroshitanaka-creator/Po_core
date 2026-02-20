@@ -24,7 +24,6 @@ This is not censorship—it's protecting the integrity of philosophical reasonin
 from being weaponized for oppression.
 """
 
-import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
@@ -257,7 +256,7 @@ class WEthicsGuardian:
         total_penalty = 0.0
 
         text_lower = text.lower()
-        context_lower = (context or "").lower()
+        (context or "").lower()
 
         # Check each violation pattern
         for pattern in VIOLATION_PATTERNS.values():

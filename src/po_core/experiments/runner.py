@@ -15,7 +15,7 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Protocol
+from typing import Any, Callable, Dict, List, Protocol
 
 from po_core.domain.experiment import (
     ExperimentDefinition,

@@ -10,7 +10,7 @@ Allows users to:
 """
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from rich.console import Console
 from rich.panel import Panel

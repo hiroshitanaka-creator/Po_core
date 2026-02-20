@@ -25,7 +25,13 @@ The normalize_response() function provides backward compatibility.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, TypedDict, Union
+from typing import Any, Dict, List, Optional, Protocol as TypingProtocol, TypedDict
+
+from po_core.domain.context import Context as DomainContext
+from po_core.domain.intent import Intent
+from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.domain.proposal import Proposal
+from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 class PhilosopherResponseRequired(TypedDict):
@@ -371,15 +377,6 @@ class Philosopher(ABC):
 
 
 # ── New Protocol-based interface for hexagonal architecture ──────────
-
-from typing import List
-from typing import Protocol as TypingProtocol
-
-from po_core.domain.context import Context as DomainContext
-from po_core.domain.intent import Intent
-from po_core.domain.memory_snapshot import MemorySnapshot
-from po_core.domain.proposal import Proposal
-from po_core.domain.tensor_snapshot import TensorSnapshot
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,5 @@
 import pytest
 
-from po_core.philosophers.heidegger import Heidegger
-
 
 @pytest.fixture()
 def heidegger_instance(heidegger):

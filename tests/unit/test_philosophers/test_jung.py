@@ -8,8 +8,6 @@ Tests Jung's analytical psychology focusing on:
 - Shadow integration
 """
 
-import pytest
-
 from po_core.philosophers.jung import Jung
 
 

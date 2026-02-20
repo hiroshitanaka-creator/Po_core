@@ -52,7 +52,7 @@ class TraceFormatter:
         # Metadata
         metadata = trace_data.get("metadata", {})
         if metadata:
-            self.console.print(f"\n[bold cyan]Metadata:[/bold cyan]")
+            self.console.print("\n[bold cyan]Metadata:[/bold cyan]")
             for key, value in metadata.items():
                 self.console.print(f"  {key}: {value}")
 
@@ -97,7 +97,7 @@ class TraceFormatter:
         tree = Tree("🌳 Reasoning Process")
 
         for i, entry in enumerate(entries):
-            timestamp = entry.get("timestamp", "")
+            entry.get("timestamp", "")
             level = entry.get("level", "info")
             event = entry.get("event", "")
             message = entry.get("message", "")
