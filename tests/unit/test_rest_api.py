@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import json
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -281,7 +281,10 @@ def test_trace_found_after_reason(client_no_auth):
 @pytest.mark.phase5
 def test_reason_stream_returns_sse(client_no_auth):
     """Stream endpoint returns SSE content-type and done chunk."""
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+    with patch(
+        "po_core.app.rest.routers.reason.po_async_run",
+        new=AsyncMock(return_value=_MOCK_RESULT),
+    ):
         resp = client_no_auth.post(
             "/v1/reason/stream",
             json={"input": "What is freedom?"},
@@ -305,7 +308,10 @@ def test_reason_stream_returns_sse(client_no_auth):
 @pytest.mark.phase5
 def test_reason_stream_result_has_response(client_no_auth):
     """Stream result chunk contains the synthesised response text."""
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+    with patch(
+        "po_core.app.rest.routers.reason.po_async_run",
+        new=AsyncMock(return_value=_MOCK_RESULT),
+    ):
         resp = client_no_auth.post(
             "/v1/reason/stream",
             json={"input": "What is courage?"},

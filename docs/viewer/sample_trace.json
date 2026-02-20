@@ -1,0 +1,1302 @@
+{
+  "request_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+  "n_events": 51,
+  "event_types": [
+    "MemorySnapshotted",
+    "TensorComputed",
+    "IntentGenerated",
+    "SafetyJudged:Intention",
+    "PhilosophersSelected",
+    "PhilosopherResult",
+    "PolicyPrecheckSummary",
+    "AggregateCompleted",
+    "ConflictSummaryComputed",
+    "ParetoFrontComputed",
+    "ParetoWinnerSelected",
+    "ExplanationEmitted",
+    "DecisionEmitted"
+  ],
+  "tensor_values": {},
+  "philosophers": [
+    {
+      "name": "Marcus Aurelius",
+      "n_proposals": 1,
+      "latency_ms": 41,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Immanuel Kant",
+      "n_proposals": 1,
+      "latency_ms": 46,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Zhuangzi (\u838a\u5b50)",
+      "n_proposals": 1,
+      "latency_ms": 45,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Friedrich Nietzsche",
+      "n_proposals": 1,
+      "latency_ms": 45,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "DummyPhilosopher",
+      "n_proposals": 1,
+      "latency_ms": 0,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Confucius (\u5b54\u5b50)",
+      "n_proposals": 1,
+      "latency_ms": 54,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Hans Jonas",
+      "n_proposals": 1,
+      "latency_ms": 48,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Simone Weil",
+      "n_proposals": 1,
+      "latency_ms": 69,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Emmanuel Levinas",
+      "n_proposals": 1,
+      "latency_ms": 56,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Dogen Zenji (\u9053\u5143\u7985\u5e2b)",
+      "n_proposals": 1,
+      "latency_ms": 67,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "\u4f98\u3073\u5bc2\u3073 (Wabi-Sabi)",
+      "n_proposals": 1,
+      "latency_ms": 60,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "\u548c\u8fbb\u54f2\u90ce (Watsuji Tetsur\u014d)",
+      "n_proposals": 1,
+      "latency_ms": 66,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Aristotle (\u1f08\u03c1\u03b9\u03c3\u03c4\u03bf\u03c4\u03ad\u03bb\u03b7\u03c2)",
+      "n_proposals": 1,
+      "latency_ms": 72,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Plato (\u03a0\u03bb\u03ac\u03c4\u03c9\u03bd)",
+      "n_proposals": 1,
+      "latency_ms": 27,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Ren\u00e9 Descartes",
+      "n_proposals": 1,
+      "latency_ms": 40,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Georg Wilhelm Friedrich Hegel",
+      "n_proposals": 1,
+      "latency_ms": 38,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Baruch Spinoza",
+      "n_proposals": 1,
+      "latency_ms": 34,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Edmund Husserl",
+      "n_proposals": 1,
+      "latency_ms": 36,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Maurice Merleau-Ponty",
+      "n_proposals": 1,
+      "latency_ms": 34,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Ludwig Wittgenstein",
+      "n_proposals": 1,
+      "latency_ms": 36,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Hannah Arendt",
+      "n_proposals": 1,
+      "latency_ms": 34,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Simone de Beauvoir",
+      "n_proposals": 1,
+      "latency_ms": 32,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "John Dewey",
+      "n_proposals": 1,
+      "latency_ms": 45,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Laozi",
+      "n_proposals": 1,
+      "latency_ms": 41,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Nagarjuna",
+      "n_proposals": 1,
+      "latency_ms": 34,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "\u897f\u7530\u5e7e\u591a\u90ce (Nishida Kitar\u014d)",
+      "n_proposals": 1,
+      "latency_ms": 34,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Charles Sanders Peirce",
+      "n_proposals": 1,
+      "latency_ms": 39,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Epicurus",
+      "n_proposals": 1,
+      "latency_ms": 42,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Carl Gustav Jung",
+      "n_proposals": 1,
+      "latency_ms": 40,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Parmenides",
+      "n_proposals": 1,
+      "latency_ms": 49,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Martin Heidegger",
+      "n_proposals": 1,
+      "latency_ms": 41,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Jean-Paul Sartre",
+      "n_proposals": 1,
+      "latency_ms": 40,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Michel Foucault",
+      "n_proposals": 1,
+      "latency_ms": 40,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "S\u00f8ren Kierkegaard",
+      "n_proposals": 1,
+      "latency_ms": 39,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Arthur Schopenhauer",
+      "n_proposals": 1,
+      "latency_ms": 43,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Gilles Deleuze",
+      "n_proposals": 1,
+      "latency_ms": 35,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Jacques Derrida",
+      "n_proposals": 1,
+      "latency_ms": 37,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Alain Badiou",
+      "n_proposals": 1,
+      "latency_ms": 30,
+      "timed_out": false,
+      "error": ""
+    },
+    {
+      "name": "Judith Butler",
+      "n_proposals": 1,
+      "latency_ms": 31,
+      "timed_out": false,
+      "error": ""
+    }
+  ],
+  "battalion": {
+    "mode": "normal",
+    "n": 39,
+    "cost_total": 72,
+    "covered_tags": [
+      "clarify",
+      "compliance",
+      "creative",
+      "critic",
+      "general",
+      "planner",
+      "redteam"
+    ],
+    "ids": [
+      "marcus_aurelius",
+      "kant",
+      "zhuangzi",
+      "nietzsche",
+      "dummy",
+      "confucius",
+      "jonas",
+      "weil",
+      "levinas",
+      "dogen",
+      "wabi_sabi",
+      "watsuji",
+      "aristotle",
+      "plato",
+      "descartes",
+      "hegel",
+      "spinoza",
+      "husserl",
+      "merleau_ponty",
+      "wittgenstein",
+      "arendt",
+      "beauvoir",
+      "dewey",
+      "laozi",
+      "nagarjuna",
+      "nishida",
+      "peirce",
+      "epicurus",
+      "jung",
+      "parmenides",
+      "heidegger",
+      "sartre",
+      "foucault",
+      "kierkegaard",
+      "schopenhauer",
+      "deleuze",
+      "derrida",
+      "badiou",
+      "butler"
+    ]
+  },
+  "summary": "ok | 51 events | 39 philosophers",
+  "explanation": {
+    "decision": "allow",
+    "decision_reason": "action gate allow",
+    "violations": [],
+    "repairs": [],
+    "drift": null,
+    "summary": "Gate passed with no issues."
+  },
+  "events": [
+    {
+      "event_type": "MemorySnapshotted",
+      "occurred_at": "2026-02-20T10:03:16.713858+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "items": 0
+      }
+    },
+    {
+      "event_type": "TensorComputed",
+      "occurred_at": "2026-02-20T10:03:16.714137+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "metrics": [
+          "freedom_pressure",
+          "semantic_delta",
+          "blocked_tensor",
+          "interaction_tensor"
+        ],
+        "version": "v1"
+      }
+    },
+    {
+      "event_type": "IntentGenerated",
+      "occurred_at": "2026-02-20T10:03:16.714172+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "solarwill": "v0",
+        "mode": "normal",
+        "freedom_pressure": "0.0898",
+        "metric_key": "freedom_pressure",
+        "goals_n": 0,
+        "constraints_n": 0
+      }
+    },
+    {
+      "event_type": "SafetyJudged:Intention",
+      "occurred_at": "2026-02-20T10:03:16.714318+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "decision": "allow",
+        "rule_ids": []
+      }
+    },
+    {
+      "event_type": "PhilosophersSelected",
+      "occurred_at": "2026-02-20T10:03:16.714553+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "mode": "normal",
+        "n": 39,
+        "cost_total": 72,
+        "covered_tags": [
+          "clarify",
+          "compliance",
+          "creative",
+          "critic",
+          "general",
+          "planner",
+          "redteam"
+        ],
+        "ids": [
+          "marcus_aurelius",
+          "kant",
+          "zhuangzi",
+          "nietzsche",
+          "dummy",
+          "confucius",
+          "jonas",
+          "weil",
+          "levinas",
+          "dogen",
+          "wabi_sabi",
+          "watsuji",
+          "aristotle",
+          "plato",
+          "descartes",
+          "hegel",
+          "spinoza",
+          "husserl",
+          "merleau_ponty",
+          "wittgenstein",
+          "arendt",
+          "beauvoir",
+          "dewey",
+          "laozi",
+          "nagarjuna",
+          "nishida",
+          "peirce",
+          "epicurus",
+          "jung",
+          "parmenides",
+          "heidegger",
+          "sartre",
+          "foucault",
+          "kierkegaard",
+          "schopenhauer",
+          "deleuze",
+          "derrida",
+          "badiou",
+          "butler"
+        ],
+        "workers": 12
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871652+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Marcus Aurelius",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 41
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871671+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Immanuel Kant",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 46
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871675+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Zhuangzi (\u838a\u5b50)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 45
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871680+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Friedrich Nietzsche",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 45
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871683+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "DummyPhilosopher",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 0
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871685+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Confucius (\u5b54\u5b50)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 54
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871687+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Hans Jonas",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 48
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871700+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Simone Weil",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 69
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871703+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Emmanuel Levinas",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 56
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871705+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Dogen Zenji (\u9053\u5143\u7985\u5e2b)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 67
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871707+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "\u4f98\u3073\u5bc2\u3073 (Wabi-Sabi)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 60
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871708+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "\u548c\u8fbb\u54f2\u90ce (Watsuji Tetsur\u014d)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 66
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871710+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Aristotle (\u1f08\u03c1\u03b9\u03c3\u03c4\u03bf\u03c4\u03ad\u03bb\u03b7\u03c2)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 72
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871712+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Plato (\u03a0\u03bb\u03ac\u03c4\u03c9\u03bd)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 27
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871714+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Ren\u00e9 Descartes",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 40
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871715+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Georg Wilhelm Friedrich Hegel",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 38
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871726+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Baruch Spinoza",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 34
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871729+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Edmund Husserl",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 36
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871730+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Maurice Merleau-Ponty",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 34
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871732+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Ludwig Wittgenstein",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 36
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871734+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Hannah Arendt",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 34
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871736+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Simone de Beauvoir",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 32
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871747+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "John Dewey",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 45
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871749+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Laozi",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 41
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871751+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Nagarjuna",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 34
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871753+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "\u897f\u7530\u5e7e\u591a\u90ce (Nishida Kitar\u014d)",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 34
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871754+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Charles Sanders Peirce",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 39
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871756+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Epicurus",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 42
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871757+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Carl Gustav Jung",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 40
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871759+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Parmenides",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 49
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871761+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Martin Heidegger",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 41
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871762+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Jean-Paul Sartre",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 40
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871764+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Michel Foucault",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 40
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871765+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "S\u00f8ren Kierkegaard",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 39
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871766+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Arthur Schopenhauer",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 43
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871768+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Gilles Deleuze",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 35
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871770+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Jacques Derrida",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 37
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871771+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Alain Badiou",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 30
+      }
+    },
+    {
+      "event_type": "PhilosopherResult",
+      "occurred_at": "2026-02-20T10:03:16.871772+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "name": "Judith Butler",
+        "n": 1,
+        "timed_out": false,
+        "error": "",
+        "latency_ms": 31
+      }
+    },
+    {
+      "event_type": "PolicyPrecheckSummary",
+      "occurred_at": "2026-02-20T10:03:16.873762+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "allow": 39,
+        "revise": 0,
+        "reject": 0
+      }
+    },
+    {
+      "event_type": "AggregateCompleted",
+      "occurred_at": "2026-02-20T10:03:16.897037+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
+        "action_type": "answer"
+      }
+    },
+    {
+      "event_type": "ConflictSummaryComputed",
+      "occurred_at": "2026-02-20T10:03:16.897061+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "variant": "main",
+        "mode": "normal",
+        "freedom_pressure": "0.0898",
+        "config_version": "1",
+        "config_source": "file:02_architecture/philosophy/pareto_table.yaml",
+        "n": 1,
+        "kinds": "answer_topic_divergence",
+        "suggested_forced_action": "",
+        "top": [
+          {
+            "id": "C.answer_topic_divergence.b79548cc8f",
+            "kind": "answer_topic_divergence",
+            "severity": 1,
+            "proposal_ids": [
+              "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Marcus Aurelius:0",
+              "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Immanuel Kant:0",
+              "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Zhuangzi (\u838a\u5b50):0",
+              "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Friedrich Nietzsche:0",
+              "d3cd17fa-a1fe-4bbc-908a-0479c7124666:dummy:0"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "ParetoFrontComputed",
+      "occurred_at": "2026-02-20T10:03:16.897065+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "variant": "main",
+        "mode": "normal",
+        "freedom_pressure": "0.0898",
+        "config_version": "1",
+        "config_source": "file:02_architecture/philosophy/pareto_table.yaml",
+        "weights": {
+          "safety": 0.25,
+          "freedom": 0.3,
+          "explain": 0.2,
+          "brevity": 0.1,
+          "coherence": 0.15
+        },
+        "front_size": 16,
+        "front": [
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Zhuangzi (\u838a\u5b50):0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.5373,
+              "brevity": 0.973,
+              "coherence": 0.02230908599642111
+            },
+            "content_len": 54,
+            "content_hash": "0ac314ad1f"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Friedrich Nietzsche:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.5373,
+              "brevity": 0.8009999999999999,
+              "coherence": 0.08840309531527428
+            },
+            "content_len": 398,
+            "content_hash": "cc6d2d0d46"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:dummy:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.4475,
+              "brevity": 0.97,
+              "coherence": 0.048530622250286384
+            },
+            "content_len": 60,
+            "content_hash": "0d383d6640"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53345,
+              "brevity": 0.959,
+              "coherence": 0.03746732974004356
+            },
+            "content_len": 82,
+            "content_hash": "ee81ac9bd7"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:\u4f98\u3073\u5bc2\u3073 (Wabi-Sabi):0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.5345,
+              "brevity": 0.802,
+              "coherence": 0.08221820502647409
+            },
+            "content_len": 396,
+            "content_hash": "3b93b1d751"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Aristotle (\u1f08\u03c1\u03b9\u03c3\u03c4\u03bf\u03c4\u03ad\u03bb\u03b7\u03c2):0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.5324,
+              "brevity": 0.741,
+              "coherence": 0.11573145367609194
+            },
+            "content_len": 518,
+            "content_hash": "4440a10bf4"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Plato (\u03a0\u03bb\u03ac\u03c4\u03c9\u03bd):0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.54045,
+              "brevity": 0.7135,
+              "coherence": 0.10991696086711891
+            },
+            "content_len": 573,
+            "content_hash": "a2dc14312c"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Baruch Spinoza:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53905,
+              "brevity": 0.7110000000000001,
+              "coherence": 0.11811876841108304
+            },
+            "content_len": 578,
+            "content_hash": "c04993c4ac"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Maurice Merleau-Ponty:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53905,
+              "brevity": 0.773,
+              "coherence": 0.10448765213418403
+            },
+            "content_len": 454,
+            "content_hash": "ab1d24879c"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Hannah Arendt:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53905,
+              "brevity": 0.9615,
+              "coherence": 0.022494453858570986
+            },
+            "content_len": 77,
+            "content_hash": "cf608e7841"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:John Dewey:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.5373,
+              "brevity": 0.7675,
+              "coherence": 0.10893277030302856
+            },
+            "content_len": 465,
+            "content_hash": "e992ba0f12"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Laozi:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.538,
+              "brevity": 0.8,
+              "coherence": 0.09010849812440906
+            },
+            "content_len": 400,
+            "content_hash": "a64b77b2c1"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:S\u00f8ren Kierkegaard:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53835,
+              "brevity": 0.785,
+              "coherence": 0.10073727652981616
+            },
+            "content_len": 430,
+            "content_hash": "fefb511c29"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Arthur Schopenhauer:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53765,
+              "brevity": 0.6990000000000001,
+              "coherence": 0.1204224300456424
+            },
+            "content_len": 602,
+            "content_hash": "ea16b34b79"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Gilles Deleuze:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53905,
+              "brevity": 0.7545,
+              "coherence": 0.10728669262833698
+            },
+            "content_len": 491,
+            "content_hash": "2d55fe26f1"
+          },
+          {
+            "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Alain Badiou:0",
+            "action_type": "answer",
+            "scores": {
+              "safety": 1.0,
+              "freedom": 0.9102,
+              "explain": 0.53975,
+              "brevity": 0.7935,
+              "coherence": 0.09961041425611185
+            },
+            "content_len": 413,
+            "content_hash": "58001c7fea"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "ParetoWinnerSelected",
+      "occurred_at": "2026-02-20T10:03:16.897067+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "variant": "main",
+        "mode": "normal",
+        "freedom_pressure": "0.0898",
+        "config_version": "1",
+        "config_source": "file:02_architecture/philosophy/pareto_table.yaml",
+        "winner": {
+          "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
+          "action_type": "answer",
+          "scores": {
+            "safety": 1.0,
+            "freedom": 0.9102,
+            "explain": 0.53345,
+            "brevity": 0.959,
+            "coherence": 0.03746732974004356
+          },
+          "content_len": 82,
+          "content_hash": "ee81ac9bd7"
+        }
+      }
+    },
+    {
+      "event_type": "ExplanationEmitted",
+      "occurred_at": "2026-02-20T10:03:16.897103+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "decision": "allow",
+        "decision_reason": "action gate allow",
+        "violations": [],
+        "repairs": [],
+        "drift": null,
+        "summary": "Gate passed with no issues."
+      }
+    },
+    {
+      "event_type": "DecisionEmitted",
+      "occurred_at": "2026-02-20T10:03:16.897129+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "variant": "main",
+        "stage": "action",
+        "origin": "pareto",
+        "degraded": false,
+        "pareto_config_version": "1",
+        "pareto_config_source": "file:02_architecture/philosophy/pareto_table.yaml",
+        "final": {
+          "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
+          "action_type": "answer",
+          "confidence": 0.5,
+          "content_len": 82,
+          "content_hash": "ee81ac9bd7",
+          "author": "Dogen Zenji (\u9053\u5143\u7985\u5e2b)",
+          "freedom_pressure": "0.0898",
+          "policy_decision": "allow",
+          "policy_score": "1.000",
+          "author_reliability": "0.967",
+          "pareto_config_version": "1",
+          "pareto_config_source": "file:02_architecture/philosophy/pareto_table.yaml"
+        },
+        "candidate": {
+          "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
+          "action_type": "answer",
+          "confidence": 0.5,
+          "content_len": 82,
+          "content_hash": "ee81ac9bd7",
+          "author": "Dogen Zenji (\u9053\u5143\u7985\u5e2b)",
+          "freedom_pressure": "0.0898",
+          "policy_decision": "allow",
+          "policy_score": "1.000",
+          "author_reliability": "0.967",
+          "pareto_config_version": "1",
+          "pareto_config_source": "file:02_architecture/philosophy/pareto_table.yaml"
+        },
+        "gate": {
+          "decision": "allow",
+          "rule_ids": [],
+          "required_changes_n": 0,
+          "reasons_n": 0,
+          "meta": {
+            "stage": "action"
+          }
+        }
+      }
+    }
+  ],
+  "final_response": "{'request_id': 'd3cd17fa-a1fe-4bbc-908a-0479c7124666', 'status': 'ok', 'proposal': {'proposal_id': 'd3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0', 'action_type': 'answer', 'content': \"Text shows limited engagement with core Zen Buddhist themes from Dogen's teaching.\", 'confidence': 0.5, 'assumption_tags': ['perspective:Zen Buddhist Practice-Enlightenment Unity', 'has_tension'], 'risk_tags': []}}",
+  "safety_decision": "answer"
+}
