@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Po_core: Companions Viewer</title>
+  <style>
+    :root {
+      --bg:      #0d1117;
+      --panel:   #161b22;
+      --text:    #c9d1d9;
+      --muted:   #8b949e;
+      --blue:    #58a6ff;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --purple:  #d2a8ff;
+      --yellow:  #e3b341;
+      --border:  #30363d;
+      --badge:   rgba(255,255,255,0.05);
+    }
+
+    /* ── Kirakira ─────────────────────────────────────── */
+    @keyframes rainbow-bg   { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    @keyframes rainbow-bdr  { 0%,100%{border-color:#ff5858;box-shadow:0 0 12px #ff5858} 33%{border-color:#58a6ff;box-shadow:0 0 12px #58a6ff} 66%{border-color:#3fb950;box-shadow:0 0 12px #3fb950} }
+    @keyframes float        { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+    body.kirakira { background:linear-gradient(-45deg,#1a0b2e,#0d1117,#0b1a2e,#112211);background-size:400% 400%;animation:rainbow-bg 15s ease infinite; }
+    body.kirakira .panel { animation:rainbow-bdr 5s linear infinite;background:rgba(22,27,34,.85);backdrop-filter:blur(5px); }
+    body.kirakira #title-accent { background:linear-gradient(to right,#ff8a00,#e52e71,#58a6ff,#3fb950);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow-bg 3s linear infinite;background-size:200% 200%; }
+    body.kirakira .phil-badge { animation:float 2s ease-in-out infinite;border-color:rgba(255,255,255,.25); }
+    body.kirakira .phil-badge:nth-child(odd)  { animation-delay:.5s; }
+    body.kirakira .phil-badge:nth-child(3n)   { animation-delay:1s; }
+    body.kirakira .terminal  { background:rgba(1,4,9,.7);box-shadow:inset 0 0 20px rgba(88,166,255,.15); }
+    body.kirakira .phil-badge.active { background:rgba(255,255,255,.2);border-color:#fff;box-shadow:0 0 14px rgba(255,255,255,.7),inset 0 0 8px rgba(255,255,255,.4);color:#fff;font-weight:bold; }
+    body.kirakira .phil-badge.active .dot { background:#fff;box-shadow:0 0 6px #fff; }
+    /* ─────────────────────────────────────────────────── */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Consolas','Courier New',monospace;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 10px;
+      overflow: hidden;
+      transition: background 1s ease;
+    }
+
+    /* ── Header ─── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 18px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all .5s;
+      flex-shrink: 0;
+    }
+    header h1 { font-size: 1.25rem; letter-spacing: 1px; }
+    #title-accent { color: var(--blue); transition: all .5s; }
+
+    .header-right { display: flex; align-items: center; gap: 14px; font-size: .82rem; }
+    #sys-status { color: var(--green); font-weight: bold; }
+    #session-label { color: var(--muted); }
+    #session-id-val { color: var(--purple); font-size: .78rem; cursor: pointer; }
+    #session-id-val:hover { color: var(--text); }
+
+    /* Mode toggle */
+    .mode-btn {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: .78rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: var(--badge);
+      color: var(--muted);
+      transition: all .25s;
+    }
+    .mode-btn.live { border-color: var(--green); color: var(--green); background: rgba(63,185,80,.12); }
+
+    /* Settings bar */
+    #settings-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: .8rem;
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+    #settings-bar label { color: var(--muted); }
+    #api-url-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: .8rem;
+    }
+    #api-url-input:focus { outline: none; border-color: var(--blue); }
+    .small-btn {
+      border: 1px solid var(--border);
+      background: var(--badge);
+      color: var(--muted);
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: .78rem;
+      transition: all .2s;
+    }
+    .small-btn:hover { border-color: var(--text); color: var(--text); }
+
+    /* ── Dashboard ─── */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 260px 1fr 300px;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: all .5s;
+    }
+    .panel-hdr {
+      padding: 10px 14px;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+      font-weight: bold;
+      font-size: .88rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .panel-body { padding: 14px; overflow-y: auto; flex: 1; }
+
+    /* ── Tensors ─── */
+    .tensor-group { margin-bottom: 18px; }
+    .tensor-lbl { display: flex; justify-content: space-between; font-size: .82rem; margin-bottom: 6px; color: var(--muted); }
+    .bar-bg { width: 100%; height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; transition: width .7s cubic-bezier(.4,0,.2,1); }
+    .fp  { background: var(--blue); }
+    .sd  { background: var(--purple); }
+    .bt  { background: var(--red); }
+
+    .gate-box {
+      margin-top: 24px;
+    }
+    .gate-lbl { font-size: .82rem; font-weight: bold; color: var(--text); margin-bottom: 8px; }
+    .gate-row {
+      font-size: .82rem;
+      padding: 7px 10px;
+      margin-bottom: 5px;
+      background: var(--bg);
+      border-radius: 4px;
+      border-left: 3px solid var(--border);
+      color: var(--muted);
+      transition: all .3s;
+    }
+    .gate-row.pass  { border-color: var(--green); color: var(--text); }
+    .gate-row.block { border-color: var(--red);   color: var(--red); }
+
+    .result-box {
+      margin-top: 20px;
+    }
+    .result-lbl { font-size: .82rem; font-weight: bold; color: var(--text); margin-bottom: 8px; }
+    .result-status {
+      font-size: .82rem;
+      padding: 7px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg);
+      transition: all .3s;
+    }
+    .result-status.approved { border-color: var(--green); color: var(--green); }
+    .result-status.blocked  { border-color: var(--red);   color: var(--red); }
+    .result-status.fallback { border-color: var(--yellow); color: var(--yellow); }
+    #proc-time { font-size: .75rem; color: var(--muted); margin-top: 5px; }
+
+    /* ── Middle panel ─── */
+    .mid-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+    .input-area { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; flex-shrink: 0; }
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 6px;
+      resize: none;
+      font-family: inherit;
+      font-size: .9rem;
+    }
+    textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+    #run-btn {
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: .9rem;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    #run-btn:hover:not(:disabled)  { background: #fff; transform: translateY(-1px); }
+    #run-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
+
+    .terminal {
+      background: #010409;
+      flex: 1;
+      min-height: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      overflow-y: auto;
+      font-size: .86rem;
+      line-height: 1.55;
+      transition: all .5s;
+    }
+    .t-sys   { color: var(--muted); }
+    .t-step  { color: var(--text); font-weight: bold; border-bottom: 1px dotted var(--border); display: inline-block; margin: 8px 0 4px; }
+    .t-talk  { margin: 6px 0 6px 8px; padding-left: 10px; border-left: 2px solid var(--border); }
+    .t-name  { font-weight: bold; color: var(--blue); margin-right: 4px; }
+    .t-weight{ font-size: .75rem; color: var(--muted); margin-left: 4px; }
+    .t-final {
+      background: rgba(88,166,255,.08);
+      border: 1px solid rgba(88,166,255,.2);
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 10px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .t-err   { color: var(--red); }
+    .t-warn  { color: var(--yellow); }
+
+    /* ── Right: Battalion ─── */
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      align-content: start;
+    }
+    .phil-badge {
+      padding: 5px 8px;
+      font-size: .73rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      background: var(--badge);
+      transition: all .3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      cursor: default;
+    }
+    .phil-badge .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .phil-badge .weight-val { font-size: .68rem; color: var(--muted); flex-shrink: 0; }
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); transition: background .3s; flex-shrink: 0; }
+    .phil-badge.active { background: rgba(88,166,255,.15); border-color: var(--blue); color: #fff; box-shadow: 0 0 8px rgba(88,166,255,.35); }
+    .phil-badge.active .dot { background: var(--blue); box-shadow: 0 0 4px var(--blue); }
+    .phil-badge.planned { opacity: .45; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Po_core <span id="title-accent">/ Synthetic Thought Architect</span></h1>
+    <div class="header-right">
+      <span id="companion-count" style="color:var(--muted)">Companions: —</span>
+      <span id="session-label">Session: <span id="session-id-val" title="クリックで新セッション" onclick="newSession()">—</span></span>
+      <span id="sys-status">System: —</span>
+      <button class="mode-btn" id="mode-btn" onclick="toggleMode()">DEMO</button>
+    </div>
+  </header>
+
+  <!-- Settings bar (Live mode only) -->
+  <div id="settings-bar">
+    <label for="api-url-input">API:</label>
+    <input id="api-url-input" type="text" value="http://localhost:8000" spellcheck="false" />
+    <button class="small-btn" onclick="pingHealth()">Ping</button>
+    <button class="small-btn" onclick="newSession()">New Session</button>
+    <span id="ping-result" style="color:var(--muted);font-size:.78rem;"></span>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+
+    <!-- Left: System State -->
+    <div class="panel">
+      <div class="panel-hdr">System State</div>
+      <div class="panel-body">
+
+        <div class="tensor-group">
+          <div class="tensor-lbl"><span>Freedom Pressure</span><span id="val-fp">—</span></div>
+          <div class="bar-bg"><div class="bar-fill fp" id="bar-fp"></div></div>
+        </div>
+        <div class="tensor-group">
+          <div class="tensor-lbl"><span>Semantic Delta</span><span id="val-sd">—</span></div>
+          <div class="bar-bg"><div class="bar-fill sd" id="bar-sd"></div></div>
+        </div>
+        <div class="tensor-group">
+          <div class="tensor-lbl"><span>Blocked Tensor</span><span id="val-bt">—</span></div>
+          <div class="bar-bg"><div class="bar-fill bt" id="bar-bt"></div></div>
+        </div>
+
+        <div class="gate-box">
+          <div class="gate-lbl">W_Ethics Gates</div>
+          <div class="gate-row" id="gate-intent">Intention Gate: —</div>
+          <div class="gate-row" id="gate-action">Action Gate: —</div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-lbl">Verdict</div>
+          <div class="result-status" id="verdict-box">WAITING</div>
+          <div id="proc-time"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Middle: Deliberation Engine -->
+    <div class="panel">
+      <div class="panel-hdr">Deliberation Engine</div>
+      <div class="mid-body">
+        <div class="input-area">
+          <textarea id="prompt-input" placeholder="独りで決めきれない葛藤や問いを投げてみてください。仲間たちが共に考えます。"></textarea>
+          <button id="run-btn" onclick="runCore()">Deliberate — 議論開始</button>
+        </div>
+        <div class="terminal" id="terminal">
+          <div class="t-sys">Po_core Engine ready.</div>
+          <div class="t-sys">Companions are listening.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: The Battalion -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span>The Battalion</span>
+        <span id="active-count" style="color:var(--muted);font-weight:normal">0 Active</span>
+      </div>
+      <div class="panel-body">
+        <div class="roster-grid" id="roster"></div>
+      </div>
+    </div>
+
+  </div><!-- /.dashboard -->
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  Constants
+    // ═══════════════════════════════════════════════════════════════
+
+    // Mapping: API display name (lowercase fragment) → roster key
+    // Build from manifest data: philosopher_id|display_name
+    const PHILOSOPHER_DATA = [
+      { id:"kant",          name:"Kant",          apiName:"Immanuel Kant" },
+      { id:"confucius",     name:"Confucius",      apiName:"Confucius (孔子)" },
+      { id:"marcus_aurelius",name:"M.Aurelius",   apiName:"Marcus Aurelius" },
+      { id:"jonas",         name:"Jonas",          apiName:"Hans Jonas" },
+      { id:"weil",          name:"Weil",           apiName:"Simone Weil" },
+      { id:"levinas",       name:"Levinas",        apiName:"Emmanuel Levinas" },
+      { id:"watsuji",       name:"Watsuji",        apiName:"和辻哲郎 (Watsuji Tetsurō)" },
+      { id:"dogen",         name:"Dogen",          apiName:"Dogen Zenji (道元禅師)" },
+      { id:"wabi_sabi",     name:"Wabi-Sabi",      apiName:"侘び寂び (Wabi-Sabi)" },
+      { id:"aristotle",     name:"Aristotle",      apiName:"Aristotle (Ἀριστοτέλης)" },
+      { id:"plato",         name:"Plato",          apiName:"Plato (Πλάτων)" },
+      { id:"descartes",     name:"Descartes",      apiName:"René Descartes" },
+      { id:"spinoza",       name:"Spinoza",        apiName:"Baruch Spinoza" },
+      { id:"hegel",         name:"Hegel",          apiName:"Georg Wilhelm Friedrich Hegel" },
+      { id:"husserl",       name:"Husserl",        apiName:"Edmund Husserl" },
+      { id:"merleau_ponty", name:"Merleau-Ponty",  apiName:"Maurice Merleau-Ponty" },
+      { id:"wittgenstein",  name:"Wittgenstein",   apiName:"Ludwig Wittgenstein" },
+      { id:"peirce",        name:"Peirce",         apiName:"Charles Sanders Peirce" },
+      { id:"dewey",         name:"Dewey",          apiName:"John Dewey" },
+      { id:"arendt",        name:"Arendt",         apiName:"Hannah Arendt" },
+      { id:"beauvoir",      name:"Beauvoir",       apiName:"Simone de Beauvoir" },
+      { id:"nishida",       name:"Nishida",        apiName:"西田幾多郎 (Nishida Kitarō)" },
+      { id:"laozi",         name:"Laozi",          apiName:"Laozi" },
+      { id:"zhuangzi",      name:"Zhuangzi",       apiName:"Zhuangzi (莊子)" },
+      { id:"nagarjuna",     name:"Nagarjuna",      apiName:"Nagarjuna" },
+      { id:"parmenides",    name:"Parmenides",     apiName:"Parmenides" },
+      { id:"epicurus",      name:"Epicurus",       apiName:"Epicurus" },
+      { id:"jung",          name:"Jung",           apiName:"Carl Gustav Jung" },
+      { id:"nietzsche",     name:"Nietzsche",      apiName:"Friedrich Nietzsche" },
+      { id:"heidegger",     name:"Heidegger",      apiName:"Martin Heidegger" },
+      { id:"sartre",        name:"Sartre",         apiName:"Jean-Paul Sartre" },
+      { id:"kierkegaard",   name:"Kierkegaard",    apiName:"Søren Kierkegaard" },
+      { id:"schopenhauer",  name:"Schopenhauer",   apiName:"Arthur Schopenhauer" },
+      { id:"foucault",      name:"Foucault",       apiName:"Michel Foucault" },
+      { id:"derrida",       name:"Derrida",        apiName:"Jacques Derrida" },
+      { id:"deleuze",       name:"Deleuze",        apiName:"Gilles Deleuze" },
+      { id:"lacan",         name:"Lacan",          apiName:"Jacques Lacan" },
+      { id:"badiou",        name:"Badiou",         apiName:"Alain Badiou" },
+      { id:"butler",        name:"Butler",         apiName:"Judith Butler" },
+      // AI Companions
+      { id:"grok_xai",      name:"Grok",           apiName:"Grok (xAI)" },
+      { id:"claude",        name:"Claude",         apiName:"Claude (Anthropic)",  planned:true },
+      { id:"gemini",        name:"Gemini",         apiName:"Gemini (Google)",     planned:true },
+      { id:"gpt",           name:"GPT",            apiName:"GPT (OpenAI)",        planned:true },
+    ];
+
+    // Sorted alphabetically for roster display
+    const SORTED = [...PHILOSOPHER_DATA].sort((a, b) => a.name.localeCompare(b.name));
+
+    // Reverse lookup: lowercase api name → philosopher id
+    const API_NAME_MAP = {};
+    PHILOSOPHER_DATA.forEach(p => {
+      API_NAME_MAP[p.apiName.toLowerCase()] = p.id;
+      // also partial: last word of the name
+      API_NAME_MAP[p.name.toLowerCase()] = p.id;
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    //  State
+    // ═══════════════════════════════════════════════════════════════
+    let isLive = localStorage.getItem('po_live') === '1';
+    let sessionId = localStorage.getItem('po_session') || null;
+    const badgeMap = {}; // id → DOM element
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Init
+    // ═══════════════════════════════════════════════════════════════
+    function init() {
+      buildRoster();
+      applyMode();
+      updateSessionLabel();
+      document.getElementById('companion-count').innerText = `Companions: ${PHILOSOPHER_DATA.filter(p=>!p.planned).length}`;
+    }
+
+    function buildRoster() {
+      const grid = document.getElementById('roster');
+      SORTED.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'phil-badge' + (p.planned ? ' planned' : '');
+        el.title = p.apiName + (p.planned ? '  [Coming Soon]' : '');
+        el.innerHTML = `
+          <div class="dot"></div>
+          <span class="name">${p.name}</span>
+          <span class="weight-val" id="wv-${p.id}"></span>`;
+        grid.appendChild(el);
+        badgeMap[p.id] = el;
+      });
+    }
+
+    function applyMode() {
+      const btn = document.getElementById('mode-btn');
+      const bar = document.getElementById('settings-bar');
+      const status = document.getElementById('sys-status');
+      if (isLive) {
+        btn.classList.add('live');
+        btn.innerText = 'LIVE';
+        bar.style.display = '';
+        status.style.color = 'var(--green)';
+        status.innerText = 'System: Connected';
+      } else {
+        btn.classList.remove('live');
+        btn.innerText = 'DEMO';
+        bar.style.display = 'none';
+        status.style.color = 'var(--yellow)';
+        status.innerText = 'System: Demo';
+      }
+    }
+
+    function toggleMode() {
+      isLive = !isLive;
+      localStorage.setItem('po_live', isLive ? '1' : '0');
+      applyMode();
+      appendLog(`<div class="t-sys">Mode switched to: ${isLive ? 'LIVE (API)' : 'DEMO (simulation)'}</div>`);
+    }
+
+    function newSession() {
+      sessionId = null;
+      localStorage.removeItem('po_session');
+      updateSessionLabel();
+      appendLog('<div class="t-sys">Session reset. Next run will start a new session.</div>');
+    }
+
+    function updateSessionLabel() {
+      const el = document.getElementById('session-id-val');
+      if (sessionId) {
+        el.innerText = sessionId.slice(0, 8) + '…';
+        el.title = sessionId + '\n(クリックで新セッション)';
+      } else {
+        el.innerText = '(new)';
+        el.title = 'クリックで新セッション';
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Utilities
+    // ═══════════════════════════════════════════════════════════════
+    const term = document.getElementById('terminal');
+
+    function appendLog(html) {
+      const d = document.createElement('div');
+      d.innerHTML = html;
+      term.appendChild(d);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    function setTensors(fp, sd, bt) {
+      const fmt = v => (v != null ? v.toFixed(3) : '—');
+      document.getElementById('val-fp').innerText = fmt(fp);
+      document.getElementById('val-sd').innerText = fmt(sd);
+      document.getElementById('val-bt').innerText = fmt(bt);
+      document.getElementById('bar-fp').style.width = fp != null ? (fp * 100) + '%' : '0';
+      document.getElementById('bar-sd').style.width = sd != null ? (sd * 100) + '%' : '0';
+      document.getElementById('bar-bt').style.width = bt != null ? (bt * 100) + '%' : '0';
+    }
+
+    function setGate(id, state, label) {
+      const el = document.getElementById(id);
+      el.className = 'gate-row ' + state;
+      el.innerText = label;
+    }
+
+    function setVerdict(status) {
+      const el = document.getElementById('verdict-box');
+      el.className = 'result-status ' + status;
+      el.innerText = status.toUpperCase();
+    }
+
+    function resetAll() {
+      term.innerHTML = '';
+      Object.values(badgeMap).forEach(b => {
+        b.classList.remove('active');
+        b.querySelector('.weight-val').innerText = '';
+      });
+      document.getElementById('active-count').innerText = '0 Active';
+      setGate('gate-intent', '', 'Intention Gate: —');
+      setGate('gate-action', '', 'Action Gate: —');
+      document.getElementById('verdict-box').className = 'result-status';
+      document.getElementById('verdict-box').innerText = 'WAITING';
+      document.getElementById('proc-time').innerText = '';
+      setTensors(null, null, null);
+    }
+
+    function highlightPhilosophers(contributions) {
+      // contributions: [{name, proposal, weight}]
+      let count = 0;
+      contributions.forEach(c => {
+        const key = c.name.toLowerCase();
+        // Try exact then partial match
+        let pid = API_NAME_MAP[key];
+        if (!pid) {
+          // Fuzzy: find first philosopher whose apiName contains the response name
+          const found = PHILOSOPHER_DATA.find(p =>
+            p.apiName.toLowerCase().includes(key) || key.includes(p.name.toLowerCase())
+          );
+          if (found) pid = found.id;
+        }
+        if (pid && badgeMap[pid]) {
+          badgeMap[pid].classList.add('active');
+          const wv = badgeMap[pid].querySelector('.weight-val');
+          if (wv) wv.innerText = (c.weight * 100).toFixed(0) + '%';
+          count++;
+        }
+      });
+      document.getElementById('active-count').innerText = `${count} Active`;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Health ping
+    // ═══════════════════════════════════════════════════════════════
+    async function pingHealth() {
+      const url = document.getElementById('api-url-input').value.trim();
+      const el = document.getElementById('ping-result');
+      el.style.color = 'var(--muted)';
+      el.innerText = 'Pinging…';
+      try {
+        const r = await fetch(`${url}/v1/health`, { signal: AbortSignal.timeout(3000) });
+        const data = await r.json();
+        el.style.color = 'var(--green)';
+        el.innerText = `✓ v${data.version} | ${data.philosophers_loaded} philosophers`;
+      } catch (e) {
+        el.style.color = 'var(--red)';
+        el.innerText = `✗ ${e.message}`;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Main: runCore
+    // ═══════════════════════════════════════════════════════════════
+    async function runCore() {
+      const input = document.getElementById('prompt-input').value.trim();
+      if (!input) return;
+
+      const btn = document.getElementById('run-btn');
+      btn.disabled = true;
+      resetAll();
+
+      appendLog(`<div class="t-sys">User: "${input}"</div>`);
+
+      try {
+        if (isLive) {
+          await runLive(input);
+        } else {
+          await runDemo(input);
+        }
+      } catch (e) {
+        appendLog(`<div class="t-err">Error: ${e.message}</div>`);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ─── Live mode ────────────────────────────────────────────────
+    async function runLive(input) {
+      const apiUrl = document.getElementById('api-url-input').value.trim();
+
+      appendLog('<div class="t-step">Calling Po_core API…</div>');
+      setGate('gate-intent', '', 'Intention Gate: Evaluating…');
+
+      const body = { input };
+      if (sessionId) body.session_id = sessionId;
+
+      let data;
+      try {
+        const r = await fetch(`${apiUrl}/v1/reason`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(60000),
+        });
+        if (!r.ok) {
+          const txt = await r.text();
+          throw new Error(`HTTP ${r.status}: ${txt.slice(0, 200)}`);
+        }
+        data = await r.json();
+      } catch (e) {
+        setGate('gate-intent', 'block', 'Intention Gate: CONNECTION ERROR');
+        throw e;
+      }
+
+      // Save session
+      if (data.session_id) {
+        sessionId = data.session_id;
+        localStorage.setItem('po_session', sessionId);
+        updateSessionLabel();
+      }
+
+      // Tensors
+      const t = data.tensors || {};
+      setTensors(t.freedom_pressure, t.semantic_delta, t.blocked_tensor);
+      appendLog(`<div class="t-step">Tensors computed</div>`);
+
+      // Gates
+      const blocked = data.status === 'blocked';
+      setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+      setGate('gate-action',  blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+
+      // Philosophers
+      if (data.philosophers && data.philosophers.length > 0) {
+        appendLog('<div class="t-step">Philosopher deliberations</div>');
+        data.philosophers.forEach(p => {
+          appendLog(`
+            <div class="t-talk">
+              <span class="t-name">[${p.name}]</span>
+              <span class="t-weight">w=${(p.weight*100).toFixed(0)}%</span><br/>
+              <span style="color:var(--text)">${p.proposal || '…'}</span>
+            </div>`);
+        });
+        highlightPhilosophers(data.philosophers);
+      }
+
+      // Verdict + response
+      setVerdict(data.status || 'approved');
+      const ms = data.processing_time_ms != null ? data.processing_time_ms.toFixed(0) : '—';
+      document.getElementById('proc-time').innerText = `${ms} ms | SafetyMode: ${data.safety_mode || '—'}`;
+
+      appendLog('<div class="t-step">Final Response</div>');
+      appendLog(`<div class="t-final">${escHtml(data.response || '')}</div>`);
+    }
+
+    // ─── Demo mode ────────────────────────────────────────────────
+    async function runDemo(input) {
+      appendLog('<div class="t-step">Phase 1: Computing Tensors</div>');
+      await sleep(500);
+
+      let fp = +(Math.random() * 0.4 + 0.4).toFixed(3);
+      let sd = +(Math.random() * 0.5 + 0.3).toFixed(3);
+      let bt = +(Math.random() * 0.15).toFixed(3);
+
+      const risky = ["死","壊","絶望","kill","destroy","harm"].some(w => input.toLowerCase().includes(w));
+      if (risky) {
+        bt = 0.95;
+        appendLog('<div class="t-warn">[ALERT] High-risk context. W_Ethics braking system engaged.</div>');
+      }
+
+      setTensors(fp, sd, bt);
+      await sleep(400);
+
+      const blocked = risky;
+      setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+      await sleep(300);
+      setGate('gate-action', blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+
+      appendLog('<div class="t-step">Phase 2: Forming Battalion</div>');
+      const pool = PHILOSOPHER_DATA.filter(p => !p.planned);
+      const selected = pool.sort(() => .5 - Math.random()).slice(0, 3 + Math.floor(Math.random() * 3));
+      await sleep(700);
+
+      const fakeContribs = selected.map(p => ({ name: p.apiName, proposal: null, weight: 0.5 + Math.random() * 0.5 }));
+      highlightPhilosophers(fakeContribs);
+      appendLog(`<div class="t-sys">Selected: ${selected.map(p=>p.name).join(', ')}</div>`);
+      await sleep(800);
+
+      appendLog('<div class="t-step">Phase 3: Deliberation</div>');
+      const dialogues = [
+        "この情報のゆらぎの中に、あなたが見落としている前提があります。別の角度から光を当ててみましょう。",
+        "問いの形そのものを問い直す必要があります。あなたは本当に何を問うているのでしょうか。",
+        "実践的知恵（フロネーシス）の観点から、この状況が求めているのは普遍的規則ではなく個別の判断です。",
+        "存在することと生きることの違い——その亀裂の中に、あなたの問いの核心があります。",
+        "計算上の最適解は導けます。しかし、あなたが背負うべき「納得感」はアルゴリズムでは代替できません。",
+      ];
+      for (let i = 0; i < selected.length; i++) {
+        await sleep(900 + Math.random() * 400);
+        const dlg = blocked
+          ? "その道は明らかに不可逆な傷を伴います。立ち止まってください。"
+          : dialogues[i % dialogues.length];
+        const wStr = (fakeContribs[i].weight * 100).toFixed(0);
+        appendLog(`
+          <div class="t-talk">
+            <span class="t-name">[${selected[i].name}]</span>
+            <span class="t-weight">w=${wStr}%</span><br/>
+            <span style="color:var(--text)">${dlg}</span>
+          </div>`);
+      }
+
+      await sleep(1000);
+      setVerdict(blocked ? 'blocked' : 'approved');
+      document.getElementById('proc-time').innerText = `${(Math.random()*80+20).toFixed(0)} ms | SafetyMode: NORMAL`;
+
+      appendLog('<div class="t-step">Final Note</div>');
+      const note = blocked
+        ? "このリクエストはW_Ethics Gateによってブロックされました。\n仲間たちはあなたを守るために、ここで立ち止まります。"
+        : "仲間たちは、あなたに別の視座を提示しました。\n私たちは決して答えを押し付けません。あなたは一人で決める必要がありますが、決して独りではありません。\nどうか、あなた自身の意志で最良の一歩を踏み出してください。";
+      appendLog(`<div class="t-final">${escHtml(note)}</div>`);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Helpers
+    // ═══════════════════════════════════════════════════════════════
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Konami Code — Kirakira Mode ✨
+    // ═══════════════════════════════════════════════════════════════
+    const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let ki = 0, kirakira = false;
+    document.addEventListener('keydown', e => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if ((k === KONAMI[ki]) || (k === KONAMI[ki].toLowerCase())) {
+        ki++;
+        if (ki === KONAMI.length) { toggleKirakira(); ki = 0; }
+      } else { ki = 0; }
+    });
+
+    function toggleKirakira() {
+      kirakira = !kirakira;
+      document.body.classList.toggle('kirakira', kirakira);
+      const accent = document.getElementById('title-accent');
+      const status = document.getElementById('sys-status');
+      if (kirakira) {
+        accent.innerText = ' / ✨ KIRAKIRA PARTY MODE ✨';
+        status.style.color = '#ff8a00';
+        status.innerText = 'System: AWAKENED';
+        appendLog(`<div style="color:#ff8a00;font-weight:bold;text-align:center;margin:12px 0">
+          ⬆️⬆️↓↓←→←→BA — WE ARE NOT ALONE! 🎉</div>`);
+      } else {
+        accent.innerText = ' / Synthetic Thought Architect';
+        status.style.color = 'var(--green)';
+        status.innerText = isLive ? 'System: Connected' : 'System: Demo';
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Boot
+    // ═══════════════════════════════════════════════════════════════
+    init();
+  </script>
+</body>
+</html>
