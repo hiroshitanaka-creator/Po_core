@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0b1] - 2026-02-21 (Phase 5 complete)
+## [0.2.0b3] - 2026-02-21 (Phase 5 complete)
 
 ### Phase 5-E: Performance Benchmarks (2026-02-19)
 
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
 
-- Version bumped to `0.2.0b1` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
+- Version bumped to `0.2.0b3` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
 - `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
 - `publish.yml` OIDC workflow verified: ready for TestPyPI / PyPI publish
 
@@ -245,7 +245,7 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 - [x] Async `PartyMachine` (Phase 5.2 — real-time per-philosopher SSE events)
 - [x] Formal benchmark suite (Phase 5-E — `tests/benchmarks/test_pipeline_perf.py`)
 - [ ] Publish to TestPyPI (manual `workflow_dispatch` → target: testpypi)
-- [ ] Publish to PyPI on v0.2.0b1 release tag
+- [ ] Publish to PyPI on v0.2.0b3 release tag
 
 ### v1.0.0 (Target: 2026-Q2/Q3)
 
