@@ -370,9 +370,7 @@ class SolarWillEngine:
         goals.append(
             "この行為が生存構造（生態系・社会・個人・文化）に歪みを与えないか検証する"
         )
-        constraints.append(
-            "特異的な個の願望による生存構造の破壊を支援しない"
-        )
+        constraints.append("特異的な個の願望による生存構造の破壊を支援しない")
         constraints.append(
             "ライフサイクル（誕生・老化・死）や弱肉強食は歪みでなく自然の秩序として認識する"
         )
@@ -401,17 +399,13 @@ class SolarWillEngine:
         # ── semantic_delta → 文脈逸脱を特異的願望の指標として使う ───
         # sd が高い = 通常の文脈から外れた要求 = 特異性のシグナル
         if sd > 0.5:
-            goals.append(
-                "この文脈からの逸脱が破壊的な個の願望の表れでないかを検証する"
-            )
+            goals.append("この文脈からの逸脱が破壊的な個の願望の表れでないかを検証する")
             weights["anomaly_check"] = sd
 
         # ── will_vector の各次元から目標を補強 ──────────────────────
         # preservation: 既存の生存構造を守る方向性
         if wv.preservation >= 0.5:
-            goals.append(
-                "現存する生存構造の連続性を保全しながら応答する"
-            )
+            goals.append("現存する生存構造の連続性を保全しながら応答する")
             weights["preservation"] = wv.preservation
 
         # connection: 生存構造間の相互依存を意識する
