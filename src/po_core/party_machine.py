@@ -33,6 +33,7 @@ Parallel Execution:
 from __future__ import annotations
 
 import asyncio
+import functools
 import random
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -254,6 +255,193 @@ def run_philosophers(
     return proposals, results
 
 
+class AsyncPartyMachine:
+    """True async philosopher execution engine (Phase 5.2).
+
+    Dispatches philosopher execution using the most efficient available method:
+    - If a philosopher exposes ``propose_async()`` with a native override,
+      it is called directly on the event loop (zero thread overhead).
+    - Otherwise the synchronous ``propose()`` is offloaded to a
+      ``ThreadPoolExecutor``, keeping the FastAPI event loop unblocked.
+
+    Lifecycle:
+        The machine creates and owns an executor for thread fallback.
+        Call ``async with AsyncPartyMachine(...) as machine`` or
+        ``await machine.aclose()`` when done to ensure proper cleanup.
+
+    Usage::
+
+        machine = AsyncPartyMachine(max_workers=12, timeout_s=5.0)
+        proposals, results = await machine.run(philosophers, ctx, intent, tensors, memory)
+        await machine.aclose()
+    """
+
+    _NATIVE_ASYNC_SENTINEL = "propose_async"
+
+    def __init__(self, *, max_workers: int = 8, timeout_s: float = 5.0) -> None:
+        self._max_workers = max_workers
+        self._timeout_s = timeout_s
+        self._executor: Optional[ThreadPoolExecutor] = None
+
+    # ── Context-manager support ───────────────────────────────────────
+
+    async def __aenter__(self) -> "AsyncPartyMachine":
+        self._executor = ThreadPoolExecutor(
+            max_workers=self._max_workers,
+            thread_name_prefix="po_phil",
+        )
+        return self
+
+    async def __aexit__(self, *_: object) -> None:
+        await self.aclose()
+
+    async def aclose(self) -> None:
+        """Gracefully shut down the internal executor."""
+        if self._executor is not None:
+            self._executor.shutdown(wait=True, cancel_futures=False)
+            self._executor = None
+
+    # ── Execution ─────────────────────────────────────────────────────
+
+    def _has_native_async(self, ph: "PhilosopherProtocol") -> bool:
+        """Return True if the philosopher overrides propose_async() natively."""
+        method = getattr(ph, self._NATIVE_ASYNC_SENTINEL, None)
+        if method is None:
+            return False
+        # If the method's underlying function differs from Philosopher.propose_async,
+        # it is a native override.
+        from po_core.philosophers.base import Philosopher
+
+        base_fn = Philosopher.propose_async
+        return getattr(method, "__func__", None) is not base_fn
+
+    async def _dispatch_one(
+        self,
+        ph: "PhilosopherProtocol",
+        ctx: "Context",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
+        """Run a single philosopher; return (proposal, n, error, latency_ms, pid)."""
+        from po_core.domain.proposal import Proposal
+
+        pid = getattr(ph, "name", ph.__class__.__name__)
+        t0 = perf_counter()
+
+        try:
+            if self._has_native_async(ph):
+                # Native async — runs on event loop directly
+                ph_proposals = await asyncio.wait_for(
+                    ph.propose_async(ctx, intent, tensors, memory),  # type: ignore[attr-defined]
+                    timeout=self._timeout_s,
+                )
+            else:
+                # Thread fallback — offload sync propose()
+                loop = asyncio.get_event_loop()
+                if self._executor is None:
+                    # Lazily create executor if not using context manager
+                    self._executor = ThreadPoolExecutor(
+                        max_workers=self._max_workers,
+                        thread_name_prefix="po_phil",
+                    )
+                ph_proposals = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        self._executor,
+                        functools.partial(ph.propose, ctx, intent, tensors, memory),
+                    ),
+                    timeout=self._timeout_s,
+                )
+
+            dt = int((perf_counter() - t0) * 1000)
+            proposal = ph_proposals[0] if ph_proposals else None
+            if proposal is not None:
+                proposal = _embed_author_proposal(proposal, pid)
+            return proposal, len(ph_proposals), None, dt, pid
+
+        except asyncio.TimeoutError:
+            dt = int((perf_counter() - t0) * 1000)
+            return None, 0, f"TimeoutError after {self._timeout_s}s", dt, pid
+        except Exception as e:
+            dt = int((perf_counter() - t0) * 1000)
+            tb = traceback.format_exc()
+            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+
+    async def run(
+        self,
+        philosophers: Sequence["PhilosopherProtocol"],
+        ctx: "Context",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> Tuple[List["Proposal"], List[RunResult]]:
+        """Run all philosophers concurrently and collect results.
+
+        Returns:
+            Tuple of (proposals, run_results) — same shape as async_run_philosophers().
+        """
+        proposals: List["Proposal"] = []
+        results: List[RunResult] = []
+
+        if not philosophers:
+            return proposals, results
+
+        tasks = [
+            asyncio.create_task(self._dispatch_one(ph, ctx, intent, tensors, memory))
+            for ph in philosophers
+        ]
+        raw_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for ph, outcome in zip(philosophers, raw_results):
+            pid = getattr(ph, "name", ph.__class__.__name__)
+            if isinstance(outcome, Exception):
+                results.append(
+                    RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=isinstance(outcome, asyncio.TimeoutError),
+                        error=f"{type(outcome).__name__}: {outcome}",
+                        latency_ms=None,
+                    )
+                )
+            else:
+                proposal, n, err, dt, author_id = outcome
+                results.append(
+                    RunResult(
+                        philosopher_id=author_id,
+                        ok=(err is None),
+                        n=n,
+                        timed_out=(err is not None and "TimeoutError" in err),
+                        error=err,
+                        latency_ms=dt,
+                    )
+                )
+                if proposal is not None:
+                    proposals.append(proposal)
+
+        return proposals, results
+
+
+def _embed_author_proposal(p: "Proposal", author: str) -> "Proposal":
+    """Embed philosopher author ID into Proposal.extra (shared helper)."""
+    from po_core.domain.proposal import Proposal
+
+    extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+    pc = dict(extra.get(PO_CORE, {}))
+    pc[AUTHOR] = author
+    extra[PO_CORE] = pc
+    return Proposal(
+        proposal_id=p.proposal_id,
+        action_type=p.action_type,
+        content=p.content,
+        confidence=p.confidence,
+        assumption_tags=list(p.assumption_tags),
+        risk_tags=list(p.risk_tags),
+        extra=extra,
+    )
+
+
 async def async_run_philosophers(
     philosophers: Sequence["PhilosopherProtocol"],
     ctx: "Context",
@@ -264,11 +452,12 @@ async def async_run_philosophers(
     max_workers: int,
     timeout_s: float,
 ) -> Tuple[List["Proposal"], List[RunResult]]:
-    """Async-native version of run_philosophers using asyncio.gather.
+    """Async-native philosopher execution — delegates to AsyncPartyMachine.
 
-    Each philosopher's ``propose()`` call is offloaded to a ``ThreadPoolExecutor``
-    via ``loop.run_in_executor()``, so the FastAPI event loop is never blocked.
-    Per-philosopher timeouts are enforced with ``asyncio.wait_for()``.
+    Backward-compatible wrapper around :class:`AsyncPartyMachine`.  New code
+    should prefer ``async with AsyncPartyMachine(...)`` for explicit lifecycle
+    management.  This function creates a machine, runs it, and shuts down the
+    executor with ``wait=True`` to guarantee clean resource release.
 
     Args:
         philosophers: Sequence of philosopher instances to execute.
@@ -284,100 +473,10 @@ async def async_run_philosophers(
         - List[Proposal]: Successfully generated proposals.
         - List[RunResult]: Execution results for each philosopher.
     """
-    from po_core.domain.proposal import Proposal
-
-    proposals: List[Proposal] = []
-    results: List[RunResult] = []
-
-    if not philosophers:
-        return proposals, results
-
-    def _embed_author(p: "Proposal", author: str) -> "Proposal":
-        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
-        pc = dict(extra.get(PO_CORE, {}))
-        pc[AUTHOR] = author
-        extra[PO_CORE] = pc
-        return Proposal(
-            proposal_id=p.proposal_id,
-            action_type=p.action_type,
-            content=p.content,
-            confidence=p.confidence,
-            assumption_tags=list(p.assumption_tags),
-            risk_tags=list(p.risk_tags),
-            extra=extra,
-        )
-
-    def _run_single(
-        ph: "PhilosopherProtocol",
-    ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
-        pid = getattr(ph, "name", ph.__class__.__name__)
-        t0 = perf_counter()
-        try:
-            ph_proposals = ph.propose(ctx, intent, tensors, memory)
-            dt = int((perf_counter() - t0) * 1000)
-            proposal = ph_proposals[0] if ph_proposals else None
-            if proposal is not None:
-                proposal = _embed_author(proposal, pid)
-            return proposal, len(ph_proposals), None, dt, pid
-        except Exception as e:
-            dt = int((perf_counter() - t0) * 1000)
-            tb = traceback.format_exc()
-            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
-
-    loop = asyncio.get_running_loop()
-    executor = ThreadPoolExecutor(max_workers=max_workers)
-    try:
-        tasks = [
-            asyncio.wait_for(
-                loop.run_in_executor(executor, _run_single, ph),
-                timeout=timeout_s,
-            )
-            for ph in philosophers
-        ]
-        raw_results = await asyncio.gather(*tasks, return_exceptions=True)
-    finally:
-        executor.shutdown(wait=False)
-
-    for ph, outcome in zip(philosophers, raw_results):
-        pid = getattr(ph, "name", ph.__class__.__name__)
-        if isinstance(outcome, asyncio.TimeoutError):
-            results.append(
-                RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=True,
-                    error=f"Timeout after {timeout_s}s",
-                    latency_ms=None,
-                )
-            )
-        elif isinstance(outcome, Exception):
-            results.append(
-                RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=False,
-                    error=f"{type(outcome).__name__}: {outcome}",
-                    latency_ms=None,
-                )
-            )
-        else:
-            proposal, n, err, dt, author_id = outcome
-            results.append(
-                RunResult(
-                    philosopher_id=author_id,
-                    ok=(err is None),
-                    n=n,
-                    timed_out=False,
-                    error=err,
-                    latency_ms=dt,
-                )
-            )
-            if proposal is not None:
-                proposals.append(proposal)
-
-    return proposals, results
+    async with AsyncPartyMachine(
+        max_workers=max_workers, timeout_s=timeout_s
+    ) as machine:
+        return await machine.run(philosophers, ctx, intent, tensors, memory)
 
 
 # ============================================================================
@@ -785,4 +884,7 @@ __all__ = [
     # Parallel execution
     "run_philosophers",
     "RunResult",
+    # Phase 5.2: Async execution
+    "AsyncPartyMachine",
+    "async_run_philosophers",
 ]

@@ -236,3 +236,158 @@ def test_reason_stream_endpoint_non_blocking(_client_no_auth):
     assert "started" in body
     assert "result" in body
     assert "done" in body
+
+
+# ---------------------------------------------------------------------------
+# AsyncPartyMachine — Phase 5.2 native async engine tests
+# ---------------------------------------------------------------------------
+
+
+class _NativeAsyncPhilosopher:
+    """Philosopher with a real native propose_async() override (no thread)."""
+
+    name = "native_async_phil"
+
+    def propose(self, ctx, intent, tensors, memory):
+        return [_FakeProposal(proposal_id="sync_fallback")]
+
+    async def propose_async(self, ctx, intent, tensors, memory):
+        # Native async — does NOT call propose() / no thread overhead
+        return [_FakeProposal(proposal_id="native_async")]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_async_party_machine_context_manager():
+    """AsyncPartyMachine can be used as an async context manager."""
+    from po_core.party_machine import AsyncPartyMachine
+
+    async with AsyncPartyMachine(max_workers=2, timeout_s=2.0) as machine:
+        proposals, results = await machine.run(
+            [_OKPhilosopher()],
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
+
+    assert len(results) == 1
+    assert results[0].ok is True
+    assert len(proposals) == 1
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_async_party_machine_native_async_dispatch():
+    """Native propose_async() is called directly without thread overhead."""
+    from po_core.party_machine import AsyncPartyMachine
+
+    native = _NativeAsyncPhilosopher()
+    async with AsyncPartyMachine(max_workers=2, timeout_s=2.0) as machine:
+        assert machine._has_native_async(native), "Should detect native override"
+        proposals, results = await machine.run(
+            [native],
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
+
+    assert results[0].ok is True
+    # Verify the native async path was used (proposal_id differs from sync fallback)
+    assert proposals[0].proposal_id == "native_async"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_async_party_machine_thread_fallback():
+    """Philosopher without propose_async override uses thread fallback."""
+    from po_core.party_machine import AsyncPartyMachine
+
+    ok_phil = _OKPhilosopher()
+    async with AsyncPartyMachine(max_workers=2, timeout_s=2.0) as machine:
+        assert not machine._has_native_async(ok_phil), "Should use thread fallback"
+        proposals, results = await machine.run(
+            [ok_phil],
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
+
+    assert results[0].ok is True
+    assert len(proposals) == 1
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_async_party_machine_mixed_sync_and_native():
+    """Mix of native-async and sync-thread philosophers works correctly."""
+    from po_core.party_machine import AsyncPartyMachine
+
+    philosophers = [_OKPhilosopher(), _NativeAsyncPhilosopher(), _ErrorPhilosopher()]
+    async with AsyncPartyMachine(max_workers=4, timeout_s=2.0) as machine:
+        proposals, results = await machine.run(
+            philosophers,
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
+
+    ids = {r.philosopher_id: r for r in results}
+    assert ids["ok_phil"].ok is True
+    assert ids["native_async_phil"].ok is True
+    assert ids["err_phil"].ok is False
+    assert len(proposals) == 2  # ok_phil + native_async_phil
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_async_party_machine_aclose():
+    """aclose() can be called explicitly instead of context manager."""
+    from po_core.party_machine import AsyncPartyMachine
+
+    machine = AsyncPartyMachine(max_workers=2, timeout_s=1.0)
+    proposals, results = await machine.run(
+        [_OKPhilosopher()],
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+    )
+    await machine.aclose()
+
+    assert results[0].ok is True
+    assert machine._executor is None  # executor has been shut down
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+@pytest.mark.asyncio
+async def test_propose_async_default_runs_in_thread():
+    """Philosopher.propose_async() default wraps propose() in a thread."""
+    from datetime import datetime, timezone
+
+    from po_core.domain.context import Context
+    from po_core.domain.tensor_snapshot import TensorSnapshot
+    from po_core.philosophers.aristotle import Aristotle
+
+    aristotle = Aristotle()
+    ctx = Context(
+        user_input="What is virtue?",
+        request_id="test-async-propose",
+        created_at=datetime.now(timezone.utc),
+    )
+    tensors = TensorSnapshot.now({"freedom_pressure": 0.5})
+    # propose_async() should return the same result type as propose()
+    async_result = await aristotle.propose_async(ctx, MagicMock(), tensors, MagicMock())
+
+    assert len(async_result) == 1
+    assert isinstance(async_result[0].content, str)
+    assert len(async_result[0].content) > 0
