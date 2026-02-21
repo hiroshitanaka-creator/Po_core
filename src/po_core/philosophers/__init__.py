@@ -19,6 +19,9 @@ from po_core.philosophers.dewey import Dewey
 from po_core.philosophers.dogen import Dogen
 from po_core.philosophers.epicurus import Epicurus
 from po_core.philosophers.foucault import Foucault
+from po_core.philosophers.gemini_google import GeminiGoogle
+from po_core.philosophers.gpt_chatgpt import GPTChatGPT
+from po_core.philosophers.grok_xai import GrokXAI
 from po_core.philosophers.hegel import Hegel
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.husserl import Husserl
@@ -45,7 +48,6 @@ from po_core.philosophers.watsuji import Watsuji
 from po_core.philosophers.weil import Weil
 from po_core.philosophers.wittgenstein import Wittgenstein
 from po_core.philosophers.zhuangzi import Zhuangzi
-from po_core.philosophers.grok_xai import GrokXAI
 
 __all__ = [
     "Philosopher",
@@ -89,4 +91,6 @@ __all__ = [
     "Wittgenstein",
     "Zhuangzi",
     "GrokXAI",
+    "GeminiGoogle",
+    "GPTChatGPT",
 ]
