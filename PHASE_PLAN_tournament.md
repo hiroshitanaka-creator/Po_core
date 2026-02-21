@@ -8,8 +8,8 @@
 ## ロードマップ全体
 
 ```
-Phase 6-A  Prompt Hardening          ← 今ここ (実装済 後に ✅)
-Phase 6-B  Dialectic Roles           ← 次
+Phase 6-A  Prompt Hardening          ✅ COMPLETE
+Phase 6-B  Dialectic Roles           ✅ COMPLETE
 Phase 6-C1 Position Clustering
 Phase 6-C2 Team Debate Engine
 Phase 6-C3 Jury & Verdict  → PyPI
@@ -55,7 +55,7 @@ Do NOT repeat your Round 1 response verbatim.
 
 ---
 
-## Phase 6-B: Dialectic Roles
+## Phase 6-B: Dialectic Roles ✅ COMPLETE
 
 **目的:** 各ラウンドに Hegel 弁証法的な役割を割り当て、
 議論の構造を Thesis → Antithesis → Synthesis に進化させる。
@@ -81,10 +81,10 @@ Round 3 (Synthesis)  : Synthesizer 哲学者群 (Hegel, Rawls, Habermas) が
 
 ### 完了条件
 
-- [ ] `dialectic` モードで 3 ラウンド実行される
-- [ ] `RoundTrace.role` が `"thesis"` / `"antithesis"` / `"synthesis"` を持つ
-- [ ] Synthesis ラウンドの出力が round 1, 2 の折衷案として検証可能
-- [ ] テスト 10 本以上グリーン
+- [x] `dialectic` モードで 3 ラウンド実行される
+- [x] `RoundTrace.role` が `"thesis"` / `"antithesis"` / `"synthesis"` を持つ
+- [x] Synthesis ラウンドの出力が round 1, 2 の折衷案として検証可能
+- [x] テスト 35 本グリーン (10 本以上の条件達成)
 
 ---
 

@@ -11,6 +11,12 @@ Design (from PHASE_PLAN_v2.md):
 
 When max_rounds=1, produces identical behavior to the current pipeline
 (backward compatible — no deliberation, just pass-through).
+
+Phase 6-B additions:
+  dialectic_mode="dialectic" enables Hegelian 3-round structure:
+    Round 1 (Thesis)     — all philosophers propose normally
+    Round 2 (Antithesis) — high-interference pairs REFUTE each other
+    Round 3 (Synthesis)  — Synthesizer philosophers integrate the debate
 """
 
 from __future__ import annotations
@@ -20,6 +26,12 @@ from typing import Dict, List, Optional, Sequence
 
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
+from po_core.deliberation.roles import (
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    assign_role,
+    get_role_prompt_prefix,
+)
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.intent import Intent
 from po_core.domain.keys import AUTHOR, PO_CORE
@@ -37,6 +49,7 @@ class RoundTrace:
     n_proposals: int
     n_revised: int
     interaction_summary: Optional[Dict] = None
+    role: str = DebateRole.STANDARD.value  # Phase 6-B: dialectic role for this round
 
 
 @dataclass
@@ -83,6 +96,7 @@ class DeliberationResult:
                     "round": r.round_number,
                     "n_proposals": r.n_proposals,
                     "n_revised": r.n_revised,
+                    "role": r.role,
                 }
                 for r in self.rounds
             ],
@@ -108,6 +122,8 @@ class DeliberationEngine:
         max_rounds: Maximum number of deliberation rounds (1 = no deliberation).
         top_k_pairs: Number of high-interference pairs to select for re-proposal.
         convergence_threshold: Stop if mean proposal change falls below this.
+        dialectic_mode: "standard" (default) or "dialectic" (Hegelian 3-round).
+            In dialectic mode, max_rounds is forced to at least 3.
     """
 
     def __init__(
@@ -119,7 +135,16 @@ class DeliberationEngine:
         emergence_threshold: float = 0.65,
         track_influence: bool = True,
         prompt_mode: str = "debate",
+        dialectic_mode: str = "standard",
     ):
+        self.dialectic_mode = (
+            dialectic_mode
+            if dialectic_mode in ("standard", "dialectic")
+            else "standard"
+        )
+        # Dialectic mode requires at least 3 rounds (Thesis, Antithesis, Synthesis)
+        if self.dialectic_mode == "dialectic":
+            max_rounds = max(max_rounds, 3)
         self.max_rounds = max(1, max_rounds)
         self.top_k_pairs = top_k_pairs
         self.convergence_threshold = convergence_threshold
@@ -156,17 +181,20 @@ class DeliberationEngine:
         Returns:
             DeliberationResult with final proposals and round traces
         """
+        is_dialectic = self.dialectic_mode == "dialectic"
         rounds: List[RoundTrace] = []
         all_emergence: List[EmergenceSignal] = []
         current_proposals = list(round1_proposals)
         baseline_proposals = list(round1_proposals)  # Round 1 = baseline
 
         # Round 1 trace (already computed externally)
+        round1_role = assign_role(1, is_dialectic)
         rounds.append(
             RoundTrace(
                 round_number=1,
                 n_proposals=len(current_proposals),
                 n_revised=0,
+                role=round1_role.value,
             )
         )
 
@@ -188,37 +216,82 @@ class DeliberationEngine:
         # Rounds 2..max_rounds
         interaction_matrix = None
         for round_num in range(2, self.max_rounds + 1):
-            # Compute interaction matrix from current proposals
-            interaction_matrix = InteractionMatrix.from_proposals(current_proposals)
+            round_role = assign_role(round_num, is_dialectic)
 
-            # Select high-interference pairs
+            if is_dialectic and round_role == DebateRole.SYNTHESIS:
+                # Synthesis round: Synthesizer philosophers integrate the full debate
+                counterarguments = _collect_synthesis_counterarguments(
+                    current_proposals, SYNTHESIZER_PHILOSOPHERS, ph_lookup
+                )
+                sender_map: Dict[str, str] = {
+                    name: "the debate" for name in counterarguments
+                }
+
+                if not counterarguments:
+                    rounds.append(
+                        RoundTrace(
+                            round_number=round_num,
+                            n_proposals=len(current_proposals),
+                            n_revised=0,
+                            role=round_role.value,
+                        )
+                    )
+                    break
+
+                revised_proposals = _re_propose(
+                    ph_lookup,
+                    counterarguments,
+                    ctx,
+                    intent,
+                    tensors,
+                    memory,
+                    round_num=round_num,
+                    sender_map=sender_map,
+                    prompt_mode=self.prompt_mode,
+                    role=round_role,
+                )
+
+                n_revised = len(revised_proposals)
+                current_proposals = _merge_proposals(
+                    current_proposals, revised_proposals
+                )
+
+                rounds.append(
+                    RoundTrace(
+                        round_number=round_num,
+                        n_proposals=len(current_proposals),
+                        n_revised=n_revised,
+                        role=round_role.value,
+                    )
+                )
+                continue
+
+            # Standard or Antithesis round: use high-interference pairs
+            interaction_matrix = InteractionMatrix.from_proposals(current_proposals)
             hi_pairs = interaction_matrix.high_interference_pairs(
                 top_k=self.top_k_pairs
             )
 
             if not hi_pairs:
-                # No interference → no deliberation needed
                 rounds.append(
                     RoundTrace(
                         round_number=round_num,
                         n_proposals=len(current_proposals),
                         n_revised=0,
                         interaction_summary=interaction_matrix.summary(),
+                        role=round_role.value,
                     )
                 )
                 break
 
-            # Identify philosophers that need to re-propose
-            # sender_map: {recipient_name → sender_name} for influence tracking
             revised_names: set = set()
-            counterarguments: Dict[str, str] = {}
-            sender_map: Dict[str, str] = {}
+            counterarguments = {}
+            sender_map = {}
             for pair in hi_pairs:
                 _collect_counterargument(
                     pair, current_proposals, counterarguments, revised_names, sender_map
                 )
 
-            # Re-propose for affected philosophers
             revised_proposals = _re_propose(
                 ph_lookup,
                 counterarguments,
@@ -229,20 +302,18 @@ class DeliberationEngine:
                 round_num=round_num,
                 sender_map=sender_map,
                 prompt_mode=self.prompt_mode,
+                role=round_role,
             )
 
-            # Merge: replace old proposals with revised ones
             n_revised = len(revised_proposals)
             current_proposals = _merge_proposals(current_proposals, revised_proposals)
 
-            # Emergence detection: compare revised proposals to round-1 baseline
             if self._emergence_detector is not None and revised_proposals:
                 signals = self._emergence_detector.detect(
                     baseline_proposals, revised_proposals, round_num
                 )
                 all_emergence.extend(signals)
 
-                # Strong emergence → stop deliberation, let this proposal win
                 if self._emergence_detector.has_strong_emergence(signals):
                     rounds.append(
                         RoundTrace(
@@ -250,11 +321,11 @@ class DeliberationEngine:
                             n_proposals=len(current_proposals),
                             n_revised=n_revised,
                             interaction_summary=interaction_matrix.summary(),
+                            role=round_role.value,
                         )
                     )
                     break
 
-            # Influence tracking
             if self._influence_tracker is not None and revised_proposals:
                 self._influence_tracker.update(revised_proposals, sender_map)
 
@@ -264,6 +335,7 @@ class DeliberationEngine:
                     n_proposals=len(current_proposals),
                     n_revised=n_revised,
                     interaction_summary=interaction_matrix.summary(),
+                    role=round_role.value,
                 )
             )
 
@@ -314,7 +386,6 @@ def _collect_counterargument(
         sender_map: If provided, also records {recipient → sender} for
                     downstream influence tracking.
     """
-    # Find proposals by these philosophers
     a_content = ""
     b_content = ""
     for p in proposals:
@@ -324,8 +395,6 @@ def _collect_counterargument(
         elif author == pair.philosopher_b:
             b_content = p.content
 
-    # Each receives the other's argument as counterpoint
-    # Guard checks the RECIPIENT (not sender) to avoid overwriting
     if a_content and pair.philosopher_b not in counterarguments:
         counterarguments[pair.philosopher_b] = a_content
         revised_names.add(pair.philosopher_b)
@@ -338,20 +407,49 @@ def _collect_counterargument(
             sender_map[pair.philosopher_a] = pair.philosopher_b
 
 
+def _collect_synthesis_counterarguments(
+    current_proposals: List[Proposal],
+    synthesizer_names: List[str],
+    ph_lookup: Dict[str, object],
+) -> Dict[str, str]:
+    """Build synthesis counterarguments for Synthesizer philosophers.
+
+    Each synthesizer receives the combined text of all current proposals
+    so they can integrate the full debate into a higher-order synthesis.
+    """
+    # Aggregate all proposals into a combined summary (max 10 proposals, 300 chars each)
+    proposal_texts = []
+    for p in current_proposals:
+        author = _get_author(p)
+        label = author if author else "Unknown"
+        if p.content:
+            proposal_texts.append(f"[{label}]: {p.content[:300]}")
+
+    combined = "\n\n".join(proposal_texts[:10])
+
+    # Only include synthesizers that exist in the philosopher lookup
+    return {name: combined for name in synthesizer_names if name in ph_lookup}
+
+
 def _build_debate_prompt(
     user_input: str,
     counter_text: str,
     sender_name: str,
     round_num: int,
     prompt_mode: str,
+    role_prefix: str = "",
 ) -> str:
     """Build enriched user_input for counterargument re-proposal.
 
     prompt_mode="basic":  legacy soft counterargument (Phase 2 behavior)
     prompt_mode="debate": structured rebuttal with explicit obligations (Phase 6-A)
+    role_prefix:          role instruction prepended before the debate prompt (Phase 6-B)
     """
+    prefix_block = f"{role_prefix}\n" if role_prefix else ""
+
     if prompt_mode == "basic":
         return (
+            f"{prefix_block}"
             f"{user_input}\n\n"
             f"[Counterargument from a fellow philosopher: {counter_text[:500]}]"
         )
@@ -359,6 +457,7 @@ def _build_debate_prompt(
     # "debate" mode — structured rebuttal obligation
     sender_label = sender_name if sender_name else "a fellow philosopher"
     return (
+        f"{prefix_block}"
         f"{user_input}\n\n"
         f"[PHILOSOPHICAL CHALLENGE — Round {round_num}]\n"
         f"{sender_label} opposes your position with the following argument:\n\n"
@@ -382,8 +481,12 @@ def _re_propose(
     round_num: int = 2,
     sender_map: Optional[Dict[str, str]] = None,
     prompt_mode: str = "debate",
+    role: Optional[DebateRole] = None,
 ) -> List[Proposal]:
     """Re-run propose() for philosophers with counterargument context."""
+    role_prefix = get_role_prompt_prefix(role) if role is not None else ""
+    role_value = role.value if role is not None else DebateRole.STANDARD.value
+
     revised = []
     for name, counter_text in counterarguments.items():
         ph = ph_lookup.get(name)
@@ -392,7 +495,12 @@ def _re_propose(
 
         sender_name = (sender_map or {}).get(name, "a fellow philosopher")
         enriched_input = _build_debate_prompt(
-            ctx.user_input, counter_text, sender_name, round_num, prompt_mode
+            ctx.user_input,
+            counter_text,
+            sender_name,
+            round_num,
+            prompt_mode,
+            role_prefix,
         )
         enriched_ctx = DomainContext(
             request_id=ctx.request_id,
@@ -409,6 +517,7 @@ def _re_propose(
                     extra["deliberation_round"] = round_num
                     extra["debate_sender"] = sender_name
                     extra["prompt_mode"] = prompt_mode
+                    extra["dialectic_role"] = role_value
                     # Preserve PO_CORE author metadata for downstream scoring
                     if PO_CORE not in extra or AUTHOR not in extra.get(PO_CORE, {}):
                         po_meta = extra.get(PO_CORE, {})
@@ -442,12 +551,10 @@ def _merge_proposals(
 
     Revised proposals REPLACE originals from the same philosopher.
     """
-    # Build set of revised authors
     revised_authors = set()
     for p in revised:
         revised_authors.add(_get_author(p))
 
-    # Keep originals whose author was NOT revised, plus all revised
     merged = [p for p in original if _get_author(p) not in revised_authors]
     merged.extend(revised)
     return merged

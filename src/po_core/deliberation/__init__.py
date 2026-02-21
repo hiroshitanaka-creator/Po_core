@@ -23,14 +23,29 @@ Usage:
 """
 
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
-from po_core.deliberation.engine import DeliberationEngine, DeliberationResult
+from po_core.deliberation.engine import (
+    DeliberationEngine,
+    DeliberationResult,
+    RoundTrace,
+)
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
+from po_core.deliberation.roles import (
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    assign_role,
+    get_role_prompt_prefix,
+)
 
 __all__ = [
     "DeliberationEngine",
     "DeliberationResult",
+    "RoundTrace",
     "EmergenceDetector",
     "EmergenceSignal",
     "InfluenceTracker",
     "InfluenceWeight",
+    "DebateRole",
+    "SYNTHESIZER_PHILOSOPHERS",
+    "assign_role",
+    "get_role_prompt_prefix",
 ]
