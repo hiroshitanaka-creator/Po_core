@@ -11,7 +11,6 @@
 Phase 6-A  Prompt Hardening          ✅ COMPLETE
 Phase 6-B  Dialectic Roles           ✅ COMPLETE
 Phase 6-C1 Position Clustering       ✅ COMPLETE
-Phase 6-C1 Position Clustering
 Phase 6-C2 Team Debate Engine
 Phase 6-C3 Jury & Verdict  → PyPI
 ```
