@@ -179,7 +179,7 @@ class TestPhilosopherRegistrySmoke:
     def test_all_39_philosophers_in_legacy_registry(self) -> None:
         from po_core.ensemble import PHILOSOPHER_REGISTRY
 
-        assert len(PHILOSOPHER_REGISTRY) == 42
+        assert len(PHILOSOPHER_REGISTRY) == 43
 
     def test_all_philosophers_have_reason_method(self) -> None:
         from po_core.ensemble import PHILOSOPHER_REGISTRY
@@ -199,7 +199,7 @@ class TestPhilosopherRegistrySmoke:
             assert len(result) > 0
 
     def test_manifest_has_40_specs(self) -> None:
-        """Manifest SPECS includes 39 philosophers + dummy + 4 AI slots (disabled) = 44."""
+        """Manifest SPECS: 39 philosophers + dummy + 4 AI slots (all enabled) = 44."""
         from po_core.philosophers.manifest import SPECS
 
         assert len(SPECS) == 44
@@ -208,7 +208,7 @@ class TestPhilosopherRegistrySmoke:
         from po_core.philosophers.manifest import SPECS
 
         enabled = [s for s in SPECS if s.enabled]
-        assert len(enabled) == 43
+        assert len(enabled) == 44
 
 
 # ══════════════════════════════════════════════════════════════════════════
