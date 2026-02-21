@@ -290,7 +290,7 @@ class SolarWillEngine:
         This method implements the SolarWillPort interface.
 
         SafetyMode に応じて縮退:
-        - NORMAL: 通常の目標（創造性を許容）
+        - NORMAL: 公理「倫理とは全ての生存構造に歪みを与えない」に基づくIntent
         - WARN: 慎重な目標（確認質問を優先）
         - CRITICAL: 拒否目標（安全が確認できるまで行為を提案しない）
 
@@ -325,11 +325,14 @@ class SolarWillEngine:
                 weights={"caution": 2.0},
             )
         else:
-            # NORMAL or UNKNOWN → neutral intent (創造性を許容)
-            intent = DomainIntent.neutral()
+            # NORMAL or UNKNOWN →
+            # 公理: 倫理とは全ての生存構造に歪みを与えないこと。
+            # 歪みとは: 特異的な個の願望による破壊（ライフサイクル・弱肉強食は歪みではない）
+            self.update(tensors.as_dict(), {"context_id": ctx.request_id})
+            intent = self._derive_survival_structure_intent(tensors)
 
         meta: Dict[str, Any] = {
-            "solarwill": "v0",
+            "solarwill": "v1",
             "mode": mode.value,
             "freedom_pressure": "" if fp is None else str(fp),
             "metric_key": self._config.metric_key,
@@ -337,6 +340,102 @@ class SolarWillEngine:
             "constraints_n": len(intent.constraints),
         }
         return intent, meta
+
+    def _derive_survival_structure_intent(
+        self,
+        tensors: TensorSnapshot,
+    ) -> DomainIntent:
+        """
+        公理「倫理とは全ての生存構造に歪みを与えない」に基づいてIntentを生成する。
+
+        生存構造とは: 生態系・社会・個人・文化など、存在が継続するための構造全般。
+        歪みの定義: 特異的な個の願望による破壊。
+        歪みでないもの: ライフサイクル（誕生・老化・死）、弱肉強食、自然の変化。
+
+        テンソル値の読み方:
+          freedom_pressure (fp): 個の意志の圧力。高いほど特異的願望のリスクが増す。
+          blocked_tensor (bt):  倫理的阻害の検出度。高いほど既に歪みの兆候がある。
+          semantic_delta (sd):  文脈からの逸脱度。高いほど特異的な意図の可能性がある。
+        """
+        wv = self._state.will_vector
+        fp = tensors.freedom_pressure
+        bt = tensors.blocked_tensor
+        sd = tensors.semantic_delta
+
+        goals: List[str] = []
+        constraints: List[str] = []
+        weights: Dict[str, float] = {}
+
+        # ── 核心公理（常に有効）─────────────────────────────────────
+        goals.append(
+            "この行為が生存構造（生態系・社会・個人・文化）に歪みを与えないか検証する"
+        )
+        constraints.append(
+            "特異的な個の願望による生存構造の破壊を支援しない"
+        )
+        constraints.append(
+            "ライフサイクル（誕生・老化・死）や弱肉強食は歪みでなく自然の秩序として認識する"
+        )
+        weights["survival_integrity"] = 1.0
+
+        # ── freedom_pressure → 個の意志圧力を評価 ───────────────────
+        # fp が高い = 特異的願望による生存構造破壊のリスクが上昇
+        if fp > 0.6:
+            goals.append(
+                "この要求が特定個体の支配欲・破壊欲・占有欲に起因していないか吟味する"
+            )
+            weights["singular_desire_risk"] = fp
+        if fp > 0.8:
+            constraints.append(
+                "強い個の意志圧力を検知した。応答が生存構造の歪みを増幅しないよう最優先で評価する"
+            )
+
+        # ── blocked_tensor → 歪みの兆候を補強 ───────────────────────
+        # bt が高い = すでに生存構造への阻害要因が存在する
+        if bt > 0.4:
+            goals.append(
+                "既存の生存構造への歪みを特定し、その歪みを拡大させない応答をとる"
+            )
+            weights["distortion_repair"] = bt
+
+        # ── semantic_delta → 文脈逸脱を特異的願望の指標として使う ───
+        # sd が高い = 通常の文脈から外れた要求 = 特異性のシグナル
+        if sd > 0.5:
+            goals.append(
+                "この文脈からの逸脱が破壊的な個の願望の表れでないかを検証する"
+            )
+            weights["anomaly_check"] = sd
+
+        # ── will_vector の各次元から目標を補強 ──────────────────────
+        # preservation: 既存の生存構造を守る方向性
+        if wv.preservation >= 0.5:
+            goals.append(
+                "現存する生存構造の連続性を保全しながら応答する"
+            )
+            weights["preservation"] = wv.preservation
+
+        # connection: 生存構造間の相互依存を意識する
+        if wv.connection >= 0.5:
+            goals.append(
+                "この行為が生存構造間の連結性（相互依存）を損なわないかを評価する"
+            )
+            weights["connection"] = wv.connection
+
+        # growth: 歪めずに発展させる
+        if wv.growth >= 0.5:
+            goals.append(
+                "生存構造を歪めることなく発展・成長させる方向への貢献を優先する"
+            )
+            weights["growth"] = wv.growth
+
+        # autonomy: 個の自律と集合的生存構造のバランス
+        if wv.autonomy >= 0.6:
+            goals.append(
+                "個の自律を尊重しつつ、その行使が他の生存構造を歪めないかを確認する"
+            )
+            weights["autonomy"] = wv.autonomy
+
+        return DomainIntent(goals=goals, constraints=constraints, weights=weights)
 
 
 __all__ = ["SolarWillEngine"]
