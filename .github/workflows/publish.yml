@@ -54,8 +54,6 @@ jobs:
     environment:
       name: testpypi
       url: https://test.pypi.org/p/po-core-flyingpig
-    permissions:
-      id-token: write  # OIDC trusted publishing
 
     steps:
       - name: Download dist
