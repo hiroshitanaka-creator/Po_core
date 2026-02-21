@@ -1,9 +1,19 @@
 """Add tension key to reason() return dict for 11 philosophers missing it."""
+
 import os
 
 MISSING_TENSION = [
-    "levinas", "watsuji", "wabi_sabi", "merleau_ponty", "wittgenstein",
-    "peirce", "dewey", "foucault", "deleuze", "lacan", "badiou",
+    "levinas",
+    "watsuji",
+    "wabi_sabi",
+    "merleau_ponty",
+    "wittgenstein",
+    "peirce",
+    "dewey",
+    "foucault",
+    "deleuze",
+    "lacan",
+    "badiou",
 ]
 
 # Tension descriptions for each philosopher
@@ -136,7 +146,7 @@ for pid in MISSING_TENSION:
         f'{indent}    "level": "Medium",',
         f'{indent}    "description": "{t["description"]}",',
         f'{indent}    "elements": {elements_str},',
-        f'{indent}}},',
+        f"{indent}}},",
     ]
 
     new_lines = lines[:insert_idx] + tension_lines + lines[insert_idx:]

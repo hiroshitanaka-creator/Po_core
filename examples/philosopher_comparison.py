@@ -6,16 +6,16 @@ Po_core Philosopher Comparison Tool
 同じ質問に対する異なる哲学者の視点を比較するツール
 """
 
-import sys
 import os
-from typing import List, Dict
+import sys
+from typing import Dict, List
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
 from rich.columns import Columns
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 from rich.text import Text
 
 from po_core import __version__

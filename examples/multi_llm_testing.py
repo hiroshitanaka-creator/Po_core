@@ -24,11 +24,11 @@ Usage Example:
     print(report["recommendations"])
 """
 
-from typing import Dict, List, Optional
 import json
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
+from typing import Dict, List, Optional
 
 
 @dataclass

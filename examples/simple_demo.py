@@ -8,6 +8,7 @@ Po_core Simple Prototype Demo
 """
 
 import json
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -78,7 +79,9 @@ def demo_philosopher_comparison():
     """複数の哲学者の視点を比較するデモ"""
 
     console.print("\n" + "=" * 70, style="bold magenta")
-    console.print("哲学者比較デモ - 異なる視点からの推論", style="bold magenta", justify="center")
+    console.print(
+        "哲学者比較デモ - 異なる視点からの推論", style="bold magenta", justify="center"
+    )
     console.print("=" * 70 + "\n", style="bold magenta")
 
     prompt = "人生の意味とは何か？"
@@ -144,7 +147,9 @@ def demo_interactive_mode():
     console.print("対話型モード", style="bold green", justify="center")
     console.print("=" * 70 + "\n", style="bold green")
 
-    console.print("[italic]質問を入力してください（終了するには 'quit' または 'exit' を入力）[/italic]\n")
+    console.print(
+        "[italic]質問を入力してください（終了するには 'quit' または 'exit' を入力）[/italic]\n"
+    )
 
     po_self = PoSelf()
 
@@ -175,7 +180,9 @@ def demo_interactive_mode():
             )
 
         except KeyboardInterrupt:
-            console.print("\n\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n")
+            console.print(
+                "\n\n[bold blue]🐷🎈 Po_coreをご利用いただきありがとうございました！[/bold blue]\n"
+            )
             break
         except Exception as e:
             console.print(f"\n[bold red]エラー:[/bold red] {str(e)}\n")

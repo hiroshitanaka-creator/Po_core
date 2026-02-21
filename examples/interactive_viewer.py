@@ -9,14 +9,14 @@ Provides a menu-driven interface for exploring Po_trace sessions.
 import sys
 from typing import Optional
 
+from rich import box
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Prompt, Confirm
+from rich.prompt import Confirm, Prompt
 from rich.table import Table
-from rich import box
 
-from po_core.po_viewer import PoViewer
 from po_core.po_self import PoSelf
+from po_core.po_viewer import PoViewer
 
 console = Console()
 

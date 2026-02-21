@@ -19,19 +19,19 @@ Usage:
 """
 
 import json
-import sys
 import os
-from pathlib import Path
-from typing import List, Dict
-from dataclasses import dataclass, asdict
+import sys
+from dataclasses import asdict, dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 from po_core import __version__
 from po_core.po_self import PoSelf

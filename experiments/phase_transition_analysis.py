@@ -13,16 +13,16 @@ Analyzes:
 """
 
 import json
+import math
 import sys
 from pathlib import Path
-from typing import List, Dict, Any, Tuple
-import math
+from typing import Any, Dict, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 from rich.tree import Tree
 
 from po_core.po_trace_db import PoTraceDB

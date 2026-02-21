@@ -9,16 +9,12 @@ organized into 5 specialized agent groups.
 import asyncio
 from datetime import datetime
 
+from multi_agent_reasoning import AgentConfig, AgentRole, MultiAgentReasoningSystem
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree
 
-from multi_agent_reasoning import (
-    AgentConfig,
-    AgentRole,
-    MultiAgentReasoningSystem,
-)
 from po_core.po_trace_db import PoTraceDB
 
 console = Console()

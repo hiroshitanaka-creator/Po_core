@@ -6,8 +6,8 @@ Po_core Quick Test
 Po_coreのプロトタイプが正常に動作するかを簡単にテストするスクリプト
 """
 
-import sys
 import os
+import sys
 
 # PYTHONPATHにsrcディレクトリを追加
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -42,7 +42,9 @@ def test_basic_functionality():
     po = PoSelf(philosophers=philosophers)
     response = po.generate("What is existence?")
     assert response.text, "応答テキストが空です"
-    assert set(response.philosophers) == set(philosophers), "選択した哲学者が正しくありません"
+    assert set(response.philosophers) == set(
+        philosophers
+    ), "選択した哲学者が正しくありません"
     print(f"  選択: {', '.join(philosophers)}")
     print(f"  リーダー: {response.consensus_leader}")
     print()

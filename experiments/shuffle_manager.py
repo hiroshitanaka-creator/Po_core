@@ -20,13 +20,13 @@ Usage:
     python shuffle_manager.py analyze
 """
 
+import argparse
+import hashlib
 import json
 import random
-import argparse
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
-import hashlib
 
 # ============================================================================
 # CONSTANTS

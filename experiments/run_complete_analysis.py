@@ -10,19 +10,19 @@ Run the complete 3-step analysis pipeline:
 This provides comprehensive insights into philosophical reasoning dynamics.
 """
 
+import asyncio
 import sys
 from pathlib import Path
-import asyncio
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from phase_transition_analysis import PhaseTransitionAnalyzer
+from philosopher_correlation_analysis import PhilosopherCorrelationAnalyzer
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
-
 from run_20_philosophers_experiment import ExperimentRunner
-from philosopher_correlation_analysis import PhilosopherCorrelationAnalyzer
-from phase_transition_analysis import PhaseTransitionAnalyzer
+
 from po_core.po_trace_db import PoTraceDB
 
 console = Console()

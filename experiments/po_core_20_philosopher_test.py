@@ -21,7 +21,7 @@ Date: 2025-12-02
 
 import json
 from datetime import datetime
-from typing import List, Dict
+from typing import Dict, List
 
 # ============================================================================
 # W_ethics: Cosmic Order Constraint
