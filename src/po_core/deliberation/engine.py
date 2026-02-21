@@ -24,6 +24,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence
 
+from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
 from po_core.deliberation.roles import (
@@ -61,6 +62,7 @@ class DeliberationResult:
     interaction_matrix: Optional[InteractionMatrix] = None
     emergence_signals: List[EmergenceSignal] = field(default_factory=list)
     influence_weights: Dict[str, InfluenceWeight] = field(default_factory=dict)
+    cluster_result: Optional[ClusterResult] = None  # Phase 6-C1
 
     @property
     def n_rounds(self) -> int:
@@ -111,6 +113,9 @@ class DeliberationResult:
             "top_influencers": [
                 {"philosopher": n, "influence": round(s, 4)} for n, s in top_influencers
             ],
+            "clustering": (
+                self.cluster_result.to_dict() if self.cluster_result else None
+            ),
         }
 
 
@@ -136,6 +141,9 @@ class DeliberationEngine:
         track_influence: bool = True,
         prompt_mode: str = "debate",
         dialectic_mode: str = "standard",
+        enable_clustering: bool = False,
+        cluster_k_min: int = 2,
+        cluster_k_max: int = 6,
     ):
         self.dialectic_mode = (
             dialectic_mode
@@ -157,6 +165,11 @@ class DeliberationEngine:
             else None
         )
         self._influence_tracker = InfluenceTracker() if track_influence else None
+        self._clusterer = (
+            PositionClusterer(k_min=cluster_k_min, k_max=cluster_k_max)
+            if enable_clustering
+            else None
+        )
 
     def deliberate(
         self,
@@ -203,11 +216,20 @@ class DeliberationEngine:
             self._influence_tracker.reset()
             self._influence_tracker.set_baseline(baseline_proposals)
 
+        # Phase 6-C1: cluster philosophers by position after round 1
+        cluster_result: Optional[ClusterResult] = None
+        if self._clusterer is not None and len(current_proposals) >= 2:
+            _init_matrix = InteractionMatrix.from_proposals(current_proposals)
+            cluster_result = self._clusterer.cluster(
+                _init_matrix.harmony, _init_matrix.names
+            )
+
         if self.max_rounds <= 1 or len(current_proposals) < 2:
             return DeliberationResult(
                 proposals=current_proposals,
                 rounds=rounds,
                 interaction_matrix=None,
+                cluster_result=cluster_result,
             )
 
         # Build philosopher lookup by name
@@ -351,6 +373,7 @@ class DeliberationEngine:
             interaction_matrix=interaction_matrix,
             emergence_signals=all_emergence,
             influence_weights=influence_weights,
+            cluster_result=cluster_result,
         )
 
 

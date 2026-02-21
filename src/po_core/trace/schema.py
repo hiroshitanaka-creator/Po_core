@@ -53,6 +53,8 @@ SPECS: List[EventSpec] = [
     # Phase 3: Observability events
     EventSpec("ExplanationEmitted", ["decision", "summary"]),
     EventSpec("DeliberationCompleted", ["n_rounds", "total_proposals"]),
+    # Phase 6-C1: Position Clustering
+    EventSpec("ClusteringCompleted", ["n_clusters", "cluster_sizes"]),
 ]
 
 

@@ -92,6 +92,10 @@ class Settings:
     # "standard" = current multi-round deliberation (rounds are homogeneous)
     # "dialectic" = Hegelian 3-round: Thesis → Antithesis → Synthesis (Phase 6-B)
     deliberation_mode: str = "standard"
+    # Phase 6-C1: cluster philosophers by position after round 1
+    # False = off (default, backward compatible)
+    # True  = PositionClusterer runs; result in DeliberationResult.cluster_result
+    deliberation_cluster_positions: bool = False
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -120,6 +124,7 @@ class Settings:
             "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
             "deliberation_prompt_mode": self.deliberation_prompt_mode,
             "deliberation_mode": self.deliberation_mode,
+            "deliberation_cluster_positions": self.deliberation_cluster_positions,
             "use_freedom_pressure_v2": self.use_freedom_pressure_v2,
         }
 
