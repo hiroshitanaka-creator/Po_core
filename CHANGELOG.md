@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
 
 - Version bumped to `0.2.0b3` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
+- Package renamed from `po-core` → `po-core-flyingpig` in `pyproject.toml`
 - `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
 - `publish.yml` OIDC workflow verified: ready for TestPyPI / PyPI publish
 
@@ -244,8 +245,8 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 
 - [x] Async `PartyMachine` (Phase 5.2 — real-time per-philosopher SSE events)
 - [x] Formal benchmark suite (Phase 5-E — `tests/benchmarks/test_pipeline_perf.py`)
-- [ ] Publish to TestPyPI (manual `workflow_dispatch` → target: testpypi)
-- [ ] Publish to PyPI on v0.2.0b3 release tag
+- [ ] Publish `po-core-flyingpig` to TestPyPI (manual `workflow_dispatch` → target: testpypi)
+- [ ] Publish `po-core-flyingpig` to PyPI on v0.2.0b3 release tag
 
 ### v1.0.0 (Target: 2026-Q2/Q3)
 
@@ -384,10 +385,10 @@ If you have questions about versioning or changelog entries:
 
 ## Links
 
-- **Repository:** <https://github.com/[username]/Po_core>
-- **Documentation:** https://[username].github.io/Po_core/
-- **Issue Tracker:** <https://github.com/[username]/Po_core/issues>
-- **Discussions:** <https://github.com/[username]/Po_core/discussions>
+- **Repository:** <https://github.com/hiroshitanaka-creator/Po_core>
+- **Documentation:** <https://hiroshitanaka-creator.github.io/Po_core/>
+- **Issue Tracker:** <https://github.com/hiroshitanaka-creator/Po_core/issues>
+- **Discussions:** <https://github.com/hiroshitanaka-creator/Po_core/discussions>
 
 ---
 
