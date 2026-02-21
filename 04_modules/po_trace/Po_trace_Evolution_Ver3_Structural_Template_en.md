@@ -21,8 +21,8 @@ class TraceEvent(BaseModel):
 
 ## **3. Why Semantic Categories & Responsibility Matter**
 
-- `actor_id` clarifies who made the decision.  
-- Classifying `reason` via Enum or meaning tensors forms a causal inference model that Po_self can learn from and adapt to.  
+- `actor_id` clarifies who made the decision.
+- Classifying `reason` via Enum or meaning tensors forms a causal inference model that Po_self can learn from and adapt to.
 - `impact_on_chain` provides a canonical evaluation of “structural change in meaning,” enabling downstream processing.
 
 ## **4. Separating Enum + `description()`**
@@ -43,5 +43,5 @@ class ImpactType(str, Enum):
 
 ## **5. Applications & Outlook**
 
-With this, Po_trace becomes a mechanism that quantitatively and categorically records the history of narrative evolution, ethical evaluation, and structural responsibility for Po_self.  
+With this, Po_trace becomes a mechanism that quantitatively and categorically records the history of narrative evolution, ethical evaluation, and structural responsibility for Po_self.
 In the future, Po_self can learn actor-specific patterns (via `actor_id`) as a basis for personalized evolution models.

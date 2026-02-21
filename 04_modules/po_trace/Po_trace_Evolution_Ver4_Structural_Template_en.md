@@ -53,7 +53,7 @@ class ReasonType(str, Enum):
 
 ## **4. Significance & Outlook**
 
-- `summary()` simplifies logging and monitoring.  
-- `label()` makes Viewer display concise and consistent.  
-- `description()` and `description_en` let Po_self separate semantic reasoning from translation.  
+- `summary()` simplifies logging and monitoring.
+- `label()` makes Viewer display concise and consistent.
+- `description()` and `description_en` let Po_self separate semantic reasoning from translation.
 Together these bring Po_trace closer to a “meaning-responsibility device” between narration and decision.

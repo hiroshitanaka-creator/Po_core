@@ -1,9 +1,11 @@
 # **Po_core Reason Log — Classification Table**
 
 ## 1. Overview
+
 This document defines a standard classification dictionary for `interference_log.reason` during manual operations in Po_core. By structuring the grounds for user interventions recorded in Po_trace, we can understand how human ethics tend to intervene in meaning evolution.
 
 ## 2. Categories
+
 | Category | Label (JP) | Description (EN) |
 | :-- | :-- | :-- |
 | meaning | 論理飛躍 | Output felt like a leap in logic or lacked continuity. |
@@ -17,6 +19,7 @@ This document defines a standard classification dictionary for `interference_log
 | aesthetic | 表現が不快 | Tone, metaphors, or style felt inappropriate or unpleasant. |
 
 ## 3. GUI Usage & Example Record
+
 Example format:
 
 ```json

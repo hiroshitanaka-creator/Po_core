@@ -8,6 +8,7 @@ Solar Willは「意志」をモデル化する。
 外部から観測される行動(tensor)ではなく、内部から生じる動機(will)を表現する。
 
 6つの意志次元:
+
 - **autonomy**: 自己決定への欲求
 - **exploration**: 可能性探索への欲求
 - **preservation**: 一貫性維持への欲求

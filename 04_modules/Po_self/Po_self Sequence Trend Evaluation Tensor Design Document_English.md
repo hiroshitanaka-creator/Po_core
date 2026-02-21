@@ -19,16 +19,16 @@ This design document defines the tensor structure `T_chain_profile`, enabling Po
   "profile_tag": "recovery_drift"
 }
 3. Field Definitions and Meaning
-Item Name	Type / Example Value	Meaning / Usage
-chain_id	string / JCX_002	Unique identifier for the target jump sequence
-steps	list[int]	List of step IDs in the sequence
-avg_priority_delta	float	Average of Δ_priority
-avg_ethics_delta	float	Average of Δ_ethics
-avg_semantic_delta	float	Average of semantic_delta
-avg_expression_delta	float	Average of Δ_expression_mode
-dominant_outcome_type	string	Most frequent outcome_type (relieved, escalated, etc.)
-trend_vector	list[↑↓→]	Direction of change for priority, ethics, semantic, expression
-profile_tag	string	Feature classification of the sequence (e.g., recovery_drift)
+Item Name Type / Example Value Meaning / Usage
+chain_id string / JCX_002 Unique identifier for the target jump sequence
+steps list[int] List of step IDs in the sequence
+avg_priority_delta float Average of Δ_priority
+avg_ethics_delta float Average of Δ_ethics
+avg_semantic_delta float Average of semantic_delta
+avg_expression_delta float Average of Δ_expression_mode
+dominant_outcome_type string Most frequent outcome_type (relieved, escalated, etc.)
+trend_vector list[↑↓→] Direction of change for priority, ethics, semantic, expression
+profile_tag string Feature classification of the sequence (e.g., recovery_drift)
 
 4. Usage in Po_self
 Po_self can tensorially evaluate the entire sequence and adjust reconstruction or memory retention pressure corresponding to specific trends (e.g., semantic_surge, ethics_recovery).

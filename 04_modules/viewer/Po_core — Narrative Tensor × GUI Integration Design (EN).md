@@ -1,9 +1,11 @@
 # **Po_core — Narrative Tensor × GUI Integration Design**
 
 ## **1. Overview**
+
 This design integrates output control for the semantic-evolution journal (“narrative tensor”) with the Viewer GUI so users can adjust expression density (`expression_mode`).
 
 ## **2. Target Modules**
+
 | Function | Module | Role |
 | :-- | :-- | :-- |
 | Journal generation | `journal_generator()` | Mode-specific journal text (structure / narrative / poetic) |
@@ -12,13 +14,16 @@ This design integrates output control for the semantic-evolution journal (“nar
 | Expression templates | `expression_map.json` | Vocabulary sets and correction scalars per mode |
 
 ## **3. Slider + Journal Link**
-- Streamlit slider sets `expression_mode` (`structure / medium / poetic`)  
+
+- Streamlit slider sets `expression_mode` (`structure / medium / poetic`)
 - Based on the mode, set background color, preview content, and call `journal_generator()`
 
 ## **4. Link with Po_self Pressure Correction**
+
 Adjust `priority_score` by journal mode:
-- structure → ×1.00  
-- medium → ×1.15  
+
+- structure → ×1.00
+- medium → ×1.15
 - poetic → ×1.30
 
 ```
@@ -31,6 +36,7 @@ adjusted_priority = base_score * (1 + expression_scaling[expression_mode])
 ```
 
 ## **5. Example Record in Po_trace**
+
 ```json
 {
   "step_id": "214",
@@ -42,4 +48,5 @@ adjusted_priority = base_score * (1 + expression_scaling[expression_mode])
 ```
 
 ## **6. Significance**
+
 The Viewer jointly controls “strength of narration” and “evolutionary pressure,” letting users select the structure–poetry balance that matches their goals.

@@ -17,20 +17,20 @@ Ver.2.1 strengthens visualization/analysis/evaluation around the freedom-respons
 
 ## **3. Comment Templates (by `G_gap`)**
 
-- `> 0.2` — Medium narrative, but high structural responsibility.  
-- `≈ 0` — Expression density matches responsibility.  
+- `> 0.2` — Medium narrative, but high structural responsibility.
+- `≈ 0` — Expression density matches responsibility.
 - `< -0.1` — Poetic output with small structural effect.
 
 ## **4. Invalidation Labels (Examples)**
 
-- “Decorative Narration?” — Poetic but structurally light.  
+- “Decorative Narration?” — Poetic but structurally light.
 - “No Structural Contribution” — No visible change in priority/ethics.
 
 ## **5. Trend View (F_P & F_cum)**
 
-- X: `step_id`  
-- Y: responsibility pressure (**F_P**)  
-- Line 1: **F_P**  
+- X: `step_id`
+- Y: responsibility pressure (**F_P**)
+- Line 1: **F_P**
 - Line 2: **F_cum**
 
 ## **6. Outlook**

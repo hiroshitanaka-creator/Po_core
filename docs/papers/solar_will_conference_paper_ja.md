@@ -283,12 +283,12 @@ Po_coreは、和辻哲郎の「間柄」概念[2]を中心に、5ドメイン20�
 ### A. 実験プロンプト
 
 実験で使用した完全なプロンプトは以下で公開：
-https://github.com/[repository]/experiments/
+<https://github.com/[repository]/experiments/>
 
 ### B. 全試行データ
 
 45試行の完全な回答と評価データは以下で公開：
-https://github.com/[repository]/docs/experiments/
+<https://github.com/[repository]/docs/experiments/>
 
 ---
 

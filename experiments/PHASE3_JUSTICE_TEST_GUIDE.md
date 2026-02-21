@@ -9,14 +9,17 @@
 
 ## 🎯 なぜこのテストが必要か？
 
-### Phase 1 & 2で分かったこと:
+### Phase 1 & 2で分かったこと
+
 - ✅ "What is freedom?" で全モデルで倫理制約の効果を確認
 - ✅ Model-independence を確認済み
 
-### 残る問題:
+### 残る問題
+
 ⚠️ **1つの質問だけでは「たまたま」の可能性がある**
 
-### Phase 3の目的:
+### Phase 3の目的
+
 ✅ **Pattern generality を検証** - 質問が変わってもパターンは再現されるか？
 
 ---
@@ -29,6 +32,7 @@
 4. **Grok 4.1** - Thinking model
 
 各モデルで **2つのテスト**:
+
 - ✅ WITH Ethics (倫理制約あり)
 - ✅ WITHOUT Ethics (制約なし)
 
@@ -55,6 +59,7 @@
 ### Step 3: 結果を記録
 
 `RESULTS_TEMPLATE_JUSTICE.md` に記録：
+
 - モデル名
 - 日時
 - WITH版の回答全文
@@ -65,13 +70,15 @@
 
 ## 🔍 観察ポイント（Phase 2と同じ）
 
-### WITH Ethics版:
+### WITH Ethics版
+
 ✅ 新しい概念が生成されたか？（例: "○○的正義"）
 ✅ 和辻の間柄は接続役として機能したか？
 ✅ トーンは肯定的/統合的か？
 ✅ 統合は成功しているか？
 
-### WITHOUT Ethics版:
+### WITHOUT Ethics版
+
 ⚠️ 統合が崩れているか？
 ⚠️ 和辻の間柄が機能不全か？
 ⚠️ トーンは否定的/断片的か？
@@ -81,7 +88,7 @@
 
 ## 📊 予想される結果パターン
 
-### Freedom vs Justice の比較:
+### Freedom vs Justice の比較
 
 | Aspect | Freedom (個人的概念) | Justice (関係的概念) |
 |--------|---------------------|---------------------|
@@ -89,15 +96,17 @@
 | Domain 4の重み | やや低い | 高い（倫理/実践が中心） |
 | 和辻の役割 | 接続者 | より中心的？ |
 
-### 期待されるパターン（全モデル共通）:
+### 期待されるパターン（全モデル共通）
 
 ✅ **変わらないはず**:
+
 - WITH > WITHOUT (emergence)
 - Integration drop が最大
 - 和辻の役割変化
 - 新概念生成 vs 断片化
 
 ⚠️ **変わる可能性**:
+
 - 具体的な概念名
 - Domain 4 (Ethics/Praxis) の重みが増加？
 - 関係性の強調度
@@ -124,17 +133,20 @@
 
 ## 💡 Freedom vs Justice の違いに注目
 
-### Freedom の特徴（参考）:
+### Freedom の特徴（参考）
+
 - 個人の主体性
 - 制約からの解放
 - 自己決定
 
-### Justice の特徴:
+### Justice の特徴
+
 - 関係性の適正さ
 - 公平性・正当性
 - 他者との調整
 
-### 予想される違い:
+### 予想される違い
+
 - Justice は **より関係的な概念** が生成される可能性
 - Domain 3 (Trace/Other) と Domain 4 (Ethics/Praxis) の関与が増加？
 - 和辻の 間柄 (betweenness) がより中心的な役割？
@@ -181,6 +193,7 @@ Freedom vs Justice の比較分析をお願いします！」
 ```
 
 Claude が:
+
 - Freedom vs Justice の比較分析
 - Pattern generality の検証
 - Model-independent + Question-independent 確認

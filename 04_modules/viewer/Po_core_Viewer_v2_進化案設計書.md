@@ -16,25 +16,25 @@
 
 ### **3.1 🧭 操作圧履歴ゾーン**
 
-Viewerに、reason.category × 時間 × 圧（confidence × level）で構成されるヒートマップを表示。  
+Viewerに、reason.category × 時間 × 圧（confidence × level）で構成されるヒートマップを表示。
 例：棒グラフ、ヒートブロック、時系列パネルにより、どのカテゴリへの干渉が多かったかを視覚化。
 
 ### **3.2 🔗 因果的干渉ゾーン**
 
-Po\_traceステップ間に、操作による影響（contextual influence path）をエッジとして記録し、ネットワーク図または因果線チャートで表示。  
+Po\_traceステップ間に、操作による影響（contextual influence path）をエッジとして記録し、ネットワーク図または因果線チャートで表示。
 例：「この出力は Step: explanation\_3 の共鳴不足 (R03) により方向が変わった」
 
 ### **3.3 ⏳ 時間鮮度ゾーン**
 
-reason\_confidence の decay 状態と現在の Po\_self priority\_score の差分をカードごとに表示。  
+reason\_confidence の decay 状態と現在の Po\_self priority\_score の差分をカードごとに表示。
 例：「🕒 confidence 0.84 → 0.71 / 再構成優先度 \+10.5%」
 
 ## **4\. Viewerとしての機能的転換**
 
-Po\_core Viewer は v1.0 において『出力結果の並列確認ツール』であった。  
+Po\_core Viewer は v1.0 において『出力結果の並列確認ツール』であった。
 v2.0 では以下のように本質的な転位を果たす：
 
-・見る → 語る  
-・並べる → 繋ぐ  
-・記録する → 再現する  
-・操作履歴を“後追い” → 人間との“倫理共進化地図”として提示  
+・見る → 語る
+・並べる → 繋ぐ
+・記録する → 再現する
+・操作履歴を“後追い” → 人間との“倫理共進化地図”として提示

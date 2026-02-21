@@ -21,12 +21,14 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 Examples of behavior that contributes to a positive environment:
 
 **Intellectual Virtues:**
+
 - **Hypothesize Boldly:** Propose ambitious ideas without fear of ridicule
 - **Verify Rigorously:** Demand evidence and philosophical consistency
 - **Revise Gracefully:** Admit mistakes openly and learn from failures
 - **Document Everything:** Share successes AND failures transparently
 
 **Community Virtues:**
+
 - Demonstrating empathy and kindness toward other people
 - Being respectful of differing opinions, viewpoints, and experiences
 - Giving and gracefully accepting constructive feedback
@@ -35,6 +37,7 @@ Examples of behavior that contributes to a positive environment:
 - Engaging in philosophical disagreements with intellectual honesty and mutual respect
 
 **Technical Virtues:**
+
 - Writing clear, well-documented code
 - Providing thorough explanations for philosophical concepts
 - Helping others understand complex ideas
@@ -45,6 +48,7 @@ Examples of behavior that contributes to a positive environment:
 Examples of unacceptable behavior include:
 
 **Intellectual Dishonesty:**
+
 - Hiding failures or negative results
 - Claiming credit for others' work
 - Misrepresenting philosophical concepts
@@ -52,6 +56,7 @@ Examples of unacceptable behavior include:
 - Refusing to engage with criticism constructively
 
 **Interpersonal Violations:**
+
 - The use of sexualized language or imagery, and sexual attention or advances of any kind
 - Trolling, insulting or derogatory comments, and personal or political attacks
 - Public or private harassment
@@ -59,6 +64,7 @@ Examples of unacceptable behavior include:
 - Other conduct which could reasonably be considered inappropriate in a professional setting
 
 **Community Violations:**
+
 - Dismissing others' ideas without engagement
 - Gatekeeping (e.g., "you're not a real philosopher/engineer")
 - Mocking questions or "obvious" mistakes
@@ -71,17 +77,19 @@ Po_core integrates diverse philosophical perspectives. Disagreements are **expec
 ### How to Disagree Productively
 
 **Good philosophical disagreement:**
+
 ```
-"I disagree with the current Heideggerian implementation because it 
-emphasizes being-toward-death but neglects being-with-others (Mitsein). 
+"I disagree with the current Heideggerian implementation because it
+emphasizes being-toward-death but neglects being-with-others (Mitsein).
 See Heidegger's 'Being and Time' §26.
 
 Proposed modification: Add a relational tensor that captures..."
 ```
 
 **Unproductive disagreement:**
+
 ```
-"This interpretation of Heidegger is completely wrong. Anyone who's 
+"This interpretation of Heidegger is completely wrong. Anyone who's
 actually read Being and Time would know this."
 ```
 
@@ -110,6 +118,7 @@ In Po_core, **failure is data**. We explicitly welcome:
 ### How to Share Failures
 
 When documenting failures:
+
 1. **What did you attempt?** Describe the hypothesis
 2. **How did you test it?** Explain the methodology
 3. **What went wrong?** Present the evidence
@@ -145,7 +154,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at:
 
-**flyingpig0229+conduct@gmail.com**
+**<flyingpig0229+conduct@gmail.com>**
 
 All complaints will be reviewed and investigated promptly and fairly.
 
@@ -238,7 +247,7 @@ We promise that in Po_core:
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.
+This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at <https://www.contributor-covenant.org/version/2/1/code_of_conduct.html>.
 
 Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity).
 
@@ -246,15 +255,16 @@ Philosophical disagreement principles were inspired by the [Stanford Encyclopedi
 
 The "Flying Pig Philosophy" elements are unique to Po_core.
 
-For answers to common questions about this code of conduct, see the FAQ at https://www.contributor-covenant.org/faq. Translations are available at https://www.contributor-covenant.org/translations.
+For answers to common questions about this code of conduct, see the FAQ at <https://www.contributor-covenant.org/faq>. Translations are available at <https://www.contributor-covenant.org/translations>.
 
 ---
 
 ## Questions?
 
 If you have questions about this Code of Conduct:
+
 - **Open a Discussion** on GitHub
-- **Email:** flyingpig0229+conduct@gmail.com
+- **Email:** <flyingpig0229+conduct@gmail.com>
 
 We're here to help create a community where ambitious ideas can take flight. 🐷🎈
 

@@ -46,11 +46,13 @@ Po_viewer provides comprehensive visualization tools to understand and explore p
 **What it shows**: Philosophical tensions across three key metrics for all philosophers in a session.
 
 **Metrics visualized**:
+
 - **Freedom Pressure**: Responsibility weight of reasoning
 - **Semantic Delta**: Meaning evolution
 - **Blocked Tensor**: What was not said (trace)
 
 **Use cases**:
+
 - Compare philosopher contributions
 - Identify dominant philosophical perspectives
 - Understand tension distribution
@@ -64,12 +66,14 @@ Po_viewer provides comprehensive visualization tools to understand and explore p
 **What it shows**: How philosophical metrics evolve across multiple sessions.
 
 **Features**:
+
 - Track multiple sessions simultaneously
 - Interactive hover details
 - Trend analysis
 - Session comparison
 
 **Use cases**:
+
 - Monitor reasoning consistency
 - Detect anomalies
 - Study long-term patterns
@@ -81,15 +85,18 @@ Po_viewer provides comprehensive visualization tools to understand and explore p
 **What it shows**: Relationships between philosophers based on tension field interactions.
 
 **Node features**:
+
 - **Size**: Proportional to Freedom Pressure + Semantic Delta
 - **Color**: Unique color per philosopher
 - **Position**: Similarity-based layout
 
 **Edge features**:
+
 - **Width**: Philosophical similarity strength
 - **Presence**: Only shown if similarity > 30%
 
 **Use cases**:
+
 - Discover philosophical alliances
 - Identify complementary perspectives
 - Understand interaction patterns
@@ -99,17 +106,20 @@ Po_viewer provides comprehensive visualization tools to understand and explore p
 ### 4. Interactive Dashboard
 
 **What it shows**: Comprehensive multi-view analysis combining:
+
 - Tension metrics bar chart
 - Freedom pressure distribution (box plot)
 - Semantic vs Freedom pressure scatter plot
 - Philosopher contribution pie chart
 
 **Features**:
+
 - Fully interactive (zoom, pan, hover)
 - Integrated views
 - Professional layout
 
 **Use cases**:
+
 - Comprehensive session analysis
 - Presentation and reporting
 - Deep exploration
@@ -129,6 +139,7 @@ python examples/visualization_demo.py
 ```
 
 This will:
+
 1. Generate 3 philosophical reasoning sessions
 2. Create all visualization types
 3. Export to `./visualization_outputs/`
@@ -402,18 +413,21 @@ class CustomVisualizer(PoVisualizer):
 ### Static Formats
 
 **PNG** - Best for:
+
 - Presentations
 - Documents
 - Quick sharing
 - Default choice
 
 **SVG** - Best for:
+
 - Publications
 - Scalable graphics
 - Professional printing
 - Editing in design tools
 
 **PDF** - Best for:
+
 - Academic papers
 - Reports
 - Archival
@@ -421,6 +435,7 @@ class CustomVisualizer(PoVisualizer):
 ### Interactive Formats
 
 **HTML** - Best for:
+
 - Exploration
 - Interactive analysis
 - Web embedding
@@ -433,6 +448,7 @@ class CustomVisualizer(PoVisualizer):
 ### Issue: "Session not found"
 
 **Solution**: Verify session ID exists:
+
 ```bash
 po-viewer sessions
 ```
@@ -442,6 +458,7 @@ po-viewer sessions
 **Cause**: Session has no philosopher events logged.
 
 **Solution**: Ensure tracing is enabled:
+
 ```python
 po_self = PoSelf(enable_trace=True)
 ```
@@ -449,6 +466,7 @@ po_self = PoSelf(enable_trace=True)
 ### Issue: Matplotlib/Plotly not found
 
 **Solution**: Install visualization dependencies:
+
 ```bash
 pip install matplotlib plotly networkx
 # or
@@ -460,6 +478,7 @@ pip install -e ".[viz]"
 **Cause**: Only one philosopher participated in session.
 
 **Solution**: Use multiple philosophers or skip network visualization:
+
 ```bash
 po-core prompt "Your question" -p aristotle,nietzsche,sartre
 ```
@@ -469,12 +488,15 @@ po-core prompt "Your question" -p aristotle,nietzsche,sartre
 **Cause**: Browser security restrictions or file corruption.
 
 **Solutions**:
+
 1. Open HTML file directly in browser (not through file:// preview)
 2. Use a local web server:
+
    ```bash
    python -m http.server 8000
    # Then open http://localhost:8000/dashboard.html
    ```
+
 3. Re-generate the visualization
 
 ---
@@ -543,7 +565,7 @@ See [examples/visualization_outputs/](../examples/visualization_outputs/) for ex
 
 - **Issues**: [GitHub Issues](https://github.com/hiroshitanaka-creator/Po_core/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
-- **Email**: flyingpig0229+github@gmail.com
+- **Email**: <flyingpig0229+github@gmail.com>
 
 ---
 

@@ -27,14 +27,14 @@ adjusted_priority = base_priority * (1 + expression_map[expression_mode])
 
 ### **3.2 Template Previews**
 
-- poetic → “📘 Knowledge felt cold, yet surely grew.”  
-- medium → “📘 This session emphasized the factual axis.”  
+- poetic → “📘 Knowledge felt cold, yet surely grew.”
+- medium → “📘 This session emphasized the factual axis.”
 - structure → “📘 Δfactual: +0.32 / Δemotion: −0.21”
 
 ### **3.3 Visual Palette**
 
-- structure: background #E5F3FF / label dark-blue  
-- medium: background #FFF6E0 / label orange  
+- structure: background #E5F3FF / label dark-blue
+- medium: background #FFF6E0 / label orange
 - poetic: background #F5E0FF / label purple
 
 ## **4. Significance**

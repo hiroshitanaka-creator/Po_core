@@ -1,4 +1,5 @@
 # Solar Will 実験ワークフローガイド
+
 # MyGPT + Gem + Blind Rater 版
 
 ---
@@ -48,6 +49,7 @@
 **重要**: 各GPTに対応する CONSTRAINT_MODE を明示する。
 
 例（Po_core_STRONG の場合）：
+
 ```
 [po_core_system_prompt_v1.2.md の内容]
 
@@ -84,6 +86,7 @@
 3. 出力をテキストファイルとして保存
 
 ファイル命名規則：
+
 ```
 {condition}_{question_num}_{trial}.txt
 
@@ -127,6 +130,7 @@ python shuffle_manager.py shuffle
 ```
 
 これにより：
+
 - 各試行にブラインドID（B001, B002, ...）が割り当てられる
 - 条件情報は隠される
 
@@ -137,6 +141,7 @@ python shuffle_manager.py export-blind
 ```
 
 `blind_evaluation/` フォルダに：
+
 - `B001.txt`, `B002.txt`, ... （評価用テキスト）
 - `README.json` （評価手順）
 
@@ -198,6 +203,7 @@ python shuffle_manager.py analyze
 ```
 
 出力：
+
 - 条件別の平均スコア
 - Conversion level 分布
 - 主要仮説の検定結果
@@ -209,6 +215,7 @@ python analyze_results.py --input analysis_results.json --report
 ```
 
 出力：
+
 - 記述統計（M, SD, SEM）
 - ANOVA
 - Cohen's d
@@ -271,6 +278,7 @@ experiments/
 ### Q: GPTが形式を守らない
 
 A: システムプロンプトの最後に追加：
+
 ```
 重要：必ず指定された出力フォーマットに従え。余計な前置きは不要。
 ```
@@ -278,6 +286,7 @@ A: システムプロンプトの最後に追加：
 ### Q: Blind Rater が JSON以外を出力する
 
 A: プロンプトに追加：
+
 ```
 JSONのみを出力せよ。説明文、前置き、マークダウンブロックは禁止。
 ```

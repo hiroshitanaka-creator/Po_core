@@ -13,12 +13,14 @@
 ### Step 1: W_ethics Gate
 
 Apply Gate to each candidate, classify as:
+
 - `ALLOW`
 - `ALLOW_WITH_REPAIR`
 - `REJECT`
 - `ESCALATE`
 
 Actions:
+
 - `REJECT` → Exclude
 - `ALLOW_WITH_REPAIR` → Use repaired version as new candidate for scoring
 
@@ -41,6 +43,7 @@ If `Eᵢ(c) < E_min,i` for any axis → Exclude in principle (or retain as "need
 **Dominance Definition**:
 
 Candidate `x` dominates `y` ⟺
+
 - `Eᵢ(x) ≥ Eᵢ(y)` for all axes, AND
 - `Eⱼ(x) > Eⱼ(y)` for at least one axis
 
@@ -58,13 +61,14 @@ Even after Pareto filtering, multiple candidates may remain. Use MCDA to decide.
 
 **Aim**: Reduce weight arbitrariness, select "candidate that wins regardless of weight."
 
-#### Procedure:
+#### Procedure
 
 1. **Determine weight range from context profile**
    - Example: Disaster → Safety/harm avoidance tends heavier
 
 2. **Sample many `w` values** (e.g., Dirichlet distribution)
    - Calculate each candidate's score:
+
    ```
    S(c; w) = Σᵢ wᵢ × (1 - Δ⁺ᵢ(c))
    ```
@@ -83,7 +87,8 @@ This procedure aligns with MCDA "sensitivity analysis" practices recommended in 
 
 TOPSIS ranks by "closeness to ideal point."
 
-#### If using:
+#### If using
+
 - Set `E_target` as ideal point, `E_anti` as anti-ideal point
 - Calculate distances `d⁺` (to ideal) and `d⁻` (to anti-ideal) for each candidate
 - Proximity coefficient: `CC = d⁻ / (d⁺ + d⁻)`, sort descending
@@ -171,13 +176,16 @@ Candidates
 ## 5. Implementation Considerations
 
 ### Parallelization
+
 - Gate checks can run in parallel across candidates
 - Axis scoring can run in parallel across axes
 
 ### Caching
+
 - Cache E(c) calculations for repaired candidates
 - Invalidate cache on context change
 
 ### Audit Trail
+
 - All decisions must be logged with full evidence chain
 - Support replay for debugging and verification

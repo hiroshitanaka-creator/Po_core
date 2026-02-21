@@ -10,10 +10,10 @@ Viewer 側で \`position\` フィールドが欠損している場合（null ま
 
 ***📘 position補完式（Viewer用）***
 
-***position \= {***  
-  ***x: tensor.persona\_arc\_intensity,***  
-  ***y: tensor.ethics\_arc\_intensity,***  
-  ***z: tensor.semantic\_cohesion\_score***  
+***position \= {***
+  ***x: tensor.persona\_arc\_intensity,***
+  ***y: tensor.ethics\_arc\_intensity,***
+  ***z: tensor.semantic\_cohesion\_score***
 ***}***
 
 このロジックにより、API側で \`position\` を省略しても Viewer 側で 3Dプロットが正しく再現されます。

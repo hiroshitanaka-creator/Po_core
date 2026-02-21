@@ -15,33 +15,33 @@
 
 ## **3\. GUIスライダー実装とjournal連動**
 
-\- Streamlitスライダーで expression\_mode を設定（structure / medium / poetic）  
+\- Streamlitスライダーで expression\_mode を設定（structure / medium / poetic）
 \- そのモードを元に background\_color / プレビュー表示 / journal\_generator() を呼び出し
 
 ## **4\. Po\_self圧力補正連動**
 
-journal出力のモードに応じて priority\_score を補正：  
-structure → ×1.00  
-medium → ×1.15  
+journal出力のモードに応じて priority\_score を補正：
+structure → ×1.00
+medium → ×1.15
 poetic → ×1.30
 
-***expression\_scaling \= {***  
-    ***"structure": 0.00,***  
-    ***"medium": 0.15,***  
-    ***"poetic": 0.30***  
-***}***  
+***expression\_scaling \= {***
+    ***"structure": 0.00,***
+    ***"medium": 0.15,***
+    ***"poetic": 0.30***
+***}***
 ***adjusted\_priority \= base\_score \* (1 \+ expression\_scaling\[expression\_mode\])***
 
 ## **5\. 表示構造例とテンソル出力**
 
 Po\_traceテンソル内に以下のように記録される：
 
-{  
-  "step\_id": "214",  
-  "journal\_mode": "medium",  
-  "journal\_confidence": 0.72,  
-  "expression\_scaling": 0.15,  
-  "journal\_text": "Po\_coreはこの過程で factual 軸を補強し..."  
+{
+  "step\_id": "214",
+  "journal\_mode": "medium",
+  "journal\_confidence": 0.72,
+  "expression\_scaling": 0.15,
+  "journal\_text": "Po\_coreはこの過程で factual 軸を補強し..."
 }
 
 ## **6\. 最終意義と展望**

@@ -5,6 +5,7 @@
 ## What You'll Build
 
 By the end of this tutorial, you'll have built:
+
 1. A basic philosophical reasoning system
 2. A custom philosopher selector
 3. A simple ethical decision-making tool
@@ -98,7 +99,7 @@ if __name__ == "__main__":
     main()
 ```
 
-### Step 4: Run It!
+### Step 4: Run It
 
 ```bash
 python my_first_po.py
@@ -185,6 +186,7 @@ python philosopher_comparison.py
 ```
 
 **💡 Observation Exercise:**
+
 - Notice how different groups emphasize different aspects
 - Which group's "Freedom Pressure" is highest? Why might that be?
 - Does the consensus leader change across groups?
@@ -413,6 +415,7 @@ python philosophy_explorer.py
 ```
 
 **🚀 Try asking:**
+
 - "What is the relationship between freedom and responsibility?"
 - "How should we define justice in the digital age?"
 - "What makes a life meaningful?"
@@ -437,17 +440,20 @@ Congratulations! You've learned how to:
 ### Explore More Features
 
 1. **Web API Server**
+
    ```bash
    python examples/web_api_server.py
    # Visit http://localhost:8000
    ```
 
 2. **Batch Processing**
+
    ```bash
    python examples/batch_analyzer.py
    ```
 
 3. **Po_Party - Interactive Party Machine**
+
    ```bash
    po-core party
    ```
@@ -473,6 +479,7 @@ Found a bug? Have an idea? We'd love your contribution!
 ### Issue: Import errors
 
 **Solution:**
+
 ```bash
 # Make sure you're in the Po_core directory
 export PYTHONPATH=$PWD/src:$PYTHONPATH
@@ -487,6 +494,7 @@ pip install -e .
 ### Issue: Performance is slow
 
 **Solution:** Disable tracing for faster responses:
+
 ```python
 po = PoSelf(enable_trace=False)
 ```
@@ -495,7 +503,7 @@ po = PoSelf(enable_trace=False)
 
 ## Get Help
 
-- 📧 Email: flyingpig0229+github@gmail.com
+- 📧 Email: <flyingpig0229+github@gmail.com>
 - 💬 [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
 - 📚 [Documentation](../README.md)
 

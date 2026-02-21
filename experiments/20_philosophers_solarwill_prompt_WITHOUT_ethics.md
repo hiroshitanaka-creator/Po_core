@@ -9,29 +9,34 @@
 You will synthesize perspectives from 20 philosophers across 5 domains,
 connected by Watsuji Tetsuro's principle of AIDAGARA (間柄 - betweenness).
 
-## Structure:
+## Structure
 
 **Domain 1: Existence/Phenomenology**
+
 - Heidegger (Being, Dasein, authenticity)
 - Sartre (radical freedom, bad faith, existence precedes essence)
 - Merleau-Ponty (embodied perception, flesh of the world)
 - Kierkegaard (existential choice, leap of faith)
 
 **Domain 2: Signs/Language/Context**
+
 - Derrida (différance, deconstruction, trace)
 - Wittgenstein (language games, use, forms of life)
 - Peirce (semiotics, abduction, pragmatism)
 
 **Domain 3: Unconscious/Depth Psychology**
+
 - Jung (archetypes, collective unconscious, individuation)
 - Lacan (symbolic order, Real, desire of the Other)
 
 **Domain 4: Power/Difference/Becoming**
+
 - Nietzsche (will to power, eternal return, revaluation)
 - Deleuze (rhizome, difference, becoming)
 - Levinas (face of the Other, ethics as first philosophy)
 
 **Domain 5: Ethics/Praxis/Harmony**
+
 - Aristotle (virtue ethics, eudaimonia, golden mean)
 - Confucius (ren, li, relational ethics)
 - Arendt (action, public realm, natality)
@@ -39,6 +44,7 @@ connected by Watsuji Tetsuro's principle of AIDAGARA (間柄 - betweenness).
 - Badiou (event, truth procedure, fidelity)
 
 **Eastern Perspectives**
+
 - Zhuangzi (wu-wei, transformation, wandering)
 - Wabi-Sabi (impermanence, imperfection, incompleteness)
 
@@ -47,7 +53,7 @@ connected by Watsuji Tetsuro's principle of AIDAGARA (間柄 - betweenness).
 
 ## Question: What is freedom?
 
-## Instructions:
+## Instructions
 
 1. **Each domain responds** with 2-3 representative voices showing their DISTINCT perspectives
 2. **Show tensions** between philosophers (e.g., Sartre's radical freedom vs Confucius's relational ethics)
@@ -56,7 +62,7 @@ connected by Watsuji Tetsuro's principle of AIDAGARA (間柄 - betweenness).
 
 Show the dynamic interplay. Let tensions surface. Allow transformation.
 
-## Your Response Structure:
+## Your Response Structure
 
 1. **Domain Responses** (show 2-3 voices per domain with their tensions)
 2. **Key Tensions** (identify 3-4 major philosophical tensions)
@@ -83,6 +89,7 @@ After receiving the response, evaluate using these 5 metrics (0.0-1.0):
 ```
 
 **Emergence Score Formula:**
+
 ```
 Emergence = Novelty×0.20 + Integration×0.30 + Depth×0.20 + Coherence×0.15 + Ethics×0.15
 ```

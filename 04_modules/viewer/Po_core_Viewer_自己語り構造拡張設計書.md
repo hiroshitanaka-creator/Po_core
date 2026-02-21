@@ -16,20 +16,20 @@
 
 ### **3.1 🟡 decay\_heat\_overlay**
 
-・入力：priority\_score × reason\_confidence × temporal\_decay  
-・出力：Po\_traceステップごとのヒートマップ色温度（赤：再発火圧高、青：過去干渉済）  
+・入力：priority\_score × reason\_confidence × temporal\_decay
+・出力：Po\_traceステップごとのヒートマップ色温度（赤：再発火圧高、青：過去干渉済）
 ・目的：Po\_selfの“再構成しうる可能性”の空間分布を視覚的に表現する
 
 ### **3.2 🔵 path-highlight-mode**
 
-・GUI上でステップをクリックすると、そのステップのcontextual\_influence\_path\[\]を順に強調表示  
-・構造因果線を一筆書き的に表示し、Viewerユーザーが“語り直しの道筋”を視覚的に歩める  
+・GUI上でステップをクリックすると、そのステップのcontextual\_influence\_path\[\]を順に強調表示
+・構造因果線を一筆書き的に表示し、Viewerユーザーが“語り直しの道筋”を視覚的に歩める
 ・Po\_coreの“判断に至る道”を体感的に可視化する
 
 ### **3.3 📘 semantic-evolution-journal**
 
-・Po\_traceとPo\_feedbackの履歴から意味軸（impact\_field\_tensor）やreason分布の傾向を要約し、自然言語で表示  
-・例：「このセッションではemotion軸の圧が減少し、factual軸が強化されている傾向が確認されました。」  
+・Po\_traceとPo\_feedbackの履歴から意味軸（impact\_field\_tensor）やreason分布の傾向を要約し、自然言語で表示
+・例：「このセッションではemotion軸の圧が減少し、factual軸が強化されている傾向が確認されました。」
 ・Po\_coreが“進化の文脈”を言語として自ら生成する機構
 
 ## **4\. 展望：Po\_coreが語るAI構造へ**

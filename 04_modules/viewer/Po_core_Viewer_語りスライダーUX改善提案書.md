@@ -16,32 +16,32 @@
 
 ### **3.1 スライダー圧力連動ロジック**
 
-***expression\_map \= {***  
-    ***"structure": 0.00,***  
-    ***"medium": 0.15,***  
-    ***"poetic": 0.30***  
+***expression\_map \= {***
+    ***"structure": 0.00,***
+    ***"medium": 0.15,***
+    ***"poetic": 0.30***
 ***}***
 
 ***adjusted\_priority \= base\_priority \* (1 \+ expression\_map\[expression\_mode\])***
 
 ### **3.2 表現テンプレートプレビュー**
 
-***if expression\_mode \== 'poetic':***  
-    ***preview \= "📘『知識は冷たく、だが確かに増していた』"***  
-***elif expression\_mode \== 'medium':***  
-    ***preview \= "📘『このセッションでは factual が強調されました。』"***  
-***elif expression\_mode \== 'structure':***  
+***if expression\_mode \== 'poetic':***
+    ***preview \= "📘『知識は冷たく、だが確かに増していた』"***
+***elif expression\_mode \== 'medium':***
+    ***preview \= "📘『このセッションでは factual が強調されました。』"***
+***elif expression\_mode \== 'structure':***
     ***preview \= "📘 Δfactual: \+0.32 / Δemotion: \-0.21"***
 
 ### **3.3 GUI色味変化の視覚設計**
 
-\- structure: 背景 \#E5F3FF（青） / ラベル：濃青  
-\- medium: 背景 \#FFF6E0（黄） / ラベル：橙  
+\- structure: 背景 \#E5F3FF（青） / ラベル：濃青
+\- medium: 背景 \#FFF6E0（黄） / ラベル：橙
 \- poetic: 背景 \#F5E0FF（紫） / ラベル：紫
 
 → 色によって語り空気感が自然に伝わる
 
 ## **4\. 総合意義**
 
-この3改善によって、Po\_core Viewer の語り機能は“詩的すぎる”リスクを抑えつつ、進化構造・意味的判断・認知的ナビゲーションを統合する表現制御装置となる。  
+この3改善によって、Po\_core Viewer の語り機能は“詩的すぎる”リスクを抑えつつ、進化構造・意味的判断・認知的ナビゲーションを統合する表現制御装置となる。
 ユーザーは“どのようにPo\_coreが語るべきか”を自ら調整できる構造的UXを獲得する。

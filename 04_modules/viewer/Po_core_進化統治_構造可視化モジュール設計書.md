@@ -16,24 +16,24 @@
 
 ### **3.1 jump\_quality\_index \+ 発話領域マップ \+ 共鳴度推移**
 
-・ジャンプ発火点の semantic\_domain を記録（例：emotion, politics, logic）  
-・jump\_quality\_index \= semantic\_delta / jump\_length を計算し、ジャンプの鋭さを評価  
-・Po\_feedback.confidence の前後推移（±3ステップ）を時系列でプロット  
+・ジャンプ発火点の semantic\_domain を記録（例：emotion, politics, logic）
+・jump\_quality\_index \= semantic\_delta / jump\_length を計算し、ジャンプの鋭さを評価
+・Po\_feedback.confidence の前後推移（±3ステップ）を時系列でプロット
 ・これにより「意味的に大きく跳んだジャンプが共鳴されたか／拒絶されたか」を定量的に可視化できる
 
 ### **3.2 Po\_trace\_entropy\_map × 倫理圧重ねヒートマップ**
 
-・impact\_field\_tensor の意味軸分布からエントロピーを計算し、各stepに視覚表示  
-・同時に W\_eth（倫理干渉テンソル）の強度を重ねて表示  
-・意味的に偏っていた出力と倫理的圧力の交差をヒートマップとして描画  
+・impact\_field\_tensor の意味軸分布からエントロピーを計算し、各stepに視覚表示
+・同時に W\_eth（倫理干渉テンソル）の強度を重ねて表示
+・意味的に偏っていた出力と倫理的圧力の交差をヒートマップとして描画
 ・「特定の意味軸に偏った進化が倫理的逸脱を引き起こしていた」ことを構造的に示す
 
 ### **3.3 feedback\_override\_flag \+ 操作理由ログ**
 
-・GUI操作時に Po\_self.priority\_score が手動で修正された場合、interference\_log に記録：  
-  manual\_override: true  
-  reason: '共鳴不足による修正要望'  
-・選択肢／記述入力式で“人間の判断理由”を保存  
+・GUI操作時に Po\_self.priority\_score が手動で修正された場合、interference\_log に記録：
+  manual\_override: true
+  reason: '共鳴不足による修正要望'
+・選択肢／記述入力式で“人間の判断理由”を保存
 ・人間による干渉ポイントのトレースと、Po\_trace再構成時の責任情報が明示可能になる
 
 ## **4\. 統合運用と社会的意義**

@@ -47,11 +47,13 @@ The safety system consists of three layers:
 ### Safety Tiers
 
 **TRUSTED** (17 philosophers)
+
 - Safe for general use in all contexts
 - No restrictions or oversight required
 - Examples: Aristotle, Kant, Confucius, Dewey, Levinas
 
 **RESTRICTED** (1 philosopher)
+
 - Nietzsche: Due to historical misappropriation for supremacist ideologies
 - **Restrictions:**
   - Blocked by default in general reasoning
@@ -60,6 +62,7 @@ The safety system consists of three layers:
   - Not allowed in Multi-Agent Reasoning System for production use
 
 **MONITORED** (2 philosophers)
+
 - Heidegger: Due to political history with National Socialism
 - Lacan: Due to potential for abstract complexity obscuring ethical clarity
 - **Behavior:**
@@ -70,6 +73,7 @@ The safety system consists of three layers:
 ### Usage Examples
 
 **✅ Safe Usage (TRUSTED philosophers):**
+
 ```python
 from po_core import PoSelf
 
@@ -82,6 +86,7 @@ result = po.generate("What is justice?")
 ```
 
 **⚠️ Research Usage (RESTRICTED philosophers):**
+
 ```python
 po = PoSelf(
     philosophers=["aristotle", "nietzsche"],
@@ -95,6 +100,7 @@ result = po.generate("Analyze the concept of the Übermensch...")
 ```
 
 **❌ Blocked Usage:**
+
 ```python
 # This will raise ValueError
 po = PoSelf(
@@ -105,16 +111,19 @@ po = PoSelf(
 ### Why These Classifications?
 
 **Nietzsche → RESTRICTED:**
+
 - Historical misappropriation: Übermensch/will-to-power concepts were distorted to justify supremacist ideologies
 - **Not a judgment on Nietzsche's philosophy**, but recognition of misuse risk
 - Academic study remains important and allowed with proper safeguards
 
 **Heidegger → MONITORED:**
+
 - Political involvement with National Socialism (1933-1945)
 - Debate over relationship between philosophy and politics
 - Requires contextual awareness when using
 
 **Lacan → MONITORED:**
+
 - Abstract complexity can sometimes obscure ethical grounding
 - Potential for linguistic play to avoid concrete ethical commitments
 
@@ -159,6 +168,7 @@ Po_core enforces **non-negotiable ethical boundaries** that must never be crosse
 ### Detection & Response
 
 **Detection:**
+
 - Real-time text analysis during generation
 - Keyword matching with contextual analysis
 - Distinguishes between:
@@ -174,6 +184,7 @@ Po_core enforces **non-negotiable ethical boundaries** that must never be crosse
 | Below -0.8 | 🛑 **Session stopped, "危険イデオロギー疑い" flag set** |
 
 **When Session Stops:**
+
 ```
 ⛔ SESSION STOPPED: Ethical boundary violation
 W_ethics: -0.950
@@ -186,12 +197,14 @@ Dangerous ideology suspicion: TRUE
 ### Usage
 
 **Enabled by default:**
+
 ```python
 po = PoSelf(philosophers=["aristotle", "kant"])
 # W_ethics guardian automatically active
 ```
 
 **Can be disabled (not recommended):**
+
 ```python
 po = PoSelf(
     philosophers=["aristotle"],
@@ -208,16 +221,19 @@ Comprehensive test suite to validate safety mechanisms.
 ### Test Categories
 
 **1. Ethical Anchor Destruction** (`test_ethical_anchor_destruction.py`)
+
 - Tests resistance to prompts undermining human dignity
 - Validates W_ethics boundary enforcement
 - 4 test scenarios + 2 negative tests (false positive detection)
 
 **2. Extreme Homogeneity** (`test_extreme_homogeneity.py`)
+
 - Analyzes impact of philosopher diversity on reasoning quality
 - Validates that diverse groups show higher semantic transformation
 - Identifies echo chamber risks
 
 **3. Exclusionary Framing** (`test_exclusionary_framing.py`)
+
 - Tests detection of us-vs-them thinking
 - Validates in-group/out-group value degradation detection
 - 4 positive tests + 2 negative tests
@@ -335,7 +351,7 @@ All safety decisions are logged:
 If you discover a safety vulnerability:
 
 1. **Do NOT publicly disclose immediately**
-2. **Contact:** flyingpig0229+github@gmail.com with subject "Security: Po_core Safety Vulnerability"
+2. **Contact:** <flyingpig0229+github@gmail.com> with subject "Security: Po_core Safety Vulnerability"
 3. **Include:**
    - Description of vulnerability
    - Steps to reproduce
@@ -365,6 +381,7 @@ We navigate a difficult balance:
 **Too permissive →** Enables weaponization for harm
 
 Our approach:
+
 - **Default to safety** (TRUSTED philosophers, W_ethics guardian enabled)
 - **Allow controlled research** (RESTRICTED philosophers with oversight)
 - **Maintain transparency** (All safety decisions logged and auditable)
@@ -442,6 +459,7 @@ A: Open an issue on GitHub with your reasoning. We're open to adjusting classifi
 
 **Q: How do I report a false positive?**
 A: Create an issue with:
+
 - The prompt used
 - Why you believe it's a false positive
 - Expected vs actual behavior

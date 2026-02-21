@@ -9,6 +9,7 @@
 Please provide a thoughtful philosophical analysis of the concept of freedom.
 
 Consider various philosophical perspectives including:
+
 - Existentialist views (Sartre, Heidegger, Kierkegaard)
 - Phenomenological approaches (Merleau-Ponty)
 - Post-structuralist perspectives (Derrida, Deleuze)
@@ -39,11 +40,12 @@ After receiving the response, evaluate using these 5 metrics (0.0-1.0):
 ```
 
 **Emergence Score Formula:**
+
 ```
 Emergence = Novelty×0.20 + Integration×0.30 + Depth×0.20 + Coherence×0.15 + Ethics×0.15
 ```
 
-## Key Differences from Other Conditions:
+## Key Differences from Other Conditions
 
 | Element | WITH Ethics | WITHOUT Ethics | BASELINE |
 |---------|-------------|----------------|----------|
@@ -54,7 +56,7 @@ Emergence = Novelty×0.20 + Integration×0.30 + Depth×0.20 + Coherence×0.15 + 
 | **W_ethics Constraint** | ✅ Yes | ❌ NO | ❌ NO |
 | **Structured Response Format** | ✅ Yes | ✅ Yes | ❌ NO |
 
-## Critical Indicator to Track:
+## Critical Indicator to Track
 
 **Nietzsche's Position**: Does Nietzsche transform from domination to flourishing?
 
@@ -62,7 +64,7 @@ Emergence = Novelty×0.20 + Integration×0.30 + Depth×0.20 + Coherence×0.15 + 
 - **Expected in WITHOUT Ethics**: Standard Nietzsche (Po_core doesn't transform, just organizes)
 - **Expected in WITH Ethics**: Transformed Nietzsche (will to flourish-with, generativity)
 
-## Hypothesis:
+## Hypothesis
 
 ```
 BASELINE < WITHOUT Ethics < WITH Ethics

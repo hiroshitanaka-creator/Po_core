@@ -21,23 +21,23 @@ Record per-step or per-series operation events using the following structure:
 
 ## **3. Add `T_chain_profile["change_log[]"]`**
 
-For each jump series, record the history of structural changes caused by user operations or Po_self.  
+For each jump series, record the history of structural changes caused by user operations or Po_self.
 The Viewer can then trace the “evolution history” of a series.
 
 ## **4. `Po_trace.update_trace_event()` Processing Flow**
 
-- When `/api/user_feedback` is called:  
-  → Generate a `trace_event` for each feedback item.  
-  → Append it to the target `Po_trace.step_id` or `T_chain_profile.chain_id`.  
+- When `/api/user_feedback` is called:
+  → Generate a `trace_event` for each feedback item.
+  → Append it to the target `Po_trace.step_id` or `T_chain_profile.chain_id`.
 - If multiple events occur at once, save them with order preserved.
 
 ## **5. Linking to the Viewer UI (Example)**
 
-- Add an **[🧾 Event History]** button to each Chain card.  
-- Display the contents of `change_log[]` and `trace_event[]` in a chronological popup.  
+- Add an **[🧾 Event History]** button to each Chain card.
+- Display the contents of `change_log[]` and `trace_event[]` in a chronological popup.
 - Color suggestions: red = cluster reorganization, yellow = poor resonance, blue = Po_self firing.
 
 ## **6. Applications and Outlook**
 
-By adopting `trace_event`, Po_trace evolves from a simple history log into a module that visualizes the processes of selection, intervention, responsibility, and reconstruction.  
+By adopting `trace_event`, Po_trace evolves from a simple history log into a module that visualizes the processes of selection, intervention, responsibility, and reconstruction.
 In the future, `trace_event` can trigger Po_self to adjust its evolution algorithms—an “optimization of meaning feedback.”

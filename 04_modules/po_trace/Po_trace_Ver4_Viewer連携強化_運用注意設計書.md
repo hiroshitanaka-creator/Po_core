@@ -8,38 +8,38 @@
 
 Viewer上でのカード表示に即利用可能な構造辞書を返すメソッド。
 
-***def as\_ui\_card(self) \-\> dict:***  
-    ***return {***  
-        ***"timestamp": self.timestamp.isoformat(),***  
-        ***"actor": self.actor\_id,***  
-        ***"source": self.source,***  
-        ***"event": self.event\_type,***  
-        ***"reason": {***  
-            ***"value": self.reason.value,***  
-            ***"label": self.reason.label,***  
-            ***"description": self.reason.description***  
-        ***},***  
-        ***"impact": {***  
-            ***"value": self.impact\_on\_chain.value,***  
-            ***"label": self.impact\_on\_chain.label,***  
-            ***"description": self.impact\_on\_chain.description***  
-        ***},***  
-        ***"chain\_id": self.chain\_id***  
+***def as\_ui\_card(self) \-\> dict:***
+    ***return {***
+        ***"timestamp": self.timestamp.isoformat(),***
+        ***"actor": self.actor\_id,***
+        ***"source": self.source,***
+        ***"event": self.event\_type,***
+        ***"reason": {***
+            ***"value": self.reason.value,***
+            ***"label": self.reason.label,***
+            ***"description": self.reason.description***
+        ***},***
+        ***"impact": {***
+            ***"value": self.impact\_on\_chain.value,***
+            ***"label": self.impact\_on\_chain.label,***
+            ***"description": self.impact\_on\_chain.description***
+        ***},***
+        ***"chain\_id": self.chain\_id***
     ***}***
 
 ## **3\. Enum.label() をUIセレクト強化に活用**
 
-\- Viewerのセレクトボックスに \`reason.label\` を表示すると分類が直感的になる  
+\- Viewerのセレクトボックスに \`reason.label\` を表示すると分類が直感的になる
 \- タグ表示（バッジ等）にも \`impact.label\` をそのまま使える（例：🔁再クラスタ化）
 
 ## **4\. OpenAPI制約と /api/event\_metadata の提案**
 
-\- \`.description\_en()\` や \`.label()\` は FastAPI の自動ドキュメントには表示されないため、  
+\- \`.description\_en()\` や \`.label()\` は FastAPI の自動ドキュメントには表示されないため、
   \`/api/event\_metadata\` などで各Enumとその説明・翻訳情報をJSON形式で提供するのが望ましい。
 
 ## **5\. DB保存時のEnum取り扱い**
 
-\- Enumは \`.value\` を保存することで、DBでの検索や集計が簡単になる。  
+\- Enumは \`.value\` を保存することで、DBでの検索や集計が簡単になる。
 \- ロジック上では再構成も容易： \`ReasonType(stored\_value)\`
 
 ## **6\. 結語**

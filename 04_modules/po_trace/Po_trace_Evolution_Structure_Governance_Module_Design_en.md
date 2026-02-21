@@ -16,23 +16,26 @@ This specification defines three auxiliary modules—`jump_quality_index`, `Po_t
 
 ### **3.1 `jump_quality_index`**
 
-Define the sharpness of a jump as a scalar:  
-- Formula: `jump_quality_index = semantic_delta / jump_length`  
-- Use: Visualize and prioritize only materially effective jumps in Po_trace.  
+Define the sharpness of a jump as a scalar:
+
+- Formula: `jump_quality_index = semantic_delta / jump_length`
+- Use: Visualize and prioritize only materially effective jumps in Po_trace.
 - Also applicable to filtering low-quality jumps.
 
 ### **3.2 `Po_trace_entropy_map`**
 
-Compute and visualize overall history entropy based on the axis distribution (factual / causal / emotional) of `impact_field_tensor` at each output step.  
-- Formula: `entropy = -∑ p_i * log(p_i)`  
-- Use: Detect semantic skew within Po_trace (e.g., overemphasis on factual axis).  
+Compute and visualize overall history entropy based on the axis distribution (factual / causal / emotional) of `impact_field_tensor` at each output step.
+
+- Formula: `entropy = -∑ p_i * log(p_i)`
+- Use: Detect semantic skew within Po_trace (e.g., overemphasis on factual axis).
 - Visualization: time-series heatmap or axis-wise bar chart.
 
 ### **3.3 `feedback_override_flag`**
 
-A boolean flag that records whether a user manually changed `Po_self.priority_score` via GUI or other operations.  
-- Recording field: `interference_log.manual_override = true/false`  
-- Use: Make artificially adjusted steps explicit and auditable in Po_trace.  
+A boolean flag that records whether a user manually changed `Po_self.priority_score` via GUI or other operations.
+
+- Recording field: `interference_log.manual_override = true/false`
+- Use: Make artificially adjusted steps explicit and auditable in Po_trace.
 - Component of Po_core’s self-traceability mechanism.
 
 ## **4. Outlook & Integrated Use**

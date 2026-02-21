@@ -8,7 +8,6 @@ This definition document defines the function `calculate_Jump_trigger_score()` f
 
 Jump_trigger_score = α × R_priority + β × jump_strength × Δ_ethics
 
-
 ## 3. Parameter Definitions
 
 | Variable      | Meaning                                 | Example / Range   |
@@ -46,5 +45,3 @@ Example: R_priority=0.74, jump_strength=0.65, Δ_ethics=0.22
 With this function, Po_self can make integrated judgments on the weight of narration (responsibility pressure) and fluctuations in the ethics tensor, enabling precise evaluation of whether a narrative should structurally trigger a jump.
 
 ---
-
-

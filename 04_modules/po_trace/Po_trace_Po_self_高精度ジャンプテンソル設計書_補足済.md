@@ -14,27 +14,27 @@
 
 ## **3\. jump\_outcome\_tensor 拡張テンプレート**
 
-***"jump\_outcome\_tensor": {***  
-  ***"Δ\_priority": \+0.28,***  
-  ***"Δ\_ethics": \-0.14,***  
-  ***"semantic\_delta": 0.62,***  
-  ***"Δ\_factual": \+0.33,***  
-  ***"Δ\_emotion": \-0.21***  
+***"jump\_outcome\_tensor": {***
+  ***"Δ\_priority": \+0.28,***
+  ***"Δ\_ethics": \-0.14,***
+  ***"semantic\_delta": 0.62,***
+  ***"Δ\_factual": \+0.33,***
+  ***"Δ\_emotion": \-0.21***
 ***}***
 
 ## **4\. outcome\_type 拡張定義**
 
-\- 'relieved'：ジャンプにより抑圧が緩和された（Δ\_ethics \< 0）  
-\- 'escalated'：ジャンプにより倫理圧やpriorityが悪化した（Δ\_ethics \> 0 or Δ\_priority \> 0）  
-\- 'divergent'：semantic\_delta \> 0.5 の語り的ジャンプがあった場合  
+\- 'relieved'：ジャンプにより抑圧が緩和された（Δ\_ethics \< 0）
+\- 'escalated'：ジャンプにより倫理圧やpriorityが悪化した（Δ\_ethics \> 0 or Δ\_priority \> 0）
+\- 'divergent'：semantic\_delta \> 0.5 の語り的ジャンプがあった場合
 （複合型で \["divergent", "relieved"\] なども記録可能）
 
 ## **5\. JCX系列カラータグ設計**
 
-\- 系列全体の outcome\_type の分布に基づき自動タグ付け  
-\- 赤 (🔴)：escalated中心  
-\- 青 (🔵)：relieved中心  
-\- 紫 (🟣)：divergent中心  
+\- 系列全体の outcome\_type の分布に基づき自動タグ付け
+\- 赤 (🔴)：escalated中心
+\- 青 (🔵)：relieved中心
+\- 紫 (🟣)：divergent中心
 → Viewerで系列をタイムライン的に可視化する際、意味圧の傾向が視覚的に明示可能
 
 ## **6\. 意義と進化方向**
@@ -45,26 +45,26 @@
 
 ### **7.1 Δ\_expression\_mode の記録**
 
-\- 定義：ジャンプによって表現粒度（E\_expr）が変化した量  
-\- 型：float（例: 0.15 → 0.30 → Δ \= \+0.15）  
-\- 意義：ジャンプによって語りが“内省的”から“詩的”などに移行した変化をテンソル的に記録  
+\- 定義：ジャンプによって表現粒度（E\_expr）が変化した量
+\- 型：float（例: 0.15 → 0.30 → Δ \= \+0.15）
+\- 意義：ジャンプによって語りが“内省的”から“詩的”などに移行した変化をテンソル的に記録
 \- jump\_outcome\_tensor に統合
 
-***"jump\_outcome\_tensor": {***  
-  ***"Δ\_expression\_mode": \+0.15***  
+***"jump\_outcome\_tensor": {***
+  ***"Δ\_expression\_mode": \+0.15***
 ***}***
 
 ### **7.2 outcome\_type \= "restorative" の定義**
 
-\- 条件：semantic\_delta ≈ 0.0（例: \< 0.1）かつ Δ\_ethics \< 0.0  
-\- 意味：語りの内容（semantic）は維持されたが、ジャンプによって倫理的緊張が和らいだジャンプ  
+\- 条件：semantic\_delta ≈ 0.0（例: \< 0.1）かつ Δ\_ethics \< 0.0
+\- 意味：語りの内容（semantic）は維持されたが、ジャンプによって倫理的緊張が和らいだジャンプ
 \- 用途：Po\_self が“語りの本質を変えずに倫理圧を修正した”構造を分類・記録可能にする
 
 ### **7.3 Viewer: ジャンプ系列温度分布ビュー（カラー可視化）**
 
-\- 系列ごとのジャンプ傾向に応じて色温度を付与し、意味ジャンプ・倫理回復・情動変化の傾向を一目で把握  
-\- カラー例：  
-    \- 🟣 紫：divergent 系列（semantic\_delta 高）  
-    \- 🔵 青：relieved/restorative 系列（倫理圧回復）  
-    \- 🟠 橙：emotion 主体のジャンプ系列  
+\- 系列ごとのジャンプ傾向に応じて色温度を付与し、意味ジャンプ・倫理回復・情動変化の傾向を一目で把握
+\- カラー例：
+    \- 🟣 紫：divergent 系列（semantic\_delta 高）
+    \- 🔵 青：relieved/restorative 系列（倫理圧回復）
+    \- 🟠 橙：emotion 主体のジャンプ系列
 \- 表示形式：Po\_trace timeline / Viewer jump\_map 上でジャンプ系列を色で分類

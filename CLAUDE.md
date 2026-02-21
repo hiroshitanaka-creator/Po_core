@@ -12,12 +12,14 @@ to generate ethically responsible responses.
 ## Architecture
 
 **Hexagonal `run_turn` pipeline** (10 steps):
+
 ```
 MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSelect
 → PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
 ```
 
 **Entry points:**
+
 - `po_core.run()` — recommended public API (`src/po_core/app/api.py`)
 - `PoSelf.generate()` — high-level wrapper (`src/po_core/po_self.py`)
 
@@ -55,6 +57,7 @@ src/po_core/
 **Phase 1: COMPLETE** — 39-philosopher scaling + tech debt cleared. 2354 tests.
 
 **Phase 2: COMPLETE** — ML tensors + Deliberation Engine. 2396 tests.
+
 - Semantic Delta: multi-backend (sbert/tfidf/basic) with encode_texts() API
 - InteractionMatrix: NxN embedding-based harmony + keyword tension
 - DeliberationEngine: multi-round philosopher dialogue (Settings.deliberation_max_rounds)
@@ -62,6 +65,7 @@ src/po_core/
 **Phase 3: COMPLETE** — Viewer WebUI + Explainable W_Ethics Gate + Deliberation Visualization
 
 Completed:
+
 - Dash WebUI with **4-tab layout** (Pipeline, Philosophers, W_Ethics Gate, Deliberation)
 - `ExplanationChain` integrated into pipeline via `ExplanationEmitted` TraceEvent
 - `build_explanation_from_verdict()` bridges SafetyVerdict → ExplanationChain
@@ -72,6 +76,7 @@ Completed:
 - TraceEvent schema: `ExplanationEmitted`, `DeliberationCompleted` registered
 
 Key files:
+
 - `src/po_core/viewer/web/app.py` — Dash app factory (4-tab layout)
 - `src/po_core/viewer/web/figures.py` — Plotly chart builders (incl. deliberation)
 - `src/po_core/safety/wethics_gate/explanation.py` — ExplanationChain + verdict bridge
@@ -82,6 +87,7 @@ Key files:
 **Phase 4: COMPLETE** — Adversarial Hardening + Ethical Stress Testing. 85 new tests.
 
 Completed:
+
 - `PromptInjectionDetector` — W1 detection for prompt injection, jailbreak, DAN, roleplay bypass
 - Enhanced `EnglishKeywordViolationDetector` v0.2 — W3 dependency disguised as help patterns
 - Enhanced `IntentionGate.check_intent` — W1 structural exclusion, W3 goal misalignment, obfuscation normalization
@@ -90,6 +96,7 @@ Completed:
 - New pytest markers: `redteam`, `phase4`
 
 Key files added/modified (Phase 4):
+
 - `src/po_core/safety/wethics_gate/detectors.py` — `PromptInjectionDetector` + v0.2 English detector
 - `src/po_core/safety/wethics_gate/intention_gate.py` — enhanced `check_intent` + obfuscation normalization
 - `tests/redteam/test_prompt_injection.py` — all 7 tests passing (was 5 pass + 5 xfail)
@@ -102,6 +109,7 @@ Key files added/modified (Phase 4):
 **Phase 5: IN PROGRESS** — Productization. Version bumped to `0.2.0-beta`.
 
 Completed (Phase 5-A: REST API):
+
 - FastAPI app factory (`src/po_core/app/rest/server.py`) with 5 routers
 - `POST /v1/reason` — synchronous philosophical reasoning
 - `POST /v1/reason/stream` — SSE streaming reasoning
@@ -113,22 +121,26 @@ Completed (Phase 5-A: REST API):
 - 24 unit tests (REST endpoints, auth, SSE, rate limiting)
 
 Completed (Phase 5-B: Security):
+
 - CORS via `PO_CORS_ORIGINS` env var (default `"*"`, production: comma-separated origins)
 - SlowAPI rate limiting via `PO_RATE_LIMIT_PER_MINUTE` (default 60 req/min per IP)
 - Starlette-compatible rate limit handler wrapper (mypy clean)
 
 Completed (Phase 5-C: Docker):
+
 - Multi-stage `Dockerfile` (builder + slim runtime, non-root `pocore` user)
 - `docker-compose.yml` with named volumes + 30s health check
 - `.dockerignore` — excludes dev/test/docs from image
 - `.env.example` — full environment variable reference
 
 Remaining in Phase 5:
+
 - **5.2 Async streaming** — SSE works via threadpool; true async `PartyMachine` not yet done
 - **5.4 Benchmarks** — pipeline latency ~30ms measured ad-hoc; formal benchmark suite TBD
 - **5.5 PyPI publish** — `publish.yml` workflow ready; actual publish to TestPyPI/PyPI pending
 
 Key files (Phase 5):
+
 - `src/po_core/app/rest/` — FastAPI app (server, config, auth, rate_limit, models, store, routers/)
 - `Dockerfile`, `docker-compose.yml`, `.dockerignore`, `.env.example`
 - `.github/workflows/publish.yml` — TestPyPI / PyPI OIDC trusted publishing
@@ -191,6 +203,7 @@ curl -X POST http://localhost:8000/v1/reason \
 ```
 
 Key env vars (see `.env.example`):
+
 - `PO_API_KEY` — enable auth (empty = no auth)
 - `PO_CORS_ORIGINS` — comma-separated allowed origins (default `"*"`)
 - `PO_RATE_LIMIT_PER_MINUTE` — per-IP rate limit (default `60`)

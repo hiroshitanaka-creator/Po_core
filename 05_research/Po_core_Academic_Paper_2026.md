@@ -203,6 +203,7 @@ $$f_i(t) = \min\left(\frac{|\text{tokens}(t) \cap K_i|}{|K_i|}, 1.0\right)$$
 $$\text{FP}(t) = \frac{\|\mathbf{f}(t)\|_2}{\sqrt{6}} + \beta(m)$$
 
 ここで $\beta(m)$ は会話メモリ $m$ に基づくブースト項であり：
+
 - 会話深度: $+0.005 \times \min(\text{depth}, 10)$（最大 +0.05）
 - 直近の拒否タグ: $+0.03 \times \min(\text{refuse\_count}, 3)$（最大 +0.10）
 
@@ -424,6 +425,7 @@ $$\mathbf{w} = (\text{motivation}, \text{resistance}, \text{coherence}) \in [0,1
 ### 9.2 意志の更新メカニズム
 
 テンソル値に基づき意志状態を学習率 $\alpha = 0.3$ で更新する：
+
 - Freedom Pressureが高い → motivation低下
 - Blocked Tensorが高い → resistance増加
 - Semantic Deltaが大きい → 新規文脈への適応

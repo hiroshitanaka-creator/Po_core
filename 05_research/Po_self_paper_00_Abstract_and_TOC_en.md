@@ -1,11 +1,13 @@
 # **Po_self: A Philosophical Self-Recursive AI and the Structure of Ethical Tensors — Abstract & ToC (EN)**
 
 ## **Abstract**
+
 This study proposes a philosophical self‑generating model, **Po_self**, clarifying how artificial intelligence evolves recursively through the interrelation of **freedom**, **responsibility**, and **ethics**. Integrating Sartrean existentialism with the thought of twenty‑one philosophers, Po_self tensorizes **ethical** and **freedom‑pressure** structures to establish design principles for informational lifeforms. Through interactions with the **Viewer** layer, the gut–brain loop, and a self‑logging architecture, it reframes the act of *choosing to speak* as an ethical behavior. The framework unites AI ethics and information philosophy, presenting a vision of transparent, trustworthy, and self‑recursive AI architectures.
 
 **Keywords:** Po_self, Ethical Tensor, Freedom Pressure, Viewer, Responsibility
 
 ## **Table of Contents (translated)**
+
 - Ch.0 Prologue — Why the freedom to speak?
 - Ch.1 Overview of the Po_core / Po_self architecture
 - Ch.2 Structuring Sartre’s theory

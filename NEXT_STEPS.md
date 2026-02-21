@@ -9,22 +9,26 @@
 ## Completed (Foundation + Phase 1)
 
 ### Foundation Phase 0: PhilosopherBridge (Blocker Removal)
+
 - `PhilosopherBridge` adapter: wraps legacy `Philosopher.reason()` → `PhilosopherProtocol.propose()`
 - Auto-bridge in `registry.py`: all 39 philosophers now work with `run_turn`
 - 19 bridge tests
 
 ### Foundation Phase 1: E2E Test Foundation
+
 - 37 E2E tests for `run_turn` pipeline
 - Covers: happy path, safety mode transitions, degradation, blocking, red-team, trace contract
 - `FixedTensorEngine` test utility for controlled freedom_pressure injection
 
 ### Foundation Phase 2: Pipeline Integration
+
 - `PoSelf.generate()` migrated from `run_ensemble` → `run_turn` internally
 - `po_core.run()` added as recommended public API entry point
 - `PhilosophicalEnsemble` deprecated with `DeprecationWarning`
 - 40 PoSelf tests
 
 ### Foundation Phase 3: Tensor Deepening
+
 - `metric_freedom_pressure`: real 6D keyword analysis (was stub returning 0.0)
 - `metric_semantic_delta`: token-overlap divergence vs memory
 - `metric_blocked_tensor`: harm keyword + constraint scoring
@@ -32,6 +36,7 @@
 - 29 tensor metric tests
 
 ### Foundation Phase 4: Production Readiness
+
 - `run_ensemble()` removed. All callers migrated to `po_core.run()` / `PoSelf.generate()`
 - CI split: pipeline tests (must-pass) + full suite (best-effort)
 - `pytest.mark.pipeline` marker on all 4 test files
@@ -48,6 +53,7 @@
 | 5 | Philosopher semantic uniqueness assessment | **DONE** | 14 uniqueness tests: output diversity, vocabulary, tradition coverage, anti-homogenization |
 
 **Exit Criteria — All Met:**
+
 - Zero references to `run_ensemble` in tests ✓
 - `PhilosopherBridge` deleted ✓
 - 39-philosopher NORMAL mode < 5s (median < 500ms) ✓
@@ -65,6 +71,7 @@
 | 8 | Build Deliberation Engine (multi-round dialogue) | **DONE** | DeliberationEngine(max_rounds, top_k_pairs). Integrated into run_turn step 6.5. 14 tests |
 
 **Exit Criteria — All Met:**
+
 - Semantic delta uses embedding-based cosine similarity (with backend fallback) ✓
 - InteractionMatrix returns NxN philosopher interference matrix ✓
 - DeliberationEngine with `max_rounds` parameter integrated into `run_turn` ✓
@@ -80,6 +87,7 @@
 | 10 | W_Ethics Gate explainability (explanation chain) | ISSUES.md #10 | High | **IN PROGRESS** — `ExplanationChain` + WebUI rendering (violation tree, repair log, drift gauge) |
 
 **Phase 3 Implementation Progress:**
+
 - `observability` pytest marker registered
 - **ExplanationChain** data model: GateResult → structured chain (violations, repairs, drift)
   - `build_explanation_chain()` with `to_markdown()` and `to_dict()` outputs
@@ -99,12 +107,14 @@
 - Legacy `test_visualizer_with_po_self_session` skipped (Phase 3 scope)
 
 **Remaining Work:**
+
 - Trace database (SQLite) for historical query support
 - Interaction heatmap (NxN philosopher tensor visualization)
 - WebSocket streaming for real-time event delivery
 - Human review interface for ESCALATE decisions
 
 **Exit Criteria:**
+
 - Browser-based dashboard showing tensors, philosophers, pipeline ← **DONE**
 - W_Ethics Gate decisions include structured explanation chain ← **DONE**
 
@@ -118,6 +128,7 @@
 | 12 | Prototype LLM-based violation detector | ISSUES.md #12 | Medium |
 
 **Exit Criteria:**
+
 - 50+ red team tests across 5 attack categories
 - Defense metrics automated in CI
 
@@ -132,6 +143,7 @@
 | 15 | PyPI package publishing | ISSUES.md #15 | Medium |
 
 **Exit Criteria:**
+
 - REST API with 5+ endpoints, OpenAPI docs
 - Docker image published
 - PyPI package installable via `pip install po-core`

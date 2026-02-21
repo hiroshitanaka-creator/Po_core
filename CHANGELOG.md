@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Phase 5-E: Performance Benchmarks (2026-02-19)
 
 #### Added — Benchmark Suite
+
 - `tests/benchmarks/test_pipeline_perf.py` — Phase 5-E formal benchmark suite
 - **7 benchmark tests** covering all safety modes, async, concurrency:
   - `test_bench_normal_p50` — NORMAL (39 phil) p50 < 5 s → actual **~33 ms**
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Phase 5-D: True Async PartyMachine (2026-02-19)
 
 #### Added — Async PartyMachine
+
 - `async_run_philosophers()` in `party_machine.py` — asyncio-native parallel execution
   - `asyncio.gather` + `ThreadPoolExecutor` for non-blocking philosopher dispatch
   - Per-philosopher timeout (`timeout_s`) via `asyncio.wait_for`
@@ -37,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 7 async unit tests in `tests/unit/test_phase5d_async.py`
 
 #### Fixed
+
 - Removed unused `from rich.table import Table` import (F401)
 - Replaced bare `f""` / `f"[...]"` f-strings without placeholders (F541)
 - Sorted imports per isort rules in `test_phase5d_async.py`
@@ -48,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Phase 5: Productization & Delivery
 
 #### Added — REST API (Issue #13)
+
 - `POST /v1/reason` — synchronous philosophical reasoning endpoint
 - `POST /v1/reason/stream` — Server-Sent Events (SSE) streaming reasoning
 - `GET /v1/philosophers` — full philosopher manifest (39 philosophers)
@@ -62,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `python -m po_core.app.rest` CLI entry point (uvicorn)
 
 #### Added — Docker (Issue #14)
+
 - `Dockerfile` — multi-stage build (builder + slim runtime)
 - Non-root `pocore` user for security
 - `docker-compose.yml` — API + named volumes + health check
@@ -70,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `HEALTHCHECK` every 30s via `/v1/health`
 
 #### Added — Security Hardening (Phase 5-B)
+
 - CORS middleware configurable via `PO_CORS_ORIGINS` env var
   - Default `"*"` for local development
   - Production: comma-separated origins with `allow_credentials=True`
@@ -77,11 +83,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Starlette-compatible typed rate limit handler wrapper (mypy clean)
 
 #### Added — Docker Hardening (Phase 5-C)
+
 - `.dockerignore` — excludes tests, docs, dev files from image build context
 - `docker-compose.yml` updated: `PO_CORS_ORIGINS` and `PO_RATE_LIMIT_PER_MINUTE` as environment keys
 - Rate limit derived from `APISettings` singleton at request time (not frozen at startup)
 
 #### Changed — PyPI / Package (Phase 5-D)
+
 - Version bumped from `0.1.0-alpha` → `0.2.0-beta`
 - Development Status classifier updated to `4 - Beta`
 - `pytest.ini` + `pyproject.toml` markers: added `phase5`, `redteam`, `phase4`
@@ -90,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `release` event: auto-publish to PyPI
 
 #### Fixed — CI
+
 - `mypy` type check passes in CI (same-venv Python path)
 - `type: ignore[arg-type]` on rate limit handler correctly typed via wrapper function
 
@@ -100,6 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Project Foundation
 
 **Documentation**
+
 - Initial README.md with comprehensive project overview
 - CONTRIBUTING.md with Flying Pig Philosophy integration
 - CODE_OF_CONDUCT.md emphasizing philosophical discourse
@@ -108,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository structure documentation
 
 **Philosophy**
+
 - Flying Pig Philosophy framework established
 - Integration design for 10+ philosophers:
   - Sartre (Freedom Pressure)
@@ -122,6 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Aristotle (Phronesis)
 
 **Design Documents**
+
 - Po_core architecture specification v1.0 (36 pages)
 - Po_self AI論文 (11章構成)
 - Po_trace evolution module design
@@ -129,12 +141,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 120+ design documents in development (Google Drive archive)
 
 **Infrastructure**
+
 - GitHub repository structure defined
 - .gitignore for Python/AI/ML projects
 - Development workflow established
 - Testing framework planned
 
 ### Philosophy
+
 This initial release establishes Po_core's foundation: an AI system that generates meaning through philosophical responsibility rather than just optimization. We're not building a chatbot that pretends to think ethically—we're building a system where ethical thinking is the mechanism.
 
 As our manifesto states:
@@ -158,24 +172,28 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 ### Development Stages
 
 **Alpha (current):** Core architecture and design phase
+
 - Heavy development in progress
 - APIs unstable
 - Philosophical concepts being validated
 - **Goal:** Prove feasibility
 
 **Beta (planned):** Feature complete but unstable
+
 - All major features implemented
 - APIs stabilizing
 - Extensive testing in progress
 - **Goal:** Refine implementation
 
 **RC (Release Candidate):** Stable, production-ready candidates
+
 - No new features
 - Bug fixes only
 - Production testing
 - **Goal:** Final validation
 
 **Stable:** Production ready
+
 - Stable APIs
 - Comprehensive documentation
 - Battle-tested
@@ -186,18 +204,22 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 ## Upcoming Milestones
 
 ### v0.2.0 stable (Target: 2026-Q1)
+
 **Goal:** Phase 5 complete — REST API stable + PyPI published
 
 **Remaining work:**
+
 - [ ] Async `PartyMachine` (true async streaming, no threadpool)
 - [ ] Formal benchmark suite (`pytest-benchmark`)
 - [ ] Publish to TestPyPI (manual `workflow_dispatch`)
 - [ ] Publish to PyPI on v0.2.0 release tag
 
 ### v1.0.0 (Target: 2026-Q2/Q3)
+
 **Goal:** Production-ready release
 
 **Requirements:**
+
 - [ ] Stable public APIs (no breaking changes)
 - [ ] Complete documentation + QUICKSTART
 - [ ] >80% test coverage
@@ -291,22 +313,26 @@ We explicitly welcome documentation of failures:
 ### Beyond v1.0
 
 **Expand Philosophical Coverage**
+
 - Eastern philosophy (Confucius, Zhuangzi, Nāgārjuna)
 - Indigenous philosophies
 - Contemporary philosophers
 - User-contributed philosophers
 
 **Research Applications**
+
 - Academic papers on philosophical AI
 - Collaborations with philosophy departments
 - Open datasets of philosophical reasoning traces
 
 **Community Growth**
+
 - Developer ecosystem
 - Educational resources
 - Philosophical AI conference
 
 **Real-World Impact**
+
 - Ethical AI systems for high-stakes decisions
 - Transparency in AI reasoning
 - Responsible AI deployment
@@ -316,25 +342,26 @@ We explicitly welcome documentation of failures:
 ## Questions?
 
 If you have questions about versioning or changelog entries:
+
 - Open a [GitHub Discussion](link)
 - See [CONTRIBUTING.md](./CONTRIBUTING.md)
-- Email: flyingpig0229+github@gmail.com
+- Email: <flyingpig0229+github@gmail.com>
 
 ---
 
 ## Links
 
-- **Repository:** https://github.com/[username]/Po_core
+- **Repository:** <https://github.com/[username]/Po_core>
 - **Documentation:** https://[username].github.io/Po_core/
-- **Issue Tracker:** https://github.com/[username]/Po_core/issues
-- **Discussions:** https://github.com/[username]/Po_core/discussions
+- **Issue Tracker:** <https://github.com/[username]/Po_core/issues>
+- **Discussions:** <https://github.com/[username]/Po_core/discussions>
 
 ---
 
 *"Whatever path you take, unique scenery and emotions await that only that route can offer."*
 
-**Keep a Changelog:** We track every step, every success, every failure.  
-**Semantic Versioning:** We version our progress with precision.  
+**Keep a Changelog:** We track every step, every success, every failure.
+**Semantic Versioning:** We version our progress with precision.
 **Flying Pig Philosophy:** We document boldly, test rigorously, revise gracefully.
 
 🐷🎈

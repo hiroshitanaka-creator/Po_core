@@ -34,6 +34,7 @@ python -m examples.basic.three_philosopher_demo
 ## Output
 
 The demo will:
+
 1. Analyze a sample prompt with each philosopher
 2. Display their unique perspectives and insights
 3. Synthesize the findings into a multi-philosophical analysis

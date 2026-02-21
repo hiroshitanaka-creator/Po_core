@@ -20,6 +20,7 @@ po-core party --quick
 ```
 
 **What it does:**
+
 - 🎯 Choose a philosophical theme (ethics, existence, knowledge, etc.)
 - 🎭 Select party mood (calm, balanced, chaotic, critical)
 - 🤖 Auto-assembles optimal philosopher combinations from research
@@ -27,6 +28,7 @@ po-core party --quick
 - 📊 Beautiful metrics dashboard (F_P, Semantic Delta, Blocked Tensor)
 
 **Research-powered:**
+
 - Based on 10,600 session analysis
 - +1975% emergence boost from dialectical tension
 - Optimal group sizes (8-14, peak at 15)
@@ -46,6 +48,7 @@ python examples/simple_demo.py
 ```
 
 **機能:**
+
 - 基本デモ - 単一の質問に対する哲学的推論
 - 哲学者比較デモ - 異なる哲学者グループの視点比較
 - 対話型モード - 連続的な質問応答
@@ -59,6 +62,7 @@ python examples/api_demo.py
 ```
 
 **例の内容:**
+
 1. 基本的な使い方
 2. カスタム哲学者の選択
 3. JSON形式での出力
@@ -76,6 +80,7 @@ python examples/quick_test.py
 ```
 
 **テスト項目:**
+
 - デフォルト/カスタム哲学者での推論
 - JSON形式への変換
 - メトリクスの検証
@@ -97,11 +102,13 @@ python examples/web_api_server.py
 ```
 
 **アクセス:**
-- Webインターフェース: http://localhost:8000
-- API ドキュメント: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+
+- Webインターフェース: <http://localhost:8000>
+- API ドキュメント: <http://localhost:8000/docs>
+- ReDoc: <http://localhost:8000/redoc>
 
 **主要機能:**
+
 - 🌐 Webベースの対話インターフェース
 - 📡 RESTful API エンドポイント
 - 💾 セッション履歴の管理
@@ -109,6 +116,7 @@ python examples/web_api_server.py
 - 🎨 美しいUIデザイン
 
 **API エンドポイント:**
+
 - `POST /api/v1/prompt` - 哲学的推論を実行
 - `GET /api/v1/sessions` - セッション履歴を取得
 - `GET /api/v1/sessions/{id}` - 特定セッションの詳細
@@ -125,6 +133,7 @@ python examples/batch_analyzer.py
 ```
 
 **機能:**
+
 - 📦 複数の質問を一括処理
 - 📊 統計分析とサマリー表示
 - 💾 JSON/CSV形式でのエクスポート
@@ -132,6 +141,7 @@ python examples/batch_analyzer.py
 - 🏆 リーダー分布の可視化
 
 **ユースケース:**
+
 - 大量の質問を効率的に処理
 - 哲学者の傾向分析
 - 研究データの収集
@@ -146,18 +156,21 @@ python examples/philosopher_comparison.py
 ```
 
 **機能:**
+
 - 🔍 グループ比較モード - 哲学者グループ間の比較
 - 👤 個別比較モード - 個々の哲学者の詳細比較
 - 📊 メトリクス比較テーブル
 - 📝 詳細な応答分析
 
 **定義済みグループ:**
+
 - 実存主義、古典哲学、現代哲学
 - 倫理学、現象学、プラグマティズム
 - 精神分析、東洋哲学、西洋哲学
 - 政治哲学
 
 **ユースケース:**
+
 - 異なる哲学的視点の理解
 - 教育・研究目的
 - 複雑な問題の多角的分析
@@ -231,6 +244,7 @@ print(f"提案: {result['proposal']}")
 Po_coreでは20人の哲学者を利用できます：
 
 ### 西洋哲学
+
 - `aristotle` - アリストテレス（徳倫理学）
 - `sartre` - サルトル（実存主義）
 - `heidegger` - ハイデガー（現象学）
@@ -249,6 +263,7 @@ Po_coreでは20人の哲学者を利用できます：
 - `arendt` - アーレント（政治哲学）
 
 ### 東洋哲学
+
 - `watsuji` - 和辻哲郎（間柄の倫理）
 - `wabi_sabi` - 侘び寂び（日本美学）
 - `confucius` - 孔子（儒教）
@@ -326,6 +341,7 @@ MIT License - 自由に使用、改変、配布できます。
 ## 🤝 貢献
 
 フィードバックや改善提案は大歓迎です！
+
 - Issues: [GitHub Issues](https://github.com/hiroshitanaka-creator/Po_core/issues)
 - Discussions: [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
 

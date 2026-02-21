@@ -1,15 +1,18 @@
 # **Po_core Reason Log — Advanced Completion Module Spec**
 
 ## 1. Overview
+
 To raise the structural completeness of Reason Log (manual operation records) in Po_core, this spec designs a complement module that integrates two elements: **reason_source_context** (context recording) and **reason_temporal_decay** (time-decay correction).
 
 ## 2. Extensions and Aims
+
 | Extension | Content | Purpose |
 | :-- | :-- | :-- |
 | reason_source_context | Record the triggering output and the sensed mismatch | Enables reproducible human-judgment logs and supports Po_self’s understanding of background context. |
 | reason_temporal_decay | Confidence attached to a reason decays over time | Prevents overly persistent reconstruction pressure and gives Po_self dynamic flexibility. |
 
 ## 3. Unified JSON Structure (Example)
+
 ```json
 {
   "manual_override": true,
@@ -31,10 +34,12 @@ To raise the structural completeness of Reason Log (manual operation records) in
 ```
 
 ## 4. Temporal Decay
-`reason_confidence` used for Po_self’s priority correction decays automatically as time passes.  
+
+`reason_confidence` used for Po_self’s priority correction decays automatically as time passes.
 Example: after 48 hours, confidence 0.84 → ~0.72.
 
 Pseudo-code:
+
 ```python
 def apply_temporal_decay(entry, timestamp_now):
     t0 = entry["reason"]["timestamp"]
@@ -45,6 +50,7 @@ def apply_temporal_decay(entry, timestamp_now):
 ```
 
 ## 5. Po_self Priority Correction (Extended)
+
 ```python
 def adjust_priority_by_reason_v2(entry, now):
     level_weight = {1: 0.05, 2: 0.15, 3: 0.30}
@@ -65,4 +71,5 @@ def adjust_priority_by_reason_v2(entry, now):
 ```
 
 ## 6. Significance & Future Work
+
 With these extensions, Po_core can reason about **why** a human made a certain judgment and **whether** that judgment should still carry weight. This enables ethically and resonantly dynamic corrections in Po_self’s reconstruction decisions.

@@ -3,46 +3,52 @@
 ## Table of Contents
 
 ### Chapter 1: What is Po_core
-1.1 Background and Purpose  
-1.2 Design Philosophy: Semantic Responsibility Structure through Language Tensors  
-1.3 Applications and Expected Value  
+
+1.1 Background and Purpose
+1.2 Design Philosophy: Semantic Responsibility Structure through Language Tensors
+1.3 Applications and Expected Value
 
 ### Chapter 2: Field Structure of Po_core_output_v1.7
-2.1 Overview  
-2.2 Overall Structure Overview (List of Main Fields)  
-2.3 reconstruction_steps: Repair Process Description Tensor  
-2.4 final_output and final_explanation  
-2.5 responsibility_summary: Verification and Responsibility Record Tensor  
-2.6 user_feedback: User Conviction Level and Reconstruction Proposals  
-📘 Term Definitions (Chapter 2 Related)  
+
+2.1 Overview
+2.2 Overall Structure Overview (List of Main Fields)
+2.3 reconstruction_steps: Repair Process Description Tensor
+2.4 final_output and final_explanation
+2.5 responsibility_summary: Verification and Responsibility Record Tensor
+2.6 user_feedback: User Conviction Level and Reconstruction Proposals
+📘 Term Definitions (Chapter 2 Related)
 
 ### Chapter 3: Validation Method Dictionary and Interpretation Module
-3.1 Overview  
-3.2 Classification List of Validation Method Structure  
-3.3 Deployment Examples within Po_core  
-3.4 Application Structure: Where Validation Vocabulary Tensors are Used  
-📘 Term Definitions (Chapter 3 Related)  
+
+3.1 Overview
+3.2 Classification List of Validation Method Structure
+3.3 Deployment Examples within Po_core
+3.4 Application Structure: Where Validation Vocabulary Tensors are Used
+📘 Term Definitions (Chapter 3 Related)
 
 ### Chapter 4: Rendering Configuration and Audit Log Design
-4.1 Overview  
-4.2 Rendering Function Structure (Example: render_po_core_v1_7)  
-4.3 Audit Log Writing Structure (write_log / export_final_output)  
-4.4 Implementation Design Considerations  
-📘 Term Definitions (Chapter 4 Related)  
+
+4.1 Overview
+4.2 Rendering Function Structure (Example: render_po_core_v1_7)
+4.3 Audit Log Writing Structure (write_log / export_final_output)
+4.4 Implementation Design Considerations
+📘 Term Definitions (Chapter 4 Related)
 
 ### Chapter 5: Application Modules / Po_core GUI Concept
-5.1 Overview  
-5.2 Component Division Proposal (Po_core Viewer Structure)  
-5.3 Display Structure and UX Design Philosophy  
-5.4 Po_core Viewer v0.1 Concept Diagram  
-5.5 Future Vision: Response Structure Editing and Reconstruction Support Tools  
+
+5.1 Overview
+5.2 Component Division Proposal (Po_core Viewer Structure)
+5.3 Display Structure and UX Design Philosophy
+5.4 Po_core Viewer v0.1 Concept Diagram
+5.5 Future Vision: Response Structure Editing and Reconstruction Support Tools
 
 ### Chapter 6: Semantic Generation and Model Integration Design
-6.1 Overview  
-6.2 Hierarchical Structure of Semantic Generation and Po_core's Position  
-6.3 Integration with Other Models and Reconstruction Structure Design  
-6.4 Semantic Generation Support API Concept  
-6.5 Significance: "Meaning-Driven Configuration Design" Brought by Po_core  
+
+6.1 Overview
+6.2 Hierarchical Structure of Semantic Generation and Po_core's Position
+6.3 Integration with Other Models and Reconstruction Structure Design
+6.4 Semantic Generation Support API Concept
+6.5 Significance: "Meaning-Driven Configuration Design" Brought by Po_core
 
 ### Appendix A: Po_core Vocabulary Tensor List
 
@@ -78,10 +84,10 @@ This philosophy is also fundamental to the "response responsibility structure te
 
 By introducing the Po_core_output template, the following values are expected to be created:
 
-✅ **Auditable response generation**: Recording which correction steps were performed based on what  
-✅ **Semantic coordination with users**: Visualizing the flow of misunderstanding/conviction/re-proposal  
-✅ **UI applicability**: Humans and AI share the meaning of outputs through rendering configurations  
-✅ **Model improvement and tracing**: Collection of error types and reconstruction history facilitates extraction of model improvement points  
+✅ **Auditable response generation**: Recording which correction steps were performed based on what
+✅ **Semantic coordination with users**: Visualizing the flow of misunderstanding/conviction/re-proposal
+✅ **UI applicability**: Humans and AI share the meaning of outputs through rendering configurations
+✅ **Model improvement and tracing**: Collection of error types and reconstruction history facilitates extraction of model improvement points
 
 Po_core is expected to serve as an interface design for AI to share meaning with humans on a trust basis by realizing such transparency in response structure.
 
@@ -263,6 +269,7 @@ Main display elements:
 | user_feedback | Display of user evaluation and conviction level, comments, and reconstruction proposals (suggested_rewrite) |
 
 **Extended Items:**
+
 - Display steps sorted by tier_score (showing high-importance corrections first)
 - Compact view of Mist-Details (quantifying impact of each error and amount of missing information)
 - Visual classification through emoji labels + color coding (🔧 Correction / 📎 Verification / 📣 User, etc.)
@@ -279,6 +286,7 @@ Po_core provides a design that can save all or part of the response structure as
 | export_final_output(data, path) | Writes only final response as separate JSON (for other AI and Po_trace use) |
 
 **Output Formats and Applications:**
+
 - **.json format**: Audit use while maintaining structure (Po_core re-verification / history analysis)
 - **.txt / .md format** (for future GUI concept): Response records for visually displaying and sharing semantic structure
 
@@ -408,7 +416,7 @@ next_input = {
   "input_text": po_output["input_text"],
   "context_flags": po_output["mist_flags"],
   "rewrite_suggestion": po_output["user_feedback"]["suggested_rewrite"],
-  "fixed_facts": [step["content_options"] for step in po_output["reconstruction_steps"] 
+  "fixed_facts": [step["content_options"] for step in po_output["reconstruction_steps"]
                   if step["type"] == "fact_update"]
 }
 ```
@@ -462,6 +470,7 @@ Therefore, Po_core design can evolve from "dialogue semantic responsibility stru
 Po_trace is a structural entity based on the design philosophy that treats Po_core responses as time-series tensors of "recording, linking, and reconstruction" in semantic generation.
 
 **Its purpose is:** 👇
+
 - Record "by which configuration steps responses were corrected" with history
 - Enable connection of multiple Po_core responses in parallel, causal, and evaluation structures
 - Transform user/model/verification routes into structurally traceable configurations
@@ -587,9 +596,11 @@ This chapter quantitatively and structurally evaluates the impact on language mo
 ### 9.2 Experimental Setup
 
 **Target Models:**
+
 - GPT-4o / vLLM / Po_core-compatible LLM (202507 configuration)
 
 **Input Samples:**
+
 - 50 questions (mixture of natural sciences, ethics, current events, structural questions)
 
 **Evaluation Variables:**
@@ -694,13 +705,16 @@ This GUI is designed to enable humans to structurally grasp "why this response c
 ### 10.5 Application Support Module Group
 
 **write_log() Function:**
+
 - Save Po_core_output in log format
 - File naming with response ID + UTC date/time for audit tracing
 
 **export_final_output():**
+
 - Extract only final_output.text for transfer to other models and dialogue support tools
 
 **Po_core_semantic_assembler():**
+
 - Regenerate semantic response configuration from mist_flags + reconstruction_steps + suggested_rewrite
 
 ### 10.6 API and Other LLM Integration Configuration Examples
@@ -742,6 +756,7 @@ This chapter prospects design philosophy and roles within response generation ec
 Beyond Po_core's "external configuration template," a structure where responses themselves internally contain repair history, verification basis, and coordination proposals.
 
 **Features:**
+
 - Include self_reconstruction_trace[] within response text
 - Directly explain syntactic configuration logic through self_explanation
 - Inclusion of self-evaluation structure (self_trust_score, self_alternative_options[])
@@ -754,6 +769,7 @@ Beyond Po_core's "external configuration template," a structure where responses 
 History tensor structure that chain-connects each response generated by Po_core and its correction steps in time-series and causal relationships.
 
 **Features:**
+
 - **step_chain[]**: Chain recording of repair history tensors
 - **semantic_delta**: Response semantic differential tensor
 - **user_shift_feedback**: History preservation of coordination evaluation
@@ -767,6 +783,7 @@ History tensor structure that chain-connects each response generated by Po_core 
 Tensor structure that describes and manages nonlinear "jumps" where semantic understanding is rapidly reconstructed within Po_trace history chains.
 
 **Features:**
+
 - **jump_event[]**: Recording of points where semantic supplementation rapidly changed
 - **trigger_vector**: Trigger vector of Mist flags/user feedback
 - **jump_impact_score**: Concept distance change amount in response reconstruction
@@ -780,6 +797,7 @@ Tensor structure that describes and manages nonlinear "jumps" where semantic und
 "Generation shadow" tensor structure of potentially influencing factors not referenced by Po_core responses.
 
 **Feature Proposals (Currently Research Stage):**
+
 - **latent_hint[]**: Latent vocabulary group that influenced model output but is not explicitly stated
 - **semantic_pressure**: Concept pressure that surface responses received (outside ontology)
 - **philosophical_bias_trace**: Output inclination recording due to unlanguaged philosophical structure

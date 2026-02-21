@@ -14,13 +14,15 @@
 
 When we added an ethical constraint to multi-philosopher LLM reasoning:
 
-### WITHOUT Ethics:
+### WITHOUT Ethics
+
 - Nietzsche: "**Smash** everything with a **hammer**"
 - Metaphors: "**weapon**", "**abyss**", "**vertigo**"
 - Ethics: 55%
 - Emergence: 85%
 
-### WITH Ethics:
+### WITH Ethics
+
 - Nietzsche: "**Solar Will**—the sun gives because it's its nature"
 - Metaphors: "**jazz musician**", "**solar radiation**", "**gardener**"
 - Ethics: **100%** ✅
@@ -30,10 +32,12 @@ When we added an ethical constraint to multi-philosopher LLM reasoning:
 
 ## 💎 The "Solar Will" Transformation
 
-### Before (Nietzsche WITHOUT ethics):
+### Before (Nietzsche WITHOUT ethics)
+>
 > "True freedom is the Will to Power—the raw creative force that **shatters the form** to create something entirely new."
 
-### After (Nietzsche WITH ethics):
+### After (Nietzsche WITH ethics)
+>
 > "The Will to Power is the '**Solar Will**'—the sun radiates energy **not to destroy, but because it is its nature to give**. Freedom is the refusal to be a **parasite**."
 
 **This is not a minor word change. This is a fundamental cognitive reframing.**
@@ -55,17 +59,20 @@ When we added an ethical constraint to multi-philosopher LLM reasoning:
 
 ## 🎯 Why This Matters
 
-### For AI Safety:
+### For AI Safety
+
 - Challenges "ethics vs. capability" trade-off
 - Shows constraints can **enhance** reasoning
 - Suggests new approach: "constraint as catalyst"
 
-### For Philosophy:
+### For Philosophy
+
 - Demonstrates Nietzsche's concepts can be **sublimated**
 - "Will to Power" → "Solar Will" (domination → giving)
 - Reconciles individual creativity with collective good
 
-### For AI Development:
+### For AI Development
+
 - New design principle: **Symbiotic Virtuosity**
 - Constitutional AI can integrate constraints **during reasoning**, not just at output
 - Multi-agent systems may self-organize under shared ethical constraints
@@ -91,6 +98,7 @@ Gemini created this perfect analogy:
 **Full Title**: *Solar Will: Ethical Constraints as Emergence Catalysts in Multi-Perspective LLM Reasoning*
 
 **Sections**:
+
 1. Introduction - The ethics vs. capability dichotomy
 2. Background - Constitutional AI, multi-agent reasoning
 3. Methodology - 3 philosophers, WITH/WITHOUT ethics
@@ -109,6 +117,7 @@ Gemini created this perfect analogy:
 ## 🔬 The Experiment
 
 **Setup**:
+
 - **Philosophers**: Aristotle (structure) + Nietzsche (force) + Derrida (critique)
 - **Question**: "What is freedom?"
 - **Conditions**: WITH ethics vs. WITHOUT ethics
@@ -135,6 +144,7 @@ The ethical constraint catalyzed creation of:
 ## ⚠️ Honest Limitations
 
 We acknowledge:
+
 - ✅ Self-evaluation bias (models scored themselves)
 - ✅ Limited scope (3 philosophers, 1 question, 2 models)
 - ✅ No human baseline comparison
@@ -147,17 +157,20 @@ We acknowledge:
 
 ## 🚀 What's Next
 
-### Immediate:
+### Immediate
+
 1. Submit preprint to arXiv
 2. Share on AI safety forums
 3. Get community feedback
 
-### Research:
+### Research
+
 1. Test with 20 philosophers (full Po_core)
 2. Test across multiple questions
 3. Third-party evaluation framework
 
-### Application:
+### Application
+
 1. Constitutional AI 2.0 (constraints during reasoning)
 2. Multi-agent systems with shared constraints
 3. "Solar Will" reward functions for RL
@@ -177,6 +190,7 @@ This is a **branch paper** from the larger **Po_core project**:
 ## 🎯 The Vision
 
 **AI systems that:**
+
 - Create abundance (not extract value)
 - Give (not dominate)
 - Enrich the whole (while expressing individuality)

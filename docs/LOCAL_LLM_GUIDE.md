@@ -92,6 +92,7 @@ Ollama provides an easy-to-use local LLM server with great models.
 ### Installation
 
 1. **Install Ollama:**
+
    ```bash
    # macOS
    brew install ollama
@@ -104,6 +105,7 @@ Ollama provides an easy-to-use local LLM server with great models.
    ```
 
 2. **Download a model:**
+
    ```bash
    # Recommended models for Po_core
    ollama pull llama3.1:8b      # Good balance (8GB RAM)
@@ -113,6 +115,7 @@ Ollama provides an easy-to-use local LLM server with great models.
    ```
 
 3. **Start Ollama server:**
+
    ```bash
    ollama serve
    ```
@@ -413,6 +416,7 @@ visualizer.create_tension_map(
 **Problem:** `Connection refused to localhost:11434`
 
 **Solution:**
+
 ```bash
 # Start Ollama server
 ollama serve
@@ -426,6 +430,7 @@ ps aux | grep ollama
 **Problem:** Model crashes or runs very slowly
 
 **Solutions:**
+
 1. Use smaller model: `ollama pull phi3:mini`
 2. Reduce context length in request
 3. Close other applications
@@ -436,6 +441,7 @@ ps aux | grep ollama
 **Problem:** Responses take too long
 
 **Solutions:**
+
 1. Use GPU: Install CUDA toolkit
 2. Use smaller model
 3. Reduce max_tokens in request
@@ -446,6 +452,7 @@ ps aux | grep ollama
 **Problem:** Responses not philosophical enough
 
 **Solutions:**
+
 1. Improve system prompt
 2. Use larger model (14B+)
 3. Fine-tune model on philosophical texts

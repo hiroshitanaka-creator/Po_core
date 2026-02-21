@@ -6,26 +6,26 @@
 
 ## **2\. JSON構造テンプレート**
 
-***{***  
-  ***"interference\_log": {***  
-    ***"step\_id": "reasoning\_1",***  
-    ***"po\_id": "po\_3921",***  
-    ***"source": "GUI",***  
-    ***"action\_type": "allow\_reconstruction",***  
-    ***"timestamp": "2025-07-14T15:40:00Z",***  
-    ***"conatus\_triggered": true,***  
-    ***"reactivation\_metadata": {***  
-      ***"S\_conatus": 0.82,***  
-      ***"emotion\_shadow\_curve": \[-0.5, \-0.3\],***  
-      ***"W\_conatus\_trace": \[0.31, 0.54, 0.68\],***  
-      ***"reactivation\_urge\_score": 0.91***  
-    ***},***  
-    ***"Po\_self\_status": "queued",***  
-    ***"Po\_trace\_sync": {***  
-      ***"reactivated\_by\_GUI": true,***  
-      ***"manual\_override": false***  
-    ***}***  
-  ***}***  
+***{***
+  ***"interference\_log": {***
+    ***"step\_id": "reasoning\_1",***
+    ***"po\_id": "po\_3921",***
+    ***"source": "GUI",***
+    ***"action\_type": "allow\_reconstruction",***
+    ***"timestamp": "2025-07-14T15:40:00Z",***
+    ***"conatus\_triggered": true,***
+    ***"reactivation\_metadata": {***
+      ***"S\_conatus": 0.82,***
+      ***"emotion\_shadow\_curve": \[-0.5, \-0.3\],***
+      ***"W\_conatus\_trace": \[0.31, 0.54, 0.68\],***
+      ***"reactivation\_urge\_score": 0.91***
+    ***},***
+    ***"Po\_self\_status": "queued",***
+    ***"Po\_trace\_sync": {***
+      ***"reactivated\_by\_GUI": true,***
+      ***"manual\_override": false***
+    ***}***
+  ***}***
 ***}***
 
 ## **3\. フィールド定義と解説**

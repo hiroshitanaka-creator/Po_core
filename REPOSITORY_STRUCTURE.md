@@ -370,9 +370,11 @@ config/
 ## Initial Release Strategy
 
 ### Phase 1: Foundation (Week 1)
+
 **Goal:** Establish project presence
 
 **Include:**
+
 - ✅ README.md
 - ✅ CONTRIBUTING.md
 - ✅ CODE_OF_CONDUCT.md
@@ -383,14 +385,17 @@ config/
 - 🔄 Selected design documents (10-15 key documents)
 
 **Exclude (for now):**
+
 - Full implementation code (in progress)
 - All 120+ design documents (too overwhelming)
 - Complete test suite (being developed)
 
 ### Phase 2: Core Implementation (Weeks 2-4)
+
 **Goal:** Demonstrate functional prototype
 
 **Add:**
+
 - Core tensor system
 - 3-philosopher bot (Sartre, Jung, Derrida)
 - Basic Po_trace logging
@@ -398,9 +403,11 @@ config/
 - Unit tests
 
 ### Phase 3: Expansion (Months 2-3)
+
 **Goal:** Build toward full vision
 
 **Add:**
+
 - Remaining philosophers (gradual integration)
 - Po_core Viewer
 - Integration tests
@@ -412,7 +419,9 @@ config/
 ## What Goes Where?
 
 ### GitHub Repository
+
 **Should include:**
+
 - Core code and architecture
 - Essential design documents
 - API documentation
@@ -421,6 +430,7 @@ config/
 - Contribution infrastructure
 
 **Should NOT include:**
+
 - Personal research notes
 - Draft documents (keep in Google Drive)
 - Large binary files (models, datasets)
@@ -428,7 +438,9 @@ config/
 - 120+ raw design documents (curate first)
 
 ### Google Drive
+
 **Should keep:**
+
 - Complete archive of all 120+ design documents
 - Draft documents and work-in-progress
 - Large PDFs and papers
@@ -437,6 +449,7 @@ config/
 - Meeting notes and planning documents
 
 ### Strategy
+
 1. **Curate** key design documents for GitHub
 2. **Keep** comprehensive archive in Google Drive
 3. **Link** from GitHub docs to Google Drive for deeper materials
@@ -447,17 +460,20 @@ config/
 ## Naming Conventions
 
 ### Files
+
 - **Python files:** `snake_case.py`
 - **Markdown files:** `lowercase-with-dashes.md` or `CamelCase.md` for major docs
 - **Config files:** `lowercase.yaml`, `lowercase.json`
 - **Test files:** `test_feature_name.py`
 
 ### Directories
+
 - **Python packages:** `snake_case/`
 - **Documentation:** `lowercase/` or `CamelCase/` for major sections
 - **General:** `lowercase-with-dashes/`
 
 ### Classes & Functions
+
 ```python
 # Classes: PascalCase
 class FreedomPressureTensor:
@@ -476,7 +492,9 @@ MAX_PHILOSOPHERS = 21
 ## GitHub-Specific Features
 
 ### Topics (Tags)
+
 Suggested topics for GitHub repository:
+
 - `artificial-intelligence`
 - `philosophy`
 - `ethics`
@@ -489,12 +507,14 @@ Suggested topics for GitHub repository:
 - `existentialism`
 
 ### About Section
+
 ```
-AI system integrating 10+ philosophers as dynamic tensors for 
+AI system integrating 10+ philosophers as dynamic tensors for
 responsible meaning generation. Built on the Flying Pig Philosophy.
 ```
 
 ### Website
+
 Link to documentation: `https://[username].github.io/Po_core/` (future)
 
 ---
@@ -502,7 +522,9 @@ Link to documentation: `https://[username].github.io/Po_core/` (future)
 ## Migration Plan from Google Drive
 
 ### Step 1: Curate Design Documents
+
 From 120+ documents, select ~15-20 essential ones:
+
 - Po_core specification v1.0
 - Po_self architecture
 - Po_trace design
@@ -511,19 +533,24 @@ From 120+ documents, select ~15-20 essential ones:
 - Tensor interaction matrix
 
 ### Step 2: Convert Format
+
 - Ensure markdown format
 - Add proper headers and structure
 - Include images/diagrams where needed
 - Update links to work in GitHub
 
 ### Step 3: Organize by Category
+
 Place documents in appropriate directories:
+
 - Architecture → `docs/design/architecture/`
 - Philosophers → `docs/design/philosophers/`
 - API specs → `docs/design/api/`
 
 ### Step 4: Create Index
+
 Create navigation documents:
+
 - `docs/design/README.md` — Design document index
 - `docs/philosophy/README.md` — Philosophy document index
 - `docs/api/README.md` — API documentation index
@@ -533,6 +560,7 @@ Create navigation documents:
 ## Next Steps
 
 ### Immediate (Today)
+
 1. ✅ Create CODE_OF_CONDUCT.md
 2. ✅ Create .gitignore
 3. ✅ Create this structure document
@@ -540,6 +568,7 @@ Create navigation documents:
 5. 🔄 Create placeholder files
 
 ### This Week
+
 1. Create packaging files (requirements.txt, setup.py, pyproject.toml)
 2. Create CHANGELOG.md
 3. Curate and migrate 15-20 key design documents
@@ -547,6 +576,7 @@ Create navigation documents:
 5. Create initial examples/
 
 ### Next Week
+
 1. Initialize GitHub repository
 2. Push initial structure
 3. Set up GitHub Actions for CI
@@ -583,6 +613,7 @@ Create navigation documents:
 ## Success Metrics
 
 ### For Initial Release
+
 - [ ] All foundation files present (README, CONTRIBUTING, etc.)
 - [ ] Basic directory structure established
 - [ ] 10-15 key design documents migrated
@@ -590,6 +621,7 @@ Create navigation documents:
 - [ ] First 3-5 GitHub stars ⭐
 
 ### For v0.2.0
+
 - [ ] Working 3-philosopher prototype
 - [ ] 20+ unit tests
 - [ ] Basic examples functional
@@ -600,6 +632,6 @@ Create navigation documents:
 
 *This document reflects the Flying Pig Philosophy: we plan boldly, build iteratively, and adjust gracefully based on what we learn.*
 
-**Document Status:** Draft v1.0  
-**Last Updated:** 2025-11-02  
+**Document Status:** Draft v1.0
+**Last Updated:** 2025-11-02
 **Next Review:** After initial GitHub publication

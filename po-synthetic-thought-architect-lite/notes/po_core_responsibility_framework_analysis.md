@@ -75,11 +75,11 @@
 
 ## 5. Po_core接続フック（Structural Hooks）
 
-1. 視点テンソル → E_expr / F_P / Ethics_Mix  
+1. 視点テンソル → E_expr / F_P / Ethics_Mix
    - 抽象度・責任圧・倫理ベクトルの方向付け要素として解釈する。
-2. 視点UI操作 → Distortion / Memory_Density  
+2. 視点UI操作 → Distortion / Memory_Density
    - 視点難易度の選択誤りは過負荷テンソルと主観時間密度の上昇として観測される。
-3. ユーザー反応 → U_feedback  
+3. ユーザー反応 → U_feedback
    - 視点選択に対する共鳴 / 反発は、間柄テンソルとして累積される。
 4. ミスマッチ条件:
    - Distortion が閾値を超過し続ける場合
