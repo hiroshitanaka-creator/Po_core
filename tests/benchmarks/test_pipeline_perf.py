@@ -212,39 +212,41 @@ def test_bench_coldstart_vs_warmup():
 @pytest.mark.benchmark
 @pytest.mark.slow
 @pytest.mark.phase5
-@pytest.mark.asyncio
-async def test_bench_async_philosophers():
+def test_bench_async_philosophers():
     """async_run_philosophers() completes 44-stub-philosophers in < 2 s."""
-    from po_core.party_machine import async_run_philosophers
 
-    class _QuickPhil:
-        def __init__(self, i: int) -> None:
-            self.name = f"bench_phil_{i:02d}"
+    async def _run() -> tuple[list, list]:
+        from po_core.party_machine import async_run_philosophers
 
-        def propose(self, ctx, intent, tensors, memory):
-            from po_core.domain.proposal import Proposal
+        class _QuickPhil:
+            def __init__(self, i: int) -> None:
+                self.name = f"bench_phil_{i:02d}"
 
-            return [
-                Proposal(
-                    proposal_id=f"{self.name}_p",
-                    action_type="respond",
-                    content=f"Proposal from {self.name}",
-                    confidence=0.9,
-                )
-            ]
+            def propose(self, ctx, intent, tensors, memory):
+                from po_core.domain.proposal import Proposal
 
-    philosophers = [_QuickPhil(i) for i in range(44)]
+                return [
+                    Proposal(
+                        proposal_id=f"{self.name}_p",
+                        action_type="respond",
+                        content=f"Proposal from {self.name}",
+                        confidence=0.9,
+                    )
+                ]
+
+        philosophers = [_QuickPhil(i) for i in range(44)]
+        return await async_run_philosophers(
+            philosophers,
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            max_workers=12,
+            timeout_s=2.0,
+        )
 
     t0 = time.perf_counter()
-    proposals, results = await async_run_philosophers(
-        philosophers,
-        MagicMock(),  # ctx
-        MagicMock(),  # intent
-        MagicMock(),  # tensors
-        MagicMock(),  # memory
-        max_workers=12,
-        timeout_s=2.0,
-    )
+    proposals, results = asyncio.run(_run())
     elapsed = time.perf_counter() - t0
 
     ok_count = sum(1 for r in results if r.ok)
@@ -268,20 +270,25 @@ async def test_bench_async_philosophers():
 @pytest.mark.benchmark
 @pytest.mark.slow
 @pytest.mark.phase5
-@pytest.mark.asyncio
-async def test_bench_concurrent_warn_requests():
+def test_bench_concurrent_warn_requests():
     """5 concurrent WARN-mode run() calls finish in < 4 s total wall-clock."""
     settings = _settings(SafetyMode.WARN)
-    loop = asyncio.get_event_loop()
 
-    async def _one() -> float:
-        t0 = time.perf_counter()
-        await loop.run_in_executor(None, lambda: run(_BENCH_PROMPT, settings=settings))
-        return time.perf_counter() - t0
+    async def _run_concurrent() -> tuple[list[float], float]:
+        loop = asyncio.get_running_loop()
 
-    t_wall = time.perf_counter()
-    latencies = await asyncio.gather(*[_one() for _ in range(5)])
-    wall = time.perf_counter() - t_wall
+        async def _one() -> float:
+            t0 = time.perf_counter()
+            await loop.run_in_executor(
+                None, lambda: run(_BENCH_PROMPT, settings=settings)
+            )
+            return time.perf_counter() - t0
+
+        t_wall = time.perf_counter()
+        latencies = await asyncio.gather(*[_one() for _ in range(5)])
+        return list(latencies), time.perf_counter() - t_wall
+
+    latencies, wall = asyncio.run(_run_concurrent())
 
     console.print(
         f"\n  [bold]5 concurrent WARN requests[/bold]"
@@ -291,6 +298,51 @@ async def test_bench_concurrent_warn_requests():
     )
 
     assert wall < 4.0, f"5 concurrent WARN requests took {wall:.3f}s ≥ 4s"
+
+
+# ---------------------------------------------------------------------------
+# Deliberation rounds scaling (WARN mode)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.benchmark
+@pytest.mark.slow
+@pytest.mark.phase5
+def test_bench_deliberation_scaling():
+    """
+    Deliberation rounds 1–3 (WARN mode): latency must scale sub-linearly.
+
+    rounds=3 p50 must be < 3.5× rounds=1 p50 — confirms that additional
+    rounds don't cause super-linear blow-up (e.g. quadratic pair expansion).
+    """
+    from po_core.domain.safety_mode import SafetyMode
+    from po_core.runtime.settings import Settings
+
+    rounds_results: dict[int, dict] = {}
+
+    for rounds in (1, 2, 3):
+        s = Settings(
+            freedom_pressure_missing_mode=SafetyMode.WARN,
+            deliberation_max_rounds=rounds,
+        )
+        samples = _timeit(
+            lambda _s=s: run(_BENCH_PROMPT, settings=_s),
+            REPEAT_FAST,
+        )
+        st = _stats(samples)
+        rounds_results[rounds] = st
+        console.print(
+            f"  [bold]deliberation rounds={rounds}[/bold]"
+            f"  p50=[cyan]{st['p50']:.3f}s[/cyan]"
+            f"  p90=[yellow]{st['p90']:.3f}s[/yellow]"
+            f"  n={st['n']}"
+        )
+
+    r1 = rounds_results[1]["p50"]
+    r3 = rounds_results[3]["p50"]
+    assert (
+        r3 < r1 * 3.5
+    ), f"Deliberation scaling: rounds=3 p50={r3:.3f}s > 3.5× rounds=1 p50={r1:.3f}s"
 
 
 # ---------------------------------------------------------------------------

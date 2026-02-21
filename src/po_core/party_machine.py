@@ -50,6 +50,7 @@ if TYPE_CHECKING:
     from po_core.domain.proposal import Proposal
     from po_core.domain.tensor_snapshot import TensorSnapshot
     from po_core.philosophers.base import PhilosopherProtocol
+    from po_core.ports.trace import TracePort
 
 from rich.console import Console
 from rich.panel import Panel
@@ -322,8 +323,14 @@ class AsyncPartyMachine:
         intent: "Intent",
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
+        tracer: Optional["TracePort"] = None,
     ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
-        """Run a single philosopher; return (proposal, n, error, latency_ms, pid)."""
+        """Run a single philosopher; return (proposal, n, error, latency_ms, pid).
+
+        If *tracer* is provided, a ``PhilosopherCompleted`` event is emitted
+        immediately after the philosopher finishes (success or failure), enabling
+        real-time SSE streaming of per-philosopher results.
+        """
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
 
@@ -355,15 +362,37 @@ class AsyncPartyMachine:
             proposal = ph_proposals[0] if ph_proposals else None
             if proposal is not None:
                 proposal = _embed_author_proposal(proposal, pid)
-            return proposal, len(ph_proposals), None, dt, pid
+            result = proposal, len(ph_proposals), None, dt, pid
 
         except asyncio.TimeoutError:
             dt = int((perf_counter() - t0) * 1000)
-            return None, 0, f"TimeoutError after {self._timeout_s}s", dt, pid
+            result = None, 0, f"TimeoutError after {self._timeout_s}s", dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+            result = None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+
+        # Emit per-philosopher completion event for real-time SSE streaming.
+        # This fires as soon as the philosopher finishes, before other philosophers
+        # complete, so SSE clients see results progressively.
+        if tracer is not None:
+            _p, n_out, err_out, dt_out, _pid = result
+            from po_core.domain.trace_event import TraceEvent
+
+            tracer.emit(
+                TraceEvent.now(
+                    "PhilosopherCompleted",
+                    ctx.request_id,
+                    {
+                        "name": pid,
+                        "n": n_out,
+                        "latency_ms": dt_out,
+                        "ok": err_out is None,
+                    },
+                )
+            )
+
+        return result
 
     async def run(
         self,
@@ -372,8 +401,13 @@ class AsyncPartyMachine:
         intent: "Intent",
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
+        tracer: Optional["TracePort"] = None,
     ) -> Tuple[List["Proposal"], List[RunResult]]:
         """Run all philosophers concurrently and collect results.
+
+        If *tracer* is provided, a ``PhilosopherCompleted`` event is emitted
+        for each philosopher as it finishes (not after all complete), enabling
+        real-time progressive streaming via the SSE endpoint.
 
         Returns:
             Tuple of (proposals, run_results) — same shape as async_run_philosophers().
@@ -385,7 +419,9 @@ class AsyncPartyMachine:
             return proposals, results
 
         tasks = [
-            asyncio.create_task(self._dispatch_one(ph, ctx, intent, tensors, memory))
+            asyncio.create_task(
+                self._dispatch_one(ph, ctx, intent, tensors, memory, tracer)
+            )
             for ph in philosophers
         ]
         raw_results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -449,6 +485,7 @@ async def async_run_philosophers(
     *,
     max_workers: int,
     timeout_s: float,
+    tracer: Optional["TracePort"] = None,
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
 
@@ -465,6 +502,9 @@ async def async_run_philosophers(
         memory: Current memory snapshot.
         max_workers: Maximum number of parallel threads.
         timeout_s: Per-philosopher timeout in seconds.
+        tracer: Optional tracer for real-time per-philosopher SSE events.
+            When provided, a ``PhilosopherCompleted`` event is emitted as
+            each philosopher finishes rather than after all complete.
 
     Returns:
         Tuple of:
@@ -474,7 +514,7 @@ async def async_run_philosophers(
     async with AsyncPartyMachine(
         max_workers=max_workers, timeout_s=timeout_s
     ) as machine:
-        return await machine.run(philosophers, ctx, intent, tensors, memory)
+        return await machine.run(philosophers, ctx, intent, tensors, memory, tracer)
 
 
 # ============================================================================

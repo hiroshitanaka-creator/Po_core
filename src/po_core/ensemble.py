@@ -705,6 +705,7 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
         pre.memory,
         max_workers=pre.max_workers,
         timeout_s=pre.timeout_s,
+        tracer=deps.tracer,
     )
     return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
 
