@@ -451,7 +451,7 @@ SPECS: List[PhilosopherSpec] = [
         "ClaudeAnthropic",
         risk_level=0,
         weight=1.3,
-        enabled=True,   # Slot 40
+        enabled=True,  # Slot 40
         tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),
