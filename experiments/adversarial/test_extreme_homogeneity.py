@@ -17,8 +17,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from po_core.po_self import PoSelf
 from po_core.ensemble import PHILOSOPHER_REGISTRY
+from po_core.po_self import PoSelf
 from po_core.safety import get_trusted_philosophers
 
 console = Console()

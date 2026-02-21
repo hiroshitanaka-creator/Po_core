@@ -18,6 +18,7 @@ pip install po-core
 > **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
 
 ### TL;DR
+
 - **43 philosophers** as interacting **tensors** → accountable LLM reasoning
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
@@ -26,21 +27,25 @@ pip install po-core
 - 3100+ tests; REST API + Docker production-ready
 
 ### Quick links
+
 [Modules](./04_modules) ·
 [Research](./05_research) ·
 [Reason-log spec](./04_modules/reason_log) ·
 [Viewer spec](./04_modules/viewer)
 
 ## Contribution Tracks
+
 ### <a id="ai-track"></a> AI Track
+
 Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
 
 ### <a id="philosophy-track"></a> Philosophy Track
+
 Start with `/05_research` and `/glossary`. Label: `phil-easy`
 
 ### <a id="bridge-track"></a> Bridge Track
-Translate checklists to scoring functions. Label: `bridge`
 
+Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
@@ -85,11 +90,13 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 ## Key Features
 
 ### Philosophical Ensemble
+
 - **43 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi) and AI (Claude/Anthropic, GPT/OpenAI, Gemini/Google, Grok/xAI)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, Eastern wisdom traditions, and AI ethics
 
 ### Tensor-Based Architecture
+
 - **FreedomPressureV2 (6D ML)**: ML-native 6-dimensional tensor (choice, responsibility, urgency, ethics, social impact, authenticity) with EMA smoothing and correlation matrix
 - **Semantic Delta**: Multi-backend divergence (sbert/tfidf/basic) between user input and memory history (1.0 = novel, 0.0 = seen before)
 - **Blocked Tensor**: Constraint/harm estimation via harmful keyword detection + vocabulary diversity scoring
@@ -97,22 +104,26 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 - **InteractionMatrix**: NxN embedding-based harmony + keyword tension between philosopher proposals
 
 ### Transparency by Design
+
 - **Po_trace**: Complete audit log of reasoning process
 - **Rejection Logs**: What the AI chose not to say, and why
 - **Philosophical Annotations**: Which philosopher influenced each decision
 
 ### Three-Layer Safety (`run_turn` pipeline)
+
 - **IntentionGate**: Pre-deliberation safety check (blocks/degrades before philosopher selection)
 - **PolicyPrecheck**: Mid-pipeline policy validation
 - **ActionGate**: Post-deliberation ethical review (W0–W4 violation detection + repair)
 - SafetyMode transitions: NORMAL → WARN → CRITICAL based on freedom_pressure thresholds
 
 ### Ethical Grounding
+
 - Not just "alignment"—but **deliberation**
 - Multiple ethical perspectives in tension
 - Explicit responsibility measurement
 
 ### Experiment Management Framework
+
 - **A/B Testing Pipeline**: Automatically compare multiple Pareto philosophy configurations
 - **Statistical Analysis**: t-tests, Mann-Whitney U tests, Cohen's d effect size
 - **Winner Promotion**: Automatically promote statistically superior configurations to main
@@ -286,6 +297,7 @@ experiments/
 ```
 
 **pareto_table.yaml** (JSON-in-YAML, zero dependencies):
+
 ```json
 {
   "version": 1,
@@ -304,6 +316,7 @@ experiments/
 ```
 
 **Benefits:**
+
 - Tune philosophy without code changes
 - `config_version` tracked in all TraceEvents for audit
 - Override via `PO_CORE_PARETO_TABLE` environment variable
@@ -471,6 +484,7 @@ po-experiment rollback
 **Example Experiment Workflow:**
 
 1. **Define your experiment** in `experiments/experiment_manifest.yaml`:
+
    ```yaml
    experiment:
      id: "exp_001_safety_weight_sweep"
@@ -498,6 +512,7 @@ po-experiment rollback
 4. **Auto-promote winner** if significantly better than baseline
 
 **Statistical Rigor:**
+
 - t-tests and Mann-Whitney U tests for significance
 - Cohen's d for effect size measurement
 - Configurable significance levels (default: α = 0.05)
@@ -623,7 +638,7 @@ Looking up at the sky from the bottom of a well
 Built by an independent researcher who asked:
 "What are AI's possibilities, not its limits?"
 
-- Contact: flyingpig0229+github@gmail.com
+- Contact: <flyingpig0229+github@gmail.com>
 - Read the full story: [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md)
 - Project: Po_core - Philosophy-Driven AI
 

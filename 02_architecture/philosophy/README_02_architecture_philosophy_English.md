@@ -84,6 +84,7 @@ Theoretical Foundations: ../../05_research/
 This folder contains externalized configuration files for philosophical weighting:
 
 ### pareto_table.yaml
+
 Defines Pareto optimization weights and tuning. Different weights can be set for each SafetyMode.
 
 ```yaml
@@ -100,9 +101,11 @@ Defines Pareto optimization weights and tuning. Different weights can be set for
 ```
 
 ### battalion_table.yaml
+
 Defines philosopher assignments (Battalion) for each SafetyMode.
 
 **Features:**
+
 - JSON-in-YAML format (zero dependencies for loading)
 - Override via `PO_CORE_PARETO_TABLE` / `PO_CORE_BATTALION_TABLE` environment variables
 - `config_version` recorded in all TraceEvents for audit

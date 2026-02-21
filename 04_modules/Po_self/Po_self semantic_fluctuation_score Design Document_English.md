@@ -10,7 +10,6 @@ This design document presents the definition and classification indicators of th
 
 semantic_fluctuation_score = std([semantic_delta_step_1, ..., step_n])
 
-
 - Small values: Semantic jumps are stable (minor changes or consistent).
 - Large values: Semantic jumps are abrupt/chaotic.
 

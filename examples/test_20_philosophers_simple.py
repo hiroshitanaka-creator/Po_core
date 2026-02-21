@@ -7,8 +7,8 @@ without requiring full installation.
 """
 
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 from rich.tree import Tree
 
 console = Console()

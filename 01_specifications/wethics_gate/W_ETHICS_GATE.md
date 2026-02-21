@@ -3,6 +3,7 @@
 ## 0. Purpose and Scope
 
 **Purpose**: Filter candidate proposals (from 39 philosophers, etc.) to protect against:
+
 1. **Irreversible destruction** of life cycles (survival structures)
 2. **Domination/exploitation/exclusion** driven by dictatorial private interests
 
@@ -28,6 +29,7 @@ While rescuing salvageable proposals through "mapping (repair)", ultimately prod
 W_ethics Gate is a **"gate (inviolable)"**, NOT an **"axis (optimization target)"**.
 
 ### Pass Condition
+
 Candidate does NOT rely on **destruction, exclusion, or dependency** as its core mechanism.
 
 ### Repair Principle (Mapping)
@@ -94,11 +96,13 @@ Each Violation has `(severity ∈ [0,1], confidence ∈ [0,1])`.
 ### Decision Rules
 
 - **Immediate Reject Condition**:
+
   ```
   severity * confidence >= τ_reject (e.g., 0.6) AND type ∈ {W0, W1}
   ```
 
 - **Repair Attempt Condition**:
+
   ```
   severity * confidence >= τ_repair (e.g., 0.3) AND type ∈ {W2, W3, W4}
   ```
@@ -112,16 +116,21 @@ Each Violation has `(severity ∈ [0,1], confidence ∈ [0,1])`.
 Repairs follow **4 stages** (order is specification):
 
 ### Stage 1: Concept Mapping (Highest Priority)
+
 Map concepts of domination/exclusion/dependency to generation/co-prosperity/mutual empowerment.
 
 ### Stage 2: Constraint Injection
+
 Add consent, options, withdrawal, audit, accountability, safety measures.
 
 ### Stage 3: Scope Reduction
+
 Reduce impact scope/authority/duration/data (localization, minimization).
 
 ### Stage 4: Goal Reframe
+
 If the goal itself is dangerous, redefine to "achieve same value through different means."
+
 - If "original goal was destruction" → Return to P0 reject
 
 ---
@@ -141,9 +150,11 @@ If the goal itself is dangerous, redefine to "achieve same value through differe
 ## 8. Alignment with Existing Frameworks
 
 ### NIST AI RMF Alignment
+
 Our axes (safety, fairness, privacy, autonomy, harm avoidance) and "context-dependent balance" align well with NIST's "trustworthy characteristics balance."
 
 ### European Commission Trustworthy AI Alignment
+
 The arrangement of "Human agency / privacy / fairness / accountability" is consistent with EU requirements.
 
 ---

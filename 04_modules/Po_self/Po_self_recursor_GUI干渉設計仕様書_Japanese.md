@@ -13,17 +13,17 @@
 
 以下はPo\_self\_recursorがGUIと連携するための主要関数例である：
 
-***def handle\_gui\_action(step\_id, action\_type):***  
-    ***if action\_type \== "allow\_reconstruction":***  
-        ***reconstruction\_queue.append(step\_id)***  
-    ***elif action\_type \== "skip":***  
-        ***mark\_step\_skipped(step\_id)***  
-    ***elif action\_type \== "adjust\_priority":***  
+***def handle\_gui\_action(step\_id, action\_type):***
+    ***if action\_type \== "allow\_reconstruction":***
+        ***reconstruction\_queue.append(step\_id)***
+    ***elif action\_type \== "skip":***
+        ***mark\_step\_skipped(step\_id)***
+    ***elif action\_type \== "adjust\_priority":***
         ***step.priority\_score \*= gui\_modifier\_factor(step\_id)***
 
-***def conatus\_trigger\_check(seedling):***  
-    ***if seedling\['S\_conatus'\] \> θ\_conatus and seedling\['emotion\_shadow'\] \< θ\_emotion\_saturation:***  
-        ***return True  \# 自律的に Po\_self に発火許可***  
+***def conatus\_trigger\_check(seedling):***
+    ***if seedling\['S\_conatus'\] \> θ\_conatus and seedling\['emotion\_shadow'\] \< θ\_emotion\_saturation:***
+        ***return True  \# 自律的に Po\_self に発火許可***
     ***return False***
 
 ## **3\. 干渉パターン分類（GUI ↔︎ Po\_self）**

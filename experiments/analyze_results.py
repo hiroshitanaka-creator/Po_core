@@ -7,11 +7,11 @@ Usage:
     python analyze_results.py --input analysis_results.json
 """
 
-import json
 import argparse
+import json
+import math
 from pathlib import Path
 from typing import Dict, List
-import math
 
 # ============================================================================
 # STATISTICAL FUNCTIONS (no external dependencies)

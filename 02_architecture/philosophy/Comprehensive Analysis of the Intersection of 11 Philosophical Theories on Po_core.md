@@ -93,5 +93,3 @@ Po_core is a structurally meaningful sphere in which the 11 philosophical tensor
 ## Diagram: Intersection of the 11 Philosophical Tensors
 
 🟦 Please refer to the image in the file for the diagram.
-
-

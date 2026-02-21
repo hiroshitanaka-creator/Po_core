@@ -1,61 +1,60 @@
 Po\_core\_renderer \+ auto\_log\_writer の統合としては、構造・動作・責任テンソル整合の三拍子が揃っています。
 
-JSONをインポート  
-argparseをインポートする  
-datetimeからdatetimeをインポート  
+JSONをインポート
+argparseをインポートする
+datetimeからdatetimeをインポート
 輸入
 
-\# レンダラー  
-def render\_po\_core\_output(データ):  
-    print(f"\\n ![🧠][image1]Po\_core\_output v{data\['schema\_version'\]} | Po\_ID: {data\['po\_id'\]}")  
-    print(f"プロンプト: {data\['input\_text'\]}")  
-    print(f"![❌][image2]元の出力: {data\['output\_text'\]}")  
-    print(f"![✅][image3]最終出力: {data\['final\_output'\]\['text'\]} ")  
-    print(f"ミストフラグ: {', '.join(data\['mist\_flags'\])}")  
-    print("\\n![🔧][image4]再構築手順:")  
-    データ\["reconstruction\_steps"\]のステップについて:  
-        print(f" \- \[{step\['step\_id'\]}\] {step\['type'\]} | ティア: {step\['importance\_tier'\]} | 信頼度: {step\['confidence'\]}")  
-        ステップ.get("review\_notes")の場合:  
-            print(f"    ![🔍][image5]理由: {step\['review\_notes'\]}")  
-    print("\\n![📎][image6]検証:", data\["responsibility\_summary"\] .get("method\_label", "?"))  
-    fb := data.get("user\_feedback", {}):  
-        print(f"![📣][image7]フィードバック: {'Accepted' if fb.get('accepted') else 'Rejected'} | {fb.get('comment', '')}")  
-        fb.get("suggested\_rewrite") の場合:  
+\# レンダラー
+def render\_po\_core\_output(データ):
+    print(f"\\n ![🧠][image1]Po\_core\_output v{data\['schema\_version'\]} | Po\_ID: {data\['po\_id'\]}")
+    print(f"プロンプト: {data\['input\_text'\]}")
+    print(f"![❌][image2]元の出力: {data\['output\_text'\]}")
+    print(f"![✅][image3]最終出力: {data\['final\_output'\]\['text'\]} ")
+    print(f"ミストフラグ: {', '.join(data\['mist\_flags'\])}")
+    print("\\n![🔧][image4]再構築手順:")
+    データ\["reconstruction\_steps"\]のステップについて:
+        print(f" \- \[{step\['step\_id'\]}\] {step\['type'\]} | ティア: {step\['importance\_tier'\]} | 信頼度: {step\['confidence'\]}")
+        ステップ.get("review\_notes")の場合:
+            print(f"    ![🔍][image5]理由: {step\['review\_notes'\]}")
+    print("\\n![📎][image6]検証:", data\["responsibility\_summary"\] .get("method\_label", "?"))
+    fb := data.get("user\_feedback", {}):
+        print(f"![📣][image7]フィードバック: {'Accepted' if fb.get('accepted') else 'Rejected'} | {fb.get('comment', '')}")
+        fb.get("suggested\_rewrite") の場合:
             print(f"![✏️][image8]書き換え提案: {fb\['suggested\_rewrite'\]}")
 
-\# ログライター  
-def write\_log(data, logdir="logs/"):  
-    os.makedirs(logdir, exist\_ok=True)  
-    po\_id \= data.get("po\_id", "po\_output")  
-    fname \= f"{po\_id}\_{datetime.utcnow(). isoformat().replace(':', '-')}.json"  
-    fpath \= os.path.join(logdir, fname)  
-    open(fpath, "w", encoding="utf-8") を f として実行します:  
-        json.dump(データ、f、ensure\_ascii=False、インデント=2)  
+\# ログライター
+def write\_log(data, logdir="logs/"):
+    os.makedirs(logdir, exist\_ok=True)
+    po\_id \= data.get("po\_id", "po\_output")
+    fname \= f"{po\_id}\_{datetime.utcnow(). isoformat().replace(':', '-')}.json"
+    fpath \= os.path.join(logdir, fname)
+    open(fpath, "w", encoding="utf-8") を f として実行します:
+        json.dump(データ、f、ensure\_ascii=False、インデント=2)
     fpathを返す
 
-\# CLIエントリ  
-\_\_name\_\_ \== "\_\_main\_\_" の場合:  
-    パーサー \= argparse.ArgumentParser()  
-    parser.add\_argument("--input", type=str, required=True, help="Po\_core\_output JSONファイル")  
-    parser.add\_argument("--mode", type=str, default="full", choices=\["full", "compact"\])  
-    parser.add\_argument("--logdir" , type=str, default="logs/", help="出力ログを保存するディレクトリ")  
+\# CLIエントリ
+\_\_name\_\_ \== "\_\_main\_\_" の場合:
+    パーサー \= argparse.ArgumentParser()
+    parser.add\_argument("--input", type=str, required=True, help="Po\_core\_output JSONファイル")
+    parser.add\_argument("--mode", type=str, default="full", choices=\["full", "compact"\])
+    parser.add\_argument("--logdir" , type=str, default="logs/", help="出力ログを保存するディレクトリ")
     引数 \= parser.parse\_args()
 
-    試す：  
-        open(args.input, "r", encoding="utf-8") を f として実行します:  
-            データ \= json.load(f)  
-    (FileNotFoundError、json.JSONDecodeError) を除き、e:  
-        print(f"![❌][image2]入力の読み取りに失敗しました: {e}")  
+    試す：
+        open(args.input, "r", encoding="utf-8") を f として実行します:
+            データ \= json.load(f)
+    (FileNotFoundError、json.JSONDecodeError) を除き、e:
+        print(f"![❌][image2]入力の読み取りに失敗しました: {e}")
         出口(1)
 
-    args.mode \== "compact"の場合:  
-        print(f" ![🧠][image1]Po\_ID: {data.get('po\_id', '?')} | 最終: {data\['final\_output'\]\['text'\]} ")  
-    それ以外：  
+    args.mode \== "compact"の場合:
+        print(f" ![🧠][image1]Po\_ID: {data.get('po\_id', '?')} | 最終: {data\['final\_output'\]\['text'\]} ")
+    それ以外：
         render\_po\_core\_output(データ)
 
-    パス \= write\_log(データ、logdir=args.logdir)  
-    print(f"\\n![💾][image9]ログは {path} に保存されました")  
-
+    パス \= write\_log(データ、logdir=args.logdir)
+    print(f"\\n![💾][image9]ログは {path} に保存されました")
 
 [image1]: <data:image/png;base64,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>
 

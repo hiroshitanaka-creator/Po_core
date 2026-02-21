@@ -1,212 +1,179 @@
-from fastapi import FastAPI  
+from fastapi import FastAPI
 
-from pydantic import BaseModel  
+from pydantic import BaseModel
 
-from typing import List, Optional  
+from typing import List, Optional
 
 from enum import Enum
 
-
-
 app = FastAPI()
-
-
 
 \# Enum Definitions
 
+class ReasonType(str, Enum):
 
+&nbsp;   like = "like"
 
-class ReasonType(str, Enum):  
+&nbsp;   disagree\_with\_label = "disagree\_with\_label"
 
-&nbsp;   like = "like"  
-
-&nbsp;   disagree\_with\_label = "disagree\_with\_label"  
-
-&nbsp;   failed\_jump = "failed\_jump"  
+&nbsp;   failed\_jump = "failed\_jump"
 
 &nbsp;   ambiguous\_output = "ambiguous\_output"
 
+&nbsp;   @property
 
+&nbsp;   def label(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def label(self):  
+&nbsp;           "like": "Positive Reaction",
 
-&nbsp;       return {  
+&nbsp;           "disagree\_with\_label": "Disagreement with Classification",
 
-&nbsp;           "like": "Positive Reaction",  
+&nbsp;           "failed\_jump": "Jump Failure",
 
-&nbsp;           "disagree\_with\_label": "Disagreement with Classification",  
-
-&nbsp;           "failed\_jump": "Jump Failure",  
-
-&nbsp;           "ambiguous\_output": "Ambiguous Output"  
+&nbsp;           "ambiguous\_output": "Ambiguous Output"
 
 &nbsp;       }.get(self.value, self.value)
 
+&nbsp;   @property
 
+&nbsp;   def description(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def description(self):  
+&nbsp;           "like": "The user gave a positive reaction",
 
-&nbsp;       return {  
+&nbsp;           "disagree\_with\_label": "There was disagreement with the Po\_self classification",
 
-&nbsp;           "like": "The user gave a positive reaction",  
+&nbsp;           "failed\_jump": "The jump structure did not reach the intended outcome",
 
-&nbsp;           "disagree\_with\_label": "There was disagreement with the Po\_self classification",  
-
-&nbsp;           "failed\_jump": "The jump structure did not reach the intended outcome",  
-
-&nbsp;           "ambiguous\_output": "The narrative output was ambiguous and needed reevaluation"  
+&nbsp;           "ambiguous\_output": "The narrative output was ambiguous and needed reevaluation"
 
 &nbsp;       }.get(self.value, self.value)
 
+&nbsp;   @property
 
+&nbsp;   def description\_en(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def description\_en(self):  
+&nbsp;           "like": "User gave a positive reaction",
 
-&nbsp;       return {  
+&nbsp;           "disagree\_with\_label": "User disagreed with the Po\_self classification",
 
-&nbsp;           "like": "User gave a positive reaction",  
+&nbsp;           "failed\_jump": "Jump structure failed to reach intended outcome",
 
-&nbsp;           "disagree\_with\_label": "User disagreed with the Po\_self classification",  
-
-&nbsp;           "failed\_jump": "Jump structure failed to reach intended outcome",  
-
-&nbsp;           "ambiguous\_output": "The output was ambiguous and needed reevaluation"  
+&nbsp;           "ambiguous\_output": "The output was ambiguous and needed reevaluation"
 
 &nbsp;       }.get(self.value, self.value)
 
+class ImpactType(str, Enum):
 
+&nbsp;   reclustered = "reclustered"
 
-class ImpactType(str, Enum):  
-
-&nbsp;   reclustered = "reclustered"  
-
-&nbsp;   tag\_updated = "profile\_tag\_updated"  
+&nbsp;   tag\_updated = "profile\_tag\_updated"
 
 &nbsp;   priority\_adjusted = "priority\_adjusted"
 
+&nbsp;   @property
 
+&nbsp;   def label(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def label(self):  
+&nbsp;           "reclustered": "Reclustered",
 
-&nbsp;       return {  
+&nbsp;           "tag\_updated": "Tag Updated",
 
-&nbsp;           "reclustered": "Reclustered",  
-
-&nbsp;           "tag\_updated": "Tag Updated",  
-
-&nbsp;           "priority\_adjusted": "Priority Adjusted"  
+&nbsp;           "priority\_adjusted": "Priority Adjusted"
 
 &nbsp;       }.get(self.value, self.value)
 
+&nbsp;   @property
 
+&nbsp;   def description(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def description(self):  
+&nbsp;           "reclustered": "Cluster structure was modified",
 
-&nbsp;       return {  
+&nbsp;           "tag\_updated": "Persona label was updated",
 
-&nbsp;           "reclustered": "Cluster structure was modified",  
-
-&nbsp;           "tag\_updated": "Persona label was updated",  
-
-&nbsp;           "priority\_adjusted": "Po\_self priority was adjusted"  
+&nbsp;           "priority\_adjusted": "Po\_self priority was adjusted"
 
 &nbsp;       }.get(self.value, self.value)
 
+&nbsp;   @property
 
+&nbsp;   def description\_en(self):
 
-&nbsp;   @property  
+&nbsp;       return {
 
-&nbsp;   def description\_en(self):  
+&nbsp;           "reclustered": "Cluster structure was modified",
 
-&nbsp;       return {  
+&nbsp;           "tag\_updated": "Persona label was updated",
 
-&nbsp;           "reclustered": "Cluster structure was modified",  
-
-&nbsp;           "tag\_updated": "Persona label was updated",  
-
-&nbsp;           "priority\_adjusted": "Po\_self priority was adjusted"  
+&nbsp;           "priority\_adjusted": "Po\_self priority was adjusted"
 
 &nbsp;       }.get(self.value, self.value)
-
-
 
 \# Pydantic Models for Schema
 
+class EnumEntry(BaseModel):
 
+&nbsp;   value: str
 
-class EnumEntry(BaseModel):  
+&nbsp;   label: str
 
-&nbsp;   value: str  
-
-&nbsp;   label: str  
-
-&nbsp;   description: str  
+&nbsp;   description: str
 
 &nbsp;   description\_en: Optional\[str]
 
+class EventMetadataResponse(BaseModel):
 
-
-class EventMetadataResponse(BaseModel):  
-
-&nbsp;   reason\_types: List\[EnumEntry]  
+&nbsp;   reason\_types: List\[EnumEntry]
 
 &nbsp;   impact\_types: List\[EnumEntry]
 
-
-
 \# API endpoint (v1)
 
+@app.get("/api/v1/event\_metadata", response\_model=EventMetadataResponse)
 
+def get\_event\_metadata():
 
-@app.get("/api/v1/event\_metadata", response\_model=EventMetadataResponse)  
+&nbsp;   return {
 
-def get\_event\_metadata():  
+&nbsp;       "reason\_types": \[
 
-&nbsp;   return {  
+&nbsp;           EnumEntry(
 
-&nbsp;       "reason\_types": \[  
+&nbsp;               value=r.value,
 
-&nbsp;           EnumEntry(  
+&nbsp;               label=r.label,
 
-&nbsp;               value=r.value,  
+&nbsp;               description=r.description,
 
-&nbsp;               label=r.label,  
+&nbsp;               description\_en=r.description\_en
 
-&nbsp;               description=r.description,  
+&nbsp;           ) for r in ReasonType
 
-&nbsp;               description\_en=r.description\_en  
+&nbsp;       ],
 
-&nbsp;           ) for r in ReasonType  
+&nbsp;       "impact\_types": \[
 
-&nbsp;       ],  
+&nbsp;           EnumEntry(
 
-&nbsp;       "impact\_types": \[  
+&nbsp;               value=i.value,
 
-&nbsp;           EnumEntry(  
+&nbsp;               label=i.label,
 
-&nbsp;               value=i.value,  
+&nbsp;               description=i.description,
 
-&nbsp;               label=i.label,  
+&nbsp;               description\_en=i.description\_en
 
-&nbsp;               description=i.description,  
+&nbsp;           ) for i in ImpactType
 
-&nbsp;               description\_en=i.description\_en  
+&nbsp;       ]
 
-&nbsp;           ) for i in ImpactType  
-
-&nbsp;       ]  
-
-&nbsp;   }  
-
-
-
+&nbsp;   }

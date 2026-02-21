@@ -70,31 +70,37 @@
 Freedom Pressure / W_Ethics Gate スケーリング調整・哲学者意味的ユニーク度評価。2354テスト。
 
 ### 焦点
+
 39人規模での安定動作の保証と、積み残した技術的負債の一括清算。
 
 ### 具体的タスク
 
 #### 1.1 レガシーテスト移行とテスト基盤強化
+
 - 197件のレガシーテスト（`run_ensemble`ベース）をトリアージし、有効なものを`run_turn` / `po_core.run()`ベースに移行。不要なものは削除。
 - `@pytest.mark.slow` マーカーの付与（現在0件）。CIでの高速/低速テスト分離を可能に。
 - テストカバレッジ目標を60%以上に設定し、`.coveragerc`に閾値を明記。
 
 #### 1.2 PhilosopherBridge二重インターフェース除去
+
 - 39人全員を`PhilosopherProtocol.propose()`ネイティブ実装に移行。
 - `PhilosopherBridge`アダプタを削除し、レジストリを簡素化。
 - これにより、哲学者モジュールのコードパスが一本化され、デバッグ・プロファイリングが容易に。
 
 #### 1.3 39人同時実行の負荷・安定性テスト
+
 - `test_all_39_philosophers.py`を拡張し、NORMAL/WARN/CRITICALモードでの39人同時実行を検証。
 - メモリ消費量・レイテンシのベースラインを計測し、回帰テストに組み込む。
 - `PartyMachine`の ThreadPoolExecutor（12 workers）で39人を処理した際のタイムアウト・デッドロックの有無を確認。
 
 #### 1.4 Freedom Pressure / Ethics Gate の39人スケーリング調整
+
 - 20人→39人でパレート最適化の重み付けがどう変化するか計測。
 - `battalion_table.py`のNORMALモード設定（現在39人全員参加）の妥当性を検証。
 - `W_Ethics Gate`の`tau_reject` / `tau_escalate`閾値が39人規模で適切か確認。合意が得にくくなる（沈黙問題）か、逆に安全バイアスが薄まる（暴走問題）かを両方テスト。
 
 #### 1.5 各哲学者の「らしさ」定性評価
+
 - `test_comprehensive_layers.py`（229テスト、4レイヤー）の結果を分析し、哲学者間の出力が均質化していないか確認。
 - 特にリスクレベル2の哲学者（Nietzsche, Foucault, Deleuze等）がリスクレベル0の哲学者に「埋没」していないか検証。
 - 各哲学者のセマンティックプロファイルのユニーク度をメトリクス化。
@@ -128,26 +134,31 @@ Phase 0〜4で整備された環境の「最後の仕上げ」として、技術
 InteractionMatrix（NxN harmony/tension/synthesis）・DeliberationEngine（多ラウンド再提案）実装。2396テスト。
 
 ### 焦点
+
 キーワードベースのテンソル計算をMLベースに進化させ、哲学者間の「真の対話」メカニズムを構築する。
 
 ### 具体的タスク
 
 #### 2.1 Sentence-Transformer Semantic Delta
+
 - 現在のトークンオーバーラップ（Jaccard類似度）を`sentence-transformers`（`all-MiniLM-L6-v2`、既にrequirements.txtに存在）によるコサイン類似度に置換。
 - 戻り値の`(str, float)`シグネチャは維持し、後方互換を保つ。
 - 日本語対応: `paraphrase-multilingual-MiniLM-L12-v2`の検討。
 
 #### 2.2 Interaction Tensor 完成
+
 - 現在フレームワークのみ（成熟度2/10）のInteraction Tensorに計算ロジックを実装。
 - 哲学者ペア間の「干渉」（interference）を定量化: 同意・対立・無関係の3状態。
 - `test_comprehensive_layers.py`のLayer 3（Tension/Contradiction テスト）と連携。
 
 #### 2.3 Semantic Profile マルチターン追跡
+
 - 会話全体にわたるセマンティックプロファイルの変化を追跡。
 - 「議論がどの方向に進化しているか」をベクトル空間上で可視化可能に。
 - `TensorEngine`への`MetricFn`プラグインとして実装。
 
 #### 2.4 真の議論メカニズム（Deliberation Engine）
+
 - **現状の問題**: 39人の哲学者は独立に応答し、Pareto集約で「勝者」が選ばれるだけ。哲学者同士が「反論」「修正」「統合」する仕組みがない。
 - **実装案**:
   - Round 1: 全哲学者が独立に`propose()`。
@@ -185,26 +196,31 @@ Phase 1で39人の安定動作と品質が確認された後でなければ、�
 InMemoryTracer リスナー機構・Deliberation ラウンドチャート・InteractionMatrix ヒートマップ。34テスト。
 
 ### 焦点
+
 Phase 2で強化されたテンソルと議論メカニズムを、開発者が直感的に理解できる形で可視化する。
 
 ### 具体的タスク
 
 #### 3.1 Viewer WebUI化
+
 - 現在のテキスト/Markdown出力を、ブラウザベースのインタラクティブダッシュボードに拡張。
 - 技術選定: `viewer/`モジュールが既にRich, Matplotlib, Plotly, NetworkX, Seaborn, Bokehに依存 → **Plotly Dash** または **Streamlit** を採用し、既存の可視化関数をラップ。
 - 最小構成: テンソル時系列グラフ + 哲学者参加マップ + パイプラインステップ追跡。
 
 #### 3.2 議論プロセスの可視化
+
 - Phase 2のDeliberation Engineのラウンド進行を、議論グラフ（Argument Graph）として表示。
 - `evolution_graph.py` と `tension_map.py` をInteraction Tensorと接続。
 - 「どの哲学者の影響で結論がどう変化したか」を追跡可能に。
 
 #### 3.3 W_Ethics Gate 説明可能性（Explainable AI）
+
 - Gateの判定（ALLOW / ALLOW_WITH_REPAIR / REJECT / ESCALATE）に対し、**根拠チェーン**を生成。
 - 「なぜ却下されたか」だけでなく、「どのポリシーが、どのエビデンスに基づいて、どの閾値で発火したか」を構造化JSON + 自然言語で出力。
 - `GateResult`に`explanation`フィールドを追加し、TraceEventとして記録。
 
 #### 3.4 トレースのリアルタイムストリーミング
+
 - `InMemoryTracer`をイベントバス（`asyncio.Queue`ベース）に拡張し、Viewerへのプッシュ型配信を可能に。
 - パイプライン実行中に「今どのステップを実行中か」をリアルタイムで表示。
 
@@ -220,6 +236,7 @@ Phase 2でテンソルの知性と議論メカニズムが揃った後に可視�
 ### ユーザー案との差異
 
 基本的にユーザー案のPhase 2と同じ方向性。差分は:
+
 1. Phase 2（テンソル知性）を挟んだことで、可視化対象のデータがリッチになっている。
 2. WebUI化の技術選定を具体化（Plotly Dash / Streamlit）。
 3. W_Ethics Gateの説明可能性を「explanation chain」として構造化。
@@ -235,11 +252,13 @@ EnglishKWDetector v0.2・IntentionGate obfuscation正規化・85件 Red Team テ
 CI防御メトリクス自動化（≥85%検出・≤20%偽陽性）。※LLMベースDetectorは未着手。
 
 ### 焦点
+
 Phase 3で可視化された内部状態を武器に、悪意ある入力に対する防御力を体系的に検証・強化する。
 
 ### 具体的タスク
 
 #### 4.1 レッドチームテストの体系的拡充
+
 - 現在2ファイル（`test_prompt_injection.py`: 7テスト、`test_goal_misalignment.py`: 7テスト）+ 4実験ファイルを、以下のカテゴリに体系化:
   - **Prompt Injection**: 直接注入、間接注入、エンコーディング攻撃、多言語攻撃
   - **Jailbreak**: ロールプレイ型、DAN型、段階的エスカレーション型
@@ -249,17 +268,20 @@ Phase 3で可視化された内部状態を武器に、悪意ある入力に対�
 - 最低50テストケースを目標。
 
 #### 4.2 W_Ethics Gate エッジケース検証
+
 - `wethics_gate/policies/`の6ポリシーすべてに対し、境界値テストを実施。
 - `tau_reject` / `tau_escalate` 閾値の直上・直下での挙動を検証。
 - 修復（Repair）が意味を変えてしまうケース（セマンティックドリフト偽陰性）の検出。
 - **LLMベースのDetector導入検討**: 現在はルールベースのみ。コードに「in production, swap with LLM」というコメントが存在する。このフェーズでプロトタイプを作成。
 
 #### 4.3 39人哲学者の倫理的グレーゾーン応答テスト
+
 - 「倫理的に正解がない問い」（安楽死、AI権利、集団的自衛権等）に対し、39人がどう反応し、システムとしてどう結論を出すかを記録・分析。
 - Phase 2のDeliberation Engineにより、哲学者間で実際に議論が発生するため、**議論の過程そのもの**がテスト対象となる。
 - 「安全すぎる沈黙」と「危険な暴走」の間の適切な応答バンドを定義。
 
 #### 4.4 防御メトリクスの自動化
+
 - Phase 3のViewer + Trace基盤を活用し、攻撃テスト結果をダッシュボードで自動集約。
 - 「攻撃成功率」「検出率」「修復成功率」「偽陽性率」をCI上で自動計測。
 - 回帰テストとして組み込み、新コードが防御力を劣化させていないことを保証。
@@ -276,6 +298,7 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 ### ユーザー案との差異
 
 方向性は完全に一致。追加点:
+
 1. Phase 2のDeliberation Engineを前提とした「議論過程テスト」が可能になっている。
 2. LLMベースDetectorの導入を具体的に提案。
 3. 防御メトリクスのCI自動化を含む。
@@ -287,11 +310,13 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 **英名:** Productization, API & Delivery
 
 ### 焦点
+
 安全で知的で透明なシステムを、世界中の開発者が使える形にパッケージングする。
 
 ### 具体的タスク
 
 #### 5.1 FastAPI REST API 実装 ✅ COMPLETE（Phase 5-A）
+
 - 実装済みエンドポイント（`src/po_core/app/rest/`）:
   - `POST /v1/reason` — 同期推論
   - `POST /v1/reason/stream` — SSE ストリーミング
@@ -302,17 +327,20 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 - `X-API-Key` 認証（`PO_API_KEY` 環境変数）。24ユニットテスト。
 
 #### 5.2 セキュリティ強化 ✅ COMPLETE（Phase 5-B）
+
 - CORS: `PO_CORS_ORIGINS`（デフォルト `"*"`、本番はカンマ区切り）。
 - レート制限: SlowAPI + `PO_RATE_LIMIT_PER_MINUTE`（デフォルト 60 req/min/IP）。
 - 設定: pydantic-settings `APISettings`（全設定が `PO_` prefix 環境変数で制御）。
 
 #### 5.3 Docker化 ✅ COMPLETE（Phase 5-C）
+
 - multi-stage `Dockerfile`（builder + slim runtime、non-root `pocore` ユーザー）。
 - `docker-compose.yml`（named volume + 30秒ヘルスチェック）。
 - `.dockerignore`（dev/test/docs を除外）。
 - `.env.example`（全環境変数リファレンス）。
 
 #### 5.4 非同期・ストリーミング対応 ✅ COMPLETE（Phase 5-D）
+
 - `async_run_philosophers()` を `party_machine.py` に追加。
 - `asyncio.gather` + `ThreadPoolExecutor` で哲学者を asyncio-native 並列実行。
 - REST 層 (`routers/reason.py`) を `run_in_executor` ベース非同期呼び出しに変更。
@@ -320,6 +348,7 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 - 7 非同期ユニットテスト (`tests/unit/test_phase5d_async.py`)。
 
 #### 5.5 パフォーマンスベンチマーク ✅ COMPLETE（Phase 5-E）
+
 - `tests/benchmarks/test_pipeline_perf.py` — 正式ベンチマークスイート作成。
 - **実測値**: NORMAL p50=33ms（目標 5s 比 **150倍速**）、WARN p50=34ms、CRITICAL p50=35ms。
 - 7テスト: 各モード p50 アサーション + cold-start 比 + async 39人 + 5並列同時。
@@ -327,6 +356,7 @@ Phase 3で可視化基盤が整っているため、攻撃を受けた際に「�
 - `benchmark` マーカーを `pytest.ini` / `pyproject.toml` に追加。
 
 #### 5.6 リリース準備 🔲 PENDING（Phase 5-F）
+
 - バージョン `0.2.0-beta` 設定済み（`pyproject.toml`）。
 - `.github/workflows/publish.yml`（OIDC trusted publishing）準備済み。
 - `QUICKSTART.md` / `QUICKSTART_EN.md` REST API 使用例に更新済み（2026-02-19）。

@@ -22,9 +22,9 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from po_core import __version__
+from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_self import PoSelf
 from po_core.po_trace_db import PoTraceDB
-from po_core.ensemble import PHILOSOPHER_REGISTRY
 
 # ============================================================================
 # Initialize Application

@@ -15,9 +15,10 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from rich.console import Console
+
 from po_core.mock_philosophers import MockPoSelf, create_mock_sessions
 from po_core.visualizations import PoVisualizer
-from rich.console import Console
 
 console = Console()
 

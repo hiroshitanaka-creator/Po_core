@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-This specification defines the GUI components and visualization methods for Po_self_seedling (self-sprouting layer) within the Po_core system.  
+This specification defines the GUI components and visualization methods for Po_self_seedling (self-sprouting layer) within the Po_core system.
 Po_self_seedling provides an interface that visualizes dormant tensors and reconstruction waiting structures from semantic, emotional, and volitional perspectives, allowing users and developers to intuitively grasp their evolutionary potential.
 
 ## 2. GUI Component Definitions
@@ -24,7 +24,6 @@ Po_self_seedling provides an interface that visualizes dormant tensors and recon
 │ emotion_shadow: ░░▚▚▒▒                                 │
 │ Comment: "I want to speak again..."                      │
 └─────────────────────────────┘
-
 
 ## 4. Operational Guidelines
 

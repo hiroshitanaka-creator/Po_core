@@ -279,6 +279,7 @@ Yao, S., Yu, D., Zhao, J., Shafran, I., Griffiths, T. L., Cao, Y., & Narasimhan,
 ---
 
 **投稿先候補**:
+
 - 人工知能学会全国大会（JSAI）
 - 言語処理学会年次大会（NLP）
 - ACL Workshop on Ethics in NLP

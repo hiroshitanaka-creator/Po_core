@@ -16,9 +16,9 @@ Usage:
     python examples/basic/three_philosopher_demo.py
 """
 
-from po_core.philosophers.sartre import Sartre
-from po_core.philosophers.jung import Jung
 from po_core.philosophers.derrida import Derrida
+from po_core.philosophers.jung import Jung
+from po_core.philosophers.sartre import Sartre
 
 
 def display_separator(title: str) -> None:

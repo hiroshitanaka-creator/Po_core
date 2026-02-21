@@ -25,13 +25,13 @@
 
 ***Jump\_trigger\_score \= R\_priority \+ jump\_strength × Δ\_ethics***
 
-\- jump\_strength：各ステップが持つジャンプしやすさの固有スカラー  
+\- jump\_strength：各ステップが持つジャンプしやすさの固有スカラー
 \- Δ\_ethics：W\_ethicsの時間変化（方向と強度）
 
 ## **5\. Viewer における UI 対応構成**
 
-\- R\_priority ≥ 0.85 のステップは赤帯・警告アイコン付き表示  
-\- trigger\_type を表示：再構成理由をユーザーが視認可能に  
+\- R\_priority ≥ 0.85 のステップは赤帯・警告アイコン付き表示
+\- trigger\_type を表示：再構成理由をユーザーが視認可能に
 \- ツールチップに Jump\_trigger\_score を表示（ジャンプ候補構造を示唆）
 
 ## **6\. 総合的意義と進化方向**

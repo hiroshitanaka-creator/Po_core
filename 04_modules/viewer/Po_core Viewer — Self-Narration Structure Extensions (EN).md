@@ -14,8 +14,8 @@ Three extension modules evolve the Viewer into a structure that narrates the cro
 
 ## **3. Details**
 
-- `decay_heat_overlay`: red = high refire pressure; blue = past intervention.  
-- `path-highlight-mode`: click a step to highlight its causal path.  
+- `decay_heat_overlay`: red = high refire pressure; blue = past intervention.
+- `path-highlight-mode`: click a step to highlight its causal path.
 - `semantic-evolution-journal`: e.g., “Emotion axis decreased; factual axis strengthened.”
 
 ## **4. Outlook**

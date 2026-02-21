@@ -6,10 +6,10 @@
 
 ## **2\. 使用テンソル一覧**
 
-\- avg\_semantic\_delta  
-\- semantic\_fluctuation\_score  
-\- avg\_ethics\_delta  
-\- ethics\_fluctuation\_score  
+\- avg\_semantic\_delta
+\- semantic\_fluctuation\_score
+\- avg\_ethics\_delta
+\- ethics\_fluctuation\_score
 \- avg\_priority\_delta
 
 ## **3\. 分類ルール一覧**
@@ -52,13 +52,13 @@
 
 ## **4\. 複合タグと優先戦略**
 
-\- 条件を複数満たす場合：  
-    ・複合ラベルとして list 化（例: \['semantic\_drift\_chain', 'ethics\_drift\_chain'\]）  
-    ・または profile\_tag\_primary / profile\_tag\_secondary として分離記録  
+\- 条件を複数満たす場合：
+    ・複合ラベルとして list 化（例: \['semantic\_drift\_chain', 'ethics\_drift\_chain'\]）
+    ・または profile\_tag\_primary / profile\_tag\_secondary として分離記録
 \- 優先度は fluctuation\_score の高い軸を主分類とする
 
 ## **5\. 応用先**
 
-\- Viewer フィルタリングやクラスタリング分類に使用  
-\- 系列ベクトル圧ヒートマップのカテゴリ分類に活用  
+\- Viewer フィルタリングやクラスタリング分類に使用
+\- 系列ベクトル圧ヒートマップのカテゴリ分類に活用
 \- 再構成候補の優先順位・系列学習パターン生成の入力ラベルに

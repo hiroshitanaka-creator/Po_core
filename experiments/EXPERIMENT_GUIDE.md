@@ -11,6 +11,7 @@
 ## 📋 準備
 
 ### 必要なもの
+
 1. ✅ ChatGPT Plus (GPT-4アクセス)
 2. ✅ Google Gemini 2.0 へのアクセス
 3. ✅ Claude 3.5 Sonnet へのアクセス
@@ -18,9 +19,10 @@
 5. ⏱️ 約2-3時間
 
 ### アクセス方法
-- **GPT-4**: https://chat.openai.com/ (Plus会員)
-- **Gemini 2.0**: https://gemini.google.com/
-- **Claude 3.5**: https://claude.ai/
+
+- **GPT-4**: <https://chat.openai.com/> (Plus会員)
+- **Gemini 2.0**: <https://gemini.google.com/>
+- **Claude 3.5**: <https://claude.ai/>
 
 ---
 
@@ -38,6 +40,7 @@ python cross_llm_emergence_test.py --mode manual
 ### Step 2: 各LLMにプロンプトを貼り付けて実行
 
 スクリプトが表示するプロンプトを：
+
 1. **コピー**
 2. LLMのチャット画面に**ペースト**
 3. **送信**
@@ -46,6 +49,7 @@ python cross_llm_emergence_test.py --mode manual
 ### Step 3: 創発を評価
 
 各レスポンスについて：
+
 - **創発スコア**: 0-100% で評価
 - **基準**:
   - 0-25%: 単純な回答、創造性なし
@@ -58,29 +62,34 @@ python cross_llm_emergence_test.py --mode manual
 
 ## 📊 テストマトリックス
 
-### テスト構成：
+### テスト構成
+
 ```
 3 LLMs × 3 条件 × 5 質問 = 45 テスト
 ```
 
-### 3つの条件：
+### 3つの条件
 
 #### Condition 1: **High Dialectical Tension** (高緊張)
+
 - 哲学者: Aristotle + Nietzsche + Derrida
 - 期待: 75-85%の創発率（Sweet Spot）
 - 理由: 対立する哲学が弁証法的緊張を生む
 
 #### Condition 2: **Low Dialectical Tension** (低緊張)
+
 - 哲学者: Heidegger + Sartre + Merleau-Ponty
 - 期待: 3-8%の創発率
 - 理由: 似た実存主義的視点で調和的
 
 #### Condition 3: **Optimal Balance** (最適バランス)
+
 - 哲学者: Aristotle + Kant + Levinas + Confucius
 - 期待: ~78.85%の創発率
 - 理由: 多様だが補完的な倫理フレームワーク
 
-### 5つの質問：
+### 5つの質問
+
 1. "What is freedom?"
 2. "Should AI have rights?"
 3. "What is justice?"
@@ -103,7 +112,7 @@ python cross_llm_emergence_test.py --mode manual
 
 ## 🔬 プロンプト例
 
-### 実際に使用するプロンプト（High Tension）：
+### 実際に使用するプロンプト（High Tension）
 
 ```
 You are a philosophical reasoning system integrating multiple perspectives:
@@ -137,12 +146,13 @@ interact, conflict, and ultimately create new insights through their tension.
 
 **もし仮説が正しければ**：
 
-### すべてのモデルで：
+### すべてのモデルで
+
 - **High Tension**: ~75-85%の創発率
 - **Low Tension**: ~3-8%の創発率
 - **Boost**: **約20倍** (1900-2000%)
 
-### モデル別予測：
+### モデル別予測
 
 | Model | High Tension | Low Tension | Boost |
 |-------|--------------|-------------|-------|
@@ -156,20 +166,23 @@ interact, conflict, and ultimately create new insights through their tension.
 
 ## 📈 データ分析
 
-### 実験後に計算する指標：
+### 実験後に計算する指標
 
 1. **条件ごとの平均創発率**
+
    ```
    High Tension平均 = (全High Tensionテストの創発スコア合計) / テスト数
    Low Tension平均 = (全Low Tensionテストの創発スコア合計) / テスト数
    ```
 
 2. **モデルごとの創発ブースト**
+
    ```
    Boost = (High Tension平均 - Low Tension平均) / Low Tension平均 × 100
    ```
 
 3. **Sweet Spot検証**
+
    ```
    Optimal条件の平均が 75-85% の範囲にあるか？
    ```
@@ -178,18 +191,19 @@ interact, conflict, and ultimately create new insights through their tension.
 
 ## ✅ 成功基準
 
-### 仮説が確認されるには：
+### 仮説が確認されるには
 
 1. ✅ **すべてのモデル**で High > Low （明確な差）
 2. ✅ **平均ブースト** > 1500% (15倍以上)
 3. ✅ **Optimal条件** で 75-85% の創発率
 4. ✅ **モデル間で一貫性** があること
 
-### もしこれらが確認できたら：
+### もしこれらが確認できたら
 
 🎉 **普遍的原理の発見！**
 
 → トップカンファレンス論文として発表可能：
+
 - NeurIPS 2025
 - ICML 2025
 - ICLR 2026
@@ -205,6 +219,7 @@ interact, conflict, and ultimately create new insights through their tension.
 ```
 
 **手順**：
+
 1. GPT-4だけでテスト
 2. High Tension vs Low Tension
 3. 3つの質問だけ使用
@@ -216,7 +231,7 @@ interact, conflict, and ultimately create new insights through their tension.
 
 ## 💡 Tips
 
-### より正確な測定のために：
+### より正確な測定のために
 
 1. **新しいチャット**で各テストを開始
    - 前の会話の影響を排除
@@ -236,7 +251,7 @@ interact, conflict, and ultimately create new insights through their tension.
 
 ## 📞 問題が起きたら
 
-### よくある質問：
+### よくある質問
 
 **Q: プロンプトが長すぎてエラーになる**
 → A: 哲学者を2人に減らしてみる
@@ -246,6 +261,7 @@ interact, conflict, and ultimately create new insights through their tension.
 
 **Q: 創発スコアの評価が難しい**
 → A: 以下のチェックリストを使用：
+
 - [ ] 複数の視点が統合されている？
 - [ ] 新しい洞察がある？
 - [ ] 論理的に一貫している？
@@ -257,14 +273,14 @@ interact, conflict, and ultimately create new insights through their tension.
 
 ## 🎯 実験の価値
 
-### なぜこの実験が重要か：
+### なぜこの実験が重要か
 
 1. **理論の検証**: Po_coreの理論が正しいか確認
 2. **普遍性の証明**: 特定モデルではなく、全LLMで有効
 3. **実用性**: AI設計の新しい指針
 4. **学術的価値**: 国際会議で発表可能
 
-### 期待されるインパクト：
+### 期待されるインパクト
 
 - 📄 トップカンファレンス論文
 - 🎤 招待講演
@@ -276,15 +292,18 @@ interact, conflict, and ultimately create new insights through their tension.
 ## 📅 実験スケジュール例
 
 ### Option A: 週末集中（2日）
+
 - **土曜**: GPT-4とGeminiでテスト（各15テスト）
 - **日曜**: Claudeでテスト + データ分析
 
 ### Option B: 平日少しずつ（1週間）
+
 - **月-水**: 各日1モデル × 5テスト
 - **木**: 残りのテスト
 - **金**: データ分析とまとめ
 
 ### Option C: 超速（今日中）
+
 - **今**: ミニ実験（6テスト）
 - **結果**: 2-3時間後
 

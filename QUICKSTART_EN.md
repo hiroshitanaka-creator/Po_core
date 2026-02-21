@@ -60,6 +60,7 @@ PYTHONPATH=src python examples/simple_demo.py
 ```
 
 The demo lets you experience:
+
 1. **Basic Demo** - Philosophical reasoning on a single question
 2. **Philosopher Comparison Demo** - Compare perspectives from different philosopher groups
 3. **Interactive Mode** - Continuous question-and-answer sessions
@@ -360,6 +361,7 @@ pytest tests/benchmarks/ -v -s -m benchmark
 ## 🤝 Feedback
 
 For questions or suggestions:
+
 - [GitHub Issues](https://github.com/hiroshitanaka-creator/Po_core/issues)
 - [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
 

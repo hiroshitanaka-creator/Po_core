@@ -2,24 +2,24 @@
 
 ## **1. Overview**
 
-This guide defines a configuration that integrates Po_core’s narrative tensors (semantic-evolution-journal) with LangChain and vLLM. The GUI exposes an expression-density slider (`expression_mode`) that steers the LLM to generate structured, narrative, or poetic output dynamically. 
+This guide defines a configuration that integrates Po_core’s narrative tensors (semantic-evolution-journal) with LangChain and vLLM. The GUI exposes an expression-density slider (`expression_mode`) that steers the LLM to generate structured, narrative, or poetic output dynamically.
 
 ## **2. Connection Topology & Main Modules**
 
-[GUI (Streamlit)]  
- ├─ Expression-density slider (`expression_mode`: structure / medium / poetic)  
+[GUI (Streamlit)]
+ ├─ Expression-density slider (`expression_mode`: structure / medium / poetic)
  └─ `summary_data` + mode → passed to LangChain
 
-[LangChain Router]  
- ├─ `PromptTemplate` (mode-specific journal prompts)  
- ├─ `OutputParser` (syntax shaping)  
+[LangChain Router]
+ ├─ `PromptTemplate` (mode-specific journal prompts)
+ ├─ `OutputParser` (syntax shaping)
  └─ `LLMExecutor` (vLLM backend)
 
-[vLLM — Local LLM]  
+[vLLM — Local LLM]
  └─ Generates Po_core–oriented journal text
 
-[Display Area]  
- ├─ Show `journal_text`  
+[Display Area]
+ ├─ Show `journal_text`
  └─ Adjust `priority_score` by expression pressure and save into Po_trace
 
 ## **3. Modules & Roles**
@@ -41,11 +41,11 @@ This guide defines a configuration that integrates Po_core’s narrative tensors
 
 ## **5. Example Execution Steps**
 
-1. User selects “Narrative” (medium).  
-2. `summary_data` + `expression_mode` → LangChain Router.  
-3. PromptTemplate builds the prompt.  
-4. vLLM generates; OutputParser shapes the result.  
-5. GUI displays `journal_text` and logs it to Po_trace.  
+1. User selects “Narrative” (medium).
+2. `summary_data` + `expression_mode` → LangChain Router.
+3. PromptTemplate builds the prompt.
+4. vLLM generates; OutputParser shapes the result.
+5. GUI displays `journal_text` and logs it to Po_trace.
 6. `priority_score` is corrected based on `expression_scaling`.
 
 ## **6. Outlook**

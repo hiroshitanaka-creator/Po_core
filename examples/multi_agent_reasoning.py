@@ -28,9 +28,9 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.tree import Tree
 
+from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_self import PoSelf
 from po_core.po_trace_db import PoTraceDB
-from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.safety import validate_philosopher_group
 
 console = Console()

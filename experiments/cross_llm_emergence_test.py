@@ -15,13 +15,13 @@ Usage:
     python cross_llm_emergence_test.py --mode manual
 """
 
-import os
 import json
+import os
 import time
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Optional
-from dataclasses import dataclass, asdict
+from typing import Dict, List, Optional
 
 # ============================================================================
 # Configuration

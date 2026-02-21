@@ -29,9 +29,10 @@ python examples/enterprise_dashboard.py
 ```
 
 アクセス:
-- **Web UI**: http://localhost:8100
-- **API Docs**: http://localhost:8100/docs
-- **Dashboard Summary**: http://localhost:8100/dashboard/summary
+
+- **Web UI**: <http://localhost:8100>
+- **API Docs**: <http://localhost:8100/docs>
+- **Dashboard Summary**: <http://localhost:8100/dashboard/summary>
 
 ### API エンドポイント
 
@@ -44,6 +45,7 @@ python examples/enterprise_dashboard.py
 #### 推論実行
 
 - `POST /reason` - 分析機能付き推論実行
+
   ```json
   {
     "prompt": "What is consciousness?",
@@ -160,6 +162,7 @@ python examples/multi_agent_reasoning.py
 ```
 
 3つのデモが順次実行されます：
+
 1. 並行推論デモ
 2. 階層的推論デモ
 3. 分散推論デモ
@@ -310,6 +313,7 @@ python -m po_core.migrate_to_db \
 ```
 
 オプション:
+
 - `--json-dir`: JSONストレージディレクトリ
 - `--db-url`: データベースURL
 - `--verbose`: 詳細な進行状況表示
@@ -330,6 +334,7 @@ pytest tests/ -v --cov=src/po_core
 ```
 
 テストカバレッジ:
+
 - DatabaseManager: 全機能
 - PoTraceDB: CRUD操作
 - マイグレーション: データ整合性
@@ -401,6 +406,7 @@ volumes:
 ```
 
 起動:
+
 ```bash
 docker-compose up -d
 ```

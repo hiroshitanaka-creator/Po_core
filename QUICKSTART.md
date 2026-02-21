@@ -60,6 +60,7 @@ PYTHONPATH=src python examples/simple_demo.py
 ```
 
 デモでは以下の機能を体験できます：
+
 1. **基本デモ** - 単一の質問に対する哲学的推論
 2. **哲学者比較デモ** - 異なる哲学者グループの視点比較
 3. **対話型モード** - 連続的な質問応答
@@ -260,6 +261,7 @@ pip install click rich
 ## 🤝 フィードバック
 
 質問や提案がありましたら：
+
 - [GitHub Issues](https://github.com/hiroshitanaka-creator/Po_core/issues)
 - [GitHub Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions)
 

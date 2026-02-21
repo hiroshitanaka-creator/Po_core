@@ -8,7 +8,7 @@ This is a **lite external framework** designed to work as an outer shell around 
 - Provides meta-cognitive self-critique
 - Exposes **Po_core connection hooks** instead of Po_core’s internal tensors
 
-It is explicitly **not** the internal implementation of Po_core.  
+It is explicitly **not** the internal implementation of Po_core.
 It is a reusable thinking framework that can sit *outside* Po_core and talk to it via abstract hooks.
 
 ## Folder layout
@@ -30,4 +30,3 @@ po-synthetic-thought-architect-lite/
 - Experimental, conceptual
 - Intended as an **external thinking engine** for Po_core
 - Safe to publish as a separate module / GitHub subfolder
-

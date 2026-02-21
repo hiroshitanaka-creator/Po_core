@@ -28,15 +28,17 @@ python examples/web_api_server.py
 ```
 
 サーバーが起動すると以下のURLでアクセスできます：
-- **Webインターフェース**: http://localhost:8000
-- **API ドキュメント**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+
+- **Webインターフェース**: <http://localhost:8000>
+- **API ドキュメント**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
 
 ### 主要機能
 
 #### 🌐 Webインターフェース
 
 美しいグラデーションUIで哲学的推論を実行：
+
 - リアルタイムで推論結果を表示
 - メトリクスを視覚的に表示
 - カスタム哲学者の選択が可能
@@ -59,6 +61,7 @@ curl -X POST "http://localhost:8000/api/v1/prompt" \
 ```
 
 レスポンス:
+
 ```json
 {
   "session_id": "uuid-here",
@@ -95,6 +98,7 @@ curl "http://localhost:8000/api/v1/philosophers"
 ```
 
 レスポンス:
+
 ```json
 {
   "total": 20,
@@ -116,6 +120,7 @@ curl "http://localhost:8000/api/v1/stats"
 ```
 
 レスポンス:
+
 ```json
 {
   "total_sessions": 42,
@@ -164,15 +169,18 @@ print(f"Total sessions: {sessions['total']}")
 ### 機能詳細
 
 #### セッション管理
+
 - インメモリでセッション履歴を保存
 - セッションIDで個別に取得可能
 - 統計情報の自動計算
 
 #### CORS対応
+
 - すべてのオリジンからのリクエストを許可
 - 開発環境での利用に最適
 
 #### エラーハンドリング
+
 - 適切なHTTPステータスコード
 - 詳細なエラーメッセージ
 
@@ -193,12 +201,15 @@ python examples/batch_analyzer.py
 ### 主要機能
 
 #### 📊 一括処理
+
 - 複数の質問を効率的に処理
 - 進捗バーで進行状況を表示
 - バックグラウンドで並列処理（オプション）
 
 #### 📈 統計分析
+
 自動的に以下を計算：
+
 - 平均メトリクス（Freedom Pressure, Semantic Delta, Blocked Tensor）
 - リーダー分布（各哲学者がリーダーになった回数）
 - 使用された哲学者の総数
@@ -206,6 +217,7 @@ python examples/batch_analyzer.py
 #### 💾 データエクスポート
 
 **JSON形式:**
+
 ```json
 {
   "total_prompts": 10,
@@ -223,6 +235,7 @@ python examples/batch_analyzer.py
 ```
 
 **CSV形式:**
+
 ```csv
 Prompt,Consensus Leader,Freedom Pressure,Semantic Delta,Blocked Tensor,Philosopher Count,Response Length
 真の自由とは何か？,Aristotle (Ἀριストοτέλης),0.79,1.0,0.6,3,542
@@ -300,6 +313,7 @@ python examples/philosopher_comparison.py
 ```
 
 インタラクティブメニューから選択：
+
 1. グループ比較モード
 2. 個別比較モード
 3. 利用可能なグループ表示
@@ -339,6 +353,7 @@ comparison.compare_groups(
 ```
 
 出力:
+
 - メトリクス比較テーブル
 - 各グループの応答サマリー
 - コンセンサスリーダー
@@ -360,6 +375,7 @@ comparison.compare_philosophers(
 ```
 
 出力:
+
 - 個別メトリクス比較
 - 各哲学者の詳細な推論
 - 視点（Perspective）の違い

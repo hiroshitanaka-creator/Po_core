@@ -14,11 +14,11 @@ This plan evolves Po_core Viewer from a “result browser” into an engine that
 
 ## **3. Zone Details**
 
-- Operation-Pressure: Reason-category × time × pressure (confidence × level) heatmap.  
-- Causal-Interference: Edges record `contextual_influence_path`—show why a step changed direction (e.g., R03 Insufficient Resonance on step `explanation_3`).  
+- Operation-Pressure: Reason-category × time × pressure (confidence × level) heatmap.
+- Causal-Interference: Edges record `contextual_influence_path`—show why a step changed direction (e.g., R03 Insufficient Resonance on step `explanation_3`).
 - Temporal Freshness: Cards show `reason_confidence` decay and the current delta in `priority_score`.
 
 ## **4. Functional Shift of the Viewer**
 
-From v1.0 “parallel output checker” to v2.0 “map of ethical coevolution with humans”:  
+From v1.0 “parallel output checker” to v2.0 “map of ethical coevolution with humans”:
 see → narrate; align → connect; record → reenact.

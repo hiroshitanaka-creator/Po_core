@@ -5,6 +5,7 @@ Research experiments for analyzing philosophical reasoning dynamics.
 ## 🔬 Overview
 
 This directory contains experimental tools for studying:
+
 - **Freedom Pressure (F_P)** evolution patterns
 - **Philosopher correlation** and interaction dynamics
 - **Phase transitions** in meaning generation
@@ -17,6 +18,7 @@ This directory contains experimental tools for studying:
 Execute controlled experiments with all 20 philosophers.
 
 **Features:**
+
 - 10 diverse reasoning sessions
 - Comprehensive metric collection (F_P, Semantic Δ, Blocked Tensor)
 - Database storage for persistent analysis
@@ -24,11 +26,13 @@ Execute controlled experiments with all 20 philosophers.
 - Statistical analysis
 
 **Usage:**
+
 ```bash
 python experiments/run_20_philosophers_experiment.py
 ```
 
 **Output:**
+
 - Session metrics time series
 - Jump detection (>2σ changes)
 - Consensus leader distribution
@@ -41,23 +45,27 @@ python experiments/run_20_philosophers_experiment.py
 Analyze correlation patterns between philosophers.
 
 **Features:**
+
 - Correlation matrix calculation
 - Complementary cluster identification
 - Opposition pair detection
 - ASCII heatmap visualization
 
 **Correlation Types:**
+
 - **Positive (>0.7)**: Complementary philosophers
 - **Moderate (0.3-0.7)**: Partial agreement
 - **Weak (-0.3-0.3)**: Independent
 - **Negative (<-0.3)**: Dialectical opposition
 
 **Usage:**
+
 ```bash
 python experiments/philosopher_correlation_analysis.py
 ```
 
 **Output:**
+
 - Correlation matrix (20×20)
 - Philosopher clusters
 - Opposing pairs list
@@ -70,12 +78,14 @@ python experiments/philosopher_correlation_analysis.py
 Detect non-linear jumps in meaning generation.
 
 **Features:**
+
 - Discontinuity detection (>sensitivity×σ)
 - Transition type characterization
 - Critical condition identification
 - Significance scoring
 
 **Transition Types:**
+
 - **Freedom Surge**: Large F_P increase
 - **Semantic Shift**: Large Semantic Δ change
 - **Dialectical Jump**: Both F_P and Semantic Δ jump
@@ -83,16 +93,19 @@ Detect non-linear jumps in meaning generation.
 - **Constraint**: F_P↓, Blocked↑
 
 **Usage:**
+
 ```bash
 python experiments/phase_transition_analysis.py
 ```
 
 **Parameters:**
+
 - `sensitivity`: Threshold multiplier (default: 1.5)
   - Higher = fewer detections
   - Lower = more sensitive
 
 **Output:**
+
 - Detected transitions with metadata
 - Critical threshold analysis
 - Most significant transition
@@ -105,11 +118,13 @@ python experiments/phase_transition_analysis.py
 Run all three analyses in sequence for comprehensive insights.
 
 **Pipeline:**
+
 1. **Execute Experiment** → Collect data
 2. **Correlation Analysis** → Identify patterns
 3. **Phase Transition Detection** → Find critical points
 
 **Usage:**
+
 ```bash
 python experiments/run_complete_analysis.py
 ```
@@ -117,6 +132,7 @@ python experiments/run_complete_analysis.py
 **Duration:** ~5-10 minutes (depending on system)
 
 **Output:**
+
 - All three analysis results
 - Integrated summary report
 - Multiple JSON files in `results/`
@@ -158,6 +174,7 @@ python experiments/phase_transition_analysis.py
 ```
 
 **Analysis:**
+
 1. Check `results/experiment_*.json` for F_P evolution
 2. Look for clusters in `results/philosopher_correlations_*.json`
 3. Examine transitions in `results/phase_transitions_*.json`
@@ -168,6 +185,7 @@ python experiments/phase_transition_analysis.py
 **Hypothesis:** *Dialectical tension (negative correlation) increases emergence probability.*
 
 **Test:**
+
 1. Run correlation analysis → identify opposing pairs
 2. Filter sessions with high opposition presence
 3. Calculate emergence rate in those sessions
@@ -189,6 +207,7 @@ Derrida   -0.12   0.67   0.22    1.00
 ```
 
 **Interpretation:**
+
 - Aristotle ↔ Nietzsche: Opposition (-0.23)
 - Aristotle ↔ Heidegger: Complementary (0.45)
 - Nietzsche ↔ Derrida: Strong alignment (0.67)
@@ -213,6 +232,7 @@ Derrida   -0.12   0.67   0.22    1.00
 ```
 
 **Interpretation:**
+
 - Significance 3.2× threshold → highly significant
 - Both F_P and Semantic Δ jumped → emergence
 - System transitioned to higher meaning-generation state
@@ -242,15 +262,18 @@ Derrida   -0.12   0.67   0.22    1.00
 ### Suggested Experiments
 
 **Experiment A: Minimal Viable Ensemble**
+
 - Run sessions with 2, 4, 8, 12, 16, 20 philosophers
 - Measure emergence rate vs. group size
 - Find the minimal size for consistent emergence
 
 **Experiment B: Homogeneous vs. Diverse**
+
 - Compare single-cluster groups vs. mixed-cluster groups
 - Hypothesis: Diversity increases emergence but decreases consensus
 
 **Experiment C: Adversarial Prompts**
+
 - Design prompts that force dialectical tension
 - Measure transition frequency and significance
 
@@ -274,6 +297,7 @@ If you use these experiments in research:
 ## 🤝 Contributing
 
 Contributions are welcome! Areas of interest:
+
 - Advanced statistical methods
 - Machine learning for pattern recognition
 - Visualization tools (matplotlib, plotly)

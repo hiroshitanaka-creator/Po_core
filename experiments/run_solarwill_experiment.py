@@ -7,9 +7,9 @@ Usage:
     python run_solarwill_experiment.py --api-key YOUR_KEY --model gpt-4 --trials 5
 """
 
-import os
-import json
 import argparse
+import json
+import os
 import time
 from datetime import datetime
 from pathlib import Path

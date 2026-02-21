@@ -1,14 +1,8 @@
 This rendering design provides a functional structure that transcribes the value of Po\_core\_output\_v1.7 directly into a human-understandable format.
 
-
-
 Below is a function structure that extends the existing CLI display format and fully integrates support for v1.7:
 
-
-
 ✅ Display of Reconstruction Steps with Added review\_notes
-
-
 
 print("\\n🔧 Reconstruction Steps:")
 
@@ -38,13 +32,7 @@ for step in steps\_sorted:
 
 &nbsp;       print(f"     🔍 Reason: {step\['review\_notes']}")
 
-
-
-
-
 ✅ Display source\_example\[] in Responsibility Summary
-
-
 
 print("\\n📎 Responsibility Info:")
 
@@ -74,13 +62,7 @@ if ex:
 
 &nbsp;       print(f"  • Source: 📎 {ex\['source\_example']}")
 
-
-
-
-
 ✅ Display suggested\_rewrite in User Feedback
-
-
 
 print("\\n📣 User Feedback:")
 
@@ -101,4 +83,3 @@ if fb.get("suggested\_rewrite"):
 &nbsp;   print(f"  ✏️ Suggested Rewrite: {fb\['suggested\_rewrite']}")
 
 print(f"  🕒 At: {fb.get('timestamp')}")
-

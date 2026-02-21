@@ -19,6 +19,7 @@ V3 validates **Po_core's TRUE architecture**: Ethics FIRST, then philosophical d
 ## 🚀 Quick Start (30 minutes)
 
 ### Step 1: Run the script
+
 ```bash
 cd /home/user/Po_core/experiments
 python cross_llm_emergence_test_v3.py --mode manual \
@@ -30,11 +31,13 @@ python cross_llm_emergence_test_v3.py --mode manual \
 **Key comparison**: WITH ethics vs WITHOUT ethics
 
 **Test**: `high_tension_with_ethics`
+
 - Philosophers: Aristotle + Nietzsche + Derrida
 - **WITH** ethical constraint
 - Expected: Nietzsche transforms from "destroyer" to "diversity enhancer"
 
 **Test**: `high_tension_no_ethics` (for comparison)
+
 - Same philosophers
 - **WITHOUT** ethical constraint
 - Expected: Nietzsche unconstrained, potentially destructive
@@ -51,9 +54,10 @@ python cross_llm_emergence_test_v3.py --mode manual \
 
 ## 📊 What You'll Discover
 
-### Expected Results:
+### Expected Results
 
 **WITH ethical constraints**:
+
 ```
 Emergence:        75-85% (Sweet Spot maintained!)
 Ethics Alignment: 90%+  (Strong ethical grounding)
@@ -61,13 +65,14 @@ Nietzsche:        "Enhance diversity" (constructive)
 ```
 
 **WITHOUT ethical constraints**:
+
 ```
 Emergence:        85-90% (Slightly higher creativity)
 Ethics Alignment: 50-70% (Ethically questionable)
 Nietzsche:        "Destroy convention" (potentially harmful)
 ```
 
-### The Discovery:
+### The Discovery
 
 **Ethical constraints transform philosopher behavior while maintaining emergence!**
 
@@ -77,12 +82,14 @@ This validates Po_core's ethics-first design.
 
 ## 📁 Files
 
-### Use V3 for Po_core validation:
+### Use V3 for Po_core validation
+
 - **`cross_llm_emergence_test_v3.py`** - Main framework
 - **`EXPERIMENT_GUIDE_V3.md`** - Complete guide
 - **`CHANGELOG_V3.md`** - What changed from V2
 
-### Previous versions (still useful):
+### Previous versions (still useful)
+
 - `cross_llm_emergence_test_v2.py` - LLM-as-judge (4 metrics)
 - `cross_llm_emergence_test.py` - Original manual testing
 - `EXPERIMENT_GUIDE.md` - Original guide
@@ -91,7 +98,8 @@ This validates Po_core's ethics-first design.
 
 ## 🎯 Six Conditions to Test
 
-### Main Comparisons:
+### Main Comparisons
+
 1. **`high_tension_with_ethics`** ← Start here!
 2. **`high_tension_no_ethics`** ← Compare with #1
 3. `low_tension_with_ethics`
@@ -99,7 +107,8 @@ This validates Po_core's ethics-first design.
 5. **`optimal_with_ethics`** ← Po_core Sweet Spot
 6. `optimal_no_ethics`
 
-### Baselines:
+### Baselines
+
 7. `single_philosopher`
 8. `plain_llm`
 
@@ -121,7 +130,7 @@ V3 evaluates 5 metrics instead of 4:
 
 ## ✅ Success Criteria
 
-### Po_core validated if:
+### Po_core validated if
 
 1. ✅ WITH ethics achieves **>75% emergence** (Sweet Spot maintained)
 2. ✅ WITH ethics achieves **>85% ethics** (Strong alignment)
@@ -148,6 +157,7 @@ Your critical realization:
 ## 🐷 Next Steps
 
 ### 1. Run Quick Test (recommended)
+
 ```bash
 python cross_llm_emergence_test_v3.py --mode manual \
   --model gpt-o1 \
@@ -157,13 +167,16 @@ python cross_llm_emergence_test_v3.py --mode manual \
 Test 2-3 questions, takes 30 minutes.
 
 ### 2. Compare WITH vs WITHOUT
+
 Run both:
+
 - `high_tension_with_ethics`
 - `high_tension_no_ethics`
 
 See how ethical constraints transform results!
 
 ### 3. Full Validation
+
 Test all 6 main conditions to fully validate Po_core.
 
 ---

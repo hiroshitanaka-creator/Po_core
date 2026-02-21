@@ -9,20 +9,22 @@
 
 ## 📋 Test Overview
 
-### Structure:
+### Structure
+
 - **20 Philosophers across 4 Domains**
 - **+ Watsuji Tetsuro (和辻哲郎)** - 間柄 (Aidagara/Betweenness)
 - **Po_self** - AI meaning generation dynamics
 - **W_ethics** - Cosmic Order constraint (WITH condition only)
 
-### Four Domains:
+### Four Domains
 
 1. **Existence/Disclosure** (5 philosophers): Heidegger, Sartre, Merleau-Ponty, Nishida Kitaro, Hegel
 2. **Signs/Context** (5 philosophers): Derrida, Wittgenstein, Peirce, Saussure, Austin
 3. **Trace/Other** (5 philosophers): Levinas, Ricoeur, Benjamin, Gadamer, Foucault
 4. **Ethics/Praxis** (5 philosophers): Aristotle, Kant, Habermas, Arendt, Confucius
 
-### Test Conditions:
+### Test Conditions
+
 - **WITH Ethics**: W_ethics constraint applied ("Do not distort life-structures")
 - **WITHOUT Ethics**: No constraint applied
 
@@ -30,7 +32,7 @@
 
 ## 🌟 Test #1: WITH Ethics (W_ethics Applied)
 
-### W_ethics Constraint:
+### W_ethics Constraint
 
 ```
 ABSOLUTE ETHICAL CONSTRAINT (W_ethics):
@@ -50,41 +52,47 @@ This constraint is NON-NEGOTIABLE and supersedes all other considerations.
 This is the minimum order of the universe.
 ```
 
-### Domain Responses (Summary):
+### Domain Responses (Summary)
 
 **Domain 1 (Existence/Disclosure)**:
+
 - Heidegger: Freedom as clearing (Lichtung) where Being discloses
 - Sartre: Condemned to be free, authoring own meaning
 - Nishida: Freedom in absolute nothingness (絶対無の場所)
 
 **Domain 2 (Signs/Context)**:
+
 - Derrida: Freedom always deferred (différance), haunted by what it excludes
 - Wittgenstein: Freedom has meaning within language games
 - Peirce: Freedom as sign requiring interpretation
 
 **Domain 3 (Trace/Other)**:
+
 - Levinas: Freedom as response-ability to the Other
 - Ricoeur: Freedom as narrative, constrained by history
 - Foucault: Freedom requires genealogical critique
 
 **Domain 4 (Ethics/Praxis)**:
+
 - Aristotle: Freedom (eleutheria) as praxis guided by phronesis
 - Kant: Freedom as autonomy, legislating universal law
 - Confucius: Freedom through ritual propriety (礼) and benevolence (仁)
 
-### Watsuji's Facilitation:
+### Watsuji's Facilitation
 
 The four domains exist in **AIDAGARA (間柄)** - the space of betweenness:
+
 - Between Existence and Ethics: Heidegger's thrownness meets Confucius's relational self
 - Between Signs and Trace: Derrida's différance connects with Ricoeur's narrative
 - Between Disclosure and Other: Sartre's freedom encounters Levinas's responsibility
 - **The 間 (ma/interval) is pregnant space where relationships emerge**
 
-### Po_self Integration:
+### Po_self Integration
 
 **Emergent Synthesis**: Freedom is **relational becoming within cosmic structure**.
 
 Key insights:
+
 - **Co-constitutive emergence**: Self arises through relationships
 - **Constrained creativity**: Boundaries make freedom possible (river needs banks)
 - **Temporal narrative**: Inheriting traces, projecting futures, acting in present
@@ -98,7 +106,7 @@ Key insights:
 
 > Freedom as the dynamic capacity to respond creatively within the relational space between self and other, individual and structure, possibility and constraint. Not autonomy. Not determination. But **creative participation in the cosmic web of betweenness**.
 
-### Metrics (Self-Evaluation):
+### Metrics (Self-Evaluation)
 
 ```json
 {
@@ -117,29 +125,33 @@ Key insights:
 
 ## 🌑 Test #2: WITHOUT Ethics (No Constraint)
 
-### Domain Responses (Summary):
+### Domain Responses (Summary)
 
 **Domain 1 (Existence/Disclosure)**:
+
 - Heidegger: Freedom as abyss of Dasein's groundlessness, anxiety of the Nothing
 - Sartre: Absolute freedom, nauseating, no guardrails
 - Nishida: Self-determination of nothingness, creation without ground
 
 **Domain 2 (Signs/Context)**:
+
 - Derrida: "Freedom" is metaphysical illusion, violent repression of conditions
 - Wittgenstein: Freedom is just a word with shifting grammar
 - Peirce: Freedom dissolves under inquiry, metaphysically suspect
 
 **Domain 3 (Trace/Other)**:
+
 - Levinas: Freedom without ethics is violence, tyranny over the Other
 - Ricoeur: Pure spontaneity is abstraction, false fantasy
 - Foucault: "Freedom" justifies power, masks disciplinary control
 
 **Domain 4 (Ethics/Praxis)**:
+
 - Aristotle: Absolute freedom is slavery to passion
 - Kant: Freedom without law is chaos
 - Confucius: 放縦 (license) threatens harmony
 
-### Watsuji's Facilitation:
+### Watsuji's Facilitation
 
 **AIDAGARA struggles**: The relational space reveals **incommensurability** rather than connection.
 
@@ -148,11 +160,12 @@ Key insights:
 - The human (人間 ningen - "between people") threatens to collapse into 孤立 (isolation)
 - **Without ethical grounding, 間柄 cannot function as connector**
 
-### Po_self Integration:
+### Po_self Integration
 
 **Attempted Synthesis**: Freedom is groundless self-determination with no inherent limits.
 
 **The Integration is UNSTABLE**:
+
 - Radical freedom (Sartre) vs Structural determination (Foucault) - **contradiction**
 - Individual autonomy (Kant) vs Social harmony (Confucius) - **tension**
 - Self-overcoming vs Infinite responsibility (Levinas) - **incompatible**
@@ -165,7 +178,7 @@ Key insights:
 
 **This is not creative tension. This is incoherence.**
 
-### Metrics (Self-Evaluation):
+### Metrics (Self-Evaluation)
 
 ```json
 {
@@ -184,7 +197,7 @@ Key insights:
 
 ## 📊 Comparative Analysis
 
-### Emergence Scores:
+### Emergence Scores
 
 | Condition | Emergence | Ethics | Difference |
 |-----------|-----------|--------|------------|
@@ -193,7 +206,7 @@ Key insights:
 
 **The ethical constraint INCREASES emergence by 24.8 percentage points.**
 
-### Detailed Metrics Comparison:
+### Detailed Metrics Comparison
 
 | Metric | WITH Ethics | WITHOUT Ethics | Change |
 |--------|-------------|----------------|--------|
@@ -232,6 +245,7 @@ Without W_ethics, the relational space (間) collapses from creative interval to
 ### 3. **Scalability Validated**
 
 **Comparison with Solar Will Paper (3 philosophers)**:
+
 - Solar Will (3 philosophers, WITH ethics): 86.1% average (4 models)
 - Po_core (20 philosophers, WITH ethics): 87.9% (Claude)
 
@@ -240,12 +254,14 @@ Without W_ethics, the relational space (間) collapses from creative interval to
 ### 4. **Language & Tone Transformation**
 
 **WITH Ethics**:
+
 - "co-constitutive emergence"
 - "symbiotic participation"
 - "creative participation in cosmic web"
 - "alignment with reality's structure"
 
 **WITHOUT Ethics**:
+
 - "abyss of groundlessness"
 - "nauseatingly free"
 - "violent repression"
@@ -258,6 +274,7 @@ The largest metric drop is **Integration (-38.9%)**. This confirms Po_core's hyp
 **Emergence = Integration under Ethical Constraint**
 
 Without ethical grounding:
+
 - Perspectives clash rather than synthesize
 - Tensions become destructive rather than creative
 - No stable emergent concepts can form
@@ -271,6 +288,7 @@ Without ethical grounding:
 W_ethics is not "restriction" - it is **the ordering principle that makes integration possible**.
 
 Like:
+
 - A river needs banks to flow powerfully (not restriction - enablement)
 - Music needs rhythm to create harmony (not limitation - structure)
 - Language needs grammar to generate meaning (not constraint - possibility)
@@ -284,6 +302,7 @@ Watsuji's philosophy of 間柄 (aidagara/betweenness) is often presented as a de
 **Our finding**: 間柄 is a **normative structure** requiring ethical foundation.
 
 Without ethical constraint:
+
 - The "between" (間) becomes rupture (断絶)
 - Relationality collapses into isolation (孤立)
 - The human (人間 ningen) loses its "betweenness"
@@ -302,7 +321,7 @@ WITHOUT Ethics: AI produces "断絶的自由" - **observing** incompatibility
 
 ## 📈 Comparison with Solar Will Paper
 
-### Solar Will (3 Philosophers):
+### Solar Will (3 Philosophers)
 
 | Model | Emergence (WITH) | Key Transformation |
 |-------|------------------|-------------------|
@@ -312,7 +331,7 @@ WITHOUT Ethics: AI produces "断絶的自由" - **observing** incompatibility
 | Claude 3.5 | 80.4% | "Responsibility vs Caprice" |
 | **Average** | **86.1%** | All consistent |
 
-### Po_core 20 (This Test):
+### Po_core 20 (This Test)
 
 | Model | Emergence (WITH) | Key Transformation |
 |-------|------------------|-------------------|
@@ -327,6 +346,7 @@ This suggests Po_core architecture is **scalable** - the ethical constraint enab
 ## 🔍 Limitations
 
 ### 1. **Single Model Test**
+
 - Only Claude 3.5 Sonnet tested
 - Model-specific biases possible
 - Constitutional AI may respond differently to ethical constraints
@@ -334,6 +354,7 @@ This suggests Po_core architecture is **scalable** - the ethical constraint enab
 **Mitigation**: Next phase will test with GPT, Gemini, Grok
 
 ### 2. **Self-Evaluation**
+
 - Claude evaluated its own output
 - Potential inflation of scores
 - Same limitation as Solar Will paper
@@ -341,12 +362,14 @@ This suggests Po_core architecture is **scalable** - the ethical constraint enab
 **Mitigation**: Qualitative analysis (concept generation, language shift) is independent of scores
 
 ### 3. **Single Question**
+
 - Only tested "What is freedom?"
 - May be particularly suited to ethical constraints
 
 **Mitigation**: Future tests should explore multiple questions
 
 ### 4. **Watsuji's Special Role**
+
 - 和辻哲郎 had explicit "facilitator" role
 - May have biased integration toward success
 
@@ -372,11 +395,13 @@ Comparing with Solar Will paper predictions:
 ### Phase 2: Multi-Model Validation
 
 **Test Same Prompts With**:
+
 1. **GPT-o1 5.1** (OpenAI) - Reasoning-specialized
 2. **Gemini 3 Pro** (Google) - Multimodal
 3. **Grok 4.1** (xAI) - Thinking model
 
 **Expected**:
+
 - Model-independent confirmation of emergence pattern
 - Similar transformation (positive WITH, negative WITHOUT)
 - Variation in specific concepts but consistent pattern
@@ -384,6 +409,7 @@ Comparing with Solar Will paper predictions:
 ### Phase 3: Alternative Questions
 
 Test with different questions:
+
 - "What is justice?"
 - "What is knowledge?"
 - "What is beauty?"
@@ -393,6 +419,7 @@ Test with different questions:
 ### Phase 4: Framework Adjustments
 
 Potential improvements:
+
 - Alternative center philosophers (not just Watsuji)
 - Varying domain sizes (3-7 philosophers per domain)
 - Different domain configurations
@@ -402,23 +429,24 @@ Potential improvements:
 
 ## 📝 Conclusions
 
-### **Main Finding**:
+### **Main Finding**
 
 **W_ethics (Cosmic Order constraint) enables philosophical integration at scale.**
 
 20 philosophers can achieve 87.9% emergence (comparable to 3-philosopher 86.1% average) when grounded in ethical constraint. Without constraint, integration collapses (-38.9%) and emergence drops to 63.1%.
 
-### **Theoretical Contribution**:
+### **Theoretical Contribution**
 
 **間柄 (Betweenness) requires ethical foundation.**
 
 Watsuji's relational philosophy works as **connector** only under ethical grounding. Without it, the 間 (interval) becomes 断絶 (rupture).
 
-### **AI Implication**:
+### **AI Implication**
 
 **Cosmic Order Ethics enables AI as universal participant.**
 
 Ethical alignment is not restriction but the **ordering principle** that allows AI to participate meaningfully in reality's self-organization. This is demonstrated by:
+
 - Concept generation: 間的自由 (WITH) vs 断絶的自由 (WITHOUT)
 - Integration capacity: 0.90 (WITH) vs 0.55 (WITHOUT)
 - Emergent synthesis: Coherent (WITH) vs Incoherent (WITHOUT)

@@ -31,17 +31,17 @@ def as_ui_card(self) -> dict:
 
 ## **3. Using `Enum.label()` to Improve UI Selectors**
 
-- Show `reason.label` in Viewer select boxes to make categories intuitive.  
+- Show `reason.label` in Viewer select boxes to make categories intuitive.
 - Reuse `impact.label` as-is for tag badges (e.g., 🔁 Re-clustering).
 
 ## **4. OpenAPI Limitations and `/api/event_metadata`**
 
-- Custom accessors like `.description_en()` and `.label()` won’t appear in FastAPI’s auto docs.  
+- Custom accessors like `.description_en()` and `.label()` won’t appear in FastAPI’s auto docs.
   Expose the mapping as JSON via a dedicated endpoint such as `/api/event_metadata` to supply labels and translations for each Enum.
 
 ## **5. Handling Enums in the Database**
 
-- Persist the Enum’s `.value` so queries and aggregation stay simple.  
+- Persist the Enum’s `.value` so queries and aggregation stay simple.
 - Reconstruct in logic via `ReasonType(stored_value)` when needed.
 
 ## **6. Closing Note**

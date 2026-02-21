@@ -30,16 +30,16 @@ from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
-from rich.prompt import Prompt, Confirm
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
+from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.text import Text
 
 from po_core.party_machine import (
-    PhilosopherPartyMachine,
-    PartyMood,
-    PhilosophicalTheme,
     PartyConfig,
+    PartyMood,
+    PhilosopherPartyMachine,
+    PhilosophicalTheme,
 )
 from po_core.po_self import PoSelf
 
@@ -140,7 +140,9 @@ def select_mood() -> PartyMood:
 
 def display_party_config(config: PartyConfig):
     """Display the suggested party configuration."""
-    console.print("\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n")
+    console.print(
+        "\n[bold magenta]🎊 Your Philosopher Party is Ready![/bold magenta]\n"
+    )
 
     # Main info panel
     console.print(

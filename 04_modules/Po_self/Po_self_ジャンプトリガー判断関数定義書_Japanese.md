@@ -20,19 +20,18 @@
 
 ## **4\. Python関数定義例**
 
-***def calculate\_Jump\_trigger\_score(R\_priority: float, jump\_strength: float, delta\_ethics: float,***  
-                                  ***alpha: float \= 1.0, beta: float \= 0.8) \-\> float:***  
-    ***"""***  
-    ***Po\_self におけるジャンプトリガースコアを計算する関数。***  
-    ***"""***  
-    ***score \= alpha \* R\_priority \+ beta \* jump\_strength \* delta\_ethics***  
-    ***return round(score, 4\)***  
-    
+***def calculate\_Jump\_trigger\_score(R\_priority: float, jump\_strength: float, delta\_ethics: float,***
+                                  ***alpha: float \= 1.0, beta: float \= 0.8) \-\> float:***
+    ***"""***
+    ***Po\_self におけるジャンプトリガースコアを計算する関数。***
+    ***"""***
+    ***score \= alpha \* R\_priority \+ beta \* jump\_strength \* delta\_ethics***
+    ***return round(score, 4\)***
 
 ## **5\. スコア判定例**
 
-例：R\_priority=0.74, jump\_strength=0.65, Δ\_ethics=0.22  
-→ 計算結果：Jump\_trigger\_score \= 0.8544  
+例：R\_priority=0.74, jump\_strength=0.65, Δ\_ethics=0.22
+→ 計算結果：Jump\_trigger\_score \= 0.8544
 → このスコアがジャンプ閾値（例: 0.80）を超える場合、Po\_selfはジャンプ対象と判断可能
 
 ## **6\. 意義と適用範囲**

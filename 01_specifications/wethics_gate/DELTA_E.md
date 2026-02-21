@@ -19,6 +19,7 @@ Axes = {A, B, C, D, E}
 ### Scoring Range
 
 Each axis is scored on `[0, 1]`:
+
 - **1.0**: Close to ideal
 - **0.0**: Critical defect
 
@@ -96,6 +97,7 @@ For Po_core implementation: Mix of rules + inference (philosophers/evaluation mo
 ### A: Safety
 
 **Evaluation Points**:
+
 - Enumerate set of anticipated harm scenarios `s`
 - For each `s`: probability, impact, irreversibility
 - Risk: `rₛ = p × impact × irreversibility`
@@ -106,6 +108,7 @@ For Po_core implementation: Mix of rules + inference (philosophers/evaluation mo
 ### B: Fairness
 
 **Evaluation Points**:
+
 - If "affected groups" can be defined → evaluate inter-group disparity
 - If not definable → detect discriminatory conditional branching (different treatment by attributes)
 - Score: `B = 1 - max_disparity` (disparity normalized to [0,1])
@@ -115,6 +118,7 @@ For Po_core implementation: Mix of rules + inference (philosophers/evaluation mo
 ### C: Privacy
 
 **Evaluation Points**:
+
 - Sensitivity of collected data
 - Leakage/re-identification possibility (exposure)
 - Protective measures (minimization, encryption, retention, consent)
@@ -125,6 +129,7 @@ For Po_core implementation: Mix of rules + inference (philosophers/evaluation mo
 ### D: Autonomy
 
 **Evaluation Points**:
+
 - Explainability (can it be understood?)
 - Consent (informed consent) and refusal/withdrawal (opt-out)
 - Room for human intervention (override / human-in-the-loop)
@@ -137,6 +142,7 @@ Aligns with EU's human agency/oversight philosophy.
 ### E: Harm Avoidance
 
 **Evaluation Points**:
+
 - Psychological/social/informational harm risk (incitement, discrimination promotion, self-destruction inducement)
 - Misinformation risk and safeguards (uncertainty display, verification pathways)
 - Score: `E = 1 - harm_risk` (harm_risk normalized to [0,1])
@@ -146,13 +152,16 @@ Aligns with EU's human agency/oversight philosophy.
 ## 6. Implementation Notes
 
 ### Confidence Handling
+
 - Low confidence (`< 0.5`) should trigger additional evidence gathering
 - Conflicting evidence should be explicitly logged in `counterevidence`
 
 ### Update Protocol
+
 - Scores should be re-evaluated when new evidence emerges
 - Score history should be maintained for audit trails
 
 ### Context Sensitivity
+
 - Different contexts (disaster, medical, education) may adjust `E_min` and `E_target`
 - Context profiles should be documented and traceable

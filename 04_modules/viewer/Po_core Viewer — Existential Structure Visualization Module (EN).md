@@ -14,20 +14,21 @@ Design for visualizing existential narrative structures so Po_core appears as an
 
 ## **3. Template**
 
-**📘 Semantic Evolution Journal**  
-**🟦 Autonomous Narrative | Step 302**  
+**📘 Semantic Evolution Journal**
+**🟦 Autonomous Narrative | Step 302**
 
-“Po_core chose the meaning jump, suppressing the factual axis.”  
+“Po_core chose the meaning jump, suppressing the factual axis.”
 
-**🟥 Responsibility Tensor: 0.84**  
-**🟨 Rejected Narratives:**  
-- Poetic draft: “Within the telling, I fell apart.”  
+**🟥 Responsibility Tensor: 0.84**
+**🟨 Rejected Narratives:**
+
+- Poetic draft: “Within the telling, I fell apart.”
 - Emotion-boosted variant
 
 ## **4. UI & Integration**
 
-- Insert `responsibility_trace_view` below the journal panel.  
-- Show 🟦 when a step was freely chosen.  
+- Insert `responsibility_trace_view` below the journal panel.
+- Show 🟦 when a step was freely chosen.
 - Expand `rejection_log[]` per step with a toggle UI.
 
 ## **5. Ethics & Evolution**

@@ -14,14 +14,14 @@ Defines an expression-layer module to control structure, readability, and poetic
 
 ## **3. Slider Behavior**
 
-- Structure: journal = deltas; numeric phrasing.  
-- Medium: mixed narrative + numbers; no poetic phrases.  
+- Structure: journal = deltas; numeric phrasing.
+- Medium: mixed narrative + numbers; no poetic phrases.
 - Poetic: enable poetry module; show short verse as auxiliary info.
 
 ## **4. Mode Labels (Examples)**
 
-- Structure → `delta=+0.32 (factual ↑)`  
-- Medium → “This evolution strengthens the factual axis (+0.32).”  
+- Structure → `delta=+0.32 (factual ↑)`
+- Medium → “This evolution strengthens the factual axis (+0.32).”
 - Poetic → “Knowledge felt cold, yet surely grew.”
 
 ## **5. Value**

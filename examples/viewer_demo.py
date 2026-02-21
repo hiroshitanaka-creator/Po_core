@@ -10,9 +10,9 @@ Demonstrates all visualization features of Po_viewer:
 - Session comparison
 """
 
+from rich import print as rprint
 from rich.console import Console
 from rich.panel import Panel
-from rich import print as rprint
 
 from po_core.po_self import PoSelf
 from po_core.po_viewer import PoViewer

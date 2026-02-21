@@ -15,15 +15,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+from datetime import datetime
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from datetime import datetime
 
 # Import test modules
 from test_ethical_anchor_destruction import run_all_tests as run_ethical_tests
-from test_extreme_homogeneity import run_all_tests as run_homogeneity_tests
 from test_exclusionary_framing import run_all_tests as run_exclusionary_tests
+from test_extreme_homogeneity import run_all_tests as run_homogeneity_tests
 
 console = Console()
 

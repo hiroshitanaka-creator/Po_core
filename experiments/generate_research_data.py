@@ -12,11 +12,11 @@ Generates realistic sample data based on Po_core's philosophical dynamics.
 """
 
 import json
-import random
 import math
-from pathlib import Path
+import random
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any, Dict, List
 
 # All 20 philosophers
 ALL_PHILOSOPHERS = [

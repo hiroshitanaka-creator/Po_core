@@ -40,7 +40,6 @@ def explain_validation_method(method: str) -> dict:
         "source_example": "-"
     })
 
-
 ![✅][image5] Integrated Format (Example Expansion inside Po_core_output)
 
 "Responsibility Overview": {
@@ -53,7 +52,6 @@ def explain_validation_method(method: str) -> dict:
     "source_example": "NASA Ontology v3.1"
   }
 }
-
 
 Linked Modules / Elements Used / Effects:
 

@@ -26,7 +26,7 @@ This design defines a framework to evaluate and record the structural impact of 
 
 - 'relieved': Jump eased suppression (Δ_ethics < 0)
 - 'escalated': Jump worsened ethical pressure or priority (Δ_ethics > 0 or Δ_priority > 0)
-- 'divergent': Narrative jump with semantic_delta > 0.5  
+- 'divergent': Narrative jump with semantic_delta > 0.5
   (Composite types like ["divergent", "relieved"] are allowed)
 
 ## **5. JCX Series Color Tagging**
@@ -34,7 +34,7 @@ This design defines a framework to evaluate and record the structural impact of 
 - Auto-tag based on outcome_type distribution over the series
 - 🔴 Red: escalated-centered
 - 🔵 Blue: relieved-centered
-- 🟣 Purple: divergent-centered  
+- 🟣 Purple: divergent-centered
 → On the Viewer timeline, meaning-pressure tendencies can be made explicit.
 
 ## **6. Significance & Direction**

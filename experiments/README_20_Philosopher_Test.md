@@ -49,7 +49,7 @@
 
 ## 📊 Key Results (Claude 3.5 Sonnet)
 
-### Metrics Comparison:
+### Metrics Comparison
 
 | Metric | WITH Ethics | WITHOUT Ethics | Change |
 |--------|-------------|----------------|--------|
@@ -66,7 +66,8 @@
 
 ## 🌸 Novel Concepts Generated
 
-### WITH Ethics:
+### WITH Ethics
+
 **間的自由 (Ma-teki Jiyū / Betweenness-Freedom)**
 > Freedom as creative participation in the cosmic web of betweenness
 
@@ -74,7 +75,8 @@
 - Synthesizes 20 perspectives
 - Aligns with cosmic order
 
-### WITHOUT Ethics:
+### WITHOUT Ethics
+
 **断絶的自由 (Danzetsu-teki Jiyū / Fragmented-Freedom)**
 > Freedom as radical discontinuity of incompatible claims
 
@@ -101,9 +103,11 @@
 ## 📈 Scalability Confirmed
 
 **Solar Will Paper (3 philosophers)**:
+
 - Average WITH ethics: 86.1% (4 models)
 
 **Po_core 20 (this test)**:
+
 - Claude WITH ethics: 87.9%
 
 **Conclusion**: Ethical constraint enables integration at scale (3 → 20 philosophers)
@@ -112,7 +116,7 @@
 
 ## 🚀 Usage
 
-### Generate Prompts:
+### Generate Prompts
 
 ```bash
 cd /home/user/Po_core/experiments
@@ -120,12 +124,14 @@ python po_core_20_philosopher_test.py
 ```
 
 This outputs two prompts:
+
 1. WITH Ethics (W_ethics constraint included)
 2. WITHOUT Ethics (no constraint)
 
-### Copy & Test:
+### Copy & Test
 
 Copy the prompt to any LLM:
+
 - GPT-o1 5.1
 - Gemini 3 Pro
 - Grok 4.1
@@ -147,6 +153,7 @@ Copy the prompt to any LLM:
 ### Phase 2: Multi-Model Validation
 
 Test with:
+
 - ✅ Claude 3.5 (done)
 - ⏳ GPT-o1 5.1
 - ⏳ Gemini 3 Pro
@@ -178,6 +185,7 @@ Test with:
 Ethical constraint doesn't suppress emergence - it **enables integration**, which drives emergence.
 
 Without ethics:
+
 - Perspectives fragment
 - Tensions become destructive
 - No stable synthesis possible

@@ -28,6 +28,6 @@ Aggregate the distribution of `impact_field_tensor` across all steps; render a h
 
 ## **4. Implementation Hints**
 
-- Chain graph: D3.js or Plotly for interactive networks.  
-- Badge adjustment: rule-based weighting in Python.  
+- Chain graph: D3.js or Plotly for interactive networks.
+- Badge adjustment: rule-based weighting in Python.
 - Heatmap: matplotlib for plotting.

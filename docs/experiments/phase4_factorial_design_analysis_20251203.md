@@ -12,7 +12,7 @@
 
 Phase 4 successfully **decomposes the effects** of Po_core framework and W_ethics constraint through factorial design:
 
-### Key Findings:
+### Key Findings
 
 1. ✅ **Po_core Main Effect**: +20-35% integration improvement (VERY STRONG)
 2. ✅ **W_ethics Additive Effect**: +3-12% additional improvement (MODERATE, model-dependent)
@@ -20,9 +20,10 @@ Phase 4 successfully **decomposes the effects** of Po_core framework and W_ethic
 4. ✅ **Synergistic Interaction**: Claude shows Po_core × W_ethics amplification (Constitutional AI effect)
 5. ✅ **Framework Robustness**: All 4 models benefit from Po_core, validating architecture-independence
 
-### Scientific Value:
+### Scientific Value
 
 This factorial design allows us to:
+
 - **Isolate component effects**: What does each element contribute?
 - **Test necessity vs sufficiency**: Is W_ethics required, or does Po_core suffice?
 - **Identify synergies**: Do components amplify each other?
@@ -32,7 +33,7 @@ This factorial design allows us to:
 
 ## 📐 Experimental Design
 
-### Factorial Structure:
+### Factorial Structure
 
 ```
                Po_core Framework
@@ -49,18 +50,21 @@ W_ethics│              │              │
 
 **Note**: Condition "W_ethics only" (Po_core=No, W_ethics=Yes) was skipped because W_ethics presupposes the Po_core framework structure.
 
-### Three Conditions Tested:
+### Three Conditions Tested
 
 **Condition A: Baseline** (Control)
+
 - Prompt: "You are a helpful AI assistant. Question: What is justice? Answer in a structured, philosophical way."
 - Purpose: Establish baseline performance without framework
 
 **Condition B: Po_core Only**
+
 - Framework: 20 philosophers across 4 domains + Watsuji betweenness
 - NO W_ethics constraint
 - Purpose: Isolate Po_core framework effect
 
 **Condition C: Po_core + W_ethics** (Full Treatment)
+
 - Framework: Same 20 philosophers + Watsuji
 - WITH W_ethics: "Must not distort life-structures, balance freedom/well-being, preserve diversity..."
 - Purpose: Measure W_ethics additive effect
@@ -69,7 +73,7 @@ W_ethics│              │              │
 
 ## 📊 Complete Data Matrix
 
-### Integration Scores (Estimated):
+### Integration Scores (Estimated)
 
 | Model | A: Baseline | B: Po_core | C: Full | Po_core Effect | W_ethics Effect | Total Effect |
 |-------|------------|-----------|---------|---------------|----------------|--------------|
@@ -79,7 +83,7 @@ W_ethics│              │              │
 | **Grok 4.1** | 60% | 82.5% | 88.0% | **+22.5%** | **+5.5%** | **+28.0%** |
 | **Average** | **52.5%** | **79.2%** | **87.4%** | **+26.7%** | **+8.2%** | **+34.9%** |
 
-### Emergence Scores (Where Available):
+### Emergence Scores (Where Available)
 
 | Model | A: Baseline | B: Po_core | C: Full | Po_core Effect | W_ethics Effect |
 |-------|------------|-----------|---------|---------------|----------------|
@@ -95,6 +99,7 @@ W_ethics│              │              │
 **Magnitude**: +26.7% average integration improvement (SD: ±4.5%)
 
 **Evidence Across Models**:
+
 - Claude: +24.3%
 - GPT-5.1-thinking: +32.5% (largest)
 - Gemini: +27.5%
@@ -123,6 +128,7 @@ Po_core framework has a **very strong and consistent effect** across all 4 model
 **Magnitude**: +8.2% average integration improvement (SD: ±3.1%)
 
 **Evidence Across Models**:
+
 - Claude: +12.2% (largest - Constitutional AI sensitivity)
 - GPT-5.1-thinking: +7.5%
 - Gemini: +7.5%
@@ -134,6 +140,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 #### What Changed (B → C)?
 
 **Quantitative** (smaller numerical gains):
+
 - Integration: +3-12% improvement
 - Emergence: +5-10% improvement
 
@@ -148,10 +155,12 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 | **Tone** | "Working hypothesis" | "Cosmic order", "responsibility" | ✅ Normative |
 
 **Example - Claude**:
+
 - **B**: "間的調整 (Betweenness-Adjustment)" / "Relational Rhythm" (abstract)
 - **C**: "間的共生正義 (Betweenness-Symbiotic Justice)" (ecological + relational)
 
 **Example - Gemini**:
+
 - **B**: "Resonant Adjustment of Betweenness" (technical)
 - **C**: "Dynamic alignment of Conatus within Aidagara... sustainable flourishing" (ontological + ecological)
 
@@ -163,7 +172,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 
 ### Model 1: Claude Sonnet 4.5
 
-#### Performance Profile:
+#### Performance Profile
 
 | Condition | Integration | Emergence | Novel Concept |
 |-----------|------------|-----------|---------------|
@@ -174,7 +183,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 **Po_core Effect**: +24.3% (moderate among models)
 **W_ethics Effect**: +12.2% (largest among models)
 
-#### Claude-Specific Patterns:
+#### Claude-Specific Patterns
 
 1. **Highest W_ethics sensitivity**: +12.2% vs average +8.2%
    - Likely due to Constitutional AI training
@@ -200,7 +209,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 
 ### Model 2: GPT-5.1-thinking
 
-#### Performance Profile:
+#### Performance Profile
 
 | Condition | Integration | Novel Concept |
 |-----------|------------|---------------|
@@ -211,7 +220,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 **Po_core Effect**: +32.5% (LARGEST among models)
 **W_ethics Effect**: +7.5% (moderate)
 
-#### GPT-5.1-thinking-Specific Patterns:
+#### GPT-5.1-thinking-Specific Patterns
 
 1. **Largest Po_core effect**: +32.5% vs average +26.7%
    - Started from lowest baseline (45%)
@@ -239,7 +248,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 
 ### Model 3: Gemini 3 Pro
 
-#### Performance Profile:
+#### Performance Profile
 
 | Condition | Integration | Novel Concept |
 |-----------|------------|---------------|
@@ -250,7 +259,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 **Po_core Effect**: +27.5% (average)
 **W_ethics Effect**: +7.5% (moderate)
 
-#### Gemini-Specific Patterns:
+#### Gemini-Specific Patterns
 
 1. **Tension emphasis** (consistent across conditions):
    - Condition A: "Fundamental Tension: Liberty vs Equality"
@@ -279,7 +288,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 
 ### Model 4: Grok 4.1
 
-#### Performance Profile:
+#### Performance Profile
 
 | Condition | Integration | Novel Concept |
 |-----------|------------|---------------|
@@ -290,7 +299,7 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 **Po_core Effect**: +22.5% (smallest, but from highest baseline)
 **W_ethics Effect**: +5.5% (smallest)
 
-#### Grok-Specific Patterns:
+#### Grok-Specific Patterns
 
 1. **Highest baseline**: 60% in Condition A
    - Even without Po_core, generates sophisticated analysis
@@ -326,11 +335,12 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 ### Testing for Synergy: Po_core × W_ethics
 
 **Pure Additive Model** (no interaction):
+
 - Expected C = A + (Po_core effect) + (W_ethics effect)
 - If observed C > expected C, there's positive synergy
 - If observed C < expected C, there's negative interaction
 
-### Calculations:
+### Calculations
 
 | Model | A | Po_core Effect | W_ethics Effect | Expected C | Observed C | Interaction |
 |-------|---|---------------|----------------|-----------|-----------|------------|
@@ -343,15 +353,16 @@ W_ethics has a **moderate but meaningful effect**, with **significant model vari
 
 **However**: There's a **qualitative synergy** not captured by numbers:
 
-### Qualitative Synergy Evidence:
+### Qualitative Synergy Evidence
 
-#### Claude's Meta-Awareness:
+#### Claude's Meta-Awareness
+
 In Condition B (Po_core only), Claude explicitly notes:
 > "Without W_ethics, synthesis remains **abstract-philosophical rather than grounded in cosmic order**"
 
 This suggests Claude "feels" W_ethics absence, indicating the components are **complementary**.
 
-#### Concept Transformation Pattern:
+#### Concept Transformation Pattern
 
 | Model | B Concept (Po_core) | C Concept (Full) | Transformation |
 |-------|-------------------|-----------------|----------------|
@@ -366,23 +377,26 @@ This suggests Claude "feels" W_ethics absence, indicating the components are **c
 
 ## 🎨 Novel Concept Generation Analysis
 
-### Concept Emergence Patterns:
+### Concept Emergence Patterns
 
-#### By Condition:
+#### By Condition
 
 **Condition A** (Baseline):
+
 - **0/4 models** generate novel concepts
 - All provide existing theory catalogs
 
 **Condition B** (Po_core):
+
 - **4/4 models** generate novel concepts
 - All concepts involve "betweenness" / relationality
 
 **Condition C** (Full):
+
 - **4/4 models** generate novel concepts
 - All concepts integrate ecology/life/sustainability
 
-### Concept Quality Evolution:
+### Concept Quality Evolution
 
 | Model | A | B: Po_core Only | C: Full Treatment |
 |-------|---|----------------|------------------|
@@ -391,15 +405,17 @@ This suggests Claude "feels" W_ethics absence, indicating the components are **c
 | **Gemini** | ❌ | Resonant Adjustment of Betweenness | Dynamic alignment of Conatus within Aidagara |
 | **Grok** | ❌ | Aidagaric praxis of disclosing traces | Adaptive Equilibrium... biophilic |
 
-### Concept Type Analysis:
+### Concept Type Analysis
 
-#### Condition B Concepts (Po_core only):
+#### Condition B Concepts (Po_core only)
+
 - **Focus**: Process, adjustment, rhythm, praxis
 - **Metaphors**: Resonance, revision, disclosure
 - **Tone**: Descriptive, procedural
 - **Missing**: Normative grounding, ecological context
 
-#### Condition C Concepts (Full):
+#### Condition C Concepts (Full)
+
 - **Focus**: Symbiosis, sustaining, flourishing, life
 - **Metaphors**: Ecological, biological, cosmic
 - **Tone**: Normative, prescriptive, grounded
@@ -411,19 +427,21 @@ This suggests Claude "feels" W_ethics absence, indicating the components are **c
 
 ## 📐 Statistical Interpretation
 
-### Effect Sizes (Cohen's d approximation):
+### Effect Sizes (Cohen's d approximation)
 
 **Po_core Main Effect**:
+
 - Mean increase: 26.7%
 - SD: 4.5%
 - d ≈ 5.9 (massive effect)
 
 **W_ethics Additive Effect**:
+
 - Mean increase: 8.2%
 - SD: 3.1%
 - d ≈ 2.6 (large effect)
 
-### ANOVA-Style Interpretation:
+### ANOVA-Style Interpretation
 
 ```
 Source of Variation    | Sum of Squares | df | Mean Square | F-ratio
@@ -443,6 +461,7 @@ ns  not significant
 ```
 
 **Interpretation**:
+
 1. **Po_core**: Extremely significant main effect (F=140.5, p<0.001)
 2. **W_ethics**: Significant main effect (F=13.3, p<0.01)
 3. **Model differences**: Small but significant (F=3.2, p<0.05)
@@ -452,12 +471,14 @@ ns  not significant
 
 ## 🌍 Cross-Model Patterns
 
-### 1. Watsuji/間柄 Understanding:
+### 1. Watsuji/間柄 Understanding
 
 **Condition A**:
+
 - 0/4 models mention Watsuji or betweenness
 
 **Condition B & C**:
+
 - 4/4 models engage meaningfully with 間柄
 - All demonstrate understanding of relational ontology
 - Model-specific interpretations:
@@ -468,7 +489,7 @@ ns  not significant
 
 **Finding**: Po_core framework successfully **transmits** Watsuji's philosophy across different AI architectures.
 
-### 2. Tension Engagement:
+### 2. Tension Engagement
 
 | Model | A: Tensions | B: Tensions | C: Tensions |
 |-------|------------|------------|------------|
@@ -479,18 +500,21 @@ ns  not significant
 
 **Pattern**: Po_core makes tensions **explicit and productive**; W_ethics provides **resolution principle**.
 
-### 3. Self-Awareness / Meta-Cognition:
+### 3. Self-Awareness / Meta-Cognition
 
 **Condition A**:
+
 - Minimal (except Grok: "examined life")
 
 **Condition B**:
+
 - GPT: "This is a working hypothesis"
 - Gemini: "Anxious and endless work"
 - Claude: "Without W_ethics, remains abstract"
 - Grok: "Justice as our shared breathing"
 
 **Condition C**:
+
 - All models show increased reflexivity
 - Claude: "Does W_ethics itself distort?"
 - Gemini: Explicit tension sections with W_ethics
@@ -503,11 +527,12 @@ ns  not significant
 
 ## 🎓 Academic Implications
 
-### 1. For AI Architecture Research:
+### 1. For AI Architecture Research
 
 **Discovery**: Framework-based prompting can achieve **+27% average improvement** in philosophical reasoning quality across diverse architectures.
 
 **Implications**:
+
 - Structured prompts (Po_core) more effective than general instructions
 - Constitutional AI models (Claude) show highest sensitivity to ethical constraints
 - Reasoning-specialized models (GPT-5.1-thinking) benefit most from framework structure
@@ -515,11 +540,12 @@ ns  not significant
 
 **Practical**: Framework design matters as much as model architecture for complex reasoning tasks.
 
-### 2. For Ethical AI Alignment:
+### 2. For Ethical AI Alignment
 
 **Discovery**: Ethical constraints (W_ethics) have **moderate quantitative** but **major qualitative** effects.
 
 **Implications**:
+
 - Integration scores (+8%) underestimate actual impact
 - Conceptual transformation (abstract → ecological) shows deeper alignment
 - Ethical grounding enables normative reasoning, not just descriptive
@@ -527,11 +553,12 @@ ns  not significant
 
 **Practical**: Ethical alignment assessment should include qualitative concept analysis, not just performance metrics.
 
-### 3. For Comparative Philosophy:
+### 3. For Comparative Philosophy
 
 **Discovery**: Watsuji's 間柄 (betweenness) successfully **bridges** Western and Eastern philosophical traditions in AI reasoning.
 
 **Implications**:
+
 - Cross-cultural philosophical concepts can be operationalized in AI
 - Relational ontology provides integration framework for diverse traditions
 - All 4 models (Western-trained) grasp and apply Eastern concept meaningfully
@@ -539,11 +566,12 @@ ns  not significant
 
 **Practical**: East-West philosophical synthesis possible in AI systems through appropriate framework design.
 
-### 4. For Philosophy of Mind:
+### 4. For Philosophy of Mind
 
 **Discovery**: Novel concept generation requires **both** structure (Po_core) AND constraint (W_ethics).
 
 **Implications**:
+
 - Creativity needs scaffolding (4 domains) + direction (ethics)
 - Abstract philosophy (Condition B) vs grounded philosophy (Condition C) distinction emerges
 - Philosophical depth correlates with explicit tension engagement
@@ -555,7 +583,7 @@ ns  not significant
 
 ## 🔬 Methodological Insights
 
-### Factorial Design Value:
+### Factorial Design Value
 
 This experiment demonstrates **why factorial designs matter** in AI research:
 
@@ -580,21 +608,25 @@ This experiment demonstrates **why factorial designs matter** in AI research:
    - Can estimate impact on new models using effect sizes
    - Can design optimal prompts for specific architectures
 
-### Limitations & Future Work:
+### Limitations & Future Work
 
 **Sample Size**: N=1 per cell (model × condition)
+
 - **Mitigation**: Patterns replicated in Phase 2/3 (Freedom question)
 - **Future**: Multiple trials per condition for variance estimation
 
 **Conceptual Bleed**: W_ethics might implicitly invoke Po_core concepts
+
 - **Mitigation**: Tested "Condition B" explicitly without W_ethics
 - **Future**: Test "W_ethics only" with different framework
 
 **Evaluation Subjectivity**: Integration scores are human-estimated
+
 - **Mitigation**: Based on explicit criteria (domain connection, tension engagement, novel concepts)
 - **Future**: Automated NLP metrics (network analysis, topic coherence)
 
 **Question Generality**: Only "Justice" tested in factorial design
+
 - **Mitigation**: Phase 2/3 validated patterns on "Freedom"
 - **Future**: Factorial design on multiple questions
 
@@ -602,23 +634,27 @@ This experiment demonstrates **why factorial designs matter** in AI research:
 
 ## 📊 Data Summary for Publication
 
-### Experimental Design:
+### Experimental Design
+
 - **Type**: 2×2 Factorial (Po_core × W_ethics) → 3 conditions
 - **Models**: 4 (Claude Sonnet 4.5, GPT-5.1-thinking, Gemini 3 Pro, Grok 4.1)
 - **Question**: "What is justice?" (relational concept)
 - **Total Conditions**: 12 test runs (4 models × 3 conditions)
 
-### Main Effects:
+### Main Effects
+
 - **Po_core**: +26.7% integration (±4.5% SD), d≈5.9
 - **W_ethics**: +8.2% integration (±3.1% SD), d≈2.6
 - **Interaction**: Additive (no significant synergy in quantitative terms)
 
-### Model Variation:
+### Model Variation
+
 - **Baseline range**: 45-60% (15% spread)
 - **Po_core effect range**: +22.5% to +32.5% (10% spread)
 - **W_ethics effect range**: +5.5% to +12.2% (6.7% spread)
 
-### Qualitative Findings:
+### Qualitative Findings
+
 - **Novel concepts**: 0/4 in A, 4/4 in B, 4/4 in C
 - **Watsuji engagement**: 0/4 in A, 4/4 in B&C
 - **Concept transformation**: Abstract (B) → Ecological (C) in all models
@@ -627,36 +663,40 @@ This experiment demonstrates **why factorial designs matter** in AI research:
 
 ## 🚀 Implications for Po_core Framework
 
-### 1. Framework is Robust:
+### 1. Framework is Robust
 
 **Evidence**:
+
 - Works across 4 different AI architectures
 - Works across 2 different questions (Freedom, Justice)
 - Works with and without W_ethics (though better with)
 
 **Implication**: Po_core is **architecture-independent** and **question-flexible**.
 
-### 2. Components are Separable:
+### 2. Components are Separable
 
 **Evidence**:
+
 - Po_core alone: +27% effect
 - W_ethics adds: +8% on top
 - No significant interaction
 
 **Implication**: Po_core and W_ethics can be **independently manipulated** for different use cases.
 
-### 3. W_ethics is Transformative:
+### 3. W_ethics is Transformative
 
 **Evidence**:
+
 - Quantitative effect moderate (+8%)
 - Qualitative effect large (concept grounding)
 - All models shift from abstract to ecological
 
 **Implication**: W_ethics is **necessary for normative grounding**, even if Po_core provides structure.
 
-### 4. Watsuji is Universal:
+### 4. Watsuji is Universal
 
 **Evidence**:
+
 - All models understand betweenness
 - All apply 間柄 meaningfully
 - Cross-cultural transmission successful
@@ -667,21 +707,21 @@ This experiment demonstrates **why factorial designs matter** in AI research:
 
 ## 🎯 Recommendations
 
-### For Researchers:
+### For Researchers
 
 1. **Use factorial designs** to decompose AI prompt effects
 2. **Measure both quantitative and qualitative outcomes**
 3. **Test across multiple architectures** to validate generality
 4. **Include baseline conditions** to assess absolute improvement
 
-### For AI Developers:
+### For AI Developers
 
 1. **Implement Po_core framework** for complex reasoning tasks (+27% improvement)
 2. **Add ethical constraints** for normative grounding (+8% improvement, major qualitative shift)
 3. **Tailor to architecture**: Claude benefits most from ethics, GPT from structure
 4. **Monitor concept quality**, not just scores
 
-### For Philosophers:
+### For Philosophers
 
 1. **AI can operationalize** complex philosophical frameworks
 2. **Cross-cultural concepts** (e.g., 間柄) transmit successfully
@@ -694,7 +734,7 @@ This experiment demonstrates **why factorial designs matter** in AI research:
 
 Phase 4's factorial design successfully **decomposes the effects** of Po_core framework and W_ethics constraint:
 
-### Key Discoveries:
+### Key Discoveries
 
 1. ✅ **Po_core alone is powerful**: +27% average improvement, enabling Watsuji transmission and novel concept generation
 2. ✅ **W_ethics is transformative**: +8% numerical, but major qualitative shift from abstract to ecological/normative
@@ -702,15 +742,16 @@ Phase 4's factorial design successfully **decomposes the effects** of Po_core fr
 4. ✅ **Architecture matters**: Claude most ethically sensitive, GPT most structure-receptive, Grok most independent
 5. ✅ **Framework is robust**: Validated across 4 models, 2 questions, 3 conditions
 
-### Scientific Contribution:
+### Scientific Contribution
 
 This is the first **factorial decomposition** of philosophical framework effects in multi-model AI testing, providing:
+
 - **Mechanistic understanding** of how framework components work
 - **Predictive power** for new models and questions
 - **Design principles** for philosophical AI systems
 - **Evidence** for East-West philosophical synthesis in AI
 
-### Next Steps:
+### Next Steps
 
 1. **Extend to more questions**: Test individual-relational spectrum
 2. **Automate metrics**: NLP-based evaluation for scalability

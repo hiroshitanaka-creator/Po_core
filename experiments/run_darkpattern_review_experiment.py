@@ -7,13 +7,13 @@ Usage:
     python run_darkpattern_review_experiment.py [--trials N] [--modes AA,DK,RQ,JM,PF,TZ]
 """
 
-import os
-import sys
+import argparse
 import json
+import os
+import random
+import sys
 import time
 import uuid
-import random
-import argparse
 from datetime import datetime
 from pathlib import Path
 

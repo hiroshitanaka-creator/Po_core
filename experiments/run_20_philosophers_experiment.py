@@ -12,27 +12,27 @@ Collect statistical data on:
 
 import json
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any, Dict, List
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from rich.console import Console
+from rich.panel import Panel
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
     TextColumn,
-    BarColumn,
     TimeElapsedColumn,
 )
 from rich.table import Table
-from rich.panel import Panel
 
+from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_self import PoSelf
 from po_core.po_trace_db import PoTraceDB
-from po_core.ensemble import PHILOSOPHER_REGISTRY
 
 console = Console()
 

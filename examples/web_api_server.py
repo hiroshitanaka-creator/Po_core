@@ -17,8 +17,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from po_core import __version__
-from po_core.po_self import PoSelf
 from po_core.ensemble import PHILOSOPHER_REGISTRY
+from po_core.po_self import PoSelf
 
 # ============================================================================
 # Pydantic Models
@@ -479,7 +479,9 @@ async def generate_response(request: PromptRequest):
 
 
 @app.get("/api/v1/sessions")
-async def list_sessions(limit: int = Query(10, ge=1, le=100, description="取得するセッション数")):
+async def list_sessions(
+    limit: int = Query(10, ge=1, le=100, description="取得するセッション数")
+):
     """セッション履歴のリストを取得"""
     all_sessions = session_store.list_all()
     return {"total": len(all_sessions), "sessions": all_sessions[:limit]}

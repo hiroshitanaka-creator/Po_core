@@ -377,6 +377,34 @@ class Philosopher(ABC):
 
         return [proposal]
 
+    async def propose_async(
+        self,
+        ctx: "DomainContext",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> "List[Proposal]":
+        """Async interface for PhilosopherProtocol.propose().
+
+        Default implementation runs the synchronous ``propose()`` in a thread
+        via the event-loop's default executor, ensuring the FastAPI event loop
+        is never blocked even for CPU-bound philosophers.
+
+        Subclasses that have native async capability (e.g., AI philosophers that
+        call external APIs) may override this method to skip the thread entirely.
+
+        Returns:
+            Same as ``propose()``: a list of Proposal objects.
+        """
+        import asyncio
+        import functools
+
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(
+            None,
+            functools.partial(self.propose, ctx, intent, tensors, memory),
+        )
+
 
 # ── New Protocol-based interface for hexagonal architecture ──────────
 
@@ -412,6 +440,25 @@ class PhilosopherProtocol(TypingProtocol):
 
         Returns:
             List of proposals
+        """
+        ...
+
+    async def propose_async(
+        self,
+        ctx: DomainContext,
+        intent: Intent,
+        tensors: TensorSnapshot,
+        memory: MemorySnapshot,
+    ) -> List[Proposal]:
+        """
+        Async variant of propose().
+
+        Implementations that override this may use native async IO without
+        blocking the event loop.  The default (on ``Philosopher`` subclasses)
+        wraps the synchronous ``propose()`` in a thread executor.
+
+        Returns:
+            Same as ``propose()``: a list of Proposal objects.
         """
         ...
 

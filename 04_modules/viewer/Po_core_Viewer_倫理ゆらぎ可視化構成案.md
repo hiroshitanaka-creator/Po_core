@@ -14,11 +14,11 @@
 
 ## **3\. 系列カード表示例**
 
-***┌────────────────────────────┐***  
-***│ JCX\_014  │ 🔴 ethics\_fluctuation\_score: 0.084***  
-***│ tag: semantic\_surge\_chain***  
-***│ avg\_Δ\_ethics: \-0.12***  
-***│ profile\_tag: divergence-drift***  
+***┌────────────────────────────┐***
+***│ JCX\_014  │ 🔴 ethics\_fluctuation\_score: 0.084***
+***│ tag: semantic\_surge\_chain***
+***│ avg\_Δ\_ethics: \-0.12***
+***│ profile\_tag: divergence-drift***
 ***└────────────────────────────┘***
 
 バー形式の視覚表示：
@@ -27,12 +27,12 @@
 
 ## **4\. Viewer フィルタ・比較・強調構成**
 
-\- filter: ethics\_fluctuation \> 0.07 → 不安定な倫理系列のみ抽出  
-\- compare: JCX\_012 vs JCX\_014 → 安定と不安定の比較ビュー  
+\- filter: ethics\_fluctuation \> 0.07 → 不安定な倫理系列のみ抽出
+\- compare: JCX\_012 vs JCX\_014 → 安定と不安定の比較ビュー
 \- overlay: fluctuation\_heatband → timeline上に赤青グラデーション表示
 
 ## **5\. 今後の拡張性**
 
-\- ethics\_fluctuation\_score による自動分類タグ（例: ethics\_drift\_chain）  
-\- ベクトル方向に倫理ゆらぎ傾向を可視化（↕︎, ↔︎）  
+\- ethics\_fluctuation\_score による自動分類タグ（例: ethics\_drift\_chain）
+\- ベクトル方向に倫理ゆらぎ傾向を可視化（↕︎, ↔︎）
 \- semantic\_fluctuation\_score など他テンソルスカラーとの統合分析も可能

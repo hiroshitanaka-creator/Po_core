@@ -298,7 +298,7 @@ skips = ["B101", "B601"]
 philosophy = "Flying Pig Philosophy"
 tenets = [
     "Hypothesize Boldly",
-    "Verify Rigorously", 
+    "Verify Rigorously",
     "Revise Gracefully"
 ]
 motto = "井の中の蛙、大海は知らずとも、大空を知る"

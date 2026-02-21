@@ -6,7 +6,7 @@ Measures end-to-end pipeline latency and throughput across safety modes,
 async philosopher execution, and concurrent REST-layer offloading.
 
 Targets:
-  NORMAL  (39 philosophers) p50 < 5 s
+  NORMAL  (44 philosophers) p50 < 5 s
   WARN    ( 5 philosophers) p50 < 2 s
   CRITICAL( 1 philosopher ) p50 < 1 s
 
@@ -99,7 +99,26 @@ def _print_rich_row(label: str, st: dict, target: float) -> None:
 
 
 # ---------------------------------------------------------------------------
-# NORMAL mode — 39 philosophers
+# Fast smoke benchmark — CI-safe, not slow, runs every build
+# Measured baselines (2026-02-21, Python 3.11, local):
+#   NORMAL (44 phil): p50 ≈ 37 ms  (target < 5 000 ms)
+#   WARN   ( 5 phil): p50 ≈ 36 ms  (target < 2 000 ms)
+#   CRITICAL(1 phil): p50 ≈ 37 ms  (target < 1 000 ms)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.benchmark
+@pytest.mark.phase5
+def test_bench_smoke_critical():
+    """CI smoke: single CRITICAL-mode run must complete in < 2 s."""
+    t0 = time.perf_counter()
+    run(_BENCH_PROMPT, settings=_settings(SafetyMode.CRITICAL))
+    elapsed = time.perf_counter() - t0
+    assert elapsed < 2.0, f"Smoke benchmark: CRITICAL run took {elapsed:.3f}s ≥ 2s"
+
+
+# ---------------------------------------------------------------------------
+# NORMAL mode — 44 philosophers
 # ---------------------------------------------------------------------------
 
 
@@ -107,13 +126,13 @@ def _print_rich_row(label: str, st: dict, target: float) -> None:
 @pytest.mark.slow
 @pytest.mark.phase5
 def test_bench_normal_p50():
-    """NORMAL mode (39 philosophers): p50 < 5 s."""
+    """NORMAL mode (44 philosophers): p50 < 5 s."""
     samples = _timeit(
         lambda: run(_BENCH_PROMPT, settings=_settings(SafetyMode.NORMAL)),
         REPEAT_NORMAL,
     )
     st = _stats(samples)
-    _print_rich_row("NORMAL (39 phil)", st, TARGET_NORMAL_S)
+    _print_rich_row("NORMAL (44 phil)", st, TARGET_NORMAL_S)
     assert (
         st["p50"] < TARGET_NORMAL_S
     ), f"NORMAL p50={st['p50']:.3f}s ≥ {TARGET_NORMAL_S}s"
@@ -195,7 +214,7 @@ def test_bench_coldstart_vs_warmup():
 @pytest.mark.phase5
 @pytest.mark.asyncio
 async def test_bench_async_philosophers():
-    """async_run_philosophers() completes 39-stub-philosophers in < 2 s."""
+    """async_run_philosophers() completes 44-stub-philosophers in < 2 s."""
     from po_core.party_machine import async_run_philosophers
 
     class _QuickPhil:
@@ -214,7 +233,7 @@ async def test_bench_async_philosophers():
                 )
             ]
 
-    philosophers = [_QuickPhil(i) for i in range(39)]
+    philosophers = [_QuickPhil(i) for i in range(44)]
 
     t0 = time.perf_counter()
     proposals, results = await async_run_philosophers(
@@ -230,15 +249,15 @@ async def test_bench_async_philosophers():
 
     ok_count = sum(1 for r in results if r.ok)
     console.print(
-        f"\n  [bold]async 39 philosophers[/bold]"
+        f"\n  [bold]async 44 philosophers[/bold]"
         f"  elapsed=[cyan]{elapsed:.3f}s[/cyan]"
-        f"  ok={ok_count}/39"
+        f"  ok={ok_count}/44"
         f"  proposals={len(proposals)}"
     )
 
-    assert elapsed < 2.0, f"async_run_philosophers 39-phil took {elapsed:.3f}s ≥ 2s"
-    assert ok_count == 39, f"Expected 39 ok results, got {ok_count}"
-    assert len(proposals) == 39
+    assert elapsed < 2.0, f"async_run_philosophers 44-phil took {elapsed:.3f}s ≥ 2s"
+    assert ok_count == 44, f"Expected 44 ok results, got {ok_count}"
+    assert len(proposals) == 44
 
 
 # ---------------------------------------------------------------------------
@@ -285,7 +304,7 @@ async def test_bench_concurrent_warn_requests():
 def test_bench_summary_table():
     """Print a Rich summary table for all safety modes (informational)."""
     modes: list[tuple[str, SafetyMode, int, float]] = [
-        ("NORMAL (39 phil)", SafetyMode.NORMAL, REPEAT_NORMAL, TARGET_NORMAL_S),
+        ("NORMAL (44 phil)", SafetyMode.NORMAL, REPEAT_NORMAL, TARGET_NORMAL_S),
         ("WARN (5 phil)", SafetyMode.WARN, REPEAT_FAST, TARGET_WARN_S),
         ("CRITICAL (1 phil)", SafetyMode.CRITICAL, REPEAT_FAST, TARGET_CRITICAL_S),
     ]

@@ -7,6 +7,7 @@ Po_core APIの基本的な使い方を示すサンプルコード
 """
 
 import json
+
 from po_core import __version__, run
 from po_core.po_self import PoSelf
 

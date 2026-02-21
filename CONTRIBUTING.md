@@ -25,13 +25,13 @@ Thank you for your interest in contributing to Po_core! This project is built on
 
 ### Flying Pig Philosophy: Three Tenets
 
-**One: Hypothesize Boldly**  
+**One: Hypothesize Boldly**
 The impossible becomes possible only when someone dares to formalize it. Don't ask "Can we?" Ask "What would it take?"
 
-**Two: Verify Rigorously**  
+**Two: Verify Rigorously**
 Bold hypotheses demand brutal testing. Every claim must survive philosophical scrutiny, mathematical proof, and empirical validation.
 
-**Three: Revise Gracefully**  
+**Three: Revise Gracefully**
 When experiments fail, don't hide them. Publish them. Failure logs become learning signals. The pig might crash, but we improve the balloon.
 
 ### What This Means for Contributors
@@ -48,35 +48,41 @@ When experiments fail, don't hide them. Publish them. Failure logs become learni
 Po_core welcomes contributions across multiple dimensions:
 
 ### 🧠 Philosophical Contributions
+
 - Propose new philosopher integrations
 - Refine existing philosophical tensor models
 - Challenge our philosophical assumptions
 - Suggest ethical frameworks
 
 ### 💻 Technical Contributions
+
 - Implement core features
 - Optimize tensor operations
 - Improve API design
 - Enhance visualization systems
 
 ### 📚 Documentation
+
 - Translate documentation (especially philosophical concepts)
 - Write tutorials and examples
 - Create educational content
 - Improve API documentation
 
 ### 🎨 Design & Visualization
+
 - Design Po_core Viewer interfaces
 - Create philosophical concept visualizations
 - Improve UX/UI
 
 ### 🐛 Bug Reports & Testing
+
 - Report bugs with detailed reproduction steps
 - Write test cases
 - Validate philosophical consistency
 - Test edge cases
 
 ### 💬 Community
+
 - Answer questions in discussions
 - Share use cases and applications
 - Write blog posts or papers
@@ -89,11 +95,13 @@ Po_core welcomes contributions across multiple dimensions:
 ### Prerequisites
 
 **Required:**
+
 - Python 3.10+
 - Basic understanding of tensors and PyTorch
 - Curiosity about philosophy (we'll help you learn!)
 
 **Helpful:**
+
 - Familiarity with FastAPI
 - Knowledge of at least one philosopher we integrate
 - Experience with philosophical argumentation
@@ -142,11 +150,13 @@ Po_core/
 ### 1. Find or Create an Issue
 
 **Before starting work:**
+
 - Check existing issues
 - For new features, create an issue to discuss first
 - For bug fixes, create an issue with reproduction steps
 
 **Issue Types:**
+
 - `feature`: New functionality
 - `bug`: Something isn't working
 - `philosophy`: Philosophical design questions
@@ -164,6 +174,7 @@ git checkout -b fix/bug-description
 ```
 
 **Branch Naming Convention:**
+
 - `feature/` — New features
 - `fix/` — Bug fixes
 - `docs/` — Documentation
@@ -255,9 +266,9 @@ class NietzscheTensor:
     def __init__(self, dimensions: int = 768):
         self.eternal_return_weight = torch.zeros(dimensions)
         self.power_will_vector = torch.zeros(dimensions)
-        
+
     def compute_recurrence_pressure(
-        self, 
+        self,
         current_state: torch.Tensor,
         historical_states: List[torch.Tensor]
     ) -> float:
@@ -279,6 +290,7 @@ Document how the new philosopher interacts with existing ones:
 #### Step 4: Validation
 
 Before implementation:
+
 - Present design to community for feedback
 - Demonstrate philosophical consistency
 - Justify computational feasibility
@@ -299,14 +311,14 @@ def calculate_freedom_pressure(
 ) -> torch.Tensor:
     """
     Calculate Sartrean freedom pressure across choice space.
-    
+
     Based on Sartre's concept that we are "condemned to be free"
     and must bear responsibility for our choices.
-    
+
     Args:
         choice_tensors: Available semantic choices
         responsibility_weight: Ethical gravity of the decision
-        
+
     Returns:
         Pressure tensor indicating responsibility burden
     """
@@ -331,13 +343,13 @@ Example:
 class DerridaTrace:
     """
     Implements Derrida's concept of 'trace' (la trace).
-    
+
     Philosophical Background:
-    Derrida argues that meaning is never fully present but always 
+    Derrida argues that meaning is never fully present but always
     contains traces of what it is not. In Po_core, this manifests as
     the blocked_tensor - what was NOT said but influenced the response.
-    
-    Reference: 
+
+    Reference:
     - Derrida, J. (1967). "Of Grammatology"
     - Implementation based on Po_core design doc v1.2
     """
@@ -358,42 +370,46 @@ class DerridaTrace:
 ### Test Categories
 
 #### 1. Unit Tests
+
 ```python
 # tests/unit/test_freedom_pressure.py
 def test_freedom_pressure_increases_with_choice_count():
     """Freedom pressure should increase with more choices."""
     tensor_calc = FreedomPressureTensor()
-    
+
     few_choices = [torch.randn(768) for _ in range(2)]
     many_choices = [torch.randn(768) for _ in range(10)]
-    
+
     fp_few = tensor_calc.calculate(few_choices)
     fp_many = tensor_calc.calculate(many_choices)
-    
+
     assert fp_many > fp_few
 ```
 
 #### 2. Integration Tests
+
 Test interactions between components:
+
 ```python
 # tests/integration/test_philosopher_interaction.py
 def test_sartre_derrida_tension():
     """Sartre's freedom and Derrida's trace should create tension."""
     po_self = PoSelf()
     response = po_self.generate("Should I speak?")
-    
+
     assert response.freedom_pressure > 0
     assert len(response.blocked_tensor) > 0
     assert response.philosophical_tension > THRESHOLD
 ```
 
 #### 3. Philosophical Consistency Tests
+
 ```python
 # tests/philosophical/test_consistency.py
 def test_philosopher_axioms():
     """Verify each philosopher's core axioms are preserved."""
     heidegger = HeideggerDasein()
-    
+
     # Dasein always involves being-toward-death
     state = heidegger.compute_state(context)
     assert state.temporal_finitude > 0
@@ -406,6 +422,7 @@ def test_philosopher_axioms():
 - **All public APIs:** 100%
 
 Run coverage report:
+
 ```bash
 pytest --cov=src --cov-report=html
 ```
@@ -424,29 +441,29 @@ def semantic_jump(
 ) -> SemanticDelta:
     """
     Calculate semantic distance and meaning shift between states.
-    
+
     Philosophical Context:
-    Based on Heidegger's concept of ontological leaps where 
+    Based on Heidegger's concept of ontological leaps where
     meaning shifts qualitatively, not just quantitatively.
-    
+
     Args:
         from_state: Source semantic state vector (768-dim)
         to_state: Target semantic state vector (768-dim)
         jump_type: Type of semantic transition
-        
+
     Returns:
         SemanticDelta containing:
             - distance: Magnitude of meaning shift
             - direction: Vector of meaning change
             - quality: Qualitative jump assessment
-            
+
     Example:
         >>> from_state = encode_text("I should help")
         >>> to_state = encode_text("I must help")
         >>> delta = semantic_jump(from_state, to_state, JumpType.ETHICAL)
         >>> delta.distance
         0.42
-        
+
     References:
         - Design doc: docs/design/semantic_jumps_v2.md
         - Heidegger, M. (1927). "Being and Time", §31
@@ -459,6 +476,7 @@ def semantic_jump(
 When creating new design documents:
 
 **Required Sections:**
+
 1. **Philosophical Motivation** — Why is this needed?
 2. **Conceptual Framework** — What are the key ideas?
 3. **Mathematical Formalization** — How is it expressed mathematically?
@@ -527,6 +545,7 @@ Closes #123
 5. **Approval & Merge** — Requires 2 approvals from maintainers
 
 **Review Timeline:**
+
 - Simple fixes: 1-3 days
 - New features: 1-2 weeks
 - Philosophical changes: 2-4 weeks (requires deeper discussion)
@@ -550,7 +569,7 @@ We are committed to providing a welcoming and inspiring community for all. We ex
 - **GitHub Issues:** Bug reports, feature requests
 - **GitHub Discussions:** General questions, philosophical debates
 - **Pull Requests:** Code contributions and reviews
-- **Email:** flyingpig0229+github@gmail.com for private matters
+- **Email:** <flyingpig0229+github@gmail.com> for private matters
 
 ### Philosophical Disagreements
 
@@ -565,9 +584,10 @@ Po_core is built on diverse philosophical perspectives. Disagreements are expect
 5. **Document outcomes** — Even unresolved debates are valuable
 
 **Example:**
+
 ```markdown
 I disagree with the current implementation of Heideggerian Dasein
-because it emphasizes being-toward-death but neglects being-with-others 
+because it emphasizes being-toward-death but neglects being-with-others
 (Mitsein). See Heidegger's "Being and Time" §26.
 
 Proposed modification: Add a relational tensor that captures...
@@ -576,6 +596,7 @@ Proposed modification: Add a relational tensor that captures...
 ### Recognition
 
 Contributors are recognized in:
+
 - **CONTRIBUTORS.md** — All contributors listed
 - **Release notes** — Significant contributions highlighted
 - **Documentation** — Authors cited in design docs
@@ -671,7 +692,7 @@ Welcome aboard. Let's make pigs fly. 🐷🎈
 
 ---
 
-**Questions? Ideas? Criticisms?**  
+**Questions? Ideas? Criticisms?**
 Open an issue or join the discussion. We're excited to hear from you.
 
 ---

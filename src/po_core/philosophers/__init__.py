@@ -11,6 +11,7 @@ from po_core.philosophers.badiou import Badiou
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.beauvoir import Beauvoir
 from po_core.philosophers.butler import Butler
+from po_core.philosophers.claude_anthropic import ClaudeAnthropic
 from po_core.philosophers.confucius import Confucius
 from po_core.philosophers.deleuze import Deleuze
 from po_core.philosophers.derrida import Derrida
@@ -56,6 +57,7 @@ __all__ = [
     "Badiou",
     "Beauvoir",
     "Butler",
+    "ClaudeAnthropic",
     "Confucius",
     "Deleuze",
     "Derrida",

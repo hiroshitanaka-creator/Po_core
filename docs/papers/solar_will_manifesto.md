@@ -1,4 +1,5 @@
 # 太陽意志宣言
+
 # The Solar Will Manifesto
 
 ---

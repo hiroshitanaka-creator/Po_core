@@ -1,61 +1,60 @@
-Po\_core\_output は「検証根拠まで含めた説明可能構造テンソル」として、Po\_responsibility\_binder や Po\_trace\_logger にそのまま連携できる状態ですね。  
+Po\_core\_output は「検証根拠まで含めた説明可能構造テンソル」として、Po\_responsibility\_binder や Po\_trace\_logger にそのまま連携できる状態ですね。
 validation\_method\_explainer.py Ver.1.1（正式仕様）
 
-![📦][image1] 構造辞書：統合構成  
-検証方法情報 \= {  
-    「シンボリック」：{  
-        "method\_label": "✓ ルールベース",  
-        "short": "この出力は、明示的な論理形式とルールベースの知識ソースを比較することによって検証されました。",  
-        "技術的": "シンボリック検証とは、正式なルール構造、オントロジー、または制約チェック（例：A→Bの場合）を用いて正当性を判断する手法です。この手法は完全に追跡可能ですが、ルールの適用範囲に制限があります。",  
-        "source\_example": "NASAオントロジーv3.1"  
-    },  
-    「埋め込み」: {  
-        "method\_label": "![🧠][image2]ベクトル類似度",  
-        "short": "出力と信頼できる文書間のベクトル類似性を使用して検証が実行されました。",  
-        "technical": "埋め込みベースの検証では、高次元ベクトル空間を利用して生成されたテキストを既知のソースと比較します。確率的かつ高速ですが、きめ細かな解釈ができない場合があります。",  
-        "source\_example": "PubMed VectorSpace (2025-05)"  
-    },  
-    「人間によるレビュー」: {  
-        "method\_label": "![👤][image3]人間によるレビュー",  
-        "short": "この結果は人間の評価者によって確認され、承認されました。",  
-        「技術的」：「人間によるレビュー」とは、専門家またはユーザーが出力の正確性または倫理的許容性を手動で確認したことを示します。高い信頼性を提供しますが、拡張性と再現性は限られています。  
-        "source\_example": "専門家パネルログ \#47 (ポリシーレビュー)"  
-    },  
-    「ハイブリッド」: {  
-        "method\_label": "![🔀][image4]ハイブリッドチェック",  
-        "short": "複数の検証方法を組み合わせ、精度とトレーサビリティのバランスを実現しました。",  
-        "技術的": "ハイブリッド検証は、記号論理（高精度）、埋め込み（カバレッジ）、および人間の入力（コンテキスト判断）を統合して、正確性と解釈可能性の両方を最大化します。",  
-        "source\_example": "FusionChain: シンボリック+ベクター+ピアレビュー、2025"  
-    }  
+![📦][image1] 構造辞書：統合構成
+検証方法情報 \= {
+    「シンボリック」：{
+        "method\_label": "✓ ルールベース",
+        "short": "この出力は、明示的な論理形式とルールベースの知識ソースを比較することによって検証されました。",
+        "技術的": "シンボリック検証とは、正式なルール構造、オントロジー、または制約チェック（例：A→Bの場合）を用いて正当性を判断する手法です。この手法は完全に追跡可能ですが、ルールの適用範囲に制限があります。",
+        "source\_example": "NASAオントロジーv3.1"
+    },
+    「埋め込み」: {
+        "method\_label": "![🧠][image2]ベクトル類似度",
+        "short": "出力と信頼できる文書間のベクトル類似性を使用して検証が実行されました。",
+        "technical": "埋め込みベースの検証では、高次元ベクトル空間を利用して生成されたテキストを既知のソースと比較します。確率的かつ高速ですが、きめ細かな解釈ができない場合があります。",
+        "source\_example": "PubMed VectorSpace (2025-05)"
+    },
+    「人間によるレビュー」: {
+        "method\_label": "![👤][image3]人間によるレビュー",
+        "short": "この結果は人間の評価者によって確認され、承認されました。",
+        「技術的」：「人間によるレビュー」とは、専門家またはユーザーが出力の正確性または倫理的許容性を手動で確認したことを示します。高い信頼性を提供しますが、拡張性と再現性は限られています。
+        "source\_example": "専門家パネルログ \#47 (ポリシーレビュー)"
+    },
+    「ハイブリッド」: {
+        "method\_label": "![🔀][image4]ハイブリッドチェック",
+        "short": "複数の検証方法を組み合わせ、精度とトレーサビリティのバランスを実現しました。",
+        "技術的": "ハイブリッド検証は、記号論理（高精度）、埋め込み（カバレッジ）、および人間の入力（コンテキスト判断）を統合して、正確性と解釈可能性の両方を最大化します。",
+        "source\_example": "FusionChain: シンボリック+ベクター+ピアレビュー、2025"
+    }
 }
 
-![✅][image5] 関数化（Po\_core内部で使用）  
-def explain\_validation\_method(メソッド: str) \-\> dict:  
-    VALIDATION\_METHOD\_INFO.get(メソッド, {を返す  
-        "method\_label": "![❓][image6]不明",  
-        "short": "不明な検証方法。",  
-        "technical": "指定されたメソッド識別子の説明はありません。",  
-        「ソース例」: "-"  
+![✅][image5] 関数化（Po\_core内部で使用）
+def explain\_validation\_method(メソッド: str) \-\> dict:
+    VALIDATION\_METHOD\_INFO.get(メソッド, {を返す
+        "method\_label": "![❓][image6]不明",
+        "short": "不明な検証方法。",
+        "technical": "指定されたメソッド識別子の説明はありません。",
+        「ソース例」: "-"
     })
 
 ![✅][image5] 統合形式（Po\_core\_output内での展開例）
 
-「責任の概要」: {  
-  「検証済み」：true、  
-  "検証方法": "シンボリック",  
-  "method\_label": "✓ ルールベース",  
-  「検証説明」: {  
-    "short": "この出力は、明示的な論理形式とルールベースの知識ソースを比較することによって検証されました。",  
-    "技術的": "記号検証とは、正式なルール構造、オントロジーの使用を指します...",  
-    "source\_example": "NASAオントロジーv3.1"  
-  }  
-}  
-・接続先モジュール：利用される要素：効果  
-・Po\_ui\_renderer：method\_label：バッジ表示／絞り込み／信頼度色分け  
-・Po\_trace\_logger：source\_example：出典記録 → 検証連鎖トレース可能  
-・Po\_self\_recursor：short \+ source：再構成時の再使用ソース決定  
-・Po\_feedback\_logger：method\_label：ユーザー納得度と検証方式の交差評価に使用可能  
-
+「責任の概要」: {
+  「検証済み」：true、
+  "検証方法": "シンボリック",
+  "method\_label": "✓ ルールベース",
+  「検証説明」: {
+    "short": "この出力は、明示的な論理形式とルールベースの知識ソースを比較することによって検証されました。",
+    "技術的": "記号検証とは、正式なルール構造、オントロジーの使用を指します...",
+    "source\_example": "NASAオントロジーv3.1"
+  }
+}
+・接続先モジュール：利用される要素：効果
+・Po\_ui\_renderer：method\_label：バッジ表示／絞り込み／信頼度色分け
+・Po\_trace\_logger：source\_example：出典記録 → 検証連鎖トレース可能
+・Po\_self\_recursor：short \+ source：再構成時の再使用ソース決定
+・Po\_feedback\_logger：method\_label：ユーザー納得度と検証方式の交差評価に使用可能
 
 [image1]: <data:image/png;base64,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>
 

@@ -69,6 +69,7 @@ src/po_core/aggregator/pareto.py       # ParetoAggregator: 提案の多目的最
 ```
 
 現在の「議論」の実態:
+
 1. 哲学者が並列に `propose()` を実行 → 提案リスト生成
 2. DeliberationEngine が高干渉ペアを特定 → counterargument → re-propose
 3. ParetoAggregator が非支配解を選択
@@ -319,6 +320,7 @@ src/po_core/aggregator/pareto.py              # Pareto 最適化
 **根本的欠如**: W_Ethics Gate は**外部入力を判定するが、自分の出力を判定しない**。
 
 システムが出力した提案が:
+
 - 時間の経過とともに品質が下がっていないか
 - 特定の哲学者が系統的に低品質な提案を出していないか
 - Pareto 集約が ethical drift を起こしていないか
