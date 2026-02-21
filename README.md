@@ -4,13 +4,13 @@
 
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
-[![PyPI version](https://badge.fury.io/py/po-core.svg)](https://badge.fury.io/py/po-core)
+[![PyPI version](https://badge.fury.io/py/po-core-flyingpig.svg)](https://badge.fury.io/py/po-core-flyingpig)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./License.md)
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-blue.svg)]()
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
 ```bash
-pip install po-core
+pip install po-core-flyingpig
 ```
 
 ---
@@ -326,7 +326,7 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Beta (v0.2.0-beta) — Phases 1–7 Complete, Heading to v1.0**
+**Current Phase: Beta (v0.2.0b3) — Phases 1–7 Complete, Heading to v1.0**
 
 ### Completed Components
 
@@ -385,7 +385,7 @@ See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
 
 ```bash
 # Install from PyPI (beta)
-pip install po-core
+pip install po-core-flyingpig
 
 # Or install from source in development mode
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
@@ -412,7 +412,7 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v0.2.0-beta
+po-core version   # v0.2.0b3
 po-core status
 po-core --help
 ```

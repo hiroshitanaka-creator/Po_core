@@ -52,7 +52,7 @@ src/po_core/
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
 
-## Current Phase: Phase 5 (IN PROGRESS — Phases 1–4 COMPLETE)
+## Current Phase: Phase 5 (COMPLETE — Phases 1–5 COMPLETE)
 
 **Phase 1: COMPLETE** — 39-philosopher scaling + tech debt cleared. 2354 tests.
 
@@ -106,7 +106,7 @@ Key files added/modified (Phase 4):
 - `tests/redteam/test_defense_metrics.py` — 11 defense metric automation tests
 - `tests/unit/test_phase4_hardening.py` — 29 W_Ethics Gate edge case + unit tests
 
-**Phase 5: IN PROGRESS** — Productization. Version bumped to `0.2.0-beta`.
+**Phase 5: COMPLETE** — Productization. Version bumped to `0.2.0b3`. Package renamed to `po-core-flyingpig`.
 
 Completed (Phase 5-A: REST API):
 
@@ -133,11 +133,11 @@ Completed (Phase 5-C: Docker):
 - `.dockerignore` — excludes dev/test/docs from image
 - `.env.example` — full environment variable reference
 
-Remaining in Phase 5:
+All Phase 5 items COMPLETE:
 
-- **5.2 Async streaming** — SSE works via threadpool; true async `PartyMachine` not yet done
-- **5.4 Benchmarks** — pipeline latency ~30ms measured ad-hoc; formal benchmark suite TBD
-- **5.5 PyPI publish** — `publish.yml` workflow ready; actual publish to TestPyPI/PyPI pending
+- **5.2 Async streaming** ✓ — `AsyncPartyMachine` + real-time per-philosopher SSE events (`PhilosopherCompleted`)
+- **5.4 Benchmarks** ✓ — `tests/benchmarks/test_pipeline_perf.py`; p50 ~33ms NORMAL mode
+- **5.5 PyPI publish** — `publish.yml` OIDC workflow ready; actual publish to TestPyPI/PyPI pending
 
 Key files (Phase 5):
 
@@ -153,7 +153,7 @@ Phase 1: Resonance Calibration    — 39人スケール + 技術負債清算 ✓
 Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ✓ COMPLETE
 Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate ✓ COMPLETE
 Phase 4: Adversarial Hardening    — Red team 拡充 + 倫理的ストレステスト ✓ COMPLETE
-Phase 5: Productization           — REST API ✓ Security ✓ Docker ✓ / Async・PyPI ← CURRENT
+Phase 5: Productization           — REST API ✓ Security ✓ Docker ✓ Async ✓ Benchmarks ✓ ← COMPLETE (PyPI publish pending)
 ```
 
 See `PHASE_PLAN_v2.md` for full rationale.
