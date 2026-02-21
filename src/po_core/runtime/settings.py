@@ -86,6 +86,12 @@ class Settings:
     # 1 = no deliberation (backward compatible), 2+ = multi-round
     deliberation_max_rounds: int = 1
     deliberation_top_k_pairs: int = 5
+    # "basic" = legacy soft counterargument
+    # "debate" = structured rebuttal with steelman + flaw + defense (Phase 6-A)
+    deliberation_prompt_mode: str = "debate"
+    # "standard" = current multi-round deliberation (rounds are homogeneous)
+    # "dialectic" = Hegelian 3-round: Thesis → Antithesis → Synthesis (Phase 6-B)
+    deliberation_mode: str = "standard"
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -112,6 +118,8 @@ class Settings:
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
             "deliberation_max_rounds": self.deliberation_max_rounds,
             "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
+            "deliberation_prompt_mode": self.deliberation_prompt_mode,
+            "deliberation_mode": self.deliberation_mode,
             "use_freedom_pressure_v2": self.use_freedom_pressure_v2,
         }
 

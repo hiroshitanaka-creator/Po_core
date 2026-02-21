@@ -61,8 +61,11 @@ class FakePhilosopher:
 
     def propose(self, ctx, intent, tensors, memory):
         content = self._response
-        # If counterargument present, append acknowledgement
-        if "[Counterargument" in ctx.user_input:
+        # Detect both legacy basic format and Phase 6-A debate format
+        if (
+            "[Counterargument" in ctx.user_input
+            or "[PHILOSOPHICAL CHALLENGE" in ctx.user_input
+        ):
             content = f"{self._response} [revised after considering counterargument]"
         return [
             Proposal(
