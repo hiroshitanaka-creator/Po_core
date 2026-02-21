@@ -22,6 +22,7 @@ Usage:
     print(result.has_emergence)  # True if novel synthesis detected
 """
 
+from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.engine import (
     DeliberationEngine,
@@ -37,8 +38,10 @@ from po_core.deliberation.roles import (
 )
 
 __all__ = [
+    "ClusterResult",
     "DeliberationEngine",
     "DeliberationResult",
+    "PositionClusterer",
     "RoundTrace",
     "EmergenceDetector",
     "EmergenceSignal",
