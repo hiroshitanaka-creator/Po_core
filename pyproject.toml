@@ -3,7 +3,7 @@ requires = ["setuptools>=69.0.0", "wheel>=0.42.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "po-core"
+name = "po-core-flyingpig"
 version = "0.2.0b3"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
@@ -90,7 +90,7 @@ viz = [
     "bokeh>=3.3.0",
 ]
 all = [
-    "po-core[dev,docs,viz]",
+    "po-core-flyingpig[dev,docs,viz]",
 ]
 
 [project.urls]
