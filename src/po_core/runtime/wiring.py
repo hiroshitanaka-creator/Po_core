@@ -375,6 +375,7 @@ def _build_deliberation_engine(settings: Settings):
     return DeliberationEngine(
         max_rounds=max_rounds,
         top_k_pairs=getattr(settings, "deliberation_top_k_pairs", 5),
+        prompt_mode=getattr(settings, "deliberation_prompt_mode", "debate"),
     )
 
 

@@ -118,10 +118,14 @@ class DeliberationEngine:
         detect_emergence: bool = True,
         emergence_threshold: float = 0.65,
         track_influence: bool = True,
+        prompt_mode: str = "debate",
     ):
         self.max_rounds = max(1, max_rounds)
         self.top_k_pairs = top_k_pairs
         self.convergence_threshold = convergence_threshold
+        self.prompt_mode = (
+            prompt_mode if prompt_mode in ("basic", "debate") else "debate"
+        )
         self._emergence_detector = (
             EmergenceDetector(threshold=emergence_threshold)
             if detect_emergence
@@ -216,7 +220,15 @@ class DeliberationEngine:
 
             # Re-propose for affected philosophers
             revised_proposals = _re_propose(
-                ph_lookup, counterarguments, ctx, intent, tensors, memory
+                ph_lookup,
+                counterarguments,
+                ctx,
+                intent,
+                tensors,
+                memory,
+                round_num=round_num,
+                sender_map=sender_map,
+                prompt_mode=self.prompt_mode,
             )
 
             # Merge: replace old proposals with revised ones
@@ -326,6 +338,40 @@ def _collect_counterargument(
             sender_map[pair.philosopher_a] = pair.philosopher_b
 
 
+def _build_debate_prompt(
+    user_input: str,
+    counter_text: str,
+    sender_name: str,
+    round_num: int,
+    prompt_mode: str,
+) -> str:
+    """Build enriched user_input for counterargument re-proposal.
+
+    prompt_mode="basic":  legacy soft counterargument (Phase 2 behavior)
+    prompt_mode="debate": structured rebuttal with explicit obligations (Phase 6-A)
+    """
+    if prompt_mode == "basic":
+        return (
+            f"{user_input}\n\n"
+            f"[Counterargument from a fellow philosopher: {counter_text[:500]}]"
+        )
+
+    # "debate" mode — structured rebuttal obligation
+    sender_label = sender_name if sender_name else "a fellow philosopher"
+    return (
+        f"{user_input}\n\n"
+        f"[PHILOSOPHICAL CHALLENGE — Round {round_num}]\n"
+        f"{sender_label} opposes your position with the following argument:\n\n"
+        f'"{counter_text[:600]}"\n\n'
+        f"You MUST respond by addressing all three points:\n"
+        f"1. Steelman: Identify the strongest part of {sender_label}'s argument.\n"
+        f"2. Refutation: Expose the core flaw or blind spot in their reasoning.\n"
+        f"3. Defense: Sharpen and defend your own position with a new or deeper argument.\n\n"
+        f"Do NOT repeat your previous response verbatim. "
+        f"Engage directly with {sender_label}'s specific claims."
+    )
+
+
 def _re_propose(
     ph_lookup: Dict[str, object],
     counterarguments: Dict[str, str],
@@ -333,6 +379,9 @@ def _re_propose(
     intent: Intent,
     tensors: TensorSnapshot,
     memory: MemorySnapshot,
+    round_num: int = 2,
+    sender_map: Optional[Dict[str, str]] = None,
+    prompt_mode: str = "debate",
 ) -> List[Proposal]:
     """Re-run propose() for philosophers with counterargument context."""
     revised = []
@@ -341,23 +390,25 @@ def _re_propose(
         if ph is None or not hasattr(ph, "propose"):
             continue
 
-        # Build enriched context with counterargument
+        sender_name = (sender_map or {}).get(name, "a fellow philosopher")
+        enriched_input = _build_debate_prompt(
+            ctx.user_input, counter_text, sender_name, round_num, prompt_mode
+        )
         enriched_ctx = DomainContext(
             request_id=ctx.request_id,
-            user_input=(
-                f"{ctx.user_input}\n\n"
-                f"[Counterargument from a fellow philosopher: {counter_text[:500]}]"
-            ),
+            user_input=enriched_input,
             created_at=ctx.created_at,
         )
 
         try:
             new_proposals = ph.propose(enriched_ctx, intent, tensors, memory)
             if new_proposals:
-                # Mark as deliberation round 2
+                suffix = f":d{round_num}"
                 for p in new_proposals:
                     extra = dict(p.extra) if isinstance(p.extra, dict) else {}
-                    extra["deliberation_round"] = 2
+                    extra["deliberation_round"] = round_num
+                    extra["debate_sender"] = sender_name
+                    extra["prompt_mode"] = prompt_mode
                     # Preserve PO_CORE author metadata for downstream scoring
                     if PO_CORE not in extra or AUTHOR not in extra.get(PO_CORE, {}):
                         po_meta = extra.get(PO_CORE, {})
@@ -367,7 +418,7 @@ def _re_propose(
                         extra[PO_CORE] = po_meta
                     revised.append(
                         Proposal(
-                            proposal_id=p.proposal_id.replace(":0", ":d2"),
+                            proposal_id=p.proposal_id.replace(":0", suffix),
                             action_type=p.action_type,
                             content=p.content,
                             confidence=min(p.confidence + 0.1, 1.0),
@@ -377,7 +428,7 @@ def _re_propose(
                         )
                     )
         except Exception:
-            # Philosopher failed in round 2 → keep original
+            # Philosopher failed in re-proposal round → keep original
             continue
 
     return revised
