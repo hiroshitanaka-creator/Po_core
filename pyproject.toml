@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "po-core"
-version = "0.2.0-beta"
+version = "0.2.0b3"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
 license = {text = "MIT"}
@@ -305,9 +305,9 @@ motto = "井の中の蛙、大海は知らずとも、大空を知る"
 # A frog in a well may not know the ocean, but it can know the sky
 
 [tool.po_core.project]
-status = "alpha"
-implementation_progress = 0.35
-philosophers_integrated = 20
+status = "beta"
+implementation_progress = 0.95
+philosophers_integrated = 39
 design_documents = 120
 started = "2024"
 
