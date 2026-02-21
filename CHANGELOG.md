@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0-beta] - 2026-02-19 (Phase 5 complete)
+## [0.2.0b1] - 2026-02-21 (Phase 5 complete)
 
 ### Phase 5-E: Performance Benchmarks (2026-02-19)
 
@@ -25,6 +25,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich-powered colored output (PASS/FAIL badges, table with status column)
 - `benchmark` marker added to `pytest.ini` and `pyproject.toml`
 - Usage: `pytest tests/benchmarks/ -v -s -m benchmark`
+
+### Phase 5.5: PyPI Publish Preparation (2026-02-21)
+
+#### Changed
+
+- Version bumped to `0.2.0b1` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
+- `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
+- `publish.yml` OIDC workflow verified: ready for TestPyPI / PyPI publish
+
+### Phase 5.2: True Async PartyMachine — Real-Time SSE Streaming (2026-02-21)
+
+#### Added
+
+- `PhilosopherCompleted` trace event: emitted per-philosopher **immediately** on
+  completion (success, timeout, or error) rather than batched after the full swarm
+  — enables real-time progressive SSE streaming of philosopher results.
+- `AsyncPartyMachine._dispatch_one(tracer=)` — optional tracer parameter; emits
+  `PhilosopherCompleted(name, n, latency_ms, ok)` as each task resolves.
+- `AsyncPartyMachine.run(tracer=)` and `async_run_philosophers(tracer=)` — new
+  backward-compatible keyword argument passed down the call chain.
+- `async_run_turn()` passes `deps.tracer` into `async_run_philosophers`, wiring
+  the SSE listener to per-philosopher events automatically.
+- `trace/schema.py`: `PhilosopherCompleted` spec registered (`name/n/latency_ms/ok`).
+- `tests/unit/test_phase5_async.py`: 15 unit tests — event emission, payload
+  correctness, error/timeout paths, schema validation, native-async detection
+  (`_has_native_async`), and sync-path regression.
+
+#### Improved
+
+- SSE clients now receive philosopher results as they complete (progressive), not
+  as a single burst when the last of 39 philosophers finishes.
+- Philosophers overriding `propose_async()` (e.g., future LLM-backed philosophers)
+  are dispatched natively on the event loop — zero thread overhead.
 
 ### Phase 5-D: True Async PartyMachine (2026-02-19)
 
@@ -46,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0-beta] - 2026-02-18
+## [0.2.0b0] - 2026-02-18
 
 ### Phase 5: Productization & Delivery
 
@@ -209,10 +242,10 @@ Po_core follows [Semantic Versioning](https://semver.org/):
 
 **Remaining work:**
 
-- [ ] Async `PartyMachine` (true async streaming, no threadpool)
-- [ ] Formal benchmark suite (`pytest-benchmark`)
-- [ ] Publish to TestPyPI (manual `workflow_dispatch`)
-- [ ] Publish to PyPI on v0.2.0 release tag
+- [x] Async `PartyMachine` (Phase 5.2 — real-time per-philosopher SSE events)
+- [x] Formal benchmark suite (Phase 5-E — `tests/benchmarks/test_pipeline_perf.py`)
+- [ ] Publish to TestPyPI (manual `workflow_dispatch` → target: testpypi)
+- [ ] Publish to PyPI on v0.2.0b1 release tag
 
 ### v1.0.0 (Target: 2026-Q2/Q3)
 
