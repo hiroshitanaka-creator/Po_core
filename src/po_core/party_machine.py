@@ -324,8 +324,6 @@ class AsyncPartyMachine:
         memory: "MemorySnapshot",
     ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
         """Run a single philosopher; return (proposal, n, error, latency_ms, pid)."""
-        from po_core.domain.proposal import Proposal
-
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
 

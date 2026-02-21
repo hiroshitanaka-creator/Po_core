@@ -1,0 +1,33 @@
+[flake8]
+max-line-length = 88
+extend-ignore =
+    # black handles line length (string literals, comments cannot be auto-split)
+    E501,
+    # black handles slice notation spacing
+    E203,
+    # black handles line break before binary operator
+    W503
+
+per-file-ignores =
+    # Examples/experiments/tools are scripts, not production code
+    examples/*.py: E402, F401, F541, F841
+    examples/**/*.py: E402, F401, F541, F841
+    experiments/*.py: E402, F401, F541, F841, E722
+    experiments/**/*.py: E402, F401, F541, F841, E722
+    tools/*.py: E402, F401, F541, F841
+    # Allow unused imports in __init__ re-exports
+    src/po_core/__init__.py: F401
+    src/po_core/philosophers/__init__.py: F401
+
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    *.egg-info,
+    .venv,
+    venv,
+    .tox,
+    02_architecture,
+    03_design,
+    05_research,

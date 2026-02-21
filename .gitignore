@@ -256,6 +256,8 @@ data/processed/
 # Except: Keep small example datasets
 !examples/**/*.csv
 !examples/**/*.json
+# Except: Keep lint/tool config files
+!.markdownlint.json
 
 # Tensor board logs
 events.out.tfevents.*
