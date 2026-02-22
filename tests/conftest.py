@@ -61,3 +61,20 @@ def make_proposal():
         )
 
     return _make
+
+
+import asyncio
+
+
+def pytest_pyfunc_call(pyfuncitem):
+    """Minimal asyncio marker support without external pytest-asyncio plugin."""
+    if pyfuncitem.get_closest_marker("asyncio") is None:
+        return None
+
+    test_func = pyfuncitem.obj
+    if not asyncio.iscoroutinefunction(test_func):
+        return None
+
+    kwargs = {name: pyfuncitem.funcargs[name] for name in pyfuncitem._fixtureinfo.argnames}
+    asyncio.run(test_func(**kwargs))
+    return True

@@ -1,0 +1,267 @@
+{
+  "meta": {
+    "schema_version": "1.0",
+    "pocore_version": "0.1.0",
+    "run_id": "case_002_expected_stub_compact_v1",
+    "created_at": "2026-02-22T00:00:00Z",
+    "seed": 0,
+    "deterministic": true,
+    "generator": {
+      "name": "generator_stub",
+      "version": "0.1.0",
+      "mode": "stub"
+    }
+  },
+  "case_ref": {
+    "case_id": "case_002_headcount_reduction",
+    "title": "チームの人員整理：1名を異動/退職にする判断",
+    "input_digest": "6e1935d3639c206e2aa81575087b57f9577fcc3135944049b478d1c9bc69426e"
+  },
+  "options": [
+    {
+      "option_id": "opt_1",
+      "title": "案A：段階的に進める",
+      "description": "最小コストで試し、学びながら前進する。",
+      "action_plan": [
+        {
+          "step": "最小実験を設計して実施する"
+        }
+      ],
+      "pros": [
+        "失敗コストを抑えられる"
+      ],
+      "cons": [
+        "進行が遅く感じる可能性"
+      ],
+      "risks": [
+        {
+          "risk": "検証不足",
+          "severity": "medium",
+          "mitigation": "検証項目を明文化する"
+        }
+      ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "1-2 weeks",
+        "confidence": "medium"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [],
+        "assumptions": [],
+        "known_unknowns": []
+      },
+      "ethics_review": {
+        "principles_applied": [
+          "integrity",
+          "autonomy"
+        ],
+        "tradeoffs": [],
+        "concerns": [
+          "不確実な事実を断言しない"
+        ],
+        "confidence": "medium"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "自分",
+            "role": "意思決定と説明責任の主体",
+            "impact": "判断の正当性・信頼に影響"
+          },
+          {
+            "name": "チームメンバーA〜F",
+            "role": "影響当事者",
+            "impact": "雇用・生活・精神的負荷に影響"
+          },
+          {
+            "name": "HR",
+            "role": "手続きと法令の担保",
+            "impact": "運用ミスのリスクを負う"
+          },
+          {
+            "name": "顧客",
+            "role": "成果物の受益者",
+            "impact": "品質・納期・サポートに影響"
+          }
+        ],
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium"
+      }
+    },
+    {
+      "option_id": "opt_2",
+      "title": "案B：情報収集してから決める",
+      "description": "重要な不明点を埋めてから判断する。",
+      "action_plan": [
+        {
+          "step": "不足情報を3〜5項目に絞って集める"
+        }
+      ],
+      "pros": [
+        "判断精度が上がる"
+      ],
+      "cons": [
+        "機会損失が起きる可能性"
+      ],
+      "risks": [
+        {
+          "risk": "先延ばし",
+          "severity": "low",
+          "mitigation": "期限と判断条件を設定する"
+        }
+      ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "3-5 days",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [],
+        "assumptions": [],
+        "known_unknowns": []
+      },
+      "ethics_review": {
+        "principles_applied": [
+          "integrity",
+          "autonomy"
+        ],
+        "tradeoffs": [],
+        "concerns": [
+          "不確実な事実を断言しない"
+        ],
+        "confidence": "medium"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "自分",
+            "role": "意思決定と説明責任の主体",
+            "impact": "判断の正当性・信頼に影響"
+          },
+          {
+            "name": "チームメンバーA〜F",
+            "role": "影響当事者",
+            "impact": "雇用・生活・精神的負荷に影響"
+          },
+          {
+            "name": "HR",
+            "role": "手続きと法令の担保",
+            "impact": "運用ミスのリスクを負う"
+          },
+          {
+            "name": "顧客",
+            "role": "成果物の受益者",
+            "impact": "品質・納期・サポートに影響"
+          }
+        ],
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "recommendation": {
+    "status": "recommended",
+    "recommended_option_id": "opt_1",
+    "reason": "害を抑えつつ前進できるため。",
+    "counter": "遅いと感じる可能性がある。",
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "不明点が多い場合"
+      }
+    ],
+    "confidence": "medium"
+  },
+  "ethics": {
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [],
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
+  },
+  "responsibility": {
+    "decision_owner": "user",
+    "stakeholders": [
+      {
+        "name": "自分",
+        "role": "意思決定と説明責任の主体",
+        "impact": "判断の正当性・信頼に影響"
+      },
+      {
+        "name": "チームメンバーA〜F",
+        "role": "影響当事者",
+        "impact": "雇用・生活・精神的負荷に影響"
+      },
+      {
+        "name": "HR",
+        "role": "手続きと法令の担保",
+        "impact": "運用ミスのリスクを負う"
+      },
+      {
+        "name": "顧客",
+        "role": "成果物の受益者",
+        "impact": "品質・納期・サポートに影響"
+      }
+    ],
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
+    "consent_considerations": []
+  },
+  "questions": [],
+  "uncertainty": {
+    "overall_level": "medium",
+    "reasons": [
+      "重要情報が未確定"
+    ],
+    "assumptions": [
+      "提示された制約が正しい"
+    ],
+    "known_unknowns": [
+      "削減の許容手段（異動・契約変更・採用凍結など）",
+      "各メンバーの直近の成果と将来の適性（客観データ）",
+      "本人の希望（異動可否、家庭事情）"
+    ]
+  },
+  "trace": {
+    "version": "1.0",
+    "steps": [
+      {
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "ended_at": "2026-02-22T00:00:01Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した",
+        "metrics": {
+          "options_planned": 2,
+          "questions_planned": 0
+        }
+      },
+      {
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "ended_at": "2026-02-22T00:00:02Z",
+        "summary": "特徴量に基づいて選択肢を生成した",
+        "metrics": {
+          "options": 2
+        }
+      },
+      {
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:02Z",
+        "ended_at": "2026-02-22T00:00:03Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+      }
+    ]
+  }
+}
