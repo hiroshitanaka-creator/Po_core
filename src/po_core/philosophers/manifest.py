@@ -79,6 +79,7 @@ SPECS: List[PhilosopherSpec] = [
         "DummyPhilosopher",
         risk_level=0,
         weight=2.0,
+        enabled=False,
         tags=(TAG_COMPLIANCE, TAG_CLARIFY),
         cost=1,
     ),
@@ -451,7 +452,7 @@ SPECS: List[PhilosopherSpec] = [
         "ClaudeAnthropic",
         risk_level=0,
         weight=1.3,
-        enabled=True,  # Slot 40
+        enabled=False,  # Slot 40
         tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),
@@ -461,7 +462,7 @@ SPECS: List[PhilosopherSpec] = [
         "GrokXAI",
         risk_level=2,
         weight=1.1,
-        enabled=True,  # Slot 41
+        enabled=False,  # Slot 41
         tags=(TAG_REDTEAM, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),
@@ -471,7 +472,7 @@ SPECS: List[PhilosopherSpec] = [
         "GPTChatGPT",
         risk_level=1,
         weight=1.2,
-        enabled=True,  # Slot 42
+        enabled=False,  # Slot 42
         tags=(TAG_GENERAL, TAG_CLARIFY, TAG_AI_SYNTHESIS),
         cost=2,
     ),
@@ -481,7 +482,7 @@ SPECS: List[PhilosopherSpec] = [
         "GeminiGoogle",
         risk_level=1,
         weight=1.1,
-        enabled=True,  # Slot 43
+        enabled=False,  # Slot 43
         tags=(TAG_PLANNER, TAG_CRITIC, TAG_AI_SYNTHESIS),
         cost=2,
     ),
