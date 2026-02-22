@@ -255,6 +255,10 @@ class PhilosopherRegistry:
                 if self._cache:
                     self._instances[pid] = ph
             except Exception as e:
+                if spec.enabled:
+                    raise RuntimeError(
+                        f"failed_to_load_enabled_philosopher:{pid}"
+                    ) from e
                 errors.append(
                     LoadError(pid, spec.module, spec.symbol, type(e).__name__)
                 )
