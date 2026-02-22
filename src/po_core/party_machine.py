@@ -36,8 +36,9 @@ import asyncio
 import functools
 import random
 import traceback
-from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeoutError
+from concurrent.futures import wait
 from dataclasses import dataclass, field
 from enum import Enum
 from time import perf_counter

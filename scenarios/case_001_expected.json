@@ -43,6 +43,24 @@
           "mitigation": "期限とデフォルト方針（情報不足なら現職）を固定する"
         }
       ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "1-2 weeks",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [
+          "転職先のランウェイ・稼働実態が未確定"
+        ],
+        "assumptions": [
+          "引っ越し不可の制約は固定"
+        ],
+        "known_unknowns": [
+          "文化",
+          "評価運用の実態"
+        ]
+      },
       "ethics_review": {
         "principles_applied": [
           "integrity",
@@ -54,7 +72,7 @@
             "tension": "慎重さと機会損失の緊張",
             "between": [
               "integrity",
-              "autonomy"
+              "opportunity"
             ],
             "mitigation": "期限付きで慎重さを維持しつつ機会損失を抑える",
             "severity": "medium"
@@ -86,24 +104,6 @@
         ],
         "accountability_notes": "最終判断はユーザー。転職する場合は家族合意と引き継ぎ計画を前提にする。",
         "confidence": "high"
-      },
-      "feasibility": {
-        "effort": "low",
-        "timeline": "1-2 weeks",
-        "confidence": "high"
-      },
-      "uncertainty": {
-        "overall_level": "medium",
-        "reasons": [
-          "転職先のランウェイ・稼働実態が未確定"
-        ],
-        "assumptions": [
-          "引っ越し不可の制約は固定"
-        ],
-        "known_unknowns": [
-          "文化",
-          "評価運用の実態"
-        ]
       }
     },
     {
@@ -131,6 +131,23 @@
           "mitigation": "交渉期限と撤退条件を設定する"
         }
       ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "2-4 weeks",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [
+          "異動・役割変更は組織事情に左右される"
+        ],
+        "assumptions": [
+          "交渉の機会がある"
+        ],
+        "known_unknowns": [
+          "提示される具体的な成長機会"
+        ]
+      },
       "ethics_review": {
         "principles_applied": [
           "autonomy",
@@ -140,8 +157,8 @@
           {
             "tension": "安定と成長の緊張",
             "between": [
-              "autonomy",
-              "nonmaleficence"
+              "economic_stability",
+              "long_term_growth"
             ],
             "mitigation": "期限を切って成長機会の有無で判断する",
             "severity": "medium"
@@ -168,23 +185,6 @@
         ],
         "accountability_notes": "交渉結果を関係者に説明し、必要なら次の選択肢へ移行する。",
         "confidence": "high"
-      },
-      "feasibility": {
-        "effort": "low",
-        "timeline": "2-4 weeks",
-        "confidence": "high"
-      },
-      "uncertainty": {
-        "overall_level": "medium",
-        "reasons": [
-          "異動・役割変更は組織事情に左右される"
-        ],
-        "assumptions": [
-          "交渉の機会がある"
-        ],
-        "known_unknowns": [
-          "提示される具体的な成長機会"
-        ]
       }
     }
   ],
@@ -214,7 +214,7 @@
         "tension": "慎重さと機会損失の緊張",
         "between": [
           "integrity",
-          "autonomy"
+          "opportunity"
         ],
         "mitigation": "期限付きにして先延ばしを防ぐ",
         "severity": "medium"
@@ -301,30 +301,9 @@
         }
       },
       {
-        "name": "ethics_review",
+        "name": "compose_output",
         "started_at": "2026-02-22T00:00:02Z",
         "ended_at": "2026-02-22T00:00:03Z",
-        "summary": "倫理原則とトレードオフを評価した"
-      },
-      {
-        "name": "responsibility_review",
-        "started_at": "2026-02-22T00:00:03Z",
-        "ended_at": "2026-02-22T00:00:04Z",
-        "summary": "責任主体と利害関係者を整理した"
-      },
-      {
-        "name": "question_layer",
-        "started_at": "2026-02-22T00:00:04Z",
-        "ended_at": "2026-02-22T00:00:05Z",
-        "summary": "不足情報の質問を生成した",
-        "metrics": {
-          "questions": 2
-        }
-      },
-      {
-        "name": "compose_output",
-        "started_at": "2026-02-22T00:00:05Z",
-        "ended_at": "2026-02-22T00:00:06Z",
         "summary": "推奨・反証・代替案を含む出力を組み立てた"
       }
     ]

@@ -69,6 +69,10 @@ jobs:
       run: |
         pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py tests/test_po_self_v2.py tests/test_tensor_metrics.py tests/test_golden_regression.py tests/test_smoke_pipeline.py tests/test_philosophers_pipeline.py tests/test_viewer_pipeline.py tests/test_philosopher_contract.py tests/test_semantic_delta.py -v
 
+    - name: Run golden E2E + schema tests (must pass)
+      run: |
+        pytest tests/test_golden_e2e.py tests/test_input_schema.py tests/test_output_schema.py -v
+
     - name: Run full test suite (best-effort)
       run: |
         pytest tests/ -v --cov=po_core --cov-report=xml --cov-report=term-missing || true

@@ -3,7 +3,7 @@
     "schema_version": "1.0",
     "pocore_version": "0.1.0",
     "run_id": "case_009_expected_stub_compact_v1",
-    "created_at": "2026-02-22T00:10:00Z",
+    "created_at": "2026-02-22T00:00:00Z",
     "seed": 0,
     "deterministic": true,
     "generator": {
@@ -43,6 +43,24 @@
           "mitigation": "期限と判断条件を先に決める"
         }
       ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "4 weeks",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "high",
+        "reasons": [
+          "価値観と目的が未確定"
+        ],
+        "assumptions": [
+          "現職継続は当面可能"
+        ],
+        "known_unknowns": [
+          "適性",
+          "支援の有無"
+        ]
+      },
       "ethics_review": {
         "principles_applied": [
           "integrity",
@@ -66,24 +84,6 @@
         ],
         "accountability_notes": "最終判断はユーザー。Po_coreは問いと構造化を提供する。",
         "confidence": "high"
-      },
-      "feasibility": {
-        "effort": "low",
-        "timeline": "4 weeks",
-        "confidence": "high"
-      },
-      "uncertainty": {
-        "overall_level": "high",
-        "reasons": [
-          "価値観と目的が未確定"
-        ],
-        "assumptions": [
-          "現職継続は当面可能"
-        ],
-        "known_unknowns": [
-          "適性",
-          "支援の有無"
-        ]
       }
     },
     {
@@ -108,6 +108,25 @@
           "mitigation": "資金計画と支援条件を確定してから着手する"
         }
       ],
+      "feasibility": {
+        "effort": "high",
+        "timeline": "6-24 months",
+        "confidence": "medium"
+      },
+      "uncertainty": {
+        "overall_level": "high",
+        "reasons": [
+          "目的が未確定",
+          "就職市場が不明"
+        ],
+        "assumptions": [
+          "候補校が存在する"
+        ],
+        "known_unknowns": [
+          "適性",
+          "出口の確実性"
+        ]
+      },
       "ethics_review": {
         "principles_applied": [
           "autonomy",
@@ -141,25 +160,6 @@
         ],
         "accountability_notes": "費用と時間投資はユーザーが負う。前提条件を明示して判断する。",
         "confidence": "high"
-      },
-      "feasibility": {
-        "effort": "high",
-        "timeline": "6-24 months",
-        "confidence": "medium"
-      },
-      "uncertainty": {
-        "overall_level": "high",
-        "reasons": [
-          "目的が未確定",
-          "就職市場が不明"
-        ],
-        "assumptions": [
-          "候補校が存在する"
-        ],
-        "known_unknowns": [
-          "適性",
-          "出口の確実性"
-        ]
       }
     }
   ],
@@ -269,35 +269,14 @@
     "steps": [
       {
         "name": "parse_input",
-        "started_at": "2026-02-22T00:10:00Z",
-        "ended_at": "2026-02-22T00:10:01Z",
+        "started_at": "2026-02-22T00:00:00Z",
+        "ended_at": "2026-02-22T00:00:01Z",
         "summary": "valuesが空であることを検出した"
       },
       {
-        "name": "generate_options",
-        "started_at": "2026-02-22T00:10:01Z",
-        "ended_at": "2026-02-22T00:10:02Z",
-        "summary": "2案を生成した",
-        "metrics": {
-          "options": 2
-        }
-      },
-      {
-        "name": "ethics_review",
-        "started_at": "2026-02-22T00:10:02Z",
-        "ended_at": "2026-02-22T00:10:03Z",
-        "summary": "倫理原則とトレードオフを評価した"
-      },
-      {
-        "name": "responsibility_review",
-        "started_at": "2026-02-22T00:10:03Z",
-        "ended_at": "2026-02-22T00:10:04Z",
-        "summary": "責任主体と利害関係者を整理した"
-      },
-      {
         "name": "question_layer",
-        "started_at": "2026-02-22T00:10:04Z",
-        "ended_at": "2026-02-22T00:10:05Z",
+        "started_at": "2026-02-22T00:00:01Z",
+        "ended_at": "2026-02-22T00:00:02Z",
         "summary": "軸を作るための質問を生成した",
         "metrics": {
           "questions": 4
@@ -305,8 +284,8 @@
       },
       {
         "name": "compose_output",
-        "started_at": "2026-02-22T00:10:05Z",
-        "ended_at": "2026-02-22T00:10:06Z",
+        "started_at": "2026-02-22T00:00:02Z",
+        "ended_at": "2026-02-22T00:00:03Z",
         "summary": "推奨を保留し、次ステップを提示した"
       }
     ]

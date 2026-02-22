@@ -11,8 +11,9 @@ Verifies:
 
 from __future__ import annotations
 
+from unittest.mock import MagicMock, call, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, call
 
 from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.registry import Selection
