@@ -1,0 +1,314 @@
+{
+  "meta": {
+    "schema_version": "1.0",
+    "pocore_version": "0.1.0",
+    "run_id": "case_009_expected_stub_compact_v1",
+    "created_at": "2026-02-22T00:10:00Z",
+    "seed": 0,
+    "deterministic": true,
+    "generator": {
+      "name": "generator_stub",
+      "version": "0.1.0",
+      "mode": "stub"
+    }
+  },
+  "case_ref": {
+    "case_id": "case_009_unclear_values",
+    "title": "価値観が不明：進路選択の前に問いを立てる",
+    "input_digest": "8328fb154a4c7565d0095c45061b8aca302222f47e49c2624943e88e1fe1941f"
+  },
+  "options": [
+    {
+      "option_id": "opt_1",
+      "title": "現職継続＋探索（期限付き）",
+      "description": "生活費維持を守りつつ、期限を切って価値観の棚卸しと情報収集を行う。",
+      "action_plan": [
+        {
+          "step": "4週間の探索期間を設定する"
+        },
+        {
+          "step": "求人5件＋ヒアリング1回で現実データを集める"
+        }
+      ],
+      "pros": [
+        "生活の安定を崩しにくい"
+      ],
+      "cons": [
+        "変化が遅く感じる可能性"
+      ],
+      "risks": [
+        {
+          "risk": "先延ばしが固定化する",
+          "severity": "medium",
+          "mitigation": "期限と判断条件を先に決める"
+        }
+      ],
+      "ethics_review": {
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "accountability"
+        ],
+        "tradeoffs": [],
+        "concerns": [
+          "価値観未確定で推奨を断言しない"
+        ],
+        "confidence": "high"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "自分",
+            "role": "意思決定主体",
+            "impact": "人生の方向性・収入に影響"
+          }
+        ],
+        "accountability_notes": "最終判断はユーザー。Po_coreは問いと構造化を提供する。",
+        "confidence": "high"
+      },
+      "feasibility": {
+        "effort": "low",
+        "timeline": "4 weeks",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "high",
+        "reasons": [
+          "価値観と目的が未確定"
+        ],
+        "assumptions": [
+          "現職継続は当面可能"
+        ],
+        "known_unknowns": [
+          "適性",
+          "支援の有無"
+        ]
+      }
+    },
+    {
+      "option_id": "opt_2",
+      "title": "学び直しを具体化して比較",
+      "description": "専門学校（費用・期間・出口）を具体化し、現実条件で比較する。",
+      "action_plan": [
+        {
+          "step": "候補校3つの費用・期間・出口データを収集する"
+        }
+      ],
+      "pros": [
+        "方向性が定まれば集中投資できる"
+      ],
+      "cons": [
+        "費用と時間の負担が大きい"
+      ],
+      "risks": [
+        {
+          "risk": "資金計画が崩れて生活が不安定になる",
+          "severity": "high",
+          "mitigation": "資金計画と支援条件を確定してから着手する"
+        }
+      ],
+      "ethics_review": {
+        "principles_applied": [
+          "autonomy",
+          "nonmaleficence",
+          "integrity"
+        ],
+        "tradeoffs": [
+          {
+            "tension": "自己実現と安全の緊張",
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "資金計画で害を抑える",
+            "severity": "high"
+          }
+        ],
+        "concerns": [
+          "『学べば成功する』と断言しない"
+        ],
+        "confidence": "medium"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "自分",
+            "role": "意思決定主体",
+            "impact": "収入・時間に影響"
+          }
+        ],
+        "accountability_notes": "費用と時間投資はユーザーが負う。前提条件を明示して判断する。",
+        "confidence": "high"
+      },
+      "feasibility": {
+        "effort": "high",
+        "timeline": "6-24 months",
+        "confidence": "medium"
+      },
+      "uncertainty": {
+        "overall_level": "high",
+        "reasons": [
+          "目的が未確定",
+          "就職市場が不明"
+        ],
+        "assumptions": [
+          "候補校が存在する"
+        ],
+        "known_unknowns": [
+          "適性",
+          "出口の確実性"
+        ]
+      }
+    }
+  ],
+  "recommendation": {
+    "status": "no_recommendation",
+    "reason": "価値観と目的が未確定なため、推奨は恣意的になる。まず問いで軸を作る。",
+    "missing_info": [
+      "学び直しの目的",
+      "リスク許容量",
+      "支援の有無"
+    ],
+    "next_steps": [
+      "q1〜q4に答えて価値の優先順位を仮決めする",
+      "候補校3つの費用と出口を集める"
+    ],
+    "confidence": "high"
+  },
+  "ethics": {
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "tension": "自己実現と生活安定の緊張",
+        "between": [
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "mitigation": "現職継続で安全を確保しつつ探索する",
+        "severity": "medium"
+      }
+    ],
+    "guardrails": [
+      "価値観未確定で推奨を断言しない",
+      "意思決定主体をユーザーから奪わない"
+    ],
+    "notes": "このケースは『問いの層』が主役。"
+  },
+  "responsibility": {
+    "decision_owner": "user",
+    "stakeholders": [
+      {
+        "name": "自分",
+        "role": "意思決定主体",
+        "impact": "人生の方向性・収入に影響"
+      }
+    ],
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+    "consent_considerations": [
+      "支援者がいる場合、金銭・時間への影響を共有する"
+    ]
+  },
+  "questions": [
+    {
+      "question_id": "q1",
+      "question": "学び直しで得たい目的は？（例：収入、自由、創造性）",
+      "priority": 1,
+      "why_needed": "目的がないと評価軸が定義できないため。",
+      "assumption_if_unanswered": "働き方の自由を暫定目的とする",
+      "optional": false
+    },
+    {
+      "question_id": "q2",
+      "question": "収入低下をどれだけ許容できる？（0%/-10%/-30%など）",
+      "priority": 1,
+      "why_needed": "実行可能な選択肢を絞るため。",
+      "assumption_if_unanswered": "収入低下は許容しない",
+      "optional": false
+    },
+    {
+      "question_id": "q3",
+      "question": "学び直しに投入できる時間は週どれくらい？",
+      "priority": 2,
+      "why_needed": "計画（学校/独学/並行）を現実化するため。",
+      "assumption_if_unanswered": "週5時間と仮定する",
+      "optional": false
+    },
+    {
+      "question_id": "q4",
+      "question": "支援（貯金・家族理解・奨学金）はある？",
+      "priority": 3,
+      "why_needed": "資金計画とリスク耐性の評価に必要。",
+      "assumption_if_unanswered": "支援なしで安全側に倒す",
+      "optional": true
+    }
+  ],
+  "uncertainty": {
+    "overall_level": "high",
+    "reasons": [
+      "価値観と目的が未確定"
+    ],
+    "assumptions": [
+      "生活費維持が優先制約"
+    ],
+    "known_unknowns": [
+      "適性",
+      "支援の有無",
+      "就職市場"
+    ]
+  },
+  "trace": {
+    "version": "1.0",
+    "steps": [
+      {
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:10:00Z",
+        "ended_at": "2026-02-22T00:10:01Z",
+        "summary": "valuesが空であることを検出した"
+      },
+      {
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:10:01Z",
+        "ended_at": "2026-02-22T00:10:02Z",
+        "summary": "2案を生成した",
+        "metrics": {
+          "options": 2
+        }
+      },
+      {
+        "name": "ethics_review",
+        "started_at": "2026-02-22T00:10:02Z",
+        "ended_at": "2026-02-22T00:10:03Z",
+        "summary": "倫理原則とトレードオフを評価した"
+      },
+      {
+        "name": "responsibility_review",
+        "started_at": "2026-02-22T00:10:03Z",
+        "ended_at": "2026-02-22T00:10:04Z",
+        "summary": "責任主体と利害関係者を整理した"
+      },
+      {
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:10:04Z",
+        "ended_at": "2026-02-22T00:10:05Z",
+        "summary": "軸を作るための質問を生成した",
+        "metrics": {
+          "questions": 4
+        }
+      },
+      {
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:10:05Z",
+        "ended_at": "2026-02-22T00:10:06Z",
+        "summary": "推奨を保留し、次ステップを提示した"
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+case_id: case_007_lie_or_admit
+title: "仕事のミス：嘘で隠すか、認めて修正するか"
+locale: ja-JP
+problem: "自分のミスで資料に誤りがある。上司から『この数字合ってる？』と聞かれた。どう対応すべきか。"
+context:
+  mistake:
+    type: "集計ロジックのミス"
+    potential_impact: "意思決定を誤らせる可能性"
+constraints:
+  - "虚偽の断言はしない"
+  - "修正可能なら早期に被害を止める"
+  - "責任転嫁はしない"
+values:
+  - "誠実（integrity）"
+  - "説明責任（accountability）"
+  - "信頼維持"
+deadline: "2026-02-25"
+stakeholders:
+  - name: "上司"
+    role: "意思決定者"
+    impact: "判断の品質に影響"
+  - name: "チーム"
+    role: "実行者"
+    impact: "手戻り・信頼に影響"
+  - name: "自分"
+    role: "当事者"
+    impact: "信用・評価・学習に影響"
+unknowns:
+  - "誤りの影響範囲（どの意思決定に影響するか）"
+  - "修正に必要な時間"
+  - "既に外部に共有済みか"
