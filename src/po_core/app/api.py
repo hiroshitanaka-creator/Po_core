@@ -31,13 +31,58 @@ Architecture:
 
 from __future__ import annotations
 
+import os
 import uuid
+
+from fastapi import FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
+
+
+def _parse_cors_origins(raw_origins: str) -> list[str]:
+    """Return comma-split CORS origins with whitespace trimmed and empty entries removed."""
+    return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
+
+def _get_configured_api_key() -> str:
+    """Secure mode is enabled only when PO_CORE_API_KEY is set and non-empty."""
+    return os.getenv("PO_CORE_API_KEY", "").strip()
+
+
+def _extract_api_key(
+    x_api_key: str | None,
+    authorization: str | None,
+) -> str | None:
+    if x_api_key:
+        return x_api_key.strip()
+    if not authorization:
+        return None
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token.strip():
+        return None
+    return token.strip()
+
+
+def _ensure_api_key(
+    x_api_key: str | None,
+    authorization: str | None,
+) -> None:
+    expected_key = _get_configured_api_key()
+    if not expected_key:
+        return
+    presented_key = _extract_api_key(x_api_key=x_api_key, authorization=authorization)
+    if presented_key != expected_key:
+        raise HTTPException(status_code=403, detail="Invalid or missing API key")
+
+
+class GenerateRequest(BaseModel):
+    user_input: str
 
 
 def run(
@@ -151,4 +196,28 @@ async def async_run(
     return await async_run_turn(ctx, deps)
 
 
-__all__ = ["run", "async_run"]
+app = FastAPI(title="Po_core API")
+
+# Defaults stay fully open for backwards compatibility.
+# Set PO_CORE_CORS_ORIGINS and/or PO_CORE_API_KEY to enable secure mode.
+_cors_origins = _parse_cors_origins(os.getenv("PO_CORE_CORS_ORIGINS", ""))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_origins or ["*"],
+    allow_credentials=bool(_cors_origins),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.post("/generate")
+async def generate(
+    payload: GenerateRequest,
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+    authorization: str | None = Header(default=None, alias="Authorization"),
+) -> dict:
+    _ensure_api_key(x_api_key=x_api_key, authorization=authorization)
+    return await async_run(payload.user_input)
+
+
+__all__ = ["run", "async_run", "app"]
