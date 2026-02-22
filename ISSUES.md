@@ -1,7 +1,11 @@
-# GitHub Issues — Po_core Phase 1–5
+# GitHub Issues — Po_core Phases 1–7 + Spec M0–M4
 
 > Issue templates ready for creation. Copy each section into a GitHub Issue.
 > Created: 2026-02-10
+> Updated: 2026-02-22 — Phases 6-7 complete; Spec M0 issues added.
+
+**Status summary (2026-02-22):**
+Phases 1–7 complete. v0.2.0b3 (po-core-flyingpig). Spec scaffolding (M0) in progress.
 
 ---
 
@@ -277,3 +281,77 @@
 - [x] Slot 43: `grok_xai.py` — Grok/xAI radical curiosity + free inquiry
 - [x] All 4 registered in `manifest.py` with risk levels and tags
 - [x] Total philosophers: 43 (was 39)
+
+---
+
+## Spec M0: Specification Scaffolding — IN PROGRESS (2026-02-22)
+
+### Issue #22: Create PRD and SRS with requirement IDs — IN PROGRESS
+
+**Labels:** `spec`, `documentation`, `m0`
+
+- [x] `docs/spec/prd.md` v0.2 — Purpose, target users, scope, success metrics, philosophy premises, roadmap (Phases 1–7 + M0–M4)
+- [x] `docs/spec/srs_v0.1.md` v0.2 — 18 requirement IDs (FR-OUT-001 〜 NFR-SEC-001), 2-layer architecture, REST API interface spec
+- [ ] Requirement IDs linked to GitHub Issues (M1)
+- [ ] CI check: SRS updated on every spec-changing PR
+
+---
+
+### Issue #23: Finalize output schema (output_schema_v1.json) — IN PROGRESS
+
+**Labels:** `spec`, `schema`, `m0`
+
+- [x] `docs/spec/output_schema_v1.json` v1.0 — Full JSON Schema Draft 2020-12
+- [x] Core fields: meta, case_ref, options, recommendation, ethics, responsibility, questions, uncertainty, trace
+- [x] Po_core-specific extensions: philosopher_contributions, tensors, explanation_chain, pocore_events
+- [x] generator.mode enum: stub / rule_based / llm / hybrid
+- [ ] `jsonschema` CI validation gate (M1)
+- [ ] Golden file for AT-001 and AT-009
+
+---
+
+### Issue #24: Write 10 acceptance test cases — IN PROGRESS
+
+**Labels:** `spec`, `testing`, `m0`
+
+- [x] `docs/spec/test_cases.md` v0.2 — 10 acceptance tests (AT-001 〜 AT-010)
+- [x] Given/When/Then format with condition ID breakdown
+- [x] Global rules: AT-OUT-001 guard, MUST-only evaluation, no content judgment
+- [ ] `tests/acceptance/` test runner implementation (M1)
+- [ ] `scenarios/case_001.yaml` 〜 `case_010.yaml` scenario files (M1)
+
+---
+
+### Issue #25: Build traceability matrix (philosophy → requirements → tests) — IN PROGRESS
+
+**Labels:** `spec`, `documentation`, `m0`
+
+- [x] `docs/spec/traceability.md` v0.2 — 4 matrices: philosophy→req→test, req→impl→test, scenario→AT→req, impl→req
+- [x] 5 ADR entries (0001–0005)
+- [x] Milestone status table (M0–M4)
+- [ ] Auto-generate coverage report from traceability matrix (M2)
+
+---
+
+## Remaining Tasks (Post-M0)
+
+### Issue #26: PyPI publish (Phase 5-F) — PENDING
+
+**Labels:** `phase-5f`, `release`
+
+- [x] Version: `0.2.0b3` (PEP 440 compliant)
+- [x] Package name: `po-core-flyingpig`
+- [x] `publish.yml` OIDC workflow ready
+- [ ] Publish to TestPyPI (`workflow_dispatch`)
+- [ ] Publish to PyPI on `v0.2.0` release tag
+
+---
+
+### Issue #27: v1.0 stabilization — PLANNED
+
+**Labels:** `v1.0`, `roadmap`
+
+- [ ] AT-001〜AT-010 all passing (M2 complete)
+- [ ] PyPI publish done (Issue #26)
+- [ ] Academic paper draft complete
+- [ ] CHANGELOG entry for v1.0.0
