@@ -8,6 +8,7 @@ Verifies:
 - generate(philosophers=None) leaves registry untouched (regression guard)
 - generate(philosophers=[...]) injects _AllowlistRegistry into EnsembleDeps
 """
+
 from __future__ import annotations
 
 import pytest
@@ -17,10 +18,10 @@ from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.registry import Selection
 from po_core.po_self import PoSelf, _AllowlistRegistry
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_selection(ids: list[str]) -> Selection:
     return Selection(
@@ -172,8 +173,10 @@ class TestPoSelfGeneratePhilosophersParam:
             return fake_result
 
         mock_sys = self._make_mock_sys()
-        with patch(self._BUILD_PATH, return_value=mock_sys), \
-             patch(self._RUN_TURN_PATH, side_effect=capture_run_turn):
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
             PoSelf().generate("test prompt", philosophers=None)
 
         assert "deps" in captured_deps
@@ -190,15 +193,17 @@ class TestPoSelfGeneratePhilosophersParam:
             return fake_result
 
         mock_sys = self._make_mock_sys(["aristotle", "confucius"])
-        with patch(self._BUILD_PATH, return_value=mock_sys), \
-             patch(self._RUN_TURN_PATH, side_effect=capture_run_turn):
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
             PoSelf().generate("test prompt", philosophers=["aristotle"])
 
         assert "deps" in captured_deps
         registry = captured_deps["deps"].registry
-        assert isinstance(registry, _AllowlistRegistry), (
-            "Expected _AllowlistRegistry when philosophers list is provided"
-        )
+        assert isinstance(
+            registry, _AllowlistRegistry
+        ), "Expected _AllowlistRegistry when philosophers list is provided"
 
     def test_philosophers_empty_list_raises_value_error(self):
         """Empty allowlist produces no overlap → ValueError from _AllowlistRegistry.
@@ -206,13 +211,16 @@ class TestPoSelfGeneratePhilosophersParam:
         run_turn is given a side_effect that calls deps.registry.select() to
         simulate what _run_phase_pre does; this exercises the allowlist filter.
         """
+
         def trigger_select(ctx, deps):
             deps.registry.select(SafetyMode.NORMAL)
             return self._make_run_turn_result()
 
         mock_sys = self._make_mock_sys(["aristotle"])
-        with patch(self._BUILD_PATH, return_value=mock_sys), \
-             patch(self._RUN_TURN_PATH, side_effect=trigger_select):
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=trigger_select),
+        ):
             with pytest.raises(ValueError):
                 PoSelf().generate("test prompt", philosophers=[])
 
@@ -221,12 +229,15 @@ class TestPoSelfGeneratePhilosophersParam:
 
         Same simulation pattern: run_turn side_effect triggers registry.select().
         """
+
         def trigger_select(ctx, deps):
             deps.registry.select(SafetyMode.NORMAL)
             return self._make_run_turn_result()
 
         mock_sys = self._make_mock_sys(["aristotle", "kant"])
-        with patch(self._BUILD_PATH, return_value=mock_sys), \
-             patch(self._RUN_TURN_PATH, side_effect=trigger_select):
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=trigger_select),
+        ):
             with pytest.raises(ValueError, match="allowlist"):
                 PoSelf().generate("test prompt", philosophers=["mill", "rawls"])

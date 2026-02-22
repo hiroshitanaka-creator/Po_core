@@ -99,9 +99,7 @@ class _AllowlistRegistry:
                 f"{sel.selected_ids!r}. "
                 "Expand the allowlist or remove the philosophers argument."
             )
-        cost = sum(
-            s.cost for s in SPECS if s.philosopher_id in set(filtered_ids)
-        )
+        cost = sum(s.cost for s in SPECS if s.philosopher_id in set(filtered_ids))
         return Selection(
             mode=mode,
             selected_ids=filtered_ids,
