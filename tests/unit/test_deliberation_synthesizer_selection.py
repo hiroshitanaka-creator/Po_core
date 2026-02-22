@@ -98,9 +98,9 @@ class Aristotle(_StubPhilosopher):
 class TestSynthesizerPhilosophersList:
     def test_synthesizer_ids_are_lowercase(self):
         for sid in SYNTHESIZER_PHILOSOPHERS:
-            assert sid == sid.lower(), (
-                f"SYNTHESIZER_PHILOSOPHERS entry {sid!r} must be a lowercase ID"
-            )
+            assert (
+                sid == sid.lower()
+            ), f"SYNTHESIZER_PHILOSOPHERS entry {sid!r} must be a lowercase ID"
 
     def test_synthesizer_ids_match_known_manifest_ids(self):
         expected = {"hegel", "kant", "plato", "dewey"}
@@ -114,9 +114,9 @@ class TestSynthesizerPhilosophersList:
             "John Dewey",
         ]
         for full_name in full_names:
-            assert full_name not in SYNTHESIZER_PHILOSOPHERS, (
-                f"Full name {full_name!r} should not appear in SYNTHESIZER_PHILOSOPHERS"
-            )
+            assert (
+                full_name not in SYNTHESIZER_PHILOSOPHERS
+            ), f"Full name {full_name!r} should not appear in SYNTHESIZER_PHILOSOPHERS"
 
 
 # ── Tests: _build_philosopher_lookup secondary key ───────────────────────────
@@ -223,7 +223,9 @@ class TestCollectSynthesisCounterarguments:
         """Even with no proposals, synthesizers in lookup get an entry (empty combined)."""
         philosophers = [Hegel()]
         lookup = _build_philosopher_lookup(philosophers)
-        result = _collect_synthesis_counterarguments([], SYNTHESIZER_PHILOSOPHERS, lookup)
+        result = _collect_synthesis_counterarguments(
+            [], SYNTHESIZER_PHILOSOPHERS, lookup
+        )
         # combined is "", but the key is present because Hegel is in lookup
         assert "hegel" in result
 
@@ -260,7 +262,9 @@ class TestSynthesisPathRePropose:
             for a in [p.extra.get("_po_core", {}).get("author", "")]
             if p.content
         )
-        counterarguments = {sid: combined for sid in SYNTHESIZER_PHILOSOPHERS if sid in lookup}
+        counterarguments = {
+            sid: combined for sid in SYNTHESIZER_PHILOSOPHERS if sid in lookup
+        }
 
         ctx = self._ctx()
         intent = Intent.neutral()
@@ -268,6 +272,7 @@ class TestSynthesisPathRePropose:
         memory = MemorySnapshot(items=[], summary=None, meta={})
 
         from po_core.deliberation.roles import DebateRole
+
         revised = _re_propose(
             lookup,
             counterarguments,
@@ -283,9 +288,9 @@ class TestSynthesisPathRePropose:
             "_re_propose returned no proposals for synthesis round — "
             "synthesizer philosophers were not found in the lookup"
         )
-        assert len(revised) == len(SYNTHESIZER_PHILOSOPHERS), (
-            f"Expected {len(SYNTHESIZER_PHILOSOPHERS)} synthesis proposals, got {len(revised)}"
-        )
+        assert len(revised) == len(
+            SYNTHESIZER_PHILOSOPHERS
+        ), f"Expected {len(SYNTHESIZER_PHILOSOPHERS)} synthesis proposals, got {len(revised)}"
 
     def test_re_propose_synthesis_proposals_carry_dialectic_role(self):
         """Synthesis proposals must have dialectic_role='synthesis' in extra."""
@@ -314,6 +319,6 @@ class TestSynthesisPathRePropose:
 
         assert revised
         for p in revised:
-            assert p.extra.get("dialectic_role") == "synthesis", (
-                f"Expected dialectic_role='synthesis', got {p.extra.get('dialectic_role')!r}"
-            )
+            assert (
+                p.extra.get("dialectic_role") == "synthesis"
+            ), f"Expected dialectic_role='synthesis', got {p.extra.get('dialectic_role')!r}"
