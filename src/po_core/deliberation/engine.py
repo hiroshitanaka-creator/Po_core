@@ -381,11 +381,21 @@ class DeliberationEngine:
 
 
 def _build_philosopher_lookup(philosophers: Sequence) -> Dict[str, object]:
-    """Build name → philosopher mapping."""
+    """Build philosopher lookup keyed by both full name and philosopher_id.
+
+    Full name (``ph.name``) is the primary key used by antithesis/standard
+    rounds.  The lowercase class name (``type(ph).__name__.lower()``) is
+    registered as a secondary key so that ``SYNTHESIZER_PHILOSOPHERS`` — which
+    stores manifest IDs like ``"hegel"`` — can resolve correctly even when the
+    instance name is ``"Georg Wilhelm Friedrich Hegel"``.
+    """
     lookup = {}
     for ph in philosophers:
         name = getattr(ph, "name", None) or str(ph)
         lookup[name] = ph
+        # Secondary key: lowercase class name matches manifest philosopher_id
+        class_id = type(ph).__name__.lower()
+        lookup.setdefault(class_id, ph)
     return lookup
 
 
