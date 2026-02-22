@@ -1,16 +1,16 @@
-# Po_core 完全体ロードマップ — Phase 1〜5
+# Po_core 完全体ロードマップ — Phase 1〜7
 
 > Grand Architect Assessment — 2026-02-10 策定
-> **現在地更新 — 2026-02-19**
+> **現在地更新 — 2026-02-22**
 >
 > 前提: Phase 0〜4（PhilosopherBridge, E2E Test, Pipeline Integration, Tensor Deepening, Production Readiness）は完了済み。
-> 本文書は「次の5フェーズ」として、Po_coreを完全体へ導くための戦略的ロードマップである。
+> Phase 1〜7 すべて完了。残タスクは PyPI 公開（5-F）および仕様化フェーズ M0〜M4。
 
 ---
 
-## 現在地（2026-02-19 時点）
+## 現在地（2026-02-22 時点）
 
-**Phase 1〜4 および Phase 5-A〜E が完了。** Phase 5-F（PyPI 公開）が残課題。
+**Phase 1〜7 完了。v0.2.0b3 (po-core-flyingpig)。仕様化フェーズ M0 進行中。**
 
 | フェーズ | 状態 | 完了サマリー |
 |---|---|---|
@@ -24,6 +24,9 @@
 | Phase 5-D: 真の非同期 | ✅ COMPLETE | `async_run_philosophers()` asyncio.gather + ThreadPoolExecutor。FastAPI イベントループ非ブロッキング |
 | Phase 5-E: ベンチマーク | ✅ COMPLETE | 7テスト・Rich サマリー表。NORMAL p50=33ms（目標5s比150倍速） |
 | Phase 5-F: PyPI公開 | 🔲 PENDING | QUICKSTART 更新済み・CHANGELOG 更新済み。TestPyPI/PyPI 公開未実施 |
+| Phase 6: 自律進化 | ✅ COMPLETE | FreedomPressureV2（6D ML）・EmergenceDetector・MetaEthicsMonitor・3層メモリ |
+| Phase 7: AI哲学者スロット | ✅ COMPLETE | Claude/GPT/Gemini/Grok スロット（40〜43番）追加。哲学者数 43 人 |
+| **Spec M0: 仕様化の土台** | 🔄 IN PROGRESS | PRD/SRS/Schema/TestCases/Traceability 作成中 |
 
 ---
 
@@ -436,13 +439,64 @@ Po_coreは「39人の哲学者が独立に喋るシステム」から
 
 ---
 
-**2026-02-19 時点の現在地:**
+## Phase 6: 「自律進化と深化」 ✅ COMPLETE
+
+**英名:** Autonomous Evolution
+
+**完了サマリー（2026-02-21）:**
+
+| サブフェーズ | 内容 | 状態 |
+|---|---|---|
+| 6-A: FreedomPressureV2 | ML-native 6D テンソル（choice/responsibility/urgency/ethics/social/authenticity）+ EMA + 相関行列 | ✅ |
+| 6-B: EmergenceDetector | 哲学者間クロス影響パターン + 創発的コンセンサス検出。`deliberation/emergence.py` + `influence.py` | ✅ |
+| 6-C: MetaEthicsMonitor | 自己反省型倫理品質台帳。`meta/ethics_monitor.py` + `philosopher_ledger.py` | ✅ |
+| 6-D/E: 3層メモリ | 意味的メモリ + 手続き的メモリ + 哲学的メモリの統合。`memory/` モジュール | ✅ |
+
+---
+
+## Phase 7: 「AI哲学者スロット」 ✅ COMPLETE
+
+**英名:** AI Philosopher Slots
+
+**完了サマリー（2026-02-21）:**
+
+- スロット 40: `claude_anthropic.py` — Claude/Anthropic 憲法的 AI の哲学的観点
+- スロット 41: `gpt_chatgpt.py` — GPT/OpenAI RLHF 根拠の推論
+- スロット 42: `gemini_google.py` — Gemini/Google 責任ある AI 原則
+- スロット 43: `grok_xai.py` — Grok/xAI 急進的好奇心 + 自由探究
+
+哲学者総数: 43（旧 39）。AI 4 社の倫理観を対話・比較できる唯一のシステム。
+
+---
+
+## Spec M0: 「仕様化の土台」 🔄 IN PROGRESS
+
+**英名:** Specification Scaffolding
+
+**目的:** Phase 1〜7 で構築した哲学審議エンジンを、
+検証可能な要件・スキーマ・受け入れテストとして文書化する。
+これにより「なぜ飛べるのか」を証明可能な形で示す。
+
+| 成果物 | ファイル | 状態 |
+|---|---|---|
+| PRD | `docs/spec/prd.md` | ✅ v0.2 |
+| SRS（要求仕様ID付き） | `docs/spec/srs_v0.1.md` | ✅ v0.2（18要件ID） |
+| 出力スキーマ | `docs/spec/output_schema_v1.json` | ✅ v1.0 |
+| 受け入れテスト（10本） | `docs/spec/test_cases.md` | ✅ v0.2 |
+| トレーサビリティ（思想→要件→テスト） | `docs/spec/traceability.md` | ✅ v0.2 |
+
+---
+
+**2026-02-22 時点の現在地:**
 
 > "We don't know if pigs can fly. But we attached a balloon to one to find out."
 >
-> 気球はついた。風も読んだ（テンソル知性・Phase 2）。
-> 内部も見えるようにした（可視化・Phase 3）。
-> 悪意にも耐えた（防御強化・Phase 4）。
-> 世界に繋がった（REST API・Docker・Phase 5-A/B/C）。
+> 気球はついた（Phase 1: 基盤）。
+> 風も読んだ（Phase 2: テンソル知性）。
+> 内部も見えるようにした（Phase 3: 可視化）。
+> 悪意にも耐えた（Phase 4: 防御強化）。
+> 世界に繋がった（Phase 5: REST API・Docker）。
+> 自律的に深化した（Phase 6: 自律進化）。
+> AI の声も届いた（Phase 7: AI 哲学者）。
 >
-> 次は飛ぶ（PyPI公開・真の非同期・Phase 5-D/E/F）。
+> 次は証明する（Spec M0〜M4: 仕様化・受け入れテスト・v1.0）。

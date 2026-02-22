@@ -1,8 +1,29 @@
-# Next Steps — Phase 1–5 Roadmap
+# Next Steps — Po_core Roadmap (Phases 1–7 Complete)
 
-> Updated: 2026-02-12
+> Updated: 2026-02-22
 > See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for full rationale.
 > See [ISSUES.md](./ISSUES.md) for GitHub Issue templates.
+> See [docs/spec/](./docs/spec/) for PRD / SRS / Schema / TestCases / Traceability.
+
+**Current status (2026-02-22): Phases 1–7 COMPLETE. v0.2.0b3 (po-core-flyingpig).**
+PyPI publish pending. Spec/acceptance-test scaffolding in progress (M0).
+
+---
+
+## Summary: All Completed Phases
+
+| Phase | Name | Status | Tests |
+|-------|------|--------|-------|
+| Foundation (0–4) | Bridge removal, E2E, pipeline integration | ✅ COMPLETE | 125+ pipeline |
+| Phase 1 | Resonance Calibration | ✅ COMPLETE | 2354 pass |
+| Phase 2 | Tensor Intelligence | ✅ COMPLETE | 2396 pass |
+| Phase 3 | Observability | ✅ COMPLETE | +34 observability |
+| Phase 4 | Adversarial Hardening | ✅ COMPLETE | +85 redteam |
+| Phase 5 | Productization | ✅ COMPLETE (5-A〜E) | +24 REST API |
+| Phase 6 | Autonomous Evolution | ✅ COMPLETE | FP-V2, Emergence, Memory |
+| Phase 7 | AI Philosopher Slots | ✅ COMPLETE | Slots 40–43 |
+
+**Remaining:** 5-F (PyPI publish) · Spec M0–M4 scaffolding · v1.0
 
 ---
 
@@ -79,7 +100,7 @@
 
 ---
 
-## Phase 3 (Current): Observability & Viewer Integration
+## Phase 3 (COMPLETE): Observability & Viewer Integration
 
 | # | Task | Issue | Priority | Status |
 |---|------|-------|----------|--------|
@@ -120,31 +141,61 @@
 
 ---
 
-## Phase 4 (Planned): Adversarial Hardening
+## Phase 4 (COMPLETE): Adversarial Hardening
 
-| # | Task | Issue | Priority |
-|---|------|-------|----------|
-| 11 | Expand red team test suite to 50+ cases | ISSUES.md #11 | High |
-| 12 | Prototype LLM-based violation detector | ISSUES.md #12 | Medium |
-
-**Exit Criteria:**
-
-- 50+ red team tests across 5 attack categories
-- Defense metrics automated in CI
+- 85 new adversarial tests across 5 categories ✓
+- 100% injection/jailbreak detection, ≤20% FP ✓
+- All 14 redteam green ✓
 
 ---
 
-## Phase 5 (Planned): Productization & Delivery
+## Phase 5 (COMPLETE — 5-A to 5-E): Productization & Delivery
 
-| # | Task | Issue | Priority |
-|---|------|-------|----------|
-| 13 | Implement FastAPI REST API | ISSUES.md #13 | Critical |
-| 14 | Docker containerization | ISSUES.md #14 | High |
-| 15 | PyPI package publishing | ISSUES.md #15 | Medium |
+- FastAPI 5 endpoints + SSE streaming + auth ✓
+- Docker multi-stage + docker-compose ✓
+- SlowAPI rate limiting + CORS config ✓
+- AsyncPartyMachine (asyncio.gather) ✓
+- Benchmarks: NORMAL p50 ~33ms ✓
+- **5-F (PyPI publish): 🔲 PENDING** — `publish.yml` ready, not yet executed
 
-**Exit Criteria:**
+---
 
-- REST API with 5+ endpoints, OpenAPI docs
-- Docker image published
-- PyPI package installable via `pip install po-core`
-- Version bumped to `0.2.0-beta`
+## Phase 6 (COMPLETE): Autonomous Evolution
+
+- FreedomPressureV2: ML-native 6D tensor + EMA + correlation ✓
+- EmergenceDetector + InfluenceTracker ✓
+- MetaEthicsMonitor + PhilosopherQualityLedger ✓
+- 3-Layer Philosophical Memory (semantic + procedural + philosophical) ✓
+
+---
+
+## Phase 7 (COMPLETE): AI Philosopher Slots
+
+- Slot 40: `claude_anthropic.py` (Constitutional AI) ✓
+- Slot 41: `gpt_chatgpt.py` (RLHF reasoning) ✓
+- Slot 42: `gemini_google.py` (Responsible AI) ✓
+- Slot 43: `grok_xai.py` (Radical curiosity) ✓
+- Total philosophers: 43 ✓
+
+---
+
+## Spec Scaffolding (M0 — Current Focus)
+
+**Main progression criteria** as of 2026-02-22:
+
+| Deliverable | File | Status |
+|------------|------|--------|
+| PRD | `docs/spec/prd.md` | ✅ v0.2 |
+| SRS (with requirement IDs) | `docs/spec/srs_v0.1.md` | ✅ v0.2 |
+| Output schema | `docs/spec/output_schema_v1.json` | ✅ v1.0 |
+| Acceptance tests (10) | `docs/spec/test_cases.md` | ✅ v0.2 |
+| Traceability (philosophy→req→test) | `docs/spec/traceability.md` | ✅ v0.2 |
+
+**Next milestones:**
+
+| Milestone | Focus |
+|-----------|-------|
+| M1 (2026-03-15) | Stub composer + E2E acceptance test runner (no LLM) |
+| M2 (2026-04-05) | ethics_v1 + responsibility_v1 implementation |
+| M3 (2026-04-26) | question_layer v1 |
+| M4 (2026-05-10) | CI governance + ADR operations |

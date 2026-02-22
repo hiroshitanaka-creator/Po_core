@@ -570,8 +570,20 @@ restored = PoSelfResponse.from_dict(d)  # Round-trip
 
 ## Documentation
 
+### Spec / Requirements (Main Progression Criteria)
+
+| Document | Description |
+|---------|-------------|
+| [docs/spec/prd.md](./docs/spec/prd.md) | Product Requirements Document — purpose, users, scope, roadmap |
+| [docs/spec/srs_v0.1.md](./docs/spec/srs_v0.1.md) | Software Requirements Specification — 18 requirement IDs (FR-* / NFR-*) |
+| [docs/spec/output_schema_v1.json](./docs/spec/output_schema_v1.json) | JSON Schema (Draft 2020-12) — contract for all structured output |
+| [docs/spec/test_cases.md](./docs/spec/test_cases.md) | 10 acceptance tests (AT-001〜AT-010) with Given/When/Then |
+| [docs/spec/traceability.md](./docs/spec/traceability.md) | Traceability matrix — philosophy → requirements → tests → implementation |
+
+### General Documentation
+
 - [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md) — Our philosophy and motivation
-- [Specifications](./01_specifications) — Technical specifications
+- [Specifications](./01_specifications) — Technical specifications (120+ docs EN/JP)
 - [Architecture](./02_architecture) — System design documents
 - [Modules](./04_modules) — Component documentation
   - [Reason Log](./04_modules/reason_log) — Reasoning trace specification

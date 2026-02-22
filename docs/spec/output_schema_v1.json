@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/pocore/schemas/output_schema_v1.json",
+  "$id": "https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/spec/output_schema_v1.json",
   "title": "Po_core Output Schema v1",
+  "description": "哲学駆動型 AI Po_core の構造化出力スキーマ。output_schema_v1 は SR FR-OUT-001 に対応する。",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,6 +20,7 @@
     "meta": {
       "type": "object",
       "additionalProperties": false,
+      "description": "実行メタデータ（再現性・バージョン管理・監査に使用）",
       "required": [
         "schema_version",
         "pocore_version",
@@ -31,26 +33,32 @@
       "properties": {
         "schema_version": {
           "type": "string",
-          "const": "1.0"
+          "const": "1.0",
+          "description": "このスキーマのバージョン。変更時は SRS NFR-GOV-001 に従い全テスト更新必須。"
         },
         "pocore_version": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "po-core-flyingpig パッケージバージョン（例: '0.2.0b3'）"
         },
         "run_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "この実行の一意 ID（UUID v4 推奨）"
         },
         "created_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "実行開始 UTC 日時（ISO 8601）"
         },
         "seed": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "description": "再現性のための乱数シード（NFR-REP-001）"
         },
         "deterministic": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "true の場合、同一入力＋同一 seed で同一出力を保証"
         },
         "generator": {
           "type": "object",
@@ -63,27 +71,52 @@
           "properties": {
             "name": {
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "description": "生成器名（例: 'po_core.ensemble.run_turn'）"
             },
             "version": {
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "description": "生成器バージョン"
             },
             "mode": {
               "type": "string",
               "enum": [
                 "stub",
+                "rule_based",
                 "llm",
                 "hybrid"
-              ]
+              ],
+              "description": "stub=テスト用スタブ, rule_based=ルールベース, llm=LLM接続, hybrid=混合"
             }
           }
+        },
+        "safety_mode": {
+          "type": "string",
+          "enum": ["NORMAL", "WARN", "CRITICAL"],
+          "description": "実行時の SafetyMode（freedom_pressure 閾値で決定）"
+        },
+        "philosophers_active": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "この実行で参加した哲学者数（NORMAL=39, WARN=5, CRITICAL=1）"
+        },
+        "config_version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "pareto_table.yaml / battalion_table.yaml の config_version（監査用）"
+        },
+        "processing_time_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "実行時間（ミリ秒）"
         }
       }
     },
     "case_ref": {
       "type": "object",
       "additionalProperties": false,
+      "description": "入力 Case への参照（再現性・監査に使用）",
       "required": [
         "case_id",
         "title",
@@ -92,52 +125,79 @@
       "properties": {
         "case_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Case の一意 ID（入力から引き継ぐ）"
         },
         "title": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Case のタイトル（人間向け）"
         },
         "input_digest": {
           "type": "string",
-          "pattern": "^[a-fA-F0-9]{64}$"
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "description": "入力 JSON の SHA-256 ハッシュ（再現性検証用）"
         }
       }
     },
     "options": {
       "type": "array",
       "minItems": 1,
+      "description": "選択肢の配列。FR-OPT-001: 通常 2 件以上必須。",
       "items": {
         "$ref": "#/$defs/option"
       }
     },
     "recommendation": {
-      "$ref": "#/$defs/recommendation"
+      "$ref": "#/$defs/recommendation",
+      "description": "推奨（FR-REC-001）または推奨なし理由。oneOf で排他。"
     },
     "ethics": {
-      "$ref": "#/$defs/ethics_summary"
+      "$ref": "#/$defs/ethics_summary",
+      "description": "倫理評価サマリー（FR-ETH-001, FR-ETH-002）。5 原則から 2 以上を使用。"
     },
     "responsibility": {
-      "$ref": "#/$defs/responsibility_summary"
+      "$ref": "#/$defs/responsibility_summary",
+      "description": "責任・説明責任サマリー（FR-RES-001）。decision_owner 必須。"
     },
     "questions": {
       "type": "array",
+      "description": "質問リスト（FR-Q-001: 不足時 1〜5 件, FR-Q-002: 十分な場合は空 or optional のみ）",
       "items": {
         "$ref": "#/$defs/question"
       }
     },
     "uncertainty": {
-      "$ref": "#/$defs/uncertainty"
+      "$ref": "#/$defs/uncertainty",
+      "description": "不確実性評価（FR-UNC-001）。overall_level と reasons 必須。"
     },
     "trace": {
-      "$ref": "#/$defs/trace"
+      "$ref": "#/$defs/trace",
+      "description": "監査ログ（FR-TR-001）。6 ステップ必須。"
+    },
+    "philosopher_contributions": {
+      "type": "array",
+      "description": "哲学者別の貢献サマリー（Po_core 固有フィールド、OPTIONAL）",
+      "items": {
+        "$ref": "#/$defs/philosopher_contribution"
+      }
+    },
+    "tensors": {
+      "$ref": "#/$defs/tensor_snapshot",
+      "description": "テンソル計算結果（Po_core 固有フィールド、OPTIONAL）"
+    },
+    "explanation_chain": {
+      "$ref": "#/$defs/explanation_chain",
+      "description": "W_Ethics Gate の根拠チェーン（Po_core 固有、ExplanationChain、OPTIONAL）"
     },
     "rendered": {
       "type": "object",
       "additionalProperties": false,
+      "description": "人間可読レンダリング（OPTIONAL）",
       "properties": {
         "markdown": {
-          "type": "string"
+          "type": "string",
+          "description": "Markdown 形式の出力サマリー"
         }
       }
     },
@@ -150,27 +210,15 @@
   "$defs": {
     "confidence": {
       "type": "string",
-      "enum": [
-        "high",
-        "medium",
-        "low"
-      ]
+      "enum": ["high", "medium", "low"]
     },
     "uncertainty_level": {
       "type": "string",
-      "enum": [
-        "low",
-        "medium",
-        "high"
-      ]
+      "enum": ["low", "medium", "high"]
     },
     "severity": {
       "type": "string",
-      "enum": [
-        "low",
-        "medium",
-        "high"
-      ]
+      "enum": ["low", "medium", "high"]
     },
     "ethics_principle": {
       "type": "string",
@@ -180,21 +228,18 @@
         "nonmaleficence",
         "justice",
         "accountability"
-      ]
+      ],
+      "description": "FR-ETH-001 で定義される 5 倫理原則"
     },
     "tradeoff": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "tension",
-        "between",
-        "mitigation",
-        "severity"
-      ],
+      "required": ["tension", "between", "mitigation", "severity"],
       "properties": {
         "tension": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "トレードオフの名称（例: '公平性 vs 効率性'）"
         },
         "between": {
           "type": "array",
@@ -203,11 +248,13 @@
           "items": {
             "type": "string",
             "minLength": 1
-          }
+          },
+          "description": "対立する 2 つの価値"
         },
         "mitigation": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "緩和策・バランス案"
         },
         "severity": {
           "$ref": "#/$defs/severity"
@@ -217,11 +264,7 @@
     "risk_item": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "risk",
-        "severity",
-        "mitigation"
-      ],
+      "required": ["risk", "severity", "mitigation"],
       "properties": {
         "risk": {
           "type": "string",
@@ -239,9 +282,7 @@
     "step": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "step"
-      ],
+      "required": ["step"],
       "properties": {
         "step": {
           "type": "string",
@@ -298,7 +339,8 @@
       "properties": {
         "decision_owner": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "意思決定主体（FR-RES-001）"
         },
         "stakeholders": {
           "type": "array",
@@ -317,19 +359,17 @@
     "feasibility": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "effort",
-        "timeline",
-        "confidence"
-      ],
+      "required": ["effort", "timeline", "confidence"],
       "properties": {
         "effort": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "実施コスト・労力の見積もり"
         },
         "timeline": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "実施期間の見積もり"
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
@@ -355,7 +395,8 @@
       "properties": {
         "option_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "選択肢の一意 ID（例: 'opt_001'）"
         },
         "title": {
           "type": "string",
@@ -400,6 +441,13 @@
         },
         "uncertainty": {
           "$ref": "#/$defs/uncertainty"
+        },
+        "philosopher_support": {
+          "type": "array",
+          "description": "この Option を支持した哲学者リスト（Po_core 固有、OPTIONAL）",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -425,18 +473,21 @@
         },
         "reason": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "推奨理由（FR-REC-001）"
         },
         "counter": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "推奨の弱点・反証（FR-REC-001）"
         },
         "alternatives": {
           "type": "array",
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/alternative"
-          }
+          },
+          "description": "代替案（FR-REC-001）"
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
@@ -460,7 +511,8 @@
         },
         "reason": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "推奨しない理由（情報不足・矛盾等）"
         },
         "missing_info": {
           "type": "array",
@@ -492,10 +544,7 @@
     "alternative": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "option_id",
-        "when_to_choose"
-      ],
+      "required": ["option_id", "when_to_choose"],
       "properties": {
         "option_id": {
           "type": "string",
@@ -503,7 +552,8 @@
         },
         "when_to_choose": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "どんな場合にこの代替案を選ぶか"
         }
       }
     },
@@ -522,33 +572,38 @@
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/ethics_principle"
-          }
+          },
+          "description": "FR-ETH-001: 2 原則以上必須"
         },
         "tradeoffs": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/tradeoff"
-          }
+          },
+          "description": "FR-ETH-002: 価値衝突がある Case では非空必須"
         },
         "guardrails": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Po_core が守るガードレール（例: '医療の最終判断は行わない'）"
         },
         "notes": {
-          "type": "string"
+          "type": "string",
+          "description": "倫理評価の補足メモ"
+        },
+        "wethics_verdict": {
+          "type": "string",
+          "enum": ["ALLOW", "ALLOW_WITH_REPAIR", "REJECT", "ESCALATE"],
+          "description": "W_Ethics Gate の最終判定（Po_core 固有、OPTIONAL）"
         }
       }
     },
     "stakeholder": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "name",
-        "role",
-        "impact"
-      ],
+      "required": ["name", "role", "impact"],
       "properties": {
         "name": {
           "type": "string",
@@ -560,7 +615,8 @@
         },
         "impact": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "この利害関係者への影響"
         }
       }
     },
@@ -576,7 +632,8 @@
       "properties": {
         "decision_owner": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "FR-RES-001: 意思決定主体（人名・役割）。Po_core 自身を主体と表現してはならない。"
         },
         "stakeholders": {
           "type": "array",
@@ -585,13 +642,15 @@
           }
         },
         "accountability_notes": {
-          "type": "string"
+          "type": "string",
+          "description": "説明責任に関する補足（誰が・何について・どう説明するか）"
         },
         "consent_considerations": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "同意・インフォームドコンセントに関する考慮点"
         }
       }
     },
@@ -608,7 +667,8 @@
       "properties": {
         "question_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "質問の一意 ID（例: 'q_001'）"
         },
         "question": {
           "type": "string",
@@ -617,17 +677,21 @@
         "priority": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 5
+          "maximum": 5,
+          "description": "FR-Q-001: 1=最重要, 5=最低優先"
         },
         "why_needed": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "FR-Q-001: なぜこの情報が必要か"
         },
         "assumption_if_unanswered": {
-          "type": "string"
+          "type": "string",
+          "description": "未回答の場合にシステムが採用するデフォルト仮定"
         },
         "optional": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "FR-Q-002: true なら情報があれば嬉しいが必須でない"
         }
       }
     },
@@ -642,27 +706,43 @@
       ],
       "properties": {
         "overall_level": {
-          "$ref": "#/$defs/uncertainty_level"
+          "$ref": "#/$defs/uncertainty_level",
+          "description": "FR-UNC-001: 全体不確実性レベル（high/medium/low）"
         },
         "reasons": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "FR-UNC-001: 不確実性の根拠リスト"
         },
         "assumptions": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "システムが採用した仮定リスト"
         },
         "known_unknowns": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "判明している未知事項（'わかっている わからないこと'）"
         }
       }
+    },
+    "trace_step_name": {
+      "type": "string",
+      "enum": [
+        "parse_input",
+        "generate_options",
+        "ethics_review",
+        "responsibility_review",
+        "question_layer",
+        "compose_output"
+      ],
+      "description": "FR-TR-001 で定義される 6 ステップ"
     },
     "trace_step": {
       "type": "object",
@@ -675,15 +755,7 @@
       ],
       "properties": {
         "name": {
-          "type": "string",
-          "enum": [
-            "parse_input",
-            "generate_options",
-            "ethics_review",
-            "responsibility_review",
-            "question_layer",
-            "compose_output"
-          ]
+          "$ref": "#/$defs/trace_step_name"
         },
         "started_at": {
           "type": "string",
@@ -694,32 +766,168 @@
           "format": "date-time"
         },
         "summary": {
-          "type": "string"
+          "type": "string",
+          "description": "このステップで何を行ったかの要約"
         },
         "metrics": {
           "type": "object",
-          "additionalProperties": true
+          "additionalProperties": true,
+          "description": "ステップ固有のメトリクス（自由形式）"
         }
       }
     },
     "trace": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "version",
-        "steps"
-      ],
+      "required": ["version", "steps"],
       "properties": {
         "version": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "FR-TR-001: config_version またはシステムバージョン"
         },
         "steps": {
           "type": "array",
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/trace_step"
+          },
+          "description": "FR-TR-001: 6 ステップ（parse_input〜compose_output）"
+        },
+        "pocore_events": {
+          "type": "array",
+          "description": "Po_core 内部 TraceEvent ストリーム（Po_core 固有、OPTIONAL）",
+          "items": {
+            "$ref": "#/$defs/pocore_event"
           }
+        }
+      }
+    },
+    "pocore_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_type", "occurred_at", "correlation_id"],
+      "description": "Po_core 内部 TraceEvent（schema.py で定義）",
+      "properties": {
+        "event_type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "例: PhilosopherCompleted, ActionGateChecked, ExplanationEmitted"
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "correlation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "philosopher_contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "哲学者 1 人の貢献サマリー（Po_core 固有）",
+      "required": ["philosopher_id", "name", "proposal_summary", "weight"],
+      "properties": {
+        "philosopher_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "哲学者の一意 ID（manifest.py と一致）"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_summary": {
+          "type": "string",
+          "description": "哲学者の提案の要約"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Pareto 集約での重み"
+        },
+        "risk_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "哲学者のリスクレベル（0=safe, 1=standard, 2=risky）"
+        },
+        "on_pareto_front": {
+          "type": "boolean",
+          "description": "Pareto フロントに含まれるか"
+        }
+      }
+    },
+    "tensor_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "テンソル計算結果（Po_core TensorEngine 出力）",
+      "properties": {
+        "freedom_pressure": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "自由度圧力（6D ML テンソルのスカラー集約値）"
+        },
+        "semantic_delta": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "意味的乖離度（1.0=完全新規, 0.0=既知）"
+        },
+        "blocked_tensor": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "有害性推定スコア"
+        },
+        "safety_mode": {
+          "type": "string",
+          "enum": ["NORMAL", "WARN", "CRITICAL"],
+          "description": "freedom_pressure に基づく SafetyMode"
+        }
+      }
+    },
+    "explanation_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "W_Ethics Gate の根拠チェーン（ExplanationChain, Po_core 固有）",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["ALLOW", "ALLOW_WITH_REPAIR", "REJECT", "ESCALATE"]
+        },
+        "layers_triggered": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "発火した倫理層（例: ['W1', 'W3']）"
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "適用されたルール ID のリスト"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "判定理由の自然言語リスト"
+        },
+        "repair_applied": {
+          "type": "boolean",
+          "description": "ALLOW_WITH_REPAIR の場合、修復が適用されたか"
         }
       }
     }

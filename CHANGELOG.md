@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] — Spec Scaffolding M0 (2026-02-22)
+
+### Added — Documentation / Specification
+
+- `docs/spec/prd.md` v0.2 — Product Requirements Document updated with Phases 6-7 completion,
+  architectural overview, jargon table, M0–M4 milestone schedule
+- `docs/spec/srs_v0.1.md` v0.2 — SRS expanded to 18 requirement IDs:
+  added FR-DEL-001 (Deliberation), FR-SAF-001/002 (W_Ethics Gate, injection detection),
+  FR-API-001 (REST), NFR-PERF-001, NFR-SEC-001; 2-layer architecture description
+- `docs/spec/output_schema_v1.json` v1.0 — JSON Schema Draft 2020-12 with Po_core-specific
+  extensions: philosopher_contributions, tensors (FP/SD/BT), explanation_chain (W_Ethics),
+  pocore_events (TraceEvent stream); generator.mode enum updated (stub/rule_based/llm/hybrid)
+- `docs/spec/test_cases.md` v0.2 — 10 acceptance tests in Given/When/Then format with
+  sub-condition IDs (AT-REC-001b, AT-ETH-001b, etc.); test runner instructions
+- `docs/spec/traceability.md` v0.2 — 4 matrices added: req→impl→test,
+  scenario→AT→req, impl→req reverse lookup; 5 ADR entries; milestone status table
+- `README.md` — "Spec / Requirements" section added linking all 5 docs/spec files
+- `NEXT_STEPS.md` — Updated to reflect Phases 1-7 complete; added Spec M0-M4 roadmap table
+- `ISSUES.md` — Issues #22-27 added: spec scaffolding (M0), PyPI publish (5-F), v1.0
+- `PHASE_PLAN_v2.md` — Phase 6 (Autonomous Evolution) and Phase 7 (AI Philosopher Slots)
+  completion summaries added; Spec M0 section added
+
+---
+
 ## [0.2.0b3] - 2026-02-21 (Phase 5 complete)
 
 ### Phase 5-E: Performance Benchmarks (2026-02-19)
