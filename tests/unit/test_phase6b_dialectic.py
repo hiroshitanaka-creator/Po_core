@@ -210,7 +210,7 @@ class TestSynthesizerPhilosophers:
         assert len(SYNTHESIZER_PHILOSOPHERS) > 0
 
     def test_hegel_is_a_synthesizer(self):
-        assert "Hegel" in SYNTHESIZER_PHILOSOPHERS
+        assert "hegel" in SYNTHESIZER_PHILOSOPHERS
 
     def test_all_synthesizer_names_are_strings(self):
         for name in SYNTHESIZER_PHILOSOPHERS:

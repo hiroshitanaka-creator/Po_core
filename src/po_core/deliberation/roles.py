@@ -16,11 +16,12 @@ from typing import Dict, List
 
 # Philosophers assigned to the Synthesis round in dialectic mode.
 # These thinkers are known for integrating opposing views into higher-order propositions.
+# Uses philosopher_id (lowercase, matches manifest.py) — NOT the full .name attribute.
 SYNTHESIZER_PHILOSOPHERS: List[str] = [
-    "Hegel",  # Aufhebung: Negation → preservation → elevation
-    "Kant",  # Transcendental synthesis of opposing faculties
-    "Plato",  # Forms: the higher truth behind apparent opposites
-    "Dewey",  # Pragmatic integration of conflicting perspectives
+    "hegel",  # Aufhebung: Negation → preservation → elevation
+    "kant",  # Transcendental synthesis of opposing faculties
+    "plato",  # Forms: the higher truth behind apparent opposites
+    "dewey",  # Pragmatic integration of conflicting perspectives
 ]
 
 
