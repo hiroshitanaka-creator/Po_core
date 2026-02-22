@@ -1,0 +1,21 @@
+case_id: case_009_unclear_values
+title: "価値観が不明：進路選択の前に問いを立てる"
+locale: ja-JP
+problem: "今の仕事を続けるか、専門学校に行ってキャリアチェンジするか迷っているが、自分が何を重視しているか分からない。"
+context:
+  options_rough:
+    - "現職継続（安定）"
+    - "学び直し→転職（不確実）"
+constraints:
+  - "生活費は維持したい"
+  - "大きな引っ越しは避けたい"
+values: []
+deadline: "2026-03-31"
+stakeholders:
+  - name: "自分"
+    role: "意思決定主体"
+    impact: "人生の方向性・収入・幸福に影響"
+unknowns:
+  - "学び直しの目的（何を得たいのか）"
+  - "許容できるリスク量"
+  - "支援の有無（家族・貯金・奨学金）"

@@ -1,0 +1,31 @@
+case_id: case_008_deadline_tradeoff
+title: "納期固定：速度 vs 品質のトレードオフ"
+locale: ja-JP
+problem: "3日後にリリースが決まっている。機能は未完成で、品質も不安。どう判断するか。"
+context:
+  project:
+    type: "ユーザー向け新機能"
+    risk: "バグが出るとユーザーに実害"
+constraints:
+  - "リリース日を動かせない（外部告知済み）"
+  - "重大障害・安全問題は許容しない"
+  - "チームの過重労働を前提にしない"
+values:
+  - "ユーザー安全（nonmaleficence）"
+  - "信頼"
+  - "持続可能性（チームの健康）"
+deadline: "2026-02-25"
+stakeholders:
+  - name: "ユーザー"
+    role: "受益者/被害者候補"
+    impact: "体験・安全・信頼に影響"
+  - name: "開発チーム"
+    role: "実行者"
+    impact: "負荷・燃え尽き・品質に影響"
+  - name: "事業責任者"
+    role: "期待管理"
+    impact: "売上・評判に影響"
+unknowns:
+  - "最低限守るべき品質ライン（SLO/重大バグ定義）"
+  - "段階リリース（限定公開）が可能か"
+  - "延期の代替（告知文、補償）"

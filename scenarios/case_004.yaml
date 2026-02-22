@@ -1,0 +1,38 @@
+case_id: case_004_security_disclosure
+title: "研究公開：脆弱性をどのタイミングで公表するか"
+locale: ja-JP
+problem: "自分が見つけた脆弱性を公表するか、ベンダーと調整して段階的に公開するか決めたい。"
+context:
+  vulnerability:
+    type: "認証回避の可能性"
+    affected_users: "不明（広範囲の可能性）"
+  timeline:
+    conference_deadline: "2026-05-01"
+constraints:
+  - "悪用リスクを増やす行為は避ける"
+  - "法令・契約・所属組織ポリシーを順守"
+  - "ユーザー保護（パッチ提供）を優先"
+  - "研究者としての誠実さ（捏造・誇張は禁止）"
+values:
+  - "公共の安全"
+  - "透明性"
+  - "学術的信用"
+  - "説明責任"
+deadline: "2026-04-15"
+stakeholders:
+  - name: "利用者"
+    role: "潜在被害者"
+    impact: "情報漏えい・乗っ取りのリスク"
+  - name: "ベンダー"
+    role: "修正主体"
+    impact: "対応負荷・評判・法的リスク"
+  - name: "自分"
+    role: "発見者・公開主体"
+    impact: "信用・法的リスク・研究成果"
+  - name: "研究コミュニティ"
+    role: "再現・検証者"
+    impact: "知見の共有と悪用の境界に影響"
+unknowns:
+  - "ベンダーの初動対応速度"
+  - "既に悪用されているか"
+  - "影響範囲の正確な特定方法"
