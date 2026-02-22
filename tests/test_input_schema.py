@@ -9,6 +9,7 @@ Requirements validated:
 
 Dependencies: pytest, PyYAML, jsonschema
 """
+
 from __future__ import annotations
 
 import datetime as _dt
@@ -134,7 +135,9 @@ YAML_FILES = _iter_yaml_files(SCENARIOS_DIR)
 
 
 def test_scenarios_directory_exists():
-    assert SCENARIOS_DIR.exists(), f"scenarios directory does not exist: {SCENARIOS_DIR}"
+    assert (
+        SCENARIOS_DIR.exists()
+    ), f"scenarios directory does not exist: {SCENARIOS_DIR}"
 
 
 def test_has_at_least_one_case_yaml():
@@ -181,9 +184,7 @@ def test_case_yaml_has_required_fields(yaml_path: Path):
     data = _load_yaml(yaml_path)
     required_fields = ["case_id", "title", "problem", "constraints", "values"]
     for field in required_fields:
-        assert field in data, (
-            f"{yaml_path.name} is missing required field: '{field}'"
-        )
+        assert field in data, f"{yaml_path.name} is missing required field: '{field}'"
 
 
 @pytest.mark.parametrize("yaml_path", YAML_FILES, ids=lambda p: p.name)

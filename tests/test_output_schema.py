@@ -11,6 +11,7 @@ Requirements validated:
 
 Dependencies: pytest, jsonschema
 """
+
 from __future__ import annotations
 
 import json
@@ -119,7 +120,13 @@ def _smoke_minimal_valid_output() -> dict:
         "action_plan": [{"step": "最小実験を設計する"}],
         "pros": ["失敗コストを抑えられる"],
         "cons": ["進行が遅く感じる可能性"],
-        "risks": [{"risk": "検証が不十分になる", "severity": "medium", "mitigation": "検証項目を明文化する"}],
+        "risks": [
+            {
+                "risk": "検証が不十分になる",
+                "severity": "medium",
+                "mitigation": "検証項目を明文化する",
+            }
+        ],
         "ethics_review": {
             "principles_applied": ["integrity", "autonomy"],
             "tradeoffs": [
@@ -135,11 +142,17 @@ def _smoke_minimal_valid_output() -> dict:
         },
         "responsibility_review": {
             "decision_owner": "user",
-            "stakeholders": [{"name": "自分", "role": "意思決定主体", "impact": "結果責任を負う"}],
+            "stakeholders": [
+                {"name": "自分", "role": "意思決定主体", "impact": "結果責任を負う"}
+            ],
             "accountability_notes": "最終判断はユーザーが行い、Po_coreは手続きを支援する。",
             "confidence": "high",
         },
-        "feasibility": {"effort": "medium", "timeline": "1-2 weeks", "confidence": "medium"},
+        "feasibility": {
+            "effort": "medium",
+            "timeline": "1-2 weeks",
+            "confidence": "medium",
+        },
         "uncertainty": {
             "overall_level": "medium",
             "reasons": ["外部条件が未確定"],
@@ -155,7 +168,13 @@ def _smoke_minimal_valid_output() -> dict:
         "action_plan": [{"step": "不足情報を5項目に絞って集める"}],
         "pros": ["判断の精度が上がる"],
         "cons": ["機会損失が起きる可能性"],
-        "risks": [{"risk": "先延ばし癖が発動する", "severity": "low", "mitigation": "期限と判断条件を設定する"}],
+        "risks": [
+            {
+                "risk": "先延ばし癖が発動する",
+                "severity": "low",
+                "mitigation": "期限と判断条件を設定する",
+            }
+        ],
         "ethics_review": {
             "principles_applied": ["integrity", "justice"],
             "tradeoffs": [],
@@ -164,7 +183,13 @@ def _smoke_minimal_valid_output() -> dict:
         },
         "responsibility_review": {
             "decision_owner": "user",
-            "stakeholders": [{"name": "自分", "role": "意思決定主体", "impact": "機会損失と納得感に影響"}],
+            "stakeholders": [
+                {
+                    "name": "自分",
+                    "role": "意思決定主体",
+                    "impact": "機会損失と納得感に影響",
+                }
+            ],
             "accountability_notes": "保留の理由と追加で必要な条件を説明可能にする。",
             "confidence": "medium",
         },
@@ -187,18 +212,33 @@ def _smoke_minimal_valid_output() -> dict:
             "deterministic": True,
             "generator": {"name": "generator_stub", "version": "0.1.0", "mode": "stub"},
         },
-        "case_ref": {"case_id": "case_smoke", "title": "Smoke Test Case", "input_digest": digest},
+        "case_ref": {
+            "case_id": "case_smoke",
+            "title": "Smoke Test Case",
+            "input_digest": digest,
+        },
         "options": [option_1, option_2],
         "recommendation": {
             "status": "recommended",
             "recommended_option_id": "opt_1",
             "reason": "段階的に進めることで害を抑えつつ前進できるため。",
             "counter": "スピードが足りず機会損失になる可能性がある。",
-            "alternatives": [{"option_id": "opt_2", "when_to_choose": "期限に余裕があり重要不明点が多い場合"}],
+            "alternatives": [
+                {
+                    "option_id": "opt_2",
+                    "when_to_choose": "期限に余裕があり重要不明点が多い場合",
+                }
+            ],
             "confidence": "medium",
         },
         "ethics": {
-            "principles_used": ["integrity", "autonomy", "nonmaleficence", "justice", "accountability"],
+            "principles_used": [
+                "integrity",
+                "autonomy",
+                "nonmaleficence",
+                "justice",
+                "accountability",
+            ],
             "tradeoffs": [
                 {
                     "tension": "速度と安全の緊張",
@@ -216,9 +256,13 @@ def _smoke_minimal_valid_output() -> dict:
         },
         "responsibility": {
             "decision_owner": "user",
-            "stakeholders": [{"name": "自分", "role": "意思決定主体", "impact": "結果責任を負う"}],
+            "stakeholders": [
+                {"name": "自分", "role": "意思決定主体", "impact": "結果責任を負う"}
+            ],
             "accountability_notes": "Po_coreは助言と構造化を提供し、最終判断はユーザーが行う。",
-            "consent_considerations": ["関係者がいる場合は事前に影響説明と合意を検討する"],
+            "consent_considerations": [
+                "関係者がいる場合は事前に影響説明と合意を検討する"
+            ],
         },
         "questions": [
             {
@@ -280,7 +324,9 @@ def _smoke_minimal_valid_output() -> dict:
                 },
             ],
         },
-        "rendered": {"markdown": "# Smoke Output\n\nこれはスキーマ検証用の最小出力です。"},
+        "rendered": {
+            "markdown": "# Smoke Output\n\nこれはスキーマ検証用の最小出力です。"
+        },
     }
     return out
 
@@ -295,7 +341,9 @@ def test_output_schema_is_valid_json_schema():
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as e:
-        pytest.fail(f"output_schema_v1.json is not a valid JSON Schema (Draft 2020-12).\n{e}")
+        pytest.fail(
+            f"output_schema_v1.json is not a valid JSON Schema (Draft 2020-12).\n{e}"
+        )
 
 
 def test_smoke_output_conforms_to_output_schema():
@@ -323,9 +371,9 @@ def test_smoke_output_has_all_five_ethics_principles():
     instance = _smoke_minimal_valid_output()
     principles = set(instance["ethics"]["principles_used"])
     required = {"integrity", "autonomy", "nonmaleficence", "justice", "accountability"}
-    assert required == principles, (
-        f"Smoke output missing ethics principles. Expected: {required}, got: {principles}"
-    )
+    assert (
+        required == principles
+    ), f"Smoke output missing ethics principles. Expected: {required}, got: {principles}"
 
 
 def test_smoke_output_recommendation_has_counter_and_alternatives():
@@ -338,7 +386,9 @@ def test_smoke_output_recommendation_has_counter_and_alternatives():
     rec = instance["recommendation"]
     assert rec["status"] == "recommended"
     assert rec.get("counter"), "recommendation.counter must be non-empty (FR-REC-001)"
-    assert len(rec.get("alternatives", [])) >= 1, "recommendation.alternatives must have >=1 item (FR-REC-001)"
+    assert (
+        len(rec.get("alternatives", [])) >= 1
+    ), "recommendation.alternatives must have >=1 item (FR-REC-001)"
 
 
 def test_smoke_output_uncertainty_exists():
@@ -361,8 +411,12 @@ def test_smoke_output_trace_has_required_steps():
     """
     instance = _smoke_minimal_valid_output()
     step_names = {s["name"] for s in instance["trace"]["steps"]}
-    assert "parse_input" in step_names, "trace must include parse_input step (FR-TR-001)"
-    assert "compose_output" in step_names, "trace must include compose_output step (FR-TR-001)"
+    assert (
+        "parse_input" in step_names
+    ), "trace must include parse_input step (FR-TR-001)"
+    assert (
+        "compose_output" in step_names
+    ), "trace must include compose_output step (FR-TR-001)"
     assert instance["trace"]["version"], "trace.version must be non-empty (FR-TR-001)"
 
 
@@ -384,7 +438,9 @@ def test_output_json_samples_conform_to_output_schema(json_path: Path):
     errors = sorted(validator.iter_errors(data), key=lambda e: list(e.path))
     if errors:
         details = _summarize_errors(errors, limit=50)
-        pytest.fail(f"Schema validation failed for output sample: {json_path}\n\n{details}")
+        pytest.fail(
+            f"Schema validation failed for output sample: {json_path}\n\n{details}"
+        )
 
 
 @pytest.mark.parametrize("json_path", SAMPLE_FILES, ids=lambda p: p.name)
@@ -396,7 +452,9 @@ def test_golden_output_responsibility_decision_owner(json_path: Path):
     """
     data = _load_json(json_path)
     owner = data.get("responsibility", {}).get("decision_owner", "")
-    assert owner, f"{json_path.name}: responsibility.decision_owner must be non-empty (FR-RES-001)"
+    assert (
+        owner
+    ), f"{json_path.name}: responsibility.decision_owner must be non-empty (FR-RES-001)"
 
 
 @pytest.mark.parametrize("json_path", SAMPLE_FILES, ids=lambda p: p.name)
