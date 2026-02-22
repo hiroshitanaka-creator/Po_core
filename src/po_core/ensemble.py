@@ -196,7 +196,7 @@ def _run_phase_pre(
         TraceEvent.now(
             "TensorComputed",
             ctx.request_id,
-            {"metrics": list(tensors.metrics.keys()), "version": tensors.version},
+            {"metrics": dict(tensors.metrics), "version": tensors.version},
         )
     )
 
