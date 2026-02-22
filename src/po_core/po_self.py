@@ -38,7 +38,7 @@ class PoSelfResponse:
     prompt: str
     text: str
     philosophers: List[str]
-    metrics: Dict[str, float]
+    metrics: Dict[str, Optional[float]]
     responses: List[Dict[str, Any]]
     log: Dict[str, Any]
     consensus_leader: Optional[str] = None
@@ -70,6 +70,52 @@ class PoSelfResponse:
             consensus_leader=data.get("consensus_leader"),
             metadata=data.get("metadata", {}),
         )
+
+
+class _AllowlistRegistry:
+    """Proxy for PhilosopherRegistry that filters select() output by an allowlist.
+
+    The allowlist is applied *after* the normal SafetyMode selection so that
+    all safety constraints (max_risk, cost_budget, require_tags) are
+    enforced by the underlying registry first.
+
+    Raises ValueError if the intersection of the allowlist and the
+    SafetyMode-selected set is empty (no silent pass-through).
+    """
+
+    def __init__(self, wrapped: Any, allowlist: List[str]) -> None:
+        self._wrapped = wrapped
+        self._allowlist: set = set(allowlist)
+
+    def select(self, mode: Any) -> Any:
+        from po_core.philosophers.registry import Selection
+
+        sel = self._wrapped.select(mode)
+        filtered_ids = [pid for pid in sel.selected_ids if pid in self._allowlist]
+        if not filtered_ids:
+            raise ValueError(
+                f"philosophers allowlist {sorted(self._allowlist)!r} has no overlap "
+                f"with SafetyMode-{mode.value!r} selection "
+                f"{sel.selected_ids!r}. "
+                "Expand the allowlist or remove the philosophers argument."
+            )
+        cost = sum(
+            s.cost for s in SPECS if s.philosopher_id in set(filtered_ids)
+        )
+        return Selection(
+            mode=mode,
+            selected_ids=filtered_ids,
+            cost_total=cost,
+            covered_tags=sel.covered_tags,
+        )
+
+    def load(self, selected_ids: Any) -> Any:
+        return self._wrapped.load(selected_ids)
+
+    def select_and_load(self, mode: Any) -> Any:
+        sel = self.select(mode)
+        phs, _ = self.load(sel.selected_ids)
+        return phs
 
 
 class PoSelf:
@@ -138,8 +184,13 @@ class PoSelf:
 
         Args:
             prompt: The input prompt to reason about
-            philosophers: Ignored (kept for backward compat;
-                          run_turn uses SafetyMode-based selection via registry)
+            philosophers: Optional allowlist of philosopher IDs. When given,
+                          only IDs present in this list *and* selected by the
+                          normal SafetyMode pipeline are used. Raises
+                          ValueError if the intersection is empty (i.e., none
+                          of the specified IDs passed safety selection). Pass
+                          None (default) to use all SafetyMode-selected
+                          philosophers.
             context: Optional context information
 
         Returns:
@@ -163,6 +214,15 @@ class PoSelf:
             meta={"entry": "po_self", "context": context or {}},
         )
 
+        # Apply philosopher allowlist filter when caller specifies IDs.
+        # Safety selection (SafetyMode / max_risk / cost_budget) runs first
+        # inside the underlying registry; the allowlist only narrows the result.
+        registry = (
+            _AllowlistRegistry(system.registry, philosophers)
+            if philosophers is not None
+            else system.registry
+        )
+
         deps = EnsembleDeps(
             memory_read=system.memory_read,
             memory_write=system.memory_write,
@@ -173,7 +233,7 @@ class PoSelf:
             philosophers=system.philosophers,
             aggregator=system.aggregator,
             aggregator_shadow=system.aggregator_shadow,
-            registry=system.registry,
+            registry=registry,
             settings=system.settings,
             shadow_guard=system.shadow_guard,
             deliberation_engine=getattr(system, "deliberation_engine", None),
@@ -207,16 +267,21 @@ class PoSelf:
             if len(parts) >= 2:
                 winner = parts[1]
 
-        # Build metrics from tensor events
-        metrics: Dict[str, float] = {}
+        # Build metrics from tensor events.
+        # TensorComputed emits only the metric *keys* (not values); real values
+        # stay inside TensorSnapshot which run_turn does not propagate to the
+        # caller. Keys are preserved so callers can introspect which metrics
+        # exist; values are None to signal "not yet populated" rather than a
+        # misleading 0.0 stub.
+        metrics: Dict[str, Optional[float]] = {}
         tensor_events = [e for e in tracer.events if e.event_type == "TensorComputed"]
         if tensor_events:
             metric_keys = tensor_events[0].payload.get("metrics", [])
             if isinstance(metric_keys, list):
                 for k in metric_keys:
-                    metrics[k] = 0.0  # Stub values (real values in TensorSnapshot)
+                    metrics[k] = None  # Value not propagated via trace
             elif isinstance(metric_keys, dict):
-                metrics = dict(metric_keys)
+                metrics = {k: float(v) for k, v in metric_keys.items()}
 
         # Build responses from philosopher results
         responses: List[Dict[str, Any]] = []
@@ -225,7 +290,7 @@ class PoSelf:
                 {
                     "name": e.payload.get("name", ""),
                     "latency_ms": e.payload.get("latency_ms", 0),
-                    "proposals": e.payload.get("n_proposals", 0),
+                    "proposals": e.payload.get("n", 0),
                 }
             )
 

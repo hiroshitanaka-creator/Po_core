@@ -72,14 +72,19 @@ class TestPoSelfMetrics:
         assert "semantic_delta" in response.metrics
         assert "blocked_tensor" in response.metrics
 
-    def test_metrics_values_range(self):
-        """Test that metrics are within expected ranges."""
+    def test_metrics_values_are_none_when_not_propagated(self):
+        """Metric keys are present but values are None (not 0.0 stubs).
+
+        TensorComputed trace events emit only metric keys; actual float values
+        are not propagated through run_turn to PoSelfResponse. Values of None
+        signal "not yet populated" and prevent silent misuse of stub 0.0 data.
+        """
         po = PoSelf()
         response = po.generate("What is beauty?")
 
-        assert 0 <= response.metrics["freedom_pressure"] <= 1
-        assert 0 <= response.metrics["semantic_delta"] <= 1
-        assert 0 <= response.metrics["blocked_tensor"] <= 1
+        assert response.metrics["freedom_pressure"] is None
+        assert response.metrics["semantic_delta"] is None
+        assert response.metrics["blocked_tensor"] is None
 
     def test_metrics_consistency_across_calls(self):
         """Test that metrics are consistent for same prompt."""
