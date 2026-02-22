@@ -19,6 +19,7 @@ def _load_api_module(monkeypatch, api_key: str = "", cors_origins: str = ""):
 
 def test_generate_requires_api_key_when_secure_mode_enabled(monkeypatch):
     api = _load_api_module(monkeypatch, api_key="secret")
+
     async def _fake_async_run(user_input):
         return _FakeResponse(ok=True)
 
@@ -32,6 +33,7 @@ def test_generate_requires_api_key_when_secure_mode_enabled(monkeypatch):
 
 def test_generate_accepts_valid_bearer_api_key(monkeypatch):
     api = _load_api_module(monkeypatch, api_key="secret")
+
     async def _fake_async_run(user_input):
         return _FakeResponse(ok=True)
 
@@ -48,7 +50,10 @@ def test_generate_accepts_valid_bearer_api_key(monkeypatch):
 
 
 def test_options_preflight_not_blocked_in_secure_mode(monkeypatch):
-    api = _load_api_module(monkeypatch, api_key="secret", cors_origins="https://example.com")
+    api = _load_api_module(
+        monkeypatch, api_key="secret", cors_origins="https://example.com"
+    )
+
     async def _fake_async_run(user_input):
         return _FakeResponse(ok=True)
 
