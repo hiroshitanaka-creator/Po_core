@@ -162,6 +162,10 @@ class PhilosopherRegistry:
         candidates = [
             s for s in self._specs if s.enabled and s.risk_level <= plan.max_risk
         ]
+        if mode == SafetyMode.NORMAL:
+            candidates = [s for s in candidates if "ai_synthesis" not in s.tags]
+        if mode == SafetyMode.CRITICAL:
+            candidates = [s for s in candidates if s.philosopher_id != "dummy"]
         # 安定順：安全→重み→id（決定論）
         candidates.sort(key=lambda s: (s.risk_level, -s.weight, s.philosopher_id))
 

@@ -78,7 +78,7 @@ SPECS: List[PhilosopherSpec] = [
         "po_core.philosophers.dummy",
         "DummyPhilosopher",
         risk_level=0,
-        weight=2.0,
+        weight=1.0,
         enabled=True,
         tags=(TAG_COMPLIANCE, TAG_CLARIFY),
         cost=1,

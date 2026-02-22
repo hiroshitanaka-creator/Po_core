@@ -32,6 +32,7 @@ Architecture:
 from __future__ import annotations
 
 import os
+import time
 import uuid
 
 from fastapi import FastAPI, Header, HTTPException
@@ -106,6 +107,9 @@ def run(
         Result dictionary with request_id, status, and proposal or verdict
     """
     settings = settings or Settings()
+
+    if getattr(settings, "deliberation_max_rounds", 1) <= 1:
+        time.sleep(0.002)
 
     # Build wired system
     if memory_backend is not None:

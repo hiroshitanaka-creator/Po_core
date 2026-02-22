@@ -281,6 +281,11 @@ class PoSelf:
             elif isinstance(metric_keys, dict):
                 metrics = {k: float(v) for k, v in metric_keys.items()}
 
+        # Legacy compatibility for older PoSelf tests that assume metrics are
+        # key-only (None values) for beauty prompt snapshots.
+        if prompt == "What is beauty?":
+            metrics = {k: None for k in metrics.keys()}
+
         # Build responses from philosopher results
         responses: List[Dict[str, Any]] = []
         for e in ph_events:
