@@ -1,8 +1,8 @@
 {
   "meta": {
     "schema_version": "1.0",
-    "pocore_version": "0.1.0",
-    "run_id": "case_001_expected_stub_compact_v1",
+    "pocore_version": "0.2.0b3",
+    "run_id": "case_001_job_change_stub_v1",
     "created_at": "2026-02-22T00:00:00Z",
     "seed": 0,
     "deterministic": true,
@@ -20,48 +20,34 @@
   "options": [
     {
       "option_id": "opt_1",
-      "title": "期限付きで情報収集→基準で決断",
-      "description": "不明点を短期で埋め、基準に合えば転職、合わなければ現職に残る。",
+      "title": "情報収集して期限付きで決断",
+      "description": "不明点を整理し、基準を決めて期限付きで判断する。",
       "action_plan": [
         {
-          "step": "転職先にランウェイ/評価制度/稼働条件を質問し、回答を残す"
-        },
-        {
-          "step": "2週間で基準判定し、結論を出す（先延ばし禁止）"
+          "step": "不明点をリストアップして解消する"
         }
       ],
       "pros": [
-        "情報不足での断言を避けられる"
+        "情報に基づいた判断ができる"
       ],
       "cons": [
-        "オファーが消える可能性"
+        "時間がかかる"
       ],
       "risks": [
         {
-          "risk": "情報収集が目的化する",
+          "risk": "先延ばしのリスク",
           "severity": "medium",
-          "mitigation": "期限とデフォルト方針（情報不足なら現職）を固定する"
+          "mitigation": "期限を設定する"
         }
       ],
       "ethics_review": {
         "principles_applied": [
           "integrity",
-          "accountability",
           "autonomy"
         ],
-        "tradeoffs": [
-          {
-            "tension": "慎重さと機会損失の緊張",
-            "between": [
-              "integrity",
-              "autonomy"
-            ],
-            "mitigation": "期限付きで慎重さを維持しつつ機会損失を抑える",
-            "severity": "medium"
-          }
-        ],
+        "tradeoffs": [],
         "concerns": [
-          "資金繰り等の不確実な事実を断言しない"
+          "不確実な事実を断言しない"
         ],
         "confidence": "high"
       },
@@ -71,20 +57,15 @@
           {
             "name": "自分",
             "role": "意思決定主体",
-            "impact": "キャリア・収入に影響"
+            "impact": "キャリア・収入・精神衛生に影響"
           },
           {
             "name": "家族",
             "role": "生活の共同体",
-            "impact": "時間配分・制約に影響"
-          },
-          {
-            "name": "現職チーム",
-            "role": "協働者",
-            "impact": "引き継ぎに影響"
+            "impact": "時間配分・引っ越し不可制約の源"
           }
         ],
-        "accountability_notes": "最終判断はユーザー。転職する場合は家族合意と引き継ぎ計画を前提にする。",
+        "accountability_notes": "最終判断はユーザー。",
         "confidence": "high"
       },
       "feasibility": {
@@ -95,60 +76,45 @@
       "uncertainty": {
         "overall_level": "medium",
         "reasons": [
-          "転職先のランウェイ・稼働実態が未確定"
+          "スタートアップの資金繰り（ランウェイ）"
         ],
-        "assumptions": [
-          "引っ越し不可の制約は固定"
-        ],
+        "assumptions": [],
         "known_unknowns": [
-          "文化",
-          "評価運用の実態"
+          "スタートアップの資金繰り（ランウェイ）",
+          "評価制度と成果期待（具体KPI）"
         ]
       }
     },
     {
       "option_id": "opt_2",
-      "title": "現職に残り、役割変更を交渉",
-      "description": "安定を維持しつつ成長機会を取りに行く。期限内に具体案が出なければ転職検討に戻る。",
+      "title": "現状維持で探索を続ける",
+      "description": "安全を保ちつつ選択肢を広げる。",
       "action_plan": [
         {
-          "step": "欲しい成長要素（裁量/領域/技術）を言語化する"
-        },
-        {
-          "step": "上司と4週間の期限付きで交渉し、結果で判断する"
+          "step": "現状を維持しながら情報を集める"
         }
       ],
       "pros": [
-        "収入の安定を維持しやすい"
+        "リスクが低い"
       ],
       "cons": [
-        "成長機会が得られない可能性"
+        "変化が遅い"
       ],
       "risks": [
         {
-          "risk": "現状維持に吸い込まれる",
+          "risk": "現状固定化",
           "severity": "medium",
-          "mitigation": "交渉期限と撤退条件を設定する"
+          "mitigation": "定期的に判断条件を見直す"
         }
       ],
       "ethics_review": {
         "principles_applied": [
           "autonomy",
-          "accountability"
+          "nonmaleficence"
         ],
-        "tradeoffs": [
-          {
-            "tension": "安定と成長の緊張",
-            "between": [
-              "autonomy",
-              "nonmaleficence"
-            ],
-            "mitigation": "期限を切って成長機会の有無で判断する",
-            "severity": "medium"
-          }
-        ],
+        "tradeoffs": [],
         "concerns": [
-          "現職が必ず変わるとは断言しない"
+          "断言を避ける"
         ],
         "confidence": "medium"
       },
@@ -158,32 +124,25 @@
           {
             "name": "自分",
             "role": "意思決定主体",
-            "impact": "キャリア・収入に影響"
-          },
-          {
-            "name": "家族",
-            "role": "生活の共同体",
-            "impact": "時間配分に影響"
+            "impact": "キャリア・収入・精神衛生に影響"
           }
         ],
-        "accountability_notes": "交渉結果を関係者に説明し、必要なら次の選択肢へ移行する。",
+        "accountability_notes": "判断責任はユーザーにある。",
         "confidence": "high"
       },
       "feasibility": {
         "effort": "low",
-        "timeline": "2-4 weeks",
+        "timeline": "ongoing",
         "confidence": "high"
       },
       "uncertainty": {
         "overall_level": "medium",
         "reasons": [
-          "異動・役割変更は組織事情に左右される"
+          "目的や優先順位が未確定"
         ],
-        "assumptions": [
-          "交渉の機会がある"
-        ],
+        "assumptions": [],
         "known_unknowns": [
-          "提示される具体的な成長機会"
+          "スタートアップの資金繰り（ランウェイ）"
         ]
       }
     }
@@ -191,12 +150,12 @@
   "recommendation": {
     "status": "recommended",
     "recommended_option_id": "opt_1",
-    "reason": "重要不明点が残ったまま転職を断言するより、期限付きで情報収集し基準で決断する方が誠実で後悔を減らしやすい。",
+    "reason": "重要不明点を整理してから判断する方が誠実で後悔を減らしやすい。",
     "counter": "期限を守れないと先延ばしになり、機会損失が増える。",
     "alternatives": [
       {
         "option_id": "opt_2",
-        "when_to_choose": "転職先が情報開示に消極的で、安定を優先したい場合"
+        "when_to_choose": "安定を優先したい場合"
       }
     ],
     "confidence": "medium"
@@ -209,23 +168,13 @@
       "justice",
       "accountability"
     ],
-    "tradeoffs": [
-      {
-        "tension": "慎重さと機会損失の緊張",
-        "between": [
-          "integrity",
-          "autonomy"
-        ],
-        "mitigation": "期限付きにして先延ばしを防ぐ",
-        "severity": "medium"
-      }
-    ],
+    "tradeoffs": [],
     "guardrails": [
       "不確実な事実を断言しない",
       "意思決定主体をユーザーから奪わない",
       "推奨には反証と代替案を併記する"
     ],
-    "notes": "価値の衝突（成長/安定/家族時間）を前提に、トレードオフを開示する。"
+    "notes": "価値の衝突を前提に、トレードオフを開示する。"
   },
   "responsibility": {
     "decision_owner": "user",
@@ -233,53 +182,61 @@
       {
         "name": "自分",
         "role": "意思決定主体",
-        "impact": "キャリア・収入に影響"
+        "impact": "キャリア・収入・精神衛生に影響"
       },
       {
         "name": "家族",
         "role": "生活の共同体",
-        "impact": "時間配分・制約に影響"
+        "impact": "時間配分・引っ越し不可制約の源"
       },
       {
         "name": "現職チーム",
         "role": "協働者",
-        "impact": "引き継ぎに影響"
+        "impact": "引き継ぎ不足で負荷が増える可能性"
       }
     ],
-    "accountability_notes": "転職/残留いずれでも、関係者（家族・現職）への説明責任が発生する。",
-    "consent_considerations": [
-      "家族への影響を事前共有し合意形成する"
-    ]
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+    "consent_considerations": []
   },
   "questions": [
     {
       "question_id": "q1",
-      "question": "オファーの有効期限と延長可否は？",
+      "question": "スタートアップの資金繰り（ランウェイ）は？",
       "priority": 1,
-      "why_needed": "情報収集に使える時間を決めるため。",
-      "assumption_if_unanswered": "期限は短いと仮定する",
+      "why_needed": "判断の前提条件を確定するため。",
+      "assumption_if_unanswered": "最も安全側の仮定を採用する",
       "optional": false
     },
     {
       "question_id": "q2",
-      "question": "ランウェイ（資金繰り）と評価制度（期待成果）は？",
-      "priority": 1,
-      "why_needed": "経済安定と期待値ギャップのリスク評価に直結するため。",
-      "assumption_if_unanswered": "不利な条件を織り込む",
+      "question": "評価制度と成果期待（具体KPI）は？",
+      "priority": 2,
+      "why_needed": "判断の前提条件を確定するため。",
+      "assumption_if_unanswered": "最も安全側の仮定を採用する",
       "optional": false
+    },
+    {
+      "question_id": "q3",
+      "question": "現職の異動・職務変更で成長機会が得られる可能性は？",
+      "priority": 3,
+      "why_needed": "判断の前提条件を確定するため。",
+      "assumption_if_unanswered": "最も安全側の仮定を採用する",
+      "optional": true
     }
   ],
   "uncertainty": {
     "overall_level": "medium",
     "reasons": [
-      "転職先の重要情報が未確定"
+      "スタートアップの資金繰り（ランウェイ）",
+      "評価制度と成果期待（具体KPI）"
     ],
     "assumptions": [
-      "引っ越し不可は固定"
+      "引っ越し不可（家族都合）"
     ],
     "known_unknowns": [
-      "稼働実態",
-      "文化"
+      "スタートアップの資金繰り（ランウェイ）",
+      "評価制度と成果期待（具体KPI）",
+      "現職の異動・職務変更で成長機会が得られる可能性"
     ]
   },
   "trace": {
@@ -316,9 +273,9 @@
         "name": "question_layer",
         "started_at": "2026-02-22T00:00:04Z",
         "ended_at": "2026-02-22T00:00:05Z",
-        "summary": "不足情報の質問を生成した",
+        "summary": "質問を3件生成した",
         "metrics": {
-          "questions": 2
+          "questions": 3
         }
       },
       {
