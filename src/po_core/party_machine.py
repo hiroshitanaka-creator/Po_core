@@ -36,7 +36,7 @@ import asyncio
 import functools
 import random
 import traceback
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
@@ -210,48 +210,67 @@ def run_philosophers(
             return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
 
     # Parallel execution with ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(_run_single, ph): ph for ph in philosophers}
+    executor = ThreadPoolExecutor(max_workers=max_workers)
+    try:
+        futures = [executor.submit(_run_single, ph) for ph in philosophers]
+        done, not_done = wait(futures, timeout=timeout_s)
 
-        for future in futures:
-            ph = futures[future]
+        result_by_index: Dict[int, RunResult] = {}
+        proposal_by_index: Dict[int, Proposal] = {}
+
+        for idx, future in enumerate(futures):
+            ph = philosophers[idx]
             pid = getattr(ph, "name", ph.__class__.__name__)
+
+            if future in not_done:
+                future.cancel()
+                result_by_index[idx] = RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    n=0,
+                    timed_out=True,
+                    error=f"Timeout after {timeout_s}s",
+                    latency_ms=None,
+                )
+                continue
+
             try:
-                proposal, n, err, dt, author_id = future.result(timeout=timeout_s)
-                results.append(
-                    RunResult(
-                        philosopher_id=author_id,
-                        ok=(err is None),
-                        n=n,
-                        timed_out=False,
-                        error=err,
-                        latency_ms=dt,
-                    )
+                proposal, n, err, dt, author_id = future.result()
+                result_by_index[idx] = RunResult(
+                    philosopher_id=author_id,
+                    ok=(err is None),
+                    n=n,
+                    timed_out=False,
+                    error=err,
+                    latency_ms=dt,
                 )
                 if proposal is not None:
-                    proposals.append(proposal)
+                    proposal_by_index[idx] = proposal
             except FuturesTimeoutError:
-                results.append(
-                    RunResult(
-                        philosopher_id=pid,
-                        ok=False,
-                        n=0,
-                        timed_out=True,
-                        error=f"Timeout after {timeout_s}s",
-                        latency_ms=None,
-                    )
+                result_by_index[idx] = RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    n=0,
+                    timed_out=True,
+                    error=f"Timeout after {timeout_s}s",
+                    latency_ms=None,
                 )
             except Exception as e:
-                results.append(
-                    RunResult(
-                        philosopher_id=pid,
-                        ok=False,
-                        n=0,
-                        timed_out=False,
-                        error=f"{type(e).__name__}: {e}",
-                        latency_ms=None,
-                    )
+                result_by_index[idx] = RunResult(
+                    philosopher_id=pid,
+                    ok=False,
+                    n=0,
+                    timed_out=False,
+                    error=f"{type(e).__name__}: {e}",
+                    latency_ms=None,
                 )
+
+        for idx in range(len(philosophers)):
+            results.append(result_by_index[idx])
+            if idx in proposal_by_index:
+                proposals.append(proposal_by_index[idx])
+    finally:
+        executor.shutdown(wait=False, cancel_futures=True)
 
     return proposals, results
 
