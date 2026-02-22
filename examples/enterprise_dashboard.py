@@ -273,9 +273,87 @@ class AnalyticsEngine:
         return top
 
     def _calculate_trends(self, sessions_meta: List[Dict]) -> List[TrendAnalysis]:
-        """Calculate metric trends over time."""
-        # Simplified trend analysis
-        return []  # TODO: Implement time-series analysis
+        """Calculate metric trends over time.
+
+        Groups sessions into daily buckets and computes per-metric averages.
+        Returns one TrendAnalysis per metric when at least two date buckets exist.
+        """
+        if len(sessions_meta) < 2:
+            return []
+
+        # Group session metrics by date (daily buckets, chronological order)
+        daily_metrics: Dict[str, Dict[str, List[float]]] = {}
+
+        for session_meta in sessions_meta:
+            created_at_str = session_meta.get("created_at", "")
+            if not created_at_str:
+                continue
+
+            date_key = created_at_str[:10]  # "YYYY-MM-DD"
+            session = self.trace_db.get_session(session_meta["session_id"])
+            if not (session and session.metrics):
+                continue
+
+            if date_key not in daily_metrics:
+                daily_metrics[date_key] = {}
+
+            for key, value in session.metrics.items():
+                if key not in daily_metrics[date_key]:
+                    daily_metrics[date_key][key] = []
+                daily_metrics[date_key][key].append(value)
+
+        if len(daily_metrics) < 2:
+            return []
+
+        sorted_dates = sorted(daily_metrics.keys())
+
+        all_metric_keys: set = set()
+        for date_data in daily_metrics.values():
+            all_metric_keys.update(date_data.keys())
+
+        trends = []
+        for metric_key in sorted(all_metric_keys):
+            time_points: List[str] = []
+            values: List[float] = []
+
+            for date in sorted_dates:
+                bucket_values = daily_metrics[date].get(metric_key, [])
+                if bucket_values:
+                    time_points.append(date)
+                    values.append(sum(bucket_values) / len(bucket_values))
+
+            if len(values) < 2:
+                continue
+
+            # Compare first and second halves to determine trend direction
+            mid = len(values) // 2
+            first_half_avg = sum(values[:mid]) / mid
+            second_half_avg = sum(values[mid:]) / len(values[mid:])
+
+            change_pct = (
+                (second_half_avg - first_half_avg) / first_half_avg * 100
+                if first_half_avg != 0
+                else 0.0
+            )
+
+            if abs(change_pct) < 5.0:
+                direction = "stable"
+            elif change_pct > 0:
+                direction = "increasing"
+            else:
+                direction = "decreasing"
+
+            trends.append(
+                TrendAnalysis(
+                    metric_name=metric_key,
+                    time_points=time_points,
+                    values=values,
+                    trend_direction=direction,
+                    change_percentage=round(change_pct, 2),
+                )
+            )
+
+        return trends
 
     def _calculate_contribution_score(
         self, metrics_sum: Dict[str, float], total: int
