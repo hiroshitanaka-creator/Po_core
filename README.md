@@ -33,6 +33,13 @@ pip install po-core-flyingpig
 [Reason-log spec](./04_modules/reason_log) ·
 [Viewer spec](./04_modules/viewer)
 
+## Development Loop (Po_core core)
+
+- `case` を追加/更新したら、まず入力を `features` として観測可能にする。
+- 次に `engines` の rule を更新し、case固有ifではなく feature駆動で振る舞いを拡張する。
+- その結果を golden（期待JSON）へ固定し、CI（`pytest -q`）で契約を検証する。
+- 凍結golden `scenarios/case_001_expected.json` / `scenarios/case_009_expected.json` は変更禁止。
+
 ## Contribution Tracks
 
 ### <a id="ai-track"></a> AI Track

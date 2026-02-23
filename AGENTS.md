@@ -194,3 +194,13 @@ Po_coreは“賢い文章生成”よりも、**決定性（determinism）**・*
 ---
 
 この規約に反する変更は、Po_coreの目的（説明責任と安全な意思決定支援）を破壊する。
+
+---
+
+## 10. 追記事実（E/F反映）
+
+- trace（generic）の `compose_output.metrics` には recommendation の `arbitration_code` が記録される。  
+- ethics は ruleset で運用し、各評価は `rule_id` を持つ。  
+- trace から ethics の `rules_fired`（発火ルール集合）を観測できる。  
+
+※上記は事実追記のみ。既存の凍結契約・禁止事項・責務境界はそのまま有効。
