@@ -40,6 +40,7 @@ def test_trace_compose_output_arbitration_metrics_not_added_to_frozen_case() -> 
         "dilemma": "frozen",
         "values": ["v"],
         "context": {},
+        "extensions": {"scenario_profile": "job_change_transition_v1"},
     }
 
     output = run_case(

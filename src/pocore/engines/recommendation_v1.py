@@ -6,6 +6,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from pocore.policy_v1 import has_time_pressure_with_unknowns, should_block_recommendation
 
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
+
 
 def arbitrate_recommendation(
     case: Dict[str, Any],
@@ -16,7 +23,7 @@ def arbitrate_recommendation(
 ) -> Tuple[Dict[str, Any], str]:
     """Produce recommendation payload with deterministic arbitration code."""
 
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         return (
             {
                 "status": "recommended",
@@ -37,7 +44,7 @@ def arbitrate_recommendation(
             "DEFAULT_RECOMMEND",
         )
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         return (
             {
                 "status": "no_recommendation",

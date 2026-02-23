@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
+
 
 def _map_stakeholders(case: Dict[str, Any]) -> List[Dict[str, Any]]:
     st = case.get("stakeholders", [])
@@ -31,7 +38,7 @@ def apply(
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """Apply responsibility review to options; return (options, responsibility_summary)."""
 
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         for opt in options:
             if opt.get("option_id") == "opt_1":
                 opt["responsibility_review"] = {
@@ -104,7 +111,7 @@ def apply(
         }
         return options, summary
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         for opt in options:
             if opt.get("option_id") == "opt_1":
                 opt["responsibility_review"] = {

@@ -13,5 +13,6 @@ Po_coreで採用済み/提案中のArchitectural Decision Records一覧。
 | 0007 | Trace Metrics Observability for parse_input | Accepted | generic traceに `unknowns/stakeholders/deadline` 観測メトリクスを追加。 |
 | 0008 | Ethics Guardrails v1 (Non-interference) | Accepted | ethicsはガードレール層であり、recommendation裁定を変更しない。 |
 | 0009 | Traceへrecommendation裁定経路を記録する | Accepted | traceの compose_output metrics に `arbitration_code` と policy snapshot を記録。 |
+| 0010 | case_001/case_009 short_id特例の撤去とscenario_profile移行 | Accepted | 永久特例を `extensions.scenario_profile`→`features` に移し、rulesで吸収する。 |
 
 > 現時点で `docs/adr/*.md` に Proposed はなく、すべて Accepted。

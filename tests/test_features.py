@@ -157,3 +157,11 @@ def test_days_to_deadline_invalid_deadline_returns_none_values() -> None:
     assert features["deadline_present"] is True
     assert features["deadline_iso"] is None
     assert features["days_to_deadline"] is None
+
+
+def test_extract_features_reads_scenario_profile_from_extensions() -> None:
+    case = {"extensions": {"scenario_profile": "job_change_transition_v1"}}
+
+    features = extract_features(case)
+
+    assert features["scenario_profile"] == "job_change_transition_v1"

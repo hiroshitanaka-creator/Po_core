@@ -45,7 +45,12 @@ def test_ethics_guardrails_v1_only_applies_to_generic_path() -> None:
     _, summary = ethics_v1.apply(
         {"case_id": "case_001_job_change"},
         short_id="case_001",
-        features={"unknowns_count": 9, "stakeholders_count": 9, "days_to_deadline": 1},
+        features={
+            "scenario_profile": "job_change_transition_v1",
+            "unknowns_count": 9,
+            "stakeholders_count": 9,
+            "days_to_deadline": 1,
+        },
         options=options,
     )
 
