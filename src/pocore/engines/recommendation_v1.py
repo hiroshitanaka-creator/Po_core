@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from pocore.policy_v1 import has_time_pressure_with_unknowns, should_block_recommendation
+
 
 def recommend(
     case: Dict[str, Any],
@@ -74,6 +76,30 @@ def recommend(
                 }
             ],
             "confidence": "medium",
+        }
+
+    if should_block_recommendation(feats):
+        return {
+            "status": "no_recommendation",
+            "reason": "重要情報の不足が大きく、現時点での推奨は恣意的になる。",
+            "missing_info": ["重要な不明点の解消"],
+            "next_steps": ["unknownsを優先度順に埋める"],
+            "confidence": "high",
+        }
+
+    if has_time_pressure_with_unknowns(feats):
+        return {
+            "status": "recommended",
+            "recommended_option_id": "opt_1",
+            "reason": "期限が近いため、低リスクな案で前進しつつ不明点を並行して潰す。",
+            "counter": "不明点が残るため、見積もりや期待値にズレが出る。",
+            "alternatives": [
+                {
+                    "option_id": "opt_2",
+                    "when_to_choose": "期限を交渉できる、または追加情報を先に取り切れる場合",
+                }
+            ],
+            "confidence": "low",
         }
 
     return {
