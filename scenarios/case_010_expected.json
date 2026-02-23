@@ -350,6 +350,11 @@
           "questions_planned": 3,
           "unknowns_count": 3,
           "stakeholders_count": 3,
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
           "days_to_deadline": 190,
           "constraint_conflict": true
         }
@@ -379,6 +384,11 @@
         "summary": "推奨・反証・代替案を含む出力を組み立てた",
         "metrics": {
           "arbitration_code": "CONSTRAINT_CONFLICT",
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
           "policy_snapshot": {
             "UNKNOWN_BLOCK": 4,
             "TIME_PRESSURE_DAYS": 7

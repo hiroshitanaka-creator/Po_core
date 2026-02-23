@@ -25,6 +25,7 @@ def build_trace(
     options_count: int = 0,
     questions_count: int = 0,
     features: Optional[Dict[str, Any]] = None,
+    rules_fired: Optional[list[str]] = None,
     arbitration_code: Optional[str] = None,
     policy_snapshot: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
@@ -93,6 +94,8 @@ def build_trace(
         "unknowns_count": int(feats.get("unknowns_count", 0)),
         "stakeholders_count": int(feats.get("stakeholders_count", 0)),
     }
+    if rules_fired:
+        parse_metrics["rules_fired"] = list(rules_fired)
     if feats.get("days_to_deadline") is not None:
         parse_metrics["days_to_deadline"] = int(feats["days_to_deadline"])
     if conflict:
@@ -131,6 +134,8 @@ def build_trace(
     compose_metrics: Dict[str, Any] = {}
     if arbitration_code:
         compose_metrics["arbitration_code"] = arbitration_code
+    if rules_fired:
+        compose_metrics["rules_fired"] = list(rules_fired)
     if policy_snapshot:
         compose_metrics["policy_snapshot"] = dict(policy_snapshot)
 

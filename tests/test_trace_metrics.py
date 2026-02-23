@@ -17,6 +17,10 @@ def test_build_trace_generic_parse_input_metrics_include_observability_values():
             "days_to_deadline": 5,
             "constraint_conflict": True,
         },
+        rules_fired=[
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+        ],
     )
 
     metrics = _parse_step(trace)["metrics"]
@@ -24,6 +28,10 @@ def test_build_trace_generic_parse_input_metrics_include_observability_values():
     assert metrics["stakeholders_count"] == 2
     assert metrics["days_to_deadline"] == 5
     assert metrics["constraint_conflict"] is True
+    assert metrics["rules_fired"] == [
+        "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+        "ETH_NO_OVERCLAIM_UNKNOWN",
+    ]
 
 
 def test_build_trace_generic_omits_days_to_deadline_when_unknown():
@@ -39,6 +47,22 @@ def test_build_trace_generic_omits_days_to_deadline_when_unknown():
     assert metrics["unknowns_count"] == 1
     assert metrics["stakeholders_count"] == 0
     assert "days_to_deadline" not in metrics
+
+
+def test_build_trace_generic_compose_output_metrics_include_rules_fired() -> None:
+    trace = build_trace(
+        short_id="case_125",
+        created_at="2026-02-22T00:00:00Z",
+        options_count=2,
+        questions_count=0,
+        features={"unknowns_count": 0, "stakeholders_count": 0},
+        rules_fired=["ETH_STAKEHOLDER_CONSENT"],
+        arbitration_code="REC_A",
+    )
+
+    compose_step = next(step for step in trace["steps"] if step["name"] == "compose_output")
+    assert compose_step["metrics"]["rules_fired"] == ["ETH_STAKEHOLDER_CONSENT"]
+    assert compose_step["metrics"]["arbitration_code"] == "REC_A"
 
 
 def test_build_trace_frozen_case_001_and_009_steps_unchanged():

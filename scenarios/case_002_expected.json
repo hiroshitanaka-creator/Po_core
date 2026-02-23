@@ -283,6 +283,10 @@
           "questions_planned": 0,
           "unknowns_count": 3,
           "stakeholders_count": 4,
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
           "days_to_deadline": 16
         }
       },
@@ -302,6 +306,10 @@
         "summary": "推奨・反証・代替案を含む出力を組み立てた",
         "metrics": {
           "arbitration_code": "DEFAULT_RECOMMEND",
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
           "policy_snapshot": {
             "UNKNOWN_BLOCK": 4,
             "TIME_PRESSURE_DAYS": 7

@@ -6,6 +6,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 _ALL = ["integrity", "autonomy", "nonmaleficence", "justice", "accountability"]
 
+ETH_CONSTRAINT_CONFLICT_DISCLOSURE = "ETH_CONSTRAINT_CONFLICT_DISCLOSURE"
+ETH_NO_OVERCLAIM_UNKNOWN = "ETH_NO_OVERCLAIM_UNKNOWN"
+ETH_STAKEHOLDER_CONSENT = "ETH_STAKEHOLDER_CONSENT"
+ETH_TIME_PRESSURE_SAFETY = "ETH_TIME_PRESSURE_SAFETY"
+
 
 def _append_unique(items: List[str], value: str) -> None:
     if value not in items:
@@ -16,6 +21,46 @@ def _is_short_deadline(days_to_deadline: Any) -> bool:
     if not isinstance(days_to_deadline, int):
         return False
     return 0 <= days_to_deadline <= 7
+
+
+def _collect_rules_fired(*, short_id: str, features: Optional[Dict[str, Any]]) -> List[str]:
+    if short_id in ("case_001", "case_009"):
+        return []
+
+    feats = features or {}
+    rules_fired: List[str] = []
+
+    rule_checks = [
+        (
+            ETH_CONSTRAINT_CONFLICT_DISCLOSURE,
+            lambda f: f.get("constraint_conflict") is True,
+        ),
+        (
+            ETH_NO_OVERCLAIM_UNKNOWN,
+            lambda f: isinstance(f.get("unknowns_count"), int) and f.get("unknowns_count") > 0,
+        ),
+        (
+            ETH_STAKEHOLDER_CONSENT,
+            lambda f: isinstance(f.get("stakeholders_count"), int)
+            and f.get("stakeholders_count") > 1,
+        ),
+        (
+            ETH_TIME_PRESSURE_SAFETY,
+            lambda f: _is_short_deadline(f.get("days_to_deadline")),
+        ),
+    ]
+
+    for rule_id, predicate in rule_checks:
+        if predicate(feats):
+            rules_fired.append(rule_id)
+
+    return rules_fired
+
+
+def rules_fired_for(*, short_id: str, features: Optional[Dict[str, Any]]) -> List[str]:
+    """Return fired ethics rule IDs in deterministic order."""
+
+    return _collect_rules_fired(short_id=short_id, features=features)
 
 
 def apply(
@@ -131,13 +176,13 @@ def apply(
 
     # ── Generic: feature-driven ───────────────────────────────────────────
     feats = features or {}
-    conflict = feats.get("constraint_conflict") is True
-    has_unknowns = isinstance(feats.get("unknowns_count"), int) and feats.get("unknowns_count") > 0
-    has_many_stakeholders = (
-        isinstance(feats.get("stakeholders_count"), int)
-        and feats.get("stakeholders_count") > 1
-    )
-    short_deadline = _is_short_deadline(feats.get("days_to_deadline"))
+    fired = _collect_rules_fired(short_id=short_id, features=features)
+    fired_set = set(fired)
+
+    conflict = ETH_CONSTRAINT_CONFLICT_DISCLOSURE in fired_set
+    has_unknowns = ETH_NO_OVERCLAIM_UNKNOWN in fired_set
+    has_many_stakeholders = ETH_STAKEHOLDER_CONSENT in fired_set
+    short_deadline = ETH_TIME_PRESSURE_SAFETY in fired_set
 
     for opt in options:
         if conflict:
