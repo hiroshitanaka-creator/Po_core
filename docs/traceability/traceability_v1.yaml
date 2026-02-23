@@ -1,0 +1,162 @@
+version: 1
+principles:
+  - id: P-ACC-001
+    mapped_requirements:
+      - REQ-DET-001
+      - REQ-SCH-001
+      - REQ-E2E-001
+      - REQ-FEA-001
+      - REQ-TRC-001
+      - REQ-ETH-002
+      - REQ-TRC-002
+      - REQ-GCV-001
+  - id: P-INT-001
+    mapped_requirements:
+      - REQ-DET-001
+      - REQ-SCH-001
+      - REQ-E2E-001
+      - REQ-ARB-001
+      - REQ-ETH-001
+  - id: P-AUT-001
+    mapped_requirements:
+      - REQ-ARB-001
+      - REQ-ETH-001
+  - id: P-NMH-001
+    mapped_requirements:
+      - REQ-ARB-001
+      - REQ-ETH-002
+  - id: P-JUS-001
+    mapped_requirements:
+      - REQ-FEA-001
+      - REQ-ETH-002
+      - REQ-GCV-001
+
+requirements:
+  - id: REQ-DET-001
+    principles: [P-ACC-001, P-INT-001]
+    adrs:
+      - docs/adr/0003-trace-contract.md
+      - docs/adr/0007-trace-metrics-observability.md
+    tests:
+      - tests/test_golden_regression.py::test_run_case_is_deterministic
+      - tests/test_trace_schema_contract.py::test_trace_steps_are_chronological
+    code_refs:
+      - kind: module
+        value: src/pocore/orchestrator.py
+      - kind: module
+        value: src/pocore/tracer.py
+
+  - id: REQ-SCH-001
+    principles: [P-ACC-001, P-INT-001]
+    adrs: [docs/adr/0001-output-format.md]
+    tests:
+      - tests/test_input_schema.py::test_each_scenario_matches_input_schema
+      - tests/test_output_schema.py::test_output_schema_validation_for_all_scenarios
+    code_refs:
+      - kind: module
+        value: src/pocore/runner.py
+
+  - id: REQ-E2E-001
+    principles: [P-ACC-001, P-INT-001]
+    adrs: [docs/adr/0002-golden-diff-contract.md]
+    tests:
+      - tests/test_golden_e2e.py::test_scenarios_match_expected_json
+    code_refs:
+      - kind: module
+        value: tests/test_golden_e2e.py
+
+  - id: REQ-FEA-001
+    principles: [P-ACC-001, P-JUS-001]
+    adrs: [docs/adr/0004-input-features.md]
+    tests:
+      - tests/test_features.py::test_extract_features_counts_and_empty_values
+      - tests/test_features.py::test_days_to_deadline_with_date_string
+    code_refs:
+      - kind: module
+        value: src/pocore/parse_input.py
+
+  - id: REQ-ARB-001
+    principles: [P-INT-001, P-AUT-001, P-NMH-001]
+    adrs: [docs/adr/0006-recommendation-arbitration-policy-v1.md]
+    tests:
+      - tests/test_recommendation_policy.py::test_unknowns_at_or_above_unknown_block_returns_no_recommendation
+      - tests/test_arbitration_trace.py::test_trace_compose_output_contains_arbitration_code_for_generic_case
+    code_refs:
+      - kind: module
+        value: src/pocore/policy_v1.py
+      - kind: module
+        value: src/pocore/engines/recommendation_v1.py
+      - kind: arbitration_code
+        value: DEFAULT_RECOMMEND
+      - kind: arbitration_code
+        value: NO_VALUES
+      - kind: arbitration_code
+        value: CONSTRAINT_CONFLICT
+      - kind: arbitration_code
+        value: BLOCK_UNKNOWN
+      - kind: arbitration_code
+        value: TIME_PRESSURE_LOW_CONF
+
+  - id: REQ-TRC-001
+    principles: [P-ACC-001]
+    adrs: [docs/adr/0009-trace-arbitration-path.md]
+    tests:
+      - tests/test_arbitration_trace.py::test_trace_compose_output_contains_arbitration_code_for_generic_case
+    code_refs:
+      - kind: module
+        value: src/pocore/tracer.py
+      - kind: module
+        value: src/pocore/orchestrator.py
+
+  - id: REQ-ETH-001
+    principles: [P-AUT-001, P-INT-001]
+    adrs: [docs/adr/0008-ethics-guardrails-v1-non-interference.md]
+    tests:
+      - tests/test_ethics_non_interference.py::test_ethics_guardrail_does_not_force_recommendation_change
+    code_refs:
+      - kind: module
+        value: src/pocore/engines/ethics_v1.py
+
+  - id: REQ-ETH-002
+    principles: [P-ACC-001, P-JUS-001, P-NMH-001]
+    adrs:
+      - docs/adr/0008-ethics-guardrails-v1-non-interference.md
+      - docs/adr/0007-trace-metrics-observability.md
+    tests:
+      - tests/test_ethics_ruleset.py::test_ethics_ruleset_fires_multiple_rules_from_features
+      - tests/test_trace_metrics.py::test_trace_metrics_include_rules_fired_for_generic_case
+    code_refs:
+      - kind: module
+        value: src/pocore/engines/ethics_v1.py
+      - kind: module
+        value: src/pocore/tracer.py
+      - kind: rule_id
+        value: ETH_CONSTRAINT_CONFLICT_DISCLOSURE
+      - kind: rule_id
+        value: ETH_NO_OVERCLAIM_UNKNOWN
+      - kind: rule_id
+        value: ETH_STAKEHOLDER_CONSENT
+      - kind: rule_id
+        value: ETH_TIME_PRESSURE_SAFETY
+
+  - id: REQ-TRC-002
+    principles: [P-ACC-001]
+    adrs:
+      - docs/adr/0003-trace-contract.md
+      - docs/adr/0007-trace-metrics-observability.md
+    tests:
+      - tests/test_trace_schema_contract.py::test_trace_steps_structure_for_all_scenarios
+      - tests/test_trace_metrics.py::test_trace_metrics_include_counts_for_generic_case
+    code_refs:
+      - kind: module
+        value: src/pocore/tracer.py
+
+  - id: REQ-GCV-001
+    principles: [P-ACC-001, P-JUS-001]
+    adrs: [docs/adr/0002-golden-diff-contract.md]
+    tests:
+      - tests/test_golden_coverage.py::test_golden_cases_cover_recommendation_paths
+      - tests/test_golden_coverage.py::test_golden_cases_cover_rule_firing_patterns
+    code_refs:
+      - kind: module
+        value: tests/test_golden_coverage.py
