@@ -81,6 +81,47 @@ def add_seconds(iso_dt: str, seconds: int) -> str:
     return dt2.isoformat().replace("+00:00", "Z")
 
 
+def parse_iso_datetime(value: Any) -> Optional[_dt.datetime]:
+    """Parse ISO-8601 datetime (including trailing `Z`) into aware UTC datetime."""
+    if not isinstance(value, str):
+        return None
+    s = value.strip()
+    if not s:
+        return None
+    if s.endswith("Z"):
+        s = s[:-1] + "+00:00"
+    try:
+        dt = _dt.datetime.fromisoformat(s)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=_dt.timezone.utc)
+    else:
+        dt = dt.astimezone(_dt.timezone.utc)
+    return dt
+
+
+def parse_deadline_iso(value: Any) -> Tuple[Optional[str], Optional[_dt.date]]:
+    """Parse supported deadline formats into normalized string + UTC date."""
+    if not isinstance(value, str):
+        return None, None
+    s = value.strip()
+    if not s:
+        return None, None
+
+    try:
+        d = _dt.date.fromisoformat(s)
+    except ValueError:
+        d = None
+    if d is not None:
+        return d.isoformat(), d
+
+    dt = parse_iso_datetime(s)
+    if dt is None:
+        return None, None
+    return dt.isoformat().replace("+00:00", "Z"), dt.date()
+
+
 # ── ID helpers ────────────────────────────────────────────────────────────
 
 _CASE_SHORT_RE = re.compile(r"^(case_\d{3})\b")

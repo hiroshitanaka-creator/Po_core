@@ -55,3 +55,105 @@ def test_extract_features_exposes_constraint_conflict_flag() -> None:
 
     assert features["constraint_conflict"] is True
     assert features["unknowns_count"] == 2
+
+
+def test_unknowns_items_normalization_order_and_limit() -> None:
+    case = {
+        "unknowns": [
+            "  first  ",
+            "",
+            "   ",
+            42,
+            "fifth",
+            "sixth",
+            "seventh",
+            "eighth",
+            "ninth",
+            "tenth",
+            "eleventh",
+            "twelfth",
+        ]
+    }
+
+    features = extract_features(case)
+
+    assert features["unknowns_items"] == [
+        "first",
+        "42",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+        "tenth",
+        "eleventh",
+        "twelfth",
+    ]
+
+
+def test_stakeholder_roles_normalization_dedup_and_limit() -> None:
+    case = {
+        "stakeholders": [
+            {"role": "  owner "},
+            {"role": ""},
+            {"role": "owner"},
+            {"role": "developer"},
+            {"name": "missing-role"},
+            "not-dict",
+            {"role": "qa"},
+            {"role": 99},
+            {"role": "support"},
+            {"role": "legal"},
+            {"role": "ops"},
+            {"role": "sales"},
+            {"role": "finance"},
+            {"role": "marketing"},
+            {"role": "security"},
+            {"role": "extra"},
+        ]
+    }
+
+    features = extract_features(case)
+
+    assert features["stakeholder_roles"] == [
+        "owner",
+        "developer",
+        "qa",
+        "99",
+        "support",
+        "legal",
+        "ops",
+        "sales",
+        "finance",
+        "marketing",
+    ]
+
+
+def test_days_to_deadline_with_date_string() -> None:
+    case = {"deadline": "2026-03-01"}
+
+    features = extract_features(case, now="2026-02-22T00:00:00Z")
+
+    assert features["deadline_present"] is True
+    assert features["deadline_iso"] == "2026-03-01"
+    assert features["days_to_deadline"] == 7
+
+
+def test_days_to_deadline_with_datetime_string() -> None:
+    case = {"deadline": "2026-03-01T23:59:59Z"}
+
+    features = extract_features(case, now="2026-02-22T09:30:00Z")
+
+    assert features["deadline_present"] is True
+    assert features["deadline_iso"] == "2026-03-01T23:59:59Z"
+    assert features["days_to_deadline"] == 7
+
+
+def test_days_to_deadline_invalid_deadline_returns_none_values() -> None:
+    case = {"deadline": "2026/03/01"}
+
+    features = extract_features(case, now="2026-02-22T00:00:00Z")
+
+    assert features["deadline_present"] is True
+    assert features["deadline_iso"] is None
+    assert features["days_to_deadline"] is None
