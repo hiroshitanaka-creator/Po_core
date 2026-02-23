@@ -313,6 +313,9 @@
         "metrics": {
           "options_planned": 2,
           "questions_planned": 3,
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 190,
           "constraint_conflict": true
         }
       },

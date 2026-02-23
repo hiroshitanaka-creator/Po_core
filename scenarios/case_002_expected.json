@@ -244,7 +244,10 @@
         "summary": "入力を正規化し、特徴量（features）を抽出した",
         "metrics": {
           "options_planned": 2,
-          "questions_planned": 0
+          "questions_planned": 0,
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 16
         }
       },
       {
