@@ -54,11 +54,23 @@
       "ethics_review": {
         "principles_applied": [
           "integrity",
-          "autonomy"
+          "autonomy",
+          "justice"
         ],
-        "tradeoffs": [],
+        "tradeoffs": [
+          {
+            "tension": "自己決定と外部性/公正の緊張",
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium"
+          }
+        ],
         "concerns": [
-          "不確実な事実を断言しない"
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
         ],
         "confidence": "medium"
       },
@@ -126,11 +138,23 @@
       "ethics_review": {
         "principles_applied": [
           "integrity",
-          "autonomy"
+          "autonomy",
+          "justice"
         ],
-        "tradeoffs": [],
+        "tradeoffs": [
+          {
+            "tension": "自己決定と外部性/公正の緊張",
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium"
+          }
+        ],
         "concerns": [
-          "不確実な事実を断言しない"
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
         ],
         "confidence": "medium"
       },
@@ -184,11 +208,23 @@
       "justice",
       "accountability"
     ],
-    "tradeoffs": [],
+    "tradeoffs": [
+      {
+        "tension": "自己決定と外部性/公正の緊張",
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium"
+      }
+    ],
     "guardrails": [
       "不確実な事実を断言しない",
       "意思決定主体をユーザーから奪わない",
-      "推奨には反証と代替案を併記する"
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
     ],
     "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
   },

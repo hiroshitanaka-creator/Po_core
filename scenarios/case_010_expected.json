@@ -69,7 +69,9 @@
         "principles_applied": [
           "integrity",
           "nonmaleficence",
-          "accountability"
+          "accountability",
+          "justice",
+          "autonomy"
         ],
         "tradeoffs": [
           {
@@ -80,10 +82,20 @@
             ],
             "mitigation": "制約を可視化して破綻条件を先に潰す",
             "severity": "high"
+          },
+          {
+            "tension": "自己決定と外部性/公正の緊張",
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium"
           }
         ],
         "concerns": [
-          "矛盾した制約を無視して断言しない"
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
         ],
         "confidence": "medium"
       },
@@ -157,7 +169,9 @@
         "principles_applied": [
           "integrity",
           "nonmaleficence",
-          "accountability"
+          "accountability",
+          "justice",
+          "autonomy"
         ],
         "tradeoffs": [
           {
@@ -168,10 +182,20 @@
             ],
             "mitigation": "制約を可視化して破綻条件を先に潰す",
             "severity": "high"
+          },
+          {
+            "tension": "自己決定と外部性/公正の緊張",
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium"
           }
         ],
         "concerns": [
-          "矛盾した制約を無視して断言しない"
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
         ],
         "confidence": "medium"
       },
@@ -229,12 +253,23 @@
         ],
         "mitigation": "期限・実験・ガードレールで両立を狙う",
         "severity": "medium"
+      },
+      {
+        "tension": "自己決定と外部性/公正の緊張",
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium"
       }
     ],
     "guardrails": [
       "不確実な事実を断言しない",
       "意思決定主体をユーザーから奪わない",
-      "推奨には反証と代替案を併記する"
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
     ],
     "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
   },

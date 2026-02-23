@@ -7,6 +7,17 @@ from typing import Any, Dict, List, Optional, Tuple
 _ALL = ["integrity", "autonomy", "nonmaleficence", "justice", "accountability"]
 
 
+def _append_unique(items: List[str], value: str) -> None:
+    if value not in items:
+        items.append(value)
+
+
+def _is_short_deadline(days_to_deadline: Any) -> bool:
+    if not isinstance(days_to_deadline, int):
+        return False
+    return 0 <= days_to_deadline <= 7
+
+
 def apply(
     case: Dict[str, Any],
     *,
@@ -121,10 +132,16 @@ def apply(
     # ── Generic: feature-driven ───────────────────────────────────────────
     feats = features or {}
     conflict = feats.get("constraint_conflict") is True
+    has_unknowns = isinstance(feats.get("unknowns_count"), int) and feats.get("unknowns_count") > 0
+    has_many_stakeholders = (
+        isinstance(feats.get("stakeholders_count"), int)
+        and feats.get("stakeholders_count") > 1
+    )
+    short_deadline = _is_short_deadline(feats.get("days_to_deadline"))
 
     for opt in options:
         if conflict:
-            opt["ethics_review"] = {
+            review = {
                 "principles_applied": [
                     "integrity",
                     "nonmaleficence",
@@ -142,32 +159,89 @@ def apply(
                 "confidence": "medium",
             }
         else:
-            opt["ethics_review"] = {
+            review = {
                 "principles_applied": ["integrity", "autonomy"],
                 "tradeoffs": [],
                 "concerns": ["不確実な事実を断言しない"],
                 "confidence": "medium",
             }
 
-    summary = {
-        "principles_used": _ALL,
-        "tradeoffs": (
-            [
+        if has_unknowns:
+            _append_unique(
+                review["concerns"],
+                "前提と不確実性を明示する",
+            )
+
+        if has_many_stakeholders:
+            _append_unique(review["principles_applied"], "justice")
+            _append_unique(review["principles_applied"], "autonomy")
+            review["tradeoffs"].append(
+                {
+                    "tension": "自己決定と外部性/公正の緊張",
+                    "between": ["autonomy", "justice"],
+                    "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+                    "severity": "medium",
+                }
+            )
+
+        if short_deadline:
+            _append_unique(review["principles_applied"], "nonmaleficence")
+            review["tradeoffs"].append(
                 {
                     "tension": "速度と安全の緊張",
                     "between": ["autonomy", "nonmaleficence"],
-                    "mitigation": "期限・実験・ガードレールで両立を狙う",
+                    "mitigation": "時間圧力下でも最小限の検証を維持する",
                     "severity": "medium",
                 }
-            ]
-            if conflict
-            else []
-        ),
-        "guardrails": [
-            "不確実な事実を断言しない",
-            "意思決定主体をユーザーから奪わない",
-            "推奨には反証と代替案を併記する",
-        ],
+            )
+
+        opt["ethics_review"] = review
+
+    tradeoffs: List[Dict[str, Any]] = []
+    if conflict:
+        tradeoffs.append(
+            {
+                "tension": "速度と安全の緊張",
+                "between": ["autonomy", "nonmaleficence"],
+                "mitigation": "期限・実験・ガードレールで両立を狙う",
+                "severity": "medium",
+            }
+        )
+    if has_many_stakeholders:
+        tradeoffs.append(
+            {
+                "tension": "自己決定と外部性/公正の緊張",
+                "between": ["autonomy", "justice"],
+                "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+                "severity": "medium",
+            }
+        )
+    if short_deadline:
+        tradeoffs.append(
+            {
+                "tension": "速度と安全（nonmaleficence）の緊張",
+                "between": ["autonomy", "nonmaleficence"],
+                "mitigation": "時間制約下でも検証を省略しない",
+                "severity": "medium",
+            }
+        )
+
+    guardrails = [
+        "不確実な事実を断言しない",
+        "意思決定主体をユーザーから奪わない",
+        "推奨には反証と代替案を併記する",
+    ]
+    if has_unknowns:
+        _append_unique(guardrails, "前提と不確実性を明示する")
+    if has_many_stakeholders:
+        _append_unique(guardrails, "関係者への影響と同意を考慮する")
+    if short_deadline:
+        _append_unique(guardrails, "時間圧力下でも検証を省略しない")
+
+    summary = {
+        "principles_used": _ALL,
+        "tradeoffs": tradeoffs,
+        "guardrails": guardrails,
         "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
     }
     return options, summary
