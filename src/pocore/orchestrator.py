@@ -44,7 +44,7 @@ def run_case(
     title = str(case.get("title", ""))
 
     # 1. parse_input → features
-    parsed = parse_input.parse(case, case_path=case_path)
+    parsed = parse_input.parse(case, case_path=case_path, now=created_at)
     short_id = parsed.short_id
     features = parsed.features
 
