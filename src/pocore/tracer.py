@@ -88,7 +88,11 @@ def build_trace(
     parse_metrics: Dict[str, Any] = {
         "options_planned": options_count,
         "questions_planned": questions_count,
+        "unknowns_count": int(feats.get("unknowns_count", 0)),
+        "stakeholders_count": int(feats.get("stakeholders_count", 0)),
     }
+    if feats.get("days_to_deadline") is not None:
+        parse_metrics["days_to_deadline"] = int(feats["days_to_deadline"])
     if conflict:
         parse_metrics["constraint_conflict"] = True
 
