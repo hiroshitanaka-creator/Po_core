@@ -1,0 +1,17 @@
+# ADR Index
+
+Po_coreで採用済み/提案中のArchitectural Decision Records一覧。
+
+| No. | Title | Status | Key Point |
+|---|---|---|---|
+| 0001 | Output Format Selection (JSON + Markdown) | Accepted | 出力はJSONを契約本体（MUST）、Markdownは人間可読補助（SHOULD）。 |
+| 0002 | Golden Diff Contract | Accepted | canonical JSON完全一致でE2E比較し、golden更新は仕様根拠付きのみ許可。 |
+| 0003 | Trace Contract | Accepted | trace時刻は injected `now` から固定オフセットで生成し、非決定要因を排除。 |
+| 0004 | Input Features Layer | Accepted | case identity分岐を避け、`parse_input` の `features` 正規化でルール分岐する。 |
+| 0005 | Rule Placement Boundaries for unknowns/stakeholders/deadline (v1) | Accepted | 観測（parse_input）と判断（engines）と配線（orchestrator）を厳密分離。 |
+| 0006 | Recommendation Arbitration Policy v1 | Accepted | recommendation裁定閾値を `policy_v1` に集約し、裁定順序を固定。 |
+| 0007 | Trace Metrics Observability for parse_input | Accepted | generic traceに `unknowns/stakeholders/deadline` 観測メトリクスを追加。 |
+| 0008 | Ethics Guardrails v1 (Non-interference) | Accepted | ethicsはガードレール層であり、recommendation裁定を変更しない。 |
+| 0009 | Traceへrecommendation裁定経路を記録する | Accepted | traceの compose_output metrics に `arbitration_code` と policy snapshot を記録。 |
+
+> 現時点で `docs/adr/*.md` に Proposed はなく、すべて Accepted。
