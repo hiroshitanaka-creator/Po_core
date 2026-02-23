@@ -74,6 +74,7 @@ def test_build_trace_frozen_case_001_and_009_steps_unchanged():
         options_count=99,
         questions_count=99,
         features={
+            "scenario_profile": "job_change_transition_v1",
             "unknowns_count": 999,
             "stakeholders_count": 999,
             "days_to_deadline": 999,
@@ -108,6 +109,7 @@ def test_build_trace_frozen_case_001_and_009_steps_unchanged():
         options_count=99,
         questions_count=99,
         features={
+            "scenario_profile": "values_clarification_v1",
             "unknowns_count": 999,
             "stakeholders_count": 999,
             "days_to_deadline": 999,

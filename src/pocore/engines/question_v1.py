@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
+
 
 def generate(
     case: Dict[str, Any],
@@ -13,7 +20,7 @@ def generate(
 ) -> List[Dict[str, Any]]:
     """Generate clarifying questions (max 5)."""
 
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         return [
             {
                 "question_id": "q1",
@@ -33,7 +40,7 @@ def generate(
             },
         ]
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         return [
             {
                 "question_id": "q1",

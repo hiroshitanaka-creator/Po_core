@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
+
 
 def summarize(
     case: Dict[str, Any],
@@ -13,7 +20,7 @@ def summarize(
 ) -> Dict[str, Any]:
     """Produce an uncertainty summary for the case."""
 
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         return {
             "overall_level": "medium",
             "reasons": ["転職先の重要情報が未確定"],
@@ -21,7 +28,7 @@ def summarize(
             "known_unknowns": ["稼働実態", "文化"],
         }
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         return {
             "overall_level": "high",
             "reasons": ["価値観と目的が未確定"],

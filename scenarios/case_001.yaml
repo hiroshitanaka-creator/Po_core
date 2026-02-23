@@ -39,3 +39,5 @@ unknowns:
   - "スタートアップの資金繰り（ランウェイ）"
   - "評価制度と成果期待（具体KPI）"
   - "現職の異動・職務変更で成長機会が得られる可能性"
+extensions:
+  scenario_profile: "job_change_transition_v1"

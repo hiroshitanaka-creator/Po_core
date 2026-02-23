@@ -19,3 +19,5 @@ unknowns:
   - "学び直しの目的（何を得たいのか）"
   - "許容できるリスク量"
   - "支援の有無（家族・貯金・奨学金）"
+extensions:
+  scenario_profile: "values_clarification_v1"

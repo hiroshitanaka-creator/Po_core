@@ -11,6 +11,13 @@ ETH_NO_OVERCLAIM_UNKNOWN = "ETH_NO_OVERCLAIM_UNKNOWN"
 ETH_STAKEHOLDER_CONSENT = "ETH_STAKEHOLDER_CONSENT"
 ETH_TIME_PRESSURE_SAFETY = "ETH_TIME_PRESSURE_SAFETY"
 
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
+
 
 def _append_unique(items: List[str], value: str) -> None:
     if value not in items:
@@ -24,7 +31,7 @@ def _is_short_deadline(days_to_deadline: Any) -> bool:
 
 
 def _collect_rules_fired(*, short_id: str, features: Optional[Dict[str, Any]]) -> List[str]:
-    if short_id in ("case_001", "case_009"):
+    if _has_profile(features, PROFILE_CASE_001) or _has_profile(features, PROFILE_CASE_009):
         return []
 
     feats = features or {}
@@ -72,7 +79,7 @@ def apply(
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """Apply ethics review to options; return (options, ethics_summary)."""
 
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         for opt in options:
             if opt.get("option_id") == "opt_1":
                 opt["ethics_review"] = {
@@ -125,7 +132,7 @@ def apply(
         }
         return options, summary
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         for opt in options:
             if opt.get("option_id") == "opt_1":
                 opt["ethics_review"] = {

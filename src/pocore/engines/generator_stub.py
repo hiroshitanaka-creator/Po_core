@@ -5,7 +5,8 @@ src/pocore/engines/generator_stub.py
 Option generator (stub).
 
 Design:
-- Frozen outputs for golden cases (case_001, case_009).
+- Profile outputs for scenario_profile-based contracts (job_change_transition_v1,
+  values_clarification_v1).
 - Generic path uses features (constraint_conflict, values_empty, etc.).
 - ethics_review / responsibility_review are placeholder; filled by later engines.
 """
@@ -13,6 +14,13 @@ Design:
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
+
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
 
 
 def _ph_ethics() -> Dict[str, Any]:
@@ -51,7 +59,7 @@ def generate_options(
     """Generate 2 option stubs for the given case."""
 
     # ── Frozen golden contracts ───────────────────────────────────────────
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         return [
             {
                 "option_id": "opt_1",
@@ -128,7 +136,7 @@ def generate_options(
             },
         ]
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         return [
             {
                 "option_id": "opt_1",

@@ -82,6 +82,14 @@ def extract_features(case: Dict[str, Any], *, now: Optional[str] = None) -> Dict
     unknowns = case.get("unknowns", [])
     stakeholders = case.get("stakeholders", [])
     deadline = case.get("deadline")
+    extensions = case.get("extensions")
+    scenario_profile = None
+    if isinstance(extensions, dict):
+        raw_profile = extensions.get("scenario_profile")
+        if isinstance(raw_profile, str):
+            normalized = raw_profile.strip()
+            if normalized:
+                scenario_profile = normalized
 
     features: Dict[str, Any] = {
         "values_empty": isinstance(values, list) and len(values) == 0,
@@ -93,6 +101,7 @@ def extract_features(case: Dict[str, Any], *, now: Optional[str] = None) -> Dict
         "deadline_present": (deadline is not None and str(deadline).strip() != ""),
         "unknowns_items": _extract_unknowns_items(unknowns),
         "stakeholder_roles": _extract_stakeholder_roles(stakeholders),
+        "scenario_profile": scenario_profile,
     }
 
     features.update(_extract_deadline_features(deadline, now))

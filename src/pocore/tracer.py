@@ -8,7 +8,7 @@ Contract (ADR-0003):
 - All timestamps derived from injected `created_at` with fixed offsets.
 - No wall-clock time.
 - Step names from output_schema_v1.json enum.
-- Existing golden cases use frozen trace structures.
+- Profile-based scenarios can pin trace structures without case_id coupling.
 """
 
 from __future__ import annotations
@@ -16,6 +16,13 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .utils import add_seconds
+
+PROFILE_CASE_001 = "job_change_transition_v1"
+PROFILE_CASE_009 = "values_clarification_v1"
+
+
+def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
+    return isinstance(features, dict) and features.get("scenario_profile") == profile
 
 
 def build_trace(
@@ -32,7 +39,7 @@ def build_trace(
     """Build a deterministic trace for a pipeline run."""
 
     # ── Frozen golden contracts ───────────────────────────────────────────
-    if short_id == "case_001":
+    if _has_profile(features, PROFILE_CASE_001):
         return {
             "version": "1.0",
             "steps": [
@@ -58,7 +65,7 @@ def build_trace(
             ],
         }
 
-    if short_id == "case_009":
+    if _has_profile(features, PROFILE_CASE_009):
         return {
             "version": "1.0",
             "steps": [
