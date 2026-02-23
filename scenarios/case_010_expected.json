@@ -376,7 +376,14 @@
         "name": "compose_output",
         "started_at": "2026-02-22T00:00:03Z",
         "ended_at": "2026-02-22T00:00:04Z",
-        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+        "summary": "推奨・反証・代替案を含む出力を組み立てた",
+        "metrics": {
+          "arbitration_code": "CONSTRAINT_CONFLICT",
+          "policy_snapshot": {
+            "UNKNOWN_BLOCK": 4,
+            "TIME_PRESSURE_DAYS": 7
+          }
+        }
       }
     ]
   }

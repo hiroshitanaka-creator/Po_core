@@ -23,6 +23,7 @@ from .engines import (
     uncertainty_v1,
 )
 from .tracer import build_trace
+from .policy_v1 import TIME_PRESSURE_DAYS, UNKNOWN_BLOCK
 from .utils import deterministic_run_id, input_digest, normalize_now
 
 POCORE_VERSION = "0.1.0"
@@ -65,7 +66,7 @@ def run_case(
         case, short_id=short_id, features=features, options=options
     )
     questions = question_v1.generate(case, short_id=short_id, features=features)
-    recommendation = recommendation_v1.recommend(
+    recommendation, arbitration_code = recommendation_v1.arbitrate_recommendation(
         case, short_id=short_id, features=features, options=options
     )
     uncertainty = uncertainty_v1.summarize(case, short_id=short_id, features=features)
@@ -77,6 +78,11 @@ def run_case(
         options_count=len(options),
         questions_count=len(questions),
         features=features,
+        arbitration_code=arbitration_code,
+        policy_snapshot={
+            "UNKNOWN_BLOCK": UNKNOWN_BLOCK,
+            "TIME_PRESSURE_DAYS": TIME_PRESSURE_DAYS,
+        },
     )
 
     return {

@@ -25,6 +25,8 @@ def build_trace(
     options_count: int = 0,
     questions_count: int = 0,
     features: Optional[Dict[str, Any]] = None,
+    arbitration_code: Optional[str] = None,
+    policy_snapshot: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Build a deterministic trace for a pipeline run."""
 
@@ -126,13 +128,21 @@ def build_trace(
         )
         t += 1
 
-    steps.append(
-        {
-            "name": "compose_output",
-            "started_at": add_seconds(created_at, t),
-            "ended_at": add_seconds(created_at, t + 1),
-            "summary": "推奨・反証・代替案を含む出力を組み立てた",
-        }
-    )
+    compose_metrics: Dict[str, Any] = {}
+    if arbitration_code:
+        compose_metrics["arbitration_code"] = arbitration_code
+    if policy_snapshot:
+        compose_metrics["policy_snapshot"] = dict(policy_snapshot)
+
+    compose_step: Dict[str, Any] = {
+        "name": "compose_output",
+        "started_at": add_seconds(created_at, t),
+        "ended_at": add_seconds(created_at, t + 1),
+        "summary": "推奨・反証・代替案を含む出力を組み立てた",
+    }
+    if compose_metrics:
+        compose_step["metrics"] = compose_metrics
+
+    steps.append(compose_step)
 
     return {"version": "1.0", "steps": steps}
