@@ -62,6 +62,7 @@ def run_case(
     options, ethics_summary = ethics_v1.apply(
         case, short_id=short_id, features=features, options=options
     )
+    ethics_rules_fired = ethics_v1.rules_fired_for(short_id=short_id, features=features)
     options, responsibility_summary = responsibility_v1.apply(
         case, short_id=short_id, features=features, options=options
     )
@@ -78,6 +79,7 @@ def run_case(
         options_count=len(options),
         questions_count=len(questions),
         features=features,
+        rules_fired=ethics_rules_fired,
         arbitration_code=arbitration_code,
         policy_snapshot={
             "UNKNOWN_BLOCK": UNKNOWN_BLOCK,
