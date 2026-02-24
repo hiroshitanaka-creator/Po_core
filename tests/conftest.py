@@ -75,6 +75,8 @@ def pytest_pyfunc_call(pyfuncitem):
     if not asyncio.iscoroutinefunction(test_func):
         return None
 
-    kwargs = {name: pyfuncitem.funcargs[name] for name in pyfuncitem._fixtureinfo.argnames}
+    kwargs = {
+        name: pyfuncitem.funcargs[name] for name in pyfuncitem._fixtureinfo.argnames
+    }
     asyncio.run(test_func(**kwargs))
     return True

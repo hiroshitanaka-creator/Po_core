@@ -30,8 +30,12 @@ def _is_short_deadline(days_to_deadline: Any) -> bool:
     return 0 <= days_to_deadline <= 7
 
 
-def _collect_rules_fired(*, short_id: str, features: Optional[Dict[str, Any]]) -> List[str]:
-    if _has_profile(features, PROFILE_CASE_001) or _has_profile(features, PROFILE_CASE_009):
+def _collect_rules_fired(
+    *, short_id: str, features: Optional[Dict[str, Any]]
+) -> List[str]:
+    if _has_profile(features, PROFILE_CASE_001) or _has_profile(
+        features, PROFILE_CASE_009
+    ):
         return []
 
     feats = features or {}
@@ -44,7 +48,8 @@ def _collect_rules_fired(*, short_id: str, features: Optional[Dict[str, Any]]) -
         ),
         (
             ETH_NO_OVERCLAIM_UNKNOWN,
-            lambda f: isinstance(f.get("unknowns_count"), int) and f.get("unknowns_count") > 0,
+            lambda f: isinstance(f.get("unknowns_count"), int)
+            and f.get("unknowns_count") > 0,
         ),
         (
             ETH_STAKEHOLDER_CONSENT,
