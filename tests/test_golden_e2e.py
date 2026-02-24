@@ -19,7 +19,7 @@ Canonicalization:
     Scalar fields and other lists are compared as-is.
 
 To regenerate goldens intentionally:
-    python scripts/update_goldens.py
+    python scripts/regenerate_golden.py --all --write
 """
 
 from __future__ import annotations
@@ -210,7 +210,7 @@ def _format_failure(actual: Dict, expected: Dict, name: str) -> str:
     if udiff:
         parts.append("\n── Unified diff (expected → actual) ──")
         parts.extend(udiff[:120])  # cap at 120 diff lines
-    parts.append("\nTo update goldens: python scripts/update_goldens.py")
+    parts.append("\nTo update goldens: python scripts/regenerate_golden.py --all --write")
     return "\n".join(parts)
 
 
