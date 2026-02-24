@@ -210,7 +210,9 @@ def _format_failure(actual: Dict, expected: Dict, name: str) -> str:
     if udiff:
         parts.append("\n── Unified diff (expected → actual) ──")
         parts.extend(udiff[:120])  # cap at 120 diff lines
-    parts.append("\nTo update goldens: python scripts/regenerate_golden.py --all --write")
+    parts.append(
+        "\nTo update goldens: python scripts/regenerate_golden.py --all --write"
+    )
     return "\n".join(parts)
 
 

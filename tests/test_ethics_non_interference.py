@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from pocore.runner import run_case_file
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CASE_PATH = ROOT / "scenarios" / "case_010.yaml"
 
@@ -43,7 +42,13 @@ def test_ethics_changes_do_not_change_recommendation(monkeypatch) -> None:
                 "confidence": "low",
             }
         return options, {
-            "principles_used": ["integrity", "autonomy", "nonmaleficence", "justice", "accountability"],
+            "principles_used": [
+                "integrity",
+                "autonomy",
+                "nonmaleficence",
+                "justice",
+                "accountability",
+            ],
             "tradeoffs": [
                 {
                     "tension": "ダミー倫理トレードオフ",

@@ -2,11 +2,15 @@ from pocore.orchestrator import run_case
 
 
 def _compose_metrics(output: dict) -> dict:
-    compose_step = next(step for step in output["trace"]["steps"] if step["name"] == "compose_output")
+    compose_step = next(
+        step for step in output["trace"]["steps"] if step["name"] == "compose_output"
+    )
     return compose_step.get("metrics", {})
 
 
-def test_trace_compose_output_includes_arbitration_code_and_policy_snapshot_for_generic_case() -> None:
+def test_trace_compose_output_includes_arbitration_code_and_policy_snapshot_for_generic_case() -> (
+    None
+):
     case = {
         "case_id": "case_custom_arbitration",
         "title": "arbitration trace check",
@@ -50,5 +54,7 @@ def test_trace_compose_output_arbitration_metrics_not_added_to_frozen_case() -> 
         deterministic=True,
     )
 
-    compose_step = next(step for step in output["trace"]["steps"] if step["name"] == "compose_output")
+    compose_step = next(
+        step for step in output["trace"]["steps"] if step["name"] == "compose_output"
+    )
     assert "metrics" not in compose_step

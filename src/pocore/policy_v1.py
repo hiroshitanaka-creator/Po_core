@@ -9,12 +9,10 @@ UNKNOWN_SOFT = 1
 TIME_PRESSURE_DAYS = 7
 
 
-
 def should_block_recommendation(features: Dict[str, Any]) -> bool:
     """Return True when missing critical information should block recommendation."""
     unknowns_count = int(features.get("unknowns_count", 0) or 0)
     return unknowns_count >= UNKNOWN_BLOCK
-
 
 
 def has_time_pressure_with_unknowns(features: Dict[str, Any]) -> bool:

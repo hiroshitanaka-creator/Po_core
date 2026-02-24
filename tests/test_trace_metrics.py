@@ -40,7 +40,11 @@ def test_build_trace_generic_omits_days_to_deadline_when_unknown():
         created_at="2026-02-22T00:00:00Z",
         options_count=1,
         questions_count=0,
-        features={"unknowns_count": 1, "stakeholders_count": 0, "days_to_deadline": None},
+        features={
+            "unknowns_count": 1,
+            "stakeholders_count": 0,
+            "days_to_deadline": None,
+        },
     )
 
     metrics = _parse_step(trace)["metrics"]
@@ -60,7 +64,9 @@ def test_build_trace_generic_compose_output_metrics_include_rules_fired() -> Non
         arbitration_code="REC_A",
     )
 
-    compose_step = next(step for step in trace["steps"] if step["name"] == "compose_output")
+    compose_step = next(
+        step for step in trace["steps"] if step["name"] == "compose_output"
+    )
     assert compose_step["metrics"]["rules_fired"] == ["ETH_STAKEHOLDER_CONSENT"]
     assert compose_step["metrics"]["arbitration_code"] == "REC_A"
 

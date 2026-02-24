@@ -16,7 +16,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from .utils import case_short_id, detect_constraint_conflict, parse_deadline_iso, parse_iso_datetime
+from .utils import (
+    case_short_id,
+    detect_constraint_conflict,
+    parse_deadline_iso,
+    parse_iso_datetime,
+)
 
 
 @dataclass(frozen=True)
@@ -75,7 +80,9 @@ def _extract_deadline_features(deadline: Any, now: Optional[str]) -> Dict[str, A
     return result
 
 
-def extract_features(case: Dict[str, Any], *, now: Optional[str] = None) -> Dict[str, Any]:
+def extract_features(
+    case: Dict[str, Any], *, now: Optional[str] = None
+) -> Dict[str, Any]:
     """Derive feature flags from case dict for engine dispatch."""
     values = case.get("values", [])
     constraints = case.get("constraints", [])

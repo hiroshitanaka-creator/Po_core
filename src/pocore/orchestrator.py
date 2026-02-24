@@ -22,8 +22,8 @@ from .engines import (
     responsibility_v1,
     uncertainty_v1,
 )
-from .tracer import build_trace
 from .policy_v1 import TIME_PRESSURE_DAYS, UNKNOWN_BLOCK
+from .tracer import build_trace
 from .utils import deterministic_run_id, input_digest, normalize_now
 
 POCORE_VERSION = "0.1.0"

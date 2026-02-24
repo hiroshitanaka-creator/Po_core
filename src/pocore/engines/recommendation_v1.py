@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from pocore.policy_v1 import has_time_pressure_with_unknowns, should_block_recommendation
+from pocore.policy_v1 import (
+    has_time_pressure_with_unknowns,
+    should_block_recommendation,
+)
 
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
@@ -133,7 +136,9 @@ def arbitrate_recommendation(
             "recommended_option_id": "opt_1",
             "reason": "害を抑えつつ前進できるため。",
             "counter": "遅いと感じる可能性がある。",
-            "alternatives": [{"option_id": "opt_2", "when_to_choose": "不明点が多い場合"}],
+            "alternatives": [
+                {"option_id": "opt_2", "when_to_choose": "不明点が多い場合"}
+            ],
             "confidence": "medium",
         },
         "DEFAULT_RECOMMEND",
