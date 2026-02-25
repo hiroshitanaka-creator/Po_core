@@ -666,9 +666,18 @@ Your criticism makes the project stronger. We publish failures, remember?
 
 ---
 
-## License
+## License & Contributor License Agreement (CLA)
 
-By contributing to Po_core, you agree that your contributions will be licensed under the GNU Affero General Public License v3.0 (AGPLv3).
+Po_core uses dual licensing (AGPLv3 + Commercial License).
+
+By submitting a pull request or contribution, you agree to the following:
+
+1. Your contributions are licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**
+2. You grant the **Flying Pig Project** the right to also distribute your contributions under a **commercial license**
+
+This dual-licensing CLA is necessary to sustain the project. Contributors retain their copyright.
+
+See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for details on the commercial license.
 
 ---
 

@@ -635,11 +635,17 @@ If you use Po_core in academic work, please cite:
 
 ## License
 
-GNU Affero General Public License v3.0 (AGPLv3) — Copyleft: modifications must be shared.
+Po_core uses **dual licensing**:
 
-Copyright (c) 2024 Flying Pig Philosopher
+| Use case | License |
+|---|---|
+| Personal / Academic / Research / OSS (AGPLv3-compliant) | **Free** — [AGPLv3](./LICENSE) |
+| Commercial / Proprietary / SaaS without source disclosure | **Commercial License required** |
 
-See [LICENSE](./License.md) for full details.
+For commercial licensing inquiries: flyingpig0229+github@gmail.com
+See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for details.
+
+Copyright (c) 2024 Flying Pig Project
 
 In the spirit of Flying Pig Philosophy:
 
