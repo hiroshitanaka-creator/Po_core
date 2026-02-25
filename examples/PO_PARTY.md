@@ -418,7 +418,7 @@ Future enhancements for Po_Party:
 
 ## License
 
-MIT License — Part of Po_core
+GNU AGPLv3 — Part of Po_core
 
 Copyright (c) 2024 Flying Pig Philosopher
 

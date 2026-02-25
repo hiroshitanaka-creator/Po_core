@@ -668,7 +668,7 @@ Your criticism makes the project stronger. We publish failures, remember?
 
 ## License
 
-By contributing to Po_core, you agree that your contributions will be licensed under the MIT License.
+By contributing to Po_core, you agree that your contributions will be licensed under the GNU Affero General Public License v3.0 (AGPLv3).
 
 ---
 

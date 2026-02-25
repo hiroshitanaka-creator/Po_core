@@ -7,7 +7,7 @@ name = "po-core-flyingpig"
 version = "0.2.0b3"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0-or-later"}
 authors = [
     {name = "Flying Pig Project", email = "flyingpig0229+github@gmail.com"}
 ]
@@ -29,7 +29,7 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",

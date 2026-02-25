@@ -172,7 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CONTRIBUTING.md with Flying Pig Philosophy integration
 - CODE_OF_CONDUCT.md emphasizing philosophical discourse
 - MANIFESTO.md (Japanese and English versions)
-- LICENSE (MIT License)
+- LICENSE (GNU AGPLv3)
 - Repository structure documentation
 
 **Philosophy**

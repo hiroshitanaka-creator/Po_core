@@ -5,7 +5,7 @@
 **Contact:** <flyingpig0229+github@gmail.com>
 **Version:** 0.1.0-alpha (70% implementation complete)
 **Date:** December 2025
-**License:** MIT License / CC BY 4.0
+**License:** GNU AGPLv3 / CC BY 4.0
 
 ---
 
@@ -868,7 +868,7 @@ First system to:
 
 **Mitigation Strategies**:
 
-- Open-source release (MIT license)
+- Open-source release (GNU AGPLv3)
 - Comprehensive documentation (120+ specs)
 - Community-driven development
 
@@ -918,7 +918,7 @@ This paper presented **Po_core**, a philosophy-driven tensor framework for ethic
 
 - Alpha release (v0.1.0, 70% complete)
 - Working prototypes: Web API, batch analyzer, enterprise dashboard
-- Open-source on GitHub (MIT license)
+- Open-source on GitHub (GNU AGPLv3)
 
 ### 8.2 The Emergence Sweet Spot: A New Paradigm
 
@@ -976,7 +976,7 @@ This addresses growing concerns about AI opacity and accountability.
 
 ### 8.5 Call for Collaboration
 
-Po_core is **open-source** (MIT license) and **community-driven**. We invite:
+Po_core is **open-source** (GNU AGPLv3) and **community-driven**. We invite:
 
 **Philosophers**: Help expand and refine philosopher modules
 **AI Researchers**: Validate Sweet Spot hypothesis with live LLMs
@@ -1234,7 +1234,7 @@ This project owes its existence to:
 ---
 
 **Project Repository**: <https://github.com/hiroshitanaka-creator/Po_core>
-**License**: MIT License
+**License**: GNU AGPLv3
 **Status**: Alpha v0.1.0 (70% implementation complete)
 **Contact**: <flyingpig0229+github@gmail.com>
 
