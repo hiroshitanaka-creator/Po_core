@@ -5,7 +5,7 @@
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
 [![PyPI version](https://badge.fury.io/py/po-core-flyingpig.svg)](https://badge.fury.io/py/po-core-flyingpig)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./License.md)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-blue.svg)]()
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
