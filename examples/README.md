@@ -336,7 +336,7 @@ existential_response = existential_po.generate("自由とは何か？")
 
 ## 📝 ライセンス
 
-MIT License - 自由に使用、改変、配布できます。
+GNU Affero General Public License v3.0 (AGPLv3) — 改変・配布時はソースコードの公開が必要です。
 
 ## 🤝 貢献
 

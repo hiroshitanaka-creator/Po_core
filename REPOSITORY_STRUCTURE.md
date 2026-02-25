@@ -55,7 +55,7 @@ Po_core/
 ├── README.md                   # Project overview
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── CODE_OF_CONDUCT.md          # Code of conduct
-├── LICENSE                     # MIT License
+├── LICENSE                     # GNU AGPLv3 License
 ├── MANIFESTO.md                # Project manifesto
 ├── CHANGELOG.md                # Version history
 ├── requirements.txt            # Python dependencies
@@ -344,7 +344,7 @@ config/
 | `README.md` | Project overview, quickstart | ✅ Complete |
 | `CONTRIBUTING.md` | Contribution guidelines | ✅ Complete |
 | `CODE_OF_CONDUCT.md` | Community standards | ✅ Complete |
-| `LICENSE` | MIT License | ✅ Complete |
+| `LICENSE` | GNU AGPLv3 License | ✅ Complete |
 | `MANIFESTO.md` | Flying Pig Philosophy | ✅ Complete |
 | `CHANGELOG.md` | Version history | 🔄 To Create |
 

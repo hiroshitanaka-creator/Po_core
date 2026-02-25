@@ -114,7 +114,7 @@ Integrates:
 ## Citations and License
 
 Use appropriate citation formats.
-Project is released under the MIT License—see the project root `LICENSE`.
+Project is released under the GNU Affero General Public License v3.0 (AGPLv3)—see the project root `LICENSE`.
 
 ## Collaboration
 

@@ -635,7 +635,7 @@ If you use Po_core in academic work, please cite:
 
 ## License
 
-MIT License — Use freely, attribute clearly.
+GNU Affero General Public License v3.0 (AGPLv3) — Copyleft: modifications must be shared.
 
 Copyright (c) 2024 Flying Pig Philosopher
 
