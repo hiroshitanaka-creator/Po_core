@@ -5,7 +5,7 @@
 > *A frog in a well may not know the ocean, but it can know the sky.*
 
 [![PyPI version](https://badge.fury.io/py/po-core-flyingpig.svg)](https://badge.fury.io/py/po-core-flyingpig)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./License.md)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-blue.svg)]()
 [![Contributions: Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg)]()
 
@@ -635,11 +635,17 @@ If you use Po_core in academic work, please cite:
 
 ## License
 
-GNU Affero General Public License v3.0 (AGPLv3) — Copyleft: modifications must be shared.
+Po_core uses **dual licensing**:
 
-Copyright (c) 2024 Flying Pig Philosopher
+| Use case | License |
+|---|---|
+| Personal / Academic / Research / OSS (AGPLv3-compliant) | **Free** — [AGPLv3](./LICENSE) |
+| Commercial / Proprietary / SaaS without source disclosure | **Commercial License required** |
 
-See [LICENSE](./License.md) for full details.
+For commercial licensing inquiries: flyingpig0229+github@gmail.com
+See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for details.
+
+Copyright (c) 2024 Flying Pig Project
 
 In the spirit of Flying Pig Philosophy:
 
