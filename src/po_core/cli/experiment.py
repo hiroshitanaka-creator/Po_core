@@ -29,8 +29,7 @@ from po_core.experiments.storage import ExperimentStorage
 
 def _print_help():
     """ヘルプメッセージを表示"""
-    print(
-        """
+    print("""
 Po_core Experiment CLI
 
 Usage:
@@ -44,8 +43,7 @@ Commands:
     analyze      Analyze experiment results
     promote      Promote winner to main (if recommendation is 'promote')
     rollback     Rollback to previous backup
-"""
-    )
+""")
 
 
 def cmd_list():
