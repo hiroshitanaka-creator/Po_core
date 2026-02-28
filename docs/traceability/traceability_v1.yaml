@@ -74,6 +74,14 @@ requirements:
     code_refs:
       - kind: module
         value: src/pocore/parse_input.py
+      - kind: module
+        value: src/pocore/engines/responsibility_v1.py
+      - kind: module
+        value: src/pocore/engines/question_v1.py
+      - kind: rule_id
+        value: RESP_STAKEHOLDER_CONSENT_CHECK
+      - kind: rule_id
+        value: RESP_IMPACT_SCOPE
 
   - id: REQ-ARB-001
     principles: [P-INT-001, P-AUT-001, P-NMH-001]

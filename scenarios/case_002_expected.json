@@ -89,9 +89,9 @@
         "失敗コストを抑えられる"
       ],
       "responsibility_review": {
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
         "confidence": "medium",
-        "decision_owner": "user",
+        "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
             "impact": "判断の正当性・信頼に影響",
@@ -173,9 +173,9 @@
         "判断精度が上がる"
       ],
       "responsibility_review": {
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
         "confidence": "medium",
-        "decision_owner": "user",
+        "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
             "impact": "判断の正当性・信頼に影響",
@@ -215,7 +215,40 @@
       }
     }
   ],
-  "questions": [],
+  "questions": [
+    {
+      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "optional": false,
+      "priority": 1,
+      "question": "この意思決定の決裁者（最終承認者）は誰か？",
+      "question_id": "q_stakeholder_1",
+      "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
+    },
+    {
+      "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "関係者の同意・相談が必要な対象は誰か？",
+      "question_id": "q_stakeholder_2",
+      "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
+    },
+    {
+      "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
+      "optional": false,
+      "priority": 1,
+      "question": "影響範囲は？（誰が何を失い、何を得るか）",
+      "question_id": "q_stakeholder_3",
+      "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。"
+    },
+    {
+      "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "通知・説明の方法と期限は？",
+      "question_id": "q_stakeholder_4",
+      "why_needed": "合意形成を実務として実行可能にするため。"
+    }
+  ],
   "recommendation": {
     "alternatives": [
       {
@@ -230,9 +263,14 @@
     "status": "recommended"
   },
   "responsibility": {
-    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
-    "consent_considerations": [],
-    "decision_owner": "user",
+    "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
+    "consent_considerations": [
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+      "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+      "RESP_IMPACT_SCOPE: コミュニケーション手段と期限を決め、実施ログを残す"
+    ],
+    "decision_owner": "未確定（要確認）",
     "stakeholders": [
       {
         "impact": "判断の正当性・信頼に影響",
@@ -263,7 +301,7 @@
         "metrics": {
           "days_to_deadline": 16,
           "options_planned": 2,
-          "questions_planned": 0,
+          "questions_planned": 4,
           "rules_fired": [
             "ETH_NO_OVERCLAIM_UNKNOWN",
             "ETH_STAKEHOLDER_CONSENT"
@@ -287,6 +325,15 @@
       {
         "ended_at": "2026-02-22T00:00:03Z",
         "metrics": {
+          "questions": 4
+        },
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "不足情報を補う問いを生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:04Z",
+        "metrics": {
           "arbitration_code": "DEFAULT_RECOMMEND",
           "policy_snapshot": {
             "TIME_PRESSURE_DAYS": -4,
@@ -298,7 +345,7 @@
           ]
         },
         "name": "compose_output",
-        "started_at": "2026-02-22T00:00:02Z",
+        "started_at": "2026-02-22T00:00:03Z",
         "summary": "推奨・反証・代替案を含む出力を組み立てた"
       }
     ],
