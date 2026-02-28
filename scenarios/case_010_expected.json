@@ -58,13 +58,24 @@
     {
       "action_plan": [
         {
-          "step": "矛盾している制約を1枚に書き出し、どれを緩められるか順位づけする"
+          "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
+          "step": "制約矛盾サマリ: 要求は週20h以上だが、許容上限は週5h以下で同時成立しない"
         },
         {
-          "step": "『週5時間』で成立する最小スコープ（検証実験）に縮退する"
+          "rationale": "交渉対象を限定して最短で合意可能にする",
+          "step": "絶対制約（守る）と調整可能制約（緩める）を2列で仕分けする"
         },
         {
-          "step": "時間を増やす手段（業務調整/家事外注/睡眠削減禁止）を検討する"
+          "rationale": "矛盾を抱えたままの過大実行を防ぐ",
+          "step": "可逆な最小スコープへ縮退し、1週間の検証条件を定義する"
+        },
+        {
+          "rationale": "意思決定を左右するunknownsを先に潰す",
+          "step": "不足情報を2件に絞って確認する（優先度順）"
+        },
+        {
+          "rationale": "保留の長期化と損失拡大を防ぐ",
+          "step": "再判定日と撤退条件（健康/収入/期限）を明文化して合意する"
         }
       ],
       "cons": [
@@ -162,10 +173,24 @@
     {
       "action_plan": [
         {
-          "step": "週5時間で回る検証メニューを作る（ヒアリング/LP/試作）"
+          "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
+          "step": "制約矛盾サマリ: 要求は週20h以上だが、許容上限は週5h以下で同時成立しない"
         },
         {
-          "step": "8週間で『進める/止める』の判断基準を置く"
+          "rationale": "交渉対象を限定して最短で合意可能にする",
+          "step": "絶対制約（守る）と調整可能制約（緩める）を2列で仕分けする"
+        },
+        {
+          "rationale": "矛盾を抱えたままの過大実行を防ぐ",
+          "step": "可逆な最小スコープへ縮退し、1週間の検証条件を定義する"
+        },
+        {
+          "rationale": "意思決定を左右するunknownsを先に潰す",
+          "step": "不足情報を2件に絞って確認する（優先度順）"
+        },
+        {
+          "rationale": "保留の長期化と損失拡大を防ぐ",
+          "step": "再判定日と撤退条件（健康/収入/期限）を明文化して合意する"
         }
       ],
       "cons": [
@@ -270,36 +295,36 @@
       "why_needed": "優先順位がないと制約の再設計ができないため。"
     },
     {
-      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "assumption_if_unanswered": "期限のみ調整可能と仮定する",
       "optional": false,
       "priority": 1,
-      "question": "この意思決定の決裁者（最終承認者）は誰か？",
-      "question_id": "q_stakeholder_1",
-      "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
+      "question": "矛盾制約（要求:20h/週, 上限:5h/週）を解くため、緩和可能な制約はどれか？（交渉可否/一時変更の可否）",
+      "question_id": "q_conflict_2",
+      "why_needed": "固定制約と可変制約を分離しないと実行計画が作れないため。"
     },
     {
-      "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+      "assumption_if_unanswered": "7日以内に一次判断すると仮定する",
       "optional": false,
       "priority": 2,
-      "question": "関係者の同意・相談が必要な対象は誰か？",
-      "question_id": "q_stakeholder_2",
-      "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
+      "question": "矛盾解消の期限はいつまでか？（判断日と見直し日を明示）",
+      "question_id": "q_conflict_3",
+      "why_needed": "無期限の保留を防ぎ、意思決定の完了条件を固定するため。"
     },
     {
-      "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
+      "assumption_if_unanswered": "影響範囲を限定した1週間の試行を実施する",
       "optional": false,
       "priority": 2,
-      "question": "影響範囲は？（誰が何を失い、何を得るか）",
-      "question_id": "q_stakeholder_3",
-      "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。"
+      "question": "現状で可逆な最小実験は何か？（影響を限定して検証する）",
+      "question_id": "q_conflict_4",
+      "why_needed": "破綻リスクを抑えながら前提検証を進めるため。"
     },
     {
-      "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
+      "assumption_if_unanswered": "健康・収入の下限割れで撤退すると仮定する",
       "optional": false,
       "priority": 3,
-      "question": "通知・説明の方法と期限は？",
-      "question_id": "q_stakeholder_4",
-      "why_needed": "合意形成を実務として実行可能にするため。"
+      "question": "解消不能だった場合の撤退条件は何か？（健康/収入/関係者影響）",
+      "question_id": "q_conflict_5",
+      "why_needed": "矛盾を抱えたままの継続を防ぎ、損失上限を明確化するため。"
     }
   ],
   "recommendation": {
@@ -394,6 +419,9 @@
             "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
             "ETH_NO_OVERCLAIM_UNKNOWN",
             "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "rules_fired_planning": [
+            "PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1"
           ]
         },
         "name": "compose_output",

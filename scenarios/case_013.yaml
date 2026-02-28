@@ -1,3 +1,30 @@
+case_id: case_013_constraint_conflict_protocol
+title: "制約矛盾の解消プロトコル適用"
+locale: ja-JP
+problem: "新規施策を今月中に開始したいが、投入時間の制約が矛盾している。最短で整理して次の判断に進みたい。"
+context:
+  domain: "新規事業準備"
+  current_state: "意思決定前だが、制約の同時成立性が不明"
+constraints:
+  - "今月中に検証を開始するため、週18時間以上の投入が必要"
+  - "家庭事情により追加時間は週6時間以内に抑える"
+  - "収入は下げない"
+  - "健康を損なう働き方は避ける"
+values:
+  - "持続可能性"
+  - "説明責任"
+  - "経済的安定"
+deadline: "2026-03-20"
+stakeholders:
+  - name: "自分"
+    role: "意思決定主体"
+    impact: "時間・収入・健康のバランスに影響"
+  - name: "家族"
+    role: "生活共同体"
+    impact: "時間配分と生活の安定に影響"
+unknowns:
+  - "投入時間を増やす代替手段"
+  - "短期検証で最低限必要なスコープ"
 case_id: case_013_values_clarification_pack
 title: "価値軸が空の意思決定を手続き化する"
 locale: ja-JP

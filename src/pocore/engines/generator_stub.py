@@ -20,6 +20,7 @@ from ..policy_v1 import TIME_PRESSURE_DAYS
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
 PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN = "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1 = "PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1"
 PLAN_VALUES_CLARIFICATION_PACK_V1 = "PLAN_VALUES_CLARIFICATION_PACK_V1"
 TRACK_B_UNKNOWNS_MAX = 3
 
@@ -175,16 +176,54 @@ def _apply_two_track_plan_if_needed(
     return options
 
 
+def _build_constraint_conflict_plan(features: Dict[str, Any]) -> List[Dict[str, str]]:
+    min_h = features.get("time_min_hours_per_week")
+    max_h = features.get("time_max_hours_per_week")
+
+    summary = "制約矛盾サマリ: 要求時間と許容上限が同時に成立しない"
+    if isinstance(min_h, int) and isinstance(max_h, int):
+        summary = (
+            "制約矛盾サマリ: "
+            f"要求は週{min_h}h以上だが、許容上限は週{max_h}h以下で同時成立しない"
+        )
+
+    return [
+        {
+            "step": summary,
+            "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
+        },
+        {
+            "step": "絶対制約（守る）と調整可能制約（緩める）を2列で仕分けする",
+            "rationale": "交渉対象を限定して最短で合意可能にする",
+        },
+        {
+            "step": "可逆な最小スコープへ縮退し、1週間の検証条件を定義する",
+            "rationale": "矛盾を抱えたままの過大実行を防ぐ",
+        },
+        {
+            "step": "不足情報を2件に絞って確認する（優先度順）",
+            "rationale": "意思決定を左右するunknownsを先に潰す",
+        },
+        {
+            "step": "再判定日と撤退条件（健康/収入/期限）を明文化して合意する",
+            "rationale": "保留の長期化と損失拡大を防ぐ",
+        },
+    ]
+
+
 def rules_fired_for(*, features: Optional[Dict[str, Any]] = None) -> List[str]:
     feats = features or {}
+    fired: List[str] = []
+    if feats.get("constraint_conflict") is True:
+        fired.append(PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1)
     if _has_profile(feats, PROFILE_CASE_001) or _has_profile(feats, PROFILE_CASE_009):
         return []
 
     if _needs_values_clarification_pack(feats):
         return [PLAN_VALUES_CLARIFICATION_PACK_V1]
     if _needs_two_track_plan(feats):
-        return [PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN]
-    return []
+        fired.append(PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN)
+    return fired
 
 
 def generate_options(
@@ -352,6 +391,8 @@ def generate_options(
         if isinstance(min_h, int) and isinstance(max_h, int):
             h_msg = f"（要求:{min_h}h/週, 上限:{max_h}h/週）"
 
+        conflict_plan = _build_constraint_conflict_plan(feats)
+
         return [
             {
                 "option_id": "opt_1",
@@ -361,22 +402,8 @@ def generate_options(
                     "緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。"
                 ),
                 "action_plan": [
-                    {
-                        "step": (
-                            "矛盾している制約を1枚に書き出し、"
-                            "どれを緩められるか順位づけする"
-                        )
-                    },
-                    {
-                        "step": (
-                            "『週5時間』で成立する最小スコープ（検証実験）に縮退する"
-                        )
-                    },
-                    {
-                        "step": (
-                            "時間を増やす手段（業務調整/家事外注/睡眠削減禁止）を検討する"
-                        )
-                    },
+                    {"step": item["step"], "rationale": item["rationale"]}
+                    for item in conflict_plan
                 ],
                 "pros": ["破綻条件を先に潰せる"],
                 "cons": ["一部の願望（期限・投入時間）を修正する必要がある"],
@@ -415,8 +442,8 @@ def generate_options(
                     "週5時間でできる検証（顧客ヒアリング/LP/プロト）に限定する。"
                 ),
                 "action_plan": [
-                    {"step": ("週5時間で回る検証メニューを作る（ヒアリング/LP/試作）")},
-                    {"step": "8週間で『進める/止める』の判断基準を置く"},
+                    {"step": item["step"], "rationale": item["rationale"]}
+                    for item in conflict_plan
                 ],
                 "pros": ["現実制約に沿って継続しやすい"],
                 "cons": ["スピード感は落ちる"],

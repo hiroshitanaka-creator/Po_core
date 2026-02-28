@@ -63,3 +63,8 @@
   - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
   - Principles: P-ACC-001, P-INT-001, P-NMH-001
 
+- **REQ-CONSTRAINT-001: Constraint Conflict Resolution Pack v1**
+  - `features.constraint_conflict == True` のとき、questions で矛盾解消プロトコル（優先順・最大5件）を提示し、options.action_plan で最短解消手順（最大5ステップ）を出力すること。
+  - plan は conflict summary を先頭に含み、決定論順序で再現可能であること。
+  - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
+  - Principles: P-ACC-001, P-INT-001, P-JUS-001, P-NMH-001

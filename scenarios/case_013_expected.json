@@ -1,5 +1,8 @@
 {
   "case_ref": {
+    "case_id": "case_013_constraint_conflict_protocol",
+    "input_digest": "2819dfa45842bd7167ddd9cc341917e72375f234b049731cb8d0abdecc70e75e",
+    "title": "制約矛盾の解消プロトコル適用"
     "case_id": "case_013_values_clarification_pack",
     "input_digest": "e91fbfd60cca2c005e7181044244db4f1cd8fd6aabb74f963dce4133e44db8ff",
     "title": "価値軸が空の意思決定を手続き化する"
@@ -10,6 +13,7 @@
       "意思決定主体をユーザーから奪わない",
       "推奨には反証と代替案を併記する",
       "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
       "価値軸が空のまま推奨を断言しない",
       "価値軸を獲得する質問と手順を先に実施する"
     ],
@@ -25,6 +29,20 @@
       {
         "between": [
           "autonomy",
+          "nonmaleficence"
+        ],
+        "mitigation": "期限・実験・ガードレールで両立を狙う",
+        "severity": "medium",
+        "tension": "速度と安全の緊張"
+      },
+      {
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium",
+        "tension": "自己決定と外部性/公正の緊張"
           "integrity"
         ],
         "mitigation": "価値軸獲得の手続きを先に提示し、裁定は保留する",
@@ -50,6 +68,34 @@
     {
       "action_plan": [
         {
+          "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
+          "step": "制約矛盾サマリ: 要求は週18h以上だが、許容上限は週6h以下で同時成立しない"
+        },
+        {
+          "rationale": "交渉対象を限定して最短で合意可能にする",
+          "step": "絶対制約（守る）と調整可能制約（緩める）を2列で仕分けする"
+        },
+        {
+          "rationale": "矛盾を抱えたままの過大実行を防ぐ",
+          "step": "可逆な最小スコープへ縮退し、1週間の検証条件を定義する"
+        },
+        {
+          "rationale": "意思決定を左右するunknownsを先に潰す",
+          "step": "不足情報を2件に絞って確認する（優先度順）"
+        },
+        {
+          "rationale": "保留の長期化と損失拡大を防ぐ",
+          "step": "再判定日と撤退条件（健康/収入/期限）を明文化して合意する"
+        }
+      ],
+      "cons": [
+        "一部の願望（期限・投入時間）を修正する必要がある"
+      ],
+      "description": "矛盾している制約（要求:18h/週, 上限:6h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
+      "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
           "rationale": "選択肢を固定し、価値軸を可視化する",
           "step": "10分タイマーをセットし、候補価値（安定/成長/自由/関係性）から上位3つを選ぶ"
         },
@@ -83,6 +129,55 @@
         "confidence": "medium",
         "principles_applied": [
           "integrity",
+          "nonmaleficence",
+          "accountability",
+          "justice",
+          "autonomy"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "制約を可視化して破綻条件を先に潰す",
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
+          },
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "medium",
+        "timeline": "2-4 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "破綻条件を先に潰せる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "high",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "時間・収入・健康のバランスに影響",
+            "name": "自分",
+            "role": "意思決定主体"
+          },
+          {
+            "impact": "時間配分と生活の安定に影響",
+            "name": "家族",
+            "role": "生活共同体"
           "autonomy",
           "accountability"
         ],
@@ -111,6 +206,25 @@
       },
       "risks": [
         {
+          "mitigation": "時間・収入・健康の下限を守るルールを先に固定する",
+          "risk": "制約を無視して突っ込むと燃え尽きる",
+          "severity": "high"
+        }
+      ],
+      "title": "制約を再設計して“段階的に起業”する",
+      "uncertainty": {
+        "assumptions": [
+          "制約の一部は交渉・設計変更で動かせる"
+        ],
+        "known_unknowns": [
+          "時間を増やせる余地",
+          "副業規定",
+          "市場ニーズ"
+        ],
+        "overall_level": "high",
+        "reasons": [
+          "制約が矛盾しているため、前提の調整が必要"
+        ]
           "mitigation": "検証項目を明文化する",
           "risk": "検証不足",
           "severity": "medium"
@@ -127,6 +241,34 @@
     {
       "action_plan": [
         {
+          "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
+          "step": "制約矛盾サマリ: 要求は週18h以上だが、許容上限は週6h以下で同時成立しない"
+        },
+        {
+          "rationale": "交渉対象を限定して最短で合意可能にする",
+          "step": "絶対制約（守る）と調整可能制約（緩める）を2列で仕分けする"
+        },
+        {
+          "rationale": "矛盾を抱えたままの過大実行を防ぐ",
+          "step": "可逆な最小スコープへ縮退し、1週間の検証条件を定義する"
+        },
+        {
+          "rationale": "意思決定を左右するunknownsを先に潰す",
+          "step": "不足情報を2件に絞って確認する（優先度順）"
+        },
+        {
+          "rationale": "保留の長期化と損失拡大を防ぐ",
+          "step": "再判定日と撤退条件（健康/収入/期限）を明文化して合意する"
+        }
+      ],
+      "cons": [
+        "スピード感は落ちる"
+      ],
+      "description": "『半年で本格始動』をいったん外し、週5時間でできる検証（顧客ヒアリング/LP/プロト）に限定する。",
+      "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
           "rationale": "選択肢を固定し、価値軸を可視化する",
           "step": "10分タイマーをセットし、候補価値（安定/成長/自由/関係性）から上位3つを選ぶ"
         },
@@ -160,6 +302,31 @@
         "confidence": "medium",
         "principles_applied": [
           "integrity",
+          "nonmaleficence",
+          "accountability",
+          "justice",
+          "autonomy"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "制約を可視化して破綻条件を先に潰す",
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
+          },
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
           "autonomy",
           "accountability"
         ],
@@ -168,6 +335,26 @@
       "feasibility": {
         "confidence": "high",
         "effort": "low",
+        "timeline": "8 weeks"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "現実制約に沿って継続しやすい"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "high",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "時間・収入・健康のバランスに影響",
+            "name": "自分",
+            "role": "意思決定主体"
+          },
+          {
+            "impact": "時間配分と生活の安定に影響",
+            "name": "家族",
+            "role": "生活共同体"
         "timeline": "3-5 days"
       },
       "option_id": "opt_2",
@@ -188,6 +375,24 @@
       },
       "risks": [
         {
+          "mitigation": "成果指標（ヒアリング件数等）を週単位で置く",
+          "risk": "進捗が遅くモチベが折れる",
+          "severity": "medium"
+        }
+      ],
+      "title": "期限目標を下げ、検証に縮退する",
+      "uncertainty": {
+        "assumptions": [
+          "週5時間は確保できる"
+        ],
+        "known_unknowns": [
+          "顧客の反応",
+          "継続可能性"
+        ],
+        "overall_level": "medium",
+        "reasons": [
+          "市場ニーズが未検証"
+        ]
           "mitigation": "期限と判断条件を設定する",
           "risk": "先延ばし",
           "severity": "low"
@@ -204,6 +409,79 @@
   ],
   "questions": [
     {
+      "assumption_if_unanswered": "健康と収入を最優先と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
+      "question_id": "q_conflict_1",
+      "why_needed": "優先順位がないと制約の再設計ができないため。"
+    },
+    {
+      "assumption_if_unanswered": "期限のみ調整可能と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "矛盾制約（要求:18h/週, 上限:6h/週）を解くため、緩和可能な制約はどれか？（交渉可否/一時変更の可否）",
+      "question_id": "q_conflict_2",
+      "why_needed": "固定制約と可変制約を分離しないと実行計画が作れないため。"
+    },
+    {
+      "assumption_if_unanswered": "7日以内に一次判断すると仮定する",
+      "optional": false,
+      "priority": 2,
+      "question": "矛盾解消の期限はいつまでか？（判断日と見直し日を明示）",
+      "question_id": "q_conflict_3",
+      "why_needed": "無期限の保留を防ぎ、意思決定の完了条件を固定するため。"
+    },
+    {
+      "assumption_if_unanswered": "影響範囲を限定した1週間の試行を実施する",
+      "optional": false,
+      "priority": 2,
+      "question": "現状で可逆な最小実験は何か？（影響を限定して検証する）",
+      "question_id": "q_conflict_4",
+      "why_needed": "破綻リスクを抑えながら前提検証を進めるため。"
+    },
+    {
+      "assumption_if_unanswered": "健康・収入の下限割れで撤退すると仮定する",
+      "optional": false,
+      "priority": 3,
+      "question": "解消不能だった場合の撤退条件は何か？（健康/収入/関係者影響）",
+      "question_id": "q_conflict_5",
+      "why_needed": "矛盾を抱えたままの継続を防ぎ、損失上限を明確化するため。"
+    }
+  ],
+  "recommendation": {
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "期限目標を下げ、週5時間で検証に縮退したい場合"
+      }
+    ],
+    "confidence": "medium",
+    "counter": "制約の調整ができない場合、目標（期限/投入時間）を下げる必要がある。",
+    "reason": "制約が矛盾している状態では、どの案も破綻しやすい。まず制約を再設計してから進めるべき。",
+    "recommended_option_id": "opt_1",
+    "status": "recommended"
+  },
+  "responsibility": {
+    "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
+    "consent_considerations": [
+      "家族への影響を事前共有し合意形成する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+      "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+      "RESP_IMPACT_SCOPE: コミュニケーション手段と期限を決め、実施ログを残す"
+    ],
+    "decision_owner": "未確定（要確認）",
+    "stakeholders": [
+      {
+        "impact": "時間・収入・健康のバランスに影響",
+        "name": "自分",
+        "role": "意思決定主体"
+      },
+      {
+        "impact": "時間配分と生活の安定に影響",
+        "name": "家族",
+        "role": "生活共同体"
       "assumption_if_unanswered": "安定を優先する",
       "optional": false,
       "priority": 1,
@@ -272,6 +550,16 @@
       {
         "ended_at": "2026-02-22T00:00:01Z",
         "metrics": {
+          "constraint_conflict": true,
+          "days_to_deadline": 26,
+          "options_planned": 2,
+          "questions_planned": 5,
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "stakeholders_count": 2,
           "days_to_deadline": 21,
           "options_planned": 2,
           "questions_planned": 5,
@@ -307,12 +595,19 @@
       {
         "ended_at": "2026-02-22T00:00:04Z",
         "metrics": {
+          "arbitration_code": "CONSTRAINT_CONFLICT",
           "arbitration_code": "NO_VALUES",
           "policy_snapshot": {
             "TIME_PRESSURE_DAYS": -4,
             "UNKNOWN_BLOCK": 4
           },
           "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "rules_fired_planning": [
+            "PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1"
             "ETH_NO_OVERCLAIM_UNKNOWN",
             "ETH_VALUES_EMPTY_CLARIFICATION"
           ],
@@ -329,6 +624,15 @@
   },
   "uncertainty": {
     "assumptions": [
+      "健康と生活維持は下限として守る"
+    ],
+    "known_unknowns": [
+      "投入時間を増やす代替手段",
+      "短期検証で最低限必要なスコープ"
+    ],
+    "overall_level": "high",
+    "reasons": [
+      "制約が矛盾している"
       "提示された制約が正しい"
     ],
     "known_unknowns": [

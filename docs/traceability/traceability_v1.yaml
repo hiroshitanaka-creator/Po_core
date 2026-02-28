@@ -12,6 +12,8 @@ principles:
       - REQ-GCV-001
       - REQ-QST-001
       - REQ-PLAN-001
+      - REQ-CONSTRAINT-001
+
       - REQ-VALUES-001
   - id: P-INT-001
     mapped_requirements:
@@ -22,6 +24,8 @@ principles:
       - REQ-ETH-001
       - REQ-QST-001
       - REQ-PLAN-001
+      - REQ-CONSTRAINT-001
+
       - REQ-VALUES-001
   - id: P-AUT-001
     mapped_requirements:
@@ -33,6 +37,8 @@ principles:
       - REQ-ETH-002
       - REQ-QST-001
       - REQ-PLAN-001
+      - REQ-CONSTRAINT-001
+
       - REQ-VALUES-001
   - id: P-JUS-001
     mapped_requirements:
@@ -240,5 +246,30 @@ requirements:
         value: src/pocore/tracer.py
       - kind: rule_id
         value: PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
+
+  - id: REQ-CONSTRAINT-001
+    principles: [P-ACC-001, P-INT-001, P-JUS-001, P-NMH-001]
+    adrs: [docs/adr/0014-constraint-conflict-resolution-pack-v1.md]
+    tests:
+      - tests/test_constraint_conflict_pack.py::test_constraint_conflict_questions_are_deterministic_and_capped
+      - tests/test_constraint_conflict_pack.py::test_constraint_conflict_plan_protocol_order_and_cap
+      - tests/test_constraint_conflict_pack.py::test_constraint_conflict_plan_rule_id_fired
+      - tests/test_plan_non_interference.py::test_planning_changes_do_not_change_recommendation
+    code_refs:
+      - kind: module
+        value: src/pocore/engines/question_v1.py
+      - kind: module
+        value: src/pocore/engines/generator_stub.py
+      - kind: module
+        value: src/pocore/orchestrator.py
+      - kind: rule_id
+        value: Q_CONFLICT_RESOLUTION_PROTOCOL_V1
+      - kind: rule_id
+        value: PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1
+      - kind: question_id
+        value: q_conflict_1
+      - kind: question_id
+        value: q_conflict_5
+
       - kind: rule_id
         value: PLAN_VALUES_CLARIFICATION_PACK_V1
