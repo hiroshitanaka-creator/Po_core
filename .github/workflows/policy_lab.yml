@@ -1,0 +1,70 @@
+name: Policy Lab Manual Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      unknown_block:
+        description: "UNKNOWN_BLOCK threshold"
+        required: true
+        type: number
+      time_pressure_days:
+        description: "TIME_PRESSURE_DAYS threshold"
+        required: true
+        type: number
+      now:
+        description: "Deterministic now timestamp"
+        required: true
+        default: "2026-02-22T00:00:00Z"
+        type: string
+      seed:
+        description: "Deterministic seed"
+        required: true
+        default: 0
+        type: number
+      compare_baseline:
+        description: "Compare variant outputs against baseline"
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  policy-lab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Policy Lab
+        run: |
+          OUTPUT_DIR="reports/policy_lab/run_${{ github.run_id }}_${{ github.run_attempt }}"
+          COMPARE_FLAG=""
+          if [ "${{ inputs.compare_baseline }}" = "true" ]; then
+            COMPARE_FLAG="--compare-baseline"
+          fi
+
+          python scripts/policy_lab.py \
+            --unknown-block ${{ inputs.unknown_block }} \
+            --time-pressure-days ${{ inputs.time_pressure_days }} \
+            --now "${{ inputs.now }}" \
+            --seed ${{ inputs.seed }} \
+            --output-dir "$OUTPUT_DIR" \
+            $COMPARE_FLAG
+
+      - name: Upload Policy Lab artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: policy-lab-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/policy_lab/**
+          if-no-files-found: error
