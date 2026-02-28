@@ -165,3 +165,9 @@ def test_extract_features_reads_scenario_profile_from_extensions() -> None:
     features = extract_features(case)
 
     assert features["scenario_profile"] == "job_change_transition_v1"
+
+
+def test_extract_features_sets_values_empty_when_values_is_empty_list() -> None:
+    features = extract_features({"values": []})
+
+    assert features["values_empty"] is True

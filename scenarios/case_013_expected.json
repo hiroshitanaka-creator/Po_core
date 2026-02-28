@@ -1,0 +1,343 @@
+{
+  "case_ref": {
+    "case_id": "case_013_values_clarification_pack",
+    "input_digest": "e91fbfd60cca2c005e7181044244db4f1cd8fd6aabb74f963dce4133e44db8ff",
+    "title": "価値軸が空の意思決定を手続き化する"
+  },
+  "ethics": {
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "価値軸が空のまま推奨を断言しない",
+      "価値軸を獲得する質問と手順を先に実施する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "between": [
+          "autonomy",
+          "integrity"
+        ],
+        "mitigation": "価値軸獲得の手続きを先に提示し、裁定は保留する",
+        "severity": "medium",
+        "tension": "選好の自由と断言回避の緊張"
+      }
+    ]
+  },
+  "meta": {
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "generator": {
+      "mode": "stub",
+      "name": "generator_stub",
+      "version": "0.1.0"
+    },
+    "pocore_version": "0.1.0",
+    "run_id": "case_013_expected_stub_compact_v1",
+    "schema_version": "1.0",
+    "seed": 0
+  },
+  "options": [
+    {
+      "action_plan": [
+        {
+          "rationale": "選択肢を固定し、価値軸を可視化する",
+          "step": "10分タイマーをセットし、候補価値（安定/成長/自由/関係性）から上位3つを選ぶ"
+        },
+        {
+          "rationale": "順序を固定して比較基準を作る",
+          "step": "上位3つを1位〜3位に並べ、『なぜ重要か』を各1文で記録する"
+        },
+        {
+          "rationale": "トレードオフを明文化し、後悔の理由を減らす",
+          "step": "最下位1つを『今回は優先しない価値』として明示する"
+        },
+        {
+          "rationale": "価値軸を行動に接続し、先延ばしを防ぐ",
+          "step": "次の一歩を1つ決める（24時間以内に実行できる行動に限定）"
+        },
+        {
+          "rationale": "見直し手順を先に定義して意思決定の質を保つ",
+          "step": "実行後に再評価する時刻をカレンダーへ固定する（例: 48時間後）"
+        }
+      ],
+      "cons": [
+        "進行が遅く感じる可能性"
+      ],
+      "description": "最小コストで試し、学びながら前進する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する",
+          "価値軸が空のまま推奨を断言しない"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "accountability"
+        ],
+        "tradeoffs": []
+      },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "low",
+        "timeline": "1-2 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "失敗コストを抑えられる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium",
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "impact": "選択の結果を直接引き受ける",
+            "name": "本人",
+            "role": "意思決定主体"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "検証項目を明文化する",
+          "risk": "検証不足",
+          "severity": "medium"
+        }
+      ],
+      "title": "案A：段階的に進める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    },
+    {
+      "action_plan": [
+        {
+          "rationale": "選択肢を固定し、価値軸を可視化する",
+          "step": "10分タイマーをセットし、候補価値（安定/成長/自由/関係性）から上位3つを選ぶ"
+        },
+        {
+          "rationale": "順序を固定して比較基準を作る",
+          "step": "上位3つを1位〜3位に並べ、『なぜ重要か』を各1文で記録する"
+        },
+        {
+          "rationale": "トレードオフを明文化し、後悔の理由を減らす",
+          "step": "最下位1つを『今回は優先しない価値』として明示する"
+        },
+        {
+          "rationale": "価値軸を行動に接続し、先延ばしを防ぐ",
+          "step": "次の一歩を1つ決める（24時間以内に実行できる行動に限定）"
+        },
+        {
+          "rationale": "見直し手順を先に定義して意思決定の質を保つ",
+          "step": "実行後に再評価する時刻をカレンダーへ固定する（例: 48時間後）"
+        }
+      ],
+      "cons": [
+        "機会損失が起きる可能性"
+      ],
+      "description": "重要な不明点を埋めてから判断する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する",
+          "価値軸が空のまま推奨を断言しない"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "accountability"
+        ],
+        "tradeoffs": []
+      },
+      "feasibility": {
+        "confidence": "high",
+        "effort": "low",
+        "timeline": "3-5 days"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "判断精度が上がる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium",
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "impact": "選択の結果を直接引き受ける",
+            "name": "本人",
+            "role": "意思決定主体"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "期限と判断条件を設定する",
+          "risk": "先延ばし",
+          "severity": "low"
+        }
+      ],
+      "title": "案B：情報収集してから決める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    }
+  ],
+  "questions": [
+    {
+      "assumption_if_unanswered": "安定を優先する",
+      "optional": false,
+      "priority": 1,
+      "question": "最優先する価値は何？（例：安定、成長、自由、関係性）",
+      "question_id": "q_values_1",
+      "why_needed": "価値が定義されないと推奨が恣意的になるため。"
+    },
+    {
+      "assumption_if_unanswered": "可逆性を最優先し、不可逆な損失を避ける",
+      "optional": false,
+      "priority": 1,
+      "question": "この意思決定で『絶対に避けたい結果』は何か？",
+      "question_id": "q_values_axis_1",
+      "why_needed": "回避条件を先に定義すると、価値軸の下限が安定するため。"
+    },
+    {
+      "assumption_if_unanswered": "生活安定と学習継続を両立した状態を成功とみなす",
+      "optional": false,
+      "priority": 2,
+      "question": "3か月後に『良い判断だった』と言える状態は何か？",
+      "question_id": "q_values_axis_2",
+      "why_needed": "短期の成功状態を定義しないと評価軸が曖昧になるため。"
+    },
+    {
+      "assumption_if_unanswered": "安定 > 成長 > 自由の順で暫定設定する",
+      "optional": false,
+      "priority": 2,
+      "question": "優先順位を1位〜3位で並べると何になるか？（例: 安定/成長/自由）",
+      "question_id": "q_values_axis_3",
+      "why_needed": "価値が複数あるとき、順序を固定しないと比較不能になるため。"
+    },
+    {
+      "assumption_if_unanswered": "追加コストは最小限（週5時間・固定費増なし）と仮定する",
+      "optional": true,
+      "priority": 3,
+      "question": "許容できるコスト上限は何か？（時間/費用/心理負荷）",
+      "question_id": "q_values_axis_4",
+      "why_needed": "価値判断を実行可能条件へ接続するため。"
+    }
+  ],
+  "recommendation": {
+    "confidence": "high",
+    "missing_info": [
+      "価値の優先順位"
+    ],
+    "next_steps": [
+      "価値の優先順位を仮決めする"
+    ],
+    "reason": "価値観（評価軸）が未確定なため、推奨は恣意的になる。",
+    "status": "no_recommendation"
+  },
+  "responsibility": {
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
+    "consent_considerations": [],
+    "decision_owner": "user",
+    "stakeholders": [
+      {
+        "impact": "選択の結果を直接引き受ける",
+        "name": "本人",
+        "role": "意思決定主体"
+      }
+    ]
+  },
+  "trace": {
+    "steps": [
+      {
+        "ended_at": "2026-02-22T00:00:01Z",
+        "metrics": {
+          "days_to_deadline": 21,
+          "options_planned": 2,
+          "questions_planned": 5,
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_VALUES_EMPTY_CLARIFICATION"
+          ],
+          "stakeholders_count": 1,
+          "unknowns_count": 2
+        },
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:02Z",
+        "metrics": {
+          "options": 2
+        },
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "summary": "特徴量に基づいて選択肢を生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:03Z",
+        "metrics": {
+          "questions": 5
+        },
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "不足情報を補う問いを生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:04Z",
+        "metrics": {
+          "arbitration_code": "NO_VALUES",
+          "policy_snapshot": {
+            "TIME_PRESSURE_DAYS": -4,
+            "UNKNOWN_BLOCK": 4
+          },
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_VALUES_EMPTY_CLARIFICATION"
+          ],
+          "rules_fired_planning": [
+            "PLAN_VALUES_CLARIFICATION_PACK_V1"
+          ]
+        },
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:03Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+      }
+    ],
+    "version": "1.0"
+  },
+  "uncertainty": {
+    "assumptions": [
+      "提示された制約が正しい"
+    ],
+    "known_unknowns": [
+      "優先したい価値の順序",
+      "許容できるコスト上限"
+    ],
+    "overall_level": "medium",
+    "reasons": [
+      "重要情報が未確定"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+case_id: case_013_values_clarification_pack
+title: "価値軸が空の意思決定を手続き化する"
+locale: ja-JP
+problem: "複数の選択肢があるが、何を優先すべきか全く決められない。"
+context:
+  domain: "キャリア設計"
+  current_state: "選択肢はあるが価値基準が定まらず比較不能"
+constraints:
+  - "今月中に次の一歩を決める"
+  - "生活費を急激に悪化させない"
+values: []
+stakeholders:
+  - name: "本人"
+    role: "意思決定主体"
+    impact: "選択の結果を直接引き受ける"
+unknowns:
+  - "優先したい価値の順序"
+  - "許容できるコスト上限"
+deadline: 2026-03-15

@@ -10,6 +10,7 @@ ETH_CONSTRAINT_CONFLICT_DISCLOSURE = "ETH_CONSTRAINT_CONFLICT_DISCLOSURE"
 ETH_NO_OVERCLAIM_UNKNOWN = "ETH_NO_OVERCLAIM_UNKNOWN"
 ETH_STAKEHOLDER_CONSENT = "ETH_STAKEHOLDER_CONSENT"
 ETH_TIME_PRESSURE_SAFETY = "ETH_TIME_PRESSURE_SAFETY"
+ETH_VALUES_EMPTY_CLARIFICATION = "ETH_VALUES_EMPTY_CLARIFICATION"
 
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
@@ -59,6 +60,10 @@ def _collect_rules_fired(
         (
             ETH_TIME_PRESSURE_SAFETY,
             lambda f: _is_short_deadline(f.get("days_to_deadline")),
+        ),
+        (
+            ETH_VALUES_EMPTY_CLARIFICATION,
+            lambda f: f.get("values_empty") is True,
         ),
     ]
 
@@ -195,6 +200,7 @@ def apply(
     has_unknowns = ETH_NO_OVERCLAIM_UNKNOWN in fired_set
     has_many_stakeholders = ETH_STAKEHOLDER_CONSENT in fired_set
     short_deadline = ETH_TIME_PRESSURE_SAFETY in fired_set
+    values_empty = ETH_VALUES_EMPTY_CLARIFICATION in fired_set
 
     for opt in options:
         if conflict:
@@ -252,6 +258,10 @@ def apply(
                 }
             )
 
+        if values_empty:
+            _append_unique(review["principles_applied"], "accountability")
+            _append_unique(review["concerns"], "価値軸が空のまま推奨を断言しない")
+
         opt["ethics_review"] = review
 
     tradeoffs: List[Dict[str, Any]] = []
@@ -282,6 +292,15 @@ def apply(
                 "severity": "medium",
             }
         )
+    if values_empty:
+        tradeoffs.append(
+            {
+                "tension": "選好の自由と断言回避の緊張",
+                "between": ["autonomy", "integrity"],
+                "mitigation": "価値軸獲得の手続きを先に提示し、裁定は保留する",
+                "severity": "medium",
+            }
+        )
 
     guardrails = [
         "不確実な事実を断言しない",
@@ -294,6 +313,9 @@ def apply(
         _append_unique(guardrails, "関係者への影響と同意を考慮する")
     if short_deadline:
         _append_unique(guardrails, "時間圧力下でも検証を省略しない")
+    if values_empty:
+        _append_unique(guardrails, "価値軸が空のまま推奨を断言しない")
+        _append_unique(guardrails, "価値軸を獲得する質問と手順を先に実施する")
 
     summary = {
         "principles_used": _ALL,
