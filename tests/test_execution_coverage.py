@@ -17,11 +17,15 @@ MUST_COVER_ETHICS_RULE_IDS = {
     "ETH_NO_OVERCLAIM_UNKNOWN",
     "ETH_STAKEHOLDER_CONSENT",
 }
+MUST_COVER_PLANNING_RULE_IDS = {
+    "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN",
+}
 
 
-def _collect_execution_coverage() -> Tuple[Set[str], Set[str]]:
+def _collect_execution_coverage() -> Tuple[Set[str], Set[str], Set[str]]:
     arbitration_codes: Set[str] = set()
     ethics_rule_ids: Set[str] = set()
+    planning_rule_ids: Set[str] = set()
 
     for yaml_path in sorted(SCENARIOS.glob("*.yaml")):
         output = run_case_file(
@@ -42,11 +46,17 @@ def _collect_execution_coverage() -> Tuple[Set[str], Set[str]]:
                     rule for rule in rules_fired if isinstance(rule, str)
                 )
 
-    return arbitration_codes, ethics_rule_ids
+            rules_fired_planning = metrics.get("rules_fired_planning")
+            if isinstance(rules_fired_planning, list):
+                planning_rule_ids.update(
+                    rule for rule in rules_fired_planning if isinstance(rule, str)
+                )
+
+    return arbitration_codes, ethics_rule_ids, planning_rule_ids
 
 
 def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
-    arbitration_codes, ethics_rule_ids = _collect_execution_coverage()
+    arbitration_codes, ethics_rule_ids, planning_rule_ids = _collect_execution_coverage()
 
     required_arbitration = set(BASE_ARBITRATION_CODES)
     if (
@@ -64,6 +74,7 @@ def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
 
     missing_arbitration = required_arbitration - arbitration_codes
     missing_rules = MUST_COVER_ETHICS_RULE_IDS - ethics_rule_ids
+    missing_planning_rules = MUST_COVER_PLANNING_RULE_IDS - planning_rule_ids
 
     assert not missing_arbitration, (
         "Missing required arbitration_code coverage from scenarios/*.yaml execution: "
@@ -74,4 +85,9 @@ def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
         "Missing required ethics rule_id coverage from scenarios/*.yaml execution: "
         f"{sorted(missing_rules)}\n"
         f"covered={sorted(ethics_rule_ids)}"
+    )
+    assert not missing_planning_rules, (
+        "Missing required planning rule_id coverage from scenarios/*.yaml execution: "
+        f"{sorted(missing_planning_rules)}\n"
+        f"covered={sorted(planning_rule_ids)}"
     )

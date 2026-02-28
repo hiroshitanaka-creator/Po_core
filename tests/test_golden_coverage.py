@@ -12,6 +12,7 @@ from pocore.policy_v1 import TIME_PRESSURE_DAYS, UNKNOWN_SOFT
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = ROOT / "scenarios"
 EXPECTED_FILES = sorted(SCENARIOS.glob("*_expected.json"))
+PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN = "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
 
 
 def _load_case_features() -> List[Dict[str, Any]]:
@@ -34,6 +35,12 @@ def _load_case_features() -> List[Dict[str, Any]]:
                 "case_stem": case_stem,
                 "now": now,
                 "features": features,
+                "planning_rules_fired": [
+                    rule
+                    for step in expected.get("trace", {}).get("steps", [])
+                    for rule in step.get("metrics", {}).get("rules_fired_planning", [])
+                    if isinstance(rule, str)
+                ],
             }
         )
 
@@ -102,6 +109,46 @@ def test_golden_has_externality_stakeholders_boundary_case() -> None:
     assert matched, (
         "No *_expected.json-backed case satisfies stakeholders externality boundary: "
         "stakeholders_count >= 2.\n"
+        "Scanned cases:\n"
+        f"{_format_records(records)}"
+    )
+
+
+def test_golden_has_two_track_planning_under_time_pressure_unknowns() -> None:
+    records = _load_case_features()
+    matched = [
+        row
+        for row in records
+        if row["features"].get("days_to_deadline") is not None
+        and row["features"].get("unknowns_count", 0) > 0
+        and row["features"].get("days_to_deadline") <= TIME_PRESSURE_DAYS
+        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
+        in row.get("planning_rules_fired", [])
+    ]
+
+    if TIME_PRESSURE_DAYS >= 0:
+        assert matched, (
+            "No *_expected.json-backed case validates Two-Track Plan firing under "
+            "unknowns/time-pressure condition: unknowns_count > 0 and "
+            f"days_to_deadline <= TIME_PRESSURE_DAYS({TIME_PRESSURE_DAYS}) with "
+            f"planning rule {PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN}.\n"
+            "Scanned cases:\n"
+            f"{_format_records(records)}"
+        )
+        return
+
+    unknowns_present = [
+        row
+        for row in records
+        if row["features"].get("days_to_deadline") is not None
+        and row["features"].get("unknowns_count", 0) > 0
+        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
+        in row.get("planning_rules_fired", [])
+    ]
+    assert unknowns_present, (
+        "No *_expected.json-backed case validates Two-Track Plan observability with "
+        f"planning rule {PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN} when "
+        f"TIME_PRESSURE_DAYS={TIME_PRESSURE_DAYS}.\n"
         "Scanned cases:\n"
         f"{_format_records(records)}"
     )
