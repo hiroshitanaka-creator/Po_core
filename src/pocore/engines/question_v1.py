@@ -7,9 +7,49 @@ from typing import Any, Dict, List, Optional
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
 
+MAX_QUESTIONS = 5
+DEADLINE_NEAR_DAYS = 3
+
+RULE_Q_VALUES = "Q_VALUES_ALIGNMENT"
+RULE_Q_CONFLICT = "Q_CONSTRAINT_CONFLICT"
+RULE_Q_STAKEHOLDER = "Q_STAKEHOLDER_ALIGNMENT"
+RULE_Q_UNKNOWN_ITEM = "Q_UNKNOWN_ITEM"
+RULE_Q_DEADLINE_FLEX = "Q_DEADLINE_FLEXIBILITY"
+RULE_Q_TEMPORARY_SCOPE = "Q_TEMPORARY_SCOPE"
+
 
 def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
     return isinstance(features, dict) and features.get("scenario_profile") == profile
+
+
+def _is_deadline_near(days_to_deadline: Any) -> bool:
+    return isinstance(days_to_deadline, int) and days_to_deadline <= DEADLINE_NEAR_DAYS
+
+
+def _append_candidate(
+    candidates: List[Dict[str, Any]],
+    *,
+    question_id: str,
+    question: str,
+    why_needed: str,
+    assumption_if_unanswered: str,
+    optional: bool,
+    base_priority: int,
+    score: int,
+    rule_id: str,
+) -> None:
+    candidates.append(
+        {
+            "question_id": question_id,
+            "question": question,
+            "priority": base_priority,
+            "why_needed": why_needed,
+            "assumption_if_unanswered": assumption_if_unanswered,
+            "optional": optional,
+            "_score": score,
+            "_rule_id": rule_id,
+        }
+    )
 
 
 def generate(
@@ -76,91 +116,151 @@ def generate(
             },
         ]
 
-    # ── Generic: feature-driven ───────────────────────────────────────────
+    # ── Generic: feature-driven with deterministic prioritization ────────
     feats = features or {}
-    questions: List[Dict[str, Any]] = []
+    candidates: List[Dict[str, Any]] = []
+
+    unknowns_count = int(feats.get("unknowns_count", 0) or 0)
+    unknowns_items = feats.get("unknowns_items")
+    unknown_items_norm = unknowns_items if isinstance(unknowns_items, list) else []
+    stakeholders_count = int(feats.get("stakeholders_count", 0) or 0)
+    is_deadline_near = _is_deadline_near(feats.get("days_to_deadline"))
+
+    if is_deadline_near:
+        _append_candidate(
+            candidates,
+            question_id="q_deadline_flex_1",
+            question="期限の柔軟性はどこまであるか？（延長可否/最短再設定日）",
+            why_needed="時間圧の中で実行可能な計画へ再設計するため。",
+            assumption_if_unanswered="期限は固定で延長不可と仮定する",
+            optional=False,
+            base_priority=1,
+            score=120,
+            rule_id=RULE_Q_DEADLINE_FLEX,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_temporary_scope_1",
+            question="暫定対応として許容できる範囲は？（品質/コスト/対象範囲）",
+            why_needed="未知が残る状況でも被害を限定して前進するため。",
+            assumption_if_unanswered="可逆で低リスクな最小範囲のみ許容とする",
+            optional=False,
+            base_priority=1,
+            score=110,
+            rule_id=RULE_Q_TEMPORARY_SCOPE,
+        )
 
     if feats.get("values_empty") is True:
-        questions.append(
-            {
-                "question_id": "q_values_1",
-                "question": "最優先する価値は何？（例：安定、成長、自由、関係性）",
-                "priority": 1,
-                "why_needed": "価値が定義されないと推奨が恣意的になるため。",
-                "assumption_if_unanswered": "安定を優先する",
-                "optional": False,
-            }
+        _append_candidate(
+            candidates,
+            question_id="q_values_1",
+            question="最優先する価値は何？（例：安定、成長、自由、関係性）",
+            why_needed="価値が定義されないと推奨が恣意的になるため。",
+            assumption_if_unanswered="安定を優先する",
+            optional=False,
+            base_priority=1,
+            score=100,
+            rule_id=RULE_Q_VALUES,
         )
 
     if feats.get("constraint_conflict") is True:
-        questions.extend(
-            [
-                {
-                    "question_id": "q_conflict_1",
-                    "question": (
-                        "矛盾している制約のうち、絶対に守るのはどれ？"
-                        "（時間/収入/健康/期限など）"
-                    ),
-                    "priority": 1,
-                    "why_needed": "優先順位がないと制約の再設計ができないため。",
-                    "assumption_if_unanswered": "健康と収入を最優先と仮定する",
-                    "optional": False,
-                },
-                {
-                    "question_id": "q_conflict_2",
-                    "question": "週5時間の内訳は？（平日/週末、連続時間の有無）",
-                    "priority": 2,
-                    "why_needed": "実行可能な検証タスクへ分解するため。",
-                    "assumption_if_unanswered": "週末に2h×2回が確保できると仮定する",
-                    "optional": False,
-                },
-                {
-                    "question_id": "q_conflict_3",
-                    "question": "現職の副業規定（許可制/禁止/競業）を確認した？",
-                    "priority": 2,
-                    "why_needed": "実行可能性（法務・契約）を左右するため。",
-                    "assumption_if_unanswered": "許可が必要と仮定し、確認を最優先にする",
-                    "optional": False,
-                },
-            ]
+        _append_candidate(
+            candidates,
+            question_id="q_conflict_1",
+            question="矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
+            why_needed="優先順位がないと制約の再設計ができないため。",
+            assumption_if_unanswered="健康と収入を最優先と仮定する",
+            optional=False,
+            base_priority=1,
+            score=95,
+            rule_id=RULE_Q_CONFLICT,
         )
 
-    if int(feats.get("stakeholders_count", 0)) >= 2:
-        questions.extend(
-            [
-                {
-                    "question_id": "q_stakeholder_1",
-                    "question": "この意思決定の決裁者（最終承認者）は誰か？",
-                    "priority": 1,
-                    "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。",
-                    "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
-                    "optional": False,
-                },
-                {
-                    "question_id": "q_stakeholder_2",
-                    "question": "関係者の同意・相談が必要な対象は誰か？",
-                    "priority": 1,
-                    "why_needed": "外部性を受ける人の合意形成を先に設計するため。",
-                    "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
-                    "optional": False,
-                },
-                {
-                    "question_id": "q_stakeholder_3",
-                    "question": "影響範囲は？（誰が何を失い、何を得るか）",
-                    "priority": 1,
-                    "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。",
-                    "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
-                    "optional": False,
-                },
-                {
-                    "question_id": "q_stakeholder_4",
-                    "question": "通知・説明の方法と期限は？",
-                    "priority": 1,
-                    "why_needed": "合意形成を実務として実行可能にするため。",
-                    "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
-                    "optional": False,
-                },
-            ]
+    if stakeholders_count >= 2:
+        _append_candidate(
+            candidates,
+            question_id="q_stakeholder_1",
+            question="この意思決定の決裁者（最終承認者）は誰か？",
+            why_needed="責任所在が未確定だと実行後の説明責任が崩れるため。",
+            assumption_if_unanswered="決裁者は未確定として判断を保留する",
+            optional=False,
+            base_priority=1,
+            score=90,
+            rule_id=RULE_Q_STAKEHOLDER,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_stakeholder_2",
+            question="関係者の同意・相談が必要な対象は誰か？",
+            why_needed="外部性を受ける人の合意形成を先に設計するため。",
+            assumption_if_unanswered="主要関係者全員に事前相談が必要と仮定する",
+            optional=False,
+            base_priority=2,
+            score=86,
+            rule_id=RULE_Q_STAKEHOLDER,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_stakeholder_3",
+            question="影響範囲は？（誰が何を失い、何を得るか）",
+            why_needed="便益と不利益の配分を記録し、公正性を検証するため。",
+            assumption_if_unanswered="不利益が大きい側を保護する案を優先する",
+            optional=False,
+            base_priority=2,
+            score=84,
+            rule_id=RULE_Q_STAKEHOLDER,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_stakeholder_4",
+            question="通知・説明の方法と期限は？",
+            why_needed="合意形成を実務として実行可能にするため。",
+            assumption_if_unanswered="文書通知を48時間以内に実施すると仮定する",
+            optional=False,
+            base_priority=3,
+            score=82,
+            rule_id=RULE_Q_STAKEHOLDER,
         )
 
-    return questions[:5]
+    if unknowns_count > 0 and unknown_items_norm:
+        headroom = max(0, MAX_QUESTIONS - len(candidates))
+        for index, item in enumerate(unknown_items_norm[: max(MAX_QUESTIONS, headroom)], start=1):
+            penalty = 2 * (index - 1)
+            urgency_bonus = 10 if is_deadline_near else 0
+            stakeholder_bonus = 2 if stakeholders_count >= 2 else 0
+            _append_candidate(
+                candidates,
+                question_id=f"q_unknown_{index}",
+                question=f"不明点『{item}』を検証するため、最短で確認できる事実は何か？",
+                why_needed="未解消の不確実性を具体的な検証タスクへ分解するため。",
+                assumption_if_unanswered="当該不明点は高リスク側に倒して扱う",
+                optional=False,
+                base_priority=2,
+                score=76 + urgency_bonus + stakeholder_bonus - penalty,
+                rule_id=RULE_Q_UNKNOWN_ITEM,
+            )
+
+    if unknowns_count > 2:
+        _append_candidate(
+            candidates,
+            question_id="q_unknowns_bundle_1",
+            question="unknowns の中で、意思決定を最も左右する上位2件はどれか？",
+            why_needed="調査対象を絞り、期限内に判断可能性を上げるため。",
+            assumption_if_unanswered="unknowns_items の先頭2件を最重要とみなす",
+            optional=False,
+            base_priority=2,
+            score=70,
+            rule_id=RULE_Q_UNKNOWN_ITEM,
+        )
+
+    ordered = sorted(candidates, key=lambda x: (-x["_score"], x["question_id"]))
+    selected = ordered[:MAX_QUESTIONS]
+
+    priority_map = {0: 1, 1: 1, 2: 2, 3: 2, 4: 3}
+    result: List[Dict[str, Any]] = []
+    for idx, item in enumerate(selected):
+        payload = {k: v for k, v in item.items() if not k.startswith("_")}
+        payload["priority"] = priority_map.get(idx, min(5, idx + 1))
+        result.append(payload)
+
+    return result

@@ -57,4 +57,4 @@ def test_questions_add_high_priority_stakeholder_prompts() -> None:
         "q_stakeholder_3",
         "q_stakeholder_4",
     ]
-    assert all(q["priority"] == 1 for q in questions)
+    assert [q["priority"] for q in questions] == [1, 1, 2, 2]
