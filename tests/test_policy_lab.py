@@ -66,6 +66,8 @@ def test_policy_lab_compare_baseline_generates_impacted_requirements(
     assert result["meta"]["compare_baseline"] is True
     assert result["summary"]["changed_cases"] >= 1
     assert "REQ-ARB-001" in result["summary"]["impacted_requirements"]
+    assert "REQ-VALUES-001" in result["summary"]["impacted_requirements"]
+    assert "REQ-CONSTRAINT" in result["summary"]["impacted_requirements"]
     assert result["summary"]["two_track_rule_id"] == "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
     assert result["summary"]["two_track_triggered_cases"] >= 1
     assert result["summary"]["planning_rule_frequency_top"]
@@ -74,3 +76,10 @@ def test_policy_lab_compare_baseline_generates_impacted_requirements(
     md_text = Path(out["md"]).read_text(encoding="utf-8")
     assert "planning two-track triggered cases" in md_text
     assert "Planning rule frequency (top)" in md_text
+    assert "Values Pack rule frequency" in md_text
+    assert "Conflict Pack baseline delta (--compare-baseline)" in md_text
+
+    assert result["summary"]["values_pack"]["variant"]["rule_case_counts"]
+    assert result["summary"]["conflict_pack"]["variant"]["rule_case_counts"]
+    assert result["summary"]["values_pack"]["delta"]["rule_deltas"]
+    assert result["summary"]["conflict_pack"]["delta"]["rule_deltas"]

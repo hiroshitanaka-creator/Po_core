@@ -203,6 +203,20 @@ requirements:
         value: q_unknown_1
 
 
+  - id: REQ-CONSTRAINT
+    principles: [P-ACC-001, P-INT-001, P-NMH-001]
+    adrs: [docs/adr/0008-ethics-guardrails-v1-non-interference.md]
+    tests:
+      - tests/test_features.py::test_constraint_conflict_detects_contradictory_weekly_hours
+      - tests/test_golden_e2e.py::test_constraint_conflict_triggers_recommendation
+    code_refs:
+      - kind: module
+        value: src/pocore/utils.py
+      - kind: arbitration_code
+        value: CONSTRAINT_CONFLICT
+      - kind: rule_id
+        value: ETH_CONSTRAINT_CONFLICT_DISCLOSURE
+
   - id: REQ-VALUES-001
     principles: [P-ACC-001, P-INT-001, P-NMH-001]
     adrs: [docs/adr/0014-values-clarification-pack-v1.md]
