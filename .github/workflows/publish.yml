@@ -57,6 +57,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      id-token: write  # OIDC trusted publishing
 
     steps:
       - name: Download dist
@@ -69,7 +70,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           attestations: false
           skip_existing: true
 
