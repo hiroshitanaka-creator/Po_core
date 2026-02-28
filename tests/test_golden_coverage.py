@@ -55,9 +55,11 @@ def _format_records(records: List[Dict[str, Any]]) -> str:
     for row in records:
         features = row["features"]
         lines.append(
-            "- {case}: unknowns_count={unknowns}, days_to_deadline={days}, "
-            "stakeholders_count={stakeholders}".format(
+            "- {case}: values_empty={values_empty}, constraint_conflict={conflict}, "
+            "unknowns_count={unknowns}, days_to_deadline={days}, stakeholders_count={stakeholders}".format(
                 case=row["case_stem"],
+                values_empty=features.get("values_empty"),
+                conflict=features.get("constraint_conflict"),
                 unknowns=features.get("unknowns_count"),
                 days=features.get("days_to_deadline"),
                 stakeholders=features.get("stakeholders_count"),
@@ -149,6 +151,41 @@ def test_golden_has_two_track_planning_under_time_pressure_unknowns() -> None:
         "No *_expected.json-backed case validates Two-Track Plan observability with "
         f"planning rule {PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN} when "
         f"TIME_PRESSURE_DAYS={TIME_PRESSURE_DAYS}.\n"
+        "Scanned cases:\n"
+        f"{_format_records(records)}"
+    )
+
+
+def test_golden_has_values_empty_with_near_deadline_case() -> None:
+    records = _load_case_features()
+    matched = [
+        row
+        for row in records
+        if row["features"].get("values_empty") is True
+        and row["features"].get("days_to_deadline") is not None
+        and row["features"].get("days_to_deadline") <= 1
+    ]
+
+    assert matched, (
+        "No *_expected.json-backed case satisfies values_empty + near deadline boundary: "
+        "values_empty == True and days_to_deadline <= 1.\n"
+        "Scanned cases:\n"
+        f"{_format_records(records)}"
+    )
+
+
+def test_golden_has_constraint_conflict_with_multiple_stakeholders_case() -> None:
+    records = _load_case_features()
+    matched = [
+        row
+        for row in records
+        if row["features"].get("constraint_conflict") is True
+        and row["features"].get("stakeholders_count", 0) >= 2
+    ]
+
+    assert matched, (
+        "No *_expected.json-backed case satisfies constraint_conflict + multiple stakeholders boundary: "
+        "constraint_conflict == True and stakeholders_count >= 2.\n"
         "Scanned cases:\n"
         f"{_format_records(records)}"
     )

@@ -1,0 +1,27 @@
+case_id: case_015_constraint_conflict_multi_stakeholders
+title: "制約競合と関係者複数：実行条件の再設計"
+locale: ja-JP
+problem: "改善施策を急ぎたいが、時間制約が矛盾し、複数関係者への影響も大きい。"
+context:
+  domain: "業務改善プロジェクト"
+  current_state: "施策実行の要請は強いが、投入可能時間と要件が噛み合っていない"
+constraints:
+  - "施策には週15時間以上を確保する"
+  - "現行業務の都合で追加投入は週6時間以内"
+  - "収入を落とせない"
+  - "現職は継続する"
+values:
+  - "説明責任"
+  - "実現可能性"
+stakeholders:
+  - name: "プロジェクト責任者"
+    role: "提案者"
+    impact: "成果責任と進捗説明責任を負う"
+  - name: "実行チーム"
+    role: "実務担当"
+    impact: "工数配分と運用品質に影響を受ける"
+  - name: "経営層"
+    role: "承認候補"
+    impact: "投資判断と対外説明責任を負う"
+unknowns:
+  - "段階導入時の最小実行範囲"
