@@ -7,7 +7,7 @@ name = "po-core-flyingpig"
 version = "0.2.0b4"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
-license = "AGPL-3.0-or-later"
+license = {text = "AGPL-3.0-or-later"}
 authors = [
     {name = "Flying Pig Project", email = "flyingpig0229+github@gmail.com"}
 ]
@@ -36,7 +36,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Philosophy",
     "Typing :: Typed",
 ]
 requires-python = ">=3.10"
