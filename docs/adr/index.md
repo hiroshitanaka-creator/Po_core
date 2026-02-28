@@ -15,5 +15,6 @@ Po_coreで採用済み/提案中のArchitectural Decision Records一覧。
 | 0009 | Traceへrecommendation裁定経路を記録する | Accepted | traceの compose_output metrics に `arbitration_code` と policy snapshot を記録。 |
 | 0010 | case_001/case_009 short_id特例の撤去とscenario_profile移行 | Accepted | 永久特例を `extensions.scenario_profile`→`features` に移し、rulesで吸収する。 |
 | 0011 | case_001/case_009 凍結解除計画（J0/J1） | Accepted | 凍結解除を二段階化し、再生成スクリプト経由でのみexpected更新を許可。 |
+| 0012 | Policy Change Protocol v1 | Accepted | policy定数変更PRで policy_lab証跡・impacted_requirements明記・golden再生成手順を必須化。 |
 
 > 現時点で `docs/adr/*.md` に Proposed はなく、すべて Accepted。
