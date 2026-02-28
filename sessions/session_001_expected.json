@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "schema_version": "1.0",
+    "pocore_version": "0.1.0",
+    "run_id": "session_001_case_expected_stub_compact_v1",
+    "created_at": "2026-02-22T00:00:00Z",
+    "seed": 0,
+    "deterministic": true,
+    "generator": {
+      "name": "generator_stub",
+      "version": "0.1.0",
+      "mode": "stub"
+    }
+  },
+  "case_ref": {
+    "case_id": "session_001_case",
+    "title": "Decision Session v1: unknowns を回答で解消する",
+    "input_digest": "8a2514519cb7d37e674ee9ac5c0501d545cdc7bd7348a4faeea237e5d754d8f4"
+  },
+  "options": [
+    {
+      "option_id": "opt_1",
+      "title": "案A：段階的に進める",
+      "description": "最小コストで試し、学びながら前進する。",
+      "action_plan": [
+        {
+          "step": "最小実験を設計して実施する"
+        }
+      ],
+      "pros": [
+        "失敗コストを抑えられる"
+      ],
+      "cons": [
+        "進行が遅く感じる可能性"
+      ],
+      "risks": [
+        {
+          "risk": "検証不足",
+          "severity": "medium",
+          "mitigation": "検証項目を明文化する"
+        }
+      ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "1-2 weeks",
+        "confidence": "medium"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [],
+        "assumptions": [],
+        "known_unknowns": []
+      },
+      "ethics_review": {
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "tradeoffs": [
+          {
+            "tension": "速度と安全の緊張",
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "時間圧力下でも最小限の検証を維持する",
+            "severity": "medium"
+          }
+        ],
+        "concerns": [
+          "不確実な事実を断言しない"
+        ],
+        "confidence": "medium"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "プロダクト責任者",
+            "role": "意思決定主体",
+            "impact": "リリース判断と結果責任を負う"
+          }
+        ],
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium"
+      }
+    },
+    {
+      "option_id": "opt_2",
+      "title": "案B：情報収集してから決める",
+      "description": "重要な不明点を埋めてから判断する。",
+      "action_plan": [
+        {
+          "step": "不足情報を3〜5項目に絞って集める"
+        }
+      ],
+      "pros": [
+        "判断精度が上がる"
+      ],
+      "cons": [
+        "機会損失が起きる可能性"
+      ],
+      "risks": [
+        {
+          "risk": "先延ばし",
+          "severity": "low",
+          "mitigation": "期限と判断条件を設定する"
+        }
+      ],
+      "feasibility": {
+        "effort": "low",
+        "timeline": "3-5 days",
+        "confidence": "high"
+      },
+      "uncertainty": {
+        "overall_level": "medium",
+        "reasons": [],
+        "assumptions": [],
+        "known_unknowns": []
+      },
+      "ethics_review": {
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "tradeoffs": [
+          {
+            "tension": "速度と安全の緊張",
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "時間圧力下でも最小限の検証を維持する",
+            "severity": "medium"
+          }
+        ],
+        "concerns": [
+          "不確実な事実を断言しない"
+        ],
+        "confidence": "medium"
+      },
+      "responsibility_review": {
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "name": "プロダクト責任者",
+            "role": "意思決定主体",
+            "impact": "リリース判断と結果責任を負う"
+          }
+        ],
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "recommendation": {
+    "status": "recommended",
+    "recommended_option_id": "opt_1",
+    "reason": "害を抑えつつ前進できるため。",
+    "counter": "遅いと感じる可能性がある。",
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "不明点が多い場合"
+      }
+    ],
+    "confidence": "medium"
+  },
+  "ethics": {
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "tension": "速度と安全（nonmaleficence）の緊張",
+        "between": [
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "mitigation": "時間制約下でも検証を省略しない",
+        "severity": "medium"
+      }
+    ],
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "時間圧力下でも検証を省略しない"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
+  },
+  "responsibility": {
+    "decision_owner": "user",
+    "stakeholders": [
+      {
+        "name": "プロダクト責任者",
+        "role": "意思決定主体",
+        "impact": "リリース判断と結果責任を負う"
+      }
+    ],
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
+    "consent_considerations": []
+  },
+  "questions": [
+    {
+      "question_id": "q_deadline_flex_1",
+      "question": "期限の柔軟性はどこまであるか？（延長可否/最短再設定日）",
+      "priority": 1,
+      "why_needed": "時間圧の中で実行可能な計画へ再設計するため。",
+      "assumption_if_unanswered": "期限は固定で延長不可と仮定する",
+      "optional": false
+    },
+    {
+      "question_id": "q_temporary_scope_1",
+      "question": "暫定対応として許容できる範囲は？（品質/コスト/対象範囲）",
+      "priority": 1,
+      "why_needed": "未知が残る状況でも被害を限定して前進するため。",
+      "assumption_if_unanswered": "可逆で低リスクな最小範囲のみ許容とする",
+      "optional": false
+    }
+  ],
+  "uncertainty": {
+    "overall_level": "low",
+    "reasons": [
+      "入力情報が比較的揃っている"
+    ],
+    "assumptions": [
+      "提示された制約が正しい"
+    ],
+    "known_unknowns": []
+  },
+  "trace": {
+    "version": "1.0",
+    "steps": [
+      {
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "ended_at": "2026-02-22T00:00:01Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した",
+        "metrics": {
+          "options_planned": 2,
+          "questions_planned": 2,
+          "unknowns_count": 0,
+          "stakeholders_count": 1,
+          "rules_fired": [
+            "ETH_TIME_PRESSURE_SAFETY"
+          ],
+          "days_to_deadline": 1
+        }
+      },
+      {
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "ended_at": "2026-02-22T00:00:02Z",
+        "summary": "特徴量に基づいて選択肢を生成した",
+        "metrics": {
+          "options": 2
+        }
+      },
+      {
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "ended_at": "2026-02-22T00:00:03Z",
+        "summary": "不足情報を補う問いを生成した",
+        "metrics": {
+          "questions": 2
+        }
+      },
+      {
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:03Z",
+        "ended_at": "2026-02-22T00:00:04Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた",
+        "metrics": {
+          "arbitration_code": "DEFAULT_RECOMMEND",
+          "rules_fired": [
+            "ETH_TIME_PRESSURE_SAFETY"
+          ],
+          "policy_snapshot": {
+            "UNKNOWN_BLOCK": 4,
+            "TIME_PRESSURE_DAYS": -4
+          }
+        }
+      }
+    ]
+  }
+}

@@ -13,6 +13,8 @@ principles:
       - REQ-QST-001
       - REQ-PLAN-001
       - REQ-VALUES-001
+      - REQ-SESSION-001
+      - REQ-SESSION-001
   - id: P-INT-001
     mapped_requirements:
       - REQ-DET-001
@@ -256,3 +258,14 @@ requirements:
         value: PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
       - kind: rule_id
         value: PLAN_VALUES_CLARIFICATION_PACK_V1
+
+  - id: REQ-SESSION-001
+    principles: [P-ACC-001, P-INT-001]
+    adrs: [docs/adr/0002-golden-diff-contract.md]
+    tests:
+      - tests/test_session_replay_e2e.py::test_session_replay_matches_expected_json
+    code_refs:
+      - kind: module
+        value: src/pocore/runner.py
+      - kind: module
+        value: tests/test_session_replay_e2e.py

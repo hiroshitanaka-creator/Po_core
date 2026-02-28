@@ -1,0 +1,20 @@
+case_id: session_001_case
+title: "Decision Session v1: unknowns を回答で解消する"
+locale: ja-JP
+problem: "新機能を今期リリースするか判断したいが、未確認事項が残っている。"
+context:
+  domain: "プロダクト運営"
+constraints:
+  - "障害率を現状より悪化させない"
+  - "法令違反リスクを許容しない"
+values:
+  - "安全性"
+  - "説明責任"
+deadline: "2026-02-23"
+stakeholders:
+  - name: "プロダクト責任者"
+    role: "意思決定主体"
+    impact: "リリース判断と結果責任を負う"
+unknowns:
+  - "負荷試験のピーク時エラー率"
+  - "利用規約改定の法務確認"

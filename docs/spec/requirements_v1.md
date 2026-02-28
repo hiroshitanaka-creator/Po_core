@@ -63,3 +63,7 @@
   - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
   - Principles: P-ACC-001, P-INT-001, P-NMH-001
 
+
+- **REQ-SESSION-001: session_replay E2E golden 契約**
+  - session answers（JSON Patch）を適用した再実行結果が、session golden expected JSON と一致すること。
+  - Principles: P-ACC-001, P-INT-001

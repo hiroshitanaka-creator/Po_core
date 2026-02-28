@@ -9,8 +9,9 @@ Design stance:
 Public API
 ----------
     run_case_file(path, *, seed, now, deterministic) -> dict
+    run_session_replay(case_path, answers_path, *, seed, now, deterministic) -> dict
 """
 
-from .runner import run_case_file
+from .runner import run_case_file, run_session_replay
 
-__all__ = ["run_case_file"]
+__all__ = ["run_case_file", "run_session_replay"]
