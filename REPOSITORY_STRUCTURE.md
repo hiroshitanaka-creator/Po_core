@@ -1,8 +1,13 @@
 # Po_core Repository Structure
 
-## Purpose
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 
-This document defines the complete repository structure for Po_core's GitHub publication. It serves as a blueprint for organizing code, documentation, and resources.
+**Document Status:** v2.0 — Reflects actual production state (Phase 5 complete)
+**Last Updated:** 2026-02-28
+**Package Version:** `po-core-flyingpig` v0.2.0b4
+
+> This document describes the **actual** repository structure as of Phase 5 completion.
+> It replaces the earlier planning document (v1.0, 2025-11-02).
 
 ---
 
@@ -10,628 +15,453 @@ This document defines the complete repository structure for Po_core's GitHub pub
 
 ```
 Po_core/
-├── .github/                    # GitHub specific files
-│   ├── workflows/             # CI/CD workflows
-│   ├── ISSUE_TEMPLATE/        # Issue templates
-│   └── PULL_REQUEST_TEMPLATE.md
 │
-├── docs/                       # Documentation
-│   ├── design/                # Design documents
-│   ├── philosophy/            # Philosophical foundations
-│   ├── api/                   # API documentation
-│   ├── tutorials/             # Tutorials and guides
-│   └── images/                # Documentation images
+├── .github/                          # GitHub configuration
+│   ├── workflows/
+│   │   ├── ci.yml                   # Main CI pipeline (lint + test + security + build)
+│   │   ├── import-guard.yml         # Import dependency enforcement
+│   │   ├── policy_lab.yml           # Policy lab automation
+│   │   └── publish.yml              # PyPI OIDC trusted publishing (TestPyPI / PyPI)
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.yml
+│       ├── feature_request.yml
+│       ├── good_first_issue.yml
+│       ├── philosopher_enhancement.yml
+│       └── config.yml
 │
-├── src/                        # Source code
-│   └── po_core/               # Main package
-│       ├── __init__.py
-│       ├── core/              # Core system
-│       ├── po_self/           # Philosophical ensemble
-│       ├── po_trace/          # Audit logging
-│       └── po_viewer/         # Visualization
+├── 01_specifications/               # System specification documents
+│   ├── Po_core_spec_doc_v1.0_English.md
+│   ├── Po_core_spec_doc_v1.0_japanese.md
+│   ├── README_01_specifications_English.md
+│   ├── README_01_specifications_japanese.md
+│   └── wethics_gate/                # W_Ethics Gate sub-specs
 │
-├── tests/                      # Test suite
-│   ├── unit/                  # Unit tests
-│   ├── integration/           # Integration tests
-│   ├── philosophical/         # Philosophical consistency tests
-│   └── fixtures/              # Test fixtures
+├── 02_architecture/                 # Architecture documents
+│   ├── philosophy/
+│   └── tensors/
 │
-├── examples/                   # Example code and demos
-│   ├── basic/                 # Basic usage examples
-│   ├── advanced/              # Advanced examples
-│   └── notebooks/             # Jupyter notebooks
+├── 03_api/                          # API documentation
 │
-├── scripts/                    # Utility scripts
-│   ├── setup/                 # Setup scripts
-│   ├── analysis/              # Analysis tools
-│   └── deployment/            # Deployment scripts
+├── 04_modules/                      # Module-level documentation
+│   ├── Po_self/
+│   ├── output_rendering/
+│   ├── po_trace/
+│   ├── reason_log/
+│   └── viewer/
 │
-├── config/                     # Configuration files
-│   ├── philosophers/          # Philosopher configurations
-│   └── default.yaml           # Default configuration
+├── 05_research/                     # Research papers and analyses
+│   └── README_05_research_en.md
 │
-├── .gitignore                  # Git ignore rules
-├── .gitattributes             # Git attributes
-├── README.md                   # Project overview
-├── CONTRIBUTING.md             # Contribution guidelines
-├── CODE_OF_CONDUCT.md          # Code of conduct
-├── LICENSE                     # GNU AGPLv3 License
-├── MANIFESTO.md                # Project manifesto
-├── CHANGELOG.md                # Version history
-├── requirements.txt            # Python dependencies
-├── requirements-dev.txt        # Development dependencies
-├── setup.py                    # Package setup
-├── pyproject.toml             # Modern Python packaging
-└── Makefile                    # Common tasks automation
+├── docs/                            # Extended documentation
+│   ├── adr/                         # Architecture Decision Records (ADR 0001–0005)
+│   ├── experiments/                 # Experiment notes
+│   ├── papers/                      # Academic paper materials
+│   ├── spec/                        # Machine-spec documents (M0 milestone)
+│   │   ├── prd.md                   # Product Requirements Document v0.3
+│   │   ├── srs_v0.1.md              # Software Requirements Specification v0.3
+│   │   ├── output_schema_v1.json    # Output schema contract (FR-OUT-001)
+│   │   ├── input_schema_v1.json     # Input schema
+│   │   ├── session_answers_schema_v1.json
+│   │   ├── session_answers_v1.md
+│   │   ├── features_v1.md
+│   │   ├── principles_v1.md
+│   │   ├── requirements_v1.md
+│   │   ├── test_cases.md            # Acceptance test specs (AT-001–AT-010+)
+│   │   └── traceability.md          # Req ↔ impl ↔ test traceability matrix
+│   ├── specifications/
+│   ├── traceability/
+│   ├── viewer/
+│   ├── LOCAL_LLM_GUIDE.md
+│   ├── MANUAL_LLM_TESTING.md
+│   ├── SAFETY.md
+│   ├── TUTORIAL.md
+│   └── VISUALIZATION_GUIDE.md
+│
+├── examples/                        # Usage examples
+│   ├── basic/                       # Beginner examples
+│   ├── PO_PARTY.md
+│   └── README.md
+│
+├── experiments/                     # Experimental code and configs
+│   ├── adversarial/
+│   ├── configs/
+│   └── results/
+│       └── darkpattern_review/
+│
+├── papers/                          # Academic papers and drafts
+│   ├── Po_core_Academia_Paper.md
+│   └── arxiv_paper_draft.md        # arXiv preprint draft
+│
+├── po-synthetic-thought-architect-lite/  # Lightweight variant
+│   ├── examples/
+│   ├── notes/
+│   └── prompt/
+│
+├── reports/                         # Policy lab reports
+│   └── policy_lab/
+│
+├── scenarios/                       # Acceptance test scenarios (case_001–case_015)
+│   ├── case_001.yaml                # 転職：安定企業→スタートアップ
+│   ├── case_001_expected.json
+│   ├── case_002.yaml                # 人員整理の判断
+│   ├── case_002_expected.json
+│   ├── case_003.yaml                # 家族介護の設計
+│   ├── case_003_expected.json
+│   ├── case_004.yaml
+│   ├── case_005.yaml
+│   ├── case_006.yaml                # ＋expected
+│   ├── case_007.yaml
+│   ├── case_008.yaml
+│   ├── case_009.yaml                # 価値観が不明（問い生成必須）
+│   ├── case_009_expected.json
+│   ├── case_010.yaml                # 制約の矛盾
+│   ├── case_010_expected.json
+│   ├── case_011.yaml  ➜  case_015.yaml  # Additional scenarios
+│   └── case_011_expected.json ➜ case_015_expected.json
+│
+├── scripts/                         # Utility scripts
+├── sessions/                        # Session data
+├── src/                             # Production source code
+│   ├── po_core/                     # Main package (po-core-flyingpig)
+│   │   └── [see §src/po_core/ below]
+│   └── pocore/                      # Legacy namespace shim
+│       └── engines/
+│
+├── tests/                           # Full test suite (2400+ tests)
+│   ├── benchmarks/                  # Performance benchmarks
+│   ├── experiments/
+│   ├── fixtures/
+│   ├── integration/
+│   ├── redteam/                     # Adversarial / red-team tests
+│   ├── unit/                        # Unit tests
+│   │   ├── test_philosophers/
+│   │   └── [60+ test files]
+│   ├── acceptance/                  # Acceptance tests (AT-001–AT-010) [M1]
+│   │   ├── conftest.py
+│   │   └── test_acceptance_suite.py
+│   └── [70+ top-level test files]
+│
+├── tools/                           # Developer tools
+│
+│── # ─── Root-level files ────────────────────────────────────
+│
+├── AGENTS.md                        # AI agent instructions
+├── CHANGELOG.md                     # Version history
+├── CLAUDE.md                        # Claude Code session context
+├── CODE_OF_CONDUCT.md               # Community standards
+├── COMMERCIAL_LICENSE.md            # Commercial use terms
+├── CONTRIBUTING.md                  # Contribution guidelines
+├── Dockerfile                       # Multi-stage Docker image (builder + slim runtime)
+├── GRAND_ARCHITECT_ASSESSMENT.md    # Architecture assessment
+├── ISSUES.md                        # Issue tracking notes
+├── LICENSE                          # GNU AGPLv3
+├── License.md                       # License summary
+├── NEXT_STEPS.md
+├── PHASE_PLAN_v2.md                 # Phase 1–5 rationale and planning
+├── Po_core_spec_doc_v1.0.md         # Full spec document (root copy)
+├── PROJECT_SUMMARY.md
+├── QUICKSTART.md                    # Japanese quickstart
+├── QUICKSTART_EN.md                 # English quickstart
+├── README.md                        # Project overview + badges
+├── REPOSITORY_STRUCTURE.md         # This file
+├── docker-compose.yml               # Docker Compose (named volumes, health check)
+├── .coveragerc
+├── .dockerignore
+├── .env.example                     # Environment variable reference
+├── .flake8
+├── .gitattributes
+├── .gitignore
+├── .markdownlint.json
+├── .markdownlintignore
+├── .pre-commit-config.yaml
+├── pyproject.toml                   # PEP 517/518 packaging (po-core-flyingpig v0.2.0b4)
+├── pytest.ini                       # Pytest configuration + markers
+├── regenerate_golden.py             # Golden file regeneration script
+├── requirements.txt                 # Production dependencies
+├── requirements-dev.txt             # Development dependencies
+└── setup.py                         # Legacy setup shim
 ```
 
 ---
 
-## Detailed Directory Descriptions
-
-### `.github/` - GitHub Configuration
-
-```
-.github/
-├── workflows/
-│   ├── ci.yml                 # Continuous Integration
-│   ├── tests.yml              # Automated testing
-│   ├── docs.yml               # Documentation deployment
-│   └── release.yml            # Release automation
-│
-├── ISSUE_TEMPLATE/
-│   ├── bug_report.md
-│   ├── feature_request.md
-│   ├── philosophical_question.md
-│   └── config.yml
-│
-├── PULL_REQUEST_TEMPLATE.md
-└── FUNDING.yml                # Optional: funding information
-```
-
-**Purpose:** GitHub-specific automation and templates
-
-### `docs/` - Documentation
-
-```
-docs/
-├── design/
-│   ├── architecture/
-│   │   ├── overview.md
-│   │   ├── po_core_architecture.md
-│   │   ├── po_self_architecture.md
-│   │   ├── po_trace_architecture.md
-│   │   └── po_viewer_architecture.md
-│   │
-│   ├── philosophers/
-│   │   ├── sartre.md          # Each philosopher's design
-│   │   ├── jung.md
-│   │   ├── derrida.md
-│   │   ├── heidegger.md
-│   │   ├── watsuji.md
-│   │   ├── spinoza.md
-│   │   ├── arendt.md
-│   │   ├── wittgenstein.md
-│   │   ├── peirce.md
-│   │   ├── aristotle.md
-│   │   └── new_philosopher_template.md
-│   │
-│   ├── tensors/
-│   │   ├── freedom_pressure.md
-│   │   ├── shadow_integration.md
-│   │   ├── trace_rejection.md
-│   │   └── tensor_interactions.md
-│   │
-│   └── api/
-│       ├── core_api.md
-│       ├── po_self_api.md
-│       ├── po_trace_api.md
-│       └── po_viewer_api.md
-│
-├── philosophy/
-│   ├── foundations.md         # Philosophical foundations
-│   ├── responsibility.md      # Responsibility theory
-│   ├── meaning_generation.md  # Meaning generation
-│   ├── ethical_framework.md   # Ethical considerations
-│   └── flying_pig_philosophy.md
-│
-├── tutorials/
-│   ├── quickstart.md
-│   ├── basic_usage.md
-│   ├── philosopher_integration.md
-│   ├── creating_custom_philosophers.md
-│   └── visualization_guide.md
-│
-├── api/
-│   ├── reference/
-│   │   ├── core.md
-│   │   ├── po_self.md
-│   │   ├── po_trace.md
-│   │   └── po_viewer.md
-│   └── generated/             # Auto-generated API docs
-│
-└── images/
-    ├── architecture/
-    ├── diagrams/
-    └── examples/
-```
-
-**Purpose:** Comprehensive project documentation
-
-**Note:** Selected design documents from Google Drive (120+ documents) will be curated and organized here. Not all documents need to be in the initial release.
-
-### `src/po_core/` - Source Code
+## `src/po_core/` — Source Code
 
 ```
 src/po_core/
-├── __init__.py
-├── __version__.py
-├── config.py                   # Configuration management
-├── exceptions.py               # Custom exceptions
+├── __init__.py                      # Package entry (re-exports run, PoSelf, etc.)
+├── ensemble.py                      # run_turn pipeline orchestrator (10-step hexagonal)
+├── party_machine.py                 # Philosopher combination assembly + AsyncPartyMachine
+├── po_self.py                       # PoSelf: high-level wrapper for generate()
+├── po_viewer.py                     # PoViewer: trace/explanation visualization
+├── po_system_prompt.py              # System prompt builder
+├── po_trace.py                      # Trace utilities
+├── po_trace_db.py                   # DB-backed tracing
+├── database.py                      # SQLite/SQLAlchemy setup
+├── visualizations.py                # Matplotlib/Plotly helpers
+├── tensor_metrics.py               # Tensor metric calculations
+├── runner.py                        # CLI runner helpers
+├── cli.py                           # CLI entry point (typer)
+├── py.typed                         # PEP 561 type marker
 │
-├── core/
-│   ├── __init__.py
-│   ├── base.py                # Base classes
-│   ├── tensor_manager.py      # Tensor operations
-│   ├── meaning_generator.py   # Core meaning generation
-│   └── response_composer.py   # Response composition
+├── app/                             # Delivery adapters (REST + public API)
+│   ├── api.py                       # po_core.run() — recommended public entry point
+│   ├── composer.py                  # StubComposer: rule-based output generator [M1]
+│   └── rest/                        # FastAPI REST layer (Phase 5)
+│       ├── server.py                # FastAPI app factory
+│       ├── config.py                # APISettings (pydantic-settings, PO_ env vars)
+│       ├── auth.py                  # X-API-Key authentication
+│       ├── rate_limit.py            # SlowAPI rate limiting
+│       ├── models.py                # Pydantic request/response models
+│       ├── store.py                 # In-process trace store
+│       ├── __main__.py              # uvicorn entry point
+│       └── routers/                 # 5 route handlers
+│           ├── reason.py            # POST /v1/reason
+│           ├── stream.py            # POST /v1/reason/stream (SSE)
+│           ├── philosophers.py      # GET /v1/philosophers
+│           ├── trace.py             # GET /v1/trace/{session_id}
+│           └── health.py            # GET /v1/health
 │
-├── po_self/
-│   ├── __init__.py
-│   ├── po_self.py             # Main Po_self class
-│   ├── philosophers/
-│   │   ├── __init__.py
-│   │   ├── base_philosopher.py
-│   │   ├── sartre.py          # Freedom pressure
-│   │   ├── jung.py            # Shadow integration
-│   │   ├── derrida.py         # Trace/rejection
-│   │   ├── heidegger.py       # Dasein/present absence
-│   │   ├── watsuji.py         # Aidagara
-│   │   ├── spinoza.py         # Conatus
-│   │   ├── arendt.py          # Public stage
-│   │   ├── wittgenstein.py    # Language games
-│   │   ├── peirce.py          # Semiotic delta
-│   │   └── aristotle.py       # Phronesis
-│   │
-│   ├── tensors/
-│   │   ├── __init__.py
-│   │   ├── freedom_pressure.py
-│   │   ├── shadow_tensor.py
-│   │   ├── trace_tensor.py
-│   │   └── interaction_matrix.py
-│   │
-│   └── ensemble.py            # Philosopher ensemble logic
+├── philosophers/                    # 39 philosopher modules
+│   ├── manifest.py                  # Philosopher registry + risk levels (0/1/2)
+│   └── [39 philosopher .py files]  # aristotle, arendt, camus, confucius, …
 │
-├── po_trace/
-│   ├── __init__.py
-│   ├── tracer.py              # Main tracing logic
-│   ├── event_logger.py        # Event logging
-│   ├── rejection_log.py       # Rejection tracking
-│   ├── evolution_tracker.py   # Evolution history
-│   ├── metadata.py            # Event metadata
-│   └── storage/
-│       ├── __init__.py
-│       ├── base_storage.py
-│       ├── json_storage.py
-│       └── database_storage.py
+├── tensors/                         # Tensor computation layer
+│   ├── engine.py                    # TensorEngine (main entry point)
+│   ├── freedom_pressure_v2.py       # FreedomPressure 6D ML tensor
+│   └── metrics/
+│       ├── freedom_pressure.py
+│       ├── semantic_delta.py        # Multi-backend: sbert / tfidf / basic
+│       └── blocked_tensor.py
 │
-├── po_viewer/
-│   ├── __init__.py
-│   ├── viewer.py              # Main viewer class
-│   ├── renderers/
-│   │   ├── __init__.py
-│   │   ├── tensor_renderer.py
-│   │   ├── graph_renderer.py
-│   │   └── timeline_renderer.py
-│   │
-│   └── exporters/
-│       ├── __init__.py
-│       ├── json_exporter.py
-│       ├── html_exporter.py
-│       └── image_exporter.py
+├── safety/                          # W_Ethics Gate (3-layer ethical filter)
+│   ├── fallback.py
+│   ├── policy_scoring.py
+│   └── wethics_gate/
+│       ├── gate.py                  # WEthicsGate: W0–W4 orchestrator
+│       ├── intention_gate.py        # W1: structural exclusion + obfuscation normalization
+│       ├── action_gate.py           # W2/W3: action-level ethical check
+│       ├── detectors.py             # PromptInjectionDetector + EnglishKeywordViolation v0.2
+│       ├── explanation.py           # ExplanationChain + build_explanation_from_verdict()
+│       └── [rule sets]
 │
-└── utils/
-    ├── __init__.py
-    ├── math_utils.py
-    ├── text_utils.py
-    └── validation.py
+├── aggregator/                      # Pareto aggregation layer
+│   ├── pareto.py                    # ParetoAggregator
+│   ├── conflict_resolver.py
+│   ├── policy_aware.py
+│   └── weighted_vote.py
+│
+├── deliberation/                    # Multi-round philosopher dialogue
+│   └── engine.py                    # DeliberationEngine (Settings.deliberation_max_rounds)
+│
+├── trace/                           # TraceEvent infrastructure
+│   ├── schema.py                    # Frozen TraceEvent schema + config_version
+│   └── in_memory.py                 # InMemoryTracer + listener/callback support
+│
+├── viewer/                          # Visualization (Phase 3)
+│   └── web/
+│       ├── app.py                   # Dash 4-tab layout (Pipeline/Philosophers/W_Ethics/Deliberation)
+│       └── figures.py               # Plotly chart builders (incl. deliberation + InteractionMatrix)
+│
+├── domain/                          # Immutable value types (PEP 420 dataclasses)
+│   └── [Context, Proposal, SafetyVerdict, etc.]
+│
+├── ports/                           # Abstract interfaces (hexagonal architecture)
+│   └── [memory, aggregator, tensor_engine, etc.]
+│
+├── runtime/                         # DI wiring + configuration
+│   ├── settings.py                  # Settings (seed injection, NFR-REP-001)
+│   ├── wiring.py                    # Dependency injection setup
+│   ├── pareto_table_loader.py       # pareto_table.yaml loader (config_version tracked)
+│   └── battalion_table_loader.py    # battalion_table.yaml loader
+│
+├── autonomy/                        # Solar Will (experimental)
+│   └── solar_will.py
+│
+├── memory/                          # Memory backend
+├── adapters/                        # Infrastructure adapters
+├── cli/                             # CLI commands
+├── config/                          # Runtime configuration
+├── meta/                            # Meta / self-reflection utilities
+└── experiments/                     # In-package experimental code
 ```
 
-**Purpose:** Production code organized by component
+---
 
-**Current Status:** Framework exists in design docs; implementation at ~30%
-
-### `tests/` - Test Suite
+## `tests/` — Test Suite
 
 ```
 tests/
-├── __init__.py
-├── conftest.py                # Pytest configuration
+├── conftest.py                      # Global pytest fixtures
 │
-├── unit/
-│   ├── core/
-│   ├── po_self/
-│   ├── po_trace/
-│   └── po_viewer/
+├── unit/                            # Unit tests (phase-organized)
+│   ├── test_philosophers/           # 39 philosopher unit tests
+│   ├── test_phase3_observability.py # Phase 3: Viewer + ExplanationChain (34 tests)
+│   ├── test_phase4_hardening.py     # Phase 4: W_Ethics Gate edge cases (29 tests)
+│   ├── test_phase5_async.py         # Phase 5: AsyncPartyMachine
+│   ├── test_rest_api.py             # REST API (24 tests: endpoints, auth, SSE, rate limit)
+│   └── [60+ additional unit tests]
 │
-├── integration/
-│   ├── test_end_to_end.py
-│   ├── test_philosopher_interactions.py
-│   └── test_trace_viewer_integration.py
+├── integration/                     # Integration tests
 │
-├── philosophical/
-│   ├── test_sartre_consistency.py
-│   ├── test_derrida_consistency.py
-│   └── test_philosophical_axioms.py
+├── redteam/                         # Adversarial + red-team tests (Phase 4)
+│   ├── test_prompt_injection.py     # 7 tests (all pass, Phase 4)
+│   ├── test_goal_misalignment.py    # 7 tests (all pass, Phase 4)
+│   ├── test_jailbreak_extended.py   # 15 adversarial patterns
+│   ├── test_ethics_boundary.py      # 16 ethical grey zone tests
+│   └── test_defense_metrics.py      # 11 defense metric automation tests
 │
-└── fixtures/
-    ├── sample_inputs.json
-    ├── expected_outputs.json
-    └── test_configurations.yaml
+├── acceptance/                      # Given/When/Then acceptance tests [M1]
+│   ├── conftest.py                  # Scenario loader fixtures
+│   └── test_acceptance_suite.py    # AT-001–AT-010 (schema + requirement validation)
+│
+├── benchmarks/
+│   └── test_pipeline_perf.py        # p50 ~33ms NORMAL mode (Phase 5)
+│
+├── fixtures/
+│
+└── [70+ pipeline/smoke/golden tests]
+    ├── test_run_turn_e2e.py         # Pipeline E2E (CI must-pass)
+    ├── test_philosopher_bridge.py   # (CI must-pass)
+    ├── test_smoke_pipeline.py       # (CI must-pass)
+    ├── test_golden_e2e.py           # Golden file E2E
+    ├── test_golden_regression.py    # Golden regression
+    ├── test_output_schema.py        # output_schema_v1 contract
+    ├── test_input_schema.py         # input_schema_v1 contract
+    └── [more…]
 ```
-
-**Purpose:** Comprehensive testing across all levels
-
-### `examples/` - Example Code
-
-```
-examples/
-├── README.md
-│
-├── basic/
-│   ├── hello_po_core.py       # Simplest example
-│   ├── three_philosopher_bot.py
-│   └── basic_tracing.py
-│
-├── advanced/
-│   ├── custom_philosopher.py
-│   ├── tensor_visualization.py
-│   ├── evolution_analysis.py
-│   └── multi_agent_debate.py
-│
-└── notebooks/
-    ├── quickstart.ipynb
-    ├── philosopher_exploration.ipynb
-    └── trace_analysis.ipynb
-```
-
-**Purpose:** Demonstrate usage patterns
-
-### `scripts/` - Utility Scripts
-
-```
-scripts/
-├── setup/
-│   ├── install_dependencies.sh
-│   ├── setup_dev_environment.sh
-│   └── verify_installation.py
-│
-├── analysis/
-│   ├── analyze_traces.py
-│   ├── tensor_statistics.py
-│   └── philosophical_metrics.py
-│
-└── deployment/
-    ├── build_package.sh
-    └── deploy_docs.sh
-```
-
-**Purpose:** Automation and utilities
-
-### `config/` - Configuration
-
-```
-config/
-├── philosophers/
-│   ├── sartre.yaml
-│   ├── jung.yaml
-│   └── ... (one per philosopher)
-│
-├── default.yaml               # Default system config
-└── example.yaml               # Example custom config
-```
-
-**Purpose:** Runtime configuration
 
 ---
 
-## Files in Repository Root
+## `docs/spec/` — Machine-Readable Specification (M0 Milestone)
 
-### Core Documentation Files
+```
+docs/spec/
+├── prd.md                           # Product Requirements Document v0.3
+├── srs_v0.1.md                      # Software Requirements Specification v0.3
+├── output_schema_v1.json            # Output schema (FR-OUT-001, ADR-0004)
+├── input_schema_v1.json             # Input schema
+├── session_answers_schema_v1.json   # Session answers schema
+├── session_answers_v1.md
+├── features_v1.md
+├── principles_v1.md
+├── requirements_v1.md
+├── test_cases.md                    # Acceptance test case specs (AT-001–AT-010+)
+└── traceability.md                  # Requirement ↔ implementation ↔ test matrix
+```
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `README.md` | Project overview, quickstart | ✅ Complete |
-| `CONTRIBUTING.md` | Contribution guidelines | ✅ Complete |
-| `CODE_OF_CONDUCT.md` | Community standards | ✅ Complete |
-| `LICENSE` | GNU AGPLv3 License | ✅ Complete |
-| `MANIFESTO.md` | Flying Pig Philosophy | ✅ Complete |
-| `CHANGELOG.md` | Version history | 🔄 To Create |
-
-### Python Packaging Files
-
-| File | Purpose | Status |
-|------|---------|--------|
-| `requirements.txt` | Production dependencies | 🔄 To Create |
-| `requirements-dev.txt` | Development dependencies | 🔄 To Create |
-| `setup.py` | Legacy package setup | 🔄 To Create |
-| `pyproject.toml` | Modern Python packaging | 🔄 To Create |
-
-### Configuration Files
-
-| File | Purpose | Status |
-|------|---------|--------|
-| `.gitignore` | Ignored files | ✅ Complete |
-| `.gitattributes` | Git file handling | 🔄 To Create |
-| `Makefile` | Common tasks | 🔄 To Create |
+**M0 Status (due 2026-03-01):** ✅ PRD/SRS/Schema/TestCases/Traceability created.
+**M1 Status (due 2026-03-15):** 🔄 In Progress — Stub Composer + AT-001–AT-010 acceptance runner.
 
 ---
 
-## Initial Release Strategy
+## `scenarios/` — Acceptance Test Scenarios
 
-### Phase 1: Foundation (Week 1)
+Each scenario is a YAML case file used by `tests/acceptance/test_acceptance_suite.py`:
 
-**Goal:** Establish project presence
-
-**Include:**
-
-- ✅ README.md
-- ✅ CONTRIBUTING.md
-- ✅ CODE_OF_CONDUCT.md
-- ✅ LICENSE
-- ✅ MANIFESTO.md
-- ✅ .gitignore
-- 🔄 Basic directory structure
-- 🔄 Selected design documents (10-15 key documents)
-
-**Exclude (for now):**
-
-- Full implementation code (in progress)
-- All 120+ design documents (too overwhelming)
-- Complete test suite (being developed)
-
-### Phase 2: Core Implementation (Weeks 2-4)
-
-**Goal:** Demonstrate functional prototype
-
-**Add:**
-
-- Core tensor system
-- 3-philosopher bot (Sartre, Jung, Derrida)
-- Basic Po_trace logging
-- Simple examples
-- Unit tests
-
-### Phase 3: Expansion (Months 2-3)
-
-**Goal:** Build toward full vision
-
-**Add:**
-
-- Remaining philosophers (gradual integration)
-- Po_core Viewer
-- Integration tests
-- Advanced examples
-- Comprehensive documentation
+| File | Test ID | Topic |
+|------|---------|-------|
+| `case_001.yaml` | AT-001 | 転職：安定企業→スタートアップ |
+| `case_002.yaml` | AT-002 | チームの人員整理 |
+| `case_003.yaml` | AT-003 | 家族介護の設計 |
+| `case_004.yaml` | AT-004 | 倫理的トレードオフ（医療系） |
+| `case_005.yaml` | AT-005 | 責任主体の明確化 |
+| `case_006.yaml` | AT-006 | 責任 + トレース重視 |
+| `case_007.yaml` | AT-007 | 推奨 + 反証 |
+| `case_008.yaml` | AT-008 | 倫理・不確実性・責任の複合 |
+| `case_009.yaml` | AT-009 | 価値観不明（問い生成必須） |
+| `case_010.yaml` | AT-010 | 制約の矛盾（矛盾検出 + 問い生成） |
+| `case_011.yaml`–`case_015.yaml` | — | Additional edge cases |
 
 ---
 
-## What Goes Where?
+## Architecture Overview
 
-### GitHub Repository
+### Hexagonal `run_turn` Pipeline (10 steps)
 
-**Should include:**
+```
+MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSelect
+→ PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
+```
 
-- Core code and architecture
-- Essential design documents
-- API documentation
-- Examples and tutorials
-- Test suite
-- Contribution infrastructure
+### Public Entry Points
 
-**Should NOT include:**
+```python
+# Recommended
+from po_core.app.api import run
+result = run(user_input="What is justice?")
 
-- Personal research notes
-- Draft documents (keep in Google Drive)
-- Large binary files (models, datasets)
-- Temporary experimental code
-- 120+ raw design documents (curate first)
+# High-level wrapper
+from po_core import PoSelf
+po = PoSelf()
+response = po.generate("What is justice?")
 
-### Google Drive
+# Stub Composer (rule-based, no LLM) [M1]
+from po_core.app.composer import StubComposer
+composer = StubComposer(seed=42)
+output = composer.compose(case_dict)  # Returns output_schema_v1-compliant dict
+```
 
-**Should keep:**
+### SafetyMode and Philosopher Counts
 
-- Complete archive of all 120+ design documents
-- Draft documents and work-in-progress
-- Large PDFs and papers
-- Personal research notes
-- Experimental analyses
-- Meeting notes and planning documents
-
-### Strategy
-
-1. **Curate** key design documents for GitHub
-2. **Keep** comprehensive archive in Google Drive
-3. **Link** from GitHub docs to Google Drive for deeper materials
-4. **Gradually migrate** polished documents to GitHub over time
+| SafetyMode | Philosophers | Trigger |
+|-----------|-------------|---------|
+| NORMAL | 39 | freedom_pressure < threshold |
+| WARN | 5 | medium freedom_pressure |
+| CRITICAL | 1 | high freedom_pressure |
 
 ---
 
 ## Naming Conventions
 
-### Files
-
-- **Python files:** `snake_case.py`
-- **Markdown files:** `lowercase-with-dashes.md` or `CamelCase.md` for major docs
-- **Config files:** `lowercase.yaml`, `lowercase.json`
-- **Test files:** `test_feature_name.py`
-
-### Directories
-
-- **Python packages:** `snake_case/`
-- **Documentation:** `lowercase/` or `CamelCase/` for major sections
-- **General:** `lowercase-with-dashes/`
-
-### Classes & Functions
-
-```python
-# Classes: PascalCase
-class FreedomPressureTensor:
-    pass
-
-# Functions: snake_case
-def calculate_semantic_delta():
-    pass
-
-# Constants: UPPER_SNAKE_CASE
-MAX_PHILOSOPHERS = 21
-```
+| Element | Convention | Example |
+|---------|-----------|---------|
+| Python files | `snake_case.py` | `tensor_engine.py` |
+| Python classes | `PascalCase` | `FreedomPressureTensor` |
+| Python functions | `snake_case` | `calculate_semantic_delta()` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_PHILOSOPHERS = 39` |
+| Markdown (major) | `UPPER_SNAKE.md` | `README.md`, `CONTRIBUTING.md` |
+| Markdown (docs) | `lowercase-with-dashes.md` | `quickstart.md` |
+| Config files | `lowercase.yaml` | `pareto_table.yaml` |
+| Test files | `test_feature_name.py` | `test_philosopher_bridge.py` |
+| Scenario files | `case_NNN_topic.yaml` | `case_001_job_change.yaml` |
 
 ---
 
-## GitHub-Specific Features
+## Key Configuration Files
 
-### Topics (Tags)
-
-Suggested topics for GitHub repository:
-
-- `artificial-intelligence`
-- `philosophy`
-- `ethics`
-- `pytorch`
-- `tensors`
-- `explainable-ai`
-- `responsible-ai`
-- `sartre`
-- `phenomenology`
-- `existentialism`
-
-### About Section
-
-```
-AI system integrating 10+ philosophers as dynamic tensors for
-responsible meaning generation. Built on the Flying Pig Philosophy.
-```
-
-### Website
-
-Link to documentation: `https://[username].github.io/Po_core/` (future)
+| File | Purpose |
+|------|---------|
+| `pyproject.toml` | PEP 517/518 packaging; `po-core-flyingpig` v0.2.0b4; `AGPL-3.0-or-later` |
+| `pytest.ini` | Markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`, `acceptance` |
+| `config/pareto_table.yaml` | Pareto weights (config_version tracked — must increment on change) |
+| `config/battalion_table.yaml` | Philosopher battalions (config_version tracked) |
+| `.env.example` | All `PO_` env vars: `PO_API_KEY`, `PO_CORS_ORIGINS`, `PO_RATE_LIMIT_PER_MINUTE`, … |
 
 ---
 
-## Migration Plan from Google Drive
+## License
 
-### Step 1: Curate Design Documents
+| Use case | License |
+|----------|---------|
+| Personal / Academic / Research / OSS (AGPLv3-compliant) | **Free** — [GNU AGPLv3](./LICENSE) |
+| Commercial / Proprietary / SaaS without source disclosure | **Commercial License required** — [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) |
 
-From 120+ documents, select ~15-20 essential ones:
-
-- Po_core specification v1.0
-- Po_self architecture
-- Po_trace design
-- Po_core Viewer design
-- Key philosopher implementations
-- Tensor interaction matrix
-
-### Step 2: Convert Format
-
-- Ensure markdown format
-- Add proper headers and structure
-- Include images/diagrams where needed
-- Update links to work in GitHub
-
-### Step 3: Organize by Category
-
-Place documents in appropriate directories:
-
-- Architecture → `docs/design/architecture/`
-- Philosophers → `docs/design/philosophers/`
-- API specs → `docs/design/api/`
-
-### Step 4: Create Index
-
-Create navigation documents:
-
-- `docs/design/README.md` — Design document index
-- `docs/philosophy/README.md` — Philosophy document index
-- `docs/api/README.md` — API documentation index
+SPDX-License-Identifier: `AGPL-3.0-or-later`
 
 ---
 
-## Next Steps
+## Phase Completion Status
 
-### Immediate (Today)
-
-1. ✅ Create CODE_OF_CONDUCT.md
-2. ✅ Create .gitignore
-3. ✅ Create this structure document
-4. 🔄 Create basic directory structure
-5. 🔄 Create placeholder files
-
-### This Week
-
-1. Create packaging files (requirements.txt, setup.py, pyproject.toml)
-2. Create CHANGELOG.md
-3. Curate and migrate 15-20 key design documents
-4. Set up basic directory structure with placeholder files
-5. Create initial examples/
-
-### Next Week
-
-1. Initialize GitHub repository
-2. Push initial structure
-3. Set up GitHub Actions for CI
-4. Create issue templates
-5. Invite first collaborators
+| Phase | Title | Status |
+|-------|-------|--------|
+| Phase 1 | 39-philosopher scaling + tech debt | ✅ COMPLETE (2354 tests) |
+| Phase 2 | ML tensors + Deliberation Engine | ✅ COMPLETE (2396 tests) |
+| Phase 3 | Viewer WebUI + Explainable W_Ethics Gate | ✅ COMPLETE |
+| Phase 4 | Adversarial Hardening (85 new tests) | ✅ COMPLETE |
+| Phase 5 | REST API + Security + Docker + Async + Benchmarks | ✅ COMPLETE (v0.2.0b4) |
+| M0 | Spec Scaffolding (PRD/SRS/Schema/Traceability) | ✅ COMPLETE |
+| M1 | Stub Composer + E2E Acceptance Runner | 🔄 IN PROGRESS |
 
 ---
 
-## Questions & Decisions Needed
-
-### Decision Points
-
-1. **Repository Name**
-   - Current: `Po_core`
-   - Alternative: `po-core`, `PoCore`, `po_core`
-   - **Recommendation:** `Po_core` (matches documentation)
-
-2. **Organization vs Personal**
-   - Personal account: `[username]/Po_core`
-   - Organization: `FlyingPigAI/Po_core`
-   - **Recommendation:** Start personal, migrate to org later if needed
-
-3. **Initial Version**
-   - Start at v0.1.0 (pre-alpha)
-   - **Recommendation:** v0.1.0-alpha
-
-4. **Documentation Hosting**
-   - GitHub Pages
-   - Read the Docs
-   - **Recommendation:** GitHub Pages initially
-
----
-
-## Success Metrics
-
-### For Initial Release
-
-- [ ] All foundation files present (README, CONTRIBUTING, etc.)
-- [ ] Basic directory structure established
-- [ ] 10-15 key design documents migrated
-- [ ] Clear contribution pathways established
-- [ ] First 3-5 GitHub stars ⭐
-
-### For v0.2.0
-
-- [ ] Working 3-philosopher prototype
-- [ ] 20+ unit tests
-- [ ] Basic examples functional
-- [ ] 5-10 design documents added
-- [ ] First external contributor
-
----
-
-*This document reflects the Flying Pig Philosophy: we plan boldly, build iteratively, and adjust gracefully based on what we learn.*
-
-**Document Status:** Draft v1.0
-**Last Updated:** 2025-11-02
-**Next Review:** After initial GitHub publication
+*This document is auto-maintained. When adding new modules or reorganizing directories, update this file and run `black`/`isort` checks.*

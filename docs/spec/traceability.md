@@ -1,7 +1,7 @@
 # Po_core トレーサビリティマトリクス (Traceability Matrix)
 
-**Version:** 0.2
-**Date:** 2026-02-22
+**Version:** 0.3
+**Date:** 2026-02-28
 **参照 SRS:** docs/spec/srs_v0.1.md
 **参照テスト:** docs/spec/test_cases.md
 
@@ -86,7 +86,7 @@
 | `src/po_core/runtime/settings.py` | NFR-REP-001, NFR-GOV-001 | ✅ |
 | `.github/workflows/ci.yml` | NFR-GOV-001 | ✅ |
 | `.github/workflows/publish.yml` | ―（PyPI 公開） | 🔲 未実行 |
-| **Composer**（予定：`src/po_core/app/composer.py`） | FR-OUT-001, FR-REC-001, FR-UNC-001 | 🔲 未実装 |
+| **StubComposer**（`src/po_core/app/composer.py`） | FR-OUT-001, FR-OPT-001, FR-REC-001, FR-UNC-001, FR-Q-001, FR-TR-001 | ✅ 実装済み（M1） |
 | **ethics_v1**（予定：`src/po_core/app/ethics_engine.py`） | FR-ETH-001, FR-ETH-002 | 🔲 未実装 |
 | **responsibility_v1**（予定：`src/po_core/app/responsibility_engine.py`） | FR-RES-001 | 🔲 未実装 |
 | **question_layer**（予定：`src/po_core/app/question_layer.py`） | FR-Q-001, FR-Q-002 | 🔲 未実装 |
@@ -124,8 +124,8 @@
 
 | マイルストーン | 期限 | 要件 | 状態 |
 |-------------|------|------|------|
-| M0：仕様化の土台 | 2026-03-01 | PRD / SRS / Schema / TestCases / Traceability 作成 | 🔄 In Progress |
-| M1：LLM なし E2E | 2026-03-15 | FR-OUT-001, FR-OPT-001, FR-REC-001（スタブ実装で AT-001〜010 通過） | 🔲 Pending |
+| M0：仕様化の土台 | 2026-03-01 | PRD / SRS / Schema / TestCases / Traceability 作成 | ✅ Complete (2026-02-28) |
+| M1：LLM なし E2E | 2026-03-15 | FR-OUT-001, FR-OPT-001, FR-REC-001（スタブ実装で AT-001〜010 通過） | 🔄 In Progress — StubComposer + AT suite 追加済み |
 | M2：倫理・責任 v1 | 2026-04-05 | FR-ETH-001/002, FR-RES-001（ethics_v1, responsibility_v1 実装） | 🔲 Pending |
 | M3：問いの層 v1 | 2026-04-26 | FR-Q-001/002（question_layer 実装） | 🔲 Pending |
 | M4：ガバナンス完成 | 2026-05-10 | NFR-GOV-001（CI / PR テンプレ / ADR 運用） | 🔲 Pending |
@@ -138,3 +138,4 @@
 |----------|------|---------|
 | 0.1 | 2026-02-22 | 初版作成 |
 | 0.2 | 2026-02-22 | FR-DEL-001, FR-SAF-001/002, FR-API-001, NFR-PERF-001, NFR-SEC-001 追加；実装コンポーネント逆引き表・マイルストーン別達成状況・ADR 追加（0003〜0005）；実装済み / 未実装の明示 |
+| 0.3 | 2026-02-28 | M0 Complete 反映；StubComposer（`src/po_core/app/composer.py`）実装済みに更新；`tests/acceptance/` AT-001〜AT-010 追加；M1 In Progress に更新；v0.2.0b4 に更新 |

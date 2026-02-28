@@ -1,9 +1,9 @@
 # Po_core Product Requirements Document (PRD)
 
-**Version:** 0.2
-**Date:** 2026-02-22
-**Status:** Active — Phases 1–7 Complete · Heading to v1.0
-**Package:** `po-core-flyingpig` v0.2.0b3
+**Version:** 0.3
+**Date:** 2026-02-28
+**Status:** Active — Phases 1–5 Complete · M0 Complete · M1 In Progress
+**Package:** `po-core-flyingpig` v0.2.0b4
 
 ---
 

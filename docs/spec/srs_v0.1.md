@@ -1,10 +1,10 @@
 # Po_core Software Requirements Specification (SRS) v0.1
 
-**Version:** 0.2
-**Date:** 2026-02-22
-**Status:** Active Draft
+**Version:** 0.3
+**Date:** 2026-02-28
+**Status:** Active Draft — M0 Complete, M1 In Progress
 **参照 PRD:** docs/spec/prd.md
-**実装バージョン:** po-core-flyingpig v0.2.0b3
+**実装バージョン:** po-core-flyingpig v0.2.0b4
 
 ---
 
