@@ -10,6 +10,7 @@ principles:
       - REQ-ETH-002
       - REQ-TRC-002
       - REQ-GCV-001
+      - REQ-PLAN-001
   - id: P-INT-001
     mapped_requirements:
       - REQ-DET-001
@@ -17,6 +18,7 @@ principles:
       - REQ-E2E-001
       - REQ-ARB-001
       - REQ-ETH-001
+      - REQ-PLAN-001
   - id: P-AUT-001
     mapped_requirements:
       - REQ-ARB-001
@@ -25,6 +27,7 @@ principles:
     mapped_requirements:
       - REQ-ARB-001
       - REQ-ETH-002
+      - REQ-PLAN-001
   - id: P-JUS-001
     mapped_requirements:
       - REQ-FEA-001
@@ -168,3 +171,21 @@ requirements:
     code_refs:
       - kind: module
         value: tests/test_golden_coverage.py
+
+
+  - id: REQ-PLAN-001
+    principles: [P-ACC-001, P-INT-001, P-NMH-001]
+    adrs: [docs/adr/0013-two-track-plan-v1.md]
+    tests:
+      - tests/test_two_track_plan.py::test_two_track_plan_emitted_under_time_pressure_with_unknowns
+      - tests/test_two_track_plan.py::test_two_track_plan_reflects_unknown_items_in_track_b_with_deterministic_order
+      - tests/test_plan_non_interference.py::test_planning_changes_do_not_change_recommendation
+    code_refs:
+      - kind: module
+        value: src/pocore/engines/generator_stub.py
+      - kind: module
+        value: src/pocore/orchestrator.py
+      - kind: module
+        value: src/pocore/tracer.py
+      - kind: rule_id
+        value: PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN

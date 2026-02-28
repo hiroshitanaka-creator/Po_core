@@ -43,3 +43,9 @@
 - **REQ-GCV-001: golden coverage（境界条件カバレッジ）**
   - golden set は主要境界条件（feature/rule/arbitration path）を継続的にカバーすること。
   - Principles: P-ACC-001, P-JUS-001
+
+- **REQ-PLAN-001: Two-Track Plan（unknowns × time pressure）**
+  - unknowns があり期限圧力が閾値以上のとき、action_plan に Track A（可逆・低リスク）と Track B（unknowns解消）を決定論順序で出力すること。
+  - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
+  - Principles: P-ACC-001, P-INT-001, P-NMH-001
+

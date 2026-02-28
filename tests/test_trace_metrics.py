@@ -143,3 +143,22 @@ def test_build_trace_frozen_case_001_and_009_steps_unchanged():
             "summary": "推奨を保留し、次ステップを提示した",
         },
     ]
+
+
+def test_build_trace_generic_compose_output_metrics_include_planning_rules() -> None:
+    trace = build_trace(
+        short_id="case_126",
+        created_at="2026-02-22T00:00:00Z",
+        options_count=2,
+        questions_count=0,
+        features={"unknowns_count": 2, "stakeholders_count": 0, "days_to_deadline": -5},
+        planning_rules_fired=["PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"],
+        arbitration_code="TIME_PRESSURE_LOW_CONF",
+    )
+
+    compose_step = next(
+        step for step in trace["steps"] if step["name"] == "compose_output"
+    )
+    assert compose_step["metrics"]["rules_fired_planning"] == [
+        "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+    ]
