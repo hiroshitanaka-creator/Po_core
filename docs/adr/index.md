@@ -19,5 +19,6 @@ Po_coreで採用済み/提案中のArchitectural Decision Records一覧。
 | 0013 | Two-Track Plan v1（unknowns × time pressure） | Accepted | unknownsと期限圧力が同時に高いとき、recommendationへ介入せずaction_planで二段階支援する。 |
 
 | 0014 | Constraint Conflict Resolution Pack v1 | Accepted | constraint_conflictを矛盾解消プロトコル（questions/action_plan上限付き）へ変換し、recommendation非介入を維持する。 |
+| 0014 | Values Clarification Pack v1（values_empty） | Accepted | values_empty時に recommendation非介入のまま、質問・10分plan・ethics guardrailsで価値軸獲得手続きを提供する。 |
 
 > 現時点で `docs/adr/*.md` に Proposed はなく、すべて Accepted。

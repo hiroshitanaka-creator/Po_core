@@ -14,6 +14,7 @@ principles:
       - REQ-PLAN-001
       - REQ-CONSTRAINT-001
 
+      - REQ-VALUES-001
   - id: P-INT-001
     mapped_requirements:
       - REQ-DET-001
@@ -25,6 +26,7 @@ principles:
       - REQ-PLAN-001
       - REQ-CONSTRAINT-001
 
+      - REQ-VALUES-001
   - id: P-AUT-001
     mapped_requirements:
       - REQ-ARB-001
@@ -37,6 +39,7 @@ principles:
       - REQ-PLAN-001
       - REQ-CONSTRAINT-001
 
+      - REQ-VALUES-001
   - id: P-JUS-001
     mapped_requirements:
       - REQ-FEA-001
@@ -158,6 +161,8 @@ requirements:
         value: ETH_STAKEHOLDER_CONSENT
       - kind: rule_id
         value: ETH_TIME_PRESSURE_SAFETY
+      - kind: rule_id
+        value: ETH_VALUES_EMPTY_CLARIFICATION
 
   - id: REQ-TRC-002
     principles: [P-ACC-001]
@@ -204,6 +209,26 @@ requirements:
         value: q_unknown_1
 
 
+  - id: REQ-VALUES-001
+    principles: [P-ACC-001, P-INT-001, P-NMH-001]
+    adrs: [docs/adr/0014-values-clarification-pack-v1.md]
+    tests:
+      - tests/test_values_clarification.py::test_values_clarification_questions_are_capped_and_deterministic
+      - tests/test_values_clarification.py::test_values_clarification_plan_is_emitted_with_fixed_steps
+      - tests/test_values_clarification.py::test_values_clarification_planning_rule_is_observable
+    code_refs:
+      - kind: module
+        value: src/pocore/engines/question_v1.py
+      - kind: module
+        value: src/pocore/engines/generator_stub.py
+      - kind: module
+        value: src/pocore/engines/ethics_v1.py
+      - kind: rule_id
+        value: Q_VALUES_CLARIFICATION_PACK_V1
+      - kind: rule_id
+        value: PLAN_VALUES_CLARIFICATION_PACK_V1
+      - kind: rule_id
+        value: ETH_VALUES_EMPTY_CLARIFICATION
 
   - id: REQ-PLAN-001
     principles: [P-ACC-001, P-INT-001, P-NMH-001]
@@ -246,3 +271,5 @@ requirements:
       - kind: question_id
         value: q_conflict_5
 
+      - kind: rule_id
+        value: PLAN_VALUES_CLARIFICATION_PACK_V1

@@ -21,6 +21,7 @@ PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
 PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN = "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
 PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1 = "PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1"
+PLAN_VALUES_CLARIFICATION_PACK_V1 = "PLAN_VALUES_CLARIFICATION_PACK_V1"
 TRACK_B_UNKNOWNS_MAX = 3
 
 
@@ -122,6 +123,47 @@ def _build_two_track_action_plan(features: Dict[str, Any]) -> List[Dict[str, str
     return plan
 
 
+def _needs_values_clarification_pack(features: Dict[str, Any]) -> bool:
+    return features.get("values_empty") is True
+
+
+def _build_values_clarification_action_plan() -> List[Dict[str, str]]:
+    return [
+        {
+            "step": "10分タイマーをセットし、候補価値（安定/成長/自由/関係性）から上位3つを選ぶ",
+            "rationale": "選択肢を固定し、価値軸を可視化する",
+        },
+        {
+            "step": "上位3つを1位〜3位に並べ、『なぜ重要か』を各1文で記録する",
+            "rationale": "順序を固定して比較基準を作る",
+        },
+        {
+            "step": "最下位1つを『今回は優先しない価値』として明示する",
+            "rationale": "トレードオフを明文化し、後悔の理由を減らす",
+        },
+        {
+            "step": "次の一歩を1つ決める（24時間以内に実行できる行動に限定）",
+            "rationale": "価値軸を行動に接続し、先延ばしを防ぐ",
+        },
+        {
+            "step": "実行後に再評価する時刻をカレンダーへ固定する（例: 48時間後）",
+            "rationale": "見直し手順を先に定義して意思決定の質を保つ",
+        },
+    ]
+
+
+def _apply_values_clarification_pack_if_needed(
+    options: List[Dict[str, Any]], features: Dict[str, Any]
+) -> List[Dict[str, Any]]:
+    if not _needs_values_clarification_pack(features):
+        return options
+
+    action_plan = _build_values_clarification_action_plan()
+    for option in options:
+        option["action_plan"] = list(action_plan)
+    return options
+
+
 def _apply_two_track_plan_if_needed(
     options: List[Dict[str, Any]], features: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
@@ -174,6 +216,11 @@ def rules_fired_for(*, features: Optional[Dict[str, Any]] = None) -> List[str]:
     fired: List[str] = []
     if feats.get("constraint_conflict") is True:
         fired.append(PLAN_CONSTRAINT_CONFLICT_PROTOCOL_V1)
+    if _has_profile(feats, PROFILE_CASE_001) or _has_profile(feats, PROFILE_CASE_009):
+        return []
+
+    if _needs_values_clarification_pack(feats):
+        return [PLAN_VALUES_CLARIFICATION_PACK_V1]
     if _needs_two_track_plan(feats):
         fired.append(PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN)
     return fired
@@ -424,7 +471,7 @@ def generate_options(
         ]
 
     # Default fallback
-    return _apply_two_track_plan_if_needed([
+    return _apply_two_track_plan_if_needed(_apply_values_clarification_pack_if_needed([
         {
             "option_id": "opt_1",
             "title": "案A：段階的に進める",
@@ -471,4 +518,4 @@ def generate_options(
             "ethics_review": _ph_ethics(),
             "responsibility_review": _ph_responsibility(),
         },
-    ], feats)
+    ], feats), feats)

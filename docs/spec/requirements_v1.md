@@ -51,6 +51,13 @@
   - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
   - Principles: P-ACC-001, P-INT-001, P-NMH-001
 
+
+- **REQ-VALUES-001: Values Clarification Pack v1（values_empty）**
+  - features.values_empty が true のとき、questions（最大5・決定論順序）と action_plan（最大5ステップ・決定論順序）で価値軸獲得の手続きを出力すること。
+  - ethics.guardrails に「価値軸が空のまま推奨を断言しない」を含めること。
+  - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
+  - Principles: P-ACC-001, P-INT-001, P-NMH-001
+
 - **REQ-PLAN-001: Two-Track Plan（unknowns × time pressure）**
   - unknowns があり期限圧力が閾値以上のとき、action_plan に Track A（可逆・低リスク）と Track B（unknowns解消）を決定論順序で出力すること。
   - recommendation 裁定（status / recommended_option_id / arbitration_code）には介入しないこと。
