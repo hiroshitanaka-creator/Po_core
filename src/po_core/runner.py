@@ -301,7 +301,7 @@ def _build_stub(
     return {
         "meta": {
             "schema_version": "1.0",
-            "pocore_version": "0.2.0b3",
+            "pocore_version": "0.2.0b4",
             "run_id": run_id,
             "created_at": now,
             "seed": seed,
