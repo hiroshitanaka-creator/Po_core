@@ -237,6 +237,13 @@ def _rule_pack_delta(*, baseline: Dict[str, Any], variant: Dict[str, Any]) -> Di
     }
 
 def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
+    def _requirement_aliases(req_id: str) -> set[str]:
+        aliases = {req_id}
+        parts = req_id.split("-")
+        if len(parts) >= 3 and parts[-1].isdigit():
+            aliases.add("-".join(parts[:-1]))
+        return aliases
+
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     reqs = payload.get("requirements", [])
     idx: Dict[str, Dict[str, set[str]]] = {}
@@ -244,6 +251,7 @@ def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
         req_id = req.get("id")
         if not isinstance(req_id, str):
             continue
+        req_ids = _requirement_aliases(req_id)
         for ref in req.get("code_refs", []):
             if not isinstance(ref, dict):
                 continue
@@ -251,8 +259,29 @@ def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
             value = ref.get("value")
             if isinstance(kind, str) and isinstance(value, str):
                 idx.setdefault(kind, {})
-                idx[kind].setdefault(value, set()).add(req_id)
+                idx[kind].setdefault(value, set()).update(req_ids)
     return idx
+
+
+def _rule_pack_delta_summary(delta: Dict[str, Any]) -> Dict[str, int]:
+    inc = 0
+    dec = 0
+    same = 0
+    for row in delta.get("rule_deltas", []):
+        if not isinstance(row, dict):
+            continue
+        change = int(row.get("delta_cases", 0) or 0)
+        if change > 0:
+            inc += 1
+        elif change < 0:
+            dec += 1
+        else:
+            same += 1
+    return {
+        "increased_rules": inc,
+        "decreased_rules": dec,
+        "unchanged_rules": same,
+    }
 
 
 def _diff_case(
@@ -386,6 +415,12 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
             rule_ids=CONFLICT_PACK_RULE_IDS,
         )
         result["cases"] = diffs
+        values_delta = _rule_pack_delta(
+            baseline=baseline_values_pack, variant=variant_values_pack
+        )
+        conflict_delta = _rule_pack_delta(
+            baseline=baseline_conflict_pack, variant=variant_conflict_pack
+        )
         result["summary"] = {
             "changed_cases": sum(1 for d in diffs if d["changed"]),
             "impacted_requirements": sorted(
@@ -395,16 +430,14 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
             "values_pack": {
                 "baseline": baseline_values_pack,
                 "variant": variant_values_pack,
-                "delta": _rule_pack_delta(
-                    baseline=baseline_values_pack, variant=variant_values_pack
-                ),
+                "delta": values_delta,
+                "delta_summary": _rule_pack_delta_summary(values_delta),
             },
             "conflict_pack": {
                 "baseline": baseline_conflict_pack,
                 "variant": variant_conflict_pack,
-                "delta": _rule_pack_delta(
-                    baseline=baseline_conflict_pack, variant=variant_conflict_pack
-                ),
+                "delta": conflict_delta,
+                "delta_summary": _rule_pack_delta_summary(conflict_delta),
             },
         }
     else:
@@ -491,10 +524,21 @@ def _render_markdown(report: Dict[str, Any]) -> str:
             lines.append("")
 
             delta = pack_block.get("delta") if isinstance(pack_block, dict) else None
+            delta_summary = (
+                pack_block.get("delta_summary") if isinstance(pack_block, dict) else None
+            )
             if isinstance(delta, dict) and delta.get("rule_deltas"):
                 lines.append(
                     f"#### {key.replace('_', ' ').title()} baseline delta (--compare-baseline)"
                 )
+                if isinstance(delta_summary, dict):
+                    lines.append(
+                        "- change summary: +{increased_rules} / -{decreased_rules} / ={unchanged_rules}".format(
+                            increased_rules=delta_summary.get("increased_rules", 0),
+                            decreased_rules=delta_summary.get("decreased_rules", 0),
+                            unchanged_rules=delta_summary.get("unchanged_rules", 0),
+                        )
+                    )
                 for row in delta.get("rule_deltas", []):
                     lines.append(
                         "- `{}`: {} → {} (Δ {:+d})".format(

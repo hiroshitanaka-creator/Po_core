@@ -66,7 +66,9 @@ def test_policy_lab_compare_baseline_generates_impacted_requirements(
     assert result["meta"]["compare_baseline"] is True
     assert result["summary"]["changed_cases"] >= 1
     assert "REQ-ARB-001" in result["summary"]["impacted_requirements"]
+    assert "REQ-ARB" in result["summary"]["impacted_requirements"]
     assert "REQ-VALUES-001" in result["summary"]["impacted_requirements"]
+    assert "REQ-VALUES" in result["summary"]["impacted_requirements"]
     assert "REQ-CONSTRAINT" in result["summary"]["impacted_requirements"]
     assert result["summary"]["two_track_rule_id"] == "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
     assert result["summary"]["two_track_triggered_cases"] >= 1
@@ -83,3 +85,6 @@ def test_policy_lab_compare_baseline_generates_impacted_requirements(
     assert result["summary"]["conflict_pack"]["variant"]["rule_case_counts"]
     assert result["summary"]["values_pack"]["delta"]["rule_deltas"]
     assert result["summary"]["conflict_pack"]["delta"]["rule_deltas"]
+    assert result["summary"]["values_pack"]["delta_summary"]
+    assert result["summary"]["conflict_pack"]["delta_summary"]
+    assert "change summary:" in md_text
