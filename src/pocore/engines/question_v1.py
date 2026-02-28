@@ -11,6 +11,7 @@ MAX_QUESTIONS = 5
 DEADLINE_NEAR_DAYS = 3
 
 RULE_Q_VALUES = "Q_VALUES_ALIGNMENT"
+RULE_Q_VALUES_CLARIFICATION_PACK = "Q_VALUES_CLARIFICATION_PACK_V1"
 RULE_Q_CONFLICT = "Q_CONSTRAINT_CONFLICT"
 RULE_Q_STAKEHOLDER = "Q_STAKEHOLDER_ALIGNMENT"
 RULE_Q_UNKNOWN_ITEM = "Q_UNKNOWN_ITEM"
@@ -161,6 +162,50 @@ def generate(
             base_priority=1,
             score=100,
             rule_id=RULE_Q_VALUES,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_values_axis_1",
+            question="この意思決定で『絶対に避けたい結果』は何か？",
+            why_needed="回避条件を先に定義すると、価値軸の下限が安定するため。",
+            assumption_if_unanswered="可逆性を最優先し、不可逆な損失を避ける",
+            optional=False,
+            base_priority=1,
+            score=99,
+            rule_id=RULE_Q_VALUES_CLARIFICATION_PACK,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_values_axis_2",
+            question="3か月後に『良い判断だった』と言える状態は何か？",
+            why_needed="短期の成功状態を定義しないと評価軸が曖昧になるため。",
+            assumption_if_unanswered="生活安定と学習継続を両立した状態を成功とみなす",
+            optional=False,
+            base_priority=1,
+            score=98,
+            rule_id=RULE_Q_VALUES_CLARIFICATION_PACK,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_values_axis_3",
+            question="優先順位を1位〜3位で並べると何になるか？（例: 安定/成長/自由）",
+            why_needed="価値が複数あるとき、順序を固定しないと比較不能になるため。",
+            assumption_if_unanswered="安定 > 成長 > 自由の順で暫定設定する",
+            optional=False,
+            base_priority=2,
+            score=97,
+            rule_id=RULE_Q_VALUES_CLARIFICATION_PACK,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_values_axis_4",
+            question="許容できるコスト上限は何か？（時間/費用/心理負荷）",
+            why_needed="価値判断を実行可能条件へ接続するため。",
+            assumption_if_unanswered="追加コストは最小限（週5時間・固定費増なし）と仮定する",
+            optional=True,
+            base_priority=2,
+            score=96,
+            rule_id=RULE_Q_VALUES_CLARIFICATION_PACK,
         )
 
     if feats.get("constraint_conflict") is True:
