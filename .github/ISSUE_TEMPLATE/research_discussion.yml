@@ -1,0 +1,89 @@
+name: "🔬 Research / Academic Discussion"
+description: "Discuss academic research, theoretical foundations, or propose a new philosopher addition."
+title: "[Research] "
+labels: ["research", "philosophy", "academic"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Research & Academic Discussion
+
+        Use this template to propose a research collaboration, discuss theoretical
+        foundations, or suggest a new philosopher or tradition to add to Po_core.
+
+        See our arXiv draft: `papers/arxiv_paper_draft.md`
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Category"
+      options:
+        - "New philosopher / tradition proposal"
+        - "Tensor mapping theory"
+        - "W_Ethics Gate formal verification"
+        - "Philosophical consistency critique"
+        - "Empirical evaluation / benchmark"
+        - "Cross-cultural representation"
+        - "Other research topic"
+    validations:
+      required: true
+
+  - type: textarea
+    id: philosopher_tradition
+    attributes:
+      label: "Philosopher / Tradition (if applicable)"
+      description: "Name, tradition, key concepts, and why they would add value."
+      placeholder: |
+        Philosopher: Simone Weil
+        Tradition: Christian mysticism / social ethics
+        Key concepts: attention (προσοχή), affliction (malheur), rootedness
+        Value: Brings a non-power-oriented ethics of attention to the ensemble
+    validations:
+      required: false
+
+  - type: textarea
+    id: tensor_mapping
+    attributes:
+      label: "Proposed Tensor Mapping"
+      description: "How would this philosopher's key concepts map to Freedom Pressure dimensions?"
+      placeholder: |
+        freedom_pressure dimension → weight
+        attention_ethics → 0.8
+        suffering_acknowledgment → 0.7
+        rootedness → 0.6
+    validations:
+      required: false
+
+  - type: textarea
+    id: research_question
+    attributes:
+      label: "Research Question / Discussion Topic"
+      description: "What question or topic do you want to explore?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: label
+    attributes:
+      label: "Contribution Track"
+      options:
+        - "phil-easy (philosophy knowledge, no coding needed)"
+        - "bridge (philosophy + Python basics)"
+        - "ai-easy (AI/ML knowledge, philosophy interest)"
+        - "research (academic collaboration)"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Before submitting"
+      options:
+        - label: "I have read the existing 39 philosophers in `src/po_core/philosophers/manifest.py`"
+          required: false
+        - label: "I have reviewed the arXiv draft (`papers/arxiv_paper_draft.md`)"
+          required: false
+        - label: "This is not a duplicate of an existing issue or discussion"
+          required: true
