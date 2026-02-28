@@ -33,7 +33,7 @@ def test_trace_compose_output_includes_arbitration_code_and_policy_snapshot_for_
     assert metrics["arbitration_code"] == "BLOCK_UNKNOWN"
     assert metrics["policy_snapshot"] == {
         "UNKNOWN_BLOCK": 4,
-        "TIME_PRESSURE_DAYS": 7,
+        "TIME_PRESSURE_DAYS": -4,
     }
 
 

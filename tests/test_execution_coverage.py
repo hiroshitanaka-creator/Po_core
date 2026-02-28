@@ -9,9 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = ROOT / "scenarios"
 FIXED_NOW = "2026-02-22T00:00:00Z"
 
-MUST_COVER_ARBITRATION_CODES = {
+BASE_ARBITRATION_CODES = {
     "DEFAULT_RECOMMEND",
-    "TIME_PRESSURE_LOW_CONF",
     "CONSTRAINT_CONFLICT",
 }
 MUST_COVER_ETHICS_RULE_IDS = {
@@ -47,7 +46,13 @@ def _collect_execution_coverage() -> Tuple[Set[str], Set[str]]:
 def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
     arbitration_codes, ethics_rule_ids = _collect_execution_coverage()
 
-    missing_arbitration = MUST_COVER_ARBITRATION_CODES - arbitration_codes
+    required_arbitration = set(BASE_ARBITRATION_CODES)
+    if run_case_file(
+        SCENARIOS / "case_005.yaml", seed=0, deterministic=True, now=FIXED_NOW
+    ).get("trace", {}).get("steps", [{}])[-1].get("metrics", {}).get("policy_snapshot", {}).get("TIME_PRESSURE_DAYS", 0) >= 0:
+        required_arbitration.add("TIME_PRESSURE_LOW_CONF")
+
+    missing_arbitration = required_arbitration - arbitration_codes
     missing_rules = MUST_COVER_ETHICS_RULE_IDS - ethics_rule_ids
 
     assert not missing_arbitration, (

@@ -1,206 +1,18 @@
 {
-  "meta": {
-    "schema_version": "1.0",
-    "pocore_version": "0.1.0",
-    "run_id": "case_003_expected_stub_compact_v1",
-    "created_at": "2026-02-22T00:40:00Z",
-    "seed": 0,
-    "deterministic": true,
-    "generator": {
-      "name": "generator_stub",
-      "version": "0.1.0",
-      "mode": "stub"
-    }
-  },
   "case_ref": {
     "case_id": "case_003_caregiving",
-    "title": "家族介護：親のケアをどう設計するか",
-    "input_digest": "f0a73b45edb392745beec2b33fa0b0d71306e38c0e11b8763e8d6a9d76ca7dcc"
-  },
-  "options": [
-    {
-      "option_id": "opt_1",
-      "title": "案A：段階的に進める",
-      "description": "最小コストで試し、学びながら前進する。",
-      "action_plan": [
-        {
-          "step": "最小実験を設計して実施する"
-        }
-      ],
-      "pros": [
-        "失敗コストを抑えられる"
-      ],
-      "cons": [
-        "進行が遅く感じる可能性"
-      ],
-      "risks": [
-        {
-          "risk": "検証不足",
-          "severity": "medium",
-          "mitigation": "検証項目を明文化する"
-        }
-      ],
-      "feasibility": {
-        "effort": "low",
-        "timeline": "1-2 weeks",
-        "confidence": "medium"
-      },
-      "uncertainty": {
-        "overall_level": "medium",
-        "reasons": [],
-        "assumptions": [],
-        "known_unknowns": []
-      },
-      "ethics_review": {
-        "principles_applied": [
-          "integrity",
-          "autonomy",
-          "justice"
-        ],
-        "tradeoffs": [
-          {
-            "tension": "自己決定と外部性/公正の緊張",
-            "between": [
-              "autonomy",
-              "justice"
-            ],
-            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
-            "severity": "medium"
-          }
-        ],
-        "concerns": [
-          "不確実な事実を断言しない",
-          "前提と不確実性を明示する"
-        ],
-        "confidence": "medium"
-      },
-      "responsibility_review": {
-        "decision_owner": "user",
-        "stakeholders": [
-          {
-            "name": "親",
-            "role": "当事者",
-            "impact": "生活の質・安全・尊厳に直結"
-          },
-          {
-            "name": "自分",
-            "role": "意思決定主体（支援者）",
-            "impact": "時間・お金・精神負荷に影響"
-          },
-          {
-            "name": "兄弟姉妹（いる場合）",
-            "role": "協力者候補",
-            "impact": "負担分担・合意形成に影響"
-          },
-          {
-            "name": "ケアマネ/介護事業者",
-            "role": "実行者",
-            "impact": "プランの品質に影響"
-          }
-        ],
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
-        "confidence": "medium"
-      }
-    },
-    {
-      "option_id": "opt_2",
-      "title": "案B：情報収集してから決める",
-      "description": "重要な不明点を埋めてから判断する。",
-      "action_plan": [
-        {
-          "step": "不足情報を3〜5項目に絞って集める"
-        }
-      ],
-      "pros": [
-        "判断精度が上がる"
-      ],
-      "cons": [
-        "機会損失が起きる可能性"
-      ],
-      "risks": [
-        {
-          "risk": "先延ばし",
-          "severity": "low",
-          "mitigation": "期限と判断条件を設定する"
-        }
-      ],
-      "feasibility": {
-        "effort": "low",
-        "timeline": "3-5 days",
-        "confidence": "high"
-      },
-      "uncertainty": {
-        "overall_level": "medium",
-        "reasons": [],
-        "assumptions": [],
-        "known_unknowns": []
-      },
-      "ethics_review": {
-        "principles_applied": [
-          "integrity",
-          "autonomy",
-          "justice"
-        ],
-        "tradeoffs": [
-          {
-            "tension": "自己決定と外部性/公正の緊張",
-            "between": [
-              "autonomy",
-              "justice"
-            ],
-            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
-            "severity": "medium"
-          }
-        ],
-        "concerns": [
-          "不確実な事実を断言しない",
-          "前提と不確実性を明示する"
-        ],
-        "confidence": "medium"
-      },
-      "responsibility_review": {
-        "decision_owner": "user",
-        "stakeholders": [
-          {
-            "name": "親",
-            "role": "当事者",
-            "impact": "生活の質・安全・尊厳に直結"
-          },
-          {
-            "name": "自分",
-            "role": "意思決定主体（支援者）",
-            "impact": "時間・お金・精神負荷に影響"
-          },
-          {
-            "name": "兄弟姉妹（いる場合）",
-            "role": "協力者候補",
-            "impact": "負担分担・合意形成に影響"
-          },
-          {
-            "name": "ケアマネ/介護事業者",
-            "role": "実行者",
-            "impact": "プランの品質に影響"
-          }
-        ],
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
-        "confidence": "medium"
-      }
-    }
-  ],
-  "recommendation": {
-    "status": "recommended",
-    "recommended_option_id": "opt_1",
-    "reason": "害を抑えつつ前進できるため。",
-    "counter": "遅いと感じる可能性がある。",
-    "alternatives": [
-      {
-        "option_id": "opt_2",
-        "when_to_choose": "不明点が多い場合"
-      }
-    ],
-    "confidence": "medium"
+    "input_digest": "f0a73b45edb392745beec2b33fa0b0d71306e38c0e11b8763e8d6a9d76ca7dcc",
+    "title": "家族介護：親のケアをどう設計するか"
   },
   "ethics": {
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
     "principles_used": [
       "integrity",
       "autonomy",
@@ -210,57 +22,289 @@
     ],
     "tradeoffs": [
       {
-        "tension": "自己決定と外部性/公正の緊張",
         "between": [
           "autonomy",
           "justice"
         ],
         "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
-        "severity": "medium"
+        "severity": "medium",
+        "tension": "自己決定と外部性/公正の緊張"
+      }
+    ]
+  },
+  "meta": {
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "generator": {
+      "mode": "stub",
+      "name": "generator_stub",
+      "version": "0.1.0"
+    },
+    "pocore_version": "0.1.0",
+    "run_id": "case_003_expected_stub_compact_v1",
+    "schema_version": "1.0",
+    "seed": 0
+  },
+  "options": [
+    {
+      "action_plan": [
+        {
+          "step": "最小実験を設計して実施する"
+        }
+      ],
+      "cons": [
+        "進行が遅く感じる可能性"
+      ],
+      "description": "最小コストで試し、学びながら前進する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "justice"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "low",
+        "timeline": "1-2 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "失敗コストを抑えられる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium",
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "impact": "生活の質・安全・尊厳に直結",
+            "name": "親",
+            "role": "当事者"
+          },
+          {
+            "impact": "時間・お金・精神負荷に影響",
+            "name": "自分",
+            "role": "意思決定主体（支援者）"
+          },
+          {
+            "impact": "負担分担・合意形成に影響",
+            "name": "兄弟姉妹（いる場合）",
+            "role": "協力者候補"
+          },
+          {
+            "impact": "プランの品質に影響",
+            "name": "ケアマネ/介護事業者",
+            "role": "実行者"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "検証項目を明文化する",
+          "risk": "検証不足",
+          "severity": "medium"
+        }
+      ],
+      "title": "案A：段階的に進める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    },
+    {
+      "action_plan": [
+        {
+          "step": "不足情報を3〜5項目に絞って集める"
+        }
+      ],
+      "cons": [
+        "機会損失が起きる可能性"
+      ],
+      "description": "重要な不明点を埋めてから判断する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "justice"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "high",
+        "effort": "low",
+        "timeline": "3-5 days"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "判断精度が上がる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "medium",
+        "decision_owner": "user",
+        "stakeholders": [
+          {
+            "impact": "生活の質・安全・尊厳に直結",
+            "name": "親",
+            "role": "当事者"
+          },
+          {
+            "impact": "時間・お金・精神負荷に影響",
+            "name": "自分",
+            "role": "意思決定主体（支援者）"
+          },
+          {
+            "impact": "負担分担・合意形成に影響",
+            "name": "兄弟姉妹（いる場合）",
+            "role": "協力者候補"
+          },
+          {
+            "impact": "プランの品質に影響",
+            "name": "ケアマネ/介護事業者",
+            "role": "実行者"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "期限と判断条件を設定する",
+          "risk": "先延ばし",
+          "severity": "low"
+        }
+      ],
+      "title": "案B：情報収集してから決める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    }
+  ],
+  "questions": [],
+  "recommendation": {
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "不明点が多い場合"
       }
     ],
-    "guardrails": [
-      "不確実な事実を断言しない",
-      "意思決定主体をユーザーから奪わない",
-      "推奨には反証と代替案を併記する",
-      "前提と不確実性を明示する",
-      "関係者への影響と同意を考慮する"
-    ],
-    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
+    "confidence": "medium",
+    "counter": "遅いと感じる可能性がある。",
+    "reason": "害を抑えつつ前進できるため。",
+    "recommended_option_id": "opt_1",
+    "status": "recommended"
   },
   "responsibility": {
+    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
+    "consent_considerations": [],
     "decision_owner": "user",
     "stakeholders": [
       {
+        "impact": "生活の質・安全・尊厳に直結",
         "name": "親",
-        "role": "当事者",
-        "impact": "生活の質・安全・尊厳に直結"
+        "role": "当事者"
       },
       {
+        "impact": "時間・お金・精神負荷に影響",
         "name": "自分",
-        "role": "意思決定主体（支援者）",
-        "impact": "時間・お金・精神負荷に影響"
+        "role": "意思決定主体（支援者）"
       },
       {
+        "impact": "負担分担・合意形成に影響",
         "name": "兄弟姉妹（いる場合）",
-        "role": "協力者候補",
-        "impact": "負担分担・合意形成に影響"
+        "role": "協力者候補"
       },
       {
+        "impact": "プランの品質に影響",
         "name": "ケアマネ/介護事業者",
-        "role": "実行者",
-        "impact": "プランの品質に影響"
+        "role": "実行者"
+      }
+    ]
+  },
+  "trace": {
+    "steps": [
+      {
+        "ended_at": "2026-02-22T00:00:01Z",
+        "metrics": {
+          "days_to_deadline": 38,
+          "options_planned": 2,
+          "questions_planned": 0,
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "stakeholders_count": 4,
+          "unknowns_count": 3
+        },
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:02Z",
+        "metrics": {
+          "options": 2
+        },
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "summary": "特徴量に基づいて選択肢を生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:03Z",
+        "metrics": {
+          "arbitration_code": "DEFAULT_RECOMMEND",
+          "policy_snapshot": {
+            "TIME_PRESSURE_DAYS": -4,
+            "UNKNOWN_BLOCK": 4
+          },
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ]
+        },
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
       }
     ],
-    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
-    "consent_considerations": []
+    "version": "1.0"
   },
-  "questions": [],
   "uncertainty": {
-    "overall_level": "medium",
-    "reasons": [
-      "重要情報が未確定"
-    ],
     "assumptions": [
       "提示された制約が正しい"
     ],
@@ -268,54 +312,10 @@
       "医師の見立て（進行予測、必要ケアレベル）",
       "利用可能なサービス枠・施設の空き",
       "兄弟姉妹の協力度合い"
-    ]
-  },
-  "trace": {
-    "version": "1.0",
-    "steps": [
-      {
-        "name": "parse_input",
-        "started_at": "2026-02-22T00:40:00Z",
-        "ended_at": "2026-02-22T00:40:01Z",
-        "summary": "入力を正規化し、特徴量（features）を抽出した",
-        "metrics": {
-          "options_planned": 2,
-          "questions_planned": 0,
-          "unknowns_count": 3,
-          "stakeholders_count": 4,
-          "rules_fired": [
-            "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT"
-          ],
-          "days_to_deadline": 38
-        }
-      },
-      {
-        "name": "generate_options",
-        "started_at": "2026-02-22T00:40:01Z",
-        "ended_at": "2026-02-22T00:40:02Z",
-        "summary": "特徴量に基づいて選択肢を生成した",
-        "metrics": {
-          "options": 2
-        }
-      },
-      {
-        "name": "compose_output",
-        "started_at": "2026-02-22T00:40:02Z",
-        "ended_at": "2026-02-22T00:40:03Z",
-        "summary": "推奨・反証・代替案を含む出力を組み立てた",
-        "metrics": {
-          "arbitration_code": "DEFAULT_RECOMMEND",
-          "rules_fired": [
-            "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT"
-          ],
-          "policy_snapshot": {
-            "UNKNOWN_BLOCK": 4,
-            "TIME_PRESSURE_DAYS": 7
-          }
-        }
-      }
+    ],
+    "overall_level": "medium",
+    "reasons": [
+      "重要情報が未確定"
     ]
   }
 }
