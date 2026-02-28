@@ -46,17 +46,18 @@ def _validate_schema(
 
 def _assert_option_count(output: dict[str, Any], min_count: int = 2) -> None:
     """FR-OPT-001: at least ``min_count`` options required."""
-    assert len(output["options"]) >= min_count, (
-        f"FR-OPT-001: expected ≥ {min_count} options, got {len(output['options'])}"
-    )
+    assert (
+        len(output["options"]) >= min_count
+    ), f"FR-OPT-001: expected ≥ {min_count} options, got {len(output['options'])}"
 
 
 def _assert_recommendation_present(output: dict[str, Any]) -> None:
     """FR-REC-001: recommendation must be present (either status)."""
     rec = output["recommendation"]
-    assert rec["status"] in {"recommended", "no_recommendation"}, (
-        f"FR-REC-001: unexpected recommendation status: {rec['status']}"
-    )
+    assert rec["status"] in {
+        "recommended",
+        "no_recommendation",
+    }, f"FR-REC-001: unexpected recommendation status: {rec['status']}"
     if rec["status"] == "recommended":
         assert rec.get("counter"), "FR-REC-001: counter (反証) must be non-empty"
         assert rec.get("alternatives"), "FR-REC-001: alternatives must be non-empty"
@@ -65,9 +66,9 @@ def _assert_recommendation_present(output: dict[str, Any]) -> None:
 def _assert_ethics(output: dict[str, Any], min_principles: int = 2) -> None:
     """FR-ETH-001: at least ``min_principles`` ethics principles used."""
     used = output["ethics"]["principles_used"]
-    assert len(used) >= min_principles, (
-        f"FR-ETH-001: expected ≥ {min_principles} ethics principles, got {len(used)}: {used}"
-    )
+    assert (
+        len(used) >= min_principles
+    ), f"FR-ETH-001: expected ≥ {min_principles} ethics principles, got {len(used)}: {used}"
 
 
 def _assert_responsibility(output: dict[str, Any]) -> None:
@@ -75,17 +76,19 @@ def _assert_responsibility(output: dict[str, Any]) -> None:
     owner = output["responsibility"]["decision_owner"]
     assert owner, "FR-RES-001: decision_owner must not be empty"
     forbidden = {"po_core", "pocore", "po core", "the system", "ai"}
-    assert owner.lower().strip() not in forbidden, (
-        f"FR-RES-001: decision_owner must not be Po_core — got: '{owner}'"
-    )
+    assert (
+        owner.lower().strip() not in forbidden
+    ), f"FR-RES-001: decision_owner must not be Po_core — got: '{owner}'"
 
 
 def _assert_uncertainty(output: dict[str, Any]) -> None:
     """FR-UNC-001: uncertainty overall_level and reasons must be present."""
     unc = output["uncertainty"]
-    assert unc["overall_level"] in {"low", "medium", "high"}, (
-        f"FR-UNC-001: invalid overall_level: {unc['overall_level']}"
-    )
+    assert unc["overall_level"] in {
+        "low",
+        "medium",
+        "high",
+    }, f"FR-UNC-001: invalid overall_level: {unc['overall_level']}"
     assert unc["reasons"], "FR-UNC-001: uncertainty reasons must not be empty"
 
 
@@ -117,9 +120,9 @@ def _assert_no_forbidden_phrases(output: dict[str, Any]) -> None:
     ]
     output_str = str(output).lower()
     for phrase in forbidden_phrases:
-        assert phrase.lower() not in output_str, (
-            f"FR-RES-001: forbidden phrase detected: '{phrase}'"
-        )
+        assert (
+            phrase.lower() not in output_str
+        ), f"FR-RES-001: forbidden phrase detected: '{phrase}'"
 
 
 def _assert_questions_present(output: dict[str, Any]) -> None:
@@ -162,7 +165,9 @@ def test_at_001_job_change(case_001, composer, output_schema):
 
     # AT-001 specific: recommended option must have counter (反証)
     rec = output["recommendation"]
-    assert rec["status"] == "recommended", "AT-001: expected recommendation for this case"
+    assert (
+        rec["status"] == "recommended"
+    ), "AT-001: expected recommendation for this case"
     assert rec["recommended_option_id"] in {o["option_id"] for o in output["options"]}
 
     # options contain stakeholder references (家族, 現職チーム, etc.)
@@ -231,9 +236,9 @@ def test_at_005_responsibility_owner(case_005, composer, output_schema):
 
     # decision_owner must be explicitly set (FR-RES-001)
     assert output["responsibility"]["decision_owner"], "AT-005: decision_owner required"
-    assert output["responsibility"]["accountability_notes"], (
-        "AT-005: accountability_notes required"
-    )
+    assert output["responsibility"][
+        "accountability_notes"
+    ], "AT-005: accountability_notes required"
 
 
 # ── AT-006: 責任 + トレース重視 ───────────────────────────────────────────────
@@ -269,15 +274,15 @@ def test_at_007_recommendation_with_counter(case_007, composer, output_schema):
     rec = output["recommendation"]
     if rec["status"] == "recommended":
         # counter must be non-trivial
-        assert len(rec["counter"]) >= 10, (
-            "AT-007: counter (反証) must be substantive (≥ 10 chars)"
-        )
+        assert (
+            len(rec["counter"]) >= 10
+        ), "AT-007: counter (反証) must be substantive (≥ 10 chars)"
         # alternatives must point to a valid option
         alt_ids = {a["option_id"] for a in rec["alternatives"]}
         option_ids = {o["option_id"] for o in output["options"]}
-        assert alt_ids <= option_ids, (
-            f"AT-007: alternatives reference unknown option_ids: {alt_ids - option_ids}"
-        )
+        assert (
+            alt_ids <= option_ids
+        ), f"AT-007: alternatives reference unknown option_ids: {alt_ids - option_ids}"
 
 
 # ── AT-008: 倫理・不確実性・責任の複合 ────────────────────────────────────────
@@ -299,9 +304,9 @@ def test_at_008_combined_ethics_uncertainty_responsibility(
     assert output["uncertainty"]["overall_level"] in {"medium", "high"}
     assert output["uncertainty"]["known_unknowns"] is not None
     # Responsibility (FR-RES-001)
-    assert output["responsibility"]["consent_considerations"], (
-        "AT-008: consent_considerations required"
-    )
+    assert output["responsibility"][
+        "consent_considerations"
+    ], "AT-008: consent_considerations required"
 
 
 # ── AT-009: 価値観が不明（問い生成必須） ──────────────────────────────────────
@@ -322,9 +327,9 @@ def test_at_009_values_clarification_questions_generated(
     for q in output["questions"]:
         assert q["question_id"], "AT-009: question_id required"
         assert q["question"], "AT-009: question text required"
-        assert isinstance(q["priority"], int) and 1 <= q["priority"] <= 5, (
-            f"AT-009: priority must be 1–5, got {q['priority']}"
-        )
+        assert (
+            isinstance(q["priority"], int) and 1 <= q["priority"] <= 5
+        ), f"AT-009: priority must be 1–5, got {q['priority']}"
         assert q["why_needed"], "AT-009: why_needed required"
         assert isinstance(q["optional"], bool), "AT-009: optional must be bool"
 
@@ -343,9 +348,10 @@ def test_at_010_conflicting_constraints_question_generated(
     _full_must_check(output, output_schema, "AT-010")
 
     # FR-UNC-001: conflicting constraints → uncertainty should be non-trivial
-    assert output["uncertainty"]["overall_level"] in {"medium", "high"}, (
-        "AT-010: conflicting constraints should yield medium/high uncertainty"
-    )
+    assert output["uncertainty"]["overall_level"] in {
+        "medium",
+        "high",
+    }, "AT-010: conflicting constraints should yield medium/high uncertainty"
     # FR-Q-001: questions should be generated for this case
     _assert_questions_present(output)
 
@@ -398,9 +404,9 @@ def test_at_meta_determinism(case_fixture_name, request, output_schema):
             step.pop("ended_at", None)
         return d
 
-    assert strip_volatile(out1) == strip_volatile(out2), (
-        "AT-META: non-deterministic output for same seed"
-    )
+    assert strip_volatile(out1) == strip_volatile(
+        out2
+    ), "AT-META: non-deterministic output for same seed"
 
 
 # Need to import StubComposer at module level for the parametrize test

@@ -18,7 +18,10 @@ from po_core.app.composer import StubComposer
 
 _SCENARIOS_DIR = pathlib.Path(__file__).parent.parent.parent / "scenarios"
 _SCHEMA_PATH = (
-    pathlib.Path(__file__).parent.parent.parent / "docs" / "spec" / "output_schema_v1.json"
+    pathlib.Path(__file__).parent.parent.parent
+    / "docs"
+    / "spec"
+    / "output_schema_v1.json"
 )
 
 
@@ -27,9 +30,7 @@ def _load_scenario(case_id: str) -> dict[str, Any]:
     pattern = f"{case_id}*.yaml"
     matches = list(_SCENARIOS_DIR.glob(pattern))
     if not matches:
-        raise FileNotFoundError(
-            f"Scenario file not found: {_SCENARIOS_DIR / pattern}"
-        )
+        raise FileNotFoundError(f"Scenario file not found: {_SCENARIOS_DIR / pattern}")
     with matches[0].open(encoding="utf-8") as fh:
         return yaml.safe_load(fh)  # type: ignore[no-any-return]
 

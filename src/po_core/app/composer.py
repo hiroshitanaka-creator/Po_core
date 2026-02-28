@@ -127,9 +127,7 @@ class StubComposer:
         constraints: list[str] = case.get("constraints", [])
         stakeholders: list[dict[str, str]] = case.get("stakeholders", [])
         unknowns: list[str] = case.get("unknowns", [])
-        decision_owner: str = (
-            stakeholders[0]["name"] if stakeholders else "意思決定者"
-        )
+        decision_owner: str = stakeholders[0]["name"] if stakeholders else "意思決定者"
 
         # Build all sub-documents
         trace_steps = self._build_trace(now)
@@ -175,9 +173,7 @@ class StubComposer:
 
     # ── Private builders ──────────────────────────────────────────────────────
 
-    def _build_trace(
-        self, base: datetime.datetime
-    ) -> list[dict[str, Any]]:
+    def _build_trace(self, base: datetime.datetime) -> list[dict[str, Any]]:
         steps: list[dict[str, Any]] = []
         t = base
         for step_name in _TRACE_STEP_NAMES:
