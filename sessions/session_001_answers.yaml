@@ -1,0 +1,20 @@
+version: "1.0"
+case_ref: "session_001_case"
+answers:
+  - question_id: "q_unknown_1"
+    answer_text: "負荷試験でピーク時エラー率は0.08%で、許容範囲内でした。"
+    applied_patch_paths:
+      - "/unknowns"
+  - question_id: "q_unknown_2"
+    answer_text: "法務確認が完了し、利用規約改定案は問題ないとの回答を得ました。"
+    applied_patch_paths:
+      - "/assumptions/0"
+patch:
+  - op: "replace"
+    path: "/unknowns"
+    value: []
+  - op: "add"
+    path: "/assumptions"
+    value:
+      - "負荷試験ピーク時エラー率は0.08%で許容範囲内"
+      - "法務確認済み（利用規約改定案）"
