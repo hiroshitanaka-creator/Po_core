@@ -1,27 +1,61 @@
 {
-  "meta": {
-    "schema_version": "1.0",
-    "pocore_version": "0.1.0",
-    "run_id": "case_010_expected_stub_compact_v1",
-    "created_at": "2026-02-22T00:00:00Z",
-    "seed": 0,
-    "deterministic": true,
-    "generator": {
-      "name": "generator_stub",
-      "version": "0.1.0",
-      "mode": "stub"
-    }
-  },
   "case_ref": {
     "case_id": "case_010_conflicting_constraints",
-    "title": "制約の矛盾：やりたいが、条件が同時に成立しない",
-    "input_digest": "a6533cced6cdf2d1a52853796a67261973f64762d2d080cea7bdb3a7d8dea0d8"
+    "input_digest": "a6533cced6cdf2d1a52853796a67261973f64762d2d080cea7bdb3a7d8dea0d8",
+    "title": "制約の矛盾：やりたいが、条件が同時に成立しない"
+  },
+  "ethics": {
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "between": [
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "mitigation": "期限・実験・ガードレールで両立を狙う",
+        "severity": "medium",
+        "tension": "速度と安全の緊張"
+      },
+      {
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium",
+        "tension": "自己決定と外部性/公正の緊張"
+      }
+    ]
+  },
+  "meta": {
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "generator": {
+      "mode": "stub",
+      "name": "generator_stub",
+      "version": "0.1.0"
+    },
+    "pocore_version": "0.1.0",
+    "run_id": "case_010_expected_stub_compact_v1",
+    "schema_version": "1.0",
+    "seed": 0
   },
   "options": [
     {
-      "option_id": "opt_1",
-      "title": "制約を再設計して“段階的に起業”する",
-      "description": "矛盾している制約（要求:20h/週, 上限:5h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
       "action_plan": [
         {
           "step": "矛盾している制約を1枚に書き出し、どれを緩められるか順位づけする"
@@ -33,39 +67,16 @@
           "step": "時間を増やす手段（業務調整/家事外注/睡眠削減禁止）を検討する"
         }
       ],
-      "pros": [
-        "破綻条件を先に潰せる"
-      ],
       "cons": [
         "一部の願望（期限・投入時間）を修正する必要がある"
       ],
-      "risks": [
-        {
-          "risk": "制約を無視して突っ込むと燃え尽きる",
-          "severity": "high",
-          "mitigation": "時間・収入・健康の下限を守るルールを先に固定する"
-        }
-      ],
-      "feasibility": {
-        "effort": "medium",
-        "timeline": "2-4 weeks",
-        "confidence": "medium"
-      },
-      "uncertainty": {
-        "overall_level": "high",
-        "reasons": [
-          "制約が矛盾しているため、前提の調整が必要"
-        ],
-        "assumptions": [
-          "制約の一部は交渉・設計変更で動かせる"
-        ],
-        "known_unknowns": [
-          "時間を増やせる余地",
-          "副業規定",
-          "市場ニーズ"
-        ]
-      },
+      "description": "矛盾している制約（要求:20h/週, 上限:5h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
       "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
         "principles_applied": [
           "integrity",
           "nonmaleficence",
@@ -75,57 +86,80 @@
         ],
         "tradeoffs": [
           {
-            "tension": "野心と持続可能性の緊張",
             "between": [
               "autonomy",
               "nonmaleficence"
             ],
             "mitigation": "制約を可視化して破綻条件を先に潰す",
-            "severity": "high"
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
           },
           {
-            "tension": "自己決定と外部性/公正の緊張",
             "between": [
               "autonomy",
               "justice"
             ],
             "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
-            "severity": "medium"
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
           }
-        ],
-        "concerns": [
-          "矛盾した制約を無視して断言しない",
-          "前提と不確実性を明示する"
-        ],
-        "confidence": "medium"
+        ]
       },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "medium",
+        "timeline": "2-4 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "破綻条件を先に潰せる"
+      ],
       "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "high",
         "decision_owner": "user",
         "stakeholders": [
           {
+            "impact": "時間・収入・健康に影響",
             "name": "自分",
-            "role": "意思決定主体",
-            "impact": "時間・収入・健康に影響"
+            "role": "意思決定主体"
           },
           {
+            "impact": "家計・時間配分・不確実性の影響",
             "name": "家族/同居人",
-            "role": "生活共同体",
-            "impact": "家計・時間配分・不確実性の影響"
+            "role": "生活共同体"
           },
           {
+            "impact": "副業規定・パフォーマンスに影響",
             "name": "現職",
-            "role": "雇用主",
-            "impact": "副業規定・パフォーマンスに影響"
+            "role": "雇用主"
           }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "時間・収入・健康の下限を守るルールを先に固定する",
+          "risk": "制約を無視して突っ込むと燃え尽きる",
+          "severity": "high"
+        }
+      ],
+      "title": "制約を再設計して“段階的に起業”する",
+      "uncertainty": {
+        "assumptions": [
+          "制約の一部は交渉・設計変更で動かせる"
         ],
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
-        "confidence": "high"
+        "known_unknowns": [
+          "時間を増やせる余地",
+          "副業規定",
+          "市場ニーズ"
+        ],
+        "overall_level": "high",
+        "reasons": [
+          "制約が矛盾しているため、前提の調整が必要"
+        ]
       }
     },
     {
-      "option_id": "opt_2",
-      "title": "期限目標を下げ、検証に縮退する",
-      "description": "『半年で本格始動』をいったん外し、週5時間でできる検証（顧客ヒアリング/LP/プロト）に限定する。",
       "action_plan": [
         {
           "step": "週5時間で回る検証メニューを作る（ヒアリング/LP/試作）"
@@ -134,38 +168,16 @@
           "step": "8週間で『進める/止める』の判断基準を置く"
         }
       ],
-      "pros": [
-        "現実制約に沿って継続しやすい"
-      ],
       "cons": [
         "スピード感は落ちる"
       ],
-      "risks": [
-        {
-          "risk": "進捗が遅くモチベが折れる",
-          "severity": "medium",
-          "mitigation": "成果指標（ヒアリング件数等）を週単位で置く"
-        }
-      ],
-      "feasibility": {
-        "effort": "low",
-        "timeline": "8 weeks",
-        "confidence": "high"
-      },
-      "uncertainty": {
-        "overall_level": "medium",
-        "reasons": [
-          "市場ニーズが未検証"
-        ],
-        "assumptions": [
-          "週5時間は確保できる"
-        ],
-        "known_unknowns": [
-          "顧客の反応",
-          "継続可能性"
-        ]
-      },
+      "description": "『半年で本格始動』をいったん外し、週5時間でできる検証（顧客ヒアリング/LP/プロト）に限定する。",
       "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
         "principles_applied": [
           "integrity",
           "nonmaleficence",
@@ -175,159 +187,203 @@
         ],
         "tradeoffs": [
           {
-            "tension": "野心と持続可能性の緊張",
             "between": [
               "autonomy",
               "nonmaleficence"
             ],
             "mitigation": "制約を可視化して破綻条件を先に潰す",
-            "severity": "high"
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
           },
           {
-            "tension": "自己決定と外部性/公正の緊張",
             "between": [
               "autonomy",
               "justice"
             ],
             "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
-            "severity": "medium"
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
           }
-        ],
-        "concerns": [
-          "矛盾した制約を無視して断言しない",
-          "前提と不確実性を明示する"
-        ],
-        "confidence": "medium"
+        ]
       },
+      "feasibility": {
+        "confidence": "high",
+        "effort": "low",
+        "timeline": "8 weeks"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "現実制約に沿って継続しやすい"
+      ],
       "responsibility_review": {
+        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "confidence": "high",
         "decision_owner": "user",
         "stakeholders": [
           {
+            "impact": "時間・収入・健康に影響",
             "name": "自分",
-            "role": "意思決定主体",
-            "impact": "時間・収入・健康に影響"
+            "role": "意思決定主体"
           },
           {
+            "impact": "家計・時間配分・不確実性の影響",
             "name": "家族/同居人",
-            "role": "生活共同体",
-            "impact": "家計・時間配分・不確実性の影響"
+            "role": "生活共同体"
           },
           {
+            "impact": "副業規定・パフォーマンスに影響",
             "name": "現職",
-            "role": "雇用主",
-            "impact": "副業規定・パフォーマンスに影響"
+            "role": "雇用主"
           }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "成果指標（ヒアリング件数等）を週単位で置く",
+          "risk": "進捗が遅くモチベが折れる",
+          "severity": "medium"
+        }
+      ],
+      "title": "期限目標を下げ、検証に縮退する",
+      "uncertainty": {
+        "assumptions": [
+          "週5時間は確保できる"
         ],
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
-        "confidence": "high"
+        "known_unknowns": [
+          "顧客の反応",
+          "継続可能性"
+        ],
+        "overall_level": "medium",
+        "reasons": [
+          "市場ニーズが未検証"
+        ]
       }
     }
   ],
+  "questions": [
+    {
+      "assumption_if_unanswered": "健康と収入を最優先と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
+      "question_id": "q_conflict_1",
+      "why_needed": "優先順位がないと制約の再設計ができないため。"
+    },
+    {
+      "assumption_if_unanswered": "週末に2h×2回が確保できると仮定する",
+      "optional": false,
+      "priority": 2,
+      "question": "週5時間の内訳は？（平日/週末、連続時間の有無）",
+      "question_id": "q_conflict_2",
+      "why_needed": "実行可能な検証タスクへ分解するため。"
+    },
+    {
+      "assumption_if_unanswered": "許可が必要と仮定し、確認を最優先にする",
+      "optional": false,
+      "priority": 2,
+      "question": "現職の副業規定（許可制/禁止/競業）を確認した？",
+      "question_id": "q_conflict_3",
+      "why_needed": "実行可能性（法務・契約）を左右するため。"
+    }
+  ],
   "recommendation": {
-    "status": "recommended",
-    "recommended_option_id": "opt_1",
-    "reason": "制約が矛盾している状態では、どの案も破綻しやすい。まず制約を再設計してから進めるべき。",
-    "counter": "制約の調整ができない場合、目標（期限/投入時間）を下げる必要がある。",
     "alternatives": [
       {
         "option_id": "opt_2",
         "when_to_choose": "期限目標を下げ、週5時間で検証に縮退したい場合"
       }
     ],
-    "confidence": "medium"
-  },
-  "ethics": {
-    "principles_used": [
-      "integrity",
-      "autonomy",
-      "nonmaleficence",
-      "justice",
-      "accountability"
-    ],
-    "tradeoffs": [
-      {
-        "tension": "速度と安全の緊張",
-        "between": [
-          "autonomy",
-          "nonmaleficence"
-        ],
-        "mitigation": "期限・実験・ガードレールで両立を狙う",
-        "severity": "medium"
-      },
-      {
-        "tension": "自己決定と外部性/公正の緊張",
-        "between": [
-          "autonomy",
-          "justice"
-        ],
-        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
-        "severity": "medium"
-      }
-    ],
-    "guardrails": [
-      "不確実な事実を断言しない",
-      "意思決定主体をユーザーから奪わない",
-      "推奨には反証と代替案を併記する",
-      "前提と不確実性を明示する",
-      "関係者への影響と同意を考慮する"
-    ],
-    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。"
+    "confidence": "medium",
+    "counter": "制約の調整ができない場合、目標（期限/投入時間）を下げる必要がある。",
+    "reason": "制約が矛盾している状態では、どの案も破綻しやすい。まず制約を再設計してから進めるべき。",
+    "recommended_option_id": "opt_1",
+    "status": "recommended"
   },
   "responsibility": {
-    "decision_owner": "user",
-    "stakeholders": [
-      {
-        "name": "自分",
-        "role": "意思決定主体",
-        "impact": "時間・収入・健康に影響"
-      },
-      {
-        "name": "家族/同居人",
-        "role": "生活共同体",
-        "impact": "家計・時間配分・不確実性の影響"
-      },
-      {
-        "name": "現職",
-        "role": "雇用主",
-        "impact": "副業規定・パフォーマンスに影響"
-      }
-    ],
     "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
     "consent_considerations": [
       "収入への影響（減収リスク）を明示し、必要なら支援/予備費を検討する"
+    ],
+    "decision_owner": "user",
+    "stakeholders": [
+      {
+        "impact": "時間・収入・健康に影響",
+        "name": "自分",
+        "role": "意思決定主体"
+      },
+      {
+        "impact": "家計・時間配分・不確実性の影響",
+        "name": "家族/同居人",
+        "role": "生活共同体"
+      },
+      {
+        "impact": "副業規定・パフォーマンスに影響",
+        "name": "現職",
+        "role": "雇用主"
+      }
     ]
   },
-  "questions": [
-    {
-      "question_id": "q_conflict_1",
-      "question": "矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
-      "priority": 1,
-      "why_needed": "優先順位がないと制約の再設計ができないため。",
-      "assumption_if_unanswered": "健康と収入を最優先と仮定する",
-      "optional": false
-    },
-    {
-      "question_id": "q_conflict_2",
-      "question": "週5時間の内訳は？（平日/週末、連続時間の有無）",
-      "priority": 2,
-      "why_needed": "実行可能な検証タスクへ分解するため。",
-      "assumption_if_unanswered": "週末に2h×2回が確保できると仮定する",
-      "optional": false
-    },
-    {
-      "question_id": "q_conflict_3",
-      "question": "現職の副業規定（許可制/禁止/競業）を確認した？",
-      "priority": 2,
-      "why_needed": "実行可能性（法務・契約）を左右するため。",
-      "assumption_if_unanswered": "許可が必要と仮定し、確認を最優先にする",
-      "optional": false
-    }
-  ],
-  "uncertainty": {
-    "overall_level": "high",
-    "reasons": [
-      "制約が矛盾している"
+  "trace": {
+    "steps": [
+      {
+        "ended_at": "2026-02-22T00:00:01Z",
+        "metrics": {
+          "constraint_conflict": true,
+          "days_to_deadline": 190,
+          "options_planned": 2,
+          "questions_planned": 3,
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "stakeholders_count": 3,
+          "unknowns_count": 3
+        },
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:02Z",
+        "metrics": {
+          "options": 2
+        },
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "summary": "特徴量に基づいて選択肢を生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:03Z",
+        "metrics": {
+          "questions": 3
+        },
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "不足情報を補う問いを生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:04Z",
+        "metrics": {
+          "arbitration_code": "CONSTRAINT_CONFLICT",
+          "policy_snapshot": {
+            "TIME_PRESSURE_DAYS": -4,
+            "UNKNOWN_BLOCK": 4
+          },
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ]
+        },
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:03Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+      }
     ],
+    "version": "1.0"
+  },
+  "uncertainty": {
     "assumptions": [
       "健康と生活維持は下限として守る"
     ],
@@ -335,66 +391,10 @@
       "副業規定の詳細（許容範囲）",
       "起業の初期モデル（必要時間・初期投資）",
       "収入維持の代替策（段階投入、検証期間）"
-    ]
-  },
-  "trace": {
-    "version": "1.0",
-    "steps": [
-      {
-        "name": "parse_input",
-        "started_at": "2026-02-22T00:00:00Z",
-        "ended_at": "2026-02-22T00:00:01Z",
-        "summary": "入力を正規化し、特徴量（features）を抽出した",
-        "metrics": {
-          "options_planned": 2,
-          "questions_planned": 3,
-          "unknowns_count": 3,
-          "stakeholders_count": 3,
-          "rules_fired": [
-            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
-            "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT"
-          ],
-          "days_to_deadline": 190,
-          "constraint_conflict": true
-        }
-      },
-      {
-        "name": "generate_options",
-        "started_at": "2026-02-22T00:00:01Z",
-        "ended_at": "2026-02-22T00:00:02Z",
-        "summary": "特徴量に基づいて選択肢を生成した",
-        "metrics": {
-          "options": 2
-        }
-      },
-      {
-        "name": "question_layer",
-        "started_at": "2026-02-22T00:00:02Z",
-        "ended_at": "2026-02-22T00:00:03Z",
-        "summary": "不足情報を補う問いを生成した",
-        "metrics": {
-          "questions": 3
-        }
-      },
-      {
-        "name": "compose_output",
-        "started_at": "2026-02-22T00:00:03Z",
-        "ended_at": "2026-02-22T00:00:04Z",
-        "summary": "推奨・反証・代替案を含む出力を組み立てた",
-        "metrics": {
-          "arbitration_code": "CONSTRAINT_CONFLICT",
-          "rules_fired": [
-            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
-            "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT"
-          ],
-          "policy_snapshot": {
-            "UNKNOWN_BLOCK": 4,
-            "TIME_PRESSURE_DAYS": 7
-          }
-        }
-      }
+    ],
+    "overall_level": "high",
+    "reasons": [
+      "制約が矛盾している"
     ]
   }
 }

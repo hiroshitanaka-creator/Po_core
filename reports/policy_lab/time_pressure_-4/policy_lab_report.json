@@ -1,0 +1,609 @@
+{
+  "meta": {
+    "tool": "policy_lab_v1",
+    "now": "2026-02-22T00:00:00Z",
+    "seed": 0,
+    "scenarios_dir": "scenarios",
+    "baseline_policy": {
+      "UNKNOWN_BLOCK": 4,
+      "UNKNOWN_SOFT": 1,
+      "TIME_PRESSURE_DAYS": 7
+    },
+    "variant_policy": {
+      "UNKNOWN_BLOCK": 4,
+      "UNKNOWN_SOFT": 1,
+      "TIME_PRESSURE_DAYS": -4
+    },
+    "compare_baseline": true,
+    "cases_total": 10
+  },
+  "cases": [
+    {
+      "case_file": "case_001.yaml",
+      "case_id": "case_001_job_change",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_001.yaml",
+        "case_id": "case_001_job_change",
+        "features": {
+          "unknowns_count": 0,
+          "stakeholders_count": 0,
+          "days_to_deadline": null
+        },
+        "arbitration_code": null,
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [],
+        "policy_snapshot": {}
+      },
+      "variant": {
+        "case_file": "case_001.yaml",
+        "case_id": "case_001_job_change",
+        "features": {
+          "unknowns_count": 0,
+          "stakeholders_count": 0,
+          "days_to_deadline": null
+        },
+        "arbitration_code": null,
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "UNKNOWN_SOFT": 1,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001"
+      ]
+    },
+    {
+      "case_file": "case_002.yaml",
+      "case_id": "case_002_headcount_reduction",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_002.yaml",
+        "case_id": "case_002_headcount_reduction",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 16
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_002.yaml",
+        "case_id": "case_002_headcount_reduction",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 16
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_003.yaml",
+      "case_id": "case_003_caregiving",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_003.yaml",
+        "case_id": "case_003_caregiving",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 38
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_003.yaml",
+        "case_id": "case_003_caregiving",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 38
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_004.yaml",
+      "case_id": "case_004_security_disclosure",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_004.yaml",
+        "case_id": "case_004_security_disclosure",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 52
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_004.yaml",
+        "case_id": "case_004_security_disclosure",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 4,
+          "days_to_deadline": 52
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_005.yaml",
+      "case_id": "case_005_promise_vs_safety",
+      "changed": true,
+      "changed_fields": [
+        "arbitration_code",
+        "recommendation",
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_005.yaml",
+        "case_id": "case_005_promise_vs_safety",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 6
+        },
+        "arbitration_code": "TIME_PRESSURE_LOW_CONF",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "low"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_005.yaml",
+        "case_id": "case_005_promise_vs_safety",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 6
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_006.yaml",
+      "case_id": "case_006_data_leak_response",
+      "changed": true,
+      "changed_fields": [
+        "arbitration_code",
+        "recommendation",
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_006.yaml",
+        "case_id": "case_006_data_leak_response",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 2
+        },
+        "arbitration_code": "TIME_PRESSURE_LOW_CONF",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "low"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_006.yaml",
+        "case_id": "case_006_data_leak_response",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 2
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_007.yaml",
+      "case_id": "case_007_lie_or_admit",
+      "changed": true,
+      "changed_fields": [
+        "arbitration_code",
+        "recommendation",
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_007.yaml",
+        "case_id": "case_007_lie_or_admit",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 3
+        },
+        "arbitration_code": "TIME_PRESSURE_LOW_CONF",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "low"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_007.yaml",
+        "case_id": "case_007_lie_or_admit",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 3
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_008.yaml",
+      "case_id": "case_008_deadline_tradeoff",
+      "changed": true,
+      "changed_fields": [
+        "arbitration_code",
+        "recommendation",
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_008.yaml",
+        "case_id": "case_008_deadline_tradeoff",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 3
+        },
+        "arbitration_code": "TIME_PRESSURE_LOW_CONF",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "low"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_008.yaml",
+        "case_id": "case_008_deadline_tradeoff",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 3
+        },
+        "arbitration_code": "DEFAULT_RECOMMEND",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT",
+          "ETH_TIME_PRESSURE_SAFETY"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    },
+    {
+      "case_file": "case_009.yaml",
+      "case_id": "case_009_unclear_values",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_009.yaml",
+        "case_id": "case_009_unclear_values",
+        "features": {
+          "unknowns_count": 0,
+          "stakeholders_count": 0,
+          "days_to_deadline": null
+        },
+        "arbitration_code": null,
+        "recommendation": {
+          "status": "no_recommendation",
+          "recommended_option_id": null,
+          "confidence": "high"
+        },
+        "rules_fired": [],
+        "policy_snapshot": {}
+      },
+      "variant": {
+        "case_file": "case_009.yaml",
+        "case_id": "case_009_unclear_values",
+        "features": {
+          "unknowns_count": 0,
+          "stakeholders_count": 0,
+          "days_to_deadline": null
+        },
+        "arbitration_code": null,
+        "recommendation": {
+          "status": "no_recommendation",
+          "recommended_option_id": null,
+          "confidence": "high"
+        },
+        "rules_fired": [],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "UNKNOWN_SOFT": 1,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001"
+      ]
+    },
+    {
+      "case_file": "case_010.yaml",
+      "case_id": "case_010_conflicting_constraints",
+      "changed": true,
+      "changed_fields": [
+        "policy_snapshot"
+      ],
+      "baseline": {
+        "case_file": "case_010.yaml",
+        "case_id": "case_010_conflicting_constraints",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 190
+        },
+        "arbitration_code": "CONSTRAINT_CONFLICT",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": 7
+        }
+      },
+      "variant": {
+        "case_file": "case_010.yaml",
+        "case_id": "case_010_conflicting_constraints",
+        "features": {
+          "unknowns_count": 3,
+          "stakeholders_count": 3,
+          "days_to_deadline": 190
+        },
+        "arbitration_code": "CONSTRAINT_CONFLICT",
+        "recommendation": {
+          "status": "recommended",
+          "recommended_option_id": "opt_1",
+          "confidence": "medium"
+        },
+        "rules_fired": [
+          "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+          "ETH_NO_OVERCLAIM_UNKNOWN",
+          "ETH_STAKEHOLDER_CONSENT"
+        ],
+        "policy_snapshot": {
+          "UNKNOWN_BLOCK": 4,
+          "TIME_PRESSURE_DAYS": -4
+        }
+      },
+      "impacted_requirements": [
+        "REQ-ARB-001",
+        "REQ-ETH-002"
+      ]
+    }
+  ],
+  "summary": {
+    "changed_cases": 10,
+    "impacted_requirements": [
+      "REQ-ARB-001",
+      "REQ-ETH-002"
+    ]
+  }
+}

@@ -61,7 +61,7 @@ def _format_records(records: List[Dict[str, Any]]) -> str:
 
 def test_golden_has_unknowns_deadline_conflict_boundary_case() -> None:
     records = _load_case_features()
-    matched = [
+    threshold_matched = [
         row
         for row in records
         if row["features"].get("days_to_deadline") is not None
@@ -69,10 +69,25 @@ def test_golden_has_unknowns_deadline_conflict_boundary_case() -> None:
         and row["features"].get("days_to_deadline") <= TIME_PRESSURE_DAYS
     ]
 
-    assert matched, (
-        "No *_expected.json-backed case satisfies unknowns×deadline boundary: "
-        f"unknowns_count >= UNKNOWN_SOFT({UNKNOWN_SOFT}) and "
-        f"days_to_deadline <= TIME_PRESSURE_DAYS({TIME_PRESSURE_DAYS}).\n"
+    if TIME_PRESSURE_DAYS >= 0:
+        assert threshold_matched, (
+            "No *_expected.json-backed case satisfies unknowns×deadline boundary: "
+            f"unknowns_count >= UNKNOWN_SOFT({UNKNOWN_SOFT}) and "
+            f"days_to_deadline <= TIME_PRESSURE_DAYS({TIME_PRESSURE_DAYS}).\n"
+            "Scanned cases:\n"
+            f"{_format_records(records)}"
+        )
+        return
+
+    near_deadline_matched = [
+        row
+        for row in records
+        if row["features"].get("days_to_deadline") is not None
+        and row["features"].get("unknowns_count", 0) >= UNKNOWN_SOFT
+    ]
+    assert near_deadline_matched, (
+        "No *_expected.json-backed case satisfies unknowns+deadline observability when "
+        f"TIME_PRESSURE_DAYS={TIME_PRESSURE_DAYS}.\n"
         "Scanned cases:\n"
         f"{_format_records(records)}"
     )

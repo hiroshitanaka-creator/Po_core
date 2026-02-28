@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 UNKNOWN_BLOCK = 4
 UNKNOWN_SOFT = 1
-TIME_PRESSURE_DAYS = 7
+TIME_PRESSURE_DAYS = -4
 
 
 def should_block_recommendation(features: Dict[str, Any]) -> bool:
