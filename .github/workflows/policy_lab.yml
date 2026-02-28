@@ -1,14 +1,14 @@
-name: Policy Lab Manual Run
+name: Policy Lab (Manual)
 
 on:
   workflow_dispatch:
     inputs:
       unknown_block:
-        description: "UNKNOWN_BLOCK threshold"
+        description: "UNKNOWN_BLOCK threshold (int)"
         required: true
         type: number
       time_pressure_days:
-        description: "TIME_PRESSURE_DAYS threshold"
+        description: "TIME_PRESSURE_DAYS threshold (int)"
         required: true
         type: number
       now:
@@ -22,13 +22,14 @@ on:
         default: 0
         type: number
       compare_baseline:
-        description: "Compare variant outputs against baseline"
+        description: "Compare with baseline"
         required: true
         default: true
         type: boolean
 
 jobs:
   policy-lab:
+    name: Policy Lab Experiment (manual only)
     runs-on: ubuntu-latest
 
     steps:
@@ -48,7 +49,7 @@ jobs:
 
       - name: Run Policy Lab
         run: |
-          OUTPUT_DIR="reports/policy_lab/run_${{ github.run_id }}_${{ github.run_attempt }}"
+          OUTPUT_DIR="reports/policy_lab/ub${{ inputs.unknown_block }}_tp${{ inputs.time_pressure_days }}_${{ github.run_id }}"
           COMPARE_FLAG=""
           if [ "${{ inputs.compare_baseline }}" = "true" ]; then
             COMPARE_FLAG="--compare-baseline"
@@ -62,9 +63,9 @@ jobs:
             --output-dir "$OUTPUT_DIR" \
             $COMPARE_FLAG
 
-      - name: Upload Policy Lab artifacts
+      - name: Upload reports artifact
         uses: actions/upload-artifact@v4
         with:
-          name: policy-lab-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          name: policy-lab-reports-${{ github.run_id }}
           path: reports/policy_lab/**
           if-no-files-found: error
