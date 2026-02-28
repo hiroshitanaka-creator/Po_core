@@ -40,7 +40,45 @@ pip install po-core-flyingpig
 - その結果を golden（期待JSON）へ固定し、CI（`pytest -q`）で契約を検証する。
 - 凍結golden `scenarios/case_001_expected.json` / `scenarios/case_009_expected.json` は変更禁止。
 
-## Contribution Tracks
+## 🚀 Good First Issues — Jump In Today
+
+> No philosophy PhD required. No ML expertise required. Just curiosity.
+
+We have **23 ready-to-claim tasks** across three tracks. Pick one and open a PR!
+
+### 🧪 AI Track — Add unit tests for a philosopher (`ai-easy`)
+
+23 philosophers have no dedicated unit test file. Pick one, copy the pattern from
+[`tests/unit/test_philosophers/test_kant.py`](./tests/unit/test_philosophers/test_kant.py),
+and submit a PR. **Estimated time: 1–2 hours.**
+
+Unclaimed philosophers:
+`beauvoir` · `butler` · `descartes` · `dogen` · `epicurus` · `foucault` ·
+`hegel` · `husserl` · `jonas` · `laozi` · `marcus_aurelius` · `nagarjuna` ·
+`nishida` · `parmenides` · `plato` · `schopenhauer` · `spinoza` · `weil`
+and more.
+
+```bash
+# Grab one and go:
+cp tests/unit/test_philosophers/test_kant.py \
+   tests/unit/test_philosophers/test_<your_philosopher>.py
+# Edit the file, run: pytest tests/unit/test_philosophers/test_<your_philosopher>.py -v
+```
+
+### 📖 Philosophy Track — No code required (`phil-easy`)
+
+- **Review philosophical accuracy** of any of the 39 philosopher modules — just read
+  `src/po_core/philosophers/<name>.py` and comment on the GitHub issue
+- **Propose a new philosopher** (Ubuntu ethics, Gilligan, Thich Nhat Hanh, etc.)
+- **Translate key concepts** in `docs/` from English ↔ Japanese ↔ your language
+
+### 🌉 Bridge Track — Python basics + philosophy curiosity (`bridge`)
+
+- **Implement a new philosopher stub** by copying `src/po_core/philosophers/aristotle.py`
+  as a template — add your chosen thinker in ~100 lines
+
+**→ [See all prepared issues](./.github/ISSUE_TEMPLATE/PREPARED_ISSUES.md)**
+**→ [Full contribution guide](./CONTRIBUTING.md)**
 
 ### <a id="ai-track"></a> AI Track
 
