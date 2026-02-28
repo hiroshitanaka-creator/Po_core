@@ -5,7 +5,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "session_replay.py"
 CASE_PATH = ROOT / "scenarios" / "case_002.yaml"
@@ -15,11 +14,17 @@ def _run_replay(tmp_path: Path, out_name: str) -> dict:
     answers = {
         "patch": [
             {"op": "replace", "path": "/unknowns", "value": ["評価データはHR確認済み"]},
-            {"op": "add", "path": "/extensions", "value": {"session_replay": "unit-test"}},
+            {
+                "op": "add",
+                "path": "/extensions",
+                "value": {"session_replay": "unit-test"},
+            },
         ]
     }
     answers_path = tmp_path / f"answers_{out_name}.json"
-    answers_path.write_text(json.dumps(answers, ensure_ascii=False, indent=2), encoding="utf-8")
+    answers_path.write_text(
+        json.dumps(answers, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     out_dir = tmp_path / out_name
     cmd = [

@@ -70,7 +70,9 @@ def test_policy_lab_compare_baseline_generates_impacted_requirements(
     assert "REQ-VALUES-001" in result["summary"]["impacted_requirements"]
     assert "REQ-VALUES" in result["summary"]["impacted_requirements"]
     assert "REQ-CONSTRAINT" in result["summary"]["impacted_requirements"]
-    assert result["summary"]["two_track_rule_id"] == "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+    assert (
+        result["summary"]["two_track_rule_id"] == "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+    )
     assert result["summary"]["two_track_triggered_cases"] >= 1
     assert result["summary"]["planning_rule_frequency_top"]
     assert result["summary"]["planning_rule_frequency_top"][0]["rule_id"]
