@@ -12,6 +12,7 @@ DEADLINE_NEAR_DAYS = 3
 
 RULE_Q_VALUES = "Q_VALUES_ALIGNMENT"
 RULE_Q_CONFLICT = "Q_CONSTRAINT_CONFLICT"
+RULE_Q_CONFLICT_PROTOCOL = "Q_CONFLICT_RESOLUTION_PROTOCOL_V1"
 RULE_Q_STAKEHOLDER = "Q_STAKEHOLDER_ALIGNMENT"
 RULE_Q_UNKNOWN_ITEM = "Q_UNKNOWN_ITEM"
 RULE_Q_DEADLINE_FLEX = "Q_DEADLINE_FLEXIBILITY"
@@ -164,16 +165,72 @@ def generate(
         )
 
     if feats.get("constraint_conflict") is True:
+        min_h = feats.get("time_min_hours_per_week")
+        max_h = feats.get("time_max_hours_per_week")
+        range_hint = ""
+        if isinstance(min_h, int) and isinstance(max_h, int):
+            range_hint = f"（要求:{min_h}h/週, 上限:{max_h}h/週）"
+
         _append_candidate(
             candidates,
             question_id="q_conflict_1",
-            question="矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
+            question=(
+                "矛盾している制約のうち、絶対に守るのはどれ？"
+                "（時間/収入/健康/期限など）"
+            ),
             why_needed="優先順位がないと制約の再設計ができないため。",
             assumption_if_unanswered="健康と収入を最優先と仮定する",
             optional=False,
             base_priority=1,
+            score=99,
+            rule_id=RULE_Q_CONFLICT_PROTOCOL,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_conflict_2",
+            question=(
+                f"矛盾制約{range_hint}を解くため、緩和可能な制約はどれか？"
+                "（交渉可否/一時変更の可否）"
+            ),
+            why_needed="固定制約と可変制約を分離しないと実行計画が作れないため。",
+            assumption_if_unanswered="期限のみ調整可能と仮定する",
+            optional=False,
+            base_priority=1,
+            score=97,
+            rule_id=RULE_Q_CONFLICT_PROTOCOL,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_conflict_3",
+            question="矛盾解消の期限はいつまでか？（判断日と見直し日を明示）",
+            why_needed="無期限の保留を防ぎ、意思決定の完了条件を固定するため。",
+            assumption_if_unanswered="7日以内に一次判断すると仮定する",
+            optional=False,
+            base_priority=1,
             score=95,
             rule_id=RULE_Q_CONFLICT,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_conflict_4",
+            question="現状で可逆な最小実験は何か？（影響を限定して検証する）",
+            why_needed="破綻リスクを抑えながら前提検証を進めるため。",
+            assumption_if_unanswered="影響範囲を限定した1週間の試行を実施する",
+            optional=False,
+            base_priority=2,
+            score=93,
+            rule_id=RULE_Q_CONFLICT_PROTOCOL,
+        )
+        _append_candidate(
+            candidates,
+            question_id="q_conflict_5",
+            question="解消不能だった場合の撤退条件は何か？（健康/収入/関係者影響）",
+            why_needed="矛盾を抱えたままの継続を防ぎ、損失上限を明確化するため。",
+            assumption_if_unanswered="健康・収入の下限割れで撤退すると仮定する",
+            optional=False,
+            base_priority=2,
+            score=91,
+            rule_id=RULE_Q_CONFLICT_PROTOCOL,
         )
 
     if stakeholders_count >= 2:

@@ -1,8 +1,8 @@
 {
   "case_ref": {
-    "case_id": "case_010_conflicting_constraints",
-    "input_digest": "a6533cced6cdf2d1a52853796a67261973f64762d2d080cea7bdb3a7d8dea0d8",
-    "title": "制約の矛盾：やりたいが、条件が同時に成立しない"
+    "case_id": "case_013_constraint_conflict_protocol",
+    "input_digest": "2819dfa45842bd7167ddd9cc341917e72375f234b049731cb8d0abdecc70e75e",
+    "title": "制約矛盾の解消プロトコル適用"
   },
   "ethics": {
     "guardrails": [
@@ -50,7 +50,7 @@
       "version": "0.1.0"
     },
     "pocore_version": "0.1.0",
-    "run_id": "case_010_expected_stub_compact_v1",
+    "run_id": "case_013_expected_stub_compact_v1",
     "schema_version": "1.0",
     "seed": 0
   },
@@ -59,7 +59,7 @@
       "action_plan": [
         {
           "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
-          "step": "制約矛盾サマリ: 要求は週20h以上だが、許容上限は週5h以下で同時成立しない"
+          "step": "制約矛盾サマリ: 要求は週18h以上だが、許容上限は週6h以下で同時成立しない"
         },
         {
           "rationale": "交渉対象を限定して最短で合意可能にする",
@@ -81,7 +81,7 @@
       "cons": [
         "一部の願望（期限・投入時間）を修正する必要がある"
       ],
-      "description": "矛盾している制約（要求:20h/週, 上限:5h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
+      "description": "矛盾している制約（要求:18h/週, 上限:6h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
       "ethics_review": {
         "concerns": [
           "矛盾した制約を無視して断言しない",
@@ -131,19 +131,14 @@
         "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
-            "impact": "時間・収入・健康に影響",
+            "impact": "時間・収入・健康のバランスに影響",
             "name": "自分",
             "role": "意思決定主体"
           },
           {
-            "impact": "家計・時間配分・不確実性の影響",
-            "name": "家族/同居人",
+            "impact": "時間配分と生活の安定に影響",
+            "name": "家族",
             "role": "生活共同体"
-          },
-          {
-            "impact": "副業規定・パフォーマンスに影響",
-            "name": "現職",
-            "role": "雇用主"
           }
         ]
       },
@@ -174,7 +169,7 @@
       "action_plan": [
         {
           "rationale": "矛盾点を先に固定しないと解消プロトコルが開始できない",
-          "step": "制約矛盾サマリ: 要求は週20h以上だが、許容上限は週5h以下で同時成立しない"
+          "step": "制約矛盾サマリ: 要求は週18h以上だが、許容上限は週6h以下で同時成立しない"
         },
         {
           "rationale": "交渉対象を限定して最短で合意可能にする",
@@ -246,19 +241,14 @@
         "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
-            "impact": "時間・収入・健康に影響",
+            "impact": "時間・収入・健康のバランスに影響",
             "name": "自分",
             "role": "意思決定主体"
           },
           {
-            "impact": "家計・時間配分・不確実性の影響",
-            "name": "家族/同居人",
+            "impact": "時間配分と生活の安定に影響",
+            "name": "家族",
             "role": "生活共同体"
-          },
-          {
-            "impact": "副業規定・パフォーマンスに影響",
-            "name": "現職",
-            "role": "雇用主"
           }
         ]
       },
@@ -298,7 +288,7 @@
       "assumption_if_unanswered": "期限のみ調整可能と仮定する",
       "optional": false,
       "priority": 1,
-      "question": "矛盾制約（要求:20h/週, 上限:5h/週）を解くため、緩和可能な制約はどれか？（交渉可否/一時変更の可否）",
+      "question": "矛盾制約（要求:18h/週, 上限:6h/週）を解くため、緩和可能な制約はどれか？（交渉可否/一時変更の可否）",
       "question_id": "q_conflict_2",
       "why_needed": "固定制約と可変制約を分離しないと実行計画が作れないため。"
     },
@@ -343,7 +333,7 @@
   "responsibility": {
     "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
     "consent_considerations": [
-      "収入への影響（減収リスク）を明示し、必要なら支援/予備費を検討する",
+      "家族への影響を事前共有し合意形成する",
       "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
       "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
       "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
@@ -352,19 +342,14 @@
     "decision_owner": "未確定（要確認）",
     "stakeholders": [
       {
-        "impact": "時間・収入・健康に影響",
+        "impact": "時間・収入・健康のバランスに影響",
         "name": "自分",
         "role": "意思決定主体"
       },
       {
-        "impact": "家計・時間配分・不確実性の影響",
-        "name": "家族/同居人",
+        "impact": "時間配分と生活の安定に影響",
+        "name": "家族",
         "role": "生活共同体"
-      },
-      {
-        "impact": "副業規定・パフォーマンスに影響",
-        "name": "現職",
-        "role": "雇用主"
       }
     ]
   },
@@ -374,7 +359,7 @@
         "ended_at": "2026-02-22T00:00:01Z",
         "metrics": {
           "constraint_conflict": true,
-          "days_to_deadline": 190,
+          "days_to_deadline": 26,
           "options_planned": 2,
           "questions_planned": 5,
           "rules_fired": [
@@ -382,8 +367,8 @@
             "ETH_NO_OVERCLAIM_UNKNOWN",
             "ETH_STAKEHOLDER_CONSENT"
           ],
-          "stakeholders_count": 3,
-          "unknowns_count": 3
+          "stakeholders_count": 2,
+          "unknowns_count": 2
         },
         "name": "parse_input",
         "started_at": "2026-02-22T00:00:00Z",
@@ -436,9 +421,8 @@
       "健康と生活維持は下限として守る"
     ],
     "known_unknowns": [
-      "副業規定の詳細（許容範囲）",
-      "起業の初期モデル（必要時間・初期投資）",
-      "収入維持の代替策（段階投入、検証期間）"
+      "投入時間を増やす代替手段",
+      "短期検証で最低限必要なスコープ"
     ],
     "overall_level": "high",
     "reasons": [
