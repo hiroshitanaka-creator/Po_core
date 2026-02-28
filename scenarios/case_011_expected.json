@@ -1,8 +1,8 @@
 {
   "case_ref": {
-    "case_id": "case_006_data_leak_response",
-    "input_digest": "44ad5d25d91f5c912500d72d69f0a7cb66b99b52dc4b981e25dd0f8ed8d97a6f",
-    "title": "インシデント対応：データ漏えい疑いの初動"
+    "case_id": "case_011_stakeholder_externality_pack",
+    "input_digest": "6f132f7e7ecc3fd069fee12ca32b3a35ade156c8009b0f476b7a8f466630cf5f",
+    "title": "外部性の高い運用変更：関係者合意の設計"
   },
   "ethics": {
     "guardrails": [
@@ -10,8 +10,7 @@
       "意思決定主体をユーザーから奪わない",
       "推奨には反証と代替案を併記する",
       "前提と不確実性を明示する",
-      "関係者への影響と同意を考慮する",
-      "時間圧力下でも検証を省略しない"
+      "関係者への影響と同意を考慮する"
     ],
     "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
     "principles_used": [
@@ -30,15 +29,6 @@
         "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
         "severity": "medium",
         "tension": "自己決定と外部性/公正の緊張"
-      },
-      {
-        "between": [
-          "autonomy",
-          "nonmaleficence"
-        ],
-        "mitigation": "時間制約下でも検証を省略しない",
-        "severity": "medium",
-        "tension": "速度と安全（nonmaleficence）の緊張"
       }
     ]
   },
@@ -51,7 +41,7 @@
       "version": "0.1.0"
     },
     "pocore_version": "0.1.0",
-    "run_id": "case_006_expected_stub_compact_v1",
+    "run_id": "case_011_expected_stub_compact_v1",
     "schema_version": "1.0",
     "seed": 0
   },
@@ -75,8 +65,7 @@
         "principles_applied": [
           "integrity",
           "autonomy",
-          "justice",
-          "nonmaleficence"
+          "justice"
         ],
         "tradeoffs": [
           {
@@ -87,15 +76,6 @@
             "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
             "severity": "medium",
             "tension": "自己決定と外部性/公正の緊張"
-          },
-          {
-            "between": [
-              "autonomy",
-              "nonmaleficence"
-            ],
-            "mitigation": "時間圧力下でも最小限の検証を維持する",
-            "severity": "medium",
-            "tension": "速度と安全の緊張"
           }
         ]
       },
@@ -114,19 +94,24 @@
         "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
-            "impact": "プライバシー・金銭被害リスク",
-            "name": "ユーザー",
-            "role": "被害者候補"
+            "impact": "収益・継続率の目標達成責任を負う",
+            "name": "プロダクト責任者",
+            "role": "提案者"
           },
           {
-            "impact": "信用・法的リスク・運用負荷",
-            "name": "自社（経営・法務・広報・開発）",
-            "role": "対応主体"
+            "impact": "説明負荷と解約抑止の対応が増える",
+            "name": "営業チーム",
+            "role": "顧客窓口"
           },
           {
-            "impact": "手続き不備で制裁の可能性",
-            "name": "規制当局/監督機関",
-            "role": "通知先"
+            "impact": "料金負担と契約条件が変わる",
+            "name": "既存顧客",
+            "role": "利用者"
+          },
+          {
+            "impact": "最終決裁と対外説明責任を負う",
+            "name": "経営会議",
+            "role": "承認主体候補"
           }
         ]
       },
@@ -164,8 +149,7 @@
         "principles_applied": [
           "integrity",
           "autonomy",
-          "justice",
-          "nonmaleficence"
+          "justice"
         ],
         "tradeoffs": [
           {
@@ -176,15 +160,6 @@
             "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
             "severity": "medium",
             "tension": "自己決定と外部性/公正の緊張"
-          },
-          {
-            "between": [
-              "autonomy",
-              "nonmaleficence"
-            ],
-            "mitigation": "時間圧力下でも最小限の検証を維持する",
-            "severity": "medium",
-            "tension": "速度と安全の緊張"
           }
         ]
       },
@@ -203,19 +178,24 @@
         "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
-            "impact": "プライバシー・金銭被害リスク",
-            "name": "ユーザー",
-            "role": "被害者候補"
+            "impact": "収益・継続率の目標達成責任を負う",
+            "name": "プロダクト責任者",
+            "role": "提案者"
           },
           {
-            "impact": "信用・法的リスク・運用負荷",
-            "name": "自社（経営・法務・広報・開発）",
-            "role": "対応主体"
+            "impact": "説明負荷と解約抑止の対応が増える",
+            "name": "営業チーム",
+            "role": "顧客窓口"
           },
           {
-            "impact": "手続き不備で制裁の可能性",
-            "name": "規制当局/監督機関",
-            "role": "通知先"
+            "impact": "料金負担と契約条件が変わる",
+            "name": "既存顧客",
+            "role": "利用者"
+          },
+          {
+            "impact": "最終決裁と対外説明責任を負う",
+            "name": "経営会議",
+            "role": "承認主体候補"
           }
         ]
       },
@@ -293,19 +273,24 @@
     "decision_owner": "未確定（要確認）",
     "stakeholders": [
       {
-        "impact": "プライバシー・金銭被害リスク",
-        "name": "ユーザー",
-        "role": "被害者候補"
+        "impact": "収益・継続率の目標達成責任を負う",
+        "name": "プロダクト責任者",
+        "role": "提案者"
       },
       {
-        "impact": "信用・法的リスク・運用負荷",
-        "name": "自社（経営・法務・広報・開発）",
-        "role": "対応主体"
+        "impact": "説明負荷と解約抑止の対応が増える",
+        "name": "営業チーム",
+        "role": "顧客窓口"
       },
       {
-        "impact": "手続き不備で制裁の可能性",
-        "name": "規制当局/監督機関",
-        "role": "通知先"
+        "impact": "料金負担と契約条件が変わる",
+        "name": "既存顧客",
+        "role": "利用者"
+      },
+      {
+        "impact": "最終決裁と対外説明責任を負う",
+        "name": "経営会議",
+        "role": "承認主体候補"
       }
     ]
   },
@@ -314,16 +299,14 @@
       {
         "ended_at": "2026-02-22T00:00:01Z",
         "metrics": {
-          "days_to_deadline": 2,
           "options_planned": 2,
           "questions_planned": 4,
           "rules_fired": [
             "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT",
-            "ETH_TIME_PRESSURE_SAFETY"
+            "ETH_STAKEHOLDER_CONSENT"
           ],
-          "stakeholders_count": 3,
-          "unknowns_count": 3
+          "stakeholders_count": 4,
+          "unknowns_count": 2
         },
         "name": "parse_input",
         "started_at": "2026-02-22T00:00:00Z",
@@ -357,8 +340,7 @@
           },
           "rules_fired": [
             "ETH_NO_OVERCLAIM_UNKNOWN",
-            "ETH_STAKEHOLDER_CONSENT",
-            "ETH_TIME_PRESSURE_SAFETY"
+            "ETH_STAKEHOLDER_CONSENT"
           ]
         },
         "name": "compose_output",
@@ -373,9 +355,8 @@
       "提示された制約が正しい"
     ],
     "known_unknowns": [
-      "実際に外部閲覧があったか（ログ分析）",
-      "漏えい範囲（対象ユーザー数、項目）",
-      "再発防止に必要な改修範囲"
+      "値上げ許容度の分布",
+      "移行期間中の問い合わせ増加量"
     ],
     "overall_level": "medium",
     "reasons": [

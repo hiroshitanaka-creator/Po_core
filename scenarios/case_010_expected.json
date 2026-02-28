@@ -115,9 +115,9 @@
         "破綻条件を先に潰せる"
       ],
       "responsibility_review": {
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
         "confidence": "high",
-        "decision_owner": "user",
+        "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
             "impact": "時間・収入・健康に影響",
@@ -216,9 +216,9 @@
         "現実制約に沿って継続しやすい"
       ],
       "responsibility_review": {
-        "accountability_notes": "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。",
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
         "confidence": "high",
-        "decision_owner": "user",
+        "decision_owner": "未確定（要確認）",
         "stakeholders": [
           {
             "impact": "時間・収入・健康に影響",
@@ -284,6 +284,22 @@
       "question": "現職の副業規定（許可制/禁止/競業）を確認した？",
       "question_id": "q_conflict_3",
       "why_needed": "実行可能性（法務・契約）を左右するため。"
+    },
+    {
+      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "optional": false,
+      "priority": 1,
+      "question": "この意思決定の決裁者（最終承認者）は誰か？",
+      "question_id": "q_stakeholder_1",
+      "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
+    },
+    {
+      "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "関係者の同意・相談が必要な対象は誰か？",
+      "question_id": "q_stakeholder_2",
+      "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
     }
   ],
   "recommendation": {
@@ -300,11 +316,15 @@
     "status": "recommended"
   },
   "responsibility": {
-    "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。",
+    "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
     "consent_considerations": [
-      "収入への影響（減収リスク）を明示し、必要なら支援/予備費を検討する"
+      "収入への影響（減収リスク）を明示し、必要なら支援/予備費を検討する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+      "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+      "RESP_IMPACT_SCOPE: コミュニケーション手段と期限を決め、実施ログを残す"
     ],
-    "decision_owner": "user",
+    "decision_owner": "未確定（要確認）",
     "stakeholders": [
       {
         "impact": "時間・収入・健康に影響",
@@ -331,7 +351,7 @@
           "constraint_conflict": true,
           "days_to_deadline": 190,
           "options_planned": 2,
-          "questions_planned": 3,
+          "questions_planned": 5,
           "rules_fired": [
             "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
             "ETH_NO_OVERCLAIM_UNKNOWN",
@@ -356,7 +376,7 @@
       {
         "ended_at": "2026-02-22T00:00:03Z",
         "metrics": {
-          "questions": 3
+          "questions": 5
         },
         "name": "question_layer",
         "started_at": "2026-02-22T00:00:02Z",

@@ -20,7 +20,7 @@ def _load_traceability() -> dict[str, Any]:
 
 
 def _extract_rule_ids_from_repo() -> set[str]:
-    pattern = re.compile(r'"(ETH_[A-Z0-9_]+)"')
+    pattern = re.compile(r'"((?:ETH|RESP)_[A-Z0-9_]+)"')
     rule_ids: set[str] = set()
     for py_file in (ROOT / "src/pocore").rglob("*.py"):
         text = py_file.read_text(encoding="utf-8")

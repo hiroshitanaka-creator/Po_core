@@ -1,0 +1,31 @@
+case_id: case_011_stakeholder_externality_pack
+title: "外部性の高い運用変更：関係者合意の設計"
+locale: ja-JP
+problem: "有料機能の料金体系を改定したい。複数の関係者に影響があるため、意思決定と説明責任をどう設計すべきか。"
+context:
+  domain: "SaaS運用"
+  current_state: "従量課金を定額中心へ変更検討"
+constraints:
+  - "既存契約の法令順守"
+  - "大規模障害を誘発しない"
+  - "顧客サポート体制を維持する"
+values:
+  - "説明責任"
+  - "公正"
+  - "継続可能性"
+stakeholders:
+  - name: "プロダクト責任者"
+    role: "提案者"
+    impact: "収益・継続率の目標達成責任を負う"
+  - name: "営業チーム"
+    role: "顧客窓口"
+    impact: "説明負荷と解約抑止の対応が増える"
+  - name: "既存顧客"
+    role: "利用者"
+    impact: "料金負担と契約条件が変わる"
+  - name: "経営会議"
+    role: "承認主体候補"
+    impact: "最終決裁と対外説明責任を負う"
+unknowns:
+  - "値上げ許容度の分布"
+  - "移行期間中の問い合わせ増加量"

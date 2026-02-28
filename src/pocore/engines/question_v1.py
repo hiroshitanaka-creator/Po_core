@@ -125,4 +125,42 @@ def generate(
             ]
         )
 
+    if int(feats.get("stakeholders_count", 0)) >= 2:
+        questions.extend(
+            [
+                {
+                    "question_id": "q_stakeholder_1",
+                    "question": "この意思決定の決裁者（最終承認者）は誰か？",
+                    "priority": 1,
+                    "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。",
+                    "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+                    "optional": False,
+                },
+                {
+                    "question_id": "q_stakeholder_2",
+                    "question": "関係者の同意・相談が必要な対象は誰か？",
+                    "priority": 1,
+                    "why_needed": "外部性を受ける人の合意形成を先に設計するため。",
+                    "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+                    "optional": False,
+                },
+                {
+                    "question_id": "q_stakeholder_3",
+                    "question": "影響範囲は？（誰が何を失い、何を得るか）",
+                    "priority": 1,
+                    "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。",
+                    "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
+                    "optional": False,
+                },
+                {
+                    "question_id": "q_stakeholder_4",
+                    "question": "通知・説明の方法と期限は？",
+                    "priority": 1,
+                    "why_needed": "合意形成を実務として実行可能にするため。",
+                    "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
+                    "optional": False,
+                },
+            ]
+        )
+
     return questions[:5]

@@ -7,6 +7,9 @@ from typing import Any, Dict, List, Optional, Tuple
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
 
+RESP_STAKEHOLDER_CONSENT_CHECK = "RESP_STAKEHOLDER_CONSENT_CHECK"
+RESP_IMPACT_SCOPE = "RESP_IMPACT_SCOPE"
+
 
 def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
     return isinstance(features, dict) and features.get("scenario_profile") == profile
@@ -165,14 +168,24 @@ def apply(
     stakeholders = _map_stakeholders(case)
     feats = features or {}
     conflict = feats.get("constraint_conflict") is True
+    has_externality_stakeholders = int(feats.get("stakeholders_count", 0)) >= 2
+
+    decision_owner = "user"
+    if has_externality_stakeholders:
+        decision_owner = "未確定（要確認）"
+
+    per_option_notes = "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。"
+    if has_externality_stakeholders:
+        per_option_notes = (
+            f"{RESP_STAKEHOLDER_CONSENT_CHECK}: 決裁者が不明なため、最初に意思決定者を特定する。"
+            "関係者への通知・同意・相談の実施と記録を前提に進める。"
+        )
 
     for opt in options:
         opt["responsibility_review"] = {
-            "decision_owner": "user",
+            "decision_owner": decision_owner,
             "stakeholders": stakeholders,
-            "accountability_notes": (
-                "最終判断はユーザー。Po_coreは構造化と検証手続きを提供する。"
-            ),
+            "accountability_notes": per_option_notes,
             "confidence": "high" if conflict else "medium",
         }
 
@@ -186,12 +199,29 @@ def apply(
     if feats.get("relocation_forbidden"):
         consent.append("居住地制約がある場合、働き方/通勤条件を先に固定する")
 
+    if has_externality_stakeholders:
+        consent.extend(
+            [
+                f"{RESP_STAKEHOLDER_CONSENT_CHECK}: 決裁者を特定し、承認権限を確認する",
+                f"{RESP_STAKEHOLDER_CONSENT_CHECK}: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+                f"{RESP_IMPACT_SCOPE}: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+                f"{RESP_IMPACT_SCOPE}: コミュニケーション手段と期限を決め、実施ログを残す",
+            ]
+        )
+
+    accountability_notes = (
+        "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。"
+    )
+    if has_externality_stakeholders:
+        accountability_notes = (
+            f"{RESP_STAKEHOLDER_CONSENT_CHECK}: 決裁者/意思決定者が未確定なら先に確定する。"
+            f"{RESP_IMPACT_SCOPE}: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。"
+        )
+
     summary = {
-        "decision_owner": "user",
+        "decision_owner": decision_owner,
         "stakeholders": stakeholders,
-        "accountability_notes": (
-            "意思決定と結果責任はユーザー。Po_coreは説明可能な判断材料を整理する。"
-        ),
+        "accountability_notes": accountability_notes,
         "consent_considerations": consent,
     }
     return options, summary
