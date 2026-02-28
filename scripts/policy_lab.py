@@ -21,6 +21,15 @@ from pocore import orchestrator, policy_v1
 from pocore.runner import run_case_file
 
 DEFAULT_NOW = "2026-02-22T00:00:00Z"
+VALUES_PACK_RULE_IDS = (
+    "Q_VALUES_CLARIFICATION_PACK_V1",
+    "PLAN_VALUES_CLARIFICATION_PACK_V1",
+    "ETH_VALUES_EMPTY_CLARIFICATION",
+)
+CONFLICT_PACK_RULE_IDS = (
+    "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+    "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN",
+)
 
 
 @dataclass(frozen=True)
@@ -114,6 +123,11 @@ def _case_record(case_path: Path, output: Dict[str, Any]) -> Dict[str, Any]:
         },
         "rules_fired": list(compose_metrics.get("rules_fired", [])),
         "planning_rules_fired": list(compose_metrics.get("rules_fired_planning", [])),
+        "question_ids": [
+            q.get("question_id")
+            for q in output.get("questions", [])
+            if isinstance(q, dict) and isinstance(q.get("question_id"), str)
+        ],
         "policy_snapshot": dict(compose_metrics.get("policy_snapshot", {})),
     }
 
@@ -152,14 +166,80 @@ def _planning_rules_summary(
     }
 
 
+
+
+def _rule_pack_summary(
+    records: Sequence[Dict[str, Any]],
+    *,
+    pack_name: str,
+    rule_ids: Sequence[str],
+) -> Dict[str, Any]:
+    total_cases = len(records)
+    case_counts: Dict[str, int] = {rule_id: 0 for rule_id in rule_ids}
+
+    for record in records:
+        fired = {
+            rule_id
+            for rule_id in (
+                list(record.get("rules_fired", []))
+                + list(record.get("planning_rules_fired", []))
+            )
+            if isinstance(rule_id, str)
+        }
+        for rule_id in rule_ids:
+            if rule_id in fired:
+                case_counts[rule_id] += 1
+
+    distribution = [
+        {
+            "rule_id": rule_id,
+            "cases": count,
+            "frequency": round((count / total_cases), 4) if total_cases else 0.0,
+        }
+        for rule_id, count in case_counts.items()
+    ]
+
+    return {
+        "pack": pack_name,
+        "total_cases": total_cases,
+        "rule_case_counts": distribution,
+        "triggered_case_total": sum(1 for row in distribution if row["cases"] > 0),
+    }
+
+
+def _rule_pack_delta(*, baseline: Dict[str, Any], variant: Dict[str, Any]) -> Dict[str, Any]:
+    baseline_by_rule = {
+        row.get("rule_id"): row
+        for row in baseline.get("rule_case_counts", [])
+        if isinstance(row, dict) and isinstance(row.get("rule_id"), str)
+    }
+    rows = []
+    for row in variant.get("rule_case_counts", []):
+        if not isinstance(row, dict) or not isinstance(row.get("rule_id"), str):
+            continue
+        before = baseline_by_rule.get(row["rule_id"], {})
+        before_cases = int(before.get("cases", 0) or 0)
+        after_cases = int(row.get("cases", 0) or 0)
+        rows.append(
+            {
+                "rule_id": row["rule_id"],
+                "baseline_cases": before_cases,
+                "variant_cases": after_cases,
+                "delta_cases": after_cases - before_cases,
+                "baseline_frequency": float(before.get("frequency", 0.0) or 0.0),
+                "variant_frequency": float(row.get("frequency", 0.0) or 0.0),
+            }
+        )
+
+    return {
+        "pack": variant.get("pack"),
+        "rule_deltas": rows,
+    }
+
 def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     reqs = payload.get("requirements", [])
-    idx = {
-        "arbitration_code": {},
-        "rule_id": {},
-        "module": {},
-    }
+    idx: Dict[str, Dict[str, set[str]]] = {}
     for req in reqs:
         req_id = req.get("id")
         if not isinstance(req_id, str):
@@ -169,7 +249,8 @@ def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
                 continue
             kind = ref.get("kind")
             value = ref.get("value")
-            if kind in idx and isinstance(value, str):
+            if isinstance(kind, str) and isinstance(value, str):
+                idx.setdefault(kind, {})
                 idx[kind].setdefault(value, set()).add(req_id)
     return idx
 
@@ -194,19 +275,26 @@ def _diff_case(
     impacted: set[str] = set()
     for code in [baseline.get("arbitration_code"), variant.get("arbitration_code")]:
         if isinstance(code, str):
-            impacted.update(trace_idx["arbitration_code"].get(code, set()))
+            impacted.update(trace_idx.get("arbitration_code", {}).get(code, set()))
 
     base_rules = set(baseline.get("rules_fired", []))
     var_rules = set(variant.get("rules_fired", []))
     base_rules.update(baseline.get("planning_rules_fired", []))
     var_rules.update(variant.get("planning_rules_fired", []))
     for rule_id in sorted(base_rules | var_rules):
-        impacted.update(trace_idx["rule_id"].get(rule_id, set()))
+        impacted.update(trace_idx.get("rule_id", {}).get(rule_id, set()))
+
+    base_questions = set(baseline.get("question_ids", []))
+    var_questions = set(variant.get("question_ids", []))
+    for question_id in sorted(base_questions | var_questions):
+        impacted.update(trace_idx.get("question_id", {}).get(question_id, set()))
 
     if changed_fields:
-        impacted.update(trace_idx["module"].get("src/pocore/policy_v1.py", set()))
+        impacted.update(trace_idx.get("module", {}).get("src/pocore/policy_v1.py", set()))
         impacted.update(
-            trace_idx["module"].get("src/pocore/engines/recommendation_v1.py", set())
+            trace_idx.get("module", {}).get(
+                "src/pocore/engines/recommendation_v1.py", set()
+            )
         )
 
     return {
@@ -277,6 +365,26 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
         planning_summary = _planning_rules_summary(
             [variant_records[name] for name in sorted(variant_records)]
         )
+        baseline_values_pack = _rule_pack_summary(
+            [baseline_records[name] for name in sorted(baseline_records)],
+            pack_name="values",
+            rule_ids=VALUES_PACK_RULE_IDS,
+        )
+        variant_values_pack = _rule_pack_summary(
+            [variant_records[name] for name in sorted(variant_records)],
+            pack_name="values",
+            rule_ids=VALUES_PACK_RULE_IDS,
+        )
+        baseline_conflict_pack = _rule_pack_summary(
+            [baseline_records[name] for name in sorted(baseline_records)],
+            pack_name="conflict",
+            rule_ids=CONFLICT_PACK_RULE_IDS,
+        )
+        variant_conflict_pack = _rule_pack_summary(
+            [variant_records[name] for name in sorted(variant_records)],
+            pack_name="conflict",
+            rule_ids=CONFLICT_PACK_RULE_IDS,
+        )
         result["cases"] = diffs
         result["summary"] = {
             "changed_cases": sum(1 for d in diffs if d["changed"]),
@@ -284,9 +392,39 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
                 {req for d in diffs for req in d["impacted_requirements"]}
             ),
             **planning_summary,
+            "values_pack": {
+                "baseline": baseline_values_pack,
+                "variant": variant_values_pack,
+                "delta": _rule_pack_delta(
+                    baseline=baseline_values_pack, variant=variant_values_pack
+                ),
+            },
+            "conflict_pack": {
+                "baseline": baseline_conflict_pack,
+                "variant": variant_conflict_pack,
+                "delta": _rule_pack_delta(
+                    baseline=baseline_conflict_pack, variant=variant_conflict_pack
+                ),
+            },
         }
     else:
         result["cases"] = [variant_records[name] for name in sorted(variant_records)]
+        result["summary"] = {
+            "values_pack": {
+                "variant": _rule_pack_summary(
+                    [variant_records[name] for name in sorted(variant_records)],
+                    pack_name="values",
+                    rule_ids=VALUES_PACK_RULE_IDS,
+                )
+            },
+            "conflict_pack": {
+                "variant": _rule_pack_summary(
+                    [variant_records[name] for name in sorted(variant_records)],
+                    pack_name="conflict",
+                    rule_ids=CONFLICT_PACK_RULE_IDS,
+                )
+            },
+        }
 
     json_path = output_dir / "policy_lab_report.json"
     md_path = output_dir / "policy_lab_report.md"
@@ -328,16 +466,45 @@ def _render_markdown(report: Dict[str, Any]) -> str:
             ]
         )
 
-        top_rules = summary.get("planning_rule_frequency_top", [])
-        lines.append("### Planning rule frequency (top)")
-        if isinstance(top_rules, list) and top_rules:
-            for row in top_rules:
+        top_rules = summary.get("planning_rule_frequency_top")
+        if top_rules is not None:
+            lines.append("### Planning rule frequency (top)")
+            if isinstance(top_rules, list) and top_rules:
+                for row in top_rules:
+                    lines.append(
+                        f"- `{row.get('rule_id', 'unknown_rule')}`: {row.get('count', 0)}"
+                    )
+            else:
+                lines.append("- (none)")
+            lines.append("")
+
+        for key in ("values_pack", "conflict_pack"):
+            pack_block = summary.get(key, {})
+            variant = pack_block.get("variant", {}) if isinstance(pack_block, dict) else {}
+            lines.append(f"### {key.replace('_', ' ').title()} rule frequency")
+            for row in variant.get("rule_case_counts", []):
                 lines.append(
-                    f"- `{row.get('rule_id', 'unknown_rule')}`: {row.get('count', 0)}"
+                    f"- `{row.get('rule_id', 'unknown_rule')}`: {row.get('cases', 0)} cases ({row.get('frequency', 0.0):.2%})"
                 )
-        else:
-            lines.append("- (none)")
-        lines.append("")
+            if not variant.get("rule_case_counts"):
+                lines.append("- (none)")
+            lines.append("")
+
+            delta = pack_block.get("delta") if isinstance(pack_block, dict) else None
+            if isinstance(delta, dict) and delta.get("rule_deltas"):
+                lines.append(
+                    f"#### {key.replace('_', ' ').title()} baseline delta (--compare-baseline)"
+                )
+                for row in delta.get("rule_deltas", []):
+                    lines.append(
+                        "- `{}`: {} → {} (Δ {:+d})".format(
+                            row.get("rule_id", "unknown_rule"),
+                            row.get("baseline_cases", 0),
+                            row.get("variant_cases", 0),
+                            row.get("delta_cases", 0),
+                        )
+                    )
+                lines.append("")
 
     lines.append("## Case Results")
     lines.append("")
