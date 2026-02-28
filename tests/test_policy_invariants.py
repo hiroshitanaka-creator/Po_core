@@ -29,7 +29,9 @@ def _apply_policy_override(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.mark.parametrize("policy_mode", ["default", "override"])
-def test_policy_mode_is_deterministic(policy_mode: str, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_policy_mode_is_deterministic(
+    policy_mode: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
     if policy_mode == "override":
         _apply_policy_override(monkeypatch)
 
