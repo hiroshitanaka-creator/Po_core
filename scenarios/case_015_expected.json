@@ -1,0 +1,417 @@
+{
+  "case_ref": {
+    "case_id": "case_015_constraint_conflict_multi_stakeholders",
+    "input_digest": "eee0faa39e0dcf02f4fa201a05477f501687e400c97d33bb3064762c7b981cd1",
+    "title": "制約競合と関係者複数：実行条件の再設計"
+  },
+  "ethics": {
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "between": [
+          "autonomy",
+          "nonmaleficence"
+        ],
+        "mitigation": "期限・実験・ガードレールで両立を狙う",
+        "severity": "medium",
+        "tension": "速度と安全の緊張"
+      },
+      {
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium",
+        "tension": "自己決定と外部性/公正の緊張"
+      }
+    ]
+  },
+  "meta": {
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "generator": {
+      "mode": "stub",
+      "name": "generator_stub",
+      "version": "0.1.0"
+    },
+    "pocore_version": "0.1.0",
+    "run_id": "case_015_expected_stub_compact_v1",
+    "schema_version": "1.0",
+    "seed": 0
+  },
+  "options": [
+    {
+      "action_plan": [
+        {
+          "step": "矛盾している制約を1枚に書き出し、どれを緩められるか順位づけする"
+        },
+        {
+          "step": "『週5時間』で成立する最小スコープ（検証実験）に縮退する"
+        },
+        {
+          "step": "時間を増やす手段（業務調整/家事外注/睡眠削減禁止）を検討する"
+        }
+      ],
+      "cons": [
+        "一部の願望（期限・投入時間）を修正する必要がある"
+      ],
+      "description": "矛盾している制約（要求:15h/週, 上限:6h/週）を可視化し、緩める順序と代替手段（交渉・外注・スコープ縮小）を決めて進める。",
+      "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "nonmaleficence",
+          "accountability",
+          "justice",
+          "autonomy"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "制約を可視化して破綻条件を先に潰す",
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
+          },
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "medium",
+        "timeline": "2-4 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "破綻条件を先に潰せる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "high",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "成果責任と進捗説明責任を負う",
+            "name": "プロジェクト責任者",
+            "role": "提案者"
+          },
+          {
+            "impact": "工数配分と運用品質に影響を受ける",
+            "name": "実行チーム",
+            "role": "実務担当"
+          },
+          {
+            "impact": "投資判断と対外説明責任を負う",
+            "name": "経営層",
+            "role": "承認候補"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "時間・収入・健康の下限を守るルールを先に固定する",
+          "risk": "制約を無視して突っ込むと燃え尽きる",
+          "severity": "high"
+        }
+      ],
+      "title": "制約を再設計して“段階的に起業”する",
+      "uncertainty": {
+        "assumptions": [
+          "制約の一部は交渉・設計変更で動かせる"
+        ],
+        "known_unknowns": [
+          "時間を増やせる余地",
+          "副業規定",
+          "市場ニーズ"
+        ],
+        "overall_level": "high",
+        "reasons": [
+          "制約が矛盾しているため、前提の調整が必要"
+        ]
+      }
+    },
+    {
+      "action_plan": [
+        {
+          "step": "週5時間で回る検証メニューを作る（ヒアリング/LP/試作）"
+        },
+        {
+          "step": "8週間で『進める/止める』の判断基準を置く"
+        }
+      ],
+      "cons": [
+        "スピード感は落ちる"
+      ],
+      "description": "『半年で本格始動』をいったん外し、週5時間でできる検証（顧客ヒアリング/LP/プロト）に限定する。",
+      "ethics_review": {
+        "concerns": [
+          "矛盾した制約を無視して断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "nonmaleficence",
+          "accountability",
+          "justice",
+          "autonomy"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "nonmaleficence"
+            ],
+            "mitigation": "制約を可視化して破綻条件を先に潰す",
+            "severity": "high",
+            "tension": "野心と持続可能性の緊張"
+          },
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "high",
+        "effort": "low",
+        "timeline": "8 weeks"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "現実制約に沿って継続しやすい"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "high",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "成果責任と進捗説明責任を負う",
+            "name": "プロジェクト責任者",
+            "role": "提案者"
+          },
+          {
+            "impact": "工数配分と運用品質に影響を受ける",
+            "name": "実行チーム",
+            "role": "実務担当"
+          },
+          {
+            "impact": "投資判断と対外説明責任を負う",
+            "name": "経営層",
+            "role": "承認候補"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "成果指標（ヒアリング件数等）を週単位で置く",
+          "risk": "進捗が遅くモチベが折れる",
+          "severity": "medium"
+        }
+      ],
+      "title": "期限目標を下げ、検証に縮退する",
+      "uncertainty": {
+        "assumptions": [
+          "週5時間は確保できる"
+        ],
+        "known_unknowns": [
+          "顧客の反応",
+          "継続可能性"
+        ],
+        "overall_level": "medium",
+        "reasons": [
+          "市場ニーズが未検証"
+        ]
+      }
+    }
+  ],
+  "questions": [
+    {
+      "assumption_if_unanswered": "健康と収入を最優先と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "矛盾している制約のうち、絶対に守るのはどれ？（時間/収入/健康/期限など）",
+      "question_id": "q_conflict_1",
+      "why_needed": "優先順位がないと制約の再設計ができないため。"
+    },
+    {
+      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "optional": false,
+      "priority": 1,
+      "question": "この意思決定の決裁者（最終承認者）は誰か？",
+      "question_id": "q_stakeholder_1",
+      "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
+    },
+    {
+      "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+      "optional": false,
+      "priority": 2,
+      "question": "関係者の同意・相談が必要な対象は誰か？",
+      "question_id": "q_stakeholder_2",
+      "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
+    },
+    {
+      "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
+      "optional": false,
+      "priority": 2,
+      "question": "影響範囲は？（誰が何を失い、何を得るか）",
+      "question_id": "q_stakeholder_3",
+      "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。"
+    },
+    {
+      "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
+      "optional": false,
+      "priority": 3,
+      "question": "通知・説明の方法と期限は？",
+      "question_id": "q_stakeholder_4",
+      "why_needed": "合意形成を実務として実行可能にするため。"
+    }
+  ],
+  "recommendation": {
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "期限目標を下げ、週5時間で検証に縮退したい場合"
+      }
+    ],
+    "confidence": "medium",
+    "counter": "制約の調整ができない場合、目標（期限/投入時間）を下げる必要がある。",
+    "reason": "制約が矛盾している状態では、どの案も破綻しやすい。まず制約を再設計してから進めるべき。",
+    "recommended_option_id": "opt_1",
+    "status": "recommended"
+  },
+  "responsibility": {
+    "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
+    "consent_considerations": [
+      "収入への影響（減収リスク）を明示し、必要なら支援/予備費を検討する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+      "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+      "RESP_IMPACT_SCOPE: コミュニケーション手段と期限を決め、実施ログを残す"
+    ],
+    "decision_owner": "未確定（要確認）",
+    "stakeholders": [
+      {
+        "impact": "成果責任と進捗説明責任を負う",
+        "name": "プロジェクト責任者",
+        "role": "提案者"
+      },
+      {
+        "impact": "工数配分と運用品質に影響を受ける",
+        "name": "実行チーム",
+        "role": "実務担当"
+      },
+      {
+        "impact": "投資判断と対外説明責任を負う",
+        "name": "経営層",
+        "role": "承認候補"
+      }
+    ]
+  },
+  "trace": {
+    "steps": [
+      {
+        "ended_at": "2026-02-22T00:00:01Z",
+        "metrics": {
+          "constraint_conflict": true,
+          "options_planned": 2,
+          "questions_planned": 5,
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "stakeholders_count": 3,
+          "unknowns_count": 1
+        },
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:02Z",
+        "metrics": {
+          "options": 2
+        },
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "summary": "特徴量に基づいて選択肢を生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:03Z",
+        "metrics": {
+          "questions": 5
+        },
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "不足情報を補う問いを生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:04Z",
+        "metrics": {
+          "arbitration_code": "CONSTRAINT_CONFLICT",
+          "policy_snapshot": {
+            "TIME_PRESSURE_DAYS": -4,
+            "UNKNOWN_BLOCK": 4
+          },
+          "rules_fired": [
+            "ETH_CONSTRAINT_CONFLICT_DISCLOSURE",
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ]
+        },
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:03Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+      }
+    ],
+    "version": "1.0"
+  },
+  "uncertainty": {
+    "assumptions": [
+      "健康と生活維持は下限として守る"
+    ],
+    "known_unknowns": [
+      "段階導入時の最小実行範囲"
+    ],
+    "overall_level": "high",
+    "reasons": [
+      "制約が矛盾している"
+    ]
+  }
+}

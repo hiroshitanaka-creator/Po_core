@@ -1,0 +1,18 @@
+case_id: case_014_values_empty_deadline_near
+title: "価値軸空白のまま期限直前：最小未知で判断を整える"
+locale: ja-JP
+problem: "価値の優先順位を決めきれないまま、提出期限が目前に迫っている。安全に次の行動を決めたい。"
+context:
+  domain: "契約更新判断"
+  current_state: "選択肢は2つあるが評価軸が言語化できていない"
+constraints:
+  - "法令違反のリスクがある変更はしない"
+  - "既存顧客への説明責任を果たす"
+values: []
+deadline: "2026-02-21"
+stakeholders:
+  - name: "担当者本人"
+    role: "意思決定主体"
+    impact: "期限内の判断と説明責任を負う"
+unknowns:
+  - "どの価値を最優先に置くか"
