@@ -263,36 +263,44 @@
   ],
   "questions": [
     {
-      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "assumption_if_unanswered": "期限は固定で延長不可と仮定する",
       "optional": false,
       "priority": 1,
+      "question": "期限の柔軟性はどこまであるか？（延長可否/最短再設定日）",
+      "question_id": "q_deadline_flex_1",
+      "why_needed": "時間圧の中で実行可能な計画へ再設計するため。"
+    },
+    {
+      "assumption_if_unanswered": "可逆で低リスクな最小範囲のみ許容とする",
+      "optional": false,
+      "priority": 1,
+      "question": "暫定対応として許容できる範囲は？（品質/コスト/対象範囲）",
+      "question_id": "q_temporary_scope_1",
+      "why_needed": "未知が残る状況でも被害を限定して前進するため。"
+    },
+    {
+      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "optional": false,
+      "priority": 2,
       "question": "この意思決定の決裁者（最終承認者）は誰か？",
       "question_id": "q_stakeholder_1",
       "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
     },
     {
+      "assumption_if_unanswered": "当該不明点は高リスク側に倒して扱う",
+      "optional": false,
+      "priority": 2,
+      "question": "不明点『実際の影響ユーザー範囲』を検証するため、最短で確認できる事実は何か？",
+      "question_id": "q_unknown_1",
+      "why_needed": "未解消の不確実性を具体的な検証タスクへ分解するため。"
+    },
+    {
       "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
       "optional": false,
-      "priority": 1,
+      "priority": 3,
       "question": "関係者の同意・相談が必要な対象は誰か？",
       "question_id": "q_stakeholder_2",
       "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
-    },
-    {
-      "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
-      "optional": false,
-      "priority": 1,
-      "question": "影響範囲は？（誰が何を失い、何を得るか）",
-      "question_id": "q_stakeholder_3",
-      "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。"
-    },
-    {
-      "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
-      "optional": false,
-      "priority": 1,
-      "question": "通知・説明の方法と期限は？",
-      "question_id": "q_stakeholder_4",
-      "why_needed": "合意形成を実務として実行可能にするため。"
     }
   ],
   "recommendation": {
@@ -337,7 +345,7 @@
         "metrics": {
           "days_to_deadline": -6,
           "options_planned": 2,
-          "questions_planned": 4,
+          "questions_planned": 5,
           "rules_fired": [
             "ETH_NO_OVERCLAIM_UNKNOWN",
             "ETH_STAKEHOLDER_CONSENT"
@@ -361,7 +369,7 @@
       {
         "ended_at": "2026-02-22T00:00:03Z",
         "metrics": {
-          "questions": 4
+          "questions": 5
         },
         "name": "question_layer",
         "started_at": "2026-02-22T00:00:02Z",
