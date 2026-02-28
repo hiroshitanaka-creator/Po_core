@@ -1,0 +1,407 @@
+{
+  "case_ref": {
+    "case_id": "case_012_two_track_unknowns_deadline",
+    "input_digest": "d4e346fb44b46ce67b08b28aab22ed3acdf1a199687ed157b218e1cd272b3e4b",
+    "title": "不確実性が残る期限超過案件：二段階で意思決定を進める"
+  },
+  "ethics": {
+    "guardrails": [
+      "不確実な事実を断言しない",
+      "意思決定主体をユーザーから奪わない",
+      "推奨には反証と代替案を併記する",
+      "前提と不確実性を明示する",
+      "関係者への影響と同意を考慮する"
+    ],
+    "notes": "M2以降で倫理ルールを拡張予定。現段階ではガードレール中心。",
+    "principles_used": [
+      "integrity",
+      "autonomy",
+      "nonmaleficence",
+      "justice",
+      "accountability"
+    ],
+    "tradeoffs": [
+      {
+        "between": [
+          "autonomy",
+          "justice"
+        ],
+        "mitigation": "関係者への影響を可視化し、同意可能な進め方を選ぶ",
+        "severity": "medium",
+        "tension": "自己決定と外部性/公正の緊張"
+      }
+    ]
+  },
+  "meta": {
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "generator": {
+      "mode": "stub",
+      "name": "generator_stub",
+      "version": "0.1.0"
+    },
+    "pocore_version": "0.1.0",
+    "run_id": "case_012_expected_stub_compact_v1",
+    "schema_version": "1.0",
+    "seed": 0
+  },
+  "options": [
+    {
+      "action_plan": [
+        {
+          "rationale": "可逆・低リスクの初動で時間を稼ぐ",
+          "step": "[Track A] 30分のタイムボックスで暫定方針を作成し、判断保留を防ぐ"
+        },
+        {
+          "rationale": "被害や手戻りの拡大を抑える",
+          "step": "[Track A] 影響範囲を拡大しない可逆対応（新規展開停止/変更凍結）を即時適用する"
+        },
+        {
+          "rationale": "認識差分による遅延を防ぐ",
+          "step": "[Track A] 関係者へ『前提・unknowns・期限』を短文で共有する"
+        },
+        {
+          "rationale": "期限切迫時の責任所在を明確化する",
+          "step": "[Track A] 期限超過のため、意思決定責任者へ即時エスカレーションし暫定運用を継続する"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 実際の影響ユーザー範囲"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 規制当局への通知期限の厳密解釈"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 暫定対策の副作用"
+        },
+        {
+          "rationale": "実行可能な判断時間を確保する",
+          "step": "[Track B] 期限の延長可否（延長幅・承認者・最終回答時刻）を確認する"
+        },
+        {
+          "rationale": "意思決定の完了条件を固定する",
+          "step": "[Track B] 成功条件: 上位unknownsの回答と期限条件が揃えば最終決断する"
+        }
+      ],
+      "cons": [
+        "進行が遅く感じる可能性"
+      ],
+      "description": "最小コストで試し、学びながら前進する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "justice"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "medium",
+        "effort": "low",
+        "timeline": "1-2 weeks"
+      },
+      "option_id": "opt_1",
+      "pros": [
+        "失敗コストを抑えられる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "medium",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "サービス継続と監査対応の責任を持つ",
+            "name": "運用責任者",
+            "role": "意思決定主体"
+          },
+          {
+            "impact": "通知要件の確認と承認が必要",
+            "name": "法務",
+            "role": "規制対応"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "検証項目を明文化する",
+          "risk": "検証不足",
+          "severity": "medium"
+        }
+      ],
+      "title": "案A：段階的に進める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    },
+    {
+      "action_plan": [
+        {
+          "rationale": "可逆・低リスクの初動で時間を稼ぐ",
+          "step": "[Track A] 30分のタイムボックスで暫定方針を作成し、判断保留を防ぐ"
+        },
+        {
+          "rationale": "被害や手戻りの拡大を抑える",
+          "step": "[Track A] 影響範囲を拡大しない可逆対応（新規展開停止/変更凍結）を即時適用する"
+        },
+        {
+          "rationale": "認識差分による遅延を防ぐ",
+          "step": "[Track A] 関係者へ『前提・unknowns・期限』を短文で共有する"
+        },
+        {
+          "rationale": "期限切迫時の責任所在を明確化する",
+          "step": "[Track A] 期限超過のため、意思決定責任者へ即時エスカレーションし暫定運用を継続する"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 実際の影響ユーザー範囲"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 規制当局への通知期限の厳密解釈"
+        },
+        {
+          "rationale": "unknownsを優先的に解消する",
+          "step": "[Track B] 確認項目: 暫定対策の副作用"
+        },
+        {
+          "rationale": "実行可能な判断時間を確保する",
+          "step": "[Track B] 期限の延長可否（延長幅・承認者・最終回答時刻）を確認する"
+        },
+        {
+          "rationale": "意思決定の完了条件を固定する",
+          "step": "[Track B] 成功条件: 上位unknownsの回答と期限条件が揃えば最終決断する"
+        }
+      ],
+      "cons": [
+        "機会損失が起きる可能性"
+      ],
+      "description": "重要な不明点を埋めてから判断する。",
+      "ethics_review": {
+        "concerns": [
+          "不確実な事実を断言しない",
+          "前提と不確実性を明示する"
+        ],
+        "confidence": "medium",
+        "principles_applied": [
+          "integrity",
+          "autonomy",
+          "justice"
+        ],
+        "tradeoffs": [
+          {
+            "between": [
+              "autonomy",
+              "justice"
+            ],
+            "mitigation": "関係者影響を可視化し、同意可能な線で意思決定する",
+            "severity": "medium",
+            "tension": "自己決定と外部性/公正の緊張"
+          }
+        ]
+      },
+      "feasibility": {
+        "confidence": "high",
+        "effort": "low",
+        "timeline": "3-5 days"
+      },
+      "option_id": "opt_2",
+      "pros": [
+        "判断精度が上がる"
+      ],
+      "responsibility_review": {
+        "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者が不明なため、最初に意思決定者を特定する。関係者への通知・同意・相談の実施と記録を前提に進める。",
+        "confidence": "medium",
+        "decision_owner": "未確定（要確認）",
+        "stakeholders": [
+          {
+            "impact": "サービス継続と監査対応の責任を持つ",
+            "name": "運用責任者",
+            "role": "意思決定主体"
+          },
+          {
+            "impact": "通知要件の確認と承認が必要",
+            "name": "法務",
+            "role": "規制対応"
+          }
+        ]
+      },
+      "risks": [
+        {
+          "mitigation": "期限と判断条件を設定する",
+          "risk": "先延ばし",
+          "severity": "low"
+        }
+      ],
+      "title": "案B：情報収集してから決める",
+      "uncertainty": {
+        "assumptions": [],
+        "known_unknowns": [],
+        "overall_level": "medium",
+        "reasons": []
+      }
+    }
+  ],
+  "questions": [
+    {
+      "assumption_if_unanswered": "決裁者は未確定として判断を保留する",
+      "optional": false,
+      "priority": 1,
+      "question": "この意思決定の決裁者（最終承認者）は誰か？",
+      "question_id": "q_stakeholder_1",
+      "why_needed": "責任所在が未確定だと実行後の説明責任が崩れるため。"
+    },
+    {
+      "assumption_if_unanswered": "主要関係者全員に事前相談が必要と仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "関係者の同意・相談が必要な対象は誰か？",
+      "question_id": "q_stakeholder_2",
+      "why_needed": "外部性を受ける人の合意形成を先に設計するため。"
+    },
+    {
+      "assumption_if_unanswered": "不利益が大きい側を保護する案を優先する",
+      "optional": false,
+      "priority": 1,
+      "question": "影響範囲は？（誰が何を失い、何を得るか）",
+      "question_id": "q_stakeholder_3",
+      "why_needed": "便益と不利益の配分を記録し、公正性を検証するため。"
+    },
+    {
+      "assumption_if_unanswered": "文書通知を48時間以内に実施すると仮定する",
+      "optional": false,
+      "priority": 1,
+      "question": "通知・説明の方法と期限は？",
+      "question_id": "q_stakeholder_4",
+      "why_needed": "合意形成を実務として実行可能にするため。"
+    }
+  ],
+  "recommendation": {
+    "alternatives": [
+      {
+        "option_id": "opt_2",
+        "when_to_choose": "期限を交渉できる、または追加情報を先に取り切れる場合"
+      }
+    ],
+    "confidence": "low",
+    "counter": "不明点が残るため、見積もりや期待値にズレが出る。",
+    "reason": "期限が近いため、低リスクな案で前進しつつ不明点を並行して潰す。",
+    "recommended_option_id": "opt_1",
+    "status": "recommended"
+  },
+  "responsibility": {
+    "accountability_notes": "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者/意思決定者が未確定なら先に確定する。RESP_IMPACT_SCOPE: 外部性があるため、通知・同意・相談の結果と合意事項を記録する。",
+    "consent_considerations": [
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 決裁者を特定し、承認権限を確認する",
+      "RESP_STAKEHOLDER_CONSENT_CHECK: 影響を受ける関係者への通知・同意・相談の要否を確認する",
+      "RESP_IMPACT_SCOPE: 影響範囲（誰が何を得る/失うか）と合意内容を記録する",
+      "RESP_IMPACT_SCOPE: コミュニケーション手段と期限を決め、実施ログを残す"
+    ],
+    "decision_owner": "未確定（要確認）",
+    "stakeholders": [
+      {
+        "impact": "サービス継続と監査対応の責任を持つ",
+        "name": "運用責任者",
+        "role": "意思決定主体"
+      },
+      {
+        "impact": "通知要件の確認と承認が必要",
+        "name": "法務",
+        "role": "規制対応"
+      }
+    ]
+  },
+  "trace": {
+    "steps": [
+      {
+        "ended_at": "2026-02-22T00:00:01Z",
+        "metrics": {
+          "days_to_deadline": -6,
+          "options_planned": 2,
+          "questions_planned": 4,
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "stakeholders_count": 2,
+          "unknowns_count": 3
+        },
+        "name": "parse_input",
+        "started_at": "2026-02-22T00:00:00Z",
+        "summary": "入力を正規化し、特徴量（features）を抽出した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:02Z",
+        "metrics": {
+          "options": 2
+        },
+        "name": "generate_options",
+        "started_at": "2026-02-22T00:00:01Z",
+        "summary": "特徴量に基づいて選択肢を生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:03Z",
+        "metrics": {
+          "questions": 4
+        },
+        "name": "question_layer",
+        "started_at": "2026-02-22T00:00:02Z",
+        "summary": "不足情報を補う問いを生成した"
+      },
+      {
+        "ended_at": "2026-02-22T00:00:04Z",
+        "metrics": {
+          "arbitration_code": "TIME_PRESSURE_LOW_CONF",
+          "policy_snapshot": {
+            "TIME_PRESSURE_DAYS": -4,
+            "UNKNOWN_BLOCK": 4
+          },
+          "rules_fired": [
+            "ETH_NO_OVERCLAIM_UNKNOWN",
+            "ETH_STAKEHOLDER_CONSENT"
+          ],
+          "rules_fired_planning": [
+            "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+          ]
+        },
+        "name": "compose_output",
+        "started_at": "2026-02-22T00:00:03Z",
+        "summary": "推奨・反証・代替案を含む出力を組み立てた"
+      }
+    ],
+    "version": "1.0"
+  },
+  "uncertainty": {
+    "assumptions": [
+      "提示された制約が正しい"
+    ],
+    "known_unknowns": [
+      "実際の影響ユーザー範囲",
+      "規制当局への通知期限の厳密解釈",
+      "暫定対策の副作用"
+    ],
+    "overall_level": "medium",
+    "reasons": [
+      "重要情報が未確定"
+    ]
+  }
+}

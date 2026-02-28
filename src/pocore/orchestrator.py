@@ -63,6 +63,7 @@ def run_case(
         case, short_id=short_id, features=features, options=options
     )
     ethics_rules_fired = ethics_v1.rules_fired_for(short_id=short_id, features=features)
+    planning_rules_fired = generator_stub.rules_fired_for(features=features)
     options, responsibility_summary = responsibility_v1.apply(
         case, short_id=short_id, features=features, options=options
     )
@@ -80,6 +81,7 @@ def run_case(
         questions_count=len(questions),
         features=features,
         rules_fired=ethics_rules_fired,
+        planning_rules_fired=planning_rules_fired,
         arbitration_code=arbitration_code,
         policy_snapshot={
             "UNKNOWN_BLOCK": UNKNOWN_BLOCK,

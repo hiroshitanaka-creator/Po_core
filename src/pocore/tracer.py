@@ -33,6 +33,7 @@ def build_trace(
     questions_count: int = 0,
     features: Optional[Dict[str, Any]] = None,
     rules_fired: Optional[list[str]] = None,
+    planning_rules_fired: Optional[list[str]] = None,
     arbitration_code: Optional[str] = None,
     policy_snapshot: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
@@ -143,6 +144,8 @@ def build_trace(
         compose_metrics["arbitration_code"] = arbitration_code
     if rules_fired:
         compose_metrics["rules_fired"] = list(rules_fired)
+    if planning_rules_fired:
+        compose_metrics["rules_fired_planning"] = list(planning_rules_fired)
     if policy_snapshot:
         compose_metrics["policy_snapshot"] = dict(policy_snapshot)
 

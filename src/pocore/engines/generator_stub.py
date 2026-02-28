@@ -15,8 +15,12 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from ..policy_v1 import TIME_PRESSURE_DAYS
+
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
+PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN = "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN"
+TRACK_B_UNKNOWNS_MAX = 3
 
 
 def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
@@ -48,6 +52,92 @@ def _ph_uncertainty() -> Dict[str, Any]:
         "assumptions": [],
         "known_unknowns": [],
     }
+
+
+def _needs_two_track_plan(features: Dict[str, Any]) -> bool:
+    days_to_deadline = features.get("days_to_deadline")
+    return (
+        int(features.get("unknowns_count", 0) or 0) > 0
+        and isinstance(days_to_deadline, int)
+        and days_to_deadline <= TIME_PRESSURE_DAYS
+    )
+
+
+def _build_two_track_action_plan(features: Dict[str, Any]) -> List[Dict[str, str]]:
+    days_to_deadline = int(features.get("days_to_deadline", 0) or 0)
+    unknowns = features.get("unknowns_items")
+    unknown_items = unknowns if isinstance(unknowns, list) else []
+    track_b_targets = [str(item) for item in unknown_items if str(item).strip()][
+        :TRACK_B_UNKNOWNS_MAX
+    ]
+    if not track_b_targets:
+        track_b_targets = ["未知点を優先度順に棚卸しする"]
+
+    deadline_step = (
+        "[Track A] 期限超過のため、意思決定責任者へ即時エスカレーションし暫定運用を継続する"
+        if days_to_deadline < 0
+        else "[Track A] 期限到達時のエスカレーション条件（誰が/いつ判断するか）を先に固定する"
+    )
+
+    plan: List[Dict[str, str]] = [
+        {
+            "step": "[Track A] 30分のタイムボックスで暫定方針を作成し、判断保留を防ぐ",
+            "rationale": "可逆・低リスクの初動で時間を稼ぐ",
+        },
+        {
+            "step": "[Track A] 影響範囲を拡大しない可逆対応（新規展開停止/変更凍結）を即時適用する",
+            "rationale": "被害や手戻りの拡大を抑える",
+        },
+        {
+            "step": "[Track A] 関係者へ『前提・unknowns・期限』を短文で共有する",
+            "rationale": "認識差分による遅延を防ぐ",
+        },
+        {
+            "step": deadline_step,
+            "rationale": "期限切迫時の責任所在を明確化する",
+        },
+    ]
+
+    for item in track_b_targets:
+        plan.append(
+            {
+                "step": f"[Track B] 確認項目: {item}",
+                "rationale": "unknownsを優先的に解消する",
+            }
+        )
+
+    plan.extend(
+        [
+            {
+                "step": "[Track B] 期限の延長可否（延長幅・承認者・最終回答時刻）を確認する",
+                "rationale": "実行可能な判断時間を確保する",
+            },
+            {
+                "step": "[Track B] 成功条件: 上位unknownsの回答と期限条件が揃えば最終決断する",
+                "rationale": "意思決定の完了条件を固定する",
+            },
+        ]
+    )
+    return plan
+
+
+def _apply_two_track_plan_if_needed(
+    options: List[Dict[str, Any]], features: Dict[str, Any]
+) -> List[Dict[str, Any]]:
+    if not _needs_two_track_plan(features):
+        return options
+
+    action_plan = _build_two_track_action_plan(features)
+    for option in options:
+        option["action_plan"] = list(action_plan)
+    return options
+
+
+def rules_fired_for(*, features: Optional[Dict[str, Any]] = None) -> List[str]:
+    feats = features or {}
+    if _needs_two_track_plan(feats):
+        return [PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN]
+    return []
 
 
 def generate_options(
@@ -307,7 +397,7 @@ def generate_options(
         ]
 
     # Default fallback
-    return [
+    return _apply_two_track_plan_if_needed([
         {
             "option_id": "opt_1",
             "title": "案A：段階的に進める",
@@ -354,4 +444,4 @@ def generate_options(
             "ethics_review": _ph_ethics(),
             "responsibility_review": _ph_responsibility(),
         },
-    ]
+    ], feats)
