@@ -57,7 +57,9 @@ def _collect_execution_coverage() -> Tuple[Set[str], Set[str], Set[str]]:
 
 
 def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
-    arbitration_codes, ethics_rule_ids, planning_rule_ids = _collect_execution_coverage()
+    arbitration_codes, ethics_rule_ids, planning_rule_ids = (
+        _collect_execution_coverage()
+    )
 
     required_arbitration = set(BASE_ARBITRATION_CODES)
     if (

@@ -35,7 +35,9 @@ def _canonicalize(obj: Any, *, parent_key: str = "") -> Any:
         if parent_key == "options":
             return sorted(items, key=lambda x: x.get("option_id", ""))
         if parent_key == "questions":
-            return sorted(items, key=lambda x: (x.get("priority", 0), x.get("question_id", "")))
+            return sorted(
+                items, key=lambda x: (x.get("priority", 0), x.get("question_id", ""))
+            )
         if parent_key == "stakeholders":
             return sorted(items, key=lambda x: (x.get("name", ""), x.get("role", "")))
         return items

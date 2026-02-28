@@ -21,8 +21,9 @@ def test_two_track_plan_emitted_under_time_pressure_with_unknowns() -> None:
     assert any(step.startswith("[Track B]") for step in steps)
 
 
-
-def test_two_track_plan_reflects_unknown_items_in_track_b_with_deterministic_order() -> None:
+def test_two_track_plan_reflects_unknown_items_in_track_b_with_deterministic_order() -> (
+    None
+):
     unknowns = ["監査ログの欠落範囲", "通知対象ユーザー数", "契約上の通知期限"]
     options = generator_stub.generate_options(
         {},

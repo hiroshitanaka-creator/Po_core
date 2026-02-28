@@ -24,8 +24,8 @@ Design stance:
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from copy import deepcopy
+from pathlib import Path
 from typing import Any, Dict, List, Union
 
 import yaml
@@ -121,7 +121,9 @@ def _resolve_parent(container: Any, tokens: List[str], *, path: str) -> tuple[An
     return current, tokens[-1]
 
 
-def _apply_patch(case: Dict[str, Any], patch_ops: List[Dict[str, Any]]) -> Dict[str, Any]:
+def _apply_patch(
+    case: Dict[str, Any], patch_ops: List[Dict[str, Any]]
+) -> Dict[str, Any]:
     updated = deepcopy(case)
     for op in patch_ops:
         op_name = str(op.get("op"))
@@ -139,7 +141,9 @@ def _apply_patch(case: Dict[str, Any], patch_ops: List[Dict[str, Any]]) -> Dict[
             index = int(leaf)
             if op_name == "add":
                 if index < 0 or index > len(parent):
-                    raise ValueError(f"List add index out of range in patch path: {path}")
+                    raise ValueError(
+                        f"List add index out of range in patch path: {path}"
+                    )
                 parent.insert(index, value)
             elif op_name == "replace":
                 if index < 0 or index >= len(parent):
@@ -155,7 +159,9 @@ def _apply_patch(case: Dict[str, Any], patch_ops: List[Dict[str, Any]]) -> Dict[
                 del parent[index]
             elif op_name == "test":
                 if index < 0 or index >= len(parent):
-                    raise ValueError(f"List test index out of range in patch path: {path}")
+                    raise ValueError(
+                        f"List test index out of range in patch path: {path}"
+                    )
                 if parent[index] != value:
                     raise ValueError(f"JSON patch test failed at {path}")
             else:

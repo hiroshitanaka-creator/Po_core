@@ -124,8 +124,7 @@ def test_golden_has_two_track_planning_under_time_pressure_unknowns() -> None:
         if row["features"].get("days_to_deadline") is not None
         and row["features"].get("unknowns_count", 0) > 0
         and row["features"].get("days_to_deadline") <= TIME_PRESSURE_DAYS
-        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
-        in row.get("planning_rules_fired", [])
+        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN in row.get("planning_rules_fired", [])
     ]
 
     if TIME_PRESSURE_DAYS >= 0:
@@ -144,8 +143,7 @@ def test_golden_has_two_track_planning_under_time_pressure_unknowns() -> None:
         for row in records
         if row["features"].get("days_to_deadline") is not None
         and row["features"].get("unknowns_count", 0) > 0
-        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN
-        in row.get("planning_rules_fired", [])
+        and PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN in row.get("planning_rules_fired", [])
     ]
     assert unknowns_present, (
         "No *_expected.json-backed case validates Two-Track Plan observability with "

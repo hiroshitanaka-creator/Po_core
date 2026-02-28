@@ -269,7 +269,9 @@ def generate(
 
     if unknowns_count > 0 and unknown_items_norm:
         headroom = max(0, MAX_QUESTIONS - len(candidates))
-        for index, item in enumerate(unknown_items_norm[: max(MAX_QUESTIONS, headroom)], start=1):
+        for index, item in enumerate(
+            unknown_items_norm[: max(MAX_QUESTIONS, headroom)], start=1
+        ):
             penalty = 2 * (index - 1)
             urgency_bonus = 10 if is_deadline_near else 0
             stakeholder_bonus = 2 if stakeholders_count >= 2 else 0

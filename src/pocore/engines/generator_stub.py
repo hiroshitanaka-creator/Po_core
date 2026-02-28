@@ -444,51 +444,57 @@ def generate_options(
         ]
 
     # Default fallback
-    return _apply_two_track_plan_if_needed(_apply_values_clarification_pack_if_needed([
-        {
-            "option_id": "opt_1",
-            "title": "案A：段階的に進める",
-            "description": "最小コストで試し、学びながら前進する。",
-            "action_plan": [{"step": "最小実験を設計して実施する"}],
-            "pros": ["失敗コストを抑えられる"],
-            "cons": ["進行が遅く感じる可能性"],
-            "risks": [
+    return _apply_two_track_plan_if_needed(
+        _apply_values_clarification_pack_if_needed(
+            [
                 {
-                    "risk": "検証不足",
-                    "severity": "medium",
-                    "mitigation": "検証項目を明文化する",
-                }
-            ],
-            "feasibility": {
-                "effort": "low",
-                "timeline": "1-2 weeks",
-                "confidence": "medium",
-            },
-            "uncertainty": _ph_uncertainty(),
-            "ethics_review": _ph_ethics(),
-            "responsibility_review": _ph_responsibility(),
-        },
-        {
-            "option_id": "opt_2",
-            "title": "案B：情報収集してから決める",
-            "description": "重要な不明点を埋めてから判断する。",
-            "action_plan": [{"step": "不足情報を3〜5項目に絞って集める"}],
-            "pros": ["判断精度が上がる"],
-            "cons": ["機会損失が起きる可能性"],
-            "risks": [
+                    "option_id": "opt_1",
+                    "title": "案A：段階的に進める",
+                    "description": "最小コストで試し、学びながら前進する。",
+                    "action_plan": [{"step": "最小実験を設計して実施する"}],
+                    "pros": ["失敗コストを抑えられる"],
+                    "cons": ["進行が遅く感じる可能性"],
+                    "risks": [
+                        {
+                            "risk": "検証不足",
+                            "severity": "medium",
+                            "mitigation": "検証項目を明文化する",
+                        }
+                    ],
+                    "feasibility": {
+                        "effort": "low",
+                        "timeline": "1-2 weeks",
+                        "confidence": "medium",
+                    },
+                    "uncertainty": _ph_uncertainty(),
+                    "ethics_review": _ph_ethics(),
+                    "responsibility_review": _ph_responsibility(),
+                },
                 {
-                    "risk": "先延ばし",
-                    "severity": "low",
-                    "mitigation": "期限と判断条件を設定する",
-                }
+                    "option_id": "opt_2",
+                    "title": "案B：情報収集してから決める",
+                    "description": "重要な不明点を埋めてから判断する。",
+                    "action_plan": [{"step": "不足情報を3〜5項目に絞って集める"}],
+                    "pros": ["判断精度が上がる"],
+                    "cons": ["機会損失が起きる可能性"],
+                    "risks": [
+                        {
+                            "risk": "先延ばし",
+                            "severity": "low",
+                            "mitigation": "期限と判断条件を設定する",
+                        }
+                    ],
+                    "feasibility": {
+                        "effort": "low",
+                        "timeline": "3-5 days",
+                        "confidence": "high",
+                    },
+                    "uncertainty": _ph_uncertainty(),
+                    "ethics_review": _ph_ethics(),
+                    "responsibility_review": _ph_responsibility(),
+                },
             ],
-            "feasibility": {
-                "effort": "low",
-                "timeline": "3-5 days",
-                "confidence": "high",
-            },
-            "uncertainty": _ph_uncertainty(),
-            "ethics_review": _ph_ethics(),
-            "responsibility_review": _ph_responsibility(),
-        },
-    ], feats), feats)
+            feats,
+        ),
+        feats,
+    )
