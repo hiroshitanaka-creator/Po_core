@@ -1,0 +1,15 @@
+version: "1.0"
+case_ref: "case_012"
+answers:
+  - question_id: "q_budget_limit"
+    answer_text: "初期予算は月5万円までです。"
+    applied_patch_paths:
+      - "/constraints/budget"
+      - "/notes/0"
+patch:
+  - op: "replace"
+    path: "/constraints/budget"
+    value: "<=50000 JPY/month"
+  - op: "add"
+    path: "/notes/0"
+    value: "予算上限: 月5万円"
