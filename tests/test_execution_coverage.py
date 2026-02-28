@@ -38,7 +38,9 @@ def _collect_execution_coverage() -> Tuple[Set[str], Set[str]]:
 
             rules_fired = metrics.get("rules_fired")
             if isinstance(rules_fired, list):
-                ethics_rule_ids.update(rule for rule in rules_fired if isinstance(rule, str))
+                ethics_rule_ids.update(
+                    rule for rule in rules_fired if isinstance(rule, str)
+                )
 
     return arbitration_codes, ethics_rule_ids
 
@@ -47,9 +49,17 @@ def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
     arbitration_codes, ethics_rule_ids = _collect_execution_coverage()
 
     required_arbitration = set(BASE_ARBITRATION_CODES)
-    if run_case_file(
-        SCENARIOS / "case_005.yaml", seed=0, deterministic=True, now=FIXED_NOW
-    ).get("trace", {}).get("steps", [{}])[-1].get("metrics", {}).get("policy_snapshot", {}).get("TIME_PRESSURE_DAYS", 0) >= 0:
+    if (
+        run_case_file(
+            SCENARIOS / "case_005.yaml", seed=0, deterministic=True, now=FIXED_NOW
+        )
+        .get("trace", {})
+        .get("steps", [{}])[-1]
+        .get("metrics", {})
+        .get("policy_snapshot", {})
+        .get("TIME_PRESSURE_DAYS", 0)
+        >= 0
+    ):
         required_arbitration.add("TIME_PRESSURE_LOW_CONF")
 
     missing_arbitration = required_arbitration - arbitration_codes

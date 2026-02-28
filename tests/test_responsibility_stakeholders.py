@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pocore.engines import question_v1, responsibility_v1
 
-
 BASE_CASE = {
     "case_id": "case_externality_unit",
     "title": "外部性がある意思決定",
@@ -33,8 +32,13 @@ def test_responsibility_adds_externality_checklist_for_many_stakeholders() -> No
     )
 
     assert summary["decision_owner"] == "未確定（要確認）"
-    assert any("RESP_STAKEHOLDER_CONSENT_CHECK" in item for item in summary["consent_considerations"])
-    assert any("RESP_IMPACT_SCOPE" in item for item in summary["consent_considerations"])
+    assert any(
+        "RESP_STAKEHOLDER_CONSENT_CHECK" in item
+        for item in summary["consent_considerations"]
+    )
+    assert any(
+        "RESP_IMPACT_SCOPE" in item for item in summary["consent_considerations"]
+    )
     assert "決裁者/意思決定者" in summary["accountability_notes"]
 
 
