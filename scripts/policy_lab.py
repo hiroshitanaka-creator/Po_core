@@ -113,7 +113,42 @@ def _case_record(case_path: Path, output: Dict[str, Any]) -> Dict[str, Any]:
             "confidence": recommendation.get("confidence"),
         },
         "rules_fired": list(compose_metrics.get("rules_fired", [])),
+        "planning_rules_fired": list(compose_metrics.get("rules_fired_planning", [])),
         "policy_snapshot": dict(compose_metrics.get("policy_snapshot", {})),
+    }
+
+
+def _planning_rules_summary(
+    records: Sequence[Dict[str, Any]],
+    *,
+    two_track_rule_id: str = "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN",
+    top_n: int = 5,
+) -> Dict[str, Any]:
+    frequency: Dict[str, int] = {}
+    two_track_triggered_cases = 0
+    for record in records:
+        rules = [
+            rule_id
+            for rule_id in record.get("planning_rules_fired", [])
+            if isinstance(rule_id, str)
+        ]
+        if two_track_rule_id in rules:
+            two_track_triggered_cases += 1
+        for rule_id in rules:
+            frequency[rule_id] = frequency.get(rule_id, 0) + 1
+
+    sorted_frequency = sorted(
+        frequency.items(),
+        key=lambda item: (-item[1], item[0]),
+    )
+
+    return {
+        "two_track_rule_id": two_track_rule_id,
+        "two_track_triggered_cases": two_track_triggered_cases,
+        "planning_rule_frequency_top": [
+            {"rule_id": rule_id, "count": count}
+            for rule_id, count in sorted_frequency[:top_n]
+        ],
     }
 
 
@@ -151,6 +186,8 @@ def _diff_case(
         changed_fields.append("recommendation")
     if baseline.get("rules_fired") != variant.get("rules_fired"):
         changed_fields.append("rules_fired")
+    if baseline.get("planning_rules_fired") != variant.get("planning_rules_fired"):
+        changed_fields.append("planning_rules_fired")
     if baseline.get("policy_snapshot") != variant.get("policy_snapshot"):
         changed_fields.append("policy_snapshot")
 
@@ -161,6 +198,8 @@ def _diff_case(
 
     base_rules = set(baseline.get("rules_fired", []))
     var_rules = set(variant.get("rules_fired", []))
+    base_rules.update(baseline.get("planning_rules_fired", []))
+    var_rules.update(variant.get("planning_rules_fired", []))
     for rule_id in sorted(base_rules | var_rules):
         impacted.update(trace_idx["rule_id"].get(rule_id, set()))
 
@@ -235,12 +274,16 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
             _diff_case(baseline_records[name], variant_records[name], trace_idx)
             for name in sorted(variant_records)
         ]
+        planning_summary = _planning_rules_summary(
+            [variant_records[name] for name in sorted(variant_records)]
+        )
         result["cases"] = diffs
         result["summary"] = {
             "changed_cases": sum(1 for d in diffs if d["changed"]),
             "impacted_requirements": sorted(
                 {req for d in diffs for req in d["impacted_requirements"]}
             ),
+            **planning_summary,
         }
     else:
         result["cases"] = [variant_records[name] for name in sorted(variant_records)]
@@ -280,9 +323,21 @@ def _render_markdown(report: Dict[str, Any]) -> str:
                 f"- changed_cases: **{summary.get('changed_cases', 0)}**",
                 "- impacted_requirements: "
                 + (", ".join(summary.get("impacted_requirements", [])) or "(none)"),
+                f"- planning two-track triggered cases ({summary.get('two_track_rule_id', 'PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN')}): **{summary.get('two_track_triggered_cases', 0)}**",
                 "",
             ]
         )
+
+        top_rules = summary.get("planning_rule_frequency_top", [])
+        lines.append("### Planning rule frequency (top)")
+        if isinstance(top_rules, list) and top_rules:
+            for row in top_rules:
+                lines.append(
+                    f"- `{row.get('rule_id', 'unknown_rule')}`: {row.get('count', 0)}"
+                )
+        else:
+            lines.append("- (none)")
+        lines.append("")
 
     lines.append("## Case Results")
     lines.append("")

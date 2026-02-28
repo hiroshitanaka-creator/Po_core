@@ -47,6 +47,16 @@ python scripts/policy_lab.py \
   - 機械可読。差分判定・ケース詳細・影響REQを含む
 - `policy_lab_report.md`:
   - 人間可読。概要とケース別差分を短く俯瞰
+  - compare時はTwo-Track Planの発火件数とplanning rule頻度上位も表示
+
+### planning summary（compare時）
+
+- `summary.two_track_rule_id`
+  - Two-Track Planの評価対象rule_id（既定: `PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN`）
+- `summary.two_track_triggered_cases`
+  - 上記rule_idが発火したケース数
+- `summary.planning_rule_frequency_top`
+  - planning rule_idの頻度分布（多い順・同率はrule_id昇順）
 
 ### impacted_requirements の意味
 
