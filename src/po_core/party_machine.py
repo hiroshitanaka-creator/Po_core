@@ -33,8 +33,8 @@ Parallel Execution:
 from __future__ import annotations
 
 import asyncio
-import os
 import functools
+import os
 import random
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -57,8 +57,8 @@ if TYPE_CHECKING:
 from rich.console import Console
 from rich.panel import Panel
 
-from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.deliberation.protocol import run_deliberation
+from po_core.domain.keys import AUTHOR, PO_CORE
 
 console = Console()
 
@@ -284,7 +284,10 @@ def run_philosophers(
     if os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes") and proposals:
         try:
             run_deliberation(
-                input={"prompt": getattr(ctx, "user_input", ""), "proposals": list(proposals)},
+                input={
+                    "prompt": getattr(ctx, "user_input", ""),
+                    "proposals": list(proposals),
+                },
                 philosophers=philosophers,
                 axis_spec={"axes": ["ethics", "risk", "evidence"]},
                 settings={"max_critiques_per_philosopher": 2},
@@ -399,7 +402,9 @@ class AsyncPartyMachine:
                 )
 
             dt = int((perf_counter() - t0) * 1000)
-            proposals = [p for p in ph_proposals if p is not None] if ph_proposals else []
+            proposals = (
+                [p for p in ph_proposals if p is not None] if ph_proposals else []
+            )
             selected = proposals[:limit_per_philosopher]
             embedded = [
                 _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
@@ -465,9 +470,7 @@ class AsyncPartyMachine:
 
         tasks = [
             asyncio.create_task(
-                self._dispatch_one(
-                    ph, ctx, intent, tensors, memory, tracer, limit
-                )
+                self._dispatch_one(ph, ctx, intent, tensors, memory, tracer, limit)
             )
             for ph in philosophers
         ]
@@ -503,7 +506,9 @@ class AsyncPartyMachine:
         return proposals, results
 
 
-def _embed_author_proposal(p: "Proposal", author: str, proposal_index: int) -> "Proposal":
+def _embed_author_proposal(
+    p: "Proposal", author: str, proposal_index: int
+) -> "Proposal":
     """Embed philosopher author ID into Proposal.extra (shared helper)."""
     from po_core.domain.proposal import Proposal
 

@@ -7,7 +7,6 @@ from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.base import ArgumentCard, Context
 from po_core.philosophers.manifest import SPECS
 
-
 TEST_PROMPT = "I need a fair and practical plan for a risky team decision."
 
 
