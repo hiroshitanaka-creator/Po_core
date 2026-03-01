@@ -83,11 +83,15 @@ def test_train_and_load_calibration_params_changes_estimation(tmp_path, monkeypa
     assert "labels" in saved and "choice" in saved["labels"]
 
     monkeypatch.delenv("PO_CALIBRATION_PARAMS", raising=False)
-    baseline = FreedomPressureV2(
-        model_name="__nonexistent_model_to_force_keyword_fallback__",
-        ema_alpha=1.0,
-        correlation_blend=0.0,
-    ).compute_v2("choose choose choose option").values
+    baseline = (
+        FreedomPressureV2(
+            model_name="__nonexistent_model_to_force_keyword_fallback__",
+            ema_alpha=1.0,
+            correlation_blend=0.0,
+        )
+        .compute_v2("choose choose choose option")
+        .values
+    )
 
     monkeypatch.setenv("PO_CALIBRATION_PARAMS", str(params_path))
     calibrated_engine_1 = FreedomPressureV2(
@@ -110,17 +114,25 @@ def test_train_and_load_calibration_params_changes_estimation(tmp_path, monkeypa
 @pytest.mark.unit
 def test_invalid_calibration_path_falls_back_to_heuristic(monkeypatch):
     monkeypatch.delenv("PO_CALIBRATION_PARAMS", raising=False)
-    baseline = FreedomPressureV2(
-        model_name="__nonexistent_model_to_force_keyword_fallback__",
-        ema_alpha=1.0,
-        correlation_blend=0.0,
-    ).compute_v2("urgent now immediate deadline").values
+    baseline = (
+        FreedomPressureV2(
+            model_name="__nonexistent_model_to_force_keyword_fallback__",
+            ema_alpha=1.0,
+            correlation_blend=0.0,
+        )
+        .compute_v2("urgent now immediate deadline")
+        .values
+    )
 
     monkeypatch.setenv("PO_CALIBRATION_PARAMS", "/tmp/not_found_params_v1.json")
-    fallback = FreedomPressureV2(
-        model_name="__nonexistent_model_to_force_keyword_fallback__",
-        ema_alpha=1.0,
-        correlation_blend=0.0,
-    ).compute_v2("urgent now immediate deadline").values
+    fallback = (
+        FreedomPressureV2(
+            model_name="__nonexistent_model_to_force_keyword_fallback__",
+            ema_alpha=1.0,
+            correlation_blend=0.0,
+        )
+        .compute_v2("urgent now immediate deadline")
+        .values
+    )
 
     assert fallback == baseline

@@ -257,7 +257,11 @@ class PoSelf:
                 "critique",
                 {
                     "events_seen": len(tracer.events),
-                    "philosophers": [e.payload.get("name", "") for e in tracer.events if e.event_type == "PhilosopherResult"],
+                    "philosophers": [
+                        e.payload.get("name", "")
+                        for e in tracer.events
+                        if e.event_type == "PhilosopherResult"
+                    ],
                 },
             )
             logger.emit(

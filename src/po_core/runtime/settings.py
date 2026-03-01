@@ -20,13 +20,13 @@ from po_core.deliberation.roles import Role, parse_roles_csv
 from po_core.domain.safety_mode import SafetyMode
 
 
-
-
 def _read_roles_from_env() -> tuple[Role, ...]:
     raw = os.getenv("PO_ROLES", "").strip()
     if not raw:
         return ()
     return tuple(sorted(parse_roles_csv(raw), key=lambda r: r.value))
+
+
 @dataclass(frozen=True)
 class Settings:
     """

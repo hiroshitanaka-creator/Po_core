@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping
 
-
 _EMAIL_RE = re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b")
 _PHONE_RE = re.compile(r"(?:\+?\d[\d\-()\s]{8,}\d)")
 _ADDRESS_RE = re.compile(
@@ -100,4 +99,3 @@ class JsonlEventLogger:
         if not self.base_dir.exists():
             return []
         return sorted(p.stem for p in self.base_dir.glob("*.jsonl"))
-

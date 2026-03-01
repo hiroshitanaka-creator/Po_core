@@ -20,7 +20,10 @@ def test_registry_can_filter_by_role_set():
     selection = registry.select(SafetyMode.NORMAL)
 
     assert selection.selected_ids
-    assert all(PHILOSOPHER_ROLE_MAP.get(pid) == Role.DEONTOLOGIST for pid in selection.selected_ids)
+    assert all(
+        PHILOSOPHER_ROLE_MAP.get(pid) == Role.DEONTOLOGIST
+        for pid in selection.selected_ids
+    )
 
 
 def test_settings_from_env_parses_po_roles(monkeypatch):

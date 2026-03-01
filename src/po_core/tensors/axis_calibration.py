@@ -33,7 +33,9 @@ class AxisCalibrationModel:
         return np.clip(calibrated, 0.0, 1.0)
 
 
-def load_calibration_model_from_path(path: Optional[str]) -> Optional[AxisCalibrationModel]:
+def load_calibration_model_from_path(
+    path: Optional[str],
+) -> Optional[AxisCalibrationModel]:
     """Load axis calibration model from json file path."""
     if not path:
         return None
@@ -61,7 +63,9 @@ def load_calibration_model_from_path(path: Optional[str]) -> Optional[AxisCalibr
     if not isinstance(feature_order, list) or not all(
         isinstance(item, str) for item in feature_order
     ):
-        logger.warning("Calibration params missing valid `feature_order`: %s", file_path)
+        logger.warning(
+            "Calibration params missing valid `feature_order`: %s", file_path
+        )
         return None
 
     weights: Dict[str, np.ndarray] = {}

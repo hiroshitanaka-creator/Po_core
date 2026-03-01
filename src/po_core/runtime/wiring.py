@@ -180,7 +180,9 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     if not selected_roles:
         roles_env = os.getenv("PO_ROLES", "").strip()
         if roles_env:
-            selected_roles = tuple(sorted(parse_roles_csv(roles_env), key=lambda r: r.value))
+            selected_roles = tuple(
+                sorted(parse_roles_csv(roles_env), key=lambda r: r.value)
+            )
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
@@ -339,7 +341,9 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     if not selected_roles:
         roles_env = os.getenv("PO_ROLES", "").strip()
         if roles_env:
-            selected_roles = tuple(sorted(parse_roles_csv(roles_env), key=lambda r: r.value))
+            selected_roles = tuple(
+                sorted(parse_roles_csv(roles_env), key=lambda r: r.value)
+            )
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(

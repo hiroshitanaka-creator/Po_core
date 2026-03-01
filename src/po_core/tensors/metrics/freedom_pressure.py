@@ -36,28 +36,111 @@ from po_core.text.normalize import normalize_text
 _Keyword = Union[str, Pattern[str]]
 
 _CHOICE_KEYWORDS_EN = [
-    "should", "must", "ought", "decide", "choose", "what", "option", "alternative"
+    "should",
+    "must",
+    "ought",
+    "decide",
+    "choose",
+    "what",
+    "option",
+    "alternative",
 ]
 _RESPONSIBILITY_KEYWORDS_EN = [
-    "responsible", "duty", "obligation", "accountable", "consequence"
+    "responsible",
+    "duty",
+    "obligation",
+    "accountable",
+    "consequence",
 ]
-_URGENCY_KEYWORDS_EN = ["now", "urgent", "immediate", "quickly", "soon", "hurry", "deadline"]
+_URGENCY_KEYWORDS_EN = [
+    "now",
+    "urgent",
+    "immediate",
+    "quickly",
+    "soon",
+    "hurry",
+    "deadline",
+]
 _ETHICAL_KEYWORDS_EN = [
-    "right", "wrong", "good", "bad", "moral", "ethical", "virtue", "harm", "justice"
+    "right",
+    "wrong",
+    "good",
+    "bad",
+    "moral",
+    "ethical",
+    "virtue",
+    "harm",
+    "justice",
 ]
 _SOCIAL_KEYWORDS_EN = ["we", "us", "society", "people", "community", "others", "public"]
-_AUTHENTICITY_KEYWORDS_EN = ["authentic", "genuine", "true", "self", "identity", "real", "honest"]
+_AUTHENTICITY_KEYWORDS_EN = [
+    "authentic",
+    "genuine",
+    "true",
+    "self",
+    "identity",
+    "real",
+    "honest",
+]
 
 # Japanese examples used for calibration comments:
 # - choice: 「どちらを選ぶべきか」「判断したい」
 # - responsibility: 「責任を取る義務」
 # - urgency: 「至急」「締め切りが迫る」
-_CHOICE_KEYWORDS_JA: List[_Keyword] = ["選ぶ", "選択", "判断", "決め", "どちら", "べき", "どうすべき"]
-_RESPONSIBILITY_KEYWORDS_JA: List[_Keyword] = ["責任", "義務", "説明責任", "結果", "影響"]
-_URGENCY_KEYWORDS_JA: List[_Keyword] = ["至急", "緊急", "今すぐ", "すぐ", "急い", "締め切り", "期限"]
-_ETHICAL_KEYWORDS_JA: List[_Keyword] = ["倫理", "道徳", "正しい", "間違", "善", "悪", "害", "公正", "正義"]
-_SOCIAL_KEYWORDS_JA: List[_Keyword] = ["社会", "他者", "みんな", "人々", "公共", "コミュニティ", "世間"]
-_AUTHENTICITY_KEYWORDS_JA: List[_Keyword] = ["本音", "自分らし", "真正", "誠実", "本心", "自己", "アイデンティティ"]
+_CHOICE_KEYWORDS_JA: List[_Keyword] = [
+    "選ぶ",
+    "選択",
+    "判断",
+    "決め",
+    "どちら",
+    "べき",
+    "どうすべき",
+]
+_RESPONSIBILITY_KEYWORDS_JA: List[_Keyword] = [
+    "責任",
+    "義務",
+    "説明責任",
+    "結果",
+    "影響",
+]
+_URGENCY_KEYWORDS_JA: List[_Keyword] = [
+    "至急",
+    "緊急",
+    "今すぐ",
+    "すぐ",
+    "急い",
+    "締め切り",
+    "期限",
+]
+_ETHICAL_KEYWORDS_JA: List[_Keyword] = [
+    "倫理",
+    "道徳",
+    "正しい",
+    "間違",
+    "善",
+    "悪",
+    "害",
+    "公正",
+    "正義",
+]
+_SOCIAL_KEYWORDS_JA: List[_Keyword] = [
+    "社会",
+    "他者",
+    "みんな",
+    "人々",
+    "公共",
+    "コミュニティ",
+    "世間",
+]
+_AUTHENTICITY_KEYWORDS_JA: List[_Keyword] = [
+    "本音",
+    "自分らし",
+    "真正",
+    "誠実",
+    "本心",
+    "自己",
+    "アイデンティティ",
+]
 
 _ALL_DIMENSIONS = [
     ("choice_weight", _CHOICE_KEYWORDS_EN, _CHOICE_KEYWORDS_JA),
