@@ -30,6 +30,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Tuple
 
+from po_core.deliberation.roles import PHILOSOPHER_ROLE_MAP, Role
 from po_core.philosophers.tags import (
     TAG_AI_SYNTHESIS,
     TAG_CLARIFY,
@@ -494,4 +495,9 @@ def get_enabled_specs() -> List[PhilosopherSpec]:
     return [s for s in SPECS if s.enabled]
 
 
-__all__ = ["PhilosopherSpec", "SPECS", "get_enabled_specs"]
+__all__ = ["PhilosopherSpec", "SPECS", "get_enabled_specs", "get_role_for_philosopher"]
+
+
+def get_role_for_philosopher(philosopher_id: str) -> Role | None:
+    """Resolve philosopher_id to functional role."""
+    return PHILOSOPHER_ROLE_MAP.get(philosopher_id)
