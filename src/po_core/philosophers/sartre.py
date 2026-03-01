@@ -153,6 +153,7 @@ class Sartre(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             freedom,
             responsibility,
             bad_faith,
@@ -1230,8 +1231,180 @@ class Sartre(Philosopher):
             "principle": "Man is condemned to be free - we did not choose our freedom",
         }
 
+    def _apply_sartre_to_problem(self, text: str) -> str:
+        """Apply Sartre's existentialist concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "freedom",
+                "free",
+                "choice",
+                "choose",
+                "liberty",
+                "autonomous",
+                "will",
+                "decide",
+            ]
+        ):
+            return (
+                "Sartre's foundational claim — 'existence precedes essence' — means that there is no pre-given "
+                "human nature, no divine blueprint, no biological telos that determines what we must be. "
+                "We are 'condemned to be free': freedom is not a pleasant option but an inescapable burden; "
+                "even the refusal to choose is itself a choice. "
+                "Every choice is total, in the sense that it implicitly defines the kind of human being "
+                "one endorses, not merely for oneself but as a model for humanity: "
+                "'In choosing for myself I choose for all.' "
+                "Anguish is the emotional register of this absolute freedom — the vertigo of recognizing "
+                "that nothing in the world justifies or compels any particular choice, "
+                "and that we are solely responsible for what we make of our situation."
+            )
+        elif any(
+            w in t
+            for w in [
+                "bad faith",
+                "mauvaise",
+                "self-decept",
+                "role",
+                "pretend",
+                "deny",
+                "excus",
+                "determinism",
+                "nature",
+                "fixed",
+            ]
+        ):
+            return (
+                "Bad faith (mauvaise foi) is Sartre's name for the lie we tell ourselves about our own freedom. "
+                "The waiter who plays at being a waiter with mechanical precision, "
+                "the woman who pretends not to notice her companion's advances — "
+                "both flee from the anxiety of freedom by adopting a fixed role or identity "
+                "as if they were things (en-soi, being-in-itself) rather than the open, self-transcending "
+                "being-for-itself (pour-soi) they actually are. "
+                "Bad faith is distinguished from lying to another because the same person is simultaneously "
+                "both deceiver and deceived; it exploits the double structure of consciousness "
+                "which is always both what it is and what it is not. "
+                "Authentic existence demands that we acknowledge both our facticity (what we have been) "
+                "and our transcendence (what we project ourselves toward) without collapsing into either."
+            )
+        elif any(
+            w in t
+            for w in [
+                "identity",
+                "self",
+                "who am",
+                "character",
+                "ego",
+                "person",
+                "essence",
+                "nature of",
+            ]
+        ):
+            return (
+                "For Sartre, the being-for-itself (pour-soi) has no fixed essence — it is pure negativity, "
+                "a 'hole in being' that perpetually flees from what it is toward what it is not yet. "
+                "Facticity names what we have been: our past, our body, our social situation — "
+                "the in-itself dimension that we always are but can never simply be, "
+                "since consciousness perpetually introduces a gap (néant, nothingness) into this solidity. "
+                "Transcendence is the for-itself's permanent projection beyond its facticity toward future possibilities. "
+                "The fundamental human project — the attempt to coincide with oneself, "
+                "to be both in-itself and for-itself (ens causa sui) — is structurally impossible: "
+                "it is the 'useless passion' of human existence, condemned never to achieve the stable self-identity it craves."
+            )
+        elif any(
+            w in t
+            for w in [
+                "other",
+                "gaze",
+                "look",
+                "shame",
+                "relation",
+                "conflict",
+                "together",
+                "social",
+                "hell",
+            ]
+        ):
+            return (
+                "Sartre's analysis of le regard — the Other's gaze — reveals a fundamental conflict at the heart of all "
+                "human relations: when the Other looks at me, I am turned from a free subject "
+                "into a fixed object, a 'thing' defined from without. "
+                "Shame is the primordial affect of this encounter: I see myself as the Other sees me, "
+                "and in doing so I discover a dimension of myself I cannot control — "
+                "my being-for-others (être-pour-autrui). "
+                "'Hell is other people' (Huis Clos) does not mean others are unpleasant "
+                "but that my freedom is perpetually at stake in the Other's objectifying gaze. "
+                "Yet the Other is also necessary: without the Other's recognition, "
+                "I cannot achieve even the partial self-knowledge that reflection provides."
+            )
+        elif any(
+            w in t
+            for w in [
+                "meaning",
+                "meaningless",
+                "absurd",
+                "nausea",
+                "nauseé",
+                "contingency",
+                "nihil",
+                "existential",
+            ]
+        ):
+            return (
+                "Nausea (La Nausée) is Sartre's name for the experience of radical contingency: "
+                "the discovery that existence has no necessary reason to be as it is, "
+                "that the in-itself — brute being — is simply there, de trop (superfluous), "
+                "without justification or purpose. "
+                "This vertiginous recognition strips away the comfortable meanings with which "
+                "the for-itself covers over the facticity of existence. "
+                "Yet authentic existence does not remain in nausea but responds with engagement (engagement): "
+                "the committed creation of meaning through projects undertaken in full awareness "
+                "of their contingency and without appeal to any transcendent guarantor. "
+                "Literature, art, and political commitment are for Sartre modes of "
+                "responsible meaning-making in a world that offers none ready-made."
+            )
+        elif any(
+            w in t
+            for w in [
+                "responsib",
+                "commit",
+                "engag",
+                "action",
+                "project",
+                "political",
+                "ethical",
+            ]
+        ):
+            return (
+                "Sartre's existentialist ethics begins from absolute responsibility: "
+                "since we are radically free and existence precedes essence, "
+                "we can offer no excuse — not God, not nature, not upbringing, not circumstance — "
+                "for what we choose to do. "
+                "Engagement (commitment) is the authentic response to freedom: "
+                "the writer who thinks literature can be 'pure' and above politics, "
+                "the intellectual who claims neutrality — both are in bad faith, "
+                "for silence and inaction are themselves choices with consequences. "
+                "Every act implicitly legislates for all of humanity; "
+                "to act is to affirm a certain image of what it is to be human, "
+                "and we bear that responsibility whether we acknowledge it or not."
+            )
+        else:
+            return (
+                "Sartre's existentialism begins with a shattering premise: existence precedes essence. "
+                "There is no pre-given human nature, no divine design, no fixed telos — "
+                "only the radical freedom of a consciousness (being-for-itself, pour-soi) "
+                "that perpetually transcends what it is toward what it is not yet. "
+                "Being and Nothingness reveals that nothingness is not an absence but an active "
+                "nihilation performed by consciousness itself, which introduces the gap "
+                "between facticity and transcendence that is the human condition. "
+                "Bad faith conceals this freedom; anguish reveals it; authentic existence "
+                "owns it without excuse. "
+                "We are condemned to be free, absolutely responsible, with no alibis."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         freedom: Dict[str, Any],
         responsibility: Dict[str, Any],
         bad_faith: List[str],
@@ -1245,7 +1418,9 @@ class Sartre(Philosopher):
         shame_pride: Dict[str, Any],
     ) -> str:
         """Construct Sartrean existentialist reasoning."""
+        applied = self._apply_sartre_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Sartrean existentialist perspective, this text reveals a {freedom['level'].lower()} "
             f"degree of freedom awareness. {freedom['status']}. "
             f"Regarding responsibility: {responsibility['status']}. "

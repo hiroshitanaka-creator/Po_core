@@ -110,6 +110,7 @@ class Jung(Philosopher):
         self_realization = self._assess_self_realization(prompt)
 
         # Construct reasoning
+        applied = self._apply_jung_to_problem(prompt)
         reasoning = self._construct_reasoning(
             archetypes,
             collective_themes,
@@ -118,6 +119,7 @@ class Jung(Philosopher):
             shadow,
             self_realization,
         )
+        reasoning = f"{applied}\n\n{reasoning}"
 
         return {
             "reasoning": reasoning,
@@ -645,6 +647,186 @@ class Jung(Philosopher):
             "status": status,
             "note": "The Self is both the center and circumference of the psyche",
         }
+
+    def _apply_jung_to_problem(self, text: str) -> str:
+        """Apply Jung's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_shadow_conflict = any(
+            w in t
+            for w in [
+                "shadow",
+                "conflict",
+                "enemy",
+                "evil",
+                "hate",
+                "anger",
+                "violence",
+                "dark",
+                "repress",
+            ]
+        )
+        is_individuation = any(
+            w in t
+            for w in [
+                "growth",
+                "develop",
+                "mature",
+                "individuat",
+                "wholeness",
+                "integrat",
+                "become",
+                "self",
+                "transform",
+            ]
+        )
+        is_dreams_symbols = any(
+            w in t
+            for w in [
+                "dream",
+                "symbol",
+                "myth",
+                "fairy",
+                "image",
+                "archetype",
+                "unconscious",
+                "vision",
+                "numinous",
+            ]
+        )
+        is_relationships = any(
+            w in t
+            for w in [
+                "relationship",
+                "love",
+                "partner",
+                "anima",
+                "animus",
+                "project",
+                "attract",
+                "romance",
+                "marriage",
+            ]
+        )
+        is_creativity = any(
+            w in t
+            for w in [
+                "creat",
+                "art",
+                "artist",
+                "inspir",
+                "imagin",
+                "express",
+                "music",
+                "poetry",
+                "story",
+            ]
+        )
+        is_meaning_spirituality = any(
+            w in t
+            for w in [
+                "meaning",
+                "spirit",
+                "synchron",
+                "god",
+                "sacred",
+                "religion",
+                "coinciden",
+                "numinous",
+                "soul",
+            ]
+        )
+
+        if is_shadow_conflict:
+            return (
+                "From the Jungian perspective of the Shadow archetype, what presents itself as an external "
+                "conflict or enemy is often a projection of the unacknowledged contents of one's own psyche. "
+                "The Shadow is not evil in itself — it is all that the conscious ego refuses to acknowledge, "
+                "the sum of personal and collective darkness that must be integrated rather than repressed or "
+                "projected onto others. Jung observed that the greatest danger to civilization is not the "
+                "malicious individual but the unconscious mass that projects its own shadow onto a designated "
+                "scapegoat. Genuine resolution of conflict therefore demands the courageous work of shadow "
+                "integration: withdrawing projections, confronting one's own complicity, and recognizing the "
+                "adversary's humanity."
+            )
+        elif is_individuation:
+            return (
+                "Jung's concept of individuation names the lifelong process by which a person becomes "
+                "what they truly are — not merely the ego they have constructed, but the whole Self that "
+                "encompasses both conscious and unconscious, persona and shadow, anima or animus and the "
+                "deeper center of the psyche. Individuation is not a striving for perfection but for "
+                "wholeness: the integration of opposites within a living, dynamic balance. The Self — "
+                "Jung's term for the archetype of totality — serves as both the goal and the organizing "
+                "principle of this developmental journey. Each crisis, each encounter with the unconscious "
+                "through dreams or symptoms, is an invitation from the Self toward greater integration. "
+                "The path is not linear; it spirals through the same complexes at ever-deeper levels of "
+                "understanding."
+            )
+        elif is_dreams_symbols:
+            return (
+                "The unconscious speaks in images, not propositions — in symbols whose meaning exceeds "
+                "any single interpretation. Jung's method of active imagination treats these symbols not "
+                "as puzzles to be decoded but as living presences to be engaged in dialogue. Archetypes — "
+                "the Hero, the Shadow, the Wise Old Man, the Great Mother, the Trickster — are the "
+                "grammar of this psychic language, recurring across myths, fairy tales, dreams, and "
+                "religious imagery because they are inherited predispositions of the collective unconscious. "
+                "The numinous quality of such experiences — the uncanny sense of the sacred, the "
+                "overwhelming other — signals genuine archetypal activation. To dismiss these images as "
+                "mere fantasy is to impoverish the psyche; to take them with absolute literalism is equally "
+                "dangerous. The art is to hold them symbolically, letting their energy transform consciousness."
+            )
+        elif is_relationships:
+            return (
+                "In Jungian psychology, intimate relationships are profoundly shaped by the projection of "
+                "the Anima (the man's inner feminine) or the Animus (the woman's inner masculine) onto the "
+                "partner. This projection creates the characteristic intensity of romantic attraction — we "
+                "fall in love not simply with a person but with an archetypal image overlaid upon them. "
+                "When the projection eventually lifts, as it inevitably does, the relationship either "
+                "deepens into genuine encounter or collapses into disappointment. Genuine relationship "
+                "requires the gradual withdrawal of projections: recognizing that what we adored or despised "
+                "in the other belongs first to our own inner world. This painful but liberating recognition "
+                "is the prerequisite for real love — meeting the other as they actually are rather than as "
+                "a screen for our unconscious contents."
+            )
+        elif is_creativity:
+            return (
+                "Jung understood the artist as a vessel through which the collective unconscious speaks. "
+                "Great art does not merely express the personal feelings of its creator; it channels "
+                "archetypal energies that resonate with the collective psyche, which is why certain works "
+                "feel mythically true across cultures and centuries. The creative process draws on active "
+                "imagination — the capacity to engage the images arising from the unconscious as autonomous "
+                "presences rather than dismissing them as mere fantasy. The Trickster, the Hero's journey, "
+                "the descent into the underworld and return — these are not literary conventions but living "
+                "patterns of the psyche expressing its own developmental dynamics. The creative individual "
+                "who resists this archetypal dimension produces merely personal art; the one who surrenders "
+                "to it becomes, paradoxically, most fully themselves."
+            )
+        elif is_meaning_spirituality:
+            return (
+                "Jung's concept of synchronicity — acausal but meaningful coincidence — challenges the "
+                "reductive materialist assumption that only linear causality is real. Synchronistic events "
+                "suggest a deeper order underlying both psyche and matter, what Jung called the unus mundus "
+                "or unitary world. The numinous — the overwhelming, fascinating, and terrible quality that "
+                "Rudolf Otto identified as the essence of the holy — is for Jung the hallmark of genuine "
+                "archetypal experience. The Self archetype functions psychologically as what religions call "
+                "God: the center and circumference of the psyche, the organizing intelligence of the whole. "
+                "Jung was careful not to conflate the God-image with metaphysical claims about God's "
+                "existence, but insisted that the God-image is a psychological reality of the first order, "
+                "whose neglect produces neurosis and whose integration produces individuation."
+            )
+        else:
+            return (
+                "Analytical psychology, as developed by C.G. Jung, approaches human experience through "
+                "the lens of the collective unconscious — the inherited layer of the psyche that contains "
+                "universal archetypal patterns (Shadow, Anima/Animus, Self, Hero, Trickster, Wise Old Man) "
+                "shaping thought, emotion, and behavior beneath the threshold of consciousness. "
+                "The central task of human psychological life, in Jung's framework, is individuation: the "
+                "gradual integration of these unconscious contents into a conscious, coherent Self. "
+                "Psychological types — the distinction between introversion and extraversion, and among "
+                "four functions (thinking, feeling, sensation, intuition) — describe the habitual orientation "
+                "of consciousness, revealing what has been developed and what remains in the shadow. "
+                "Synchronicity reminds us that the psyche participates in a larger order that neither "
+                "mechanism nor coincidence fully explains."
+            )
 
     def _construct_reasoning(
         self,

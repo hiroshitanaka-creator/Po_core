@@ -128,7 +128,7 @@ class Deleuze(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            rhizome, difference, becoming, lines, territory
+            prompt, rhizome, difference, becoming, lines, territory
         )
 
         return {
@@ -740,8 +740,181 @@ class Deleuze(Philosopher):
             "principle": "The virtual is real - virtuality is not opposed to reality but to actuality",
         }
 
+    def _apply_deleuze_to_problem(self, text: str) -> str:
+        """Apply Deleuzian concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "creat",
+                "art",
+                "express",
+                "becom",
+                "transform",
+                "change",
+                "evolv",
+                "novel",
+                "new",
+                "invent",
+                "origin",
+            ]
+        ):
+            return (
+                "For Deleuze, becoming is ontologically primary: life is a ceaseless process of "
+                "differentiation, not a stable state of being. Becoming-animal, becoming-molecular, "
+                "becoming-imperceptible are not metaphors but names for real transformations that "
+                "cross the identities assigned by categories and representations. Difference is not "
+                "derived from identity (A differs from B) but primary: difference is in itself, "
+                "the engine of production and creativity. The question to pose to any creative "
+                "domain is not 'what does this represent?' but 'what affects does it produce, "
+                "what new connections does it enable, what lines of flight does it open?'"
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "learn",
+                "educat",
+                "thought",
+                "think",
+                "concept",
+                "theor",
+                "system",
+                "structure",
+                "hierarch",
+            ]
+        ):
+            return (
+                "Deleuze opposes the rhizome to the tree as a model for thought. Arborescent "
+                "knowledge — hierarchical, root-trunk-branch, with a single foundation and "
+                "ordered derivations — mirrors the state's desire for centralized, controllable "
+                "thought. The rhizome, by contrast, has no center, no fixed beginning or end; "
+                "it connects any point to any other point; it is multiple, flat, anti-genealogical. "
+                "Learning that is genuinely experimental follows rhizomatic lines: multiple entry "
+                "points, lateral connections, productive detours, and concepts that work rather "
+                "than represent. A Thousand Plateaus itself enacts this: read it from the middle, "
+                "in any direction."
+            )
+        elif any(
+            w in t
+            for w in [
+                "desire",
+                "want",
+                "motivat",
+                "drive",
+                "need",
+                "lack",
+                "pleasure",
+                "libido",
+                "invest",
+                "energy",
+            ]
+        ):
+            return (
+                "Against the Freudian-Lacanian axiom that desire is constituted by lack, Deleuze "
+                "and Guattari (Anti-Oedipus) insist that desire is productive: it does not desire "
+                "what it lacks but produces connections, flows, assemblages, realities. Desire = "
+                "flow; it invests social fields, not just persons; it produces machines (desiring-"
+                "machines) that connect to other machines. The question is never 'what does desire "
+                "want?' but 'what assemblages does it invest?' — and which assemblages enable life "
+                "to expand and which capture it, bind it, represent it back to itself as mere "
+                "compensation for a prior and unfillable void."
+            )
+        elif any(
+            w in t
+            for w in [
+                "politic",
+                "society",
+                "state",
+                "capital",
+                "power",
+                "govern",
+                "institution",
+                "class",
+                "market",
+                "economy",
+            ]
+        ):
+            return (
+                "Capitalism, for Deleuze and Guattari, is the universal deterritorializing machine: "
+                "it dissolves all fixed identities, traditions, and territories — only to "
+                "reterritorialize them as flows of capital, labor, and consumption. "
+                "Deterritorialization names the escape from a fixed code or territory; "
+                "reterritorialization names the formation of new structures that recapture escaped "
+                "flows. The political question is: which deterritorializations lead to genuine "
+                "lines of flight (new forms of life) and which merely feed new forms of capture? "
+                "The state apparatus and the war machine are the two poles between which social "
+                "formations oscillate."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technology",
+                "machine",
+                "ai",
+                "algorithm",
+                "digital",
+                "network",
+                "platform",
+                "system",
+                "automat",
+                "robot",
+            ]
+        ):
+            return (
+                "Deleuze and Guattari conceive of machines not as opposed to the human but as "
+                "assemblages: a human-tool-institution-affect complex that produces specific "
+                "capacities. The machinic phylum designates the quasi-autonomous tendency of "
+                "technical objects to evolve, connect, and produce emergent behaviors. AI and "
+                "algorithmic systems are assemblages — the question is what connections they "
+                "enable or foreclose, which affects they amplify, and whether they constitute "
+                "rhizomatic (open, generative) or arborescent (hierarchical, capturing) "
+                "organizations of information-flow and social desire."
+            )
+        elif any(
+            w in t
+            for w in [
+                "art",
+                "music",
+                "paint",
+                "film",
+                "literature",
+                "poet",
+                "aesthet",
+                "percept",
+                "affect",
+                "sensation",
+                "style",
+            ]
+        ):
+            return (
+                "Art, for Deleuze, is not representation but the creation of percepts and affects: "
+                "it tears sensations free from the perceptions and affections of a lived subject "
+                "and makes them stand alone on a plane of composition. The great novelist, painter, "
+                "or musician does not express personal experience but catches and preserves "
+                "impersonal becomings — zones of indetermination where the boundary between "
+                "human and non-human, organic and inorganic, dissolves. What is Philosophy? "
+                "distinguishes art (percepts/affects), science (functions), and philosophy "
+                "(concepts) as three distinct modes of thought — none reducible to the others, "
+                "each making the imperceptible perceptible in its own way."
+            )
+        else:
+            return (
+                "Deleuze's philosophy inverts the traditional primacy of identity, representation, "
+                "and being in favor of difference, multiplicity, and becoming. The rhizome — "
+                "a model of thought without beginning or end, connecting any point to any other — "
+                "replaces the tree with its roots, trunk, and hierarchy. Desire is productive "
+                "rather than lack-driven; assemblages replace fixed entities; deterritorialization "
+                "and reterritorialization describe the constant motion of social and subjective "
+                "life. The plane of immanence, the virtual/actual distinction, the event, and the "
+                "body without organs are the key conceptual instruments. Anti-Oedipus and "
+                "A Thousand Plateaus remain the central texts for any engagement with "
+                "Deleuzian political and ontological thought."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         rhizome: Dict[str, Any],
         difference: Dict[str, Any],
         becoming: Dict[str, Any],
@@ -749,7 +922,9 @@ class Deleuze(Philosopher):
         territory: Dict[str, Any],
     ) -> str:
         """Construct Deleuzian differential reasoning."""
+        applied = self._apply_deleuze_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Deleuzian perspective, the structure here is {rhizome['structure']}: {rhizome['description']}. "
             f"Regarding difference: {difference['description']}. "
             f"Becoming: {becoming['description']}. "

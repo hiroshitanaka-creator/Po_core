@@ -397,6 +397,193 @@ class Jonas(Philosopher):
             },
         }
 
+    def _apply_jonas_to_problem(self, text: str) -> str:
+        """Apply Jonas's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_technology_ai = any(
+            w in t
+            for w in [
+                "technolog",
+                "ai",
+                "artificial intelligence",
+                "automat",
+                "machine",
+                "algorithm",
+                "robot",
+                "biotech",
+                "engineer",
+            ]
+        )
+        is_future_generations = any(
+            w in t
+            for w in [
+                "future",
+                "generation",
+                "children",
+                "posterity",
+                "descendant",
+                "long-term",
+                "legacy",
+                "inherit",
+                "tomorrow",
+            ]
+        )
+        is_risk_decision = any(
+            w in t
+            for w in [
+                "risk",
+                "danger",
+                "catastroph",
+                "decision",
+                "uncertain",
+                "precaution",
+                "irreversib",
+                "doom",
+                "threat",
+            ]
+        )
+        is_environment_ecology = any(
+            w in t
+            for w in [
+                "environment",
+                "ecolog",
+                "nature",
+                "climate",
+                "biosphere",
+                "species",
+                "ecosystem",
+                "earth",
+                "planet",
+            ]
+        )
+        is_ethics_responsibility = any(
+            w in t
+            for w in [
+                "ethics",
+                "responsib",
+                "duty",
+                "obligation",
+                "care",
+                "vulnerable",
+                "ought",
+                "moral",
+                "ought",
+            ]
+        )
+        is_life_biology = any(
+            w in t
+            for w in [
+                "life",
+                "organism",
+                "biology",
+                "metabol",
+                "living",
+                "vitalism",
+                "evolution",
+                "body",
+                "nature",
+            ]
+        )
+
+        if is_technology_ai:
+            return (
+                "Jonas's Imperative of Responsibility acquires its sharpest edge in the domain of "
+                "powerful technology: 'Act so that the effects of your action are compatible with the "
+                "permanence of genuine human life.' New capabilities generate new obligations — the "
+                "greater the power to affect the world irreversibly, the greater the duty of caution. "
+                "Jonas's heuristics of fear counsels that when catastrophic harm is possible, we must "
+                "act as if the worse scenario is true even in the absence of certainty: 'The prophecy "
+                "of doom is to be given precedence over the prophecy of bliss.' Artificial intelligence "
+                "and biotechnology exemplify precisely the kind of novelty Jonas feared: capabilities "
+                "that outpace our ethical frameworks, that alter what it means to be human before we "
+                "have deliberated on whether such alteration is wise. The irreversibility of technological "
+                "change demands that we pause, consult the heuristics of fear, and ask what we owe to "
+                "those who will inherit whatever world our innovations create."
+            )
+        elif is_future_generations:
+            return (
+                "Jonas grounds intergenerational responsibility in an ontological claim: the existence "
+                "of future human beings — their capacity for genuine human life — is not merely desirable "
+                "but places unconditional obligations on the present. We owe to those not yet born the "
+                "conditions of their existence: a biosphere capable of sustaining life, a human nature "
+                "not irrevocably altered by technological intervention, social institutions that preserve "
+                "the range of human possibilities. The asymmetry is crucial: future generations cannot "
+                "consent to the risks we impose on them, cannot negotiate, cannot advocate for themselves "
+                "in present deliberation. This vulnerability generates responsibility — the same "
+                "responsibility that parents bear for children, that Jonas identifies as the primordial "
+                "model of all ethical obligation. To discount the future for present convenience is not "
+                "merely imprudent; it is a moral failure of the first order."
+            )
+        elif is_risk_decision:
+            return (
+                "Jonas's heuristics of fear articulates a fundamental asymmetry in the ethics of risk: "
+                "when the potential harm is catastrophic and irreversible, the burden of proof falls on "
+                "those who would proceed, not on those who would refrain. This is not timidity but "
+                "rational moral asymmetry — the badness of irreversible catastrophe is incommensurable "
+                "with the goodness of any finite benefit. 'The prophecy of doom is to be given precedence "
+                "over the prophecy of bliss' — not because pessimism is philosophically superior, but "
+                "because the stakes are not symmetric. When we face decisions whose consequences extend "
+                "across generations and whose effects cannot be undone, the precautionary imperative "
+                "takes priority over the calculus of expected benefit. Jonas does not counsel paralysis "
+                "but deliberate, frightened responsibility — using fear as a moral instrument of foresight."
+            )
+        elif is_environment_ecology:
+            return (
+                "Jonas insists that nature is not merely a resource for human purposes but the "
+                "precondition of all existence — human and non-human alike — and therefore possesses "
+                "intrinsic value that grounds moral obligation. Technological civilization has created "
+                "for the first time in history the genuine possibility of destroying the biosphere that "
+                "sustains all life, making ecological responsibility an ethical imperative of the highest "
+                "order. The Imperative of Responsibility demands that we preserve the integrity of the "
+                "natural world not merely for our descendants but because nature itself embodies value: "
+                "every organism pursues its own being, manifests purposiveness, instantiates the "
+                "fundamental freedom that life represents in Jonas's vitalist ontology. To treat the "
+                "biosphere as infinitely exploitable is to deny this intrinsic value and to betray the "
+                "obligation of care that genuine human responsibility entails."
+            )
+        elif is_ethics_responsibility:
+            return (
+                "Jonas identifies responsibility as the primary ethical category — prior to rights, "
+                "contracts, or reciprocal duties — because responsibility does not require consent or "
+                "agreement: it arises from the simple fact of power over something vulnerable. The "
+                "newborn child cannot reciprocate the care it receives, cannot contract with its parents, "
+                "cannot claim rights in any formal sense; yet the parents' responsibility is total. "
+                "This asymmetric, non-reciprocal structure of care for the vulnerable is, Jonas argues, "
+                "the paradigm of all genuine ethical obligation. The statesman, the engineer, the "
+                "scientist — each bears responsibility proportionate to their power to affect the world "
+                "irreversibly. Responsibility is not merely reactive (answering for what one has done) "
+                "but prospective: it demands foresight, the imaginative projection of consequences "
+                "across time, the willingness to be constrained by care for what does not yet exist."
+            )
+        elif is_life_biology:
+            return (
+                "Jonas's vitalism identifies life as the fundamental category of being in which value "
+                "and ought are first manifest. Metabolism — the organism's exchange with its environment "
+                "to sustain its own being — is the most basic expression of freedom in nature: life "
+                "reaches beyond itself, maintains itself against entropy, pursues its own continuation. "
+                "This purposiveness is not imposed from outside but immanent in the organism itself, "
+                "which Jonas takes as evidence that being harbors ought: that the existence of life "
+                "generates the imperative to preserve it. Human existence represents the highest "
+                "development of this organic freedom — the emergence of self-conscious responsibility "
+                "from the blind purposiveness of cellular metabolism. To understand life is to "
+                "understand that value is not a projection of human preference onto an indifferent "
+                "world but is inscribed in the structure of living being itself."
+            )
+        else:
+            return (
+                "Hans Jonas's ethics of responsibility is grounded in his recognition that modern "
+                "technology has fundamentally transformed the human condition: we now possess the power "
+                "to alter the biosphere, to modify human nature, to affect all future generations — "
+                "and this power generates obligations that traditional ethics was never designed to meet. "
+                "His Imperative of Responsibility — 'Act so that the effects of your action are compatible "
+                "with the permanence of genuine human life' — reformulates the categorical imperative for "
+                "the age of technology. The heuristics of fear counsels giving priority to the bad "
+                "prognosis when catastrophic irreversible harm is possible. Intergenerational responsibility "
+                "requires representing the interests of those not yet born. Vitalism grounds all this in "
+                "an ontological claim: life itself embodies value, and the emergence of life on earth "
+                "is the precondition of every ethical consideration."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -410,7 +597,10 @@ class Jonas(Philosopher):
         ecological: Dict,
     ) -> str:
         """Construct comprehensive Jonas reasoning."""
-        return f"""Analysis through Jonas's Ethics of Responsibility: "{prompt}"
+        applied = self._apply_jonas_to_problem(prompt)
+        return f"""{applied}
+
+Analysis through Jonas's Ethics of Responsibility: "{prompt}"
 
 THE IMPERATIVE OF RESPONSIBILITY
 {responsibility['new_imperative']['formulation']}. {responsibility['new_imperative']['scope']}

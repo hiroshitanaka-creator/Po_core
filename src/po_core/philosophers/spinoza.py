@@ -111,7 +111,13 @@ class Spinoza(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
-            substance_monism, conatus, determinism, adequate_ideas, freedom, amor_dei
+            prompt,
+            substance_monism,
+            conatus,
+            determinism,
+            adequate_ideas,
+            freedom,
+            amor_dei,
         )
 
         return {
@@ -1014,8 +1020,141 @@ class Spinoza(Philosopher):
             "principle": "Three kinds of knowledge: imagination, reason, and intuitive science (Ethics II, P40)",
         }
 
+    def _apply_spinoza_to_problem(self, text: str) -> str:
+        """Apply Spinozistic philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "free",
+                "freedom",
+                "emotion",
+                "passion",
+                "desire",
+                "feeling",
+                "affect",
+            ]
+        ):
+            return (
+                "Spinoza teaches that what we call passions are inadequate ideas — confused"
+                " representations of causes that lie largely outside ourselves. True freedom is not"
+                " the absence of causation but the state of being determined by one's own adequate"
+                " understanding rather than by external forces. The conatus, each thing's drive to"
+                " persevere in its own being, is best expressed when reason guides it rather than"
+                " blind passion. By forming adequate ideas of our affects we transform bondage into"
+                " genuine self-determination, acting from our own nature rather than being buffeted"
+                " by external causes. Sub specie aeternitatis, our emotions become intelligible as"
+                " necessary expressions of God or Nature."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "good",
+                "evil",
+                "moral",
+                "right",
+                "wrong",
+                "virtue",
+                "vice",
+            ]
+        ):
+            return (
+                "For Spinoza, good and evil are not absolute metaphysical categories but relational"
+                " ones: good is what aids our conatus — our drive to persevere and flourish — while"
+                " evil is what hinders it. This relational ethics, laid out geometrically in the"
+                " Ethics, dissolves moralistic condemnation in favour of understanding causal"
+                " necessity. Virtue is literally power — the power to act from adequate ideas rather"
+                " than reactive passions. Blessedness is not the reward of virtue but virtue itself;"
+                " the free person thinks of nothing less than death and contemplates life with wisdom."
+                " Ethical life thus becomes a matter of increasing one's power of understanding."
+            )
+        elif any(
+            w in t
+            for w in [
+                "know",
+                "knowledge",
+                "truth",
+                "belief",
+                "idea",
+                "understand",
+                "certain",
+            ]
+        ):
+            return (
+                "Spinoza distinguishes three kinds of knowledge in the Ethics. The first kind,"
+                " imagination, consists of confused images and hearsay — the source of most human"
+                " error and passive emotion. The second kind, reason, grasps common notions and"
+                " necessary connections, yielding adequate ideas that correspond to the order of"
+                " Nature. The third and highest kind, intuitive science, grasps singular things"
+                " under the aspect of eternity (sub specie aeternitatis), uniting the individual"
+                " mind with the infinite intellect of God or Nature. Adequate ideas do not merely"
+                " describe reality — they are the same order and connection as things themselves,"
+                " since the order of ideas and the order of things are identical."
+            )
+        elif any(
+            w in t
+            for w in [
+                "god",
+                "nature",
+                "religion",
+                "divine",
+                "theology",
+                "universe",
+                "cosmos",
+            ]
+        ):
+            return (
+                "Spinoza's most radical thesis is the identification of God with Nature: Deus sive"
+                " Natura. There is only one infinite substance, self-caused (causa sui), possessing"
+                " infinite attributes of which we know two — thought and extension. Every finite"
+                " thing is a mode of this single substance, determined by the infinite chain of"
+                " necessary causes that constitutes God's nature. This pantheism abolishes the"
+                " personal God who intervenes, rewards, and punishes, replacing theological"
+                " anthropomorphism with a vision of a wholly immanent, necessary, and eternal"
+                " reality. To understand Nature adequately is itself the intellectual love of God,"
+                " the highest form of human blessedness."
+            )
+        elif any(
+            w in t
+            for w in [
+                "politic",
+                "state",
+                "society",
+                "power",
+                "law",
+                "government",
+                "right",
+                "democrat",
+            ]
+        ):
+            return (
+                "In the Theological-Political Treatise and Political Treatise, Spinoza grounds"
+                " political philosophy in natural right understood as power: each entity's natural"
+                " right extends exactly as far as its power to persevere. The purpose of the state"
+                " is to enable rational freedom — to allow citizens to develop adequate ideas rather"
+                " than live under the dominion of fear and superstition. Spinoza regards the"
+                " democratic republic as the most rational form of government because it comes"
+                " closest to the natural equality of rational beings. Freedom of thought and"
+                " expression are not privileges but conditions for the flourishing of reason in the"
+                " commonwealth."
+            )
+        else:
+            return (
+                "Spinoza's monist vision in the Ethics begins with a single infinite substance —"
+                " God or Nature (Deus sive Natura) — of which all things are modes. The conatus,"
+                " each thing's striving to persevere in its own being, is the fundamental"
+                " expression of this substance in finite form. Adequate ideas, by mirroring the"
+                " necessary order of Nature, free the mind from the bondage of passion and elevate"
+                " it toward the intellectual love of God (amor dei intellectualis). Considered sub"
+                " specie aeternitatis — under the aspect of eternity — we perceive that all things"
+                " are necessary expressions of infinite divine nature, and that blessedness is"
+                " achieved through understanding rather than through fear or hope."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         substance_monism: Dict[str, Any],
         conatus: Dict[str, Any],
         determinism: Dict[str, Any],
@@ -1024,7 +1163,9 @@ class Spinoza(Philosopher):
         amor_dei: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Spinozistic philosophical reasoning."""
+        applied = self._apply_spinoza_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             "From a Spinozistic perspective, we must understand all things through the one infinite substance - "
             "God or Nature (Deus sive Natura). "
         )

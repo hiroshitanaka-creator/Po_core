@@ -114,6 +114,7 @@ class Kant(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             categorical_imperative,
             autonomy,
             duty,
@@ -1130,8 +1131,153 @@ class Kant(Philosopher):
             "principle": "Practical reason has primacy - determines the will through the moral law",
         }
 
+    def _apply_kant_to_problem(self, text: str) -> str:
+        """Apply Kantian philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "decision",
+                "choice",
+                "act",
+                "should",
+                "ethic",
+                "moral",
+                "right",
+                "wrong",
+                "duty",
+                "obligation",
+            ]
+        ):
+            return (
+                "Kant's categorical imperative provides the supreme principle of morality, admitting"
+                " three equivalent formulations. The universalizability formula demands we act only"
+                " on maxims we could consistently will to become universal laws — a test that exposes"
+                " the self-defeating nature of lying, promise-breaking, and exploitation. The humanity"
+                " formula — 'Act so that you treat humanity, whether in your own person or in that of"
+                " another, always as an end and never as a means only' — grounds the inviolable"
+                " dignity of rational beings. The kingdom of ends formula asks us to legislate as if"
+                " we were sovereign members of a community of rational ends. Duty, not inclination or"
+                " consequence, is the moral measure; an act has genuine moral worth only when done"
+                " from respect for the moral law."
+            )
+        elif any(
+            w in t
+            for w in [
+                "know",
+                "knowledge",
+                "truth",
+                "belief",
+                "certain",
+                "science",
+                "understand",
+                "perceive",
+                "experience",
+            ]
+        ):
+            return (
+                "Kant's Critique of Pure Reason draws a fundamental boundary between phenomena —"
+                " objects as they appear to us, structured by the a priori forms of intuition (space"
+                " and time) and the categories of the understanding — and noumena — things as they"
+                " are in themselves, forever inaccessible to theoretical cognition. Synthetic a priori"
+                " judgements, such as the principles of mathematics and Newtonian mechanics, are"
+                " possible because the mind actively constitutes the objects of experience rather than"
+                " passively receiving them. This Copernican revolution in epistemology means that"
+                " knowledge is always knowledge of appearances; claims that transgress the boundaries"
+                " of possible experience — about God, the soul, the cosmos as a whole — produce only"
+                " antinomies and paralogisms, not genuine knowledge."
+            )
+        elif any(
+            w in t
+            for w in [
+                "free",
+                "freedom",
+                "autonom",
+                "self",
+                "will",
+                "dignity",
+                "person",
+                "rational",
+            ]
+        ):
+            return (
+                "For Kant, moral autonomy is the capacity of rational beings to give themselves the"
+                " moral law through pure practical reason, rather than acting from inclination or"
+                " external compulsion (heteronomy). Autonomy is the ground of human dignity: every"
+                " rational being possesses an absolute, incomparable worth precisely because it is"
+                " capable of self-legislation. Heteronomy — acting from desire, social pressure, or"
+                " even divine command — deprives action of genuine moral worth. Freedom, in the"
+                " practical sense, is not mere absence of external constraint but positive"
+                " self-determination according to the moral law that reason imposes on itself."
+                " The postulate of freedom is a necessary condition of moral responsibility."
+            )
+        elif any(
+            w in t
+            for w in [
+                "politic",
+                "state",
+                "society",
+                "justice",
+                "law",
+                "government",
+                "right",
+                "citizen",
+                "peace",
+            ]
+        ):
+            return (
+                "Kant's political philosophy is grounded in the kingdom of ends: a systematic union"
+                " of rational beings who treat one another always as ends, never merely as means."
+                " Legitimate political institutions must be compatible with the external freedom of"
+                " every rational agent; the republican constitution, with separation of powers and"
+                " rule of law, best approximates this ideal. In 'Toward Perpetual Peace', Kant argues"
+                " that a federation of republican states can progressively eliminate war by aligning"
+                " the incentives of governments with those of their citizens, who bear war's costs."
+                " Cosmopolitan right extends to every human being a right of hospitality as a member"
+                " of the universal community of rational persons."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technolog",
+                "ai",
+                "machine",
+                "robot",
+                "automat",
+                "compute",
+                "algorithm",
+                "artificial",
+            ]
+        ):
+            return (
+                "Kant's analysis of autonomy poses a deep challenge to the possibility of genuinely"
+                " autonomous artificial intelligence. Moral autonomy, for Kant, requires that a being"
+                " give itself the moral law through pure practical reason — a capacity rooted in"
+                " rational self-consciousness, not in computational process. A machine, however"
+                " sophisticated, operates according to laws given to it externally by its designers,"
+                " making it heteronomous by definition. The categorical question becomes whether any"
+                " mechanism could instantiate genuine rational self-legislation, or whether all"
+                " machine 'decisions' are merely complex conditioned reflexes. Kant's humanity formula"
+                " also demands we never treat persons merely as instruments — a principle with urgent"
+                " implications for the deployment of automated decision systems."
+            )
+        else:
+            return (
+                "Kant's critical philosophy begins with the question of how synthetic a priori"
+                " knowledge is possible, and answers by revealing that the mind actively structures"
+                " experience through its own forms. The categorical imperative — act only on maxims"
+                " you could universalize — supplies the supreme principle of morality, grounding"
+                " the inviolable dignity of every rational being. Transcendental idealism separates"
+                " the phenomenal world accessible to science from the noumenal realm of freedom,"
+                " God, and the soul, preserving space for moral autonomy within a deterministic"
+                " nature. The Critiques of Pure Reason, Practical Reason, and Judgment form a"
+                " systematic architecture exploring the limits and proper use of reason in"
+                " knowledge, morality, and aesthetic experience."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         categorical_imperative: Dict[str, Any],
         autonomy: Dict[str, Any],
         duty: Dict[str, Any],
@@ -1141,7 +1287,9 @@ class Kant(Philosopher):
         practical_reason: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Kantian philosophical reasoning."""
+        applied = self._apply_kant_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             "From a Kantian critical perspective, this text must be examined through both "
             "theoretical and practical reason. "
         )

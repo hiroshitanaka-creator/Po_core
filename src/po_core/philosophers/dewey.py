@@ -123,7 +123,7 @@ class Dewey(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            experience, inquiry, growth, democracy, reflection
+            prompt, experience, inquiry, growth, democracy, reflection
         )
 
         return {
@@ -769,8 +769,191 @@ class Dewey(Philosopher):
             "principle": "Experience has continuity (temporal) and interaction (situational)",
         }
 
+    def _apply_dewey_to_problem(self, text: str) -> str:
+        """Apply Deweyan concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "knowledge",
+                "truth",
+                "belief",
+                "know",
+                "understand",
+                "learn",
+                "inquir",
+                "discover",
+                "research",
+                "evidence",
+            ]
+        ):
+            return (
+                "For Dewey, inquiry is the natural response to an indeterminate situation — a "
+                "situation that is troubling, unsettled, obscure. Inquiry is not the matching of "
+                "ideas to a ready-made reality but a problem-solving transaction between organism "
+                "and environment: it moves from felt difficulty to problem-formulation, from "
+                "hypotheses to experimental testing, from testing to a situation made determinate. "
+                "Truth, accordingly, is not correspondence to a mind-independent world but "
+                "warranted assertibility: what survives the rigor of inquiry and resolves "
+                "the initiating problem. All beliefs are instruments; ideas are plans of action; "
+                "knowledge is achieved, not given — and it is always provisional, always open "
+                "to revision by further inquiry."
+            )
+        elif any(
+            w in t
+            for w in [
+                "educat",
+                "school",
+                "teach",
+                "student",
+                "learn",
+                "curriculum",
+                "classro",
+                "instruct",
+                "train",
+                "pedagog",
+            ]
+        ):
+            return (
+                "Education, in Dewey's pragmatism, is not the transmission of fixed knowledge "
+                "from teacher to passive recipient but the reconstruction and reorganization of "
+                "experience that adds to its meaning and increases capacity to direct subsequent "
+                "experience. Learning by doing is not a slogan but an epistemological claim: "
+                "the most durable understanding arises from active engagement with genuine "
+                "problems, not from rote memorization or abstract instruction. The aim of "
+                "education is growth — not growth toward some fixed end, but growth as its "
+                "own end, the continuous expansion of the capacity to have richer and more "
+                "meaningful experience. Democracy requires an educated public capable of "
+                "shared inquiry and intelligent participation."
+            )
+        elif any(
+            w in t
+            for w in [
+                "democrac",
+                "politic",
+                "public",
+                "citizen",
+                "community",
+                "social",
+                "participat",
+                "govern",
+                "communit",
+                "deliberat",
+            ]
+        ):
+            return (
+                "Dewey's conception of democracy is not procedural but experiential: democracy "
+                "is not merely a form of government with voting mechanisms but a mode of "
+                "associated living — a way of life organized around shared problems, free "
+                "communication, and collective inquiry. A democratic community is one in which "
+                "members participate in shaping the conditions of their common life and in "
+                "which the results of shared experience are freely distributed. The Great "
+                "Community requires not just formal political structures but the reconstruction "
+                "of social habits, institutions, and communication to enable genuine democratic "
+                "intelligence. Fallibilism and experimentalism are not just epistemological "
+                "virtues but democratic ones."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technology",
+                "tool",
+                "instrument",
+                "machine",
+                "ai",
+                "engineer",
+                "design",
+                "artifact",
+                "technique",
+                "applied",
+            ]
+        ):
+            return (
+                "Instrumentalism — Dewey's account of ideas, concepts, and technologies as "
+                "instruments for resolving problematic situations — positions tools neither as "
+                "neutral means to pre-given ends nor as deterministic shapers of their users. "
+                "A tool is always a tool-in-use within a transactional context; its meaning "
+                "is bound to the problematic situation it is designed to resolve and the "
+                "consequences it produces. The pragmatist question for any technology is "
+                "therefore: what problems does it help resolve, what new problems does it "
+                "create, and whose growth and flourishing does it enable or foreclose? "
+                "Technology should serve democratic community and human growth, not "
+                "replace the shared inquiry that alone legitimates its ends."
+            )
+        elif any(
+            w in t
+            for w in [
+                "decision",
+                "action",
+                "plan",
+                "problem",
+                "solv",
+                "strateg",
+                "method",
+                "approach",
+                "evaluat",
+                "consequenc",
+            ]
+        ):
+            return (
+                "Dewey's model of reflective thinking provides a rigorous framework for "
+                "practical decision-making: (1) a felt difficulty — something is wrong, "
+                "unsettled; (2) its location and definition — what exactly is the problem? "
+                "(3) generation of possible solutions — hypotheses; (4) reasoning out the "
+                "consequences of each hypothesis; (5) further observation and experiment "
+                "leading to acceptance or rejection. This is not a rigid algorithm but a "
+                "description of intelligent inquiry in any domain. Fallibilism is its "
+                "epistemological companion: no conclusion is final; every resolution is "
+                "provisional, subject to revision when new difficulties arise. The test of "
+                "any decision is not its conformity to antecedent rules but the quality of "
+                "its experienced consequences."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "moral",
+                "value",
+                "good",
+                "right",
+                "wrong",
+                "ought",
+                "virtue",
+                "end",
+                "flourish",
+                "wellbeing",
+            ]
+        ):
+            return (
+                "Dewey's ethics is experimental: moral ends and values are not fixed in advance "
+                "by tradition, divine command, or rational intuition, but are themselves "
+                "hypotheses to be tested by their consequences in experience. The good is not "
+                "a static end-in-itself but growth — the continuous expansion of the capacity "
+                "to participate in and enrich shared experience. Moral problems arise from "
+                "conflicts of values within experience; their resolution requires the same "
+                "intelligent inquiry as any other problem. Warranted assertibility applies "
+                "to moral claims as to empirical ones: we are entitled to assert what survives "
+                "rigorous inquiry into consequences, and we must remain open to revision when "
+                "new experience challenges our conclusions."
+            )
+        else:
+            return (
+                "Dewey's pragmatism begins from experience understood not as passive reception "
+                "of data but as a transaction between organism and environment — an active, "
+                "two-directional engagement in which both organism and environment are "
+                "transformed. Inquiry is the organized form of this transaction when the "
+                "environment becomes problematic: it moves from indeterminate situation "
+                "through problem-formulation and hypothesis to experimental resolution. "
+                "Warranted assertibility replaces the correspondence theory of truth; "
+                "instrumentalism replaces the spectator theory of knowledge. Democracy as "
+                "a way of life, education as growth, and the continuity of means and ends "
+                "are the practical-political upshots. Experience and Nature, Logic: The "
+                "Theory of Inquiry, and Democracy and Education are the central texts."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         experience: Dict[str, Any],
         inquiry: Dict[str, Any],
         growth: Dict[str, Any],
@@ -778,7 +961,9 @@ class Dewey(Philosopher):
         reflection: Dict[str, Any],
     ) -> str:
         """Construct Deweyan pragmatist reasoning."""
+        applied = self._apply_dewey_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Deweyan pragmatist perspective, the quality of experience here is: {experience['description']}. "
             f"Regarding inquiry: {inquiry['description']}. "
             f"Growth potential: {growth['description']}. "
