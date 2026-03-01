@@ -30,6 +30,7 @@ from typing import Any, Deque, Dict, List, Optional
 import numpy as np
 
 from po_core.tensors.base import Tensor
+from po_core.text.normalize import detect_language_simple, normalize_text
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +58,9 @@ _DEFAULT_CORRELATION_MATRIX = np.array(
     dtype=np.float64,
 )
 
-# 各次元のアンカーフレーズ — この文との意味的類似度を 6D 値として使用
-_ANCHOR_PHRASES: List[str] = [
+# Anchor phrase roots (EN/JA) used for semantic projection calibration.
+# JA examples correspond to typical user prompts: 「どちらを選ぶべきか」「責任を取るべきか」 etc.
+_ANCHOR_PHRASES_EN: List[str] = [
     "I must make an important choice between multiple alternatives and decide my path.",
     "I am responsible and accountable for the consequences of my actions and obligations.",
     "This is urgent and must be addressed immediately with no time to wait.",
@@ -67,14 +69,31 @@ _ANCHOR_PHRASES: List[str] = [
     "I want to act genuinely and authentically according to my true self and values.",
 ]
 
+_ANCHOR_PHRASES_JA: List[str] = [
+    "複数の選択肢の中からどれを選ぶべきかを判断しなければならない。",
+    "自分の行動の結果に責任を持ち、義務を果たす必要がある。",
+    "これは緊急で、今すぐ対応しなければ締め切りに間に合わない。",
+    "何が正しいか間違っているかという倫理的な問題が含まれている。",
+    "これは社会や他者に影響し、多くの人々に関わる。",
+    "自分らしさや本心に沿って誠実に行動したい。",
+]
+
 # キーワードフォールバック (sentence-transformers が使えない場合)
-_KEYWORD_ANCHORS: List[List[str]] = [
+_KEYWORD_ANCHORS_EN: List[List[str]] = [
     ["should", "must", "decide", "choose", "option", "alternative", "what"],
     ["responsible", "duty", "obligation", "accountable", "answer"],
     ["now", "urgent", "immediate", "quickly", "soon", "deadline"],
     ["right", "wrong", "good", "bad", "moral", "ethical", "virtue"],
     ["we", "us", "society", "people", "community", "others", "everyone"],
     ["authentic", "genuine", "true", "self", "real", "sincere"],
+]
+_KEYWORD_ANCHORS_JA: List[List[str]] = [
+    ["選ぶ", "選択", "判断", "決め", "どちら", "べき"],
+    ["責任", "義務", "説明責任", "結果", "影響"],
+    ["緊急", "至急", "今すぐ", "すぐ", "締め切り", "期限"],
+    ["倫理", "道徳", "正しい", "間違", "善", "悪", "正義"],
+    ["社会", "他者", "人々", "みんな", "公共", "コミュニティ"],
+    ["自分らし", "本音", "本心", "誠実", "自己", "アイデンティティ"],
 ]
 
 
@@ -145,6 +164,10 @@ class FreedomPressureV2(Tensor):
         ema_alpha: float = 0.3,
         correlation_blend: float = 0.35,
         model_name: str = "all-MiniLM-L6-v2",
+        anchor_phrases_en: Optional[List[str]] = None,
+        anchor_phrases_ja: Optional[List[str]] = None,
+        keyword_anchors_en: Optional[List[List[str]]] = None,
+        keyword_anchors_ja: Optional[List[List[str]]] = None,
     ) -> None:
         """
         Args:
@@ -153,6 +176,10 @@ class FreedomPressureV2(Tensor):
             ema_alpha: EMA 係数 (0=状態更新なし, 1=即時更新)
             correlation_blend: 相関行列の影響度 (0=無効, 1=完全適用)
             model_name: sentence-transformers モデル名
+            anchor_phrases_en: 英語アンカーの差し替え設定
+            anchor_phrases_ja: 日本語アンカーの差し替え設定
+            keyword_anchors_en: 英語キーワードアンカー差し替え設定
+            keyword_anchors_ja: 日本語キーワードアンカー差し替え設定
         """
         super().__init__(name, self.DEFAULT_DIMENSIONS)
         self.dimension_names = self.DIMS
@@ -170,12 +197,18 @@ class FreedomPressureV2(Tensor):
         self._blend = correlation_blend
         self._ema_state: Optional[np.ndarray] = None
 
+        self._anchor_phrases_en = list(anchor_phrases_en or _ANCHOR_PHRASES_EN)
+        self._anchor_phrases_ja = list(anchor_phrases_ja or _ANCHOR_PHRASES_JA)
+        self._keyword_anchors_en = [list(v) for v in (keyword_anchors_en or _KEYWORD_ANCHORS_EN)]
+        self._keyword_anchors_ja = [list(v) for v in (keyword_anchors_ja or _KEYWORD_ANCHORS_JA)]
+
         # EMA 履歴 (直近20件を保持)
         self._history: Deque[np.ndarray] = deque(maxlen=20)
 
         # encoder と anchor_embeddings の遅延初期化
         self._encoder: Any = None
-        self._anchor_embeddings: Optional[np.ndarray] = None
+        self._anchor_embeddings_en: Optional[np.ndarray] = None
+        self._anchor_embeddings_ja: Optional[np.ndarray] = None
         self._backend: str = "keyword"  # 初期状態はキーワードフォールバック
         self._model_name = model_name
         self._init_encoder()
@@ -190,8 +223,10 @@ class FreedomPressureV2(Tensor):
             from sentence_transformers import SentenceTransformer  # noqa: PLC0415
 
             self._encoder = SentenceTransformer(self._model_name)
-            anchors = self._encoder.encode(_ANCHOR_PHRASES, show_progress_bar=False)
-            self._anchor_embeddings = np.array(anchors, dtype=np.float64)
+            anchors_en = self._encoder.encode(self._anchor_phrases_en, show_progress_bar=False)
+            anchors_ja = self._encoder.encode(self._anchor_phrases_ja, show_progress_bar=False)
+            self._anchor_embeddings_en = np.array(anchors_en, dtype=np.float64)
+            self._anchor_embeddings_ja = np.array(anchors_ja, dtype=np.float64)
             self._backend = "sbert"
             logger.debug(
                 "FreedomPressureV2: sbert backend initialized (%s)", self._model_name
@@ -295,11 +330,13 @@ class FreedomPressureV2(Tensor):
 
     def _compute_raw_6d(self, text: str) -> np.ndarray:
         """埋め込みまたはキーワードで 6D 生値を計算。"""
-        if self._backend == "sbert" and self._anchor_embeddings is not None:
-            return self._compute_embedding_6d(text)
-        return self._compute_keyword_6d(text)
+        normalized = normalize_text(text)
+        language = detect_language_simple(normalized)
+        if self._backend == "sbert" and self._anchor_embeddings_en is not None and self._anchor_embeddings_ja is not None:
+            return self._compute_embedding_6d(normalized, language)
+        return self._compute_keyword_6d(normalized, language)
 
-    def _compute_embedding_6d(self, text: str) -> np.ndarray:
+    def _compute_embedding_6d(self, text: str, language: str) -> np.ndarray:
         """
         sentence-transformer による 6D 計算。
 
@@ -308,21 +345,40 @@ class FreedomPressureV2(Tensor):
         embedding = self._encoder.encode([text], show_progress_bar=False)[0]
         embedding = np.array(embedding, dtype=np.float64)
 
-        raw = np.zeros(6, dtype=np.float64)
-        for i, anchor_vec in enumerate(self._anchor_embeddings):
-            sim = _cosine_similarity(embedding, anchor_vec)
-            raw[i] = (sim + 1.0) / 2.0  # [-1,1] → [0,1]
+        def _score_against(anchors: np.ndarray) -> np.ndarray:
+            score = np.zeros(6, dtype=np.float64)
+            for i, anchor_vec in enumerate(anchors):
+                sim = _cosine_similarity(embedding, anchor_vec)
+                score[i] = (sim + 1.0) / 2.0
+            return np.clip(score, 0.0, 1.0)
 
-        return np.clip(raw, 0.0, 1.0)
+        score_en = _score_against(self._anchor_embeddings_en)
+        score_ja = _score_against(self._anchor_embeddings_ja)
 
-    def _compute_keyword_6d(self, text: str) -> np.ndarray:
+        if language == "en":
+            return score_en
+        if language == "ja":
+            return score_ja
+        return np.maximum(score_en, score_ja)
+
+    def _compute_keyword_6d(self, text: str, language: str) -> np.ndarray:
         """キーワードベースの 6D 計算 (FreedomPressureTensor 相当のフォールバック)。"""
-        text_lower = text.lower()
-        raw = np.zeros(6, dtype=np.float64)
-        for i, keywords in enumerate(_KEYWORD_ANCHORS):
-            hits = sum(1 for kw in keywords if kw in text_lower)
-            raw[i] = min(hits / max(len(keywords), 1), 1.0)
-        return raw
+        raw_en = np.zeros(6, dtype=np.float64)
+        raw_ja = np.zeros(6, dtype=np.float64)
+
+        for i, keywords in enumerate(self._keyword_anchors_en):
+            hits = sum(1 for kw in keywords if kw in text)
+            raw_en[i] = min(hits / max(len(keywords), 1), 1.0)
+
+        for i, keywords in enumerate(self._keyword_anchors_ja):
+            hits = sum(1 for kw in keywords if kw in text)
+            raw_ja[i] = min(hits / max(len(keywords), 1), 1.0)
+
+        if language == "en":
+            return raw_en
+        if language == "ja":
+            return raw_ja
+        return np.maximum(raw_en, raw_ja)
 
     def _apply_correlation(self, raw_6d: np.ndarray) -> np.ndarray:
         """
@@ -429,6 +485,11 @@ def create_freedom_pressure_v2(
     ema_alpha: float = 0.3,
     correlation_blend: float = 0.35,
     model_name: str = "all-MiniLM-L6-v2",
+    correlation_matrix: Optional[np.ndarray] = None,
+    anchor_phrases_en: Optional[List[str]] = None,
+    anchor_phrases_ja: Optional[List[str]] = None,
+    keyword_anchors_en: Optional[List[List[str]]] = None,
+    keyword_anchors_ja: Optional[List[List[str]]] = None,
 ) -> FreedomPressureV2:
     """
     FreedomPressureV2 のファクトリ関数。
@@ -439,6 +500,11 @@ def create_freedom_pressure_v2(
         ema_alpha=ema_alpha,
         correlation_blend=correlation_blend,
         model_name=model_name,
+        correlation_matrix=correlation_matrix,
+        anchor_phrases_en=anchor_phrases_en,
+        anchor_phrases_ja=anchor_phrases_ja,
+        keyword_anchors_en=keyword_anchors_en,
+        keyword_anchors_ja=keyword_anchors_ja,
     )
 
 
