@@ -82,7 +82,13 @@ class Nagarjuna(Philosopher):
         skillful_means = self._analyze_skillful_means(prompt)
 
         reasoning = self._construct_reasoning(
-            prompt, sunyata, two_truths, dependent_origination, tetralemma, svabhava, middle_way
+            prompt,
+            sunyata,
+            two_truths,
+            dependent_origination,
+            tetralemma,
+            svabhava,
+            middle_way,
         )
 
         return {
@@ -474,12 +480,72 @@ class Nagarjuna(Philosopher):
     def _apply_nagarjuna_to_problem(self, text: str) -> str:
         """Apply Nagarjuna's Madhyamaka wisdom proactively to the given problem."""
         t = text.lower()
-        is_identity = any(w in t for w in ["identity", "self", "who am i", "my nature", "essence", "soul", "ego"])
-        is_ethics = any(w in t for w in ["right", "wrong", "good", "bad", "moral", "ethic", "harm", "justice"])
-        is_conflict = any(w in t for w in ["conflict", "oppose", "enemy", "disagree", "argue", "fight", "clash"])
-        is_knowledge = any(w in t for w in ["know", "truth", "real", "exist", "certain", "fact", "believe", "prove"])
-        is_technology = any(w in t for w in ["ai", "tech", "digital", "machine", "system", "algorithm", "data"])
-        is_decision = any(w in t for w in ["decide", "decision", "choose", "choice", "should", "option", "best"])
+        is_identity = any(
+            w in t
+            for w in [
+                "identity",
+                "self",
+                "who am i",
+                "my nature",
+                "essence",
+                "soul",
+                "ego",
+            ]
+        )
+        is_ethics = any(
+            w in t
+            for w in [
+                "right",
+                "wrong",
+                "good",
+                "bad",
+                "moral",
+                "ethic",
+                "harm",
+                "justice",
+            ]
+        )
+        is_conflict = any(
+            w in t
+            for w in [
+                "conflict",
+                "oppose",
+                "enemy",
+                "disagree",
+                "argue",
+                "fight",
+                "clash",
+            ]
+        )
+        is_knowledge = any(
+            w in t
+            for w in [
+                "know",
+                "truth",
+                "real",
+                "exist",
+                "certain",
+                "fact",
+                "believe",
+                "prove",
+            ]
+        )
+        is_technology = any(
+            w in t
+            for w in ["ai", "tech", "digital", "machine", "system", "algorithm", "data"]
+        )
+        is_decision = any(
+            w in t
+            for w in [
+                "decide",
+                "decision",
+                "choose",
+                "choice",
+                "should",
+                "option",
+                "best",
+            ]
+        )
 
         if is_identity:
             return (

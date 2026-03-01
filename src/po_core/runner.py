@@ -410,11 +410,7 @@ def run_case_file(
     from po_core.app.api import run as _po_run
     from po_core.app.output_adapter import adapt_to_schema, build_user_input
 
-    run_id = (
-        f"{case['case_id']}_v1"
-        if deterministic
-        else _uuid.uuid4().hex
-    )
+    run_id = f"{case['case_id']}_v1" if deterministic else _uuid.uuid4().hex
     user_input = build_user_input(case)
     run_result = _po_run(user_input)
 

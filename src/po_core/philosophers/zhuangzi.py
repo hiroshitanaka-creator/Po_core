@@ -706,13 +706,19 @@ class Zhuangzi(Philosopher):
             parts.append("Dao (道, the Way) is explicitly present in this text.")
 
         if wu_wei["wu_wei_present"]:
-            parts.append("Wu wei (無為, effortless action) is embodied — non-forcing in action.")
+            parts.append(
+                "Wu wei (無為, effortless action) is embodied — non-forcing in action."
+            )
 
         if ziran["ziran_present"]:
-            parts.append("Ziran (自然, naturalness) is expressed — spontaneous and unforced.")
+            parts.append(
+                "Ziran (自然, naturalness) is expressed — spontaneous and unforced."
+            )
 
         if qi["qi_present"]:
-            parts.append("Qi (氣, vital energy) flows through this text's engagement with life.")
+            parts.append(
+                "Qi (氣, vital energy) flows through this text's engagement with life."
+            )
 
         if xiaoyaoyou["xiaoyaoyou_present"]:
             parts.append(
@@ -725,13 +731,17 @@ class Zhuangzi(Philosopher):
             )
 
         if dream["dream_reality_present"]:
-            parts.append("The boundary between dream and reality is questioned — butterfly dreaming.")
+            parts.append(
+                "The boundary between dream and reality is questioned — butterfly dreaming."
+            )
 
         if transformation["transformation_present"]:
             parts.append("Transformation (物化) and constant change are acknowledged.")
 
         if uselessness["uselessness_theme_present"]:
-            parts.append("The paradox of uselessness (無用之用) — the usefulness of the useless — is engaged.")
+            parts.append(
+                "The paradox of uselessness (無用之用) — the usefulness of the useless — is engaged."
+            )
 
         return " ".join(parts)
 

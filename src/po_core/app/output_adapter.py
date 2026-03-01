@@ -55,7 +55,13 @@ _VALUE_TO_PRINCIPLE: Dict[str, str] = {
     "透明性": "accountability",
 }
 
-_ALL_PRINCIPLES = ["integrity", "autonomy", "justice", "nonmaleficence", "accountability"]
+_ALL_PRINCIPLES = [
+    "integrity",
+    "autonomy",
+    "justice",
+    "nonmaleficence",
+    "accountability",
+]
 
 
 def _map_values_to_principles(values: List[str]) -> List[str]:
@@ -115,7 +121,9 @@ def _build_uncertainty(case: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _build_option_ethics_review(principles: List[str]) -> Dict[str, Any]:
-    applied = principles[:2] if len(principles) >= 2 else list(principles) + ["autonomy"]
+    applied = (
+        principles[:2] if len(principles) >= 2 else list(principles) + ["autonomy"]
+    )
     return {
         "principles_applied": applied,
         "tradeoffs": [],
@@ -135,7 +143,9 @@ def _build_option_responsibility_review(case: Dict[str, Any]) -> Dict[str, Any]:
         for s in stakeholders[:3]
     ]
     if not sh_list:
-        sh_list = [{"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}]
+        sh_list = [
+            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
+        ]
     owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
     return {
         "decision_owner": owner,
@@ -148,7 +158,11 @@ def _build_option_responsibility_review(case: Dict[str, Any]) -> Dict[str, Any]:
 def _build_feasibility(case: Dict[str, Any]) -> Dict[str, Any]:
     deadline = case.get("deadline")
     if deadline:
-        return {"effort": "中程度", "timeline": f"期限: {deadline}", "confidence": "medium"}
+        return {
+            "effort": "中程度",
+            "timeline": f"期限: {deadline}",
+            "confidence": "medium",
+        }
     return {"effort": "要確認", "timeline": "期限未定", "confidence": "low"}
 
 
@@ -301,7 +315,9 @@ def _build_recommendation(
         }
 
     confidence = float(proposal.get("confidence", 0.5))
-    conf_label = "high" if confidence >= 0.7 else ("medium" if confidence >= 0.45 else "low")
+    conf_label = (
+        "high" if confidence >= 0.7 else ("medium" if confidence >= 0.45 else "low")
+    )
 
     return {
         "status": "recommended",
@@ -381,7 +397,10 @@ def _build_trace(now: str) -> Dict[str, Any]:
     """Build FR-TR-001 compliant 6-step trace."""
     base = _parse_base(now)
     step_defs = [
-        ("parse_input", "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した"),
+        (
+            "parse_input",
+            "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した",
+        ),
         ("generate_options", "39人の哲学者による審議を経て選択肢を生成した"),
         ("ethics_review", "W_Ethics Gateによる3層倫理評価を適用した"),
         ("responsibility_review", "意思決定主体と利害関係者の責任構造を検証した"),
@@ -512,7 +531,9 @@ def adapt_to_schema(
         for s in stakeholders[:5]
     ]
     if not sh_list:
-        sh_list = [{"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}]
+        sh_list = [
+            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
+        ]
     owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
 
     # Derive consent_considerations: non-empty when user safety or external parties involved

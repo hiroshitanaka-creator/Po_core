@@ -710,13 +710,19 @@ class Confucius(Philosopher):
             )
 
         if li["li_present"]:
-            parts.append("Li (禮, ritual propriety) is evident — proper conduct and form.")
+            parts.append(
+                "Li (禮, ritual propriety) is evident — proper conduct and form."
+            )
 
         if yi["yi_present"]:
-            parts.append("Yi (義, righteousness) is demonstrated — moral principle over expedience.")
+            parts.append(
+                "Yi (義, righteousness) is demonstrated — moral principle over expedience."
+            )
 
         if xiao["xiao_present"]:
-            parts.append("Xiao (孝, filial piety) is expressed — reverence for family and origins.")
+            parts.append(
+                "Xiao (孝, filial piety) is expressed — reverence for family and origins."
+            )
 
         if junzi["junzi_present"]:
             parts.append("The junzi (君子, exemplary person) ideal is reflected.")
@@ -728,10 +734,14 @@ class Confucius(Philosopher):
             parts.append("De (德, virtue/moral power) is emphasized.")
 
         if tianming["tianming_present"]:
-            parts.append("Tianming (天命, Mandate of Heaven) and cosmic moral order are invoked.")
+            parts.append(
+                "Tianming (天命, Mandate of Heaven) and cosmic moral order are invoked."
+            )
 
         if learning["learning_present"]:
-            parts.append("The value of xue (學, learning) and self-cultivation is affirmed.")
+            parts.append(
+                "The value of xue (學, learning) and self-cultivation is affirmed."
+            )
 
         return " ".join(parts)
 

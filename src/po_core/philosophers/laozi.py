@@ -459,11 +459,50 @@ class Laozi(Philosopher):
     def _apply_laozi_to_problem(self, text: str) -> str:
         """Apply Laozi's Daoist wisdom proactively to the given problem."""
         t = text.lower()
-        is_decision = any(w in t for w in ["decide", "decision", "choose", "choice", "should i", "option", "best"])
-        is_control = any(w in t for w in ["control", "manage", "force", "push", "power", "authority", "leader"])
-        is_conflict = any(w in t for w in ["conflict", "fight", "argue", "oppose", "enemy", "war", "compete"])
-        is_technology = any(w in t for w in ["ai", "tech", "digital", "machine", "automate", "system", "data"])
-        is_stress = any(w in t for w in ["stress", "anxiety", "overwhelm", "busy", "rush", "pressure", "exhaust"])
+        is_decision = any(
+            w in t
+            for w in [
+                "decide",
+                "decision",
+                "choose",
+                "choice",
+                "should i",
+                "option",
+                "best",
+            ]
+        )
+        is_control = any(
+            w in t
+            for w in [
+                "control",
+                "manage",
+                "force",
+                "push",
+                "power",
+                "authority",
+                "leader",
+            ]
+        )
+        is_conflict = any(
+            w in t
+            for w in ["conflict", "fight", "argue", "oppose", "enemy", "war", "compete"]
+        )
+        is_technology = any(
+            w in t
+            for w in ["ai", "tech", "digital", "machine", "automate", "system", "data"]
+        )
+        is_stress = any(
+            w in t
+            for w in [
+                "stress",
+                "anxiety",
+                "overwhelm",
+                "busy",
+                "rush",
+                "pressure",
+                "exhaust",
+            ]
+        )
 
         if is_decision:
             return (

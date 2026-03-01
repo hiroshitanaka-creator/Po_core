@@ -736,19 +736,13 @@ class Watsuji(Philosopher):
             )
 
         # Add dialectic analysis
-        reasoning += (
-            f" 個人と全体の弁証法的関係：{dialectic['description']}。"
-        )
+        reasoning += f" 個人と全体の弁証法的関係：{dialectic['description']}。"
 
         # Add betweenness quality
-        reasoning += (
-            f" 間（ま）・間柄の質：{betweenness['description']}。"
-        )
+        reasoning += f" 間（ま）・間柄の質：{betweenness['description']}。"
 
         # Add ethical dimension
-        reasoning += (
-            f" 倫理的次元——{ethics['mode']}：{ethics['description']}。"
-        )
+        reasoning += f" 倫理的次元——{ethics['mode']}：{ethics['description']}。"
 
         # Conclude with Watsuji's core insight
         reasoning += (
