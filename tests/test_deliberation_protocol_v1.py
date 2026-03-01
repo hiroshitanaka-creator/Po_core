@@ -174,4 +174,7 @@ def test_ensemble_feature_flag_runs_protocol_v1(monkeypatch):
     result = _run_phase_post(ctx, deps, pre, proposals, run_results=[])
 
     assert result["status"] == "ok"
-    assert any(getattr(e, "event_type", "") == "DebateProtocolV1Completed" for e in tracer.events)
+    assert any(
+        getattr(e, "event_type", "") == "DebateProtocolV1Completed"
+        for e in tracer.events
+    )

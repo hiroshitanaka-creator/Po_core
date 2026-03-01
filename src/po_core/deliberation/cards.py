@@ -89,7 +89,9 @@ class SynthesisReport:
             summary=str(data["summary"]),
             recommended_option_id=str(data["recommended_option_id"]),
             argument_cards=tuple(
-                ArgumentCard.from_dict(item) for item in arg_raw if isinstance(item, Mapping)
+                ArgumentCard.from_dict(item)
+                for item in arg_raw
+                if isinstance(item, Mapping)
             ),
             critique_cards=tuple(
                 CritiqueCard.from_dict(item)

@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
 
-
 _DEFAULT_SPEC_PATH = Path(__file__).resolve().parent / "specs" / "v1.json"
 
 

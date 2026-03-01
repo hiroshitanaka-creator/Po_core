@@ -13,11 +13,20 @@ DEPENDENCY RULES:
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
+from po_core.deliberation.roles import Role, parse_roles_csv
 from po_core.domain.safety_mode import SafetyMode
 
 
+
+
+def _read_roles_from_env() -> tuple[Role, ...]:
+    raw = os.getenv("PO_ROLES", "").strip()
+    if not raw:
+        return ()
+    return tuple(sorted(parse_roles_csv(raw), key=lambda r: r.value))
 @dataclass(frozen=True)
 class Settings:
     """
@@ -67,6 +76,9 @@ class Settings:
     philosophers_max_warn: int = 5
     philosophers_max_critical: int = 1
 
+    # Role-based filtering (voice names are labels; role is the operational unit)
+    philosopher_roles: tuple[Role, ...] = ()
+
     # 並列数: mode別のworker数
     philosopher_workers_normal: int = 12
     philosopher_workers_warn: int = 6
@@ -97,6 +109,11 @@ class Settings:
     # True  = PositionClusterer runs; result in DeliberationResult.cluster_result
     deliberation_cluster_positions: bool = False
 
+    @classmethod
+    def from_env(cls) -> "Settings":
+        """Build settings with PO_ROLES environment override."""
+        return cls(philosopher_roles=_read_roles_from_env())
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -120,6 +137,7 @@ class Settings:
             "philosopher_cost_budget_normal": self.philosopher_cost_budget_normal,
             "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
+            "philosopher_roles": [r.value for r in self.philosopher_roles],
             "deliberation_max_rounds": self.deliberation_max_rounds,
             "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
             "deliberation_prompt_mode": self.deliberation_prompt_mode,

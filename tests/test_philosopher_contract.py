@@ -112,9 +112,9 @@ class TestPhilosopherContract:
                 tension, (int, float)
             ), f"{spec.philosopher_id}: tension must be dict or numeric, got {type(tension)}"
 
-
-
-    def test_reason_contract_unchanged_after_card_generation(self, spec: PhilosopherSpec) -> None:
+    def test_reason_contract_unchanged_after_card_generation(
+        self, spec: PhilosopherSpec
+    ) -> None:
         """Calling propose_card() must not alter legacy reason() contract."""
         phil = _load_philosopher(spec)
         if not hasattr(phil, "propose_card"):
@@ -123,8 +123,13 @@ class TestPhilosopherContract:
         _ = phil.propose_card(Context.from_prompt(TEST_PROMPTS[0]))
         result = phil.reason(TEST_PROMPTS[0])
 
-        assert "reasoning" in result, f"{spec.philosopher_id}: missing 'reasoning' after propose_card"
-        assert "perspective" in result, f"{spec.philosopher_id}: missing 'perspective' after propose_card"
+        assert (
+            "reasoning" in result
+        ), f"{spec.philosopher_id}: missing 'reasoning' after propose_card"
+        assert (
+            "perspective" in result
+        ), f"{spec.philosopher_id}: missing 'perspective' after propose_card"
+
     def test_reason_is_deterministic(self, spec: PhilosopherSpec) -> None:
         """reason() with same prompt should return consistent results."""
         phil = _load_philosopher(spec)

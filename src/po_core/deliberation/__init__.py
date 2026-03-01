@@ -1,26 +1,4 @@
-"""
-Deliberation Engine
-====================
-
-Multi-round philosopher dialogue for emergent philosophical reasoning.
-
-Round 1: All philosophers propose() independently (current pipeline behavior).
-Round 2: InteractionMatrix identifies high-interference pairs.
-         Those philosophers receive counterarguments and re-propose.
-Round N: Repeat until max_rounds or convergence.
-
-Phase 6-B additions:
-- EmergenceDetector: detects genuinely novel proposals vs round-1 baseline
-- InfluenceTracker: tracks how much each philosopher moved others
-
-Usage:
-    from po_core.deliberation import DeliberationEngine, EmergenceDetector
-
-    engine = DeliberationEngine(max_rounds=2, top_k_pairs=5)
-    result = engine.deliberate(philosophers, ctx, intent, tensors, memory, round1_proposals)
-    print(result.peak_novelty)   # 0.0-1.0
-    print(result.has_emergence)  # True if novel synthesis detected
-"""
+"""Public exports for deliberation package."""
 
 from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
@@ -32,6 +10,7 @@ from po_core.deliberation.protocol import (
     SynthesisEngine as ProtocolSynthesisEngine,
     run_deliberation,
 )
+from po_core.deliberation.protocol import run_deliberation
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
     DebateRole,
@@ -46,6 +25,18 @@ from po_core.deliberation.synthesis import (
     SynthesisEngine,
     SynthesisReport,
 )
+from po_core.deliberation.roles import (
+    DEFAULT_ROLES,
+    PHILOSOPHER_ROLE_MAP,
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    Role,
+    RoleCoverage,
+    assign_role,
+    get_role_prompt_prefix,
+    parse_roles_csv,
+)
+from po_core.deliberation.synthesis import AxisSpec, ScoreboardEntry, SynthesisReport
 
 __all__ = [
     "ClusterResult",
@@ -58,17 +49,23 @@ __all__ = [
     "InfluenceTracker",
     "InfluenceWeight",
     "DebateRole",
+    "Role",
+    "RoleCoverage",
+    "DEFAULT_ROLES",
+    "PHILOSOPHER_ROLE_MAP",
     "SYNTHESIZER_PHILOSOPHERS",
     "assign_role",
     "get_role_prompt_prefix",
     "ProtocolArgumentCard",
     "ProtocolCritiqueCard",
     "ProtocolSynthesisEngine",
+    "parse_roles_csv",
+    "ArgumentCard",
+    "CritiqueCard",
+    "SynthesisEngine",
     "run_deliberation",
     "ArgumentCard",
     "AxisSpec",
-    "CritiqueCard",
     "ScoreboardEntry",
-    "SynthesisEngine",
     "SynthesisReport",
 ]

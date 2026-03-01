@@ -19,3 +19,4 @@ Po_core の意思決定支援における思想レイヤーを、機械可読な
 
 - 原則は実装の直接条件分岐ではなく、要件（REQ）とADRを介してコード・テストに反映する。
 - traceability_v1.yaml を SoT とし、Principles → Requirements → ADR/Test/Code の往復参照を維持する。
+- 哲学者名は voice（語り口）として扱い、実行時の選択・カバレッジ保証は role（機能役割）を本体として行う。

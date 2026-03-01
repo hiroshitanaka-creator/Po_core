@@ -379,9 +379,6 @@ def replay_session(
     _validate_or_raise(input_validator, case, label=f"Input case {case_path.name}")
 
     answers_schema_path = _repo_root() / "docs" / "spec" / "session_answers_schema_v1.json"
-    # Backward compatibility: replay accepted patch-only payloads before the
-    # session_answers_v1 envelope was introduced. Keep supporting that legacy
-    # shape to avoid breaking existing tooling/tests.
     if answers_schema_path.exists() and isinstance(answers_payload, dict):
         has_v1_envelope = all(
             key in answers_payload for key in ("version", "case_ref", "answers")
