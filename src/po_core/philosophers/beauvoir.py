@@ -130,6 +130,7 @@ class Beauvoir(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             gender_construction,
             the_other,
             immanence_transcendence,
@@ -1051,8 +1052,173 @@ class Beauvoir(Philosopher):
             "insight": "Women's lived experience reveals what male-centered philosophy obscures",
         }
 
+    def _apply_beauvoir_to_problem(self, text: str) -> str:
+        """Apply Beauvoir's feminist existentialist concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "freedom",
+                "free",
+                "oppress",
+                "constraint",
+                "liberation",
+                "autonomy",
+                "choice",
+            ]
+        ):
+            return (
+                "Beauvoir's concept of situated freedom is essential here: we are free, "
+                "but always within a concrete historical, social, and material situation that we did not choose. "
+                "Freedom is not an abstract property of a disembodied will but a practical achievement "
+                "that can be facilitated or systematically blocked by social structures. "
+                "Oppression is precisely the concrete obstruction of situated freedom: "
+                "when certain groups are confined to immanence — repetitive, self-consuming labor "
+                "that reproduces life without transcending it — their freedom is not merely limited "
+                "but structurally denied. "
+                "Beauvoir insists that genuine freedom is impossible in isolation: "
+                "my freedom is bound up with the freedom of others, "
+                "so that liberation must be collective, not merely individual."
+            )
+        elif any(
+            w in t
+            for w in [
+                "gender",
+                "woman",
+                "women",
+                "man",
+                "men",
+                "sex",
+                "feminin",
+                "masculin",
+                "born",
+            ]
+        ):
+            return (
+                "Beauvoir's most famous claim — 'One is not born, but rather becomes, a woman' — "
+                "demolishes the idea of a fixed feminine essence. "
+                "Gender is not a biological given but a social construction lived through the body: "
+                "the slow accumulation of gestures, expectations, restrictions, and roles "
+                "through which a female child is interpellated into 'womanhood'. "
+                "The Second Sex shows how this construction serves male domination: "
+                "woman is cast as the 'Other' — the relative, the secondary, the immanent — "
+                "in a world whose standards and symbols are defined by and for men. "
+                "The mystification that naturalizes this construction must be exposed through critical analysis "
+                "and dismantled through concrete political and social transformation."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "moral",
+                "ambigui",
+                "ought",
+                "responsib",
+                "right",
+                "wrong",
+                "value",
+            ]
+        ):
+            return (
+                "The Ethics of Ambiguity is Beauvoir's answer to the question of how to live authentically "
+                "in the absence of God and fixed essences. "
+                "She rejects two symmetrical failures: the 'spirit of seriousness' (which treats values as pre-given facts) "
+                "and the 'nihilist' (who, recognizing the absence of given values, concludes nothing matters). "
+                "Authentic ethics requires embracing ambiguity — the condition of a being who is both "
+                "free and situated, transcendent and factical — without fleeing into either pole. "
+                "The test of genuine moral seriousness is not adherence to abstract principles "
+                "but the concrete expansion of others' freedom: "
+                "I act authentically only when my project contributes to the liberation "
+                "of those whose oppression would otherwise be the condition of my own flourishing."
+            )
+        elif any(
+            w in t
+            for w in [
+                "feminist",
+                "politic",
+                "second sex",
+                "patriarch",
+                "inequalit",
+                "discriminat",
+                "sexism",
+            ]
+        ):
+            return (
+                "Beauvoir's The Second Sex (1949) remains the founding text of second-wave feminism "
+                "precisely because it refuses both biological essentialism and abstract humanism. "
+                "Woman is not a natural kind but a historical construction — the 'Other' produced "
+                "by a male-defined symbolic order that presents its contingent arrangements as necessary. "
+                "Mystification — the naturalization of oppression — is the ideological mechanism Beauvoir exposes: "
+                "biology, psychology, religion, and culture are pressed into service "
+                "to make the subordination of women appear inevitable and just. "
+                "Liberation requires both demystification (theoretical critique) "
+                "and material transformation (economic independence, access to the public sphere) — "
+                "the two are inseparable because ideas and material conditions mutually reinforce each other."
+            )
+        elif any(
+            w in t
+            for w in [
+                "self",
+                "authentic",
+                "identity",
+                "bad faith",
+                "project",
+                "becoming",
+                "exist",
+            ]
+        ):
+            return (
+                "For Beauvoir, authentic existence means acknowledging the full structure of the human condition: "
+                "that we are free yet situated, transcendent yet factical, individual yet intersubjective. "
+                "Bad faith in Beauvoir's sense includes not only the Sartrean denial of freedom "
+                "but also the specifically gendered bad faith by which women internalize "
+                "their own objectification — the 'narcissist', the 'woman in love', "
+                "the 'mystic' whom Beauvoir analyzes in The Second Sex. "
+                "Authentic existence demands that we take up our freedom as a genuine project — "
+                "not the flight into immanence that patriarchal society encourages in women "
+                "but the active engagement with a world that one takes responsibility for transforming."
+            )
+        elif any(
+            w in t
+            for w in [
+                "love",
+                "relation",
+                "partner",
+                "couple",
+                "together",
+                "other person",
+                "marriage",
+            ]
+        ):
+            return (
+                "Beauvoir's analysis of love exposes a structural asymmetry: under patriarchy, "
+                "love tends to mean something different for women and men. "
+                "For the woman positioned as 'Other', love easily becomes total self-abnegation — "
+                "making the beloved's existence the whole meaning of one's own — "
+                "a form of bad faith that trades freedom for the security of devotion. "
+                "Genuine love, by contrast, is possible only between equals who each affirm "
+                "the other's freedom rather than seeking to possess or be absorbed by the other. "
+                "This requires that both parties have independent projects, independent standing in the world — "
+                "which in turn requires the material and social conditions of genuine equality, "
+                "without which romantic love too easily becomes a gilded cage."
+            )
+        else:
+            return (
+                "Beauvoir's feminist existentialism begins from the recognition that situated freedom — "
+                "freedom always exercised within a concrete social and historical situation — "
+                "is the fundamental human condition, but one that oppressive structures systematically distort. "
+                "Her central insight from The Second Sex — that one becomes rather than is born a woman — "
+                "reveals gender as a historical construction serving specific interests rather than a natural fact. "
+                "The Ethics of Ambiguity insists that authentic moral life requires embracing the ambiguity "
+                "of human existence (free yet situated) and committing to the liberation of others, "
+                "since one's own genuine freedom is inseparable from the freedom of those around one. "
+                "Feminist politics is not a special interest but the concrete application of the "
+                "existentialist imperative: transform the situations that deny human transcendence."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         gender_construction: Dict[str, Any],
         the_other: Dict[str, Any],
         immanence_transcendence: Dict[str, Any],
@@ -1065,7 +1231,9 @@ class Beauvoir(Philosopher):
         lived_experience: Dict[str, Any],
     ) -> str:
         """Construct Beauvoirean existentialist feminist reasoning."""
+        applied = self._apply_beauvoir_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Beauvoir's existentialist feminist perspective: "
             f"{gender_construction['description']}. "
         )
