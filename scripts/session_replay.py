@@ -313,6 +313,12 @@ def replay_session(
     _validate_or_raise(input_validator, case, label=f"Input case {case_path.name}")
 
     answers_schema_path = _repo_root() / "docs" / "spec" / "session_answers_schema_v1.json"
+    # Backward compatibility: replay accepted patch-only payloads before the
+    # session_answers_v1 envelope was introduced. Keep supporting that legacy
+    # shape to avoid breaking existing tooling/tests.
+    if answers_schema_path.exists() and isinstance(answers_payload, dict):
+        has_v1_envelope = all(
+            key in answers_payload for key in ("version", "case_ref", "answers")
     if answers_schema_path.exists() and isinstance(answers_payload, dict) and "patch" not in answers_payload and "operations" not in answers_payload:
         answers_validator = _load_validator("session_answers_schema_v1.json")
         _validate_or_raise(
@@ -320,6 +326,13 @@ def replay_session(
             answers_payload,
             label=f"Session answers {answers_path.name}",
         )
+        if has_v1_envelope:
+            answers_validator = _load_validator("session_answers_schema_v1.json")
+            _validate_or_raise(
+                answers_validator,
+                answers_payload,
+                label=f"Session answers {answers_path.name}",
+            )
 
     patch_ops = _normalize_answers_payload(answers_payload)
     patched_case = apply_rfc6902_patch(case, patch_ops)

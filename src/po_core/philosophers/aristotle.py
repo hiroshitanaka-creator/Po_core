@@ -18,7 +18,7 @@ Key Concepts:
 
 from typing import Any, Dict, List, Optional
 
-from po_core.philosophers.base import Philosopher
+from po_core.philosophers.base import ArgumentCard, Context, Philosopher
 
 
 class Aristotle(Philosopher):
@@ -80,6 +80,117 @@ class Aristotle(Philosopher):
                 "focus": "Excellence (arete), golden mean, and human flourishing",
             },
         }
+
+    def propose_card(
+        self, context: Context, axis_spec: Optional[Dict[str, Any]] = None
+    ) -> ArgumentCard:
+        """Return a richer Aristotelian card while preserving reason() contract."""
+        raw = self.reason(context.prompt, context.metadata if context.metadata else None)
+
+        virtue = raw.get("virtue_assessment", {})
+        mean = raw.get("golden_mean", {})
+        telos = raw.get("telos", {})
+        phronesis = raw.get("practical_wisdom", {})
+        tension = raw.get("tension", {})
+
+        claims = [raw.get("reasoning", "")]
+        if isinstance(mean, dict) and mean.get("assessment"):
+            claims.append(f"Golden mean assessment: {mean['assessment']}")
+        if isinstance(telos, dict) and telos.get("primary_end"):
+            claims.append(f"Telos focus: {telos['primary_end']}")
+
+        assumptions: List[str] = []
+        if isinstance(virtue, dict):
+            assumptions.append(
+                "Ethical excellence emerges through habituated virtue in concrete practice."
+            )
+        if isinstance(phronesis, dict):
+            assumptions.append(
+                "Practical wisdom should calibrate universal principles to particulars."
+            )
+
+        risks: List[str] = []
+        if isinstance(tension, dict):
+            level = str(tension.get("level", "")).lower()
+            if level in {"high", "very_high"}:
+                risks.append("Moral imbalance may push action toward excess or deficiency.")
+            elif level == "moderate":
+                risks.append("Competing goods require sustained deliberation to avoid vice.")
+
+        questions: List[str] = []
+        if isinstance(telos, dict) and not telos.get("primary_end"):
+            questions.append("What concrete telos defines flourishing in this decision?")
+        if isinstance(mean, dict) and not mean.get("virtue_mean"):
+            questions.append("Which extremes frame the relevant golden mean here?")
+
+        actions = [
+            "Identify the relevant virtues and their opposite excess/deficiency.",
+            "Choose the next step that best aligns character, purpose, and common good.",
+        ]
+
+        axis_scores_self = self._build_axis_scores(context.prompt, axis_spec)
+        confidence = 0.74 if axis_scores_self else 0.66
+
+        return ArgumentCard(
+            philosopher=self.name,
+            perspective=str(raw.get("perspective", "Virtue Ethics / Teleology")),
+            stance="virtue_guided_action",
+            claims=[c for c in claims if c],
+            assumptions=assumptions,
+            risks=risks,
+            questions=questions,
+            actions=actions,
+            axis_scores_self=axis_scores_self,
+            confidence=confidence,
+            rationale="Act with phronesis toward a telos that supports shared flourishing.",
+            citations=["Nicomachean Ethics", "Politics"],
+        )
+
+    def _build_axis_scores(
+        self, prompt: str, axis_spec: Optional[Dict[str, Any]]
+    ) -> Dict[str, float]:
+        """Map Aristotle's self-assessment to AxisSpec-v1-like IDs.
+
+        If ``axis_spec`` is supplied, this method prioritizes its dimension IDs.
+        """
+        prompt_l = prompt.lower()
+
+        baseline = {
+            "prudence": 0.86,
+            "virtue": 0.9,
+            "coherence": 0.72,
+            "feasibility": 0.77,
+            "care": 0.68,
+        }
+        if any(k in prompt_l for k in ["risk", "harm", "safety", "危険", "安全"]):
+            baseline["care"] = 0.82
+        if any(k in prompt_l for k in ["plan", "steps", "実装", "手順"]):
+            baseline["feasibility"] = 0.84
+
+        if not axis_spec:
+            return {"virtue_prudence": 0.88}
+
+        dimensions = axis_spec.get("dimensions", []) if isinstance(axis_spec, dict) else []
+        scores: Dict[str, float] = {}
+        for dim in dimensions:
+            if not isinstance(dim, dict):
+                continue
+            dim_id = str(dim.get("id", "")).strip()
+            if not dim_id:
+                continue
+            probe = dim_id.lower()
+            if any(tag in probe for tag in ["prud", "phron", "wisdom"]):
+                scores[dim_id] = baseline["prudence"]
+            elif any(tag in probe for tag in ["virt", "ethic", "justice"]):
+                scores[dim_id] = baseline["virtue"]
+            elif any(tag in probe for tag in ["coher", "logic", "consist"]):
+                scores[dim_id] = baseline["coherence"]
+            elif any(tag in probe for tag in ["feasib", "practic", "action"]):
+                scores[dim_id] = baseline["feasibility"]
+            elif any(tag in probe for tag in ["care", "harm", "safety"]):
+                scores[dim_id] = baseline["care"]
+
+        return scores or {"virtue_prudence": 0.88}
 
     def _analyze_virtue(self, prompt: str) -> Dict[str, Any]:
         """
