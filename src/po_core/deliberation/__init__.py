@@ -24,17 +24,20 @@ Usage:
 
 from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
-from po_core.deliberation.engine import (
-    DeliberationEngine,
-    DeliberationResult,
-    RoundTrace,
-)
+from po_core.deliberation.engine import DeliberationEngine, DeliberationResult, RoundTrace
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
 from po_core.deliberation.protocol import (
-    ArgumentCard,
-    CritiqueCard,
-    SynthesisEngine,
+    ArgumentCard as ProtocolArgumentCard,
+    CritiqueCard as ProtocolCritiqueCard,
+    SynthesisEngine as ProtocolSynthesisEngine,
     run_deliberation,
+)
+from po_core.deliberation.roles import (
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    assign_role,
+    get_role_prompt_prefix,
+)
 from po_core.deliberation.synthesis import (
     ArgumentCard,
     AxisSpec,
@@ -42,12 +45,6 @@ from po_core.deliberation.synthesis import (
     ScoreboardEntry,
     SynthesisEngine,
     SynthesisReport,
-)
-from po_core.deliberation.roles import (
-    SYNTHESIZER_PHILOSOPHERS,
-    DebateRole,
-    assign_role,
-    get_role_prompt_prefix,
 )
 
 __all__ = [
@@ -64,10 +61,11 @@ __all__ = [
     "SYNTHESIZER_PHILOSOPHERS",
     "assign_role",
     "get_role_prompt_prefix",
-    "ArgumentCard",
-    "CritiqueCard",
-    "SynthesisEngine",
+    "ProtocolArgumentCard",
+    "ProtocolCritiqueCard",
+    "ProtocolSynthesisEngine",
     "run_deliberation",
+    "ArgumentCard",
     "AxisSpec",
     "CritiqueCard",
     "ScoreboardEntry",

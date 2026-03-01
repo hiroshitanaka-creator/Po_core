@@ -198,6 +198,7 @@ class PoSelf:
         from po_core.ensemble import EnsembleDeps, run_turn
         from po_core.runtime.settings import Settings
         from po_core.runtime.wiring import build_test_system
+        from po_core.trace.event_log import JsonlEventLogger
         from po_core.trace.in_memory import InMemoryTracer
 
         settings = Settings()
@@ -239,6 +240,35 @@ class PoSelf:
 
         result = run_turn(ctx, deps)
         self._last_tracer = tracer
+
+        if self.enable_trace:
+            logger = JsonlEventLogger(base_dir=self.trace_dir)
+            logger.emit(
+                ctx.request_id,
+                "propose",
+                {
+                    "prompt": prompt,
+                    "philosophers": philosophers or [],
+                    "context": context or {},
+                },
+            )
+            logger.emit(
+                ctx.request_id,
+                "critique",
+                {
+                    "events_seen": len(tracer.events),
+                    "philosophers": [e.payload.get("name", "") for e in tracer.events if e.event_type == "PhilosopherResult"],
+                },
+            )
+            logger.emit(
+                ctx.request_id,
+                "synthesize",
+                {
+                    "status": result.get("status"),
+                    "request_id": result.get("request_id"),
+                    "synthesis_report": result.get("synthesis_report", {}),
+                },
+            )
 
         return self._build_response(prompt, result, tracer, ctx, context)
 
@@ -327,6 +357,7 @@ class PoSelf:
                 "status": result.get("status"),
                 "degraded": result.get("degraded", False),
                 "request_id": result.get("request_id"),
+                "synthesis_report": result.get("synthesis_report"),
             },
         )
 

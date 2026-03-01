@@ -62,14 +62,14 @@ class SynthesisReport:
 
     def to_dict(self) -> Dict[str, object]:
         """JSON-friendly form for logging/debugging."""
+        scoreboard = {axis: asdict(entry) for axis, entry in self.scoreboard.items()}
         return {
             "stance_distribution": dict(self.stance_distribution),
             "consensus_claims": list(self.consensus_claims),
             "disagreements": list(self.disagreements),
             "open_questions": list(self.open_questions),
-            "scoreboard": {
-                axis: asdict(entry) for axis, entry in self.scoreboard.items()
-            },
+            "scoreboard": scoreboard,
+            "axis_scoreboard": scoreboard,
         }
 
 

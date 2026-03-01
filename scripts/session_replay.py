@@ -370,7 +370,6 @@ def replay_session(
     seed: int = 0,
 ) -> Dict[str, Path]:
     case = _load_case_yaml(case_path)
-    answers_payload = _coerce_answers_payload(_load_json(answers_path), case_path=case_path)
     answers_payload = _load_json(answers_path)
     answers_payload = _coerce_answers_envelope(answers_payload, case_path=case_path)
 
@@ -386,12 +385,6 @@ def replay_session(
     if answers_schema_path.exists() and isinstance(answers_payload, dict):
         has_v1_envelope = all(
             key in answers_payload for key in ("version", "case_ref", "answers")
-    if answers_schema_path.exists() and isinstance(answers_payload, dict) and "patch" not in answers_payload and "operations" not in answers_payload:
-        answers_validator = _load_validator("session_answers_schema_v1.json")
-        _validate_or_raise(
-            answers_validator,
-            answers_payload,
-            label=f"Session answers {answers_path.name}",
         )
         if has_v1_envelope:
             answers_validator = _load_validator("session_answers_schema_v1.json")
