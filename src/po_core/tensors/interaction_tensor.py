@@ -29,6 +29,7 @@ import numpy as np
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.tensors.base import Tensor
+from po_core.text.normalize import detect_language_simple, normalize_text
 
 # ══════════════════════════════════════════════════════════════════════
 # InteractionMatrix (Phase 2) — embedding-based pairwise interaction
@@ -220,18 +221,40 @@ _OPPOSITION_PAIRS = [
     ("universal", "particular"),
 ]
 
+_JA_OPPOSITION_PAIRS = [
+    ("自由", "決定論"),
+    ("個人", "集団"),
+    ("主観", "客観"),
+    ("理性", "感情"),
+    ("絶対", "相対"),
+    ("秩序", "混沌"),
+    ("普遍", "個別"),
+    ("精神", "身体"),
+]
+
 
 def _compute_tension(text_a: str, text_b: str) -> float:
     """Compute tension score between two texts based on opposing concepts."""
-    a_lower = text_a.lower()
-    b_lower = text_b.lower()
+    # Normalize first so full-width/spacing differences in Japanese text
+    # still hit the same opposition keywords deterministically.
+    a_normalized = normalize_text(text_a)
+    b_normalized = normalize_text(text_b)
+
+    lang = detect_language_simple(f"{a_normalized} {b_normalized}")
+    if lang == "ja":
+        opposition_pairs = _JA_OPPOSITION_PAIRS
+    elif lang == "en":
+        opposition_pairs = _OPPOSITION_PAIRS
+    else:
+        opposition_pairs = _OPPOSITION_PAIRS + _JA_OPPOSITION_PAIRS
+
     hits = 0
-    for word_a, word_b in _OPPOSITION_PAIRS:
-        if (word_a in a_lower and word_b in b_lower) or (
-            word_b in a_lower and word_a in b_lower
+    for word_a, word_b in opposition_pairs:
+        if (word_a in a_normalized and word_b in b_normalized) or (
+            word_b in a_normalized and word_a in b_normalized
         ):
             hits += 1
-    return min(hits / max(len(_OPPOSITION_PAIRS) * 0.5, 1), 1.0)
+    return min(hits / max(len(opposition_pairs) * 0.5, 1), 1.0)
 
 
 # ══════════════════════════════════════════════════════════════════════
