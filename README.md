@@ -566,6 +566,25 @@ d = response.to_dict()            # JSON-serializable dict
 restored = PoSelfResponse.from_dict(d)  # Round-trip
 ```
 
+### Observe `synthesis_report` (Trade-off Device Bench)
+
+`PoSelf` includes `metadata["synthesis_report"]` when structured output mode is enabled.
+
+```bash
+export PO_STRUCTURED_OUTPUT=1
+python scripts/observe_device.py "転職するべき？家族とキャリアのトレードオフが悩み"
+```
+
+The observer script will print:
+
+- `request_id`, `status`, `degraded`, and `consensus_leader`
+- pretty-printed `metadata["synthesis_report"]`
+- `DeliberationCompleted` payload from `PoSelf.get_trace()` (when present)
+- short summaries for `scoreboard` / `disagreements` when available
+
+`scripts/observe_device.py` also sets `PO_STRUCTURED_OUTPUT=1` with
+`os.environ.setdefault(...)`, so existing environment values are preserved.
+
 ### Legacy API (Deprecated — will be removed in v0.3)
 
 ```python
