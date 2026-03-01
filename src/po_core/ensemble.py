@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
+from po_core.axis.scoring import score_text
+from po_core.axis.spec import load_axis_spec
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.keys import (
@@ -490,6 +492,7 @@ def _run_phase_post(
 
     enriched: List[DomainProposal] = []
     precheck_counts: Dict[str, int] = {"allow": 0, "revise": 0, "reject": 0}
+    axis_spec = load_axis_spec()
 
     for p in raw_proposals:
         extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
@@ -515,6 +518,9 @@ def _run_phase_post(
         }
         precheck_counts[v.decision.value] = precheck_counts.get(v.decision.value, 0) + 1
         pc[FREEDOM_PRESSURE] = fp_str
+        pc["axis_scores"] = score_text(str(p.content), axis_spec)
+        pc["axis_name"] = axis_spec.axis_name
+        pc["axis_spec_version"] = axis_spec.spec_version
         extra[PO_CORE] = pc
         enriched.append(
             DomainProposal(
