@@ -15,6 +15,7 @@ from rich.table import Table
 from po_core import __author__, __email__, __version__
 from po_core.po_self import PoSelf
 from po_core.po_trace import PoTrace
+from po_core.trace.replay import replay_run
 
 console = Console()
 SAMPLE_PROMPT = "What does it mean to live authentically?"
@@ -149,6 +150,21 @@ def log(prompt: str) -> None:
     run_data = PoSelf().generate(prompt)
     # 余計なprint等は一切禁止
     click.echo(json.dumps(run_data.log, ensure_ascii=False))
+
+
+@main.command("replay")
+@click.argument("run_id")
+@click.option(
+    "--log-dir",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+    default=Path(".po_core_runs"),
+    help="Directory containing <run_id>.jsonl event logs",
+)
+def replay(run_id: str, log_dir: Path) -> None:
+    """Replay a run from JSONL event log and print regenerated report structure."""
+
+    replayed = replay_run(run_id, log_dir=log_dir)
+    click.echo(json.dumps(replayed, ensure_ascii=False))
 
 
 @main.command()

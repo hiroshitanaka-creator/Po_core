@@ -9,7 +9,13 @@ Use ``InMemoryTracer`` (via ``PoSelf.get_trace()``) or the
 """
 
 from po_core.trace.annotator import PhilosophicalAnnotator
+from po_core.trace.event_log import Event, JsonlEventLogger, mask_sensitive_payload
+from po_core.trace.replay import replay_run
 
 __all__ = [
     "PhilosophicalAnnotator",
+    "Event",
+    "JsonlEventLogger",
+    "mask_sensitive_payload",
+    "replay_run",
 ]
