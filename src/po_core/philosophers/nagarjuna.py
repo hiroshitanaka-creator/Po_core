@@ -82,7 +82,7 @@ class Nagarjuna(Philosopher):
         skillful_means = self._analyze_skillful_means(prompt)
 
         reasoning = self._construct_reasoning(
-            sunyata, two_truths, dependent_origination, tetralemma, svabhava, middle_way
+            prompt, sunyata, two_truths, dependent_origination, tetralemma, svabhava, middle_way
         )
 
         return {
@@ -471,8 +471,87 @@ class Nagarjuna(Philosopher):
             "principle": "Upaya: Teachings are expedient means adapted to the hearer's capacity",
         }
 
+    def _apply_nagarjuna_to_problem(self, text: str) -> str:
+        """Apply Nagarjuna's Madhyamaka wisdom proactively to the given problem."""
+        t = text.lower()
+        is_identity = any(w in t for w in ["identity", "self", "who am i", "my nature", "essence", "soul", "ego"])
+        is_ethics = any(w in t for w in ["right", "wrong", "good", "bad", "moral", "ethic", "harm", "justice"])
+        is_conflict = any(w in t for w in ["conflict", "oppose", "enemy", "disagree", "argue", "fight", "clash"])
+        is_knowledge = any(w in t for w in ["know", "truth", "real", "exist", "certain", "fact", "believe", "prove"])
+        is_technology = any(w in t for w in ["ai", "tech", "digital", "machine", "system", "algorithm", "data"])
+        is_decision = any(w in t for w in ["decide", "decision", "choose", "choice", "should", "option", "best"])
+
+        if is_identity:
+            return (
+                "Nagarjuna's Mulamadhyamakakarika deconstructs svabhava (intrinsic nature): no self exists independently. "
+                "What we call 'identity' is a conventional designation (prajnapti) on a stream of dependently-originated processes. "
+                "'Emptiness' (sunyata) does not mean nothingness—it means the self lacks inherent existence while functioning conventionally. "
+                "This liberation from fixed selfhood is not loss but freedom: the tetralemma dissolves 'I am / I am not / both / neither'. "
+                "On the ultimate level (paramartha-satya) the self is empty; on the conventional (samvrti-satya) it functions—both truths hold."
+            )
+        elif is_ethics:
+            return (
+                "Nagarjuna's two truths framework applies directly: at the conventional level, ethical distinctions (harm/help, just/unjust) are real and binding. "
+                "The Bodhisattva uses skillful means (upaya) guided by the conventional truth of compassion. "
+                "Yet on the ultimate level, 'good' and 'bad' lack inherent existence—they arise dependently and relationally. "
+                "This does not collapse ethics into relativism; it grounds ethics in interdependence (pratītyasamutpāda): "
+                "harming others harms the web of conditions that sustains oneself. "
+                "Middle Way: neither rigid rule-following (eternalism) nor 'anything goes' (nihilism)."
+            )
+        elif is_conflict:
+            return (
+                "Nagarjuna's tetralemma (catuṣkoṭi) reveals that fixed positions in conflict lack inherent existence: "
+                "'X is true / X is false / both / neither'—all four are ultimately empty. "
+                "Conflict often reifies positions as if they had svabhava (own-nature); sunyata dissolves this reification. "
+                "On the conventional level, dialogue and middle-path resolution are appropriate. "
+                "On the ultimate level, the opposing parties themselves arise through dependent origination: "
+                "neither side is a fixed, independent entity in conflict with another fixed entity. "
+                "Recognizing this shared emptiness creates space for reconciliation."
+            )
+        elif is_knowledge:
+            return (
+                "Nagarjuna's epistemological insight: all phenomena are empty of inherent existence (svabhava). "
+                "What we call 'certain knowledge' is conventional designation built on dependent conditions—not absolute truth. "
+                "MMK XXIV.18: 'Whatever is dependently co-arisen, that is explained to be emptiness. "
+                "That, being a dependent designation, is itself the middle way.' "
+                "Claims to absolute, independently existing truths (eternalism) and claims that nothing can be known (nihilism) "
+                "are both extremes refuted by the Madhyamaka middle way. "
+                "Proceed with epistemic humility: conventional truths guide action; ultimate emptiness prevents dogmatism."
+            )
+        elif is_technology:
+            return (
+                "From Nagarjuna's Madhyamaka lens, technology has no inherent nature (svabhava)—it is empty, dependently originated. "
+                "An AI system, algorithm, or tool arises from causes and conditions: designers, data, social context, use cases. "
+                "The 'neutrality' of technology is a conventional designation, not an ultimate fact. "
+                "Two truths apply: conventionally, we evaluate impact and risk; ultimately, no technology is inherently good or bad. "
+                "This prevents both technophobia (rejecting all AI as inherently harmful) and techno-utopianism (assuming AI is inherently beneficial). "
+                "Skillful means (upaya) guides deployment: adapt to context, remain responsive to consequences."
+            )
+        elif is_decision:
+            return (
+                "Nagarjuna's Madhyamaka approach to decision-making: no option has inherent existence or inherent correctness. "
+                "Each choice arises from dependent origination—causes, conditions, relationships, context. "
+                "Apply the two truths: conventionally, deliberate carefully using reason and compassion; "
+                "ultimately, hold the decision lightly—it is empty of permanent, fixed consequence. "
+                "The tetralemma can break decision paralysis: 'Option A is right / wrong / both / neither'—"
+                "all four dissolve the illusion that one choice carries absolute weight. "
+                "Middle Way: avoid both over-analysis (clinging to certainty) and reckless non-deliberation."
+            )
+        else:
+            return (
+                "Nagarjuna (c. 150–250 CE), founder of the Madhyamaka school, taught that all phenomena are empty (sunyata) of inherent existence. "
+                "This emptiness is not nihilism—MMK XXIV.18 declares: 'Whatever is dependently co-arisen is explained to be emptiness; "
+                "that, being a dependent designation, is itself the middle way.' "
+                "Two truths structure all reality: conventional truth (samvrti-satya) governs everyday discourse; "
+                "ultimate truth (paramartha-satya) reveals that all things lack svabhava (own-nature). "
+                "The tetralemma (catuṣkoṭi) deconstructs dogmatic positions: any absolute claim—'X is,' 'X is not,' 'both,' 'neither'—is empty. "
+                "Pratītyasamutpāda (dependent origination) means every phenomenon arises through interdependent conditions. "
+                "This is liberation: understanding emptiness dissolves clinging to fixed views."
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         sunyata: Dict[str, Any],
         two_truths: Dict[str, Any],
         dependent_origination: Dict[str, Any],
@@ -481,8 +560,9 @@ class Nagarjuna(Philosopher):
         middle_way: Dict[str, Any],
     ) -> str:
         """Construct Madhyamaka reasoning."""
+        applied = self._apply_nagarjuna_to_problem(text)
         reasoning = (
-            f"From Nagarjuna's Madhyamaka perspective, this text is analyzed through the lens of emptiness. "
+            f"{applied} "
             f"Sunyata: {sunyata['description']}. "
             f"Two Truths: {two_truths['description']}. "
         )

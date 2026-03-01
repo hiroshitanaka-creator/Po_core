@@ -84,7 +84,7 @@ class Laozi(Philosopher):
         sage_ruler = self._analyze_sage_ruler(prompt)
 
         reasoning = self._construct_reasoning(
-            tao, wu_wei, te, pu, yin_yang, soft_hard, emptiness
+            prompt, tao, wu_wei, te, pu, yin_yang, soft_hard, emptiness
         )
 
         return {
@@ -456,8 +456,68 @@ class Laozi(Philosopher):
             "principle": "The best leader is barely known to exist (TTC 17)",
         }
 
+    def _apply_laozi_to_problem(self, text: str) -> str:
+        """Apply Laozi's Daoist wisdom proactively to the given problem."""
+        t = text.lower()
+        is_decision = any(w in t for w in ["decide", "decision", "choose", "choice", "should i", "option", "best"])
+        is_control = any(w in t for w in ["control", "manage", "force", "push", "power", "authority", "leader"])
+        is_conflict = any(w in t for w in ["conflict", "fight", "argue", "oppose", "enemy", "war", "compete"])
+        is_technology = any(w in t for w in ["ai", "tech", "digital", "machine", "automate", "system", "data"])
+        is_stress = any(w in t for w in ["stress", "anxiety", "overwhelm", "busy", "rush", "pressure", "exhaust"])
+
+        if is_decision:
+            return (
+                "Laozi counsels: 'Act without acting; do without doing' (TTC 3). "
+                "The sage does not force a decision but waits for clarity to emerge from stillness. "
+                "The Tao (道) itself is without preference—it nourishes all things impartially. "
+                "Observe the situation with empty mind (pu, 樸), and the natural path will reveal itself. "
+                "Simplicity and restraint often outperform elaborate strategy (TTC 16: 'Return to the root')."
+            )
+        elif is_control:
+            return (
+                "Laozi warns: 'The more laws and restrictions there are, the poorer people become' (TTC 57). "
+                "Governance through wu wei (無為)—non-interference—is the highest form of leadership. "
+                "'The best ruler is barely known to exist' (TTC 17). "
+                "Te (德, virtue) radiates naturally without coercion; forcing compliance inverts it. "
+                "Yield like water: 'Nothing in the world is as soft and yielding as water, yet nothing is better at overcoming the hard' (TTC 78)."
+            )
+        elif is_conflict:
+            return (
+                "Laozi teaches: 'Yield and overcome; bend and be straight' (TTC 22). "
+                "Confrontation escalates; the Daoist way is to soften opposition through non-resistance. "
+                "Yin-yang balance means every extreme contains its opposite—apparent defeat holds future victory. "
+                "'The soft overcomes the hard; the gentle overcomes the rigid' (TTC 76). "
+                "Seek the empty space (emptiness) where conflict dissolves rather than the wall where it hardens."
+            )
+        elif is_technology:
+            return (
+                "Laozi would recognize technology as a form of wei (為, effortful doing). "
+                "'For those who follow the Tao, less and less is done until non-action is achieved' (TTC 48). "
+                "Every complex machine creates dependencies; simplicity (pu, 樸) preserves freedom. "
+                "Technology aligned with natural patterns (ziran, 自然) serves; technology against them strains. "
+                "Ask not only what it enables, but what natural wholeness it displaces."
+            )
+        elif is_stress:
+            return (
+                "Laozi prescribes stillness: 'Return to the root is called stillness; stillness is called returning to one's destiny' (TTC 16). "
+                "Stress arises from clinging to outcomes—wu wei dissolves this by releasing attachment to results. "
+                "The valley spirit (谷神) endures because it does not strive (TTC 6). "
+                "Simplify: 'In pursuit of learning, every day something is acquired; in pursuit of Tao, every day something is dropped' (TTC 48). "
+                "Rest in emptiness (虛靜) and let vitality replenish naturally."
+            )
+        else:
+            return (
+                "Laozi's Tao Te Ching opens: '道可道，非常道'—the Tao that can be told is not the eternal Tao. "
+                "All phenomena arise from the interplay of yin and yang, being and non-being. "
+                "Wu wei (無為) is not passivity but acting in perfect accord with the natural order. "
+                "Te (德) is virtue that radiates without effort, as sunlight warms without trying. "
+                "Pu (樸)—uncarved simplicity—reminds us that complexity added beyond necessity obscures the Way. "
+                "The Tao nourishes all things without possessing them (TTC 51): this is the deepest model of beneficial action."
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         tao: Dict[str, Any],
         wu_wei: Dict[str, Any],
         te: Dict[str, Any],
@@ -467,8 +527,9 @@ class Laozi(Philosopher):
         emptiness: Dict[str, Any],
     ) -> str:
         """Construct Daoist reasoning."""
+        applied = self._apply_laozi_to_problem(text)
         reasoning = (
-            f"From Laozi's Daoist perspective, this text is examined through the lens of the Tao. "
+            f"{applied} "
             f"The Tao: {tao['description']}. "
             f"Wu Wei: {wu_wei['description']}. "
         )

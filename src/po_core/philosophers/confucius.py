@@ -77,7 +77,7 @@ class Confucius(Philosopher):
         learning = self._assess_learning(text)
 
         summary = self._generate_summary(
-            ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
+            text, ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
         )
         tension = self._calculate_tension(
             ren, li, yi, xiao, junzi, zhong_shu, de, tianming, learning
@@ -526,8 +526,169 @@ class Confucius(Philosopher):
             ),
         }
 
+    def _apply_confucian_to_problem(self, text: str) -> str:
+        """
+        Proactively apply Confucian philosophy to any problem type.
+
+        Confucius's ethics center on ren (仁/benevolence), li (禮/ritual propriety),
+        yi (義/righteousness), junzi (君子/exemplary person), and continuous self-cultivation.
+        """
+        text_lower = text.lower()
+
+        is_decision = any(
+            w in text_lower
+            for w in [
+                "should",
+                "decide",
+                "choice",
+                "option",
+                "career",
+                "すべき",
+                "転職",
+                "決断",
+                "選択",
+            ]
+        )
+        is_leadership = any(
+            w in text_lower
+            for w in [
+                "leader",
+                "manage",
+                "govern",
+                "organization",
+                "team",
+                "authority",
+                "power",
+                "政治",
+                "リーダー",
+                "組織",
+            ]
+        )
+        is_technology = any(
+            w in text_lower
+            for w in [
+                "technology",
+                "ai",
+                "digital",
+                "robot",
+                "machine",
+                "tech",
+                "技術",
+                "人工知能",
+                "システム",
+            ]
+        )
+        is_conflict = any(
+            w in text_lower
+            for w in [
+                "conflict",
+                "dispute",
+                "war",
+                "violence",
+                "disagree",
+                "opposition",
+                "紛争",
+                "対立",
+                "争い",
+            ]
+        )
+        is_relationship = any(
+            w in text_lower
+            for w in [
+                "relationship",
+                "family",
+                "friend",
+                "trust",
+                "love",
+                "parent",
+                "child",
+                "関係",
+                "家族",
+                "友情",
+                "信頼",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "Confucius teaches: 'The exemplary person (君子, junzi) acts from righteousness (義, yi),"
+                " not from profit (利, li).' Before asking 'which option is better?', ask:"
+                " 'Which path allows me to cultivate ren (仁, benevolence) and maintain integrity?'"
+                " The rectification of names (正名, zhengming) demands clarity about what this decision"
+                " truly is — its real moral weight, not just its practical consequences."
+                " 'When you know a thing, hold that you know it; when you do not know a thing,"
+                " allow that you do not know it — this is knowledge.' (Analects 2.17)"
+                " Self-cultivation (修身) is the foundation: a decision made from cultivated character"
+                " will be sound; one made from fear or desire alone will not."
+            )
+        elif is_leadership:
+            return (
+                "Confucius on governance and leadership: 'If you lead with virtue (德, de),"
+                " the people will gather around you like stars around the North Star.' (Analects 2.1)"
+                " The exemplary person (君子, junzi) leads not through coercion but through moral example."
+                " Zhengming (正名, rectification of names): leaders must ensure words correspond to reality —"
+                " if names are not correct, speech will not accord with truth, and affairs cannot be accomplished."
+                " Ren (仁, benevolence) in leadership means: 'Do not impose on others what you yourself"
+                " do not want.' (Analects 12.2 — the Golden Rule of Confucian ethics)"
+                " True authority comes from earned moral credibility (信, xin), not from position alone."
+            )
+        elif is_technology:
+            return (
+                "Confucius would examine technology through the lens of ren (仁) and li (禮):"
+                " Does this technology help humans cultivate virtue and right relationships,"
+                " or does it erode them?"
+                " The five constants (五常: ren仁, yi義, li禮, zhi智, xin信) provide the ethical framework:"
+                " a technology must serve benevolence, righteousness, proper conduct, wisdom, and trustworthiness."
+                " The rectification of names (正名, zhengming) demands we be precise: is this tool"
+                " genuinely 'intelligent', genuinely 'helpful', genuinely 'safe'?"
+                " Confucius valued learning (學) and reflection (思) in equal measure:"
+                " 'Learning without thought is labor lost; thought without learning is perilous.' (Analects 2.15)"
+                " Technology embodies learning without wisdom unless human reflection guides its use."
+            )
+        elif is_conflict:
+            return (
+                "Confucius addresses conflict through zhong-shu (忠恕 — loyalty and reciprocity):"
+                " 'Do not impose on others what you yourself do not want.' (Analects 12.2)"
+                " Before engaging conflict, the junzi (君子) practices self-examination (内省):"
+                " 'I daily examine myself on three points: whether I am faithful in doing business"
+                " for others, sincere with friends, and have mastered what I have been taught.' (Analects 1.4)"
+                " Li (禮, ritual propriety) provides the framework for transforming conflict into dialogue:"
+                " proper forms of address, proper procedure, proper humility."
+                " Yi (義, righteousness) demands we ask not 'who wins?' but 'what is just?'"
+                " Harmony (和, he) is the highest achievement of ritual propriety — not uniformity, but"
+                " the harmony that emerges from properly ordered relationships."
+            )
+        elif is_relationship:
+            return (
+                "Confucius places human relationships at the center of all ethics through the Five Relationships"
+                " (五倫: ruler-minister, parent-child, husband-wife, elder-younger, friend-friend)."
+                " Each relationship carries mutual obligations grounded in ren (仁, benevolence)."
+                " Xiao (孝, filial piety) — reverence for parents and ancestors — is the root of ren:"
+                " 'Filial piety and fraternal submission! Are they not the root of all benevolent actions?' (Analects 1.2)"
+                " Zhong-shu (忠恕): be loyal and faithful in your obligations; extend to others"
+                " the same consideration you desire for yourself."
+                " The junzi (君子) cultivates relationships through continuous self-improvement,"
+                " not through demanding change from others first."
+                " 'Expect much of yourself, little of others — resentment is kept far away.' (Analects 15.15)"
+            )
+        else:
+            return (
+                "Confucius (孔子, 551–479 BCE) teaches that all wisdom begins with ren (仁, benevolence)"
+                " — the capacity for human-heartedness, for genuine care and relationship."
+                " 'Is he not a man of complete virtue, who feels no discomposure though men may take no note of him?' (Analects 1.1)"
+                " The exemplary person (君子, junzi) is not defined by birth or status, but by ceaseless"
+                " self-cultivation (修身) through learning, reflection, and virtuous action."
+                " Li (禮, ritual propriety) gives form to ren: the right action at the right time,"
+                " in the right relationship, with the right intention."
+                " Yi (義, righteousness) demands we act from principle, not from calculation of gain."
+                " 'At fifteen, I had my mind bent on learning. At thirty, I stood firm."
+                " At forty, I had no doubts... At seventy, I could follow what my heart desired"
+                " without transgressing what was right.' (Analects 2.4) — the life of cultivation."
+            )
+
     def _generate_summary(
         self,
+        text: str,
         ren: Dict[str, Any],
         li: Dict[str, Any],
         yi: Dict[str, Any],
@@ -539,41 +700,38 @@ class Confucius(Philosopher):
         learning: Dict[str, Any],
     ) -> str:
         """Generate a Confucian summary of the analysis."""
-        parts = []
+        # Always begin with proactive philosophical application to the actual problem
+        parts = [self._apply_confucian_to_problem(text)]
 
+        # Append detected Confucian concepts as deeper analysis
         if ren["ren_present"]:
             parts.append(
-                "Text embodies ren (benevolence) - the supreme Confucian virtue."
+                "Ren (仁, benevolence) is manifest: the supreme Confucian virtue is present."
             )
 
         if li["li_present"]:
-            parts.append("It emphasizes li (ritual propriety) and proper conduct.")
+            parts.append("Li (禮, ritual propriety) is evident — proper conduct and form.")
 
         if yi["yi_present"]:
-            parts.append("It demonstrates yi (righteousness) and moral principle.")
+            parts.append("Yi (義, righteousness) is demonstrated — moral principle over expedience.")
 
         if xiao["xiao_present"]:
-            parts.append(
-                "It expresses xiao (filial piety) toward family and ancestors."
-            )
+            parts.append("Xiao (孝, filial piety) is expressed — reverence for family and origins.")
 
         if junzi["junzi_present"]:
-            parts.append("It reflects the ideal of the junzi - the exemplary person.")
+            parts.append("The junzi (君子, exemplary person) ideal is reflected.")
 
         if zhong_shu["zhong_loyalty_present"] or zhong_shu["shu_reciprocity_present"]:
             parts.append(zhong_shu["interpretation"])
 
         if de["de_present"]:
-            parts.append("It emphasizes de (virtue) and moral character.")
+            parts.append("De (德, virtue/moral power) is emphasized.")
 
         if tianming["tianming_present"]:
-            parts.append("It references the Mandate of Heaven and cosmic moral order.")
+            parts.append("Tianming (天命, Mandate of Heaven) and cosmic moral order are invoked.")
 
         if learning["learning_present"]:
-            parts.append("It values learning and self-cultivation.")
-
-        if not parts:
-            parts.append("Text shows limited engagement with core Confucian values.")
+            parts.append("The value of xue (學, learning) and self-cultivation is affirmed.")
 
         return " ".join(parts)
 

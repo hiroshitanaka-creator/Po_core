@@ -78,6 +78,7 @@ class Zhuangzi(Philosopher):
         uselessness = self._assess_uselessness(text)
 
         summary = self._generate_summary(
+            text,
             dao,
             wu_wei,
             ziran,
@@ -514,8 +515,178 @@ class Zhuangzi(Philosopher):
             ),
         }
 
+    def _apply_zhuangzi_to_problem(self, text: str) -> str:
+        """
+        Proactively apply Zhuangzi's Daoist philosophy to any problem type.
+
+        Zhuangzi's wisdom: Dao (道/the Way), wu wei (無為/non-action), ziran (自然/naturalness),
+        xiaoyaoyou (逍遙遊/free wandering), qiwulun (齊物論/equality of all things),
+        transformation, and the paradox of usefulness.
+        """
+        text_lower = text.lower()
+
+        is_decision = any(
+            w in text_lower
+            for w in [
+                "should",
+                "decide",
+                "choice",
+                "option",
+                "career",
+                "すべき",
+                "転職",
+                "決断",
+                "選択",
+            ]
+        )
+        is_technology = any(
+            w in text_lower
+            for w in [
+                "technology",
+                "ai",
+                "machine",
+                "digital",
+                "robot",
+                "system",
+                "技術",
+                "人工知能",
+                "機械",
+            ]
+        )
+        is_knowledge = any(
+            w in text_lower
+            for w in [
+                "knowledge",
+                "truth",
+                "know",
+                "understand",
+                "certain",
+                "objective",
+                "reality",
+                "真理",
+                "知識",
+                "客観",
+            ]
+        )
+        is_conflict = any(
+            w in text_lower
+            for w in [
+                "conflict",
+                "war",
+                "debate",
+                "argument",
+                "right",
+                "wrong",
+                "justice",
+                "紛争",
+                "対立",
+                "正義",
+            ]
+        )
+        is_stress = any(
+            w in text_lower
+            for w in [
+                "stress",
+                "anxiety",
+                "pressure",
+                "worry",
+                "overwhelm",
+                "burden",
+                "ストレス",
+                "不安",
+                "プレッシャー",
+                "悩み",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "Zhuangzi offers the parable of Cook Ding (庖丁解牛): the master butcher"
+                " does not force his blade against bone — he follows the natural cavities,"
+                " the Tao of the ox. So too with decisions: do not force an answer."
+                " Wu wei (無為, non-action) is not passivity but acting in accord with your"
+                " own natural grain. 'Flow with whatever may happen and let your mind be free."
+                " Stay centered by accepting whatever you are doing. This is the ultimate.' (Zhuangzi)"
+                " Qiwulun (齊物論, equality of all things): from a higher vantage point,"
+                " the 'better' option and the 'worse' option are not as fixed as they appear."
+                " The cicada cannot understand the journey of the great Peng bird — small knowledge"
+                " cannot fathom great knowledge. Do not let short-term thinking constrain the vision."
+                " Ziran (自然): trust your own natural response, not society's scripted answer."
+            )
+        elif is_technology:
+            return (
+                "Zhuangzi's warning about 'machine mind' (機心, ji xin): in a story, an old gardener"
+                " refuses a well-sweep machine — 'where there are machines, there will be machine affairs;"
+                " where there are machine affairs, there will be machine minds.' (Zhuangzi, Ch.12)"
+                " Once the machine mind takes hold, pure simplicity (純白) is lost, and with it,"
+                " the spirit's dwelling becomes unsettled."
+                " Yet Zhuangzi is not simply anti-technology: the Dao operates through all transformation."
+                " The question is whether technology arises from wu wei (無為) — from natural unfolding —"
+                " or from forced, anxiety-driven control."
+                " Transformation (化) is the nature of all things: technology too will transform,"
+                " and clinging to any fixed form of it — for or against — misses the Dao."
+            )
+        elif is_knowledge:
+            return (
+                "Zhuangzi dissolves the certainty of knowledge with the butterfly dream:"
+                " 'Once upon a time, I, Zhuangzi, dreamt I was a butterfly... Now I do not know"
+                " whether I was then a man dreaming I was a butterfly, or whether I am now a butterfly"
+                " dreaming I am a man.' (Zhuangzi, Ch.2)"
+                " Qiwulun (齊物論, equalization of things): all perspectives are partial;"
+                " 'this' and 'that' arise together in mutual dependence. The sage illuminates"
+                " all things with the 'heavenly equality' — from the perspective of the Dao,"
+                " all distinctions are provisional."
+                " 'Great knowledge is broad and unhurried; small knowledge is cramped and busy."
+                " Great speech is like bland flavor; small speech is all argument and debate.' (Ch.2)"
+                " True understanding is not accumulation of information but transformation of perspective."
+            )
+        elif is_conflict:
+            return (
+                "Zhuangzi responds to conflict with the relativity of perspectives (齊物論, qiwulun):"
+                " each side in a dispute occupies a 'this' position, making the other 'that'."
+                " But 'that' also has its own 'this', and from the Dao's perspective,"
+                " neither has the final claim."
+                " The sage does not take sides (無是非, beyond right and wrong) but sees from"
+                " the pivot of the Dao (道樞, daoshu) — the still center from which all perspectives"
+                " can be seen without attachment."
+                " 'The true man of old did not dream of reversals; he had no anxiety about separations."
+                " He could go up high without trembling, into water without getting wet, into fire without"
+                " getting burned.' (Ch.6) — the spirit undisturbed by external opposition."
+                " Transformation (物化) dissolves all fixed positions eventually; what seems urgent"
+                " conflict is just one phase in the Dao's endless transformation."
+            )
+        elif is_stress:
+            return (
+                "Zhuangzi's prescription for overwhelm and anxiety: xiaoyaoyou (逍遙遊,"
+                " free and easy wandering) — the capacity to move freely without attachment"
+                " to outcomes, like the great Peng bird riding the wind for 90,000 li."
+                " 'To a mind that is still, the whole universe surrenders.' (Zhuangzi)"
+                " Ziran (自然, spontaneous naturalness): anxiety arises from forcing oneself"
+                " against one's own nature, like a fish trying to climb a tree."
+                " Wu wei (無為): the highest effectiveness comes not from straining effort"
+                " but from aligning with the natural flow."
+                " The parable of the gnarled tree: the 'useless' tree lives a thousand years"
+                " because nothing covets it. Uselessness (無用之用) is the greatest usefulness."
+                " Stop trying to be the straight, perfect timber — be the ancient gnarled oak."
+            )
+        else:
+            return (
+                "Zhuangzi (莊子, c.369–286 BCE) invites us to dissolve the problem itself."
+                " His first chapter, Xiaoyaoyou (逍遙遊, Free and Easy Wandering), opens with"
+                " the great Peng bird, whose wings darken the sky as it soars 90,000 li —"
+                " while the cicada laughs: 'Why such effort?' Small knowledge cannot fathom great knowledge."
+                " Qiwulun (齊物論, Equalization of All Things): all distinctions — right/wrong,"
+                " beautiful/ugly, useful/useless — arise from a particular perspective."
+                " From the Dao's view, they equalize."
+                " Wu wei (無為): the Dao does not strive, yet nothing is left undone."
+                " Act from your natural grain, not from social expectation or anxious forcing."
+                " Ziran (自然): trust spontaneous naturalness. The Dao is present in all things,"
+                " even in the lowliest — 'it is in the ant, in the grass, in dung, in tile-shards.' (Ch.22)"
+            )
+
     def _generate_summary(
         self,
+        text: str,
         dao: Dict[str, Any],
         wu_wei: Dict[str, Any],
         ziran: Dict[str, Any],
@@ -527,43 +698,40 @@ class Zhuangzi(Philosopher):
         uselessness: Dict[str, Any],
     ) -> str:
         """Generate a Daoist summary of the analysis."""
-        parts = []
+        # Always begin with proactive philosophical application to the actual problem
+        parts = [self._apply_zhuangzi_to_problem(text)]
 
+        # Append detected Daoist concepts
         if dao["dao_present"]:
-            parts.append(
-                "Text references the Dao - the natural Way underlying all things."
-            )
+            parts.append("Dao (道, the Way) is explicitly present in this text.")
 
         if wu_wei["wu_wei_present"]:
-            parts.append("It embodies wu wei - effortless action and non-forcing.")
+            parts.append("Wu wei (無為, effortless action) is embodied — non-forcing in action.")
 
         if ziran["ziran_present"]:
-            parts.append("It expresses ziran - naturalness and spontaneity.")
+            parts.append("Ziran (自然, naturalness) is expressed — spontaneous and unforced.")
 
         if qi["qi_present"]:
-            parts.append("It references qi - vital energy flowing through existence.")
+            parts.append("Qi (氣, vital energy) flows through this text's engagement with life.")
 
         if xiaoyaoyou["xiaoyaoyou_present"]:
             parts.append(
-                "It expresses xiaoyaoyou - free and easy wandering, spiritual freedom."
+                "Xiaoyaoyou (逍遙遊, free wandering) is present — spiritual freedom beyond attachment."
             )
 
         if qiwulun["qiwulun_present"]:
             parts.append(
-                "It embodies qiwulun - relativity of perspectives and equality of things."
+                "Qiwulun (齊物論, equality of all things) is embodied — perspectives equalized."
             )
 
         if dream["dream_reality_present"]:
-            parts.append("It questions the distinction between dream and reality.")
+            parts.append("The boundary between dream and reality is questioned — butterfly dreaming.")
 
         if transformation["transformation_present"]:
-            parts.append("It acknowledges transformation and constant change.")
+            parts.append("Transformation (物化) and constant change are acknowledged.")
 
         if uselessness["uselessness_theme_present"]:
-            parts.append("It engages with the paradox of usefulness and uselessness.")
-
-        if not parts:
-            parts.append("Text shows limited engagement with core Daoist themes.")
+            parts.append("The paradox of uselessness (無用之用) — the usefulness of the useless — is engaged.")
 
         return " ".join(parts)
 
