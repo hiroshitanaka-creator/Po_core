@@ -30,11 +30,13 @@ from po_core.deliberation.engine import (
     RoundTrace,
 )
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
-from po_core.deliberation.protocol import (
-    ArgumentCard,
-    CritiqueCard,
-    SynthesisEngine,
-    run_deliberation,
+from po_core.deliberation.protocol import run_deliberation
+from po_core.deliberation.roles import (
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    assign_role,
+    get_role_prompt_prefix,
+)
 from po_core.deliberation.synthesis import (
     ArgumentCard,
     AxisSpec,

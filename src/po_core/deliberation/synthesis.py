@@ -111,7 +111,9 @@ class SynthesisEngine:
         counts = Counter((c.stance or "unknown") for c in cards)
         return dict(sorted(counts.items(), key=lambda x: x[0]))
 
-    def _consensus_claims(self, cards: Sequence[ArgumentCard]) -> List[Dict[str, int | str]]:
+    def _consensus_claims(
+        self, cards: Sequence[ArgumentCard]
+    ) -> List[Dict[str, int | str]]:
         claim_counts: Counter[str] = Counter()
         for card in cards:
             # per-card duplicate claims are collapsed to avoid accidental over-weighting
@@ -129,7 +131,9 @@ class SynthesisEngine:
         axis_spec: AxisSpec,
         cards: Sequence[ArgumentCard],
     ) -> Dict[str, ScoreboardEntry]:
-        rows: Dict[str, List[tuple[float, float]]] = {axis: [] for axis in axis_spec.dimensions}
+        rows: Dict[str, List[tuple[float, float]]] = {
+            axis: [] for axis in axis_spec.dimensions
+        }
 
         for card in cards:
             weight = max(0.0, float(card.confidence))
@@ -172,13 +176,13 @@ class SynthesisEngine:
                 {
                     "type": "stance_split",
                     "n_stances": len(stance_distribution),
-                    "largest_group": max(stance_distribution.values()) if stance_distribution else 0,
+                    "largest_group": (
+                        max(stance_distribution.values()) if stance_distribution else 0
+                    ),
                 }
             )
 
-        sorted_axis = sorted(
-            scoreboard.items(), key=lambda x: (-x[1].variance, x[0])
-        )
+        sorted_axis = sorted(scoreboard.items(), key=lambda x: (-x[1].variance, x[0]))
         for axis, entry in sorted_axis[: self.disagreement_top_n]:
             if entry.samples >= 2 and entry.variance >= self.variance_alert_threshold:
                 rows.append(
@@ -203,7 +207,9 @@ class SynthesisEngine:
             )
         )
 
-    def _iter_questions_from_cards(self, cards: Sequence[ArgumentCard]) -> Iterable[str]:
+    def _iter_questions_from_cards(
+        self, cards: Sequence[ArgumentCard]
+    ) -> Iterable[str]:
         for card in cards:
             for q in card.questions:
                 clean = q.strip()

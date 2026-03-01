@@ -11,7 +11,12 @@ from po_core.domain.proposal import Proposal
 from po_core.domain.safety_mode import SafetyMode
 from po_core.domain.safety_verdict import SafetyVerdict
 from po_core.domain.tensor_snapshot import TensorSnapshot
-from po_core.ensemble import EnsembleDeps, _PhasePreResult, _normalize_primary_proposals, _run_phase_post
+from po_core.ensemble import (
+    EnsembleDeps,
+    _normalize_primary_proposals,
+    _PhasePreResult,
+    _run_phase_post,
+)
 from po_core.party_machine import run_philosophers
 
 
@@ -76,7 +81,9 @@ def _mk_ctx() -> Context:
     )
 
 
-def _mk_proposal(pid: str, author: str | None = None, *, fallback: bool = False) -> Proposal:
+def _mk_proposal(
+    pid: str, author: str | None = None, *, fallback: bool = False
+) -> Proposal:
     extra = {}
     if author is not None:
         extra = {PO_CORE: {AUTHOR: author}}
@@ -150,7 +157,9 @@ def test_normalize_primary_proposals_handles_empty_none_and_fallback_author() ->
     assert [p.proposal_id for p in secondary] == ["a-1", "legacy-1"]
 
 
-def test_run_phase_post_with_deliberation_rounds_two_completes_without_exception() -> None:
+def test_run_phase_post_with_deliberation_rounds_two_completes_without_exception() -> (
+    None
+):
     ctx = _mk_ctx()
     tracer = _NullTracer()
     memory_write = _NullMemoryWrite()

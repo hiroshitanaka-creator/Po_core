@@ -1,7 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Sequence, Tuple
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.domain.proposal import Proposal
@@ -194,7 +204,9 @@ def _coerce_argument_card(raw: Any, ph: Any) -> ArgumentCard:
     raise TypeError("Unsupported propose_card return type")
 
 
-def _coerce_critique_card(raw: Any, *, critic: str, target: ArgumentCard) -> CritiqueCard:
+def _coerce_critique_card(
+    raw: Any, *, critic: str, target: ArgumentCard
+) -> CritiqueCard:
     if isinstance(raw, CritiqueCard):
         return raw
     if isinstance(raw, Mapping):
