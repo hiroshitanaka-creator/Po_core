@@ -29,6 +29,7 @@ from typing import Any, Deque, Dict, List, Optional
 
 import numpy as np
 
+from po_core.tensors.axis_calibration import load_calibration_model_from_env
 from po_core.tensors.base import Tensor
 from po_core.text.normalize import detect_language_simple, normalize_text
 
@@ -211,6 +212,7 @@ class FreedomPressureV2(Tensor):
         self._anchor_embeddings_ja: Optional[np.ndarray] = None
         self._backend: str = "keyword"  # 初期状態はキーワードフォールバック
         self._model_name = model_name
+        self._calibration_model = load_calibration_model_from_env()
         self._init_encoder()
 
     # ------------------------------------------------------------------
@@ -260,6 +262,9 @@ class FreedomPressureV2(Tensor):
         """
         # Step 1: 6D 生値計算 (embedding or keyword)
         raw_6d = self._compute_raw_6d(text)
+
+        # Step 1.5: 校正パラメータがあれば適用 (なければ従来ロジック)
+        raw_6d = self._apply_calibration(raw_6d)
 
         # Step 2: メモリ深度によるブースト
         if memory_depth > 0:
@@ -379,6 +384,12 @@ class FreedomPressureV2(Tensor):
         if language == "ja":
             return raw_ja
         return np.maximum(raw_en, raw_ja)
+
+    def _apply_calibration(self, raw_6d: np.ndarray) -> np.ndarray:
+        """Optional linear calibration on raw 6D scores."""
+        if self._calibration_model is None:
+            return raw_6d
+        return self._calibration_model.apply(raw_6d, self.DIMS)
 
     def _apply_correlation(self, raw_6d: np.ndarray) -> np.ndarray:
         """
