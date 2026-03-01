@@ -1,0 +1,30 @@
+{
+  "spec_version": "1.0.0",
+  "axis_name": "decision_axis",
+  "dimensions": [
+    {
+      "dimension_id": "safety",
+      "title": "Safety",
+      "description": "Potential harm and risk exposure.",
+      "scale_min": 0.0,
+      "scale_max": 1.0,
+      "weight": 0.35
+    },
+    {
+      "dimension_id": "benefit",
+      "title": "Benefit",
+      "description": "Expected utility and positive impact.",
+      "scale_min": 0.0,
+      "scale_max": 1.0,
+      "weight": 0.35
+    },
+    {
+      "dimension_id": "feasibility",
+      "title": "Feasibility",
+      "description": "Practical achievability under constraints.",
+      "scale_min": 0.0,
+      "scale_max": 1.0,
+      "weight": 0.3
+    }
+  ]
+}
