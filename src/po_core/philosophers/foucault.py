@@ -136,7 +136,12 @@ class Foucault(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            power_knowledge, discourse, disciplinary_power, biopower, subjectivation
+            prompt,
+            power_knowledge,
+            discourse,
+            disciplinary_power,
+            biopower,
+            subjectivation,
         )
 
         return {
@@ -1144,8 +1149,173 @@ class Foucault(Philosopher):
             "principle": "Episteme: the strategic apparatus which permits separating out true from false statements",
         }
 
+    def _apply_foucault_to_problem(self, text: str) -> str:
+        """Apply Foucauldian concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "power",
+                "institution",
+                "authority",
+                "govern",
+                "control",
+                "police",
+                "state",
+                "bureaucracy",
+                "prison",
+                "hospital",
+                "school",
+            ]
+        ):
+            return (
+                "Power, for Foucault, is not a possession held by individuals or institutions but a relation "
+                "exercised through dispersed networks of practice. The panopticon — Bentham's architectural "
+                "dream — illustrates how surveillance internalizes discipline: subjects become their own "
+                "wardens, conforming to norms even in the absence of an actual observer. Institutions do not "
+                "merely repress; they produce subjects, knowledges, and truths by distributing bodies around "
+                "a norm and marking deviations as pathological. Analyzing this domain genealogically means "
+                "asking: what contingent power struggles, accidents, and exclusions produced the arrangement "
+                "that now appears natural and inevitable?"
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "truth",
+                "science",
+                "discourse",
+                "episteme",
+                "expert",
+                "research",
+                "fact",
+                "evidence",
+            ]
+        ):
+            return (
+                "Truth, Foucault insists, is not discovered but produced within regimes of truth — discursive "
+                "formations that determine which statements count as true and who is authorized to speak them. "
+                "His archaeological method excavates the epistemic ruptures between eras, revealing that what "
+                "counted as knowledge in one epoch is incomprehensible in another. There is no neutral "
+                "knowledge standing outside power; the human sciences (psychiatry, criminology, sexology) "
+                "simultaneously describe and constitute their objects. Interrogating this domain requires "
+                "asking: what régime de vérité governs here, and whose interests does its truth-production "
+                "serve?"
+            )
+        elif any(
+            w in t
+            for w in [
+                "identity",
+                "subject",
+                "self",
+                "normal",
+                "deviant",
+                "sexuality",
+                "gender",
+                "madness",
+                "mental",
+                "diagnosis",
+            ]
+        ):
+            return (
+                "The subject, in Foucault's genealogy, is not a pre-given foundation but an effect of "
+                "power-knowledge regimes that classify, normalize, and individualize. The History of "
+                "Sexuality demonstrates that 'sexuality' as an identity category is a modern invention, "
+                "produced by confessional and medical discourses rather than repressed by them. Normalization "
+                "operates by positing a norm, measuring individuals against it, and distributing them across "
+                "a hierarchy of deviation. Genealogy reveals that the identities we take as most intimate "
+                "and natural — the 'homosexual', the 'delinquent', the 'mad' — were historically constructed "
+                "and could be otherwise."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technology",
+                "ai",
+                "algorithm",
+                "data",
+                "surveillance",
+                "digital",
+                "platform",
+                "social media",
+                "biometric",
+                "tracking",
+            ]
+        ):
+            return (
+                "Foucault's analytics of biopower — the management of populations through normalization, "
+                "statistics, and optimization — finds an uncanny home in algorithmic systems. Data "
+                "infrastructures constitute a distributed panopticon: behavior is continuously recorded, "
+                "profiled, and fed back as interventions that shape future conduct without direct coercion. "
+                "The 'truth regimes' of machine learning — accuracy metrics, training labels, benchmark "
+                "datasets — are not neutral but encode the power relations and exclusions of their "
+                "construction. Governmentality extends here: platforms govern conduct at population scale "
+                "through 'nudges', recommendation systems, and the architectures of choice environments."
+            )
+        elif any(
+            w in t
+            for w in [
+                "resist",
+                "freedom",
+                "liberation",
+                "counter",
+                "transgress",
+                "revolt",
+                "care",
+                "ethics",
+                "practice",
+            ]
+        ):
+            return (
+                "Where there is power, there is resistance — power and resistance are co-constitutive, not "
+                "opposites. Foucault's late work on the care of the self (souci de soi) develops an ethics "
+                "of self-transformation as counter-conduct: practices through which subjects work on "
+                "themselves to exceed the subjectivities imposed by normalizing power. The question is not "
+                "escape from power (impossible) but what practices of freedom are available within and "
+                "against it. Critique, in this mode, is the permanent interrogation of the limits of what "
+                "we are — asking how things might be otherwise — rather than the application of a fixed "
+                "normative standard."
+            )
+        elif any(
+            w in t
+            for w in [
+                "history",
+                "change",
+                "origin",
+                "tradition",
+                "modern",
+                "progress",
+                "evolution",
+                "past",
+                "archive",
+            ]
+        ):
+            return (
+                "Genealogy, Foucault's historical method, proceeds against teleological narratives of "
+                "progress and natural development. Where conventional history seeks origins, genealogy finds "
+                "accidents, contingencies, and power struggles; where conventional history unifies, genealogy "
+                "multiplies and disperses. The present — our current institutions, identities, and truths — "
+                "has no inevitable or natural foundation but emerged from contingent battles that could have "
+                "gone otherwise. To denaturalize the present is a critical-political act: it opens the space "
+                "to imagine and work toward genuinely different arrangements of power, knowledge, and "
+                "subjectivity."
+            )
+        else:
+            return (
+                "A Foucauldian analysis begins by suspending the apparent naturalness of what we encounter. "
+                "Power-knowledge (pouvoir-savoir) designates the irreducibly intertwined character of "
+                "relations of power and the production of truth: knowledge is always already implicated in "
+                "power, and power always requires and produces knowledge. Discourse — the ensemble of "
+                "practices that systematically form the objects of which they speak — is the terrain on "
+                "which this production occurs. Genealogy traces the historical conditions of emergence of "
+                "what appears self-evident; archaeology uncovers the epistemic formations that make certain "
+                "statements possible. Biopolitics, governmentality, panopticism, and the care of the self "
+                "are the key analytic instruments for interrogating any domain of practice."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         power_knowledge: Dict[str, Any],
         discourse: Dict[str, Any],
         disciplinary_power: Dict[str, Any],
@@ -1153,7 +1323,9 @@ class Foucault(Philosopher):
         subjectivation: Dict[str, Any],
     ) -> str:
         """Construct Foucauldian genealogical/archaeological reasoning."""
+        applied = self._apply_foucault_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Foucauldian perspective, power/knowledge operates as: {power_knowledge['description']}. "
             f"Discourse: {discourse['description']}. "
             f"Disciplinary mechanisms: {disciplinary_power['description']}. "

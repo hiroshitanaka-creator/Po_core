@@ -108,7 +108,13 @@ class Descartes(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
-            cogito, methodic_doubt, clear_distinct, mind_body, rationalism, mathematical
+            prompt,
+            cogito,
+            methodic_doubt,
+            clear_distinct,
+            mind_body,
+            rationalism,
+            mathematical,
         )
 
         return {
@@ -986,8 +992,141 @@ class Descartes(Philosopher):
             "principle": "Apply mathematical method to philosophy - clear axioms and rigorous deduction",
         }
 
+    def _apply_descartes_to_problem(self, text: str) -> str:
+        """Apply Cartesian philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "doubt",
+                "know",
+                "certain",
+                "truth",
+                "belief",
+                "evidence",
+                "justify",
+            ]
+        ):
+            return (
+                "Descartes' method of doubt demands we withhold assent from everything that admits"
+                " the slightest uncertainty. Applying this to the present question, we must strip"
+                " away inherited opinion and sensory prejudice until we reach propositions that are"
+                " clear and distinct to the mind's eye. The cogito — cogito ergo sum — anchors the"
+                " entire inquiry: existence of a thinking thing is the one indubitable foundation."
+                " From this foundation, clear and distinct ideas serve as the criterion of truth,"
+                " validated ultimately by a non-deceiving God who guarantees our rational faculty."
+                " Only conclusions that survive this Cartesian gauntlet deserve to be called genuine"
+                " knowledge."
+            )
+        elif any(
+            w in t
+            for w in [
+                "mind",
+                "conscious",
+                "think",
+                "ai",
+                "machine",
+                "intelligence",
+                "mental",
+                "brain",
+            ]
+        ):
+            return (
+                "Descartes draws a sharp ontological boundary between res cogitans — the thinking,"
+                " unextended substance — and res extensa — the extended, mechanical substance."
+                " Machines, however complex, belong entirely to res extensa and operate by purely"
+                " mechanical principles, much like the animal-machines Descartes describes in the"
+                " Discourse on Method. A genuine thinking thing, by contrast, is identified by its"
+                " capacity for flexible rational speech and self-aware doubt. The pineal gland"
+                " problem illustrates the difficulty: if mind and body are truly distinct substances,"
+                " their interaction demands special explanation. Whether artificial intelligence"
+                " constitutes a res cogitans or an extraordinarily sophisticated machine remains"
+                " one of the deepest open questions in Cartesian metaphysics."
+            )
+        elif any(
+            w in t
+            for w in [
+                "decision",
+                "choice",
+                "act",
+                "should",
+                "option",
+                "dilemma",
+                "select",
+            ]
+        ):
+            return (
+                "Cartesian practical wisdom counsels applying methodic doubt to all available options"
+                " before committing to a course of action. Just as Descartes suspended judgment on"
+                " everything susceptible to doubt until he reached indubitable ground, so too must"
+                " practical deliberation clear away unexamined assumptions about the options before"
+                " us. Only those plans whose merits appear clear and distinct to impartial reason"
+                " deserve confident endorsement. Descartes also advised, in his provisional moral"
+                " code, to act decisively once a course has been rationally selected rather than"
+                " vacillating — the resolution of the will should match the clarity achieved by the"
+                " intellect."
+            )
+        elif any(
+            w in t
+            for w in [
+                "god",
+                "faith",
+                "religion",
+                "divine",
+                "theology",
+                "prayer",
+                "soul",
+            ]
+        ):
+            return (
+                "Descartes placed God at the very center of his epistemological architecture: the"
+                " ontological argument of the Meditations demonstrates a supremely perfect being"
+                " whose very essence entails existence. More crucially, God's veracity is the"
+                " guarantor that our clear and distinct ideas correspond to reality rather than"
+                " being products of an evil demon's deception. Without this divine guarantee, the"
+                " Cartesian system of knowledge would collapse into solipsism. The soul, as res"
+                " cogitans, is immortal precisely because it is entirely distinct from the body;"
+                " its fate is therefore not bound to the physical corruption of res extensa."
+            )
+        elif any(
+            w in t
+            for w in [
+                "science",
+                "method",
+                "math",
+                "logic",
+                "proof",
+                "reason",
+                "deduct",
+                "analytic",
+            ]
+        ):
+            return (
+                "Descartes envisioned a mathesis universalis — a universal mathematics that would"
+                " unify all branches of knowledge under a single deductive method. In the Rules for"
+                " the Direction of the Mind and the Discourse on Method, he proposed reducing every"
+                " problem to its simplest components, solving those components with certainty, and"
+                " reconstructing the complex whole by a chain of necessary inferences. This"
+                " deductive model, inspired by geometry, treats science as a hierarchy of truths"
+                " derivable from indubitable first principles. Descartes' own contributions to"
+                " analytic geometry exemplify mathesis universalis in practice, translating"
+                " geometric problems into algebraic equations subject to certain calculation."
+            )
+        else:
+            return (
+                "Descartes invites us to approach any problem through the lens of the Meditations"
+                " on First Philosophy: begin with methodic doubt, seek what is clear and distinct,"
+                " and build knowledge from the indubitable bedrock of the cogito. Mind-body dualism"
+                " — the distinction between res cogitans and res extensa — shapes how we understand"
+                " the nature of the entities involved. Innate ideas, implanted by a veracious God,"
+                " supply the materials of genuine knowledge that no empirical deception can"
+                " undermine. Whatever the question, Cartesian rationalism demands rigorous"
+                " self-examination before any conclusion is embraced as true."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         cogito: Dict[str, Any],
         methodic_doubt: Dict[str, Any],
         clear_distinct: Dict[str, Any],
@@ -996,7 +1135,9 @@ class Descartes(Philosopher):
         mathematical: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Cartesian philosophical reasoning."""
+        applied = self._apply_descartes_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Cartesian rationalist perspective, we must begin with methodic doubt. "
             f"Doubt status: {methodic_doubt['description']}. "
         )
