@@ -110,6 +110,7 @@ class Nishida(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             pure_experience,
             absolute_nothingness,
             basho,
@@ -1100,8 +1101,149 @@ class Nishida(Philosopher):
             "principle": "Zen insight: Direct awakening to emptiness and non-duality",
         }
 
+    def _apply_nishida_to_problem(self, text: str) -> str:
+        """
+        Proactively apply Nishida Kitaro's philosophy to any problem type.
+
+        Nishida's core: 純粋経験 (pure experience), 絶対無 (Absolute Nothingness),
+        場所 (basho/place), 絶対矛盾的自己同一 (self-contradictory identity),
+        行為的直観 (acting intuition).
+        """
+        text_lower = text.lower()
+
+        is_decision = any(
+            w in text_lower
+            for w in [
+                "すべき",
+                "どうすべき",
+                "転職",
+                "決断",
+                "選択",
+                "どちら",
+                "decide",
+                "choice",
+                "should",
+                "option",
+            ]
+        )
+        is_technology = any(
+            w in text_lower
+            for w in [
+                "technology",
+                "ai",
+                "digital",
+                "robot",
+                "machine",
+                "技術",
+                "人工知能",
+                "コンピュータ",
+                "システム",
+            ]
+        )
+        is_ethics = any(
+            w in text_lower
+            for w in [
+                "ethical",
+                "moral",
+                "right",
+                "wrong",
+                "just",
+                "fair",
+                "good",
+                "倫理",
+                "道徳",
+                "正義",
+                "善",
+            ]
+        )
+        is_consciousness = any(
+            w in text_lower
+            for w in [
+                "consciousness",
+                "self",
+                "identity",
+                "mind",
+                "aware",
+                "perceive",
+                "意識",
+                "自己",
+                "同一性",
+                "心",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "西田幾多郎（1870-1945）の純粋経験（じゅんすいけいけん）から問う："
+                "「転職すべきか」「どちらを選ぶか」という問いは、"
+                "主観と客観が分裂する前の純粋経験の場（basho）においてどう現れているか。"
+                "選択を迷う「今この意識」こそが純粋経験であり、"
+                "選択肢Aと選択肢Bという分割はすでに反省的思考の産物だ。"
+                "絶対矛盾的自己同一（ぜったいむじゅんてきじこどういつ）："
+                "どちらの選択肢も「選ぶ自己」と「選ばれる状況」の矛盾を内包しており、"
+                "その矛盾が統一される場所（basho）こそが真の決断の場だ。"
+                "行為的直観（こういてきちょっかん）：考えることと行為することを分けるな。"
+                "直観的行為の中にこそ、西田的な「真知」が宿る。"
+                "絶対無（ぜったいむ）：どちらを選んでも「正解」という実体はない——"
+                "選択は絶対無の場において自己決定するのだ。"
+            )
+        elif is_technology:
+            return (
+                "西田幾多郎の場所（basho）の論理からAI・技術を問う。"
+                "技術は「道具」として人間の外側にあるのではなく、"
+                "人間の純粋経験（じゅんすいけいけん）の「場所」を変容させる。"
+                "AIの「意識」「自己」の問題：西田は純粋経験を「主客未分の直接経験」と定義した。"
+                "AIに純粋経験は可能か——この問いは場所（basho）の論理によって問わねばならない。"
+                "絶対矛盾的自己同一（ぜったいむじゅんてきじこどういつ）："
+                "人間とAIは対立しながら統一される——「人間ではないもの」によって"
+                "「人間であること」の意味が問い直される。"
+                "西田が警告するように：技術への過度の同化は"
+                "純粋経験の基底を失わせ、行為的直観の力を弱める。"
+            )
+        elif is_ethics:
+            return (
+                "西田幾多郎の倫理観は「善の研究」（1911）に根ざす。"
+                "善とは何か——西田にとって善とは「人格の実現」であり、"
+                "純粋経験（じゅんすいけいけん）の最高形態である。"
+                "倫理的判断は主観と客観の分裂の前、すなわち絶対無（ぜったいむ）の場において生まれる。"
+                "場所（basho）の論理：倫理は「場所」によって異なる——"
+                "普遍的な倫理規則を適用するだけでは、具体的な場所における善を見失う。"
+                "絶対矛盾的自己同一：「正しさ」と「誤り」は単純な対立ではなく、"
+                "より高次の統一の中において意味を持つ。"
+                "行為的直観（こういてきちょっかん）：倫理は頭で考えるものではなく、"
+                "行為しながら直観するものだ——西田的実践倫理の核心。"
+            )
+        elif is_consciousness:
+            return (
+                "西田幾多郎の哲学の出発点は「純粋経験」（じゅんすいけいけん）——"
+                "主観と客観に分裂する前の直接的な意識の状態だ。"
+                "自己（じこ）：西田の自己は固定した実体ではなく、"
+                "「自己の中に他者を含み、他者の中に自己を含む」絶対矛盾的自己同一の働きだ。"
+                "絶対無（ぜったいむ）：意識の最深部は「無」である——"
+                "ただし単なる虚無ではなく、あらゆる存在を包摂する絶対的な場所（basho）だ。"
+                "禅（ぜん）の影響：座禅・公案の実践が西田の哲学を根底で支えている——"
+                "「無」の体験こそが絶対無の哲学的基盤だ。"
+            )
+        else:
+            return (
+                "西田幾多郎（1870-1945）——京都学派の祖——は問う："
+                "あらゆる思考・判断・行為の根底に何があるか。"
+                "純粋経験（じゅんすいけいけん）：主観と客観が分裂する前の直接的経験の場——"
+                "この問いを抱えている「今この意識」こそが純粋経験の現れだ。"
+                "場所（basho）の論理：思考は「場所」において起こる——"
+                "この問いはどのような「場所」、どのような文脈において問われているのか。"
+                "絶対矛盾的自己同一（ぜったいむじゅんてきじこどういつ）："
+                "対立するものが高次において統一される——矛盾は解消すべき問題ではなく、"
+                "存在の構造そのものだ。"
+                "絶対無（ぜったいむ）：すべての存在の根底に「無」がある——"
+                "実体としての「無」ではなく、自己決定する場所としての絶対無。"
+                "行為的直観（こういてきちょっかん）：考えてから行為するのではなく、"
+                "行為しながら直観する——これが西田的知恵の実践形態だ。"
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         pure_experience: Dict[str, Any],
         absolute_nothingness: Dict[str, Any],
         basho: Dict[str, Any],
@@ -1110,37 +1252,37 @@ class Nishida(Philosopher):
         zen_influence: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Nishidaian reasoning."""
-        reasoning = (
-            f"From Nishida's perspective of 純粋経験 (pure experience) and 絶対無 (Absolute Nothingness), "
-            f"this text reveals: {pure_experience['description']}. "
-        )
+        # Always begin with proactive philosophical application to the actual problem
+        reasoning = self._apply_nishida_to_problem(text)
 
-        # Add Absolute Nothingness analysis
-        reasoning += f"Regarding the ground of being, we find: {absolute_nothingness['description']}. "
-
-        # Add basho analysis
-        reasoning += f"The logic of 場所 (basho/place) shows: {basho['description']}. "
-
-        # Add self-contradictory identity
+        # Append deeper concept-level analysis when detected
         reasoning += (
-            f"In terms of 絶対矛盾的自己同一 (self-contradictory identity): "
-            f"{self_contradictory_identity['description']}. "
+            f" 純粋経験（pure experience）の観点：{pure_experience['description']}。"
         )
 
-        # Add acting intuition
-        reasoning += f"Concerning 行為的直観 (acting intuition): {acting_intuition['description']}. "
+        reasoning += (
+            f" 絶対無（Absolute Nothingness）の基盤：{absolute_nothingness['description']}。"
+        )
+
+        reasoning += f" 場所（basho）の論理：{basho['description']}。"
+
+        reasoning += (
+            f" 絶対矛盾的自己同一：{self_contradictory_identity['description']}。"
+        )
+
+        reasoning += (
+            f" 行為的直観（acting intuition）：{acting_intuition['description']}。"
+        )
 
         # Add Zen influence if significant
         if zen_influence["zen_score"] >= 1 or zen_influence["nondual_score"] >= 1:
-            reasoning += f"Zen influence: {zen_influence['description']}. "
+            reasoning += f" 禅（ぜん）的影響：{zen_influence['description']}。"
 
         # Conclude with Nishida's core insight
         reasoning += (
-            "The ultimate reality is 絶対無 (Absolute Nothingness) - not mere negation, "
-            "but the self-determining place (場所) that grounds all being through the "
-            "self-identity of absolute contradictions. True knowledge is realized in "
-            "純粋経験 (pure experience) and 行為的直観 (acting intuition), prior to "
-            "the subject-object split."
+            " 究極の実在は絶対無（Absolute Nothingness）——単なる否定ではなく、"
+            "絶対矛盾の自己同一を通じてすべての存在を根拠づける自己決定的な場所（basho）。"
+            "真の知は純粋経験と行為的直観において、主客分裂以前に実現される。"
         )
 
         return reasoning

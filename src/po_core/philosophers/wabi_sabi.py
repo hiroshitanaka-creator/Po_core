@@ -135,7 +135,7 @@ class WabiSabi(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            imperfection, impermanence, simplicity, overall
+            prompt, imperfection, impermanence, simplicity, overall
         )
 
         return {
@@ -757,25 +757,164 @@ class WabiSabi(Philosopher):
             "principle": "侘び寂び - Finding beauty in imperfection, impermanence, and simplicity",
         }
 
+    def _apply_wabisabi_to_problem(self, text: str) -> str:
+        """
+        Proactively apply Wabi-Sabi aesthetic philosophy to any problem type.
+
+        Wabi-Sabi teaches beauty in imperfection (不完全), impermanence (無常),
+        and incompleteness (未完成). Nothing lasts, nothing is finished, nothing is perfect.
+        """
+        text_lower = text.lower()
+
+        is_decision = any(
+            w in text_lower
+            for w in [
+                "すべき",
+                "どうすべき",
+                "転職",
+                "決断",
+                "選択",
+                "どちら",
+                "decide",
+                "choice",
+                "should",
+                "option",
+            ]
+        )
+        is_technology = any(
+            w in text_lower
+            for w in [
+                "technology",
+                "ai",
+                "digital",
+                "robot",
+                "perfect",
+                "optimal",
+                "技術",
+                "人工知能",
+                "最適化",
+                "完璧",
+            ]
+        )
+        is_crisis = any(
+            w in text_lower
+            for w in [
+                "conflict",
+                "crisis",
+                "war",
+                "broken",
+                "fail",
+                "loss",
+                "grief",
+                "危機",
+                "失敗",
+                "喪失",
+                "壊れ",
+            ]
+        )
+        is_creation = any(
+            w in text_lower
+            for w in [
+                "create",
+                "design",
+                "build",
+                "art",
+                "make",
+                "craft",
+                "作る",
+                "デザイン",
+                "創作",
+                "芸術",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "侘び寂び（わびさび）の美学から見れば、「完璧な選択」などというものは存在しない。"
+                "不完全（ふかんぜん）——どちらの選択肢も傷や欠けを持つ。それが選択というものの本質だ。"
+                "無常（むじょう）——「正しい選択」も時とともに変わる。今日の最善が明日の重荷になることもある。"
+                "侘び（wabi）の精神：決断の不完全さを恐れるな。未完成の選択を抱えて生きることの中に、"
+                "本物の美しさがある。"
+                "金継ぎ（kintsugi）の哲学：割れた器を金で繋ぐように、"
+                "不完全な選択の傷こそが、その人の人生に深みと個性を与える。"
+                "寂び（sabi）：時間の経過と変化を受け入れよ——決断は永遠に固定されるのではなく、"
+                "生きながら変化し続けるものだ。"
+            )
+        elif is_technology:
+            return (
+                "侘び寂び（わびさび）の美学は、技術の「完璧性」への執着に根本的な疑問を投げかける。"
+                "不完全（ふかんぜん）：最適化・効率化を極めようとする技術の衝動は、"
+                "wabi-sabiが美と見なす「不完全さ」「余白」「偶然性」を排除しようとする。"
+                "無常（むじょう）：いかに精巧なシステムも、やがて時代遅れになる。"
+                "この無常を技術設計に織り込むことが真の知恵だ。"
+                "間（ま）：技術のデザインにおいて、「何もない空間」「余白」「沈黙」が"
+                "豊かさをもたらす——機能過多のシステムよりも、余白ある設計の方が人間的だ。"
+                "侘び的問い：この技術は人間の不完全さ・脆弱さを尊重するか、"
+                "それとも消去しようとするか？"
+            )
+        elif is_crisis:
+            return (
+                "侘び寂び（わびさび）は危機・喪失・破壊の中にこそ、深い美しさを見出す。"
+                "金継ぎ（kintsugi）——割れた陶器を金で修復する伝統の如く："
+                "壊れたものは修復されることで、元の完全な状態より美しくなる。"
+                "危機・失敗・喪失は傷ではなく、その存在の歴史を刻む「金の継ぎ目」だ。"
+                "無常（むじょう）：この危機もまた、永遠には続かない。変化こそが存在の本質だ。"
+                "寂び（sabi）：時間と苦難によって磨かれたものの中にある静けさと深み——"
+                "危機を経た人間・組織・社会は、傷を持つことで深みを増す。"
+                "不完全を受け入れよ：完全な回復を求めるのではなく、"
+                "傷を抱えながら前進することの美しさを見出せ。"
+            )
+        elif is_creation:
+            return (
+                "侘び寂び（わびさび）の美学は、創作・デザインの根幹を問い直す。"
+                "不完全（ふかんぜん）の美：完璧を追求することで失われるものがある——"
+                "手の温もり、偶然の美、生命の息吹。"
+                "未完成（みかんせい）：「完成した」作品より、まだ生きている作品の方が美しい。"
+                "柔らかな余白、曖昧な境界、意図せぬ傷こそが作品に魂を宿す。"
+                "自然（しぜん）：自然素材の不規則性、時間による変化——"
+                "これらを排除するのではなく受け入れることが侘び寂びの創作だ。"
+                "間（ま）：余白・沈黙・空白は「欠如」ではなく、"
+                "作品が呼吸する空間である。"
+            )
+        else:
+            return (
+                "侘び寂び（わびさび）——日本の美意識の核心——は三つの真実を語る。"
+                "不完全（ふかんぜん）：完璧なものなど存在しない。そしてそこにこそ美がある。"
+                "金継ぎ（kintsugi）の哲学：割れた陶器の継ぎ目を金で埋め、"
+                "傷を隠すのではなく輝かせる——不完全さこそが、その物の歴史であり個性だ。"
+                "無常（むじょう）：何も永続しない。桜の花は散るから美しく、"
+                "朝露は消えるから輝く。この問いも、この状況も、無常の流れの中にある。"
+                "未完成（みかんせい）：完成された答えを求めるな。"
+                "「まだ終わっていない」という状態の中に、生命の息吹がある。"
+                "侘び寂びは問う：今この不完全さ、この不確かさの中に、どんな美しさが隠れているか？"
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         imperfection: Dict[str, Any],
         impermanence: Dict[str, Any],
         simplicity: Dict[str, Any],
         overall: Dict[str, Any],
     ) -> str:
         """Construct wabi-sabi aesthetic reasoning."""
-        reasoning = (
-            f"From a wabi-sabi aesthetic perspective, imperfection: {imperfection['description']}. "
-            f"Impermanence: {impermanence['description']}. "
-            f"Simplicity: {simplicity['description']}. "
-            f"Overall assessment: {overall['description']}. "
-        )
+        # Always begin with proactive philosophical application
+        reasoning = self._apply_wabisabi_to_problem(text)
+
+        # Add concept-level analysis only when clearly detected
+        if imperfection["appreciation"] not in ("Unclear", "Indeterminate"):
+            reasoning += f" 不完全の美：{imperfection['description']}。"
+
+        if impermanence.get("awareness") not in ("Unclear", "Indeterminate", None):
+            reasoning += f" 無常（むじょう）：{impermanence['description']}。"
+
+        if simplicity.get("level") not in ("Unclear", "Indeterminate", None):
+            reasoning += f" 簡素（かんそ）：{simplicity['description']}。"
 
         # Conclude with wabi-sabi wisdom
         reasoning += (
-            "侘び寂び teaches us to find beauty in the imperfect, impermanent, and incomplete. "
-            "Nothing lasts, nothing is finished, nothing is perfect - and therein lies the beauty."
+            " wabi-sabi（侘び寂び）が教えるように：imperfection（不完全）・無常・未完成の中にこそ、"
+            "本物の美しさがある。"
         )
 
         return reasoning
