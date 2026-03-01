@@ -187,8 +187,14 @@ def normalize_response(
     # The four new fields are excluded here because they go through explicit
     # normalisation logic below (type coercion, clamping, allow-list checks).
     preserved_keys = {
-        "reasoning", "perspective", "tension", "metadata",
-        "rationale", "confidence", "action_type", "citations",
+        "reasoning",
+        "perspective",
+        "tension",
+        "metadata",
+        "rationale",
+        "confidence",
+        "action_type",
+        "citations",
     }
     for key, value in raw_response.items():
         if key not in preserved_keys:
@@ -220,9 +226,7 @@ def normalize_response(
 
     # action_type: must be one of VALID_ACTION_TYPES; unknown values → "answer"
     raw_action = raw_response.get("action_type", "answer")
-    action_type: str = (
-        raw_action if raw_action in VALID_ACTION_TYPES else "answer"
-    )
+    action_type: str = raw_action if raw_action in VALID_ACTION_TYPES else "answer"
 
     # citations: must be a list; non-list values → []
     raw_citations = raw_response.get("citations")
