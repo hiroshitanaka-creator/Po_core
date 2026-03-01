@@ -31,6 +31,7 @@ import numpy as np
 
 from po_core.tensors.axis_calibration import load_calibration_model_from_env
 from po_core.tensors.base import Tensor
+from po_core.text.embedding_cache import GLOBAL_EMBEDDING_CACHE
 from po_core.text.normalize import detect_language_simple, normalize_text
 
 logger = logging.getLogger(__name__)
@@ -359,8 +360,14 @@ class FreedomPressureV2(Tensor):
 
         アンカーフレーズとのコサイン類似度 → [0,1] 正規化。
         """
-        embedding = self._encoder.encode([text], show_progress_bar=False)[0]
-        embedding = np.array(embedding, dtype=np.float64)
+        model_id = f"sbert:{self._model_name}"
+        cached = GLOBAL_EMBEDDING_CACHE.get(text, model_id)
+        if cached is None:
+            fresh = self._encoder.encode([text], show_progress_bar=False)[0]
+            embedding = np.array(fresh, dtype=np.float64)
+            GLOBAL_EMBEDDING_CACHE.put(text, model_id, embedding)
+        else:
+            embedding = np.array(cached, dtype=np.float64)
 
         def _score_against(anchors: np.ndarray) -> np.ndarray:
             score = np.zeros(6, dtype=np.float64)
@@ -504,6 +511,20 @@ class FreedomPressureV2(Tensor):
         return float(np.linalg.norm(last - first))
 
 
+
+def preload_model(model_name: str = "all-MiniLM-L6-v2") -> dict[str, str]:
+    """Best-effort preload hook used by runtime wiring."""
+    status: dict[str, str] = {"model": model_name}
+    try:
+        from sentence_transformers import SentenceTransformer  # noqa: PLC0415
+
+        SentenceTransformer(model_name)
+        status["sbert"] = "ready"
+    except Exception as exc:
+        status["sbert"] = f"failed: {exc}"
+    return status
+
+
 def create_freedom_pressure_v2(
     ema_alpha: float = 0.3,
     correlation_blend: float = 0.35,
@@ -535,5 +556,6 @@ __all__ = [
     "FreedomPressureV2",
     "FreedomPressureV2Snapshot",
     "create_freedom_pressure_v2",
+    "preload_model",
     "_DEFAULT_CORRELATION_MATRIX",
 ]

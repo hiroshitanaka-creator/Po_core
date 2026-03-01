@@ -28,6 +28,7 @@ import numpy as np
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.text.embedding_cache import GLOBAL_EMBEDDING_CACHE
 
 # ── Backend Detection ────────────────────────────────────────────────
 
@@ -66,6 +67,7 @@ def _has_sklearn() -> bool:
 # ── Shared Encoder API ───────────────────────────────────────────────
 
 _sbert_model = None
+_SBERT_MODEL_ID = "sbert:all-MiniLM-L6-v2"
 
 
 def _get_sbert_model():
@@ -93,8 +95,7 @@ def encode_texts(texts: List[str]) -> np.ndarray:
 
     if backend == "sbert":
         try:
-            model = _get_sbert_model()
-            return model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
+            return _encode_sbert_cached(texts)
         except Exception:
             # Model download failed or runtime error — fall back
             _BACKEND = "tfidf" if _has_sklearn() else "basic"
@@ -105,6 +106,35 @@ def encode_texts(texts: List[str]) -> np.ndarray:
 
     # Fallback: basic token overlap vectors
     return _encode_basic(texts)
+
+
+def _encode_sbert_cached(texts: List[str]) -> np.ndarray:
+    model = _get_sbert_model()
+    encoded: list[np.ndarray] = []
+    missing_texts: list[str] = []
+    missing_indices: list[int] = []
+
+    for i, text in enumerate(texts):
+        cached = GLOBAL_EMBEDDING_CACHE.get(text, _SBERT_MODEL_ID)
+        if cached is None:
+            missing_texts.append(text)
+            missing_indices.append(i)
+            encoded.append(np.array([], dtype=np.float64))
+            continue
+        encoded.append(cached)
+
+    if missing_texts:
+        fresh = model.encode(
+            missing_texts,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
+        for idx, text, emb in zip(missing_indices, missing_texts, fresh):
+            arr = np.array(emb, dtype=np.float64)
+            GLOBAL_EMBEDDING_CACHE.put(text, _SBERT_MODEL_ID, arr)
+            encoded[idx] = arr
+
+    return np.vstack(encoded) if encoded else np.zeros((0, 1), dtype=np.float64)
 
 
 def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
@@ -123,6 +153,27 @@ def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
 def get_backend() -> str:
     """Return the active backend name. Useful for tests and diagnostics."""
     return _detect_backend()
+
+
+def preload_models() -> Dict[str, str]:
+    """Optional startup preloading for semantic_delta dependencies."""
+    backend = _detect_backend()
+    status: Dict[str, str] = {"backend": backend}
+    if backend == "sbert":
+        try:
+            _get_sbert_model()
+            status["sbert"] = "ready"
+        except Exception as exc:
+            status["sbert"] = f"failed: {exc}"
+    return status
+
+
+def configure_embedding_cache(*, max_size: int) -> None:
+    GLOBAL_EMBEDDING_CACHE.set_max_size(max_size)
+
+
+def clear_embedding_cache() -> None:
+    GLOBAL_EMBEDDING_CACHE.clear()
 
 
 # ── TF-IDF Backend ───────────────────────────────────────────────────
@@ -382,4 +433,7 @@ __all__ = [
     "encode_texts",
     "cosine_sim",
     "get_backend",
+    "preload_models",
+    "configure_embedding_cache",
+    "clear_embedding_cache",
 ]

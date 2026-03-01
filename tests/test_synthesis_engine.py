@@ -55,3 +55,48 @@ def test_synthesis_engine_scoreboard_and_open_questions() -> None:
         "variance": 0.018056,
         "samples": 3,
     }
+
+
+def test_synthesis_report_structure_stable_with_cache_toggle() -> None:
+    from po_core.tensors.metrics.semantic_delta import (
+        clear_embedding_cache,
+        configure_embedding_cache,
+    )
+
+    engine = SynthesisEngine(consensus_top_n=2)
+    axis = AxisSpec(dimensions=["safety", "speed"])
+    cards = [
+        ArgumentCard(
+            card_id="c1",
+            stance="pro",
+            claims=["A", "B"],
+            axis_scores={"safety": 0.7, "speed": 0.4},
+            confidence=1.0,
+            questions=["Q1"],
+        ),
+        ArgumentCard(
+            card_id="c2",
+            stance="con",
+            claims=["A"],
+            axis_scores={"safety": 0.3, "speed": 0.6},
+            confidence=1.0,
+            questions=["Q2"],
+        ),
+    ]
+
+    clear_embedding_cache()
+    configure_embedding_cache(max_size=0)
+    report_no_cache = engine.synthesize(axis_spec=axis, cards=cards).to_dict()
+
+    clear_embedding_cache()
+    configure_embedding_cache(max_size=128)
+    report_cache = engine.synthesize(axis_spec=axis, cards=cards).to_dict()
+
+    for key in [
+        "stance_distribution",
+        "consensus_claims",
+        "disagreements",
+        "open_questions",
+        "scoreboard",
+    ]:
+        assert report_no_cache[key] == report_cache[key]
