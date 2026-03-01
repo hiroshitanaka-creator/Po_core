@@ -545,30 +545,36 @@ def _re_propose(
             new_proposals = ph.propose(enriched_ctx, intent, tensors, memory)
             if new_proposals:
                 suffix = f":d{round_num}"
-                for p in new_proposals:
-                    extra = dict(p.extra) if isinstance(p.extra, dict) else {}
-                    extra["deliberation_round"] = round_num
-                    extra["debate_sender"] = sender_name
-                    extra["prompt_mode"] = prompt_mode
-                    extra["dialectic_role"] = role_value
-                    # Preserve PO_CORE author metadata for downstream scoring
-                    if PO_CORE not in extra or AUTHOR not in extra.get(PO_CORE, {}):
-                        po_meta = extra.get(PO_CORE, {})
-                        if not isinstance(po_meta, dict):
-                            po_meta = {}
-                        po_meta[AUTHOR] = name
-                        extra[PO_CORE] = po_meta
-                    revised.append(
-                        Proposal(
-                            proposal_id=p.proposal_id.replace(":0", suffix),
-                            action_type=p.action_type,
-                            content=p.content,
-                            confidence=min(p.confidence + 0.1, 1.0),
-                            assumption_tags=list(p.assumption_tags),
-                            risk_tags=list(p.risk_tags),
-                            extra=extra,
-                        )
+                candidates = [p for p in new_proposals if p is not None]
+                if not candidates:
+                    continue
+                selected = max(candidates, key=lambda p: float(p.confidence))
+                discarded_n = max(0, len(candidates) - 1)
+                extra = dict(selected.extra) if isinstance(selected.extra, dict) else {}
+                extra["deliberation_round"] = round_num
+                extra["debate_sender"] = sender_name
+                extra["prompt_mode"] = prompt_mode
+                extra["dialectic_role"] = role_value
+                if discarded_n > 0:
+                    extra["deliberation_discarded_alternatives"] = discarded_n
+                # Preserve PO_CORE author metadata for downstream scoring
+                if PO_CORE not in extra or AUTHOR not in extra.get(PO_CORE, {}):
+                    po_meta = extra.get(PO_CORE, {})
+                    if not isinstance(po_meta, dict):
+                        po_meta = {}
+                    po_meta[AUTHOR] = name
+                    extra[PO_CORE] = po_meta
+                revised.append(
+                    Proposal(
+                        proposal_id=selected.proposal_id.replace(":0", suffix),
+                        action_type=selected.action_type,
+                        content=selected.content,
+                        confidence=min(selected.confidence + 0.1, 1.0),
+                        assumption_tags=list(selected.assumption_tags),
+                        risk_tags=list(selected.risk_tags),
+                        extra=extra,
                     )
+                )
         except Exception:
             # Philosopher failed in re-proposal round → keep original
             continue

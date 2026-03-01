@@ -170,6 +170,34 @@ class _PhasePreResult(NamedTuple):
     timeout_s: float
 
 
+def _proposal_author_key(proposal: Any) -> str:
+    """Resolve proposal author key for normalization with legacy fallback."""
+    extra = proposal.extra if isinstance(getattr(proposal, "extra", None), Mapping) else {}
+    pc = extra.get(PO_CORE, {}) if isinstance(extra, Mapping) else {}
+    if isinstance(pc, Mapping):
+        author = str(pc.get(AUTHOR, ""))
+        if author:
+            return author
+    return str(extra.get("philosopher", ""))
+
+
+def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[Any]]:
+    """Normalize to one primary proposal per author while preserving input order."""
+    primaries: List[Any] = []
+    secondaries: List[Any] = []
+    seen_authors: set[str] = set()
+
+    for proposal in proposals:
+        author_key = _proposal_author_key(proposal)
+        if author_key and author_key in seen_authors:
+            secondaries.append(proposal)
+            continue
+        if author_key:
+            seen_authors.add(author_key)
+        primaries.append(proposal)
+    return primaries, secondaries
+
+
 def _run_phase_pre(
     ctx: DomainContext, deps: "EnsembleDeps"
 ) -> Union["_PhasePreResult", Dict[str, Any]]:
@@ -342,7 +370,7 @@ def _run_phase_post(
     memory, tensors, intent = pre.memory, pre.tensors, pre.intent
     timeout_s = pre.timeout_s
 
-    raw_proposals: List[DomainProposal] = list(ph_proposals)
+    raw_proposals: List[DomainProposal] = [p for p in ph_proposals if p is not None]
 
     # Emit trace events for each philosopher execution result
     for result in run_results:
@@ -366,10 +394,13 @@ def _run_phase_post(
     if deps.deliberation_engine is not None and hasattr(
         deps.deliberation_engine, "deliberate"
     ):
-        delib_result = deps.deliberation_engine.deliberate(
-            pre.philosophers, ctx, intent, tensors, memory, raw_proposals
+        primary_proposals, secondary_proposals = _normalize_primary_proposals(
+            raw_proposals
         )
-        raw_proposals = delib_result.proposals
+        delib_result = deps.deliberation_engine.deliberate(
+            pre.philosophers, ctx, intent, tensors, memory, primary_proposals
+        )
+        raw_proposals = list(delib_result.proposals) + secondary_proposals
         tracer.emit(
             TraceEvent.now(
                 "DeliberationCompleted", ctx.request_id, delib_result.summary()

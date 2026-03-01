@@ -137,6 +137,7 @@ def run_philosophers(
     *,
     max_workers: int,
     timeout_s: float,
+    limit_per_philosopher: int = 1,
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """
     Execute philosophers in parallel with timeout and isolation.
@@ -170,11 +171,17 @@ def run_philosophers(
     if not philosophers:
         return proposals, results
 
-    def _embed_author(p: "Proposal", author: str) -> "Proposal":
-        """Embed author into proposal.extra[PO_CORE][AUTHOR]."""
+    limit = max(0, min(limit_per_philosopher, 5))
+
+    def _embed_author_and_index(
+        p: "Proposal", author: str, proposal_index: int
+    ) -> "Proposal":
+        """Embed author/index into proposal.extra[PO_CORE]."""
         extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
-        pc = dict(extra.get(PO_CORE, {}))
+        pc_src = extra.get(PO_CORE, {})
+        pc = dict(pc_src) if isinstance(pc_src, Mapping) else {}
         pc[AUTHOR] = author
+        pc["proposal_index"] = proposal_index
         extra[PO_CORE] = pc
         return Proposal(
             proposal_id=p.proposal_id,
@@ -188,27 +195,27 @@ def run_philosophers(
 
     def _run_single(
         ph: "PhilosopherProtocol",
-    ) -> Tuple[Optional[Proposal], int, Optional[str], int, str]:
+    ) -> Tuple[List[Proposal], int, Optional[str], int, str]:
         """Run a single philosopher with error handling and timing.
 
         Returns:
-            Tuple of (proposal, n_proposals, error, latency_ms, philosopher_id)
+            Tuple of (proposals, n_proposals, error, latency_ms, philosopher_id)
         """
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         try:
-            proposals = ph.propose(ctx, intent, tensors, memory)
+            raw = ph.propose(ctx, intent, tensors, memory)
             dt = int((perf_counter() - t0) * 1000)
-            # propose() returns List[Proposal]; take the first one
-            proposal = proposals[0] if proposals else None
-            # Embed author into proposal
-            if proposal is not None:
-                proposal = _embed_author(proposal, pid)
-            return proposal, len(proposals), None, dt, pid
+            proposals = [p for p in raw if p is not None] if raw else []
+            selected = proposals[:limit]
+            embedded = [
+                _embed_author_and_index(p, pid, idx) for idx, p in enumerate(selected)
+            ]
+            return embedded, len(proposals), None, dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            return None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+            return [], 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
 
     # Parallel execution with ThreadPoolExecutor
     executor = ThreadPoolExecutor(max_workers=max_workers)
@@ -217,7 +224,7 @@ def run_philosophers(
         done, not_done = wait(futures, timeout=timeout_s)
 
         result_by_index: Dict[int, RunResult] = {}
-        proposal_by_index: Dict[int, Proposal] = {}
+        proposals_by_index: Dict[int, List[Proposal]] = {}
 
         for idx, future in enumerate(futures):
             ph = philosophers[idx]
@@ -236,7 +243,7 @@ def run_philosophers(
                 continue
 
             try:
-                proposal, n, err, dt, author_id = future.result()
+                selected_proposals, n, err, dt, author_id = future.result()
                 result_by_index[idx] = RunResult(
                     philosopher_id=author_id,
                     ok=(err is None),
@@ -245,8 +252,8 @@ def run_philosophers(
                     error=err,
                     latency_ms=dt,
                 )
-                if proposal is not None:
-                    proposal_by_index[idx] = proposal
+                if selected_proposals:
+                    proposals_by_index[idx] = selected_proposals
             except FuturesTimeoutError:
                 result_by_index[idx] = RunResult(
                     philosopher_id=pid,
@@ -268,8 +275,7 @@ def run_philosophers(
 
         for idx in range(len(philosophers)):
             results.append(result_by_index[idx])
-            if idx in proposal_by_index:
-                proposals.append(proposal_by_index[idx])
+            proposals.extend(proposals_by_index.get(idx, []))
     finally:
         executor.shutdown(wait=False, cancel_futures=True)
 
@@ -344,8 +350,9 @@ class AsyncPartyMachine:
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
         tracer: Optional["TracePort"] = None,
-    ) -> Tuple[Optional["Proposal"], int, Optional[str], int, str]:
-        """Run a single philosopher; return (proposal, n, error, latency_ms, pid).
+        limit_per_philosopher: int = 1,
+    ) -> Tuple[List["Proposal"], int, Optional[str], int, str]:
+        """Run a single philosopher; return (proposals, n, error, latency_ms, pid).
 
         If *tracer* is provided, a ``PhilosopherCompleted`` event is emitted
         immediately after the philosopher finishes (success or failure), enabling
@@ -379,24 +386,26 @@ class AsyncPartyMachine:
                 )
 
             dt = int((perf_counter() - t0) * 1000)
-            proposal = ph_proposals[0] if ph_proposals else None
-            if proposal is not None:
-                proposal = _embed_author_proposal(proposal, pid)
-            result = proposal, len(ph_proposals), None, dt, pid
+            proposals = [p for p in ph_proposals if p is not None] if ph_proposals else []
+            selected = proposals[:limit_per_philosopher]
+            embedded = [
+                _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
+            ]
+            result = embedded, len(proposals), None, dt, pid
 
         except asyncio.TimeoutError:
             dt = int((perf_counter() - t0) * 1000)
-            result = None, 0, f"TimeoutError after {self._timeout_s}s", dt, pid
+            result = [], 0, f"TimeoutError after {self._timeout_s}s", dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            result = None, 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+            result = [], 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
 
         # Emit per-philosopher completion event for real-time SSE streaming.
         # This fires as soon as the philosopher finishes, before other philosophers
         # complete, so SSE clients see results progressively.
         if tracer is not None:
-            _p, n_out, err_out, dt_out, _pid = result
+            _proposals, n_out, err_out, dt_out, _pid = result
             from po_core.domain.trace_event import TraceEvent
 
             tracer.emit(
@@ -422,6 +431,7 @@ class AsyncPartyMachine:
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
         tracer: Optional["TracePort"] = None,
+        limit_per_philosopher: int = 1,
     ) -> Tuple[List["Proposal"], List[RunResult]]:
         """Run all philosophers concurrently and collect results.
 
@@ -438,9 +448,13 @@ class AsyncPartyMachine:
         if not philosophers:
             return proposals, results
 
+        limit = max(0, min(limit_per_philosopher, 5))
+
         tasks = [
             asyncio.create_task(
-                self._dispatch_one(ph, ctx, intent, tensors, memory, tracer)
+                self._dispatch_one(
+                    ph, ctx, intent, tensors, memory, tracer, limit
+                )
             )
             for ph in philosophers
         ]
@@ -460,7 +474,7 @@ class AsyncPartyMachine:
                     )
                 )
             else:
-                proposal, n, err, dt, author_id = outcome
+                selected_proposals, n, err, dt, author_id = outcome
                 results.append(
                     RunResult(
                         philosopher_id=author_id,
@@ -471,19 +485,20 @@ class AsyncPartyMachine:
                         latency_ms=dt,
                     )
                 )
-                if proposal is not None:
-                    proposals.append(proposal)
+                proposals.extend(selected_proposals)
 
         return proposals, results
 
 
-def _embed_author_proposal(p: "Proposal", author: str) -> "Proposal":
+def _embed_author_proposal(p: "Proposal", author: str, proposal_index: int) -> "Proposal":
     """Embed philosopher author ID into Proposal.extra (shared helper)."""
     from po_core.domain.proposal import Proposal
 
     extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
-    pc = dict(extra.get(PO_CORE, {}))
+    pc_src = extra.get(PO_CORE, {})
+    pc = dict(pc_src) if isinstance(pc_src, Mapping) else {}
     pc[AUTHOR] = author
+    pc["proposal_index"] = proposal_index
     extra[PO_CORE] = pc
     return Proposal(
         proposal_id=p.proposal_id,
@@ -505,6 +520,7 @@ async def async_run_philosophers(
     *,
     max_workers: int,
     timeout_s: float,
+    limit_per_philosopher: int = 1,
     tracer: Optional["TracePort"] = None,
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
@@ -534,7 +550,15 @@ async def async_run_philosophers(
     async with AsyncPartyMachine(
         max_workers=max_workers, timeout_s=timeout_s
     ) as machine:
-        return await machine.run(philosophers, ctx, intent, tensors, memory, tracer)
+        return await machine.run(
+            philosophers,
+            ctx,
+            intent,
+            tensors,
+            memory,
+            tracer,
+            limit_per_philosopher=limit_per_philosopher,
+        )
 
 
 # ============================================================================
