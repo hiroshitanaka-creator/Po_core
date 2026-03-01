@@ -1,0 +1,34 @@
+{
+  "version": "axis_scoring_calibration_v1",
+  "feature_order": [
+    "safety",
+    "benefit",
+    "feasibility"
+  ],
+  "labels": {
+    "safety": {
+      "weights": [
+        1.1,
+        0.0,
+        0.0
+      ],
+      "bias": 0.0
+    },
+    "benefit": {
+      "weights": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "bias": 0.0
+    },
+    "feasibility": {
+      "weights": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bias": 0.0
+    }
+  }
+}
