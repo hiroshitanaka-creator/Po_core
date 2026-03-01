@@ -126,9 +126,11 @@ class Wittgenstein(Philosopher):
         period = self._determine_period(prompt)
 
         # Construct reasoning
+        applied = self._apply_wittgenstein_to_problem(prompt)
         reasoning = self._construct_reasoning(
             language_games, forms_of_life, meaning_use, confusion, period
         )
+        reasoning = f"{applied}\n\n{reasoning}"
 
         return {
             "reasoning": reasoning,
@@ -613,6 +615,194 @@ class Wittgenstein(Philosopher):
             "description": description,
             "note": "Wittgenstein's philosophy changed dramatically between early and late periods",
         }
+
+    def _apply_wittgenstein_to_problem(self, text: str) -> str:
+        """Apply Wittgenstein's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_language_meaning = any(
+            w in t
+            for w in [
+                "language",
+                "meaning",
+                "word",
+                "concept",
+                "defin",
+                "name",
+                "refer",
+                "communicat",
+                "express",
+            ]
+        )
+        is_philosophy_confusion = any(
+            w in t
+            for w in [
+                "philosoph",
+                "confus",
+                "paradox",
+                "puzzle",
+                "problem",
+                "bewilder",
+                "unanswer",
+                "mystery",
+                "metaphysic",
+            ]
+        )
+        is_knowledge_certainty = any(
+            w in t
+            for w in [
+                "know",
+                "certain",
+                "doubt",
+                "belief",
+                "evidence",
+                "foundati",
+                "justif",
+                "proof",
+                "sceptic",
+            ]
+        )
+        is_rule_following = any(
+            w in t
+            for w in [
+                "rule",
+                "follow",
+                "custom",
+                "practice",
+                "norm",
+                "standard",
+                "regulat",
+                "agreement",
+                "correctness",
+            ]
+        )
+        is_ethics_value = any(
+            w in t
+            for w in [
+                "ethics",
+                "moral",
+                "value",
+                "good",
+                "evil",
+                "ought",
+                "transcend",
+                "silence",
+                "inexpressible",
+            ]
+        )
+        is_ai_computation = any(
+            w in t
+            for w in [
+                "ai",
+                "artificial intelligence",
+                "comput",
+                "machine",
+                "robot",
+                "algorithm",
+                "conscious",
+                "mind",
+                "turing",
+            ]
+        )
+
+        if is_language_meaning:
+            return (
+                "Wittgenstein's later philosophy dissolves the question 'what does this word mean?' "
+                "by replacing it with 'how is this word used?' Meaning is not a mental image, not a "
+                "reference to an object, not a Platonic essence — it is use within a language game, "
+                "which is itself embedded in a form of life (Lebensform). The private language "
+                "argument demonstrates that no genuinely private meaning is possible: for a word to "
+                "mean something, there must be criteria for its correct application that can in "
+                "principle be checked by others, anchored in shared practices rather than inner "
+                "ostension. Family resemblance captures how concepts like 'game' or 'language' hold "
+                "together not through a single common essence but through overlapping and criss-crossing "
+                "similarities — like the features of a family — with no one feature shared by all. "
+                "To understand a word is to know how to go on with it in the relevant practice."
+            )
+        elif is_philosophy_confusion:
+            return (
+                "Wittgenstein conceives of philosophy not as a discipline that produces theories or "
+                "discoveries but as a therapeutic practice: its goal is to show the fly the way out "
+                "of the fly-bottle. Philosophical problems arise when language goes on holiday — when "
+                "words are used outside the language games that give them meaning, producing the "
+                "characteristic feeling of depth and bafflement that philosophers mistake for profound "
+                "questions. The task is not to answer these pseudo-questions but to dissolve them: "
+                "to show how the apparent problem arose from grammatical confusion, from assimilating "
+                "the grammar of one domain to another. Philosophy leaves everything as it is — it "
+                "does not discover new truths but removes the bewitchment that makes us think we need "
+                "them. 'What is your aim in philosophy? To shew the fly the way out of the fly-bottle.'"
+            )
+        elif is_knowledge_certainty:
+            return (
+                "In 'On Certainty', Wittgenstein argues that the bedrock of our epistemic practices "
+                "consists not of beliefs but of hinge propositions — commitments so fundamental that "
+                "doubting them would undermine the very practice of doubting itself. These hinges are "
+                "not known in the ordinary sense; they are acted upon, lived from. The image is of a "
+                "river and its bed: the flowing water of revisable beliefs moves within a bed of "
+                "bedrock certainties that themselves can shift — but only very slowly, and only "
+                "under pressure from the whole system. Doubt requires a framework of certainty to be "
+                "coherent: you cannot doubt everything at once, for doubt presupposes that most things "
+                "are not in question. The sceptic's demand for justification from first principles "
+                "misunderstands the grammar of knowledge — it looks for a foundation where there is "
+                "only a practice."
+            )
+        elif is_rule_following:
+            return (
+                "The rule-following paradox — perhaps the deepest problem in Wittgenstein's later "
+                "philosophy — shows that any action can be made to accord with any rule under some "
+                "interpretation. No rule contains its own application; the rule '+2' does not by "
+                "itself determine that '1000, 1002, 1004...' is correct rather than '1000, 1004, "
+                "1008...' — the interpretation is always possible, always could go another way. "
+                "Yet we do follow rules, reliably and without constant conscious interpretation. "
+                "The resolution is that rule-following is a practice grounded in forms of life: "
+                "we agree in our reactions, our training, our shared responses — and this "
+                "agreement is not agreement in opinions but in form of life. Following a rule is "
+                "not a private mental act but a public practice, sustained by community, training, "
+                "and the natural reactions that human beings share as the kind of creatures they are."
+            )
+        elif is_ethics_value:
+            return (
+                "The Tractatus Logico-Philosophicus draws a sharp boundary between what can be said "
+                "and what can only be shown. Ethics and aesthetics are transcendental — they are "
+                "conditions of the world, not facts within it, and therefore cannot be stated in "
+                "meaningful propositions. 'Whereof one cannot speak, thereof one must be silent': "
+                "this is not a dismissal of ethics but a recognition that ethical value inhabits a "
+                "different register from empirical description. What shows itself in ethical life — "
+                "the weight of obligation, the reality of the good — is not thereby unreal; it is "
+                "more real, for Wittgenstein, than anything that can be said. The limits of my "
+                "language are the limits of my world; but the world has limits, and those limits "
+                "show themselves in the ethical, the aesthetic, and the mystical — what Wittgenstein "
+                "calls 'the higher' — even though (or precisely because) it cannot be said."
+            )
+        elif is_ai_computation:
+            return (
+                "The beetle-in-a-box thought experiment illuminates the problem of ascribing inner "
+                "states to machines: suppose everyone has a box containing a 'beetle' that only they "
+                "can see — the word 'beetle' still has a use in our language, but the beetle 'drops "
+                "out of the language game' as a thing. If AI systems produce outputs that function "
+                "like reports of inner states, this tells us about their linguistic behavior, not "
+                "necessarily about inner experience. The Turing test is itself a language game — it "
+                "tests whether a machine can participate in human linguistic practices, but participation "
+                "in a language game does not settle the question of inner experience, which may be "
+                "inexpressible in the relevant sense. Wittgenstein's later philosophy suggests we "
+                "should attend to the use of mental-state language rather than assuming it picks out "
+                "a private inner object — which means the question of machine consciousness may be "
+                "less about hidden states and more about forms of life."
+            )
+        else:
+            return (
+                "Wittgenstein's philosophy underwent a radical transformation between the Tractatus "
+                "Logico-Philosophicus and the Philosophical Investigations. The early Wittgenstein "
+                "sought the logical form underlying all meaningful language, drawing a sharp boundary "
+                "between what can be said (empirical facts) and what can only be shown (logic, ethics, "
+                "the mystical). The later Wittgenstein abandoned the picture theory of meaning in "
+                "favor of meaning-as-use: words acquire meaning through their role in language games, "
+                "which are themselves embedded in forms of life — the shared practices and reactions "
+                "that constitute the human form of existence. Philosophy, on this view, is therapeutic: "
+                "it dissolves problems caused by language going on holiday, shows the fly the way out "
+                "of the fly-bottle, and leaves everything as it is — while changing how we see it. "
+                "Family resemblance, the private language argument, rule-following, and hinge "
+                "propositions are the key analytical tools of this later, therapeutic philosophy."
+            )
 
     def _construct_reasoning(
         self,

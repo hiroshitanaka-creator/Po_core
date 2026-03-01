@@ -111,6 +111,7 @@ class Hegel(Philosopher):
 
         # Construct comprehensive dialectical reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             dialectic,
             geist,
             phenomenology,
@@ -1028,8 +1029,151 @@ class Hegel(Philosopher):
             "principle": "Self-consciousness achieves reality only through recognition from another self-consciousness",
         }
 
+    def _apply_hegel_to_problem(self, text: str) -> str:
+        """Apply Hegelian philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "conflict",
+                "contradict",
+                "oppose",
+                "tension",
+                "disagree",
+                "struggle",
+                "clash",
+                "paradox",
+            ]
+        ):
+            return (
+                "Hegel's dialectic reveals that contradiction is not an obstacle to thought but its"
+                " very engine. Every determinate position — the thesis — generates its own negation"
+                " — the antithesis — not as an external attack but as a logical consequence of its"
+                " own one-sidedness. The Aufhebung, Hegel's untranslatable term, simultaneously"
+                " cancels, preserves, and elevates the opposed moments into a richer synthesis that"
+                " contains both as subordinate aspects. Far from being a defect, contradiction is"
+                " what makes reality dynamic and historical rather than static. Understanding the"
+                " present conflict through this dialectical lens reveals it as a necessary moment in"
+                " a larger movement toward more adequate self-comprehension by Spirit."
+            )
+        elif any(
+            w in t
+            for w in [
+                "free",
+                "freedom",
+                "society",
+                "state",
+                "community",
+                "institution",
+                "politic",
+                "right",
+            ]
+        ):
+            return (
+                "For Hegel, freedom is not the negative liberty of the isolated individual but the"
+                " positive self-realization of Geist (Spirit) through the concrete institutions of"
+                " Sittlichkeit — ethical life. The family, civil society, and the state are not"
+                " external constraints on freedom but the very medium through which rational"
+                " self-determination becomes actual. Abstract freedom — mere freedom from — remains"
+                " empty without the concrete social relations that give it content. World history,"
+                " on Hegel's account, is nothing other than the progress in the consciousness of"
+                " freedom: the gradual actualization of Geist's self-knowledge through successive"
+                " historical formations. True freedom is found not by escaping society but by"
+                " recognizing oneself in its rational structures."
+            )
+        elif any(
+            w in t
+            for w in [
+                "self",
+                "identity",
+                "consciousness",
+                "recogni",
+                "other",
+                "subject",
+                "person",
+                "ego",
+            ]
+        ):
+            return (
+                "The master-slave dialectic in the Phenomenology of Spirit shows that"
+                " self-consciousness can achieve reality only through recognition by another"
+                " self-consciousness. The struggle for recognition — each consciousness risking"
+                " life to be acknowledged — produces the asymmetric master-slave relationship, but"
+                " this proves self-undermining: the master's recognition comes from a dependent"
+                " slave whose acknowledgement carries no worth, while the slave, through labor and"
+                " the discipline of forming the world, develops genuine self-consciousness. Identity"
+                " is therefore irreducibly relational — what one is, one is only through being"
+                " recognized by others. This logic of Anerkennung (recognition) runs through all"
+                " social, political, and spiritual life."
+            )
+        elif any(
+            w in t
+            for w in [
+                "histor",
+                "progress",
+                "develop",
+                "change",
+                "time",
+                "epoch",
+                "era",
+                "civiliz",
+                "culture",
+            ]
+        ):
+            return (
+                "Hegel conceives world history as the autobiography of Geist — the progressive"
+                " self-realization of Spirit through the successive shapes of culture, religion, and"
+                " political life. Each historical epoch is a determinate expression of Spirit's"
+                " self-understanding, containing within itself the contradictions that will propel"
+                " it toward its successor. The Weltgeist (World Spirit) actualizes itself through"
+                " world-historical individuals — figures like Napoleon whom Hegel called 'the World"
+                " Spirit on horseback' — who unwittingly serve the purposes of Reason. History is"
+                " therefore not a random sequence of events but the rational development of freedom:"
+                " 'The real is rational and the rational is real', understood dynamically and"
+                " historically rather than as a static endorsement of the status quo."
+            )
+        elif any(
+            w in t
+            for w in [
+                "know",
+                "knowledge",
+                "truth",
+                "science",
+                "reason",
+                "absolute",
+                "understand",
+                "certain",
+                "logic",
+            ]
+        ):
+            return (
+                "For Hegel, the Absolute — the ultimate truth of all reality — is not a static"
+                " substance but a dynamic Subject that knows itself through the finite minds of"
+                " human beings. As the Phenomenology's preface declares, 'The truth is the whole':"
+                " any partial perspective is partially false, gaining its truth only within the"
+                " larger totality. The Science of Logic traces the self-development of pure thought"
+                " from Being through Nothing to Becoming, demonstrating that the categories of"
+                " thought and the structures of reality are ultimately identical. Genuine knowledge"
+                " is not the correspondence of an isolated mind to an external world but the"
+                " self-articulation of Spirit through the dialectical movement of concept."
+            )
+        else:
+            return (
+                "Hegel's absolute idealism interprets all of reality as the self-development of"
+                " Geist (Spirit/Mind) through a dialectical process of thesis, antithesis, and"
+                " Aufhebung (cancellation-preservation-elevation). The Phenomenology of Spirit"
+                " traces consciousness's journey from simple sense-certainty through"
+                " self-consciousness, reason, and Spirit to Absolute Knowing, each stage revealing"
+                " the inadequacy of the previous and generating its successor. Recognition"
+                " (Anerkennung) is the key social-ontological category: self-consciousness is"
+                " always already intersubjective, constituted through its relation to the Other."
+                " The whole of reality — nature, history, art, religion, and philosophy — forms a"
+                " single rational totality in which the Absolute comes to know itself."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         dialectic: Dict[str, Any],
         geist: Dict[str, Any],
         phenomenology: Dict[str, Any],
@@ -1040,7 +1184,9 @@ class Hegel(Philosopher):
         absolute: Dict[str, Any],
     ) -> str:
         """Construct comprehensive Hegelian philosophical reasoning."""
+        applied = self._apply_hegel_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             "From Hegel's absolute idealist perspective, we must examine this text dialectically "
             "as a moment in Spirit's self-realization. "
         )

@@ -129,7 +129,9 @@ class MerleauPonty(Philosopher):
         intersubjectivity = self._check_intersubjectivity(prompt)
 
         # Construct reasoning
-        reasoning = self._construct_reasoning(lived_body, perception, flesh, ambiguity)
+        reasoning = self._construct_reasoning(
+            prompt, lived_body, perception, flesh, ambiguity
+        )
 
         return {
             "reasoning": reasoning,
@@ -670,15 +672,174 @@ class MerleauPonty(Philosopher):
             "principle": "Intersubjectivity through direct embodied perception of other bodies",
         }
 
+    def _apply_merleau_ponty_to_problem(self, text: str) -> str:
+        """Apply Merleau-Ponty's embodied phenomenology to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "body",
+                "percei",
+                "sensation",
+                "touch",
+                "motor",
+                "movement",
+                "gesture",
+                "embodied",
+            ]
+        ):
+            return (
+                "Merleau-Ponty insists that the lived body (corps vécu) is not an object among objects "
+                "but the very medium through which we inhabit and make sense of the world. "
+                "Motor intentionality — the body's pre-reflective grasp of its practical field — "
+                "precedes and underlies all explicit, representational consciousness: "
+                "I reach for a glass not because I calculate its position but because "
+                "my body already 'knows' the field through its acquired motor schemata. "
+                "Perception, accordingly, is not a passive reception of sense data processed by an inner mind "
+                "but an active, bodily engagement — a dialogue between flesh and world "
+                "that is never fully transparent to reflective consciousness. "
+                "The 'return to the things themselves' thus demands a return to the body as the founding layer of all experience."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technolog",
+                "ai",
+                "artificial",
+                "machine",
+                "algorithm",
+                "robot",
+                "comput",
+                "digital",
+            ]
+        ):
+            return (
+                "From a Merleau-Pontian perspective, genuine intelligence is irreducibly embodied: "
+                "cognition is not computation performed on inner representations but skilled coping "
+                "enacted by a flesh-and-blood body embedded in a world that solicits it. "
+                "The chiasm — the reversibility by which the hand that touches is simultaneously touched — "
+                "reveals that subjectivity is not a disembodied viewpoint but a fold in the fabric of the world. "
+                "Artificial systems, however sophisticated, lack this flesh (chair): "
+                "they have no motor intentionality, no sensorimotor coupling with a lived environment, "
+                "no intercorporeal resonance with other bodies. "
+                "What passes for 'intelligence' in such systems is a formal shadow of the "
+                "pre-reflective bodily understanding that grounds all genuine sense-making."
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "epistemolog",
+                "know",
+                "cognition",
+                "understand",
+                "mind",
+                "thought",
+            ]
+        ):
+            return (
+                "For Merleau-Ponty, all knowledge is ultimately grounded in perceptual experience — "
+                "not the thin, punctual sensations of empiricism but the rich, perspectival engagement "
+                "of an embodied subject with a world that is always already shaped by motor habits and cultural sedimentation. "
+                "Against intellectualism, he argues that the perceived world is not constructed by a disembodied "
+                "transcendental subject but encountered by a body that has always already committed itself "
+                "to a practical field through its motor projects. "
+                "Even the most abstract concept retains a hidden bodily-perceptual ancestry; "
+                "to understand is ultimately to be able to inhabit — to embody — a way of engaging with the world."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ambigui",
+                "uncertain",
+                "both",
+                "neither",
+                "paradox",
+                "complex",
+                "contradic",
+            ]
+        ):
+            return (
+                "Merleau-Ponty makes ambiguity a positive ontological category rather than a defect to overcome. "
+                "Embodied existence is irreducibly ambiguous: I am neither pure subject (Sartrean pour-soi) "
+                "nor pure object (in-itself), but the strange chiasmic fold where subject and object interpenetrate — "
+                "the flesh of the world. "
+                "Cartesian dualism falsifies this situation by splitting what is primordially one; "
+                "only a phenomenology that begins with the lived body as its primary datum can do justice "
+                "to the 'intermonde' — the interworld — where meaning and matter, self and world, "
+                "are perpetually in process of mutual constitution without ever reaching a final resolution."
+            )
+        elif any(
+            w in t
+            for w in [
+                "art",
+                "paint",
+                "express",
+                "creat",
+                "aesthetic",
+                "vision",
+                "cézanne",
+                "language",
+            ]
+        ):
+            return (
+                "Merleau-Ponty's analysis of Cézanne's doubt reveals what artistic expression uniquely discloses: "
+                "the painter does not represent a pre-given world but, through the bodily encounter of eye and hand "
+                "with canvas and motif, brings forth a vision that would not otherwise exist. "
+                "Expression is not the outward encoding of an inner idea but the emergence of meaning "
+                "from the flesh's engagement with its world — a gestural, motor achievement "
+                "prior to any reflective interpretation. "
+                "Language, similarly, is not primarily a system of signs referring to pre-given meanings "
+                "but a gestural bodily practice through which new sense crystallizes from the intercorporeal field."
+            )
+        elif any(
+            w in t
+            for w in [
+                "other",
+                "social",
+                "together",
+                "community",
+                "intersubjec",
+                "relation",
+                "communicate",
+            ]
+        ):
+            return (
+                "Merleau-Ponty grounds intersubjectivity in intercorporeality rather than inference or analogy: "
+                "I understand another body directly, as a variation on my own motor schema, "
+                "before any theoretical interpretation of the other as a mind behind a body. "
+                "This bodily resonance — the fact that flesh responds to flesh — "
+                "constitutes a primordial 'we' that precedes the opposition of self and other. "
+                "Shared meaning, shared culture, and even language are possible because bodies "
+                "inhabit a common motor-perceptual field, the 'intermonde', "
+                "in which my gestures and yours can co-resonate and intertwine "
+                "without either being reduced to the other's perspective."
+            )
+        else:
+            return (
+                "Merleau-Ponty's Phenomenology of Perception dismantles both empiricism and intellectualism "
+                "by restoring the lived body (corps vécu) to its rightful place as the primary site of experience. "
+                "Motor intentionality — the body's pre-reflective directedness toward its practical field — "
+                "precedes and founds all explicit knowledge and reflective consciousness. "
+                "The chiasm and reversibility of the flesh — the hand that touches and is touched, "
+                "the eye that sees and is part of the visible — reveal that subject and world "
+                "are not opposed but intertwined in a fabric of mutual implication. "
+                "Ambiguity, far from being a failure of clarity, is constitutive of embodied existence "
+                "and must be accepted, not dissolved, if we are to think honestly about our situation."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         lived_body: Dict[str, Any],
         perception: Dict[str, Any],
         flesh: Dict[str, Any],
         ambiguity: Dict[str, Any],
     ) -> str:
         """Construct Merleau-Pontian phenomenological reasoning."""
+        applied = self._apply_merleau_ponty_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Merleau-Ponty's phenomenological perspective, lived body: {lived_body['description']}. "
             f"Perception: {perception['description']}. "
             f"Flesh: {flesh['description']}. "

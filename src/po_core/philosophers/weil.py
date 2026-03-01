@@ -460,6 +460,187 @@ class Weil(Philosopher):
             },
         }
 
+    def _apply_weil_to_problem(self, text: str) -> str:
+        """Apply Weil's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_suffering_affliction = any(
+            w in t
+            for w in [
+                "suffer",
+                "afflict",
+                "pain",
+                "grief",
+                "torment",
+                "misery",
+                "agony",
+                "degrad",
+                "humiliat",
+            ]
+        )
+        is_attention_contemplation = any(
+            w in t
+            for w in [
+                "attention",
+                "contempl",
+                "meditat",
+                "focus",
+                "prayer",
+                "study",
+                "wait",
+                "listen",
+                "presence",
+            ]
+        )
+        is_oppression_justice = any(
+            w in t
+            for w in [
+                "oppress",
+                "justice",
+                "injustice",
+                "power",
+                "force",
+                "exploit",
+                "worker",
+                "labor",
+                "rights",
+            ]
+        )
+        is_gravity_grace = any(
+            w in t
+            for w in [
+                "gravity",
+                "grace",
+                "selfishness",
+                "ego",
+                "decreas",
+                "decreat",
+                "renounce",
+                "transcend",
+                "uplift",
+            ]
+        )
+        is_knowledge_truth = any(
+            w in t
+            for w in [
+                "truth",
+                "knowledge",
+                "intellect",
+                "understand",
+                "learn",
+                "study",
+                "think",
+                "reason",
+                "clarity",
+            ]
+        )
+        is_god_spirituality = any(
+            w in t
+            for w in [
+                "god",
+                "spirit",
+                "divine",
+                "sacred",
+                "mystic",
+                "kenosis",
+                "cross",
+                "void",
+                "absence",
+            ]
+        )
+
+        if is_suffering_affliction:
+            return (
+                "Simone Weil's concept of affliction (malheur) demands that we distinguish it sharply from "
+                "ordinary suffering. Affliction is not merely pain — it is the uprooting of life itself, "
+                "the simultaneous devastation of body, social standing, and soul that crushes a person into "
+                "silence, stripping them of the very language to articulate their condition. Weil's own "
+                "experience in the Renault factory taught her that affliction renders the afflicted invisible "
+                "to those not crushed by it; the comfortable cannot hear what the afflicted cannot say. "
+                "Only the rarest and purest form of attention — a complete emptying of self, a suspension "
+                "of one's own needs and judgments — can reach the afflicted soul. Grace alone, not "
+                "willpower or moral resolve, can descend into affliction and bring something of the "
+                "supernatural into the heart of necessity."
+            )
+        elif is_attention_contemplation:
+            return (
+                "For Simone Weil, attention (attente) is not concentration or effortful focus but its "
+                "opposite: the complete suspension of one's own thoughts, the emptying of the self so "
+                "that the object — the other person, the geometric problem, the suffering before one — "
+                "can truly be seen. 'Attention is the rarest and purest form of generosity,' Weil writes; "
+                "it is the foundation of both justice and genuine prayer. Intellectual work practiced with "
+                "this quality of attention becomes a spiritual discipline: not because it produces correct "
+                "answers, but because the effort to attend trains the faculty of the soul that perceives "
+                "reality. This waiting without grasping — attente — is Weil's fundamental spiritual "
+                "posture, active and receptive simultaneously, open to what comes without imposing what "
+                "is expected."
+            )
+        elif is_oppression_justice:
+            return (
+                "Weil's analysis of oppression is mercilessly clear: force reduces persons to things. "
+                "When force is exercised upon a human being — whether in the factory, the prison, the "
+                "occupied country, or the marketplace — it treats that person as an instrument, a means, "
+                "something to be weighed and used. True justice requires attending to those whom force "
+                "has crushed — not with pity, which still maintains the comfortable distance of the "
+                "observer, but with afflicted attention, the willingness to descend into the reality of "
+                "the other's condition. Supernatural love, in Weil's framework, is the only force that "
+                "can resist gravity — the social gravity that reproduces oppression by compelling even "
+                "the oppressed to oppress those weaker than themselves. Justice is not a calculation but "
+                "an act of supernatural attention to the afflicted soul."
+            )
+        elif is_gravity_grace:
+            return (
+                "Gravity, in Weil's metaphysics, names all the forces that drag the soul downward: "
+                "selfishness, the appetite for power and prestige, the mechanical reproduction of "
+                "social habits, the compulsion to compensate one hurt with another. Gravity is not evil "
+                "— it is the natural order of a world governed by necessity. Grace is what defies this "
+                "order: supernatural love that descends rather than rises, that empties rather than fills, "
+                "that consents to be nothing so that the other can be seen. Decreation — Weil's most "
+                "demanding concept — means undoing the self not through violence or self-hatred but "
+                "through loving consent: withdrawing the ego from the center so that God, or the Good, "
+                "can act through the void left behind. The paradox is that this radical self-emptying "
+                "is not annihilation but the precondition of genuine existence."
+            )
+        elif is_knowledge_truth:
+            return (
+                "Weil's epistemology is inseparable from her ethics: truth requires afflicted attention, "
+                "the willingness to stay with difficulty, to resist premature resolution, to let the "
+                "question work on the self rather than forcing the self's framework onto the question. "
+                "Intellectual work practiced in this spirit — not for career, recognition, or the "
+                "pleasure of cleverness, but as an offering of attention — becomes a form of prayer. "
+                "Weil's method is to remain with the contradiction, the unsolvable problem, the "
+                "irreducible paradox: for it is precisely at these points of maximum difficulty that "
+                "the soul is most purely attending, most emptied of its preconceptions, most open to "
+                "what reality actually is. 'One must always be ready to change sides with justice, "
+                "that fugitive from the winning camp.' Truth is found not by the strongest argument "
+                "but by the most attentive soul."
+            )
+        elif is_god_spirituality:
+            return (
+                "Weil's theology is structured around the paradox of divine withdrawal (kenosis): God "
+                "renounced omnipotence in the act of creation, withdrawing to make room for a world "
+                "that is genuinely other than God. The cross, in this reading, is the intersection of "
+                "necessity and love — the point where divine love consents to be subject to the full "
+                "weight of the world's gravity. The void left by decreation — the space cleared by the "
+                "self's withdrawal from its own center — is precisely the space into which grace enters. "
+                "Weil was deeply drawn to mystical traditions across religions, finding in each the same "
+                "movement: the soul's consent to be nothing before the absolute. Yet she refused baptism, "
+                "choosing to remain at the threshold, in solidarity with those outside every established "
+                "community, where she believed supernatural love was most purely expressed."
+            )
+        else:
+            return (
+                "Simone Weil's philosophy orients itself around a few demanding concepts that cut against "
+                "the comfortable categories of both secular and religious thought. Attention (attente) — "
+                "the complete suspension of self in order truly to see — is the root of justice, prayer, "
+                "and intellectual integrity alike. Affliction (malheur) names the specific devastation "
+                "that force inflicts on body, social existence, and soul simultaneously. Gravity and grace "
+                "describe the double law of existence: the natural downward pull of selfishness and power, "
+                "and the supernatural uplift of love that defies it. Decreation — the voluntary undoing "
+                "of the ego — is the path through which grace becomes possible. Weil's factory work and "
+                "wartime solidarity gave these concepts flesh; they are not abstract but wrested from "
+                "direct encounter with affliction and necessity."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -474,7 +655,10 @@ class Weil(Philosopher):
         rootedness: Dict,
     ) -> str:
         """Construct comprehensive Weil reasoning."""
-        return f"""Contemplation through Simone Weil: "{prompt}"
+        applied = self._apply_weil_to_problem(prompt)
+        return f"""{applied}
+
+Contemplation through Simone Weil: "{prompt}"
 
 THE FACULTY OF ATTENTION
 {attention['nature']['description']}. {attention['moral_attention']['description']}

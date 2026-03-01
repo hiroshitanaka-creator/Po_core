@@ -1454,19 +1454,13 @@ class Dogen(Philosopher):
 
         # Append deeper analysis for any Zen concepts explicitly detected in the text
         if being_time["being_time_present"]:
-            parts.append(
-                f"有時（Uji）が浮き彫りに：{being_time['interpretation']}"
-            )
+            parts.append(f"有時（Uji）が浮き彫りに：{being_time['interpretation']}")
 
         if buddha_nature["buddha_nature_present"]:
-            parts.append(
-                f"仏性（仏性）の現れ：{buddha_nature['interpretation']}"
-            )
+            parts.append(f"仏性（仏性）の現れ：{buddha_nature['interpretation']}")
 
         if shikantaza["shikantaza_present"]:
-            parts.append(
-                f"只管打坐（しかんたざ）の相：{shikantaza['interpretation']}"
-            )
+            parts.append(f"只管打坐（しかんたざ）の相：{shikantaza['interpretation']}")
 
         if practice_enlightenment["unity_present"]:
             parts.append(
@@ -1484,19 +1478,13 @@ class Dogen(Philosopher):
             )
 
         if mountains_waters["mountains_waters_present"]:
-            parts.append(
-                f"山水経：{mountains_waters['interpretation']}"
-            )
+            parts.append(f"山水経：{mountains_waters['interpretation']}")
 
         if impermanence["impermanence_present"]:
-            parts.append(
-                f"無常（むじょう）：{impermanence['interpretation']}"
-            )
+            parts.append(f"無常（むじょう）：{impermanence['interpretation']}")
 
         if non_thinking["non_thinking_present"]:
-            parts.append(
-                f"非思量（ひしりょう）：{non_thinking['interpretation']}"
-            )
+            parts.append(f"非思量（ひしりょう）：{non_thinking['interpretation']}")
 
         if zazen_buddha["zazen_buddha_present"]:
             parts.append(f"坐禅即仏：{zazen_buddha['interpretation']}")

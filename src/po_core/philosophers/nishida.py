@@ -1260,9 +1260,7 @@ class Nishida(Philosopher):
             f" 純粋経験（pure experience）の観点：{pure_experience['description']}。"
         )
 
-        reasoning += (
-            f" 絶対無（Absolute Nothingness）の基盤：{absolute_nothingness['description']}。"
-        )
+        reasoning += f" 絶対無（Absolute Nothingness）の基盤：{absolute_nothingness['description']}。"
 
         reasoning += f" 場所（basho）の論理：{basho['description']}。"
 

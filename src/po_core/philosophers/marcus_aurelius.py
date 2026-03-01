@@ -479,6 +479,138 @@ class MarcusAurelius(Philosopher):
             ],
         }
 
+    def _apply_marcus_to_problem(self, text: str) -> str:
+        """Apply Marcus Aurelius's Stoic philosophy proactively to the given problem."""
+        t = text.lower()
+        is_adversity = any(
+            w in t
+            for w in [
+                "obstacle",
+                "fail",
+                "loss",
+                "problem",
+                "crisis",
+                "difficult",
+                "hard",
+                "setback",
+            ]
+        )
+        is_control = any(
+            w in t
+            for w in [
+                "control",
+                "can't control",
+                "cannot control",
+                "worry",
+                "anxious",
+                "uncertain",
+                "outcome",
+            ]
+        )
+        is_leadership = any(
+            w in t
+            for w in [
+                "leader",
+                "manage",
+                "team",
+                "govern",
+                "responsibility",
+                "duty",
+                "role",
+            ]
+        )
+        is_anger = any(
+            w in t
+            for w in [
+                "anger",
+                "angry",
+                "frustrat",
+                "rage",
+                "irritat",
+                "annoy",
+                "resent",
+            ]
+        )
+        is_mortality = any(
+            w in t
+            for w in ["death", "die", "mortal", "time", "legacy", "meaning", "purpose"]
+        )
+        is_decision = any(
+            w in t
+            for w in ["decide", "decision", "choose", "choice", "should", "option"]
+        )
+
+        if is_adversity:
+            return (
+                "Marcus Aurelius writes in the Meditations: 'The impediment to action advances action. "
+                "What stands in the way becomes the way' (V.20). "
+                "Every obstacle is material for virtue—the fire that tests and strengthens. "
+                "Amor fati (love of fate): do not merely accept what happens, but will it, embrace it. "
+                "The rational soul transforms adversity into opportunity by applying its three disciplines: "
+                "desire (want only what logos ordains), action (persist with reserve clause), "
+                "assent (judge events accurately, neither catastrophizing nor minimizing)."
+            )
+        elif is_control:
+            return (
+                "The Stoic Dichotomy of Control (Epictetus, Encheiridion 1; Meditations IV.3): "
+                "some things are 'up to us' (eph' hēmin)—our judgments, impulses, desires, aversions. "
+                "Everything else—reputation, body, wealth, others' actions—is 'not up to us.' "
+                "Marcus practiced this daily: 'You have power over your mind, not outside events. "
+                "Realize this, and you will find strength' (Meditations). "
+                "Redirect energy from uncontrollable externals to the inner citadel of prohairesis (rational will). "
+                "Peace is found not in changing circumstances but in mastering your response to them."
+            )
+        elif is_leadership:
+            return (
+                "Marcus Aurelius governed the Roman Empire while writing the Meditations as private notes. "
+                "Stoic leadership: serve the common good (koinos), not personal glory. "
+                "'Never esteem anything as of advantage to you that will make you break your word or lose your self-respect' (Med. III.7). "
+                "The leader's duty is virtue in action—wisdom, justice, courage, temperance—especially under pressure. "
+                "Cosmopolitanism: all rational beings share the logos; lead with universal concern, not tribal favoritism. "
+                "Memento mori: remembering mortality dissolves vanity and clarifies what truly matters in leadership."
+            )
+        elif is_anger:
+            return (
+                "Marcus Aurelius on anger (Meditations II.1): begin each day expecting difficult people, "
+                "for 'they err because they are ignorant—not willfully evil.' "
+                "Anger is a passion arising from false judgment: the belief that an external event is genuinely bad. "
+                "Apply the discipline of assent: pause before accepting the impression 'this is an outrage.' "
+                "The logos is shared by all; the offender acts from their own rationality, however flawed. "
+                "'How much more harmful are the consequences of anger than the events that provoke it' (Med. XI.18). "
+                "Correct with gentleness; change through reason, not force."
+            )
+        elif is_mortality:
+            return (
+                "Memento mori—'remember you will die'—was central to Marcus's daily practice. "
+                "'Confine yourself to the present' (Med. VIII.7): past and future are not in your power. "
+                "Alexander the Great and his mule-driver now lie in the same dust (Med. VI.24)—"
+                "fame, empire, legacy dissolve. What remains is how virtuously you acted. "
+                "Death is not evil (it is indifferent—an adiaphoron); living without virtue is the true loss. "
+                "Amor fati: embrace your finite time as the logos ordained it. "
+                "This moment, this action—lived with virtue—is enough."
+            )
+        elif is_decision:
+            return (
+                "Marcus Aurelius's decision framework from the Meditations: "
+                "First, apply the Dichotomy of Control—what in this situation is truly up to you? Focus there. "
+                "Second, ask what virtue (wisdom, justice, courage, temperance) demands. "
+                "Third, invoke the Reserve Clause (hupexairesis): act with full commitment 'fate permitting.' "
+                "Fourth, consider the view from above (Med. IX.30): how does this look from cosmic perspective? "
+                "Fifth, memento mori: which choice will future-you, looking back from death, be proud of? "
+                "'Do what nature requires. Set out immediately, if possible; don't look around to see if people will know about it' (Med. X.11)."
+            )
+        else:
+            return (
+                "Marcus Aurelius (121–180 CE), philosopher-emperor, wrote the Meditations as private Stoic exercises. "
+                "Core teaching: the Dichotomy of Control—distinguish what is 'up to us' (prohairesis, rational will) "
+                "from externals (indifferents, adiaphora). "
+                "Virtue (wisdom, justice, courage, temperance) is the sole good; everything else is indifferent. "
+                "Logos—divine rational principle—pervades the cosmos; living 'according to nature' means aligning with logos. "
+                "Amor fati: love your fate, including suffering, as part of the rational whole. "
+                "Memento mori: remembering death clarifies priorities and dissolves vanity. "
+                "Cosmopolitanism: all rational beings share logos; act for the common good of all humanity."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -494,7 +626,10 @@ class MarcusAurelius(Philosopher):
         ataraxia: Dict,
     ) -> str:
         """Construct comprehensive Stoic reasoning."""
-        return f"""Stoic Meditation on: "{prompt}"
+        applied = self._apply_marcus_to_problem(prompt)
+        return f"""{applied}
+
+Stoic Meditation on: "{prompt}"
 
 DICHOTOMY OF CONTROL
 First, we must distinguish what is up to us from what is not.

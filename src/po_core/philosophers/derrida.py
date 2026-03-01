@@ -152,6 +152,7 @@ class Derrida(Philosopher):
 
         # Construct deconstructive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             binaries,
             traces,
             differance,
@@ -1199,8 +1200,183 @@ class Derrida(Philosopher):
             "principle": "Justice: The undeconstructible that deconstruction serves",
         }
 
+    def _apply_derrida_to_problem(self, text: str) -> str:
+        """Apply Derridean concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "language",
+                "text",
+                "word",
+                "write",
+                "read",
+                "sign",
+                "meaning",
+                "interpret",
+                "literal",
+                "metaphor",
+            ]
+        ):
+            return (
+                "Deconstruction reveals that every text is inhabited by tensions and contradictions "
+                "it cannot fully master. Différance — Derrida's portmanteau of 'deferral' and "
+                "'difference' — designates the movement by which meaning is never fully present: "
+                "each sign refers to other signs, endlessly deferring the arrival of a stable "
+                "signified. The dream of a purely transparent language, a pure logos that would "
+                "deliver meaning without mediation, is precisely the logocentric illusion that "
+                "deconstruction dismantles. Reading therefore becomes an act of attending to the "
+                "margins, the supplements, the traces of what a text had to exclude in order to "
+                "appear coherent."
+            )
+        elif any(
+            w in t
+            for w in [
+                "oppos",
+                "binary",
+                "versus",
+                "either",
+                "or",
+                "distinction",
+                "contrast",
+                "hierarchy",
+                "prior",
+                "original",
+            ]
+        ):
+            return (
+                "Binary oppositions — nature/culture, speech/writing, presence/absence, "
+                "reason/madness — are not neutral analytical tools but hierarchical structures "
+                "in which one term is privileged and the other subordinated. Deconstruction's "
+                "first move is to reverse the hierarchy: to show how the 'inferior' term is in "
+                "fact constitutive of the 'superior' one. Its second move displaces the opposition "
+                "altogether, showing that it cannot be maintained in its apparent clarity. The "
+                "inferior term always haunts the superior as its necessary supplement, its "
+                "constitutive outside — the writing that 'mere' speech cannot do without, the "
+                "absence that defines presence."
+            )
+        elif any(
+            w in t
+            for w in [
+                "justice",
+                "law",
+                "right",
+                "legal",
+                "fair",
+                "norm",
+                "rule",
+                "obligation",
+                "court",
+                "punishment",
+            ]
+        ):
+            return (
+                "In 'Force of Law', Derrida argues that law is deconstructible — its foundations "
+                "in force and convention can always be questioned — but justice is not: justice is "
+                "the very experience of deconstruction, what deconstruction is in the service of. "
+                "Justice is 'to-come' (l'avenir): never fully present, never calculable, never "
+                "reducible to the application of an existing rule. Every genuine decision faces an "
+                "aporia — it must both follow a rule (or it is arbitrary) and be singular (or it "
+                "is merely mechanical); it must be both just and legal, both certain and uncertain. "
+                "This undecidability is not a defect but the very condition of responsibility."
+            )
+        elif any(
+            w in t
+            for w in [
+                "hospitality",
+                "welcome",
+                "stranger",
+                "foreigner",
+                "guest",
+                "host",
+                "other",
+                "immigrant",
+                "refugee",
+                "border",
+            ]
+        ):
+            return (
+                "Derrida's meditation on hospitality traces an irreducible tension between "
+                "unconditional hospitality — welcome the stranger absolutely, without condition, "
+                "without asking for a name — and conditional hospitality, which is the only "
+                "hospitality we can actually practice (hospitality with laws, with limits, with "
+                "identities verified). The word itself carries the aporia: 'hostis' means both "
+                "host and enemy; the guest threatens to become master of the house. Pure "
+                "unconditional hospitality is impossible and perhaps even unjust (it dissolves "
+                "the home that makes welcoming possible); yet conditional hospitality falls short "
+                "of the unconditional demand. We must negotiate this aporia without resolution."
+            )
+        elif any(
+            w in t
+            for w in [
+                "identity",
+                "self",
+                "difference",
+                "same",
+                "origin",
+                "pure",
+                "authentic",
+                "culture",
+                "tradition",
+                "heritage",
+            ]
+        ):
+            return (
+                "There is no pure self-presence, no originary identity that precedes its relation "
+                "to the Other. Différance shows that identity is constituted through difference and "
+                "deferral: the 'same' is only intelligible against what it differs from, and what "
+                "it differs from leaves a trace within it. The dream of cultural or personal purity "
+                "— an identity untouched by the Other — is both impossible and politically "
+                "dangerous; deconstruction shows that the Other is always already within the Same. "
+                "What Derrida calls the 'trace' — the mark of the Other in every identity — "
+                "is not a contamination to be purged but the condition of possibility of any "
+                "identity whatsoever."
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "meaning",
+                "concept",
+                "idea",
+                "theory",
+                "philosophy",
+                "foundation",
+                "ground",
+                "center",
+                "system",
+            ]
+        ):
+            return (
+                "Every system of thought requires a center — a ground, an origin, a presence — "
+                "that governs the play of the system's elements while itself standing outside "
+                "that play. But Derrida shows that the center is itself a function of the "
+                "structure, not its exterior foundation; the 'center is not the center'. The "
+                "supplement reveals the incompleteness of what it was supposed merely to add to: "
+                "writing supplements speech (in Rousseau and Plato) precisely because speech was "
+                "never self-sufficient; the supplement fills a lack that the 'original' was "
+                "supposed not to have. Iterability — the repeatability of any sign in new contexts "
+                "— means that no meaning can be fully controlled or fixed by an originating "
+                "intention."
+            )
+        else:
+            return (
+                "Deconstruction is not a method applied from outside but a patient attention to "
+                "the internal tensions and undecidabilities that every text, institution, or "
+                "practice harbors. Différance — the irreducible play of difference and deferral "
+                "— ensures that no meaning, no identity, no presence is ever fully itself. "
+                "Binary oppositions organize our thought but are hierarchical and unstable; "
+                "the trace of the excluded term persists within the privileged one. Justice, "
+                "hospitality, friendship, democracy — these are names for the unconditional "
+                "demand that always exceeds any conditional, calculable instance of them: they "
+                "are 'to-come', the infinite responsibility that deconstruction keeps open. "
+                "Of Grammatology, Writing and Difference, and Specters of Marx each open this "
+                "space of undecidability in a different domain."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         binaries: List[Dict[str, Any]],
         traces: List[Dict[str, str]],
         differance: Dict[str, Any],
@@ -1211,9 +1387,11 @@ class Derrida(Philosopher):
         aporia: List[Dict[str, str]],
     ) -> str:
         """Construct comprehensive deconstructive reasoning."""
+        applied = self._apply_derrida_to_problem(prompt)
         # Start with binary oppositions
         primary_binary = binaries[0]["opposition"] if binaries else "presence/absence"
         reasoning = (
+            f"{applied}\n\n"
             f"Through deconstruction, we reveal that this text operates through binary oppositions "
             f"(such as {primary_binary}). These oppositions are not neutral but hierarchical, "
             f"privileging one term over its 'inferior' other. "

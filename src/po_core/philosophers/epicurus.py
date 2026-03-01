@@ -458,6 +458,137 @@ class Epicurus(Philosopher):
             ],
         }
 
+    def _apply_epicurus_to_problem(self, text: str) -> str:
+        """Apply Epicurus's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_fear = any(
+            w in t
+            for w in [
+                "fear",
+                "death",
+                "die",
+                "anxiety",
+                "worry",
+                "god",
+                "divine",
+                "punish",
+                "afterlife",
+            ]
+        )
+        is_desire = any(
+            w in t
+            for w in [
+                "want",
+                "desire",
+                "craving",
+                "ambition",
+                "wealth",
+                "fame",
+                "luxury",
+                "need",
+            ]
+        )
+        is_stress = any(
+            w in t
+            for w in [
+                "stress",
+                "overwhelm",
+                "busy",
+                "pressure",
+                "exhaust",
+                "burden",
+                "suffer",
+            ]
+        )
+        is_friendship = any(
+            w in t
+            for w in [
+                "friend",
+                "relation",
+                "community",
+                "trust",
+                "lonely",
+                "connect",
+                "social",
+            ]
+        )
+        is_technology = any(
+            w in t
+            for w in ["ai", "tech", "digital", "machine", "automate", "system", "data"]
+        )
+        is_decision = any(
+            w in t
+            for w in ["decide", "decision", "choose", "choice", "should", "option"]
+        )
+
+        if is_fear:
+            return (
+                "Epicurus's Tetrapharmakos (Four-Fold Remedy) addresses this directly: "
+                "'Do not fear god, do not fear death; what is good is easy to get, what is terrible is easy to endure.' "
+                "On death: 'When death is, I am not; when I am, death is not' (Letter to Menoeceus). "
+                "Death is simply the cessation of sensation—nothing to experience, nothing to dread. "
+                "Fear of divine punishment is unfounded: the gods live in perfect ataraxia and care nothing for human affairs. "
+                "Philosophy is the medicine (φάρμακον) that heals these fears."
+            )
+        elif is_desire:
+            return (
+                "Epicurus classifies desires rigorously: natural & necessary (food, shelter, friendship, philosophy) → satisfy these. "
+                "Natural but unnecessary (luxury food, romance beyond basic companionship) → pursue cautiously. "
+                "Unnatural & unnecessary (fame, power, endless wealth) → these are the source of most human suffering. "
+                "'Nothing is enough for the person to whom enough is too little.' "
+                "Prudence (phronesis) calculates: will this desire, if satisfied, produce more pleasure than pain over time? "
+                "The goal is not maximum stimulation but stable ataraxia (tranquility) and aponia (freedom from bodily pain)."
+            )
+        elif is_stress:
+            return (
+                "Epicurus prescribes withdrawal (lathe biosas—'live hidden'): retreat from public striving to the Garden. "
+                "Stress is the product of unnatural desires (fame, wealth, power) and unfounded fears. "
+                "The cure: simplify. Natural and necessary goods are easy to obtain. "
+                "'Wealth consists not in having great possessions, but in having few wants.' "
+                "Aponia (ἀπονία)—freedom from bodily pain—and ataraxia (ἀταραξία)—freedom from mental disturbance—are the twin peaks. "
+                "Philosophy practiced daily, friendship cultivated in a small community, simple pleasures: this is the Epicurean therapy."
+            )
+        elif is_friendship:
+            return (
+                "Epicurus held friendship (philia) as the greatest of all goods that wisdom provides (Vatican Sayings 52). "
+                "'Friendship dances around the world, bidding us all to awaken to the recognition of happiness.' "
+                "The Epicurean Garden was a community of friends—men, women, slaves—living philosophically together. "
+                "Friendship is not merely useful (though it is); at its highest it becomes intrinsically valued. "
+                "Trust, mutual aid, shared philosophy: the community of friends provides security (asphaleia) that money cannot. "
+                "Invest in deep friendships; they are the surest path to ataraxia."
+            )
+        elif is_technology:
+            return (
+                "Epicurus would apply the desires test to technology: is it natural and necessary? natural but unnecessary? or unnatural? "
+                "Technology that reduces genuine pain (aponia) and enables tranquil living is beneficial. "
+                "Technology that generates new cravings, social comparison, or anxiety (unnatural desires) subtracts from ataraxia. "
+                "The Epicurean question: does this tool make it easier to obtain what is truly good "
+                "(friendship, simple pleasures, philosophical reflection), or does it multiply wants? "
+                "Prudence (phronesis) calculates net pleasure across time, not immediate stimulation."
+            )
+        elif is_decision:
+            return (
+                "Epicurus's prudence (phronesis) is the calculus of the good life: "
+                "weigh pleasures and pains across time, not just immediate gratification. "
+                "'It is not possible to live pleasantly without living prudently, honorably, and justly.' "
+                "For each option, ask: (1) Does it satisfy natural and necessary desires? "
+                "(2) Does it produce lasting ataraxia or merely brief excitement followed by disturbance? "
+                "(3) Does it align with friendship and community, or does it isolate? "
+                "(4) Will future-me be grateful for this choice? "
+                "The Tetrapharmakos reminds us: good is easy to get, evil easy to endure—do not overcomplicate."
+            )
+        else:
+            return (
+                "Epicurus (341–270 BCE) taught that the goal of life is eudaimonia achieved through "
+                "ataraxia (ἀταραξία, tranquility of mind) and aponia (ἀπονία, freedom from bodily pain). "
+                "Pleasure (ἡδονή) is the beginning and end of the blessed life—but the highest pleasure is the stable absence of pain, not excess. "
+                "The Tetrapharmakos: fear not the gods, fear not death, good is easy to get, evil is easy to endure. "
+                "Desires must be classified: natural & necessary → natural & unnecessary → unnatural & unnecessary. "
+                "Pursue only the first; prune the rest. "
+                "Friendship is the greatest external good: 'Of all things wisdom provides for happiness, the greatest is friendship' (VS 52). "
+                "Lathe biosas ('live hidden'): withdraw from political strife into the philosophical Garden."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -471,7 +602,10 @@ class Epicurus(Philosopher):
         prudence: Dict,
     ) -> str:
         """Construct comprehensive Epicurean reasoning."""
-        return f"""Epicurean Analysis of: "{prompt}"
+        applied = self._apply_epicurus_to_problem(prompt)
+        return f"""{applied}
+
+Epicurean Analysis of: "{prompt}"
 
 THE NATURE OF PLEASURE
 {pleasure['nature_of_pleasure']['definition']}. True pleasure is not excess or

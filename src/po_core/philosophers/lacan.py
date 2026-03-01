@@ -128,7 +128,9 @@ class Lacan(Philosopher):
         discourse = self._determine_discourse(prompt)
 
         # Construct reasoning
+        applied = self._apply_lacan_to_problem(prompt)
         reasoning = self._construct_reasoning(register, desire, other, lack, objet_a)
+        reasoning = f"{applied}\n\n{reasoning}"
 
         return {
             "reasoning": reasoning,
@@ -709,6 +711,183 @@ class Lacan(Philosopher):
             "description": description,
             "principle": "Four discourses structure social bonds and positions",
         }
+
+    def _apply_lacan_to_problem(self, text: str) -> str:
+        """Apply Lacan's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_desire_motivation = any(
+            w in t
+            for w in [
+                "desire",
+                "want",
+                "motivat",
+                "drive",
+                "need",
+                "wish",
+                "longing",
+                "craving",
+                "seek",
+            ]
+        )
+        is_identity_self = any(
+            w in t
+            for w in [
+                "identity",
+                "self",
+                "ego",
+                "who am i",
+                "mirror",
+                "image",
+                "recogni",
+                "subject",
+                "person",
+            ]
+        )
+        is_language_communication = any(
+            w in t
+            for w in [
+                "language",
+                "word",
+                "meaning",
+                "signif",
+                "speech",
+                "communicat",
+                "symbol",
+                "sign",
+                "text",
+            ]
+        )
+        is_real_trauma = any(
+            w in t
+            for w in [
+                "trauma",
+                "real",
+                "horror",
+                "unspeakable",
+                "jouissance",
+                "enjoyment",
+                "compulsion",
+                "repetit",
+                "rupture",
+            ]
+        )
+        is_relationships_love = any(
+            w in t
+            for w in [
+                "love",
+                "relationship",
+                "partner",
+                "other",
+                "demand",
+                "lack",
+                "intimacy",
+                "attachment",
+                "couple",
+            ]
+        )
+        is_power_authority = any(
+            w in t
+            for w in [
+                "power",
+                "authority",
+                "law",
+                "father",
+                "rule",
+                "order",
+                "prohibit",
+                "castrat",
+                "psychosis",
+            ]
+        )
+
+        if is_desire_motivation:
+            return (
+                "From a Lacanian perspective, desire is not a natural appetite that seeks its object and "
+                "finds satisfaction — it is constitutively metonymic, perpetually sliding along the "
+                "signifying chain from one substitute to the next without ever arriving. Desire is always "
+                "the desire of the Other: we desire according to the desire we read in another's gaze, "
+                "seeking to become the object that fills the Other's lack. The objet petit a is not the "
+                "object of desire but its cause — the elusive remainder that sets desire in motion, always "
+                "already lost. This is why satisfaction, when achieved, so often produces disappointment: "
+                "the obtained object reveals itself as not-it, and desire migrates onward. To understand "
+                "motivation is thus to map the topology of lack and the circuits of fantasy that temporarily "
+                "screen it."
+            )
+        elif is_identity_self:
+            return (
+                "The Lacanian mirror stage reveals identity as constitutively misrecognition (méconnaissance): "
+                "the infant identifies with its specular image — a coherent, unified form — precisely to "
+                "compensate for its experience of bodily fragmentation and motor helplessness. The ego is "
+                "thus not the seat of agency but an imaginary construction, a fiction of wholeness that "
+                "covers the fundamental division of the subject. The subject of the unconscious ($) is "
+                "split — between conscious statement and unconscious enunciation, between the subject of "
+                "the signifier and the subject it represents. This split cannot be healed or reconciled; "
+                "it is the condition of speaking-being (parlêtre). What presents itself as a unified self "
+                "is always a masquerade, a performance of completeness over an irreducible lack."
+            )
+        elif is_language_communication:
+            return (
+                "Lacan's axiom — the unconscious is structured like a language — transforms psychoanalysis "
+                "into a reading of the signifying chain rather than a decoding of hidden drives. Following "
+                "Saussure but inverting his hierarchy, Lacan insists on the primacy of the signifier over "
+                "the signified: meaning is produced retroactively through the relation between signifiers, "
+                "not through correspondence to a pre-given concept. The subject is a subject of the "
+                "signifier — represented by one signifier for another signifier, always elsewhere in the "
+                "chain. The symptom is not a mere dysfunction but a message: a signifier addressed to the "
+                "Other, waiting to be deciphered. Communication thus never achieves full transparency; "
+                "there is always a remainder, a point where meaning slips, which is the point of the Real "
+                "in language."
+            )
+        elif is_real_trauma:
+            return (
+                "The Lacanian Real is not reality — it is precisely what resists symbolization, the "
+                "remainder that the Symbolic order cannot absorb. Trauma is the intrusion of the Real into "
+                "the fabric of the Symbolic: an event that cannot be integrated into the narrative of the "
+                "subject, that returns insistently in symptoms, nightmares, and acting-out. Jouissance — "
+                "the excessive pleasure/pain beyond the pleasure principle — is the mode in which the "
+                "Real registers in the body: the body enjoys in ways that escape conscious intention and "
+                "undermine adaptation. The Real always returns in the gaps of the Symbolic, in the "
+                "moments of breakdown, the slips of tongue, the repetitions that compel beyond reason. "
+                "Working through trauma requires not dissolving the Real but finding a way to live with "
+                "its insistence — what Lacan called traversing the fantasy."
+            )
+        elif is_relationships_love:
+            return (
+                "Love, in the Lacanian register, is the demand that the Other fill one's lack — 'Give me "
+                "what I do not have, and which is perhaps what you do not have either.' But the Other is "
+                "also barred (the barred Other, $): the partner, the parent, the beloved is also lacking, "
+                "also divided, also unable to provide the complete satisfaction demanded. Love requires the "
+                "recognition of this mutual lack — not as defeat but as the condition of genuine encounter. "
+                "The confusion of love with demand produces the neurotic circle: the more the demand is "
+                "satisfied, the more urgent it becomes, because the objet petit a — the cause of desire — "
+                "can never be finally possessed. What Lacan calls love proper begins when one loves the "
+                "other's symptom — their particular mode of jouissance, irreducible and singular."
+            )
+        elif is_power_authority:
+            return (
+                "The Lacanian Name-of-the-Father (Nom-du-Père) is the master signifier that introduces "
+                "the Law into the subject's desire: it interposes between the child and the imaginary "
+                "fusion with the mother, inscribing lack and the prohibition that structures the Symbolic "
+                "order. This 'castration' is not a loss but the condition of entry into language, desire, "
+                "and social bond. When the Name-of-the-Father is foreclosed — excluded from the Symbolic "
+                "rather than repressed — the result is psychosis: the Real returns in the form of "
+                "hallucination or delusion where the Symbolic fails. Authority structures reproduce the "
+                "four discourses (Master, University, Hysteric, Analyst), each positioning the subject "
+                "differently in relation to knowledge and jouissance. Power is never simply repressive; "
+                "it operates by structuring desire, producing subjects who will it."
+            )
+        else:
+            return (
+                "Lacanian psychoanalysis operates through the triad of the Real, Symbolic, and Imaginary "
+                "(RSI) — three registers that together constitute human subjectivity. The Imaginary is the "
+                "domain of images, identifications, and the ego's misrecognitions; the Symbolic is the "
+                "order of language, law, and the signifier; the Real is what resists symbolization and "
+                "returns as symptom. The subject is always split ($), constituted by the signifier yet "
+                "never fully representable by it. Desire is metonymic — it moves along the signifying "
+                "chain, always displaced from its cause (objet petit a) and structured by the desire of "
+                "the Other. The unconscious is structured like a language: it speaks through slips, "
+                "dreams, and symptoms, addressing an Other that is itself barred and lacking."
+            )
 
     def _construct_reasoning(
         self,

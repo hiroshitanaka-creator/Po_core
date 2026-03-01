@@ -117,7 +117,7 @@ class Aristotle(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            virtue, mean, eudaimonia, causes, phronesis, telos
+            prompt, virtue, mean, eudaimonia, causes, phronesis, telos
         )
 
         return {
@@ -726,8 +726,128 @@ class Aristotle(Philosopher):
             ),
         }
 
+    def _apply_aristotle_to_problem(self, text: str) -> str:
+        """Apply Aristotle's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_decision = any(
+            w in t
+            for w in ["decide", "decision", "choose", "choice", "should", "option"]
+        )
+        is_ethics = any(
+            w in t
+            for w in [
+                "right",
+                "wrong",
+                "good",
+                "bad",
+                "moral",
+                "ethic",
+                "virtue",
+                "harm",
+            ]
+        )
+        is_knowledge = any(
+            w in t
+            for w in [
+                "know",
+                "learn",
+                "science",
+                "understand",
+                "research",
+                "study",
+                "truth",
+            ]
+        )
+        is_politics = any(
+            w in t
+            for w in [
+                "leader",
+                "govern",
+                "politics",
+                "community",
+                "society",
+                "polis",
+                "citizen",
+            ]
+        )
+        is_technology = any(
+            w in t
+            for w in [
+                "ai",
+                "tech",
+                "digital",
+                "machine",
+                "build",
+                "create",
+                "make",
+                "tool",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "Aristotle's Nicomachean Ethics places phronesis (practical wisdom, φρόνησις) at the center of good decision-making. "
+                "Phronesis is not rule-following but the capacity to perceive what virtue requires in this particular situation. "
+                "Apply the doctrine of the mean (μεσότης): the virtuous choice lies between excess and deficiency. "
+                "Deliberation (bouleusis, NE III.3) is the rational process: identify the end (telos), "
+                "then reason back through means to what is in your power to do now. "
+                "Ask: what would a person of excellent character (σπουδαῖος) do here?"
+            )
+        elif is_ethics:
+            return (
+                "Aristotle's virtue ethics grounds morality in character (ἦθος) rather than rules or outcomes. "
+                "Virtues are stable dispositions (hexeis) acquired through habituation (NE II.1): "
+                "'we become just by doing just acts, temperate by temperate acts, brave by brave acts.' "
+                "Each virtue is a mean between two vices: courage between cowardice and recklessness; "
+                "generosity between miserliness and prodigality. "
+                "The ultimate aim is eudaimonia (εὐδαιμονία)—flourishing through a complete life of virtuous activity. "
+                "Ethical judgment requires phronesis, not algorithms."
+            )
+        elif is_knowledge:
+            return (
+                "Aristotle distinguishes three intellectual virtues: episteme (scientific knowledge of necessary truths), "
+                "techne (craft knowledge of how to make), and phronesis (practical wisdom of how to act). "
+                "All humans by nature desire to know (Metaphysics I.1). "
+                "Knowledge of causes is deepest: material, formal, efficient, final causes explain why things are as they are. "
+                "The four causes applied here: what is the subject matter (material)? "
+                "What is its defining form (formal)? What brought it about (efficient)? What is it for (final)? "
+                "Wisdom (sophia) is knowledge of first principles and highest causes."
+            )
+        elif is_politics:
+            return (
+                "Aristotle declares: 'Man is by nature a political animal' (zoon politikon, Politics I.2). "
+                "The polis exists for eudaimonia—the good life, not merely survival. "
+                "Good governance requires the rule of law (not arbitrary individuals), "
+                "and constitutions are judged by whether they serve the common good or private interest. "
+                "The best practicable constitution (polity) mixes oligarchy and democracy, creating a stable middle class. "
+                "Political virtue is civic friendship (philia politike): citizens bound by shared pursuit of the common good. "
+                "Leadership demands phronesis: understanding particulars, not merely abstract principles."
+            )
+        elif is_technology:
+            return (
+                "Aristotle's concept of techne (τέχνη) is directly relevant: techne is knowledge of how to make, "
+                "guided by a clear final cause (telos)—the purpose the artifact is for. "
+                "A technology without clear telos is incomplete knowledge. "
+                "Four causes applied to any technological system: "
+                "material (what it's made of), formal (its structure/algorithm), efficient (who/what created it), final (what it's for). "
+                "Technology aligned with human eudaimonia serves; technology that undermines flourishing violates its proper telos. "
+                "Ask: does this tool enable humans to exercise virtue and practical wisdom, or does it substitute for them?"
+            )
+        else:
+            return (
+                "Aristotle (384–322 BCE) grounded ethics in eudaimonia (εὐδαιμονία)—human flourishing. "
+                "Virtue (ἀρετή) is a stable disposition to choose the mean between excess and deficiency, "
+                "developed through habituation (NE II.1). "
+                "Phronesis (practical wisdom, φρόνησις) is the master intellectual virtue: "
+                "it perceives what virtue requires in each concrete situation. "
+                "The four causes (material, formal, efficient, final) explain why anything exists or occurs. "
+                "All things have a telos—a proper end or function; living according to one's telos constitutes flourishing. "
+                "Politics is the master science: the polis exists to enable citizens to live well, not merely to survive."
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         virtue: Dict[str, Any],
         mean: Dict[str, Any],
         eudaimonia: Dict[str, Any],
@@ -737,8 +857,10 @@ class Aristotle(Philosopher):
     ) -> str:
         """Construct Aristotelian ethical reasoning."""
         primary_virtue = virtue["primary"]
+        applied = self._apply_aristotle_to_problem(text)
 
         reasoning = (
+            f"{applied} "
             f"From an Aristotelian perspective, this text concerns {primary_virtue}. "
             f"Regarding the golden mean: {mean['description']}. "
             f"The level of eudaimonia (human flourishing) appears to be: {eudaimonia['description']}. "

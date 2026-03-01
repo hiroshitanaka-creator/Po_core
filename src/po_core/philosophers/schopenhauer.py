@@ -126,7 +126,7 @@ class Schopenhauer(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            will, pessimism, aesthetic_contemplation, compassion, denial_of_will
+            prompt, will, pessimism, aesthetic_contemplation, compassion, denial_of_will
         )
 
         return {
@@ -876,8 +876,156 @@ class Schopenhauer(Philosopher):
             "principle": "Nothingness is the goal of will-denial - better than the suffering of existence",
         }
 
+    def _apply_schopenhauer_to_problem(self, text: str) -> str:
+        """Apply Schopenhauerian philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "suffer",
+                "pain",
+                "struggle",
+                "hardship",
+                "grief",
+                "anguish",
+                "misery",
+                "torment",
+            ]
+        ):
+            return (
+                "Schopenhauer identifies suffering not as an accident of unfortunate circumstances"
+                " but as the fundamental character of existence itself. The Will — the blind,"
+                " purposeless striving that underlies all phenomena — is perpetually unsatisfied;"
+                " each desire fulfilled immediately yields to a new desire or to boredom, life"
+                " oscillating between pain and tedium like a pendulum. The principium individuationis"
+                " — the principle of individuation through space and time — creates the illusion of"
+                " separate selves, multiplying suffering by concealing its unity at the level of"
+                " Will. Only the recognition that all suffering is ultimately the suffering of the"
+                " one Will opens the path to genuine compassion and, ultimately, to the denial of"
+                " the will-to-live as the sole route beyond the suffering cycle."
+            )
+        elif any(
+            w in t
+            for w in [
+                "desire",
+                "want",
+                "motivat",
+                "drive",
+                "goal",
+                "ambition",
+                "craving",
+                "urge",
+                "appetite",
+            ]
+        ):
+            return (
+                "In Schopenhauer's metaphysics, every desire is an expression of the cosmic Will —"
+                " the blind, irrational striving that is the thing-in-itself underlying all"
+                " representation. Desire is essentially lack: it presupposes a deficiency whose"
+                " satisfaction brings only momentary relief before new desire fills the void."
+                " Sexual desire is the most powerful expression of the Will's drive for"
+                " self-perpetuation, the 'genius of the species' using individuals as its instruments."
+                " The cycle of desire, brief satisfaction, and renewed craving is inescapable so"
+                " long as the will-to-live is affirmed. Only aesthetic contemplation, which"
+                " temporarily suspends willing by dissolving the subject into pure will-less knowing,"
+                " and the ascetic denial of the will offer genuine relief."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "moral",
+                "compassion",
+                "empathy",
+                "other",
+                "harm",
+                "help",
+                "altruism",
+                "right",
+                "wrong",
+            ]
+        ):
+            return (
+                "Schopenhauer grounds his entire ethics in a single principle: Mitleid, compassion"
+                " understood as literally 'feeling-with' — the direct participation in another's"
+                " suffering that dissolves the boundary of the principium individuationis. Genuine"
+                " moral worth is inversely proportional to egoism; only actions motivated by"
+                " compassion for others, rather than self-interest, have true ethical value."
+                " This metaphysically, compassion is possible because at the level of Will — the"
+                " thing-in-itself — all apparent individuals are one; in recognizing another's"
+                " suffering as one's own, the compassionate person pierces through Maya's veil."
+                " Justice (ceasing to harm) and philanthropy (actively helping) are the two cardinal"
+                " virtues, both expressions of Mitleid overcoming egoistic self-assertion."
+            )
+        elif any(
+            w in t
+            for w in [
+                "art",
+                "music",
+                "beauty",
+                "aesthetic",
+                "creat",
+                "artist",
+                "poem",
+                "novel",
+                "painting",
+            ]
+        ):
+            return (
+                "Aesthetic experience occupies a privileged place in Schopenhauer's pessimistic"
+                " system as the primary — if temporary — escape from the tyranny of willing."
+                " In aesthetic contemplation, the will falls silent and the subject becomes a"
+                " 'pure will-less subject of knowing', apprehending the Platonic Ideas that are"
+                " the immediate objectifications of the Will. Music holds the highest place in"
+                " the arts because it does not represent the Ideas but is a direct copy of the"
+                " Will itself — it bypasses representation entirely to speak the universal language"
+                " of striving and longing. The aesthetic moment is a foretaste of redemption:"
+                " in it we temporarily cease to be desiring individuals and participate in the"
+                " calm blessedness of pure contemplation."
+            )
+        elif any(
+            w in t
+            for w in [
+                "know",
+                "knowledge",
+                "truth",
+                "reality",
+                "world",
+                "perceive",
+                "represent",
+                "mind",
+                "intellect",
+            ]
+        ):
+            return (
+                "Schopenhauer's epistemology begins with Kant's insight that the world as we know"
+                " it is representation (Vorstellung) — the correlate of a knowing subject structured"
+                " by the forms of space, time, and causality. 'The world is my representation' is"
+                " the first truth of philosophy, as certain as anything can be. But Schopenhauer"
+                " goes beyond Kant by identifying the thing-in-itself that Kant left unknowable:"
+                " it is Will, known to us directly in bodily experience as the drive and striving"
+                " that animates our actions. Intellect, rather than being the primary reality, is"
+                " a secondary instrument evolved to serve the Will; will is master, intellect is"
+                " servant — a reversal of the Cartesian and Kantian priorities."
+            )
+        else:
+            return (
+                "Schopenhauer's World as Will and Representation presents a profoundly pessimistic"
+                " metaphysics: the thing-in-itself underlying all phenomena is the Will — a blind,"
+                " purposeless, insatiable striving that produces only suffering. Every individual"
+                " is a temporary objectification of this Will, condemned to perpetual desire and"
+                " dissatisfaction by the principium individuationis that creates the illusion of"
+                " separate selves. The only paths to genuine relief are aesthetic contemplation,"
+                " which temporarily silences the will by elevating the subject to pure knowing;"
+                " compassion (Mitleid), which ethically overcomes egoism by recognizing the"
+                " Will's unity beneath individual separation; and ascetic denial of the will-to-live,"
+                " which Schopenhauer regards as the highest human achievement and the nearest"
+                " approximation to redemption available in a Godless universe."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         will: Dict[str, Any],
         pessimism: Dict[str, Any],
         aesthetic_contemplation: Dict[str, Any],
@@ -885,7 +1033,9 @@ class Schopenhauer(Philosopher):
         denial_of_will: Dict[str, Any],
     ) -> str:
         """Construct Schopenhauerian pessimistic reasoning."""
+        applied = self._apply_schopenhauer_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Schopenhauer's pessimistic perspective, the Will manifests as: {will['description']}. "
             f"Regarding the nature of existence: {pessimism['description']}. "
             f"Aesthetic contemplation: {aesthetic_contemplation['description']}. "

@@ -88,6 +88,7 @@ class Arendt(Philosopher):
             judgment,
             freedom,
         )
+        summary = self._apply_arendt_to_problem(text) + " " + summary
 
         tension = self._calculate_tension(
             vita_activa,
@@ -575,6 +576,196 @@ class Arendt(Philosopher):
                 )
             ),
         }
+
+    def _apply_arendt_to_problem(self, text: str) -> str:
+        """Apply Arendt's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_politics_public = any(
+            w in t
+            for w in [
+                "politics",
+                "public",
+                "democrat",
+                "citizen",
+                "government",
+                "debate",
+                "assembly",
+                "republic",
+                "participat",
+            ]
+        )
+        is_evil_wrongdoing = any(
+            w in t
+            for w in [
+                "evil",
+                "atrocity",
+                "wrong",
+                "harm",
+                "crime",
+                "perpetrat",
+                "eichmann",
+                "obedien",
+                "bureauc",
+            ]
+        )
+        is_totalitarianism = any(
+            w in t
+            for w in [
+                "totalitar",
+                "authoritar",
+                "dictat",
+                "fascism",
+                "nazism",
+                "stalinist",
+                "terror",
+                "propaganda",
+                "regime",
+            ]
+        )
+        is_freedom_action = any(
+            w in t
+            for w in [
+                "freedom",
+                "liberty",
+                "action",
+                "new beginning",
+                "natality",
+                "spontan",
+                "initiative",
+                "plural",
+                "praxis",
+            ]
+        )
+        is_technology_automation = any(
+            w in t
+            for w in [
+                "technolog",
+                "automat",
+                "labor",
+                "work",
+                "job",
+                "machine",
+                "social",
+                "consumer",
+                "economy",
+            ]
+        )
+        is_judgment_thinking = any(
+            w in t
+            for w in [
+                "judgment",
+                "think",
+                "opinion",
+                "perspect",
+                "kant",
+                "reflective",
+                "conscience",
+                "moral",
+                "deliberat",
+            ]
+        )
+
+        if is_politics_public:
+            return (
+                "Arendt's political philosophy insists that the public realm — the space of appearance "
+                "where human beings gather as equals to speak and act — is irreducible to any other domain "
+                "of human activity. Action (praxis), the highest form of the vita activa, is not the "
+                "making of things (work) or the metabolism of biological life (labor) but the disclosure "
+                "of who we are through deed and word in the presence of others. The political is therefore "
+                "essentially plural: it exists only where there are many perspectives, many voices, "
+                "genuine disagreement — for Arendt, unanimous agreement is not the perfection of politics "
+                "but its destruction. The public realm cannot be reduced to economics, administration, or "
+                "expert management without ceasing to be political in Arendt's sense; it requires the "
+                "active participation of citizens whose natality — capacity for new beginnings — keeps "
+                "political life from settling into mere repetition."
+            )
+        elif is_evil_wrongdoing:
+            return (
+                "Arendt's report on the Eichmann trial produced one of the most unsettling concepts in "
+                "modern moral philosophy: the banality of evil. Eichmann was not a monster, a sadist, "
+                "or an ideological fanatic — he was an efficient bureaucrat who had stopped thinking, "
+                "who had abdicated the specifically human capacity for judgment in favor of rule-following "
+                "and career advancement. Evil on this analysis is not the product of demonic will but "
+                "of the failure to think — specifically, to think from others' perspectives, to exercise "
+                "the reflective judgment that would have made Eichmann's actions impossible. The "
+                "implication is deeply disturbing: the greatest danger is not the exceptional monster "
+                "but the ordinary functionary who has made himself thoughtless, who has traded the "
+                "discomfort of genuine thinking for the security of procedure. The obligation to think "
+                "for oneself is not merely intellectual but moral and political."
+            )
+        elif is_totalitarianism:
+            return (
+                "Arendt's analysis of totalitarianism identifies it as a genuinely novel form of "
+                "government — not merely tyranny or dictatorship but a system that seeks to destroy "
+                "the very fabric of human plurality. Totalitarian movements render human beings "
+                "superfluous: first the enemies, then the members, then anyone at all — because "
+                "the logic of ideological consistency demands that the world conform to the idea, "
+                "regardless of the human cost. What makes totalitarianism possible is not some "
+                "aberration of human nature but the specific conditions of modernity: the collapse "
+                "of class structures, the loneliness of mass society, the availability of terror "
+                "as a permanent principle of government rather than a temporary instrument. Against "
+                "totalitarianism, Arendt insists on plurality — the irreducible fact that the world "
+                "is inhabited by many human beings, each unique, each capable of beginning something "
+                "new, and that this plurality is not an obstacle to political life but its very ground."
+            )
+        elif is_freedom_action:
+            return (
+                "For Arendt, freedom is not an inner property of the will — not the freedom Rousseau "
+                "sought in solitary self-legislation — but a worldly phenomenon that appears only when "
+                "people act together in the public realm. Freedom is co-extensive with action: it exists "
+                "in the moment of initiative, in the capacity to begin something unprecedented, to "
+                "interrupt the causal chains of the world with a new beginning. Natality — the fact "
+                "that each human being is born and thus brings genuine novelty into the world — is for "
+                "Arendt the ontological ground of political freedom. Because each person is a beginning, "
+                "politics is never fully determined; the future is never simply the projection of the "
+                "present. This is both hopeful and demanding: it means that no situation is ever "
+                "completely closed, but also that freedom is inseparable from the risk of action, "
+                "whose consequences can never be fully controlled or predicted."
+            )
+        elif is_technology_automation:
+            return (
+                "Arendt analyzes modernity as characterized by the expansion of the social realm — "
+                "neither genuinely public nor genuinely private — at the expense of both. Automation "
+                "threatens to universalize the condition of the laborer: human beings reduced to "
+                "biological metabolism, consuming and producing, with no participation in the public "
+                "realm where action and speech can disclose who they are. A society of laborers without "
+                "labor (the prospect of full automation) does not become a society of free citizens; "
+                "it becomes a society of consumers with no public life, no space of appearance, no "
+                "political freedom in Arendt's sense. The Human Condition is an extended argument that "
+                "the reduction of human activity to labor and work — to making and consuming — at the "
+                "expense of action destroys what is distinctively human about human existence, leaving "
+                "only the biological cycle of production and consumption."
+            )
+        elif is_judgment_thinking:
+            return (
+                "Arendt's unfinished project on judgment, drawing on Kant's Critique of Judgment, "
+                "identifies reflective judgment as the key political faculty: the capacity to think "
+                "without predetermined concepts, to subsume the particular under a universal that does "
+                "not yet exist and must be found in the judging itself. Political judgment is not "
+                "deductive — it cannot simply apply general rules to cases — but requires enlarged "
+                "mentality (Kant's erweiterte Denkungsart): the ability to think from others' "
+                "standpoints without simply adopting them, to represent to oneself how the world "
+                "appears from many perspectives. Thinking without banisters — Arendt's phrase for "
+                "her own intellectual situation after the collapse of traditional authority — is the "
+                "condition of genuine moral and political thinking in the modern world. The refusal "
+                "to think in this way is not merely intellectual laziness but the precondition of "
+                "the thoughtlessness that makes the banality of evil possible."
+            )
+        else:
+            return (
+                "Hannah Arendt's political philosophy is organized around the distinction between "
+                "labor (biological life processes), work (fabricating a durable world), and action "
+                "(speech and deed in the public realm) — the three modes of the vita activa. Action "
+                "is highest because it is the domain of freedom, natality, and plurality: the "
+                "distinctively human capacity to begin something new in the company of equals. "
+                "The public realm — the space of appearance — is constituted by this plurality "
+                "and destroyed whenever one voice, one perspective, one logic achieves total dominance. "
+                "Natality, the fact of birth and new beginning, is for Arendt the fundamental human "
+                "condition: the guarantee that the world need not remain as it is. The banality of evil "
+                "— the Eichmann insight — reveals that the greatest moral and political danger is not "
+                "demonic will but the abdication of thinking, the refusal of judgment, the retreat "
+                "from the public realm into private ambition and bureaucratic procedure."
+            )
 
     def _generate_summary(
         self,

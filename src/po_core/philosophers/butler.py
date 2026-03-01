@@ -432,6 +432,188 @@ class Butler(Philosopher):
             },
         }
 
+    def _apply_butler_to_problem(self, text: str) -> str:
+        """Apply Butlerian concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "gender",
+                "sex",
+                "woman",
+                "man",
+                "female",
+                "male",
+                "trans",
+                "queer",
+                "nonbinary",
+                "identity",
+                "masculine",
+                "feminine",
+            ]
+        ):
+            return (
+                "Gender, Butler argues in Gender Trouble, is not the expression of a prior "
+                "biological sex or an inner identity, but a performance: a stylized repetition "
+                "of acts that produces the very illusion of a stable gendered substance behind "
+                "them. There is no gender identity prior to the expressions of gender; the "
+                "expressions are constitutive. This means gender norms must be cited — repeated "
+                "— to have force, and that repetition is precisely what opens the possibility "
+                "of subversive reiteration: drag, parody, and other performances that expose "
+                "the constructed and contingent character of what presents itself as natural "
+                "and inevitable. The heterosexual matrix — the assumption that coherent gender "
+                "requires alignment of sex, gender, and desire — is the regulatory ideal whose "
+                "internal contradictions Gender Trouble traces."
+            )
+        elif any(
+            w in t
+            for w in [
+                "power",
+                "norm",
+                "rule",
+                "law",
+                "regulat",
+                "govern",
+                "subject",
+                "subordinat",
+                "compli",
+                "conform",
+            ]
+        ):
+            return (
+                "Subject formation, for Butler, occurs through and within normative frameworks: "
+                "to become recognizable as a subject — to be legible, to have standing, to "
+                "matter — is to have submitted to the norms that make subjectivity possible. "
+                "This is not simple oppression but a productive and constitutive operation: "
+                "norms do not merely constrain pre-formed subjects but bring subjects into "
+                "being. The paradox is that the same power that subordinates is the power "
+                "one must cite to resist. But because norms require repeated citation to "
+                "maintain their authority, that repetition is always potentially imperfect, "
+                "displaced, subversive — citationality opens the gap between norm and its "
+                "instantiation that political agency can inhabit."
+            )
+        elif any(
+            w in t
+            for w in [
+                "vulnerab",
+                "precari",
+                "suffer",
+                "harm",
+                "care",
+                "pain",
+                "body",
+                "bodily",
+                "injur",
+                "loss",
+                "grief",
+                "mourn",
+            ]
+        ):
+            return (
+                "In Precarious Life and Frames of War, Butler argues that vulnerability and "
+                "precarity are constitutive features of all human life — we are always already "
+                "dependent on others, exposed to loss and harm by virtue of our embodied, "
+                "relational existence. But precarity is differentially distributed: some lives "
+                "are organized as precarious, rendered insecure and expendable by political and "
+                "economic arrangements, while others are protected. The ethical demand is to "
+                "acknowledge shared vulnerability — the interdependency that links us — and "
+                "to contest the frames that render some lives ungrievable, invisible, outside "
+                "the circle of moral concern."
+            )
+        elif any(
+            w in t
+            for w in [
+                "politic",
+                "resist",
+                "movement",
+                "protest",
+                "assembl",
+                "collective",
+                "activis",
+                "mobiliz",
+                "solidarity",
+                "coalition",
+            ]
+        ):
+            return (
+                "Butler's political ontology begins from bodies assembled together in public "
+                "space: the very act of assembly — gathering, persisting, refusing to disperse — "
+                "is a performative claim about whose lives matter and whose precarity is to be "
+                "contested. Performative politics does not express a pre-given political subject "
+                "but constitutes that subject through the repeated act of assembly. Coalition "
+                "politics does not require sameness of identity but solidarity across difference "
+                "organized around shared precarity and the aspiration to more livable lives. "
+                "The question 'who counts as a grievable life?' is simultaneously an ethical "
+                "and a political question whose answer is always contested."
+            )
+        elif any(
+            w in t
+            for w in [
+                "language",
+                "speech",
+                "word",
+                "hate",
+                "slur",
+                "insult",
+                "name",
+                "call",
+                "say",
+                "utterance",
+                "discourse",
+            ]
+        ):
+            return (
+                "Excitable Speech examines the paradox of injurious language: words can wound, "
+                "can constitute and diminish the subjects they address. But Butler resists the "
+                "conclusion that hate speech should be legally censored, arguing instead that "
+                "the performative force of language is never fully controlled by the speaker. "
+                "Resignification — the reappropriation and redeployment of injurious terms — "
+                "has been a persistent strategy of subordinated communities: the reclaimed slur, "
+                "the term of contempt transformed into a badge of pride, demonstrates that "
+                "iterability opens even the most harmful utterances to subversive reiteration. "
+                "Language is the site of both harm and potential transformation."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "moral",
+                "responsib",
+                "obligation",
+                "recogni",
+                "other",
+                "face",
+                "encounter",
+                "relation",
+                "cohabit",
+            ]
+        ):
+            return (
+                "Butler's ethics turns on the question of recognition: whose lives are "
+                "recognizable as lives, whose suffering registers as suffering, whose deaths "
+                "are mourned as losses? Drawing on Levinas, she argues that the face of the "
+                "Other — even the enemy's face — makes an ethical demand that cannot be fully "
+                "satisfied or refused. But she goes beyond Levinas in insisting that recognition "
+                "is always mediated by frames and norms that determine who can appear as a "
+                "recognizable face. The ethical-political task is to contest those frames, to "
+                "expand grievability, and to acknowledge that we are bound together in precarious "
+                "cohabitation on a globe we did not choose and cannot leave."
+            )
+        else:
+            return (
+                "Butler's philosophy centers on performativity — the insight that identity "
+                "categories (gender, sex, the subject itself) are not expressions of pre-given "
+                "essences but effects of repeated, citational performances that produce the "
+                "illusion of an underlying substance. Norms are constitutive: they bring "
+                "subjects into being and simultaneously mark others as abject, unlivable, "
+                "outside the norm. Precarity names the unequal distribution of vulnerability: "
+                "whose life counts as a life, whose death as a death worth mourning? "
+                "Grievability, recognition, and the aspiration to more livable lives for all "
+                "are the ethical-political horizons of Butler's work. Gender Trouble, "
+                "Precarious Life, and Notes Toward a Performative Theory of Assembly remain "
+                "the central texts."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -445,7 +627,10 @@ class Butler(Philosopher):
         subversion: Dict,
     ) -> str:
         """Construct comprehensive Butler reasoning."""
-        return f"""Critical Analysis through Butler: "{prompt}"
+        applied = self._apply_butler_to_problem(prompt)
+        return f"""{applied}
+
+Critical Analysis through Butler: "{prompt}"
 
 PERFORMATIVITY
 {performativity['concept']['description']}. {performativity['concept']['effect']}

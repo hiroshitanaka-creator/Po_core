@@ -127,9 +127,7 @@ class StubComposer:
         run_id = str(
             uuid.UUID(
                 int=int(
-                    hashlib.sha256(
-                        f"{case_id}:{self.seed}".encode()
-                    ).hexdigest(),
+                    hashlib.sha256(f"{case_id}:{self.seed}".encode()).hexdigest(),
                     16,
                 )
                 % (2**128)

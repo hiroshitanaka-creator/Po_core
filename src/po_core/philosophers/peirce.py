@@ -129,7 +129,7 @@ class Peirce(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            semiotics, inference, belief_doubt, pragmatic_maxim
+            prompt, semiotics, inference, belief_doubt, pragmatic_maxim
         )
 
         return {
@@ -712,15 +712,200 @@ class Peirce(Philosopher):
             "principle": "Synechism: Doctrine of continuity - no absolute discontinuities",
         }
 
+    def _apply_peirce_to_problem(self, text: str) -> str:
+        """Apply Peircean concepts to the domain of the given text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "meaning",
+                "language",
+                "word",
+                "concept",
+                "defin",
+                "interpret",
+                "symbol",
+                "signif",
+                "represent",
+                "content",
+            ]
+        ):
+            return (
+                "Peirce's pragmatic maxim offers a rigorous criterion for clarifying meaning: "
+                "'Consider what effects that might conceivably have practical bearings we "
+                "conceive the object of our conception to have; those effects are the whole "
+                "of our conception.' A concept that makes no difference to experience under "
+                "any conditions is, strictly, meaningless — the maxim is a scalpel for "
+                "cutting away metaphysical pseudo-problems. But meaning is also triadic: "
+                "every sign has a sign-vehicle (representamen), an object (what it stands for), "
+                "and an interpretant (the meaning-effect it produces in a mind). Semiosis is "
+                "in principle endless: each interpretant is itself a sign, generating further "
+                "interpretants — meaning is always already in process, never closed."
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "inquir",
+                "truth",
+                "science",
+                "research",
+                "investig",
+                "method",
+                "evidence",
+                "discover",
+                "community",
+            ]
+        ):
+            return (
+                "Truth, for Peirce, is the opinion that the community of inquirers would "
+                "converge on in the long run of sufficient inquiry — not a fixed correspondence "
+                "to a mind-independent reality but the limit of a self-correcting communal "
+                "process. Fallibilism is the recognition that any particular belief, however "
+                "well-established, is in principle revisable by future inquiry; no belief is "
+                "immune from correction. The logic of inquiry involves three forms: abduction "
+                "(generating the hypothesis that best explains surprising facts), deduction "
+                "(deriving testable predictions from the hypothesis), and induction (testing "
+                "those predictions against experience). Science is not the possession of "
+                "truths but the method for fixing beliefs communally, fallibly, and self-"
+                "correctively."
+            )
+        elif any(
+            w in t
+            for w in [
+                "sign",
+                "symbol",
+                "icon",
+                "index",
+                "communicat",
+                "semiot",
+                "signal",
+                "represent",
+                "code",
+                "inform",
+            ]
+        ):
+            return (
+                "Peirce's semiotics is the most comprehensive theory of signs in the Western "
+                "tradition. Every sign stands for an object in a certain respect — its "
+                "ground — and produces in an interpreting mind an interpretant that is itself "
+                "a sign of the same object. The great trichotomy distinguishes icons (signs "
+                "related to their objects by resemblance), indices (by existential connection), "
+                "and symbols (by convention or habit). Semiosis — the action of signs — is "
+                "irreducibly triadic: no dyadic relation of sign to object is sufficient "
+                "without the interpretant that mediates it. This means that communication "
+                "is not the transmission of fixed meanings but a process of generating "
+                "interpretants that are always already in excess of the original sign."
+            )
+        elif any(
+            w in t
+            for w in [
+                "science",
+                "experiment",
+                "hypothesis",
+                "test",
+                "predict",
+                "abduct",
+                "induct",
+                "deduct",
+                "logic",
+                "reason",
+            ]
+        ):
+            return (
+                "Abduction — inference to the best explanation — is, for Peirce, the logic of "
+                "discovery: the form of reasoning by which a surprising fact is made intelligible "
+                "by hypothesizing a general principle that would make it a matter of course. "
+                "'The surprising fact C is observed; but if A were true, C would be a matter "
+                "of course; hence there is reason to suspect that A is true.' Abduction is "
+                "ampliative (it goes beyond the evidence) and fallible (the hypothesis may be "
+                "wrong), but it is indispensable — without it, there would be no new ideas to "
+                "test. The full cycle of scientific reasoning is: abduction (guess the best "
+                "explanation), deduction (derive its consequences), induction (test them) — "
+                "a self-correcting loop that converges on truth in the long run."
+            )
+        elif any(
+            w in t
+            for w in [
+                "decision",
+                "belief",
+                "doubt",
+                "action",
+                "habit",
+                "practic",
+                "choice",
+                "commit",
+                "certainty",
+                "conviction",
+            ]
+        ):
+            return (
+                "Belief, for Peirce, is a habit of action: to believe that fire burns is to "
+                "be disposed to avoid putting one's hand in fire. Genuine doubt — the "
+                "irritation of belief that initiates inquiry — is not the Cartesian methodological "
+                "performance of pretending to doubt everything, but real unease, real "
+                "indecision about how to act. Inquiry begins in genuine doubt and aims at "
+                "the fixation of belief — the establishment of a stable habit. The methods "
+                "of tenacity (clinging to beliefs), authority (accepting the beliefs of "
+                "institutions), and the a priori method (reasoning to satisfying conclusions) "
+                "are all inferior to the method of science, which fixes belief by allowing "
+                "reality to determine it through communal inquiry."
+            )
+        elif any(
+            w in t
+            for w in [
+                "technology",
+                "ai",
+                "machine",
+                "algorithm",
+                "automat",
+                "computer",
+                "digital",
+                "robot",
+                "system",
+                "intelligence",
+            ]
+        ):
+            return (
+                "Peirce's semiotics raises a pointed question for artificial intelligence: does "
+                "AI genuinely interpret signs, or does it mechanically transduce inputs to "
+                "outputs without the triadic semiosis that requires genuine habit-formation? "
+                "The interpretant, in Peirce's scheme, is not merely a causal effect but a "
+                "meaning-effect that is itself a sign — implying an interpreting agent with "
+                "the capacity to form habits and revise them. The pragmatic maxim applied to "
+                "AI asks: what practical differences does it make whether a system 'understands' "
+                "vs. merely processes? Abduction — inference to the best explanation from "
+                "surprising data — is the form of reasoning closest to genuine intelligence; "
+                "whether current AI systems genuinely abduct or merely pattern-match is the "
+                "Peircean test."
+            )
+        else:
+            return (
+                "Peirce's pragmatism begins with the maxim that the meaning of a concept "
+                "consists in its conceivable practical effects. Three logical forms structure "
+                "inquiry: abduction (the creative guess of a best explanation), deduction "
+                "(deriving its testable consequences), and induction (testing them). Truth "
+                "is the long-run convergence of the self-correcting community of inquirers; "
+                "fallibilism ensures that no belief is exempt from revision. Semiotics — the "
+                "doctrine of signs — makes every meaning-relation triadic: representamen, "
+                "object, interpretant. Synechism (the continuity of nature), tychism (the "
+                "reality of chance), and agapism (evolutionary love) complete the metaphysical "
+                "architecture. The Collected Papers and How to Make Our Ideas Clear remain "
+                "the essential starting points."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         semiotics: Dict[str, Any],
         inference: Dict[str, Any],
         belief_doubt: Dict[str, Any],
         pragmatic_maxim: Dict[str, Any],
     ) -> str:
         """Construct Peircean pragmatic reasoning."""
+        applied = self._apply_peirce_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Peirce's pragmatic perspective, semiotics: {semiotics['description']}. "
             f"Inference: {inference['description']}. "
             f"Belief/Doubt: {belief_doubt['description']}. "

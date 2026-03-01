@@ -126,6 +126,7 @@ class Heidegger(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             temporality,
             authenticity,
             thrownness,
@@ -1243,8 +1244,163 @@ class Heidegger(Philosopher):
 
         return questions[:5]  # Limit to 5 questions
 
+    def _apply_heidegger_to_problem(self, text: str) -> str:
+        """Apply Heidegger's ontological concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "technolog",
+                "ai",
+                "artificial",
+                "machine",
+                "algorithm",
+                "digital",
+                "automat",
+                "robot",
+                "comput",
+            ]
+        ):
+            return (
+                "Heidegger's analysis of Gestell (enframing) is indispensable here: "
+                "modern technology does not merely produce tools but reveals all entities — including human beings — "
+                "as Bestand (standing reserve), resources to be optimized and mobilized on demand. "
+                "In this revealing, Being itself becomes invisible; we encounter only calculable, "
+                "manipulable stock, never the mysterious givenness of entities as such. "
+                "Yet Heidegger insists there is a 'saving power' hidden within the danger: "
+                "by questioning the essence of technology rather than merely its products, "
+                "we open a space where a different, non-enframing revealing — poiesis, techne as bringing-forth — "
+                "can once again become possible, and Being can disclose itself anew."
+            )
+        elif any(
+            w in t
+            for w in [
+                "authentic",
+                "identity",
+                "self",
+                "individual",
+                "person",
+                "ego",
+                "who am",
+            ]
+        ):
+            return (
+                "For Heidegger, the constant temptation is to lose oneself in das Man — the anonymous 'they' — "
+                "whose idle talk, curiosity, and ambiguity flatten every genuine possibility into comfortable averageness. "
+                "Dasein (human being-there) is always already thrown into a world not of its choosing (Geworfenheit), "
+                "bearing a definite factical situation it cannot simply discard. "
+                "Authentic existence requires owning this thrownness — neither fleeing it into distraction "
+                "nor pretending to transcend it — while simultaneously projecting resolutely toward "
+                "one's ownmost possibilities in the light of Being-toward-death. "
+                "Only this resolute ownership of finitude rescues Dasein from the grip of das Man "
+                "and allows genuine selfhood to emerge from the anonymous 'they'."
+            )
+        elif any(
+            w in t
+            for w in [
+                "anxiety",
+                "angst",
+                "dread",
+                "fear",
+                "unease",
+                "existential",
+                "unsettl",
+            ]
+        ):
+            return (
+                "Angst (anxiety), for Heidegger, is not merely a psychological state but an ontological attunement "
+                "that individualizes Dasein by stripping away the comfortable familiarity of das Man. "
+                "In anxiety, the world as a whole becomes uncanny (unheimlich) — no longer a cozy home — "
+                "and Dasein confronts the naked fact of its own thrownness: that it is, and has to be, "
+                "without any ultimate justification or fixed essence to fall back on. "
+                "This groundlessness is not simply negative; it is the very condition for authentic disclosure, "
+                "for only when das Man's reassurances fall silent can Dasein hear the 'call of conscience' "
+                "summoning it to own its existence in full."
+            )
+        elif any(
+            w in t
+            for w in [
+                "meaning",
+                "being",
+                "exist",
+                "ontolog",
+                "metaphys",
+                "truth",
+                "real",
+            ]
+        ):
+            return (
+                "The guiding question of Heidegger's entire thinking is the Seinsfrage — the Question of Being: "
+                "what does it mean for anything to be at all? "
+                "Western metaphysics since Plato has, he argues, forgotten this question, treating Being as merely "
+                "the most general concept or the highest entity, producing an epoch of nihilism and Gestell. "
+                "Truth, for Heidegger, is not a property of propositions but aletheia — unconcealment — "
+                "the primordial event by which entities emerge from concealment into the clearing (Lichtung) "
+                "that Dasein itself is; falsehood and error are derivative forms of concealment. "
+                "Recovering the Question of Being thus demands a 'destruction' of the metaphysical tradition "
+                "to expose the forgotten experiences of Being that were covered over in its sedimented concepts."
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "epistemolog",
+                "know",
+                "cognition",
+                "science",
+                "understand",
+            ]
+        ):
+            return (
+                "Heidegger reframes knowing through the distinction between ready-to-hand (zuhanden) "
+                "and present-at-hand (vorhanden): in everyday practical engagement, equipment is transparent — "
+                "the hammer withdraws into its use — and entities show up in their functional significance "
+                "within the totality of involvements that is Dasein's world. "
+                "Only when equipment breaks down does it become 'present-at-hand', an object of detached "
+                "theoretical inspection — the mode science privileges and mistakenly takes as primary. "
+                "Truth, as aletheia, is the pre-theoretical unconcealment in which Dasein, as the clearing (Lichtung), "
+                "lets entities show themselves; all propositional correspondence-truth presupposes "
+                "this more primordial disclosure that Dasein always already inhabits."
+            )
+        elif any(
+            w in t
+            for w in [
+                "decision",
+                "choice",
+                "action",
+                "resol",
+                "commit",
+                "care",
+                "responsib",
+            ]
+        ):
+            return (
+                "Care (Sorge) is Heidegger's name for the fundamental structure of Dasein: "
+                "Dasein is always 'ahead-of-itself' (projection into possibilities), "
+                "'already-in' (thrownness into a factical situation it did not choose), "
+                "and 'alongside' (absorbed in entities encountered within-the-world). "
+                "Authentic decision, then, is not the free act of a will unconstrained by circumstance "
+                "but resolute (Entschlossenheit) appropriation of one's thrown possibilities, "
+                "undertaken in the awareness of finitude that Being-toward-death provides. "
+                "Such resoluteness opens the moment of vision (Augenblick) in which Dasein "
+                "can act from genuine understanding of its situation rather than from the directives of das Man."
+            )
+        else:
+            return (
+                "Heidegger invites us to ask the most fundamental question: What is the meaning of Being? "
+                "Dasein — the entity that we ourselves are — is distinguished by its Being-in-the-world: "
+                "not a subject facing an external object, but a care-structure always already engaged "
+                "with a meaningful, historically transmitted world. "
+                "Thrownness (Geworfenheit) reminds us that we find ourselves in situations not of our choosing, "
+                "while projection (Entwurf) opens us toward future possibilities; "
+                "authentic existence owns both poles in the light of Being-toward-death. "
+                "Aletheia (unconcealment) names the primordial truth-event by which Being discloses itself "
+                "through the clearing that Dasein is, prior to all theory and representation."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         temporality: Dict[str, Any],
         authenticity: Dict[str, Any],
         thrownness: Dict[str, Any],
@@ -1256,7 +1412,9 @@ class Heidegger(Philosopher):
         concepts: List[str],
     ) -> str:
         """Construct comprehensive Heideggerian reasoning."""
+        applied = self._apply_heidegger_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Heideggerian perspective, this text invites us to question "
             f"the nature of Being itself. "
             f"Temporal analysis: {temporality['primary_mode']} - {temporality['description']}. "

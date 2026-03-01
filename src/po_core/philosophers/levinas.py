@@ -131,7 +131,7 @@ class Levinas(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            other, face, responsibility, totality_infinity
+            prompt, other, face, responsibility, totality_infinity
         )
 
         return {
@@ -694,15 +694,181 @@ class Levinas(Philosopher):
             "principle": "Il y a - the horror of anonymous, impersonal being",
         }
 
+    def _apply_levinas_to_problem(self, text: str) -> str:
+        """Apply Levinas's ethical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "ethic",
+                "responsib",
+                "moral",
+                "ought",
+                "duty",
+                "oblig",
+                "right",
+                "wrong",
+                "good",
+            ]
+        ):
+            return (
+                "Levinas makes ethics first philosophy: not a regional discipline built atop epistemology or ontology, "
+                "but the very foundation of all meaningful thought and action. "
+                "The Face of the Other (le Visage) — naked, vulnerable, mortal — issues an infinite and unconditional command: "
+                "'Thou shalt not kill.' "
+                "This command is not derived from any principle or contract; it precedes freedom and rational deliberation, "
+                "constituting me as a responsible subject before I have had any say in the matter. "
+                "Responsibility is asymmetric and infinite: I am responsible for the Other's responsibility, "
+                "responsible even for what the Other does to me; no reciprocal accounting can exhaust the claim the Face makes. "
+                "Genuine ethics, for Levinas, begins not with the autonomous subject choosing its values "
+                "but with the irreducible encounter with the Other who interrupts and calls my self-sufficiency into question."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ai",
+                "artificial",
+                "machine",
+                "algorithm",
+                "robot",
+                "digital",
+                "technolog",
+                "comput",
+            ]
+        ):
+            return (
+                "Levinas's ethics rests on the encounter with the Face — the nakedness and vulnerability of the Other "
+                "that commands 'Thou shalt not kill' with infinite authority. "
+                "No artificial system, however sophisticated, can have a Face in this sense: "
+                "it presents no mortality, no destitution, no appeal from within its own finitude. "
+                "The ethical encounter is not information exchange but a relation of infinite asymmetry — "
+                "the Other exceeds every category, every data representation, every model. "
+                "Treating AI outputs as moral agents or moral subjects risks a form of idolatry: "
+                "confusing a sophisticated mirror of the said (le dit) with the living Saying (le dire) "
+                "through which genuine ethical address occurs. "
+                "Ethics demands we keep the Face visible — and that means insisting on the human "
+                "vulnerability that no algorithm can instantiate or replace."
+            )
+        elif any(
+            w in t
+            for w in [
+                "self",
+                "identity",
+                "ego",
+                "subject",
+                "i ",
+                "me ",
+                "my ",
+                "individual",
+            ]
+        ):
+            return (
+                "For Levinas, the subject is not a self-positing ego (as in Descartes or Hegel) "
+                "but a self constituted through its response to the Other's call. "
+                "The encounter with the Face shatters my self-sufficiency and installs in me "
+                "an infinite responsibility that I never chose and cannot discharge. "
+                "Subjectivity is ultimately substitution (Substitution): I bear the Other's burden, "
+                "am hostage (otage) to the Other, responsible to the point of suffering for the Other's suffering. "
+                "This is not masochism but the deepest structure of selfhood — the 'here I am' (me voici) "
+                "of ethical response that precedes any freely chosen identity or project."
+            )
+        elif any(
+            w in t
+            for w in [
+                "politic",
+                "justice",
+                "law",
+                "society",
+                "institution",
+                "state",
+                "public",
+                "third",
+            ]
+        ):
+            return (
+                "Levinas introduces the third party (le tiers) to account for the passage from ethics to justice: "
+                "when I encounter not only the singular Other but also a third person — another Other — "
+                "comparison becomes unavoidable, and with it institutions, law, and politics. "
+                "Justice is thus a necessary betrayal of the infinite singularity of the Face: "
+                "we must count, compare, and distribute in ways that cannot fully honor each singular Other. "
+                "Yet justice must remain animated by the ethical relation to the singular Face; "
+                "when institutions forget the vulnerability of the individual Other behind their procedures, "
+                "they harden into the violence of Totality — a political order that sacrifices "
+                "the infinite person to the finite calculation of the whole."
+            )
+        elif any(
+            w in t
+            for w in [
+                "knowledge",
+                "truth",
+                "ontolog",
+                "being",
+                "understand",
+                "epistemolog",
+                "cognition",
+            ]
+        ):
+            return (
+                "Levinas diagnoses Western philosophy as fundamentally an ontology — a philosophy of totality — "
+                "that subsumes the Other under categories of the Same, reducing difference to a moment "
+                "within a comprehensive system (Hegel's Totality). "
+                "Against this, Infinity (the Other as Infinity) exceeds every concept, every horizon, every totality: "
+                "the Other overflows the idea I have of the Other, exposing the violence inherent "
+                "in any attempt to comprehend, possess, or systematize. "
+                "Genuine thought must begin with this excess — with the Other's trace (la trace) "
+                "that disturbs all ontological equilibrium — rather than with the subject's "
+                "self-certain grasp of being. "
+                "Ethics is therefore more fundamental than epistemology: I am called before I can know."
+            )
+        elif any(
+            w in t
+            for w in [
+                "suffer",
+                "pain",
+                "vulnerab",
+                "death",
+                "mortal",
+                "face",
+                "naked",
+                "destitut",
+            ]
+        ):
+            return (
+                "The Face (le Visage), in Levinas, is not primarily a visual appearance but an ethical epiphany: "
+                "the Other's nakedness, destitution, and mortality that speaks directly — 'Do not kill me.' "
+                "Suffering reveals the Other's vulnerability in its most undeniable form, "
+                "and this revelation makes an infinite ethical demand that no calculation of welfare "
+                "or utility can exhaust. "
+                "Useless suffering — suffering that serves no redemptive purpose — "
+                "is for Levinas the skandalon that indicts every theodicy and demands "
+                "an ethics of proximity and responsibility rather than a metaphysics of meaning. "
+                "The witness to the Other's suffering is called to respond, not to explain."
+            )
+        else:
+            return (
+                "Levinas places the encounter with the Other (l'Autrui) at the center of all philosophy. "
+                "The Face (le Visage) of the Other is not an object of perception but an ethical address — "
+                "a call that issues the infinite command 'Thou shalt not kill' before any deliberation begins. "
+                "Ethics is first philosophy: responsibility for the Other precedes freedom, knowledge, and ontology. "
+                "Totality and Infinity — Levinas's great opposition — names the conflict between the violence of "
+                "philosophical systems that reduce the Other to the Same, and the infinite excess by which "
+                "the Other always overflows any category. "
+                "The Saying (le dire) — the living address to the Other — must never be entirely swallowed "
+                "by the Said (le dit) — the frozen content of discourse — if ethics is to remain alive."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         other: Dict[str, Any],
         face: Dict[str, Any],
         responsibility: Dict[str, Any],
         totality_infinity: Dict[str, Any],
     ) -> str:
         """Construct Levinasian ethical reasoning."""
+        applied = self._apply_levinas_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Levinas's ethical perspective, the Other: {other['description']}. "
             f"The face: {face['description']}. "
             f"Responsibility: {responsibility['description']}. "

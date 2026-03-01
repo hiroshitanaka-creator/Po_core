@@ -124,7 +124,7 @@ class Nietzsche(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            will_to_power, ubermensch, nihilism, morality, amor_fati
+            prompt, will_to_power, ubermensch, nihilism, morality, amor_fati
         )
 
         return {
@@ -817,8 +817,156 @@ class Nietzsche(Philosopher):
             ),
         }
 
+    def _apply_nietzsche_to_problem(self, text: str) -> str:
+        """Apply Nietzschean philosophical concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "moral",
+                "ethic",
+                "good",
+                "evil",
+                "right",
+                "wrong",
+                "virtue",
+                "sin",
+                "value",
+            ]
+        ):
+            return (
+                "Nietzsche's Genealogy of Morals unmasks conventional morality as a historical"
+                " construction born of ressentiment — the reactive emotion of the weak who, unable"
+                " to affirm their own power, revalue strength as evil and weakness as virtue."
+                " Slave morality inverts master morality: where the noble affirms 'I am good' and"
+                " only secondarily defines the bad as its opposite, the slave begins with 'they are"
+                " evil' and defines itself negatively as not-evil. This reactive, life-denying"
+                " morality Nietzsche calls a 'revaluation of all values' in reverse — a triumph of"
+                " the herd over the exceptional. Genuine revaluation requires going beyond good and"
+                " evil as conventionally understood, creating new values from an overflowing life"
+                " rather than a compensatory resentment. The task is to become a creator of values,"
+                " not merely a follower of inherited ones."
+            )
+        elif any(
+            w in t
+            for w in [
+                "power",
+                "leader",
+                "strength",
+                "dominat",
+                "control",
+                "author",
+                "command",
+                "overcome",
+                "excel",
+            ]
+        ):
+            return (
+                "Nietzsche's will to power is not a drive to dominate others but the fundamental"
+                " character of all life: the drive to overcome, to grow, to create, to express one's"
+                " nature with maximum force and artistry. Self-overcoming (Selbstüberwindung) is the"
+                " hallmark of the Übermensch — not a genetic superman but a human type who creates"
+                " values rather than merely inheriting them, who says yes to life even in suffering."
+                " Great politics for Nietzsche is not about managing masses but about conditions that"
+                " allow exceptional individuals to flourish. The danger Nietzsche identifies is the"
+                " Last Man — comfortable, herd-minded, allergic to distinction — who emerges when"
+                " the will to power exhausts itself in mere self-preservation and pleasure."
+            )
+        elif any(
+            w in t
+            for w in [
+                "meaning",
+                "nihil",
+                "purposeless",
+                "absurd",
+                "god",
+                "faith",
+                "religion",
+                "exist",
+                "life",
+            ]
+        ):
+            return (
+                "Nietzsche's proclamation that 'God is dead' is not a triumphant atheism but a"
+                " diagnosis of cultural crisis: the metaphysical framework that gave Western life"
+                " its meaning, purpose, and moral authority has become unbelievable, leaving a"
+                " vacuum that passive nihilism — despair, resignation, the flight into distraction"
+                " — threatens to fill. The creative response is active nihilism: acknowledging the"
+                " collapse of inherited values as an opportunity to create new ones. Eternal"
+                " recurrence — the thought that one's life will recur infinitely — functions as"
+                " Nietzsche's ultimate test of affirmation: could you will this exact life again and"
+                " again? Amor fati — love of fate — names the disposition that transforms 'it was'"
+                " into 'thus I willed it', embracing necessity as if one had chosen it."
+            )
+        elif any(
+            w in t
+            for w in [
+                "know",
+                "truth",
+                "perspect",
+                "interpret",
+                "certain",
+                "fact",
+                "object",
+                "science",
+                "reason",
+            ]
+        ):
+            return (
+                "Nietzsche's perspectivism holds that there is no view from nowhere — every"
+                " knowledge claim is an interpretation from a particular vantage point shaped by"
+                " instinct, interest, and power. 'Truth' in the conventional sense is, as Nietzsche"
+                " writes in 'On Truth and Lies in a Nonmoral Sense', a mobile army of metaphors that"
+                " have been forgotten as metaphors. This does not license relativism but rather a"
+                " more honest epistemology: richer, more life-enhancing perspectives are better than"
+                " impoverished ones, but none is absolute. Even science is a perspective — a"
+                " particular will to power that values parsimony, predictability, and control."
+                " Nietzsche celebrates the multiplication of perspectives as expanding our"
+                " interpretive richness rather than lamenting the loss of a single Truth."
+            )
+        elif any(
+            w in t
+            for w in [
+                "suffer",
+                "pain",
+                "adversity",
+                "hardship",
+                "struggle",
+                "obstacle",
+                "fail",
+                "loss",
+                "difficult",
+            ]
+        ):
+            return (
+                "For Nietzsche, suffering is not an evil to be eliminated but the material from"
+                " which greatness is forged. 'What does not kill me makes me stronger' captures the"
+                " Nietzschean conviction that hardship, when affirmed rather than resented, develops"
+                " depth, creativity, and strength of character. The Dionysian stance — named after"
+                " the god of tragic exuberance — affirms the full spectrum of existence including"
+                " destruction, pain, and chaos, recognizing that the same primal force that destroys"
+                " also creates. Great art, great philosophy, and great human beings emerge through"
+                " struggle and suffering, not despite it. The temptation to flee suffering through"
+                " comfortable mediocrity — the Last Man's strategy — Nietzsche regards as the"
+                " deepest self-betrayal of the will to power."
+            )
+        else:
+            return (
+                "Nietzsche's philosophy constitutes a comprehensive revaluation of the values"
+                " bequeathed by Platonism and Christianity, diagnosing them as symptoms of life-"
+                "denial and ressentiment. The will to power — the fundamental drive of all living"
+                " things toward self-overcoming and creative expression — is the alternative"
+                " principle to moral reactivism. Eternal recurrence as a thought-experiment tests"
+                " whether one can affirm one's existence so completely as to will its infinite"
+                " repetition; amor fati names the disposition of full affirmation. The Übermensch"
+                " is not a biological type but a cultural ideal: the person who creates values"
+                " from strength rather than inheriting them from weakness, who embraces life's"
+                " tragic character with Dionysian joy rather than Apollonian illusion."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         will_to_power: Dict[str, Any],
         ubermensch: Dict[str, Any],
         nihilism: Dict[str, Any],
@@ -826,7 +974,9 @@ class Nietzsche(Philosopher):
         amor_fati: Dict[str, Any],
     ) -> str:
         """Construct Nietzschean life-affirming reasoning."""
+        applied = self._apply_nietzsche_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From a Nietzschean perspective, the will to power manifests as: {will_to_power['description']}. "
             f"Regarding the Übermensch: {ubermensch['description']}. "
             f"Nihilism: {nihilism['description']}. "

@@ -122,6 +122,7 @@ class Husserl(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             epoche,
             intentionality,
             noesis_noema,
@@ -1286,8 +1287,170 @@ class Husserl(Philosopher):
 
         return questions[:5]  # Limit to 5 questions
 
+    def _apply_husserl_to_problem(self, text: str) -> str:
+        """Apply Husserl's phenomenological concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "knowledge",
+                "consciousness",
+                "aware",
+                "mind",
+                "cognition",
+                "know",
+            ]
+        ):
+            return (
+                "Husserl's phenomenology demands that we attend to intentionality: "
+                "consciousness is never merely inner but is always consciousness of something. "
+                "Before theorizing, we must perform the epoché — bracketing the natural attitude "
+                "and its implicit belief in the existence of the world — to reveal the pure "
+                "phenomenal field as it presents itself to transcendental subjectivity. "
+                "The noetic act (the how of intending) and the noematic content (the what as intended) "
+                "must be carefully distinguished, for it is in their correlation that meaning is constituted. "
+                "Only this rigorous first-person investigation, returning 'to the things themselves' "
+                "(Zu den Sachen selbst), can ground genuine knowledge."
+            )
+        elif any(
+            w in t
+            for w in [
+                "percei",
+                "experience",
+                "sensation",
+                "appear",
+                "see",
+                "hear",
+                "feel",
+            ]
+        ):
+            return (
+                "For Husserl, perception is the paradigm of intentional life: "
+                "the perceived object is given in 'bodily presence' (Leibhaftigkeit), "
+                "yet every perceptual act harbors unfulfilled horizons awaiting fulfillment. "
+                "Eidetic reduction — imaginative free variation of instances — lets us identify "
+                "the invariant essential structure (eidos) that any possible perception of this kind "
+                "must exemplify, distinguishing contingent fact from necessary essence. "
+                "The imperative 'to the things themselves' (Zu den Sachen selbst) calls us "
+                "to describe experience as it genuinely gives itself, before theoretical overlay distorts it. "
+                "Such description reveals the temporal flow of inner time-consciousness "
+                "as the deepest layer of all experience."
+            )
+        elif any(
+            w in t
+            for w in [
+                "crisis",
+                "meaning",
+                "science",
+                "modern",
+                "technolog",
+                "value",
+                "nihil",
+            ]
+        ):
+            return (
+                "Husserl's Crisis of European Sciences diagnoses a profound forgetfulness: "
+                "modern mathematical natural science, in its very success, has severed itself "
+                "from the Lebenswelt — the pre-theoretical, pre-scientific lifeworld in which "
+                "all scientific idealization is ultimately grounded and from which it draws its meaning. "
+                "The result is a crisis of meaning: science can say nothing about what genuinely "
+                "matters to human existence — freedom, meaning, responsibility. "
+                "Phenomenology offers a way back: by performing the epoché on science itself, "
+                "we can recover the founding intuitions buried beneath the sediment of tradition "
+                "and reconnect objective knowledge to the living subjectivity that sustains it."
+            )
+        elif any(
+            w in t
+            for w in [
+                "other",
+                "community",
+                "social",
+                "intersubjec",
+                "shared",
+                "culture",
+                "together",
+            ]
+        ):
+            return (
+                "Husserl's account of intersubjectivity begins with the constitution of the Other "
+                "through analogical apperception: I appresent another transcendental ego "
+                "via my own body as guide, recognizing the Other as a 'second original' ego "
+                "that can never be directly given but only co-intended. "
+                "This pairing (Paarung) founds a shared world — an intersubjective Lebenswelt — "
+                "in which objectivity itself is constituted as the correlate of a community of subjects. "
+                "Science and culture rest on this intersubjective ground: "
+                "no claim to objective validity can bypass the constituting community "
+                "of transcendental subjects whose mutual recognition makes a shared world possible."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ai",
+                "artificial",
+                "machine",
+                "algorithm",
+                "robot",
+                "automat",
+                "comput",
+            ]
+        ):
+            return (
+                "From a Husserlian perspective, artificial intelligence operates entirely "
+                "within the natural attitude: it processes symbols without the intentional arc "
+                "that would make those symbols genuinely 'of' or 'about' anything. "
+                "Genuine intentionality — consciousness directed at an object with a noetic sense "
+                "and a noematic correlate — is constituted by a living, temporally flowing ego; "
+                "no algorithmic system, however complex, performs the epoché or undergoes "
+                "eidetic reduction. "
+                "AI thus lacks the transcendental subjectivity required for authentic meaning-constitution: "
+                "it simulates the outputs of intentional life without instantiating its first-person structure. "
+                "Phenomenology demands that we not confuse the formal manipulation of signs "
+                "with the lived intentional givenness that grounds all genuine sense."
+            )
+        elif any(
+            w in t
+            for w in [
+                "decision",
+                "choice",
+                "ethical",
+                "moral",
+                "ought",
+                "should",
+                "right",
+                "wrong",
+            ]
+        ):
+            return (
+                "Husserl calls us to perform the epoché before any significant decision: "
+                "bracket the unexamined presuppositions — cultural, theoretical, habitual — "
+                "that ordinarily shape our practical orientation, and attend to the situation "
+                "as it genuinely gives itself to consciousness. "
+                "Eidetic variation then reveals the essential structure of the ethical situation: "
+                "what features are invariant across imaginable variants, and which are contingent? "
+                "The Lebenswelt provides the pre-given normative horizon within which "
+                "values are encountered with something like perceptual immediacy, "
+                "demanding that ethical reflection reconnect with this lived ground "
+                "rather than floating free in abstract principle."
+            )
+        else:
+            return (
+                "Husserl's transcendental phenomenology approaches every domain by first "
+                "suspending the natural attitude through the epoché — the bracketing of all "
+                "existence claims — to gain access to the pure field of consciousness and its "
+                "intentional structures. "
+                "Intentionality, the directedness of consciousness toward objects, reveals that "
+                "every act has a noetic character (its mode of intending) and a noematic correlate "
+                "(the object as intended). "
+                "Eidetic reduction uncovers essential, invariant structures beneath contingent facts, "
+                "while the concept of the Lebenswelt reminds us that all scientific and theoretical "
+                "construction rests on a pre-given, intersubjectively shared lived world. "
+                "The guiding maxim — 'To the things themselves' (Zu den Sachen selbst) — demands "
+                "rigorous, presupposition-free description of phenomena as they give themselves."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         epoche: Dict[str, Any],
         intentionality: Dict[str, Any],
         noesis_noema: Dict[str, Any],
@@ -1298,7 +1461,9 @@ class Husserl(Philosopher):
         concepts: List[str],
     ) -> str:
         """Construct comprehensive Husserlian phenomenological reasoning."""
+        applied = self._apply_husserl_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Husserl's transcendental phenomenological perspective, we must analyze "
             f"what is given in pure consciousness. "
             f"Epoché: {epoche['description']}. "
