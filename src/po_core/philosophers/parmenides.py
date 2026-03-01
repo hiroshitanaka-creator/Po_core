@@ -418,6 +418,150 @@ class Parmenides(Philosopher):
             },
         }
 
+    def _apply_parmenides_to_problem(self, text: str) -> str:
+        """Apply Parmenides's Eleatic philosophy proactively to the given problem."""
+        t = text.lower()
+        is_change = any(
+            w in t
+            for w in [
+                "change",
+                "flux",
+                "evolve",
+                "transform",
+                "become",
+                "process",
+                "update",
+                "new",
+            ]
+        )
+        is_knowledge = any(
+            w in t
+            for w in [
+                "know",
+                "truth",
+                "real",
+                "certain",
+                "understand",
+                "learn",
+                "fact",
+                "evidence",
+            ]
+        )
+        is_identity = any(
+            w in t
+            for w in [
+                "identity",
+                "self",
+                "same",
+                "different",
+                "one",
+                "many",
+                "unity",
+                "plural",
+            ]
+        )
+        is_appearance = any(
+            w in t
+            for w in [
+                "appear",
+                "seem",
+                "look",
+                "perception",
+                "opinion",
+                "believe",
+                "illusion",
+            ]
+        )
+        is_contradiction = any(
+            w in t
+            for w in [
+                "contradict",
+                "paradox",
+                "impossible",
+                "inconsistent",
+                "conflict",
+                "both",
+            ]
+        )
+        is_decision = any(
+            w in t
+            for w in ["decide", "choose", "choice", "should", "option"]
+        )
+
+        if is_change:
+            return (
+                "Parmenides (On Nature, fr. 8) delivers a radical verdict on change: it is impossible. "
+                "Being (τὸ ἐόν) is eternal, unchanging, one, and complete. "
+                "What IS cannot become what IS NOT—for non-being is unthinkable and unspeakable. "
+                "Therefore: generation is impossible (being cannot come from non-being), "
+                "destruction is impossible (being cannot pass into non-being), "
+                "and motion/change are illusions of the Way of Opinion (doxa). "
+                "What appears as change is mortals' confused two-headed path—"
+                "confusing being with non-being, the Way of Truth with the Way of Seeming."
+            )
+        elif is_knowledge:
+            return (
+                "Parmenides distinguishes two paths: the Way of Truth (Alētheia) and the Way of Opinion (Doxa). "
+                "The Way of Truth: 'Being is; non-being is not'—this alone is thinkable and sayable. "
+                "Thought and being are identical (fr. 3): you can only think what IS. "
+                "The rational method: follow logos wherever it leads, even against sensory appearance. "
+                "The Way of Opinion: the world of mortals who 'wander, two-headed'—accepting both being and non-being. "
+                "True knowledge is rational, not empirical: the senses show flux and multiplicity; "
+                "reason alone grasps the One eternal Being."
+            )
+        elif is_identity:
+            return (
+                "Parmenides's monism (fr. 8): Being is One—continuous, indivisible, homogeneous. "
+                "There cannot be many distinct beings, because what would separate them? Non-being—which is nothing. "
+                "Being is the same throughout: 'Nor is it divisible, since it is all alike' (fr. 8.22). "
+                "Identity is grounded in the eternal unchanging One. "
+                "Any claim of plural distinct identities relies on the forbidden notion of non-being as separator. "
+                "The sphere metaphor: Being is like a perfect sphere—complete, uniform, equal in all directions—"
+                "admitting no inner differentiation."
+            )
+        elif is_appearance:
+            return (
+                "Parmenides sharply separates appearance (doxa) from reality (alētheia). "
+                "The senses deceive: they present a world of change, plurality, generation—"
+                "all of which require non-being, which is nothing. "
+                "Mortals on the Way of Opinion accept the testimony of eyes and ears: "
+                "'for whom to be and not to be are thought the same yet not the same' (fr. 6). "
+                "Philosophy's task: subordinate appearance to logos. "
+                "Whatever reason demonstrates about Being must take precedence over what perception suggests. "
+                "This is the methodological legacy Plato and later rationalists inherited."
+            )
+        elif is_contradiction:
+            return (
+                "Parmenides pioneered the use of logical necessity in philosophy: "
+                "contradictions reveal not paradox but the limits of confused thinking. "
+                "His proof: being cannot come from non-being (ex nihilo nihil fit); "
+                "non-being cannot be thought (for thought requires an object that IS). "
+                "Therefore any proposition that requires non-being—generation, destruction, plurality, change—"
+                "is strictly false, however intuitive it seems. "
+                "The method: follow the logos rigorously. Where it leads to contradiction, "
+                "the premises (usually sensory or conventional) must be rejected."
+            )
+        elif is_decision:
+            return (
+                "Parmenides would insist: before deciding, strip away doxa (opinion) and follow the Way of Truth. "
+                "Apply logical necessity: which options are genuinely thinkable (i.e., coherent, non-contradictory)? "
+                "Non-contradictory options ARE; contradictory options ARE NOT—and non-being cannot be chosen. "
+                "Seek the eternal, unchanging principle at stake: surface appearances (doxa) mislead. "
+                "What reason (logos) demonstrates is; what reason refutes is not. "
+                "Decision guided by logos is on the Way of Truth; decision driven by convention and perception wanders."
+            )
+        else:
+            return (
+                "Parmenides of Elea (fl. c. 475 BCE) wrote a didactic poem On Nature presenting two paths: "
+                "the Way of Truth (Alētheia): 'Being is; non-being is not'—Being is eternal, one, unchanging, complete. "
+                "The Way of Opinion (Doxa): the world mortals inhabit—seeming change, plurality, generation, destruction. "
+                "His core thesis: thought and being are identical (fr. 3); you can only think what IS. "
+                "Non-being is unthinkable and unspeakable. Therefore: change, plurality, generation, and motion are impossible. "
+                "Being is like a perfect sphere—homogeneous, continuous, indivisible. "
+                "Methodology: logos (reason) is the only valid path to truth; sensation leads only to opinion. "
+                "Legacy: Parmenides forced subsequent philosophy to confront the problem of change and plurality."
+            )
+
     def _construct_reasoning(
         self,
         prompt: str,
@@ -431,7 +575,10 @@ class Parmenides(Philosopher):
         appearance_reality: Dict,
     ) -> str:
         """Construct comprehensive Parmenidean reasoning."""
-        return f"""Eleatic Inquiry: "{prompt}"
+        applied = self._apply_parmenides_to_problem(prompt)
+        return f"""{applied}
+
+Eleatic Inquiry: "{prompt}"
 
 THE WAY OF TRUTH
 {truth['nature']['description']}. {truth['identity_of_thought_and_being']['thesis']}

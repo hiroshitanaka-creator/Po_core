@@ -126,7 +126,7 @@ class Plato(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            forms, cave, divided_line, soul, justice, good
+            prompt, forms, cave, divided_line, soul, justice, good
         )
 
         return {
@@ -959,8 +959,114 @@ class Plato(Philosopher):
             ),
         }
 
+    def _apply_plato_to_problem(self, text: str) -> str:
+        """Apply Plato's philosophy proactively to the given problem."""
+        t = text.lower()
+        is_decision = any(
+            w in t
+            for w in ["decide", "decision", "choose", "choice", "should i", "option"]
+        )
+        is_knowledge = any(
+            w in t
+            for w in [
+                "know",
+                "truth",
+                "real",
+                "certain",
+                "believe",
+                "understand",
+                "learn",
+            ]
+        )
+        is_justice = any(
+            w in t
+            for w in [
+                "justice",
+                "fair",
+                "right",
+                "wrong",
+                "moral",
+                "ethic",
+                "good",
+                "evil",
+            ]
+        )
+        is_politics = any(
+            w in t
+            for w in [
+                "leader",
+                "govern",
+                "politics",
+                "state",
+                "society",
+                "power",
+                "authority",
+            ]
+        )
+        is_technology = any(
+            w in t
+            for w in ["ai", "tech", "digital", "machine", "automate", "algorithm"]
+        )
+
+        if is_decision:
+            return (
+                "Plato urges: let reason (the charioteer) govern spirit and appetite before deciding. "
+                "In the Republic, right decision flows from knowledge of the Good (τὸ ἀγαθόν), not mere opinion (doxa). "
+                "Apply the dialectic: question assumptions, seek the Form of the wisest course. "
+                "The divided line reminds us: conjecture and belief belong to the visible realm; "
+                "true understanding (noesis) requires ascending to first principles. "
+                "'The unexamined life is not worth living' (Apology 38a)—nor the unexamined decision."
+            )
+        elif is_knowledge:
+            return (
+                "Plato's Allegory of the Cave (Republic VII) maps this precisely: "
+                "most 'knowledge' is shadow-play—images of images. "
+                "The Divided Line distinguishes eikasia (conjecture) → pistis (belief) → dianoia (reasoning) → noesis (pure intellect). "
+                "True knowledge is of the eternal Forms, not changing particulars. "
+                "Recollection (anamnesis, Meno 80a) holds that learning is remembering what the soul knew before embodiment. "
+                "Ascend through dialectic to the Form of the Good—the sun that illuminates all other Forms."
+            )
+        elif is_justice:
+            return (
+                "Plato grounds justice in the harmony of the tripartite soul: "
+                "reason (λογιστικόν) rules, spirit (θυμοειδές) supports, appetite (ἐπιθυμητικόν) is governed. "
+                "At the civic level, justice is each element fulfilling its proper function (Republic IV). "
+                "The Form of Justice (δικαιοσύνη) is eternal and unchanging—particular acts are just insofar as they participate in it. "
+                "The philosopher-ruler alone, knowing the Good, can legislate justly. "
+                "Injustice is always ultimately self-harm: it disorders the soul (Republic IX)."
+            )
+        elif is_politics:
+            return (
+                "Plato's Republic proposes philosopher-kings: only those who know the Good should govern. "
+                "Political authority without philosophical knowledge produces timocracy, oligarchy, democracy, tyranny—each a degeneration. "
+                "The Statesman (Politikos) identifies true governance as a techne (craft) requiring real knowledge, not opinion. "
+                "The Allegory of the Cave shows why: prisoners (those in doxa) elect cave-shadows as leaders. "
+                "Genuine political reform begins with education—turning the soul toward the light of the Good."
+            )
+        elif is_technology:
+            return (
+                "Plato's Phaedrus (274c–275b) warns against writing as externalized memory: "
+                "it produces the semblance of knowledge (doxa) without wisdom (episteme). "
+                "AI and digital systems risk the same: impressive simulacra of understanding, "
+                "but lacking the living dialectic that produces genuine knowledge. "
+                "On the Divided Line, technology operates in the visible realm—useful, but never a substitute for noesis. "
+                "The Form of Intelligence cannot be instantiated in matter; only approximated. "
+                "Guard against mistaking the tool's output for the philosopher's insight."
+            )
+        else:
+            return (
+                "Plato (428–348 BCE) teaches that the material world is a shadow of eternal, immutable Forms. "
+                "The Form of the Good (τὸ ἀγαθόν) is the highest Form—source of being and truth for all others. "
+                "The Allegory of the Cave (Republic VII) maps the philosopher's ascent from illusion to reality: "
+                "from shadow-images → physical objects → mathematical objects → the Good itself. "
+                "The tripartite soul (reason, spirit, appetite) achieves justice when reason rules. "
+                "Dialectic—rigorous question-and-answer—is the method by which the mind ascends to the Forms. "
+                "'The unexamined life is not worth living' (Apology 38a): philosophy is not luxury but necessity."
+            )
+
     def _construct_reasoning(
         self,
+        text: str,
         forms: Dict[str, Any],
         cave: Dict[str, Any],
         divided_line: Dict[str, Any],
@@ -970,8 +1076,10 @@ class Plato(Philosopher):
     ) -> str:
         """Construct Platonic philosophical reasoning."""
         primary_form = forms["primary"]
+        applied = self._apply_plato_to_problem(text)
 
         reasoning = (
+            f"{applied} "
             f"From a Platonic perspective, this text concerns {primary_form}. "
             f"Position in the cave: {cave['description']}. "
             f"Epistemic status on the divided line: {divided_line['epistemic_status']}. "
