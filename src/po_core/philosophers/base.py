@@ -547,6 +547,38 @@ class Philosopher(ABC):
 
         return [proposal]
 
+
+    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+        """Default critique implementation for deliberation protocol v1.
+
+        Backward-compatible rule-based fallback used when philosopher subclasses
+        do not provide a custom critique method.
+        """
+        claims = getattr(target, "claims", [])
+        joined = " ".join(str(c) for c in claims).lower()
+
+        weakness = "insufficient_information"
+        detail = "前提が十分に定義されていません。"
+        question = "どの条件が満たされれば主張を支持できますか？"
+
+        if "risk" not in joined and "リスク" not in joined:
+            weakness = "risk_not_explicit"
+            detail = "リスク・副作用の明示が不足しています。"
+            question = "主要な失敗モードと緩和策は何ですか？"
+        elif "?" not in joined and "question" not in joined:
+            weakness = "questions_missing"
+            detail = "検証のための問いが不足しています。"
+            question = "反証可能な問いを1つ提示できますか？"
+
+        return {
+            "critic": self.name,
+            "target": str(getattr(target, "philosopher", "")),
+            "target_proposal_id": str(getattr(target, "proposal_id", "")),
+            "weakness": weakness,
+            "detail": detail,
+            "question": question,
+        }
+
     async def propose_async(
         self,
         ctx: "DomainContext",
@@ -644,6 +676,38 @@ class PhilosopherProtocol(TypingProtocol):
             (see class docstring).
         """
         ...
+
+
+    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+        """Default critique implementation for deliberation protocol v1.
+
+        Backward-compatible rule-based fallback used when philosopher subclasses
+        do not provide a custom critique method.
+        """
+        claims = getattr(target, "claims", [])
+        joined = " ".join(str(c) for c in claims).lower()
+
+        weakness = "insufficient_information"
+        detail = "前提が十分に定義されていません。"
+        question = "どの条件が満たされれば主張を支持できますか？"
+
+        if "risk" not in joined and "リスク" not in joined:
+            weakness = "risk_not_explicit"
+            detail = "リスク・副作用の明示が不足しています。"
+            question = "主要な失敗モードと緩和策は何ですか？"
+        elif "?" not in joined and "question" not in joined:
+            weakness = "questions_missing"
+            detail = "検証のための問いが不足しています。"
+            question = "反証可能な問いを1つ提示できますか？"
+
+        return {
+            "critic": self.name,
+            "target": str(getattr(target, "philosopher", "")),
+            "target_proposal_id": str(getattr(target, "proposal_id", "")),
+            "weakness": weakness,
+            "detail": detail,
+            "question": question,
+        }
 
     async def propose_async(
         self,
