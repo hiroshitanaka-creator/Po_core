@@ -35,6 +35,13 @@ from po_core.deliberation.protocol import (
     CritiqueCard,
     SynthesisEngine,
     run_deliberation,
+from po_core.deliberation.synthesis import (
+    ArgumentCard,
+    AxisSpec,
+    CritiqueCard,
+    ScoreboardEntry,
+    SynthesisEngine,
+    SynthesisReport,
 )
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
@@ -61,4 +68,9 @@ __all__ = [
     "CritiqueCard",
     "SynthesisEngine",
     "run_deliberation",
+    "AxisSpec",
+    "CritiqueCard",
+    "ScoreboardEntry",
+    "SynthesisEngine",
+    "SynthesisReport",
 ]
