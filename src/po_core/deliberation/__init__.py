@@ -31,10 +31,15 @@ from po_core.deliberation.engine import (
 )
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
 from po_core.deliberation.roles import (
+    DEFAULT_ROLES,
+    PHILOSOPHER_ROLE_MAP,
     SYNTHESIZER_PHILOSOPHERS,
     DebateRole,
+    Role,
+    RoleCoverage,
     assign_role,
     get_role_prompt_prefix,
+    parse_roles_csv,
 )
 
 __all__ = [
@@ -48,7 +53,12 @@ __all__ = [
     "InfluenceTracker",
     "InfluenceWeight",
     "DebateRole",
+    "Role",
+    "RoleCoverage",
+    "DEFAULT_ROLES",
+    "PHILOSOPHER_ROLE_MAP",
     "SYNTHESIZER_PHILOSOPHERS",
     "assign_role",
     "get_role_prompt_prefix",
+    "parse_roles_csv",
 ]

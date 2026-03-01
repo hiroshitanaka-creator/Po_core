@@ -23,6 +23,7 @@ import importlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Sequence, Tuple
 
+from po_core.deliberation.roles import PHILOSOPHER_ROLE_MAP, Role
 from po_core.domain.safety_mode import SafetyMode
 
 if TYPE_CHECKING:
@@ -94,10 +95,12 @@ class PhilosopherRegistry:
         budget_critical: int = 3,
         cache_instances: bool = True,
         battalion_plans: Optional[Mapping[SafetyMode, "BattalionModePlan"]] = None,
+        required_roles: Optional[Sequence[Role]] = None,
     ):
         self._specs = list(specs)
         self._cache = cache_instances
         self._instances: Dict[str, PhilosopherProtocol] = {}
+        self._required_roles: Tuple[Role, ...] = tuple(required_roles or ())
 
         # battalion_plans が渡されたらそちらを優先
         if battalion_plans is not None:
@@ -162,6 +165,13 @@ class PhilosopherRegistry:
         candidates = [
             s for s in self._specs if s.enabled and s.risk_level <= plan.max_risk
         ]
+        if self._required_roles:
+            role_values = set(self._required_roles)
+            candidates = [
+                s
+                for s in candidates
+                if PHILOSOPHER_ROLE_MAP.get(s.philosopher_id) in role_values
+            ]
         if mode == SafetyMode.NORMAL:
             candidates = [s for s in candidates if "ai_synthesis" not in s.tags]
         if mode == SafetyMode.CRITICAL:

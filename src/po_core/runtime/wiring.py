@@ -26,6 +26,7 @@ import os
 from dataclasses import dataclass
 from typing import Sequence
 
+from po_core.deliberation.roles import parse_roles_csv
 from po_core.philosophers.base import PhilosopherProtocol
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.ports.aggregator import AggregatorPort
@@ -175,6 +176,12 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             shadow_config_source=str(shadow_cfg.source) if shadow_cfg else "unknown",
         )
 
+    selected_roles = settings.philosopher_roles
+    if not selected_roles:
+        roles_env = os.getenv("PO_ROLES", "").strip()
+        if roles_env:
+            selected_roles = tuple(sorted(parse_roles_csv(roles_env), key=lambda r: r.value))
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -184,6 +191,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         budget_warn=settings.philosopher_cost_budget_warn,
         budget_critical=settings.philosopher_cost_budget_critical,
         battalion_plans=battalion_plans,
+        required_roles=selected_roles,
     )
 
     return WiredSystem(
@@ -327,6 +335,12 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             shadow_config_source=str(shadow_cfg.source) if shadow_cfg else "unknown",
         )
 
+    selected_roles = settings.philosopher_roles
+    if not selected_roles:
+        roles_env = os.getenv("PO_ROLES", "").strip()
+        if roles_env:
+            selected_roles = tuple(sorted(parse_roles_csv(roles_env), key=lambda r: r.value))
+
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
     registry = PhilosopherRegistry(
         max_normal=settings.philosophers_max_normal,
@@ -336,6 +350,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         budget_warn=settings.philosopher_cost_budget_warn,
         budget_critical=settings.philosopher_cost_budget_critical,
         battalion_plans=battalion_plans,
+        required_roles=selected_roles,
     )
 
     return WiredSystem(
