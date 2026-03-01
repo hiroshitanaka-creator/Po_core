@@ -90,6 +90,17 @@ class DeliberationResult:
             key=lambda x: x[1],
             reverse=True,
         )[:3]
+        influence_graph = {
+            name: weight.to_dict() for name, weight in self.influence_weights.items()
+        }
+
+        interference_pairs_top = None
+        if self.interaction_matrix is not None:
+            interference_pairs_top = [
+                pair.to_dict()
+                for pair in self.interaction_matrix.high_interference_pairs(top_k=3)
+            ]
+
         return {
             "n_rounds": self.n_rounds,
             "total_proposals": self.total_proposals,
@@ -113,6 +124,8 @@ class DeliberationResult:
             "top_influencers": [
                 {"philosopher": n, "influence": round(s, 4)} for n, s in top_influencers
             ],
+            "influence_graph": influence_graph,
+            "interference_pairs_top": interference_pairs_top,
             "clustering": (
                 self.cluster_result.to_dict() if self.cluster_result else None
             ),
