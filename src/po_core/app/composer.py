@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (c) 2026 Flying Pig Project
-"""Stub Composer — rule-based, LLM-free output generator for M1.
+"""Composer — po_core philosophical pipeline → output_schema_v1.
 
-Implements FR-OUT-001 (output_schema_v1 compliance) using only deterministic
-rule-based logic.  No external LLM or ML model is required.
+Drives the real po_core.run() pipeline (39 philosophers + W_Ethics Gate)
+and adapts the proposal to the structured output_schema_v1 format.
 
 Usage::
 
@@ -16,11 +16,10 @@ Usage::
 Contract:
 - ``composer.compose(case)`` MUST return a dict that validates against
   ``docs/spec/output_schema_v1.json`` (jsonschema Draft 2020-12).
-- ``meta.generator.mode`` is always ``"stub"``.
 - ``meta.deterministic`` is always ``True`` when ``seed`` is provided.
-- The output is deterministic for the same ``case`` dict and ``seed``.
+- The output is deterministic for the same ``case`` dict and ``seed``
+  (proposal content comes from the deterministic philosophical pipeline).
 
-Milestone: M1 (due 2026-03-15)
 Requirement: FR-OUT-001, FR-OPT-001, FR-REC-001, FR-ETH-001,
              FR-ETH-002, FR-RES-001, FR-UNC-001, FR-Q-001, FR-TR-001
 """
@@ -107,69 +106,55 @@ class StubComposer:
     def compose(self, case: dict[str, Any]) -> dict[str, Any]:
         """Compose a complete output document from a case dict.
 
+        Drives the real po_core.run() pipeline to obtain a philosophical
+        proposal, then adapts it to the output_schema_v1 structure.
+
         Args:
             case: A dict loaded from a ``scenarios/case_NNN.yaml`` file.
 
         Returns:
             A dict conforming to ``docs/spec/output_schema_v1.json``.
         """
-        now = datetime.datetime.now(datetime.timezone.utc)
-        run_id = str(uuid.UUID(int=self._rng.getrandbits(128)))
+        from po_core.app.api import run as _po_run
+        from po_core.app.output_adapter import adapt_to_schema, build_user_input
+
+        now_str = datetime.datetime.now(datetime.timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+
+        # Deterministic run_id: derived from case_id + seed
+        case_id = str(case.get("case_id", "case_unknown"))
+        run_id = str(
+            uuid.UUID(
+                int=int(
+                    hashlib.sha256(
+                        f"{case_id}:{self.seed}".encode()
+                    ).hexdigest(),
+                    16,
+                )
+                % (2**128)
+            )
+        )
 
         # SHA-256 of the serialised case (input_digest, NFR-REP-001)
         input_digest = hashlib.sha256(
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
-        # Extract case fields
-        problem: str = case.get("problem", "")
-        values: list[str] = case.get("values", [])
-        constraints: list[str] = case.get("constraints", [])
-        stakeholders: list[dict[str, str]] = case.get("stakeholders", [])
-        unknowns: list[str] = case.get("unknowns", [])
-        decision_owner: str = stakeholders[0]["name"] if stakeholders else "意思決定者"
+        # Run the philosophical pipeline
+        user_input = build_user_input(case)
+        run_result = _po_run(user_input)
 
-        # Build all sub-documents
-        trace_steps = self._build_trace(now)
-        options = self._build_options(
-            problem, constraints, stakeholders, unknowns, decision_owner
+        # Adapt to output_schema_v1
+        return adapt_to_schema(
+            case,
+            run_result,
+            run_id=run_id,
+            digest=input_digest,
+            now=now_str,
+            seed=self.seed if self.seed is not None else 0,
+            deterministic=self.seed is not None,
         )
-        recommendation = self._build_recommendation(unknowns)
-        ethics = self._build_ethics(values)
-        responsibility = self._build_responsibility(decision_owner, stakeholders)
-        questions = self._build_questions(unknowns)
-        uncertainty = self._build_uncertainty(unknowns)
-
-        return {
-            "meta": {
-                "schema_version": _SCHEMA_VERSION,
-                "pocore_version": _POCORE_VERSION,
-                "run_id": run_id,
-                "created_at": now.isoformat(),
-                "seed": self.seed if self.seed is not None else 0,
-                "deterministic": self.seed is not None,
-                "generator": {
-                    "name": _GENERATOR_NAME,
-                    "version": _GENERATOR_VERSION,
-                    "mode": "stub",
-                },
-            },
-            "case_ref": {
-                "case_id": case.get("case_id", "unknown"),
-                "title": case.get("title", ""),
-                "input_digest": input_digest,
-            },
-            "options": options,
-            "recommendation": recommendation,
-            "ethics": ethics,
-            "responsibility": responsibility,
-            "questions": questions,
-            "uncertainty": uncertainty,
-            "trace": {
-                "version": "1",
-                "steps": trace_steps,
-            },
-        }
 
     # ── Private builders ──────────────────────────────────────────────────────
 
