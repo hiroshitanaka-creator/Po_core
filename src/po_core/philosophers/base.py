@@ -31,9 +31,16 @@ from typing import TypedDict
 
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.intent import Intent
+from po_core.domain.keys import CITATIONS, PO_CORE, RATIONALE
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.tensor_snapshot import TensorSnapshot
+
+# Valid action types that philosophers may declare.
+# Values outside this set are silently normalised to "answer".
+VALID_ACTION_TYPES: frozenset = frozenset(
+    {"answer", "refuse", "ask_clarification", "tool_call", "defer"}
+)
 
 
 class PhilosopherResponseRequired(TypedDict):
@@ -51,9 +58,17 @@ class PhilosopherResponse(PhilosopherResponseRequired, total=False):
         reasoning: str - The philosophical analysis text
         perspective: str - Name of the philosophical viewpoint
 
-    Optional keys:
+    Optional keys (normalised automatically by normalize_response()):
         tension: Any - Identified tensions (str, dict, or None)
         metadata: Dict[str, Any] - Additional structured data
+        rationale: str - Short one-sentence justification; derived from the
+            first sentence of *reasoning* when absent.
+        confidence: float - Self-reported confidence in [0, 1]; defaults to
+            0.5 when absent or non-numeric.
+        action_type: str - Proposed action class; must be one of
+            VALID_ACTION_TYPES.  Unknown values fall back to "answer".
+        citations: List[str] - Philosophical references / works cited;
+            defaults to [] when absent.
 
     Philosophers may include additional custom keys specific to their
     philosophical framework (e.g., virtue_assessment for Aristotle,
@@ -62,6 +77,10 @@ class PhilosopherResponse(PhilosopherResponseRequired, total=False):
 
     tension: Any
     metadata: Dict[str, Any]
+    rationale: str
+    confidence: float
+    action_type: str
+    citations: List[str]
 
 
 @dataclass
@@ -111,6 +130,10 @@ def normalize_response(
     - perspective: from 'perspective', 'description', or use philosopher description
     - tension: from 'tension' or None
     - metadata: from 'metadata' or construct from extra keys
+    - rationale: from 'rationale', else first sentence (≤150 chars) of reasoning
+    - confidence: from 'confidence' clamped to [0.0, 1.0], else 0.5
+    - action_type: from 'action_type' if in VALID_ACTION_TYPES, else "answer"
+    - citations: from 'citations' if list[str], else []
     """
     # Try to extract reasoning
     reasoning = raw_response.get("reasoning")
@@ -160,11 +183,58 @@ def normalize_response(
         normalized["metadata"] = metadata
 
     # Preserve additional custom keys from original response
-    # This allows philosopher-specific extensions (e.g., virtue_assessment)
-    preserved_keys = {"reasoning", "perspective", "tension", "metadata"}
+    # This allows philosopher-specific extensions (e.g., virtue_assessment).
+    # The four new fields are excluded here because they go through explicit
+    # normalisation logic below (type coercion, clamping, allow-list checks).
+    preserved_keys = {
+        "reasoning", "perspective", "tension", "metadata",
+        "rationale", "confidence", "action_type", "citations",
+    }
     for key, value in raw_response.items():
         if key not in preserved_keys:
             normalized[key] = value  # type: ignore
+
+    # ── New fields ────────────────────────────────────────────────────
+
+    # rationale: explicit field preferred; fall back to first sentence of reasoning
+    raw_rationale = raw_response.get("rationale")
+    if isinstance(raw_rationale, str) and raw_rationale.strip():
+        rationale: str = raw_rationale.strip()
+    else:
+        reasoning_text: str = normalized["reasoning"]
+        dot_idx = reasoning_text.find(". ")
+        rationale = (
+            reasoning_text[: dot_idx + 1] if dot_idx > 0 else reasoning_text[:150]
+        ).strip()
+
+    # confidence: must be a float in [0.0, 1.0]
+    raw_conf = raw_response.get("confidence")
+    if raw_conf is None:
+        confidence: float = 0.5
+    else:
+        try:
+            confidence = float(raw_conf)
+            confidence = max(0.0, min(1.0, confidence))
+        except (ValueError, TypeError):
+            confidence = 0.5
+
+    # action_type: must be one of VALID_ACTION_TYPES; unknown values → "answer"
+    raw_action = raw_response.get("action_type", "answer")
+    action_type: str = (
+        raw_action if raw_action in VALID_ACTION_TYPES else "answer"
+    )
+
+    # citations: must be a list; non-list values → []
+    raw_citations = raw_response.get("citations")
+    if isinstance(raw_citations, list):
+        citations: List[str] = [str(c) for c in raw_citations if c]
+    else:
+        citations = []
+
+    normalized["rationale"] = rationale
+    normalized["confidence"] = confidence
+    normalized["action_type"] = action_type
+    normalized["citations"] = citations
 
     return normalized
 
@@ -348,18 +418,32 @@ class Philosopher(ABC):
         perspective = normalized.get("perspective", "")
         tension = normalized.get("tension")
 
+        # --- Fields extracted / normalised by normalize_response() ---
+        confidence: float = float(normalized.get("confidence", 0.5))
+        action_type: str = str(normalized.get("action_type", "answer"))
+        rationale: str = str(normalized.get("rationale", ""))
+        citations: List[str] = list(normalized.get("citations", []))
+
         content = reasoning
-        action_type = "answer"
 
         assumption_tags = [f"perspective:{perspective}"]
         if tension:
             assumption_tags.append("has_tension")
+        if citations:
+            assumption_tags.append("has_citations")
+
+        # PO_CORE provenance block — AUTHOR is added later by _embed_author()
+        # in party_machine, which merges into this dict rather than replacing it.
+        po_core_meta: Dict[str, Any] = {
+            RATIONALE: rationale,
+            CITATIONS: citations,
+        }
 
         proposal = Proposal(
             proposal_id=f"{ctx.request_id}:{self.name}:0",
             action_type=action_type,
             content=content,
-            confidence=0.5,
+            confidence=confidence,
             assumption_tags=assumption_tags,
             risk_tags=[],
             extra={
@@ -372,6 +456,7 @@ class Philosopher(ABC):
                     for k, v in normalized.items()
                     if k not in ("reasoning", "voiced_reasoning")
                 },
+                PO_CORE: po_core_meta,
             },
         )
 
@@ -418,7 +503,37 @@ class PhilosopherInfo:
 
 
 class PhilosopherProtocol(TypingProtocol):
-    """Protocol for philosopher implementations (hexagonal architecture)."""
+    """
+    Protocol for philosopher implementations (hexagonal architecture).
+
+    Every conforming implementation must satisfy:
+
+    1. ``info`` — a :class:`PhilosopherInfo` instance.
+
+    2. ``propose()`` / ``propose_async()`` — return ``List[Proposal]`` where
+       every Proposal guarantees the following in its ``extra`` mapping:
+
+       * ``extra[PO_CORE][RATIONALE]`` (:class:`str`) — one-sentence
+         justification derived from the philosopher's reasoning.  Empty string
+         when the reasoning itself is empty.
+       * ``extra[PO_CORE][CITATIONS]`` (:class:`List[str]`) — philosophical
+         references returned by ``reason()``.  Empty list when none are given.
+       * ``extra[PO_CORE][AUTHOR]`` (:class:`str`) — philosopher identifier,
+         embedded by ``party_machine._embed_author()`` after ``propose()``
+         returns (not set inside ``propose()`` itself).
+
+    3. ``Proposal.confidence`` — float in ``[0.0, 1.0]`` sourced from the
+       ``confidence`` key in ``reason()``'s return dict (default ``0.5``).
+
+    4. ``Proposal.action_type`` — one of :data:`VALID_ACTION_TYPES` sourced
+       from the ``action_type`` key in ``reason()``'s return dict (default
+       ``"answer"``).
+
+    The base :class:`Philosopher` class satisfies all four guarantees through
+    :func:`normalize_response` + the ``propose()`` implementation in
+    ``base.py``.  Custom protocol implementations must replicate this
+    behaviour explicitly.
+    """
 
     info: PhilosopherInfo
 
@@ -439,7 +554,9 @@ class PhilosopherProtocol(TypingProtocol):
             memory: Memory snapshot
 
         Returns:
-            List of proposals
+            List of Proposal objects.  Each Proposal must carry
+            ``extra[PO_CORE][RATIONALE]`` and ``extra[PO_CORE][CITATIONS]``
+            (see class docstring).
         """
         ...
 
@@ -470,6 +587,7 @@ __all__ = [
     "PhilosopherResponseRequired",
     "Context",
     "normalize_response",
+    "VALID_ACTION_TYPES",
     # New hexagonal architecture
     "PhilosopherInfo",
     "PhilosopherProtocol",
