@@ -20,7 +20,11 @@ def _extract_replay_inputs(events: list[Mapping[str, Any]]) -> Dict[str, Any]:
         return {
             "prompt": str(payload.get("prompt", "")),
             "philosophers": payload.get("philosophers"),
-            "context": payload.get("context") if isinstance(payload.get("context"), Mapping) else {},
+            "context": (
+                payload.get("context")
+                if isinstance(payload.get("context"), Mapping)
+                else {}
+            ),
         }
     raise ValueError("No propose event found; cannot replay run")
 
@@ -67,7 +71,9 @@ def replay_run(run_id: str, log_dir: str | Path | None = None) -> Dict[str, Any]
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Replay Po_core run from JSONL event log")
+    parser = argparse.ArgumentParser(
+        description="Replay Po_core run from JSONL event log"
+    )
     parser.add_argument("run_id", help="Run ID to replay")
     parser.add_argument(
         "--log-dir",

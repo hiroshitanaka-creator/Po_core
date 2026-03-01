@@ -46,4 +46,3 @@ def detect_language_simple(text: str) -> Language:
 
 
 __all__ = ["normalize_text", "detect_language_simple", "Language"]
-

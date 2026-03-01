@@ -74,7 +74,10 @@ class RoleCoverage:
     @classmethod
     def is_fully_covered(cls, roles: Iterable[Role]) -> bool:
         role_set = set(roles)
-        return all(required.intersection(role_set) for required in cls.AXIS_REQUIRED_ROLES.values())
+        return all(
+            required.intersection(role_set)
+            for required in cls.AXIS_REQUIRED_ROLES.values()
+        )
 
 
 DEFAULT_ROLES: FrozenSet[Role] = frozenset(

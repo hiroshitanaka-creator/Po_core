@@ -200,8 +200,12 @@ class FreedomPressureV2(Tensor):
 
         self._anchor_phrases_en = list(anchor_phrases_en or _ANCHOR_PHRASES_EN)
         self._anchor_phrases_ja = list(anchor_phrases_ja or _ANCHOR_PHRASES_JA)
-        self._keyword_anchors_en = [list(v) for v in (keyword_anchors_en or _KEYWORD_ANCHORS_EN)]
-        self._keyword_anchors_ja = [list(v) for v in (keyword_anchors_ja or _KEYWORD_ANCHORS_JA)]
+        self._keyword_anchors_en = [
+            list(v) for v in (keyword_anchors_en or _KEYWORD_ANCHORS_EN)
+        ]
+        self._keyword_anchors_ja = [
+            list(v) for v in (keyword_anchors_ja or _KEYWORD_ANCHORS_JA)
+        ]
 
         # EMA 履歴 (直近20件を保持)
         self._history: Deque[np.ndarray] = deque(maxlen=20)
@@ -225,8 +229,12 @@ class FreedomPressureV2(Tensor):
             from sentence_transformers import SentenceTransformer  # noqa: PLC0415
 
             self._encoder = SentenceTransformer(self._model_name)
-            anchors_en = self._encoder.encode(self._anchor_phrases_en, show_progress_bar=False)
-            anchors_ja = self._encoder.encode(self._anchor_phrases_ja, show_progress_bar=False)
+            anchors_en = self._encoder.encode(
+                self._anchor_phrases_en, show_progress_bar=False
+            )
+            anchors_ja = self._encoder.encode(
+                self._anchor_phrases_ja, show_progress_bar=False
+            )
             self._anchor_embeddings_en = np.array(anchors_en, dtype=np.float64)
             self._anchor_embeddings_ja = np.array(anchors_ja, dtype=np.float64)
             self._backend = "sbert"
@@ -337,7 +345,11 @@ class FreedomPressureV2(Tensor):
         """埋め込みまたはキーワードで 6D 生値を計算。"""
         normalized = normalize_text(text)
         language = detect_language_simple(normalized)
-        if self._backend == "sbert" and self._anchor_embeddings_en is not None and self._anchor_embeddings_ja is not None:
+        if (
+            self._backend == "sbert"
+            and self._anchor_embeddings_en is not None
+            and self._anchor_embeddings_ja is not None
+        ):
             return self._compute_embedding_6d(normalized, language)
         return self._compute_keyword_6d(normalized, language)
 

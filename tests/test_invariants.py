@@ -9,7 +9,9 @@ def test_synthesis_report_invariants() -> None:
     old = os.environ.get("PO_STRUCTURED_OUTPUT")
     os.environ["PO_STRUCTURED_OUTPUT"] = "1"
     try:
-        response = PoSelf(enable_trace=False).generate("What should we prioritize first?")
+        response = PoSelf(enable_trace=False).generate(
+            "What should we prioritize first?"
+        )
     finally:
         if old is None:
             os.environ.pop("PO_STRUCTURED_OUTPUT", None)
