@@ -142,18 +142,21 @@ def render_argument_card(card: "ArgumentCard") -> str:
         )
     if card.assumptions:
         sections.append(
-            "Assumptions: "
-            + " ".join(f"- {item}" for item in card.assumptions if item)
+            "Assumptions: " + " ".join(f"- {item}" for item in card.assumptions if item)
         )
     if card.risks:
-        sections.append("Risks: " + " ".join(f"- {item}" for item in card.risks if item))
+        sections.append(
+            "Risks: " + " ".join(f"- {item}" for item in card.risks if item)
+        )
     if card.questions:
         sections.append(
-            "Open questions: " + " ".join(f"- {item}" for item in card.questions if item)
+            "Open questions: "
+            + " ".join(f"- {item}" for item in card.questions if item)
         )
     if card.actions:
         sections.append(
-            "Suggested actions: " + " ".join(f"- {item}" for item in card.actions if item)
+            "Suggested actions: "
+            + " ".join(f"- {item}" for item in card.actions if item)
         )
 
     return "\n\n".join(s for s in sections if s)
@@ -407,7 +410,9 @@ class Philosopher(ABC):
         Default implementation preserves backward compatibility by adapting the
         existing reasoning payload into a minimal card.
         """
-        raw = self.reason(context.prompt, context.metadata if context.metadata else None)
+        raw = self.reason(
+            context.prompt, context.metadata if context.metadata else None
+        )
         normalized = normalize_response(raw, self.name, self.description)
         reasoning_text = normalized.get("reasoning", "")
 
@@ -547,8 +552,9 @@ class Philosopher(ABC):
 
         return [proposal]
 
-
-    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+    def critique_card(
+        self, target: Any, axis_spec: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, str]:
         """Default critique implementation for deliberation protocol v1.
 
         Backward-compatible rule-based fallback used when philosopher subclasses
@@ -677,8 +683,9 @@ class PhilosopherProtocol(TypingProtocol):
         """
         ...
 
-
-    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+    def critique_card(
+        self, target: Any, axis_spec: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, str]:
         """Default critique implementation for deliberation protocol v1.
 
         Backward-compatible rule-based fallback used when philosopher subclasses

@@ -9,12 +9,11 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-import os
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
-from po_core.domain.context import Context as DomainContext
 from po_core.deliberation.protocol import run_deliberation
+from po_core.domain.context import Context as DomainContext
 from po_core.domain.keys import (
     AUTHOR,
     AUTHOR_RELIABILITY,
@@ -173,8 +172,6 @@ class _PhasePreResult(NamedTuple):
     timeout_s: float
 
 
-
-
 def _debate_v1_enabled() -> bool:
     return os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes")
 
@@ -205,9 +202,12 @@ def _run_deliberation_protocol_v1(
         )
     )
 
+
 def _proposal_author_key(proposal: Any) -> str:
     """Resolve proposal author key for normalization with legacy fallback."""
-    extra = proposal.extra if isinstance(getattr(proposal, "extra", None), Mapping) else {}
+    extra = (
+        proposal.extra if isinstance(getattr(proposal, "extra", None), Mapping) else {}
+    )
     pc = extra.get(PO_CORE, {}) if isinstance(extra, Mapping) else {}
     if isinstance(pc, Mapping):
         author = str(pc.get(AUTHOR, ""))
