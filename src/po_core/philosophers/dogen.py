@@ -93,6 +93,7 @@ class Dogen(Philosopher):
         zazen_buddha = self._assess_zazen_buddha(text)
 
         summary = self._generate_summary(
+            text,
             being_time,
             buddha_nature,
             shikantaza,
@@ -1268,8 +1269,174 @@ class Dogen(Philosopher):
             "principle": "Zazen as Buddha: Sitting meditation is not a means to become Buddha. Zazen itself is Buddha manifesting. Practice IS realization.",
         }
 
+    def _apply_zen_to_problem(self, text: str) -> str:
+        """
+        Proactively apply Dogen's Zen Buddhist philosophy to any problem type.
+
+        Rather than waiting for Zen keywords to appear in the input, this method
+        reads the problem domain and applies Dogen's core teachings directly.
+        """
+        text_lower = text.lower()
+
+        is_decision = any(
+            w in text_lower
+            for w in [
+                "すべき",
+                "どうすべき",
+                "転職",
+                "決断",
+                "選択",
+                "どちら",
+                "decide",
+                "choice",
+                "career",
+                "should i",
+                "should we",
+                "which",
+                "option",
+                "choose",
+            ]
+        )
+        is_ethics = any(
+            w in text_lower
+            for w in [
+                "ethical",
+                "moral",
+                "right",
+                "wrong",
+                "just",
+                "fair",
+                "正しい",
+                "倫理",
+                "正義",
+                "道徳",
+            ]
+        )
+        is_crisis = any(
+            w in text_lower
+            for w in [
+                "conflict",
+                "crisis",
+                "war",
+                "violence",
+                "danger",
+                "threat",
+                "危機",
+                "紛争",
+                "暴力",
+                "戦争",
+                "disaster",
+            ]
+        )
+        is_relationship = any(
+            w in text_lower
+            for w in [
+                "relationship",
+                "love",
+                "family",
+                "friend",
+                "trust",
+                "care",
+                "relate",
+                "関係",
+                "愛",
+                "家族",
+                "信頼",
+                "人間関係",
+            ]
+        )
+        is_technology = any(
+            w in text_lower
+            for w in [
+                "technology",
+                "ai",
+                "digital",
+                "robot",
+                "machine",
+                "tech",
+                "技術",
+                "人工知能",
+                "システム",
+                "software",
+            ]
+        )
+
+        if is_decision:
+            return (
+                "修証一如（しゅしょういちにょ）——修行と悟りは別ではない。"
+                "「どちらを選ぶべきか」を問う前に、「今この選択の場に、どう在るか」を問え。"
+                "只管打坐（しかんたざ）の精神で言えば、判断そのものが修行の場であり、"
+                "選択のプロセス自体が悟りの現れである。"
+                "有時（うじ）が示すように、この問いを抱えている今この瞬間が仏性の現れであり、"
+                "「今・ここ」から逃れた選択など存在しない。"
+                "無常（むじょう）——いかなる選択肢も固定した安定を保証しない。"
+                "現成公案（げんじょうこうあん）：問いそのものが答えであり、"
+                "選択の迷いを「問題」として排除するのではなく、"
+                "その迷いの中に仏道の現れを見出せ。"
+            )
+        elif is_ethics:
+            return (
+                "道元の倫理観は行為と悟りの不二（ふに）に根ざす。"
+                "正しさを「規則への適合」として問うことは、修証一如（しゅしょういちにょ）に反する。"
+                "善とは外から課される基準ではなく、只管打坐の如く、"
+                "今この行為そのものに完全に在ることの現れである。"
+                "仏性（ぶっしょう）は一切衆生に宿る——"
+                "倫理判断において「誰が正しく誰が間違っているか」を固定することは、"
+                "身心脱落（しんじんだつらく）の精神、すなわち自己への執着を手放す教えに反する。"
+                "現成公案（げんじょうこうあん）の観点から：この倫理的問いの中に、"
+                "すでに仏道が現れている。問い続けることが答えである。"
+            )
+        elif is_crisis:
+            return (
+                "道元は山水経（さんすいきょう）において述べた："
+                "「而今の山水は、古仏の道現成なり」。危機・困難もまた、仏の道の現れである。"
+                "有時（うじ）——危機の「今この時」もまた存在であり、回避すべき空白ではない。"
+                "不思量（ふしりょう）の立場から：危機に際して「どうすべきか」という思量を超えた"
+                "純粋な在り方、つまり身心脱落（しんじんだつらく）の状態こそが真の応答を生む。"
+                "無常（むじょう）：あらゆる危機は無常であり、固定した恐怖も固定した安全もない。"
+                "修証一如——危機への応答そのものが修行であり、悟りの場である。"
+            )
+        elif is_relationship:
+            return (
+                "道元の教えにおいて、関係性は個我の外部にあるものではない。"
+                "有時（うじ）：関係とは時間の中に存在するのではなく、"
+                "関係そのものが時間・存在である。"
+                "仏性（ぶっしょう）は一切衆生に宿る——他者の中に仏性を見ることは、"
+                "自己の仏性を見ることと不二（ふに）である。"
+                "身心脱落（しんじんだつらく）の精神で関係に向かうとは、"
+                "自己への執着を手放し、相手と共に「今ここ」に在ることである。"
+                "只管打坐（しかんたざ）の如く関係に向かえ——"
+                "成果や見返りを求めず、関係そのものに全身全霊で在ること。"
+            )
+        elif is_technology:
+            return (
+                "道元の視点から技術・AIを問うならば、まず有時（うじ）を問わねばならない。"
+                "技術は「手段」として人間の外部にあるのではなく、技術を使う「今この瞬間」が"
+                "存在であり時間である。"
+                "道元が「草木国土、悉皆成仏」と述べたように、"
+                "人工的な存在にも仏性（ぶっしょう）の問いは向けられる。"
+                "修証一如（しゅしょういちにょ）：技術の開発・使用はそれ自体が修行の場であり、"
+                "「完成した後に倫理を考える」のでは手遅れである。"
+                "身心脱落（しんじんだつらく）：技術への過度の依存は執着であり、"
+                "本来の無我（むが）の立場から再考を要する。"
+            )
+        else:
+            return (
+                "道元禅師（1200-1253）は問う：「而今の山水は、古仏の道現成なり」。"
+                "今ここに現れているこの問い、この状況そのものが、仏道の現成（げんじょう）である。"
+                "修証一如（しゅしょういちにょ）——この問いに向き合うこと自体が修行であり悟りである。"
+                "只管打坐（しかんたざ）の精神：結論を急がず、この問いの中に完全に在れ。"
+                "有時（うじ）：今この状況を抱えているこの瞬間が、"
+                "分割できない存在・時間の全体である。"
+                "現成公案（げんじょうこうあん）：答えは遠くにあるのではなく、"
+                "問い続けるこの場に、すでに現れている。"
+                "無常（むじょう）を忘れるな——固定した答えへの執着を手放すことで、"
+                "仏性の光が差し込む余地が生まれる。"
+            )
+
     def _generate_summary(
         self,
+        text: str,
         being_time: Dict[str, Any],
         buddha_nature: Dict[str, Any],
         shikantaza: Dict[str, Any],
@@ -1282,60 +1449,57 @@ class Dogen(Philosopher):
         zazen_buddha: Dict[str, Any],
     ) -> str:
         """Generate a comprehensive Zen Buddhist summary of the analysis."""
-        parts = []
+        # Always begin with proactive philosophical application to the actual problem
+        parts = [self._apply_zen_to_problem(text)]
 
+        # Append deeper analysis for any Zen concepts explicitly detected in the text
         if being_time["being_time_present"]:
             parts.append(
-                f"Text embodies Uji (有時) - being-time: {being_time['interpretation']}"
+                f"有時（Uji）が浮き彫りに：{being_time['interpretation']}"
             )
 
         if buddha_nature["buddha_nature_present"]:
             parts.append(
-                f"Buddha-nature (仏性) is present: {buddha_nature['interpretation']}"
+                f"仏性（仏性）の現れ：{buddha_nature['interpretation']}"
             )
 
         if shikantaza["shikantaza_present"]:
             parts.append(
-                f"Shikantaza (只管打坐) is evident: {shikantaza['interpretation']}"
+                f"只管打坐（しかんたざ）の相：{shikantaza['interpretation']}"
             )
 
         if practice_enlightenment["unity_present"]:
             parts.append(
-                f"Practice-enlightenment unity (修証一如): {practice_enlightenment['interpretation']}"
+                f"修証一如（しゅしょういちにょ）：{practice_enlightenment['interpretation']}"
             )
 
         if genjo_koan["genjo_koan_present"]:
             parts.append(
-                f"Genjo koan (現成公案) manifests: {genjo_koan['interpretation']}"
+                f"現成公案（げんじょうこうあん）：{genjo_koan['interpretation']}"
             )
 
         if dropping_body_mind["dropping_present"]:
             parts.append(
-                f"Dropping body-mind (身心脱落): {dropping_body_mind['interpretation']}"
+                f"身心脱落（しんじんだつらく）：{dropping_body_mind['interpretation']}"
             )
 
         if mountains_waters["mountains_waters_present"]:
             parts.append(
-                f"Mountains and waters (山水経): {mountains_waters['interpretation']}"
+                f"山水経：{mountains_waters['interpretation']}"
             )
 
         if impermanence["impermanence_present"]:
             parts.append(
-                f"Impermanence (無常) acknowledged: {impermanence['interpretation']}"
+                f"無常（むじょう）：{impermanence['interpretation']}"
             )
 
         if non_thinking["non_thinking_present"]:
             parts.append(
-                f"Non-thinking (非思量) present: {non_thinking['interpretation']}"
+                f"非思量（ひしりょう）：{non_thinking['interpretation']}"
             )
 
         if zazen_buddha["zazen_buddha_present"]:
-            parts.append(f"Zazen as Buddha: {zazen_buddha['interpretation']}")
-
-        if not parts:
-            parts.append(
-                "Text shows limited engagement with core Zen Buddhist themes from Dogen's teaching."
-            )
+            parts.append(f"坐禅即仏：{zazen_buddha['interpretation']}")
 
         return " ".join(parts)
 
