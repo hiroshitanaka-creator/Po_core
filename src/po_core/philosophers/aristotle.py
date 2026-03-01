@@ -735,11 +735,28 @@ class Aristotle(Philosopher):
         )
         is_ethics = any(
             w in t
-            for w in ["right", "wrong", "good", "bad", "moral", "ethic", "virtue", "harm"]
+            for w in [
+                "right",
+                "wrong",
+                "good",
+                "bad",
+                "moral",
+                "ethic",
+                "virtue",
+                "harm",
+            ]
         )
         is_knowledge = any(
             w in t
-            for w in ["know", "learn", "science", "understand", "research", "study", "truth"]
+            for w in [
+                "know",
+                "learn",
+                "science",
+                "understand",
+                "research",
+                "study",
+                "truth",
+            ]
         )
         is_politics = any(
             w in t
@@ -755,7 +772,16 @@ class Aristotle(Philosopher):
         )
         is_technology = any(
             w in t
-            for w in ["ai", "tech", "digital", "machine", "build", "create", "make", "tool"]
+            for w in [
+                "ai",
+                "tech",
+                "digital",
+                "machine",
+                "build",
+                "create",
+                "make",
+                "tool",
+            ]
         )
 
         if is_decision:

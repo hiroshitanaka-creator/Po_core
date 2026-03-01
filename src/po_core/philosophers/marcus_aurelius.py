@@ -521,7 +521,15 @@ class MarcusAurelius(Philosopher):
         )
         is_anger = any(
             w in t
-            for w in ["anger", "angry", "frustrat", "rage", "irritat", "annoy", "resent"]
+            for w in [
+                "anger",
+                "angry",
+                "frustrat",
+                "rage",
+                "irritat",
+                "annoy",
+                "resent",
+            ]
         )
         is_mortality = any(
             w in t

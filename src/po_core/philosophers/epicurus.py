@@ -477,15 +477,40 @@ class Epicurus(Philosopher):
         )
         is_desire = any(
             w in t
-            for w in ["want", "desire", "craving", "ambition", "wealth", "fame", "luxury", "need"]
+            for w in [
+                "want",
+                "desire",
+                "craving",
+                "ambition",
+                "wealth",
+                "fame",
+                "luxury",
+                "need",
+            ]
         )
         is_stress = any(
             w in t
-            for w in ["stress", "overwhelm", "busy", "pressure", "exhaust", "burden", "suffer"]
+            for w in [
+                "stress",
+                "overwhelm",
+                "busy",
+                "pressure",
+                "exhaust",
+                "burden",
+                "suffer",
+            ]
         )
         is_friendship = any(
             w in t
-            for w in ["friend", "relation", "community", "trust", "lonely", "connect", "social"]
+            for w in [
+                "friend",
+                "relation",
+                "community",
+                "trust",
+                "lonely",
+                "connect",
+                "social",
+            ]
         )
         is_technology = any(
             w in t

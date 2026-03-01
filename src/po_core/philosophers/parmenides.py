@@ -484,8 +484,7 @@ class Parmenides(Philosopher):
             ]
         )
         is_decision = any(
-            w in t
-            for w in ["decide", "choose", "choice", "should", "option"]
+            w in t for w in ["decide", "choose", "choice", "should", "option"]
         )
 
         if is_change:
