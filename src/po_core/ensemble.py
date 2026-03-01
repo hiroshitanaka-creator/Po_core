@@ -15,6 +15,7 @@ from po_core.domain.context import Context as DomainContext
 from po_core.domain.keys import (
     AUTHOR,
     AUTHOR_RELIABILITY,
+    EMERGENCE_NOVELTY,
     FREEDOM_PRESSURE,
     PO_CORE,
     POLICY,
@@ -374,6 +375,38 @@ def _run_phase_post(
                 "DeliberationCompleted", ctx.request_id, delib_result.summary()
             )
         )
+
+        # Embed emergence novelty scores into proposals so Pareto can reward them.
+        # EmergenceSignal.source_philosopher → author → proposal.extra[PO_CORE][EMERGENCE_NOVELTY]
+        if delib_result.emergence_signals:
+            author_novelty: Dict[str, float] = {}
+            for sig in delib_result.emergence_signals:
+                prev = author_novelty.get(sig.source_philosopher, 0.0)
+                author_novelty[sig.source_philosopher] = max(prev, sig.novelty_score)
+
+            tagged: List[DomainProposal] = []
+            for p in raw_proposals:
+                extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+                pc = dict(extra.get(PO_CORE, {}))
+                author = str(pc.get(AUTHOR, ""))
+                novelty = author_novelty.get(author, 0.0)
+                if novelty > 0.0:
+                    pc[EMERGENCE_NOVELTY] = f"{novelty:.4f}"
+                    extra[PO_CORE] = pc
+                    tagged.append(
+                        DomainProposal(
+                            proposal_id=p.proposal_id,
+                            action_type=p.action_type,
+                            content=p.content,
+                            confidence=p.confidence,
+                            assumption_tags=list(p.assumption_tags),
+                            risk_tags=list(p.risk_tags),
+                            extra=extra,
+                        )
+                    )
+                else:
+                    tagged.append(p)
+            raw_proposals = tagged
 
     # 6.6 Enrich proposals with policy/trace/freedom signals
     author_stat = {r.philosopher_id: r for r in run_results}

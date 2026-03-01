@@ -2,7 +2,7 @@
 src/po_core/runner.py
 =====================
 
-Po_core scenario runner — M1 stub implementation.
+Po_core scenario runner — drives the real philosophical pipeline.
 
 Public API
 ----------
@@ -12,12 +12,14 @@ Pipeline (executed in order):
     1. Load YAML
     2. Validate against input_schema_v1.json
     3. Compute input_digest  = sha256(canonical_json(case))
-    4. Generate stub output  (deterministic given same inputs)
-    5. Validate against output_schema_v1.json
-    6. Return dict
+    4. Run po_core.run() → philosophical proposal from 39 philosophers
+    5. Adapt proposal → output_schema_v1 via output_adapter
+    6. Validate against output_schema_v1.json
+    7. Return dict
 
 Determinism contract (ADR-0002):
     Same path + same seed + same now + deterministic=True → identical JSON.
+    (proposal content is deterministic given the same user_input)
 
 Dependencies: PyYAML, jsonschema (both in dev requirements)
 """
@@ -367,7 +369,7 @@ def run_case_file(
     deterministic: bool = True,
 ) -> dict:
     """
-    Run a scenario YAML file through the Po_core stub pipeline.
+    Run a scenario YAML file through the Po_core pipeline.
 
     Args:
         path:          Path to case YAML file (``scenarios/*.yaml``).
@@ -402,23 +404,33 @@ def run_case_file(
     # 3. Compute input_digest
     digest = _digest(case)
 
-    # 4. Generate stub output
+    # 4. Run philosophical pipeline
+    import uuid as _uuid
+
+    from po_core.app.api import run as _po_run
+    from po_core.app.output_adapter import adapt_to_schema, build_user_input
+
     run_id = (
-        f"{case['case_id']}_stub_v1"
+        f"{case['case_id']}_v1"
         if deterministic
-        else __import__("uuid").uuid4().hex
+        else _uuid.uuid4().hex
     )
-    output = _build_stub(
+    user_input = build_user_input(case)
+    run_result = _po_run(user_input)
+
+    # 5. Adapt to output_schema_v1
+    output = adapt_to_schema(
         case,
-        digest=digest,
-        seed=seed,
-        now=now,
+        run_result,
         run_id=run_id,
+        digest=digest,
+        now=now,
+        seed=seed,
         deterministic=deterministic,
     )
 
-    # 5. Validate output
+    # 6. Validate output
     _validate(output, _OUTPUT_SCHEMA, "Output")
 
-    # 6. Return
+    # 7. Return
     return output
