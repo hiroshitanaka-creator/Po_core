@@ -8,8 +8,11 @@ Tests for multi-round philosopher dialogue.
 from __future__ import annotations
 
 import uuid
+import json
 
 from po_core.deliberation import DeliberationEngine
+from po_core.deliberation.engine import DeliberationResult, RoundTrace
+from po_core.deliberation.influence import InfluenceWeight
 from po_core.domain.context import Context
 from po_core.domain.intent import Intent
 from po_core.domain.memory_snapshot import MemorySnapshot
@@ -232,6 +235,24 @@ class TestMultiRound:
         )
         assert result.n_rounds >= 2
         assert result.n_rounds <= 3
+
+    def test_summary_includes_influence_graph(self):
+        result = DeliberationResult(
+            proposals=[_proposal("A", "freedom")],
+            rounds=[RoundTrace(round_number=1, n_proposals=1, n_revised=0)],
+            influence_weights={
+                "A": InfluenceWeight(
+                    philosopher_id="A",
+                    influenced={"B": 0.42},
+                )
+            },
+        )
+
+        summary = result.summary()
+
+        assert "influence_graph" in summary
+        assert summary["influence_graph"]["A"]["influenced"] == {"B": 0.42}
+        json.dumps(summary)
 
 
 # ── Integration with real philosophers ───────────────────────────────
