@@ -85,7 +85,9 @@ class Aristotle(Philosopher):
         self, context: Context, axis_spec: Optional[Dict[str, Any]] = None
     ) -> ArgumentCard:
         """Return a richer Aristotelian card while preserving reason() contract."""
-        raw = self.reason(context.prompt, context.metadata if context.metadata else None)
+        raw = self.reason(
+            context.prompt, context.metadata if context.metadata else None
+        )
 
         virtue = raw.get("virtue_assessment", {})
         mean = raw.get("golden_mean", {})
@@ -113,13 +115,19 @@ class Aristotle(Philosopher):
         if isinstance(tension, dict):
             level = str(tension.get("level", "")).lower()
             if level in {"high", "very_high"}:
-                risks.append("Moral imbalance may push action toward excess or deficiency.")
+                risks.append(
+                    "Moral imbalance may push action toward excess or deficiency."
+                )
             elif level == "moderate":
-                risks.append("Competing goods require sustained deliberation to avoid vice.")
+                risks.append(
+                    "Competing goods require sustained deliberation to avoid vice."
+                )
 
         questions: List[str] = []
         if isinstance(telos, dict) and not telos.get("primary_end"):
-            questions.append("What concrete telos defines flourishing in this decision?")
+            questions.append(
+                "What concrete telos defines flourishing in this decision?"
+            )
         if isinstance(mean, dict) and not mean.get("virtue_mean"):
             questions.append("Which extremes frame the relevant golden mean here?")
 
@@ -170,7 +178,9 @@ class Aristotle(Philosopher):
         if not axis_spec:
             return {"virtue_prudence": 0.88}
 
-        dimensions = axis_spec.get("dimensions", []) if isinstance(axis_spec, dict) else []
+        dimensions = (
+            axis_spec.get("dimensions", []) if isinstance(axis_spec, dict) else []
+        )
         scores: Dict[str, float] = {}
         for dim in dimensions:
             if not isinstance(dim, dict):

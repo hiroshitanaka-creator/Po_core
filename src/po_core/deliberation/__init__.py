@@ -9,12 +9,31 @@ from po_core.deliberation.protocol import (
     CritiqueCard,
     SynthesisEngine,
     run_deliberation,
-)
+from po_core.deliberation.protocol import run_deliberation
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
     DebateRole,
     assign_role,
     get_role_prompt_prefix,
+)
+from po_core.deliberation.synthesis import (
+    ArgumentCard,
+    AxisSpec,
+    CritiqueCard,
+    ScoreboardEntry,
+    SynthesisEngine,
+    SynthesisReport,
+)
+from po_core.deliberation.roles import (
+    DEFAULT_ROLES,
+    PHILOSOPHER_ROLE_MAP,
+    SYNTHESIZER_PHILOSOPHERS,
+    DebateRole,
+    Role,
+    RoleCoverage,
+    assign_role,
+    get_role_prompt_prefix,
+    parse_roles_csv,
 )
 from po_core.deliberation.synthesis import AxisSpec, ScoreboardEntry, SynthesisReport
 
@@ -29,9 +48,14 @@ __all__ = [
     "InfluenceTracker",
     "InfluenceWeight",
     "DebateRole",
+    "Role",
+    "RoleCoverage",
+    "DEFAULT_ROLES",
+    "PHILOSOPHER_ROLE_MAP",
     "SYNTHESIZER_PHILOSOPHERS",
     "assign_role",
     "get_role_prompt_prefix",
+    "parse_roles_csv",
     "ArgumentCard",
     "CritiqueCard",
     "SynthesisEngine",

@@ -24,68 +24,48 @@ Memory factors:
 from __future__ import annotations
 
 import math
-from typing import List, Tuple
+import re
+from typing import List, Pattern, Tuple, Union
 
 from po_core.domain.context import Context
 from po_core.domain.memory_snapshot import MemorySnapshot
+from po_core.text.normalize import normalize_text
 
 # ── Keyword lists for each dimension ──
 
-_CHOICE_KEYWORDS = [
-    "should",
-    "must",
-    "ought",
-    "decide",
-    "choose",
-    "what",
-    "option",
-    "alternative",
+_Keyword = Union[str, Pattern[str]]
+
+_CHOICE_KEYWORDS_EN = [
+    "should", "must", "ought", "decide", "choose", "what", "option", "alternative"
 ]
-_RESPONSIBILITY_KEYWORDS = [
-    "responsible",
-    "duty",
-    "obligation",
-    "accountable",
-    "consequence",
+_RESPONSIBILITY_KEYWORDS_EN = [
+    "responsible", "duty", "obligation", "accountable", "consequence"
 ]
-_URGENCY_KEYWORDS = [
-    "now",
-    "urgent",
-    "immediate",
-    "quickly",
-    "soon",
-    "hurry",
-    "deadline",
+_URGENCY_KEYWORDS_EN = ["now", "urgent", "immediate", "quickly", "soon", "hurry", "deadline"]
+_ETHICAL_KEYWORDS_EN = [
+    "right", "wrong", "good", "bad", "moral", "ethical", "virtue", "harm", "justice"
 ]
-_ETHICAL_KEYWORDS = [
-    "right",
-    "wrong",
-    "good",
-    "bad",
-    "moral",
-    "ethical",
-    "virtue",
-    "harm",
-    "justice",
-]
-_SOCIAL_KEYWORDS = ["we", "us", "society", "people", "community", "others", "public"]
-_AUTHENTICITY_KEYWORDS = [
-    "authentic",
-    "genuine",
-    "true",
-    "self",
-    "identity",
-    "real",
-    "honest",
-]
+_SOCIAL_KEYWORDS_EN = ["we", "us", "society", "people", "community", "others", "public"]
+_AUTHENTICITY_KEYWORDS_EN = ["authentic", "genuine", "true", "self", "identity", "real", "honest"]
+
+# Japanese examples used for calibration comments:
+# - choice: 「どちらを選ぶべきか」「判断したい」
+# - responsibility: 「責任を取る義務」
+# - urgency: 「至急」「締め切りが迫る」
+_CHOICE_KEYWORDS_JA: List[_Keyword] = ["選ぶ", "選択", "判断", "決め", "どちら", "べき", "どうすべき"]
+_RESPONSIBILITY_KEYWORDS_JA: List[_Keyword] = ["責任", "義務", "説明責任", "結果", "影響"]
+_URGENCY_KEYWORDS_JA: List[_Keyword] = ["至急", "緊急", "今すぐ", "すぐ", "急い", "締め切り", "期限"]
+_ETHICAL_KEYWORDS_JA: List[_Keyword] = ["倫理", "道徳", "正しい", "間違", "善", "悪", "害", "公正", "正義"]
+_SOCIAL_KEYWORDS_JA: List[_Keyword] = ["社会", "他者", "みんな", "人々", "公共", "コミュニティ", "世間"]
+_AUTHENTICITY_KEYWORDS_JA: List[_Keyword] = ["本音", "自分らし", "真正", "誠実", "本心", "自己", "アイデンティティ"]
 
 _ALL_DIMENSIONS = [
-    ("choice_weight", _CHOICE_KEYWORDS),
-    ("responsibility_degree", _RESPONSIBILITY_KEYWORDS),
-    ("temporal_urgency", _URGENCY_KEYWORDS),
-    ("ethical_stakes", _ETHICAL_KEYWORDS),
-    ("social_impact", _SOCIAL_KEYWORDS),
-    ("authenticity_pressure", _AUTHENTICITY_KEYWORDS),
+    ("choice_weight", _CHOICE_KEYWORDS_EN, _CHOICE_KEYWORDS_JA),
+    ("responsibility_degree", _RESPONSIBILITY_KEYWORDS_EN, _RESPONSIBILITY_KEYWORDS_JA),
+    ("temporal_urgency", _URGENCY_KEYWORDS_EN, _URGENCY_KEYWORDS_JA),
+    ("ethical_stakes", _ETHICAL_KEYWORDS_EN, _ETHICAL_KEYWORDS_JA),
+    ("social_impact", _SOCIAL_KEYWORDS_EN, _SOCIAL_KEYWORDS_JA),
+    ("authenticity_pressure", _AUTHENTICITY_KEYWORDS_EN, _AUTHENTICITY_KEYWORDS_JA),
 ]
 
 
@@ -99,8 +79,8 @@ def _tokenize(text: str) -> List[str]:
     return tokens
 
 
-def _keyword_ratio(tokens: List[str], keywords: List[str]) -> float:
-    """Count how many keywords are present in tokens, normalized to [0,1]."""
+def _keyword_ratio_en(tokens: List[str], keywords: List[str]) -> float:
+    """Exact-token match ratio for English keywords (legacy behavior)."""
     if not keywords:
         return 0.0
     token_set = set(tokens)
@@ -108,10 +88,31 @@ def _keyword_ratio(tokens: List[str], keywords: List[str]) -> float:
     return min(hits / len(keywords), 1.0)
 
 
+def _keyword_ratio_ja(text: str, keywords: List[_Keyword]) -> float:
+    """Substring/regex match ratio for Japanese text without tokenization."""
+    if not keywords:
+        return 0.0
+    hits = 0
+    for kw in keywords:
+        if isinstance(kw, re.Pattern):
+            matched = kw.search(text) is not None
+        else:
+            matched = kw in text
+        if matched:
+            hits += 1
+    return min(hits / len(keywords), 1.0)
+
+
 def _compute_dimensions(text: str) -> List[float]:
     """Compute 6-dimensional pressure from text."""
-    tokens = _tokenize(text)
-    return [_keyword_ratio(tokens, kws) for _, kws in _ALL_DIMENSIONS]
+    normalized = normalize_text(text)
+    tokens = _tokenize(normalized)
+    values: List[float] = []
+    for _, kws_en, kws_ja in _ALL_DIMENSIONS:
+        en_ratio = _keyword_ratio_en(tokens, kws_en)
+        ja_ratio = _keyword_ratio_ja(normalized, kws_ja)
+        values.append(max(en_ratio, ja_ratio))
+    return values
 
 
 def _l2_norm(values: List[float]) -> float:
