@@ -62,6 +62,26 @@ class WiredSystem:
     deliberation_engine: object | None = None  # DeliberationEngine (Phase 2)
 
 
+def _maybe_preload_models(settings: Settings) -> None:
+    if os.getenv("PO_PRELOAD_MODELS", "").strip() not in {"1", "true", "TRUE", "yes", "YES"}:
+        return
+    try:
+        from po_core.tensors.metrics.semantic_delta import preload_models as preload_semantic
+
+        preload_semantic()
+    except Exception:
+        pass
+
+    if settings.use_freedom_pressure_v2:
+        try:
+            from po_core.tensors.freedom_pressure_v2 import preload_model as preload_fpv2
+
+            preload_fpv2()
+        except Exception:
+            pass
+
+
+
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     """
     Build a wired system with all dependencies.
@@ -95,6 +115,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.trace.noop import NoopTracer
 
     mem = PoSelfMemoryAdapter(memory)
+    _maybe_preload_models(settings)
 
     # SafetyModeConfig (単一真実 - Settingsから構築)
     safety_config = SafetyModeConfig(
@@ -254,6 +275,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
 
     settings = settings or Settings()
     mem = InMemoryAdapter()
+    _maybe_preload_models(settings)
 
     # SafetyModeConfig (単一真実 - Settingsから構築)
     safety_config = SafetyModeConfig(

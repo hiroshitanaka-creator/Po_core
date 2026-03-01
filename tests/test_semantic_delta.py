@@ -336,3 +336,25 @@ class TestSemanticDeltaIntegration:
 
 
 __all__: list = []
+
+
+def test_semantic_delta_cache_on_off_equivalence(monkeypatch):
+    from po_core.tensors.metrics.semantic_delta import (
+        clear_embedding_cache,
+        configure_embedding_cache,
+    )
+
+    ctx = _ctx("What is justice in social institutions?")
+    mem = _memory("Justice concerns institutions and fairness.")
+
+    clear_embedding_cache()
+    configure_embedding_cache(max_size=0)
+    _, no_cache = metric_semantic_delta(ctx, mem)
+
+    clear_embedding_cache()
+    configure_embedding_cache(max_size=256)
+    _, with_cache_1 = metric_semantic_delta(ctx, mem)
+    _, with_cache_2 = metric_semantic_delta(ctx, mem)
+
+    assert with_cache_1 == with_cache_2
+    assert with_cache_1 == no_cache

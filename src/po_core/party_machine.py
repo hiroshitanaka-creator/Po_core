@@ -130,6 +130,9 @@ class RunResult:
     latency_ms: Optional[int] = None  # Execution time in milliseconds
 
 
+_LATENCY_EMA_BY_PHILOSOPHER: Dict[str, float] = {}
+
+
 def run_philosophers(
     philosophers: Sequence["PhilosopherProtocol"],
     ctx: "Context",
@@ -141,30 +144,7 @@ def run_philosophers(
     timeout_s: float,
     limit_per_philosopher: int = 1,
 ) -> Tuple[List["Proposal"], List[RunResult]]:
-    """
-    Execute philosophers in parallel with timeout and isolation.
-
-    Args:
-        philosophers: Sequence of philosopher instances to execute
-        ctx: Context for the current request
-        intent: Parsed intent from intention stage
-        tensors: Current tensor snapshot (safety metrics)
-        memory: Current memory snapshot
-        max_workers: Maximum number of parallel workers
-        timeout_s: Timeout in seconds for each philosopher
-
-    Returns:
-        Tuple of:
-        - List[Proposal]: Successfully generated proposals
-        - List[RunResult]: Execution results for each philosopher
-
-    Example:
-        proposals, results = run_philosophers(
-            philosophers, ctx, intent, tensors, memory,
-            max_workers=12, timeout_s=1.2
-        )
-        # Combine proposals in ensemble...
-    """
+    """Execute philosophers with adaptive parallelism and deterministic ordering."""
     from po_core.domain.proposal import Proposal
 
     proposals: List[Proposal] = []
@@ -178,7 +158,6 @@ def run_philosophers(
     def _embed_author_and_index(
         p: "Proposal", author: str, proposal_index: int
     ) -> "Proposal":
-        """Embed author/index into proposal.extra[PO_CORE]."""
         extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
         pc_src = extra.get(PO_CORE, {})
         pc = dict(pc_src) if isinstance(pc_src, Mapping) else {}
@@ -198,88 +177,127 @@ def run_philosophers(
     def _run_single(
         ph: "PhilosopherProtocol",
     ) -> Tuple[List[Proposal], int, Optional[str], int, str]:
-        """Run a single philosopher with error handling and timing.
-
-        Returns:
-            Tuple of (proposals, n_proposals, error, latency_ms, philosopher_id)
-        """
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         try:
             raw = ph.propose(ctx, intent, tensors, memory)
             dt = int((perf_counter() - t0) * 1000)
-            proposals = [p for p in raw if p is not None] if raw else []
-            selected = proposals[:limit]
+            proposals_local = [p for p in raw if p is not None] if raw else []
+            selected = proposals_local[:limit]
             embedded = [
                 _embed_author_and_index(p, pid, idx) for idx, p in enumerate(selected)
             ]
-            return embedded, len(proposals), None, dt, pid
+            return embedded, len(proposals_local), None, dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
             return [], 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
 
-    # Parallel execution with ThreadPoolExecutor
-    executor = ThreadPoolExecutor(max_workers=max_workers)
-    try:
-        futures = [executor.submit(_run_single, ph) for ph in philosophers]
-        done, not_done = wait(futures, timeout=timeout_s)
+    ema_alpha = float(os.getenv("PO_PHILOSOPHER_LATENCY_EMA_ALPHA", "0.3"))
+    seq_threshold_ms = float(os.getenv("PO_PHILOSOPHER_SEQUENTIAL_THRESHOLD_MS", "0.0"))
 
-        result_by_index: Dict[int, RunResult] = {}
-        proposals_by_index: Dict[int, List[Proposal]] = {}
+    global _LATENCY_EMA_BY_PHILOSOPHER
 
-        for idx, future in enumerate(futures):
-            ph = philosophers[idx]
-            pid = getattr(ph, "name", ph.__class__.__name__)
+    def _update_ema(pid: str, dt: Optional[int]) -> None:
+        if dt is None:
+            return
+        prev = _LATENCY_EMA_BY_PHILOSOPHER.get(pid)
+        if prev is None:
+            _LATENCY_EMA_BY_PHILOSOPHER[pid] = float(dt)
+            return
+        _LATENCY_EMA_BY_PHILOSOPHER[pid] = ema_alpha * float(dt) + (1.0 - ema_alpha) * prev
 
-            if future in not_done:
-                future.cancel()
-                result_by_index[idx] = RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=True,
-                    error=f"Timeout after {timeout_s}s",
-                    latency_ms=None,
-                )
-                continue
+    result_by_index: Dict[int, RunResult] = {}
+    proposals_by_index: Dict[int, List[Proposal]] = {}
 
-            try:
-                selected_proposals, n, err, dt, author_id = future.result()
-                result_by_index[idx] = RunResult(
-                    philosopher_id=author_id,
-                    ok=(err is None),
-                    n=n,
-                    timed_out=False,
-                    error=err,
-                    latency_ms=dt,
-                )
-                if selected_proposals:
-                    proposals_by_index[idx] = selected_proposals
-            except FuturesTimeoutError:
-                result_by_index[idx] = RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=True,
-                    error=f"Timeout after {timeout_s}s",
-                    latency_ms=None,
-                )
-            except Exception as e:
-                result_by_index[idx] = RunResult(
-                    philosopher_id=pid,
-                    ok=False,
-                    n=0,
-                    timed_out=False,
-                    error=f"{type(e).__name__}: {e}",
-                    latency_ms=None,
-                )
+    sequential_indices: list[int] = []
+    parallel_indices: list[int] = []
 
-        for idx in range(len(philosophers)):
-            results.append(result_by_index[idx])
-            proposals.extend(proposals_by_index.get(idx, []))
-    finally:
-        executor.shutdown(wait=False, cancel_futures=True)
+    for idx, ph in enumerate(philosophers):
+        pid = getattr(ph, "name", ph.__class__.__name__)
+        ema = _LATENCY_EMA_BY_PHILOSOPHER.get(pid)
+        if seq_threshold_ms > 0.0 and ema is not None and ema <= seq_threshold_ms:
+            sequential_indices.append(idx)
+        else:
+            parallel_indices.append(idx)
+
+    for idx in sequential_indices:
+        ph = philosophers[idx]
+        selected_proposals, n, err, dt, pid = _run_single(ph)
+        _update_ema(pid, dt)
+        timed_out = dt > timeout_s * 1000
+        if timed_out and err is None:
+            err = f"Timeout after {timeout_s}s (sequential fallback=empty_proposals)"
+            selected_proposals = []
+            n = 0
+        result_by_index[idx] = RunResult(
+            philosopher_id=pid,
+            ok=(err is None),
+            n=n,
+            timed_out=timed_out,
+            error=err,
+            latency_ms=dt,
+        )
+        if selected_proposals:
+            proposals_by_index[idx] = selected_proposals
+
+    if parallel_indices:
+        executor = ThreadPoolExecutor(max_workers=max_workers)
+        try:
+            futures = {idx: executor.submit(_run_single, philosophers[idx]) for idx in parallel_indices}
+            done, not_done = wait(list(futures.values()), timeout=timeout_s)
+            for idx in parallel_indices:
+                future = futures[idx]
+                ph = philosophers[idx]
+                pid = getattr(ph, "name", ph.__class__.__name__)
+                if future in not_done:
+                    future.cancel()
+                    result_by_index[idx] = RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=True,
+                        error=f"Timeout after {timeout_s}s (parallel fallback=empty_proposals)",
+                        latency_ms=None,
+                    )
+                    continue
+                try:
+                    selected_proposals, n, err, dt, author_id = future.result()
+                    _update_ema(author_id, dt)
+                    result_by_index[idx] = RunResult(
+                        philosopher_id=author_id,
+                        ok=(err is None),
+                        n=n,
+                        timed_out=False,
+                        error=err,
+                        latency_ms=dt,
+                    )
+                    if selected_proposals:
+                        proposals_by_index[idx] = selected_proposals
+                except FuturesTimeoutError:
+                    result_by_index[idx] = RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=True,
+                        error=f"Timeout after {timeout_s}s (parallel fallback=empty_proposals)",
+                        latency_ms=None,
+                    )
+                except Exception as e:
+                    result_by_index[idx] = RunResult(
+                        philosopher_id=pid,
+                        ok=False,
+                        n=0,
+                        timed_out=False,
+                        error=f"{type(e).__name__}: {e}",
+                        latency_ms=None,
+                    )
+        finally:
+            executor.shutdown(wait=False, cancel_futures=True)
+
+    for idx in range(len(philosophers)):
+        results.append(result_by_index[idx])
+        proposals.extend(proposals_by_index.get(idx, []))
 
     if os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes") and proposals:
         try:
