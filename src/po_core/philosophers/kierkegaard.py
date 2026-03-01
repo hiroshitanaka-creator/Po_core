@@ -122,7 +122,7 @@ class Kierkegaard(Philosopher):
 
         # Construct reasoning
         reasoning = self._construct_reasoning(
-            stage, anxiety, despair, faith, subjectivity
+            prompt, stage, anxiety, despair, faith, subjectivity
         )
 
         return {
@@ -714,8 +714,181 @@ class Kierkegaard(Philosopher):
             "principle": "The moment/instant - where eternal significance enters time",
         }
 
+    def _apply_kierkegaard_to_problem(self, text: str) -> str:
+        """Apply Kierkegaard's existential concepts to the specific domain of the text."""
+        t = text.lower()
+        if any(
+            w in t
+            for w in [
+                "faith",
+                "god",
+                "religion",
+                "belief",
+                "prayer",
+                "divine",
+                "sacred",
+                "absurd",
+                "church",
+                "christian",
+            ]
+        ):
+            return (
+                "Kierkegaard's Fear and Trembling confronts us with the most vertiginous demand of the religious stage: "
+                "the teleological suspension of the ethical — the moment when Abraham raises the knife over Isaac "
+                "not in defiance of ethics but in response to a command from God that no ethical system can ratify. "
+                "The leap of faith (troens spring) is not a step taken on the basis of evidence or argument "
+                "but a passionate, infinite commitment to the Absolute in the face of objective uncertainty — "
+                "indeed, because of it: 'subjectivity is truth' (Concluding Unscientific Postscript). "
+                "Faith is not a comfortable resting place but an ongoing task, "
+                "a perpetual 70,000 fathoms over 70,000 fathoms of water, "
+                "sustained only by the power of the Absurd that the finite can contain the Infinite."
+            )
+        elif any(
+            w in t
+            for w in [
+                "choice",
+                "decision",
+                "either",
+                "or",
+                "choose",
+                "commit",
+                "select",
+                "aesthetic",
+                "ethical stage",
+            ]
+        ):
+            return (
+                "Kierkegaard's Either/Or presents the fundamental existential fork: "
+                "the aesthetic life (the life of Don Juan — sensuous immediacy, novelty, the pursuit of interesting experience) "
+                "versus the ethical life (Judge Wilhelm — commitment, duty, choosing oneself in one's eternal validity). "
+                "The crucial insight is that the choice between these stages cannot itself be made on aesthetic grounds "
+                "or argued into on purely rational ones; it requires a qualitative leap — a decision "
+                "that constitutes the self rather than being made by a pre-constituted self. "
+                "To remain undecided is itself to choose — to drift in the aesthetic's desperate search "
+                "for novelty, never achieving the continuity and depth that genuine selfhood requires. "
+                "The gravity of Either/Or lies precisely in this: the choice matters absolutely, "
+                "even if no external authority can make it for you."
+            )
+        elif any(
+            w in t
+            for w in [
+                "anxiety",
+                "angst",
+                "dread",
+                "dizziness",
+                "freedom",
+                "possib",
+                "future",
+                "uncertain",
+            ]
+        ):
+            return (
+                "Kierkegaard's Concept of Anxiety diagnoses anxiety (Angest) not as a pathology "
+                "but as the necessary accompaniment of freedom: anxiety is the 'dizziness of freedom' — "
+                "the vertiginous awareness of one's own possibilities that both attracts and repels. "
+                "Unlike fear, which has a definite object, anxiety is anxiety about nothing — "
+                "about the sheer open possibility of one's existence, including the possibility of sin, "
+                "of wrong choice, of becoming someone one cannot recognize. "
+                "Anxiety is thus the condition of possibility for genuine selfhood: "
+                "only the being who can be anxious can truly choose, and only the being who truly chooses "
+                "can become a self. "
+                "Suppressing anxiety, rather than passing through it, is a symptom of despair."
+            )
+        elif any(
+            w in t
+            for w in [
+                "self",
+                "identity",
+                "despair",
+                "who am",
+                "becoming",
+                "individual",
+                "single",
+                "person",
+            ]
+        ):
+            return (
+                "For Kierkegaard, becoming a self is not a given but the task of existence — "
+                "the hardest and most important work a human being can undertake. "
+                "The self, he writes in The Sickness Unto Death, is 'a relation that relates to itself' — "
+                "a synthesis of finite and infinite, temporal and eternal, freedom and necessity, "
+                "that can either be in proper relation or in despair. "
+                "Despair (Fortvivlelse) is the fundamental sickness: "
+                "not willing to be oneself (despair of weakness) or willing to be oneself "
+                "in defiance of the power that established it (demonic despair). "
+                "The cure is not philosophical argument but the religious: "
+                "grounding the self in the power that posited it, standing transparent before God "
+                "as the singular individual (hiin Enkelte) rather than disappearing into the crowd."
+            )
+        elif any(
+            w in t
+            for w in [
+                "ethic",
+                "moral",
+                "duty",
+                "obligation",
+                "universal",
+                "law",
+                "norm",
+                "rule",
+            ]
+        ):
+            return (
+                "Kierkegaard's ethical stage, voiced through Judge Wilhelm in Either/Or, "
+                "represents a genuine advance over the aesthetic: it introduces continuity, commitment, "
+                "and the choice of oneself in one's eternal validity — taking responsibility "
+                "for who one has been and who one is becoming. "
+                "But the ethical stage has its own limit: it operates through universal norms "
+                "that cannot reach the singular individual in his or her absolute relation to God. "
+                "The religious stage — particularly the paradox of Abraham — shows that the highest "
+                "expression of faith may require a teleological suspension of the ethical: "
+                "not because ethics is worthless but because the absolute relation to the Absolute "
+                "is higher than the universal, and the single individual stands before God "
+                "in a way no ethical category can fully capture."
+            )
+        elif any(
+            w in t
+            for w in [
+                "meaning",
+                "suffer",
+                "repetition",
+                "truth",
+                "subjective",
+                "inward",
+                "passion",
+                "pathos",
+            ]
+        ):
+            return (
+                "Kierkegaard's 'truth is subjectivity' (Concluding Unscientific Postscript) does not mean "
+                "that every opinion is equally valid, but that existential truth — truth that transforms "
+                "one's life — can only be appropriated in 'infinite passionate inwardness.' "
+                "Objective certainty, the goal of science and speculative philosophy, is precisely "
+                "the wrong relationship to have with the truths that matter most: "
+                "to want God-proof is already to misunderstand what relationship to God requires. "
+                "Repetition (Gjentagelse) offers the alternative to mere recollection (backward-looking): "
+                "it is spiritual renewal, the recovery of oneself at a deeper level "
+                "through suffering and forward-movement — not nostalgia but the task of becoming "
+                "who one truly is, sustained by faith in the power that established the self."
+            )
+        else:
+            return (
+                "Kierkegaard's existentialism centers on the single individual (hiin Enkelte) "
+                "and the task of becoming a self before God. "
+                "The three stages of existence — aesthetic (sensuous immediacy), ethical (universal duty), "
+                "and religious (absolute relation to the Absolute) — are not a linear hierarchy "
+                "but qualitatively distinct ways of existing, each requiring a leap rather than a logical step. "
+                "Anxiety is the dizziness of freedom; despair is the failure of selfhood; "
+                "faith is the passionate response to objective uncertainty. "
+                "Indirect communication — pseudonymous authorship, irony, existential paradox — "
+                "is Kierkegaard's chosen method because the truths of existence cannot be "
+                "directly transmitted but must be existentially appropriated by the reader "
+                "who is willing to encounter them in inwardness."
+            )
+
     def _construct_reasoning(
         self,
+        prompt: str,
         stage: Dict[str, Any],
         anxiety: Dict[str, Any],
         despair: Dict[str, Any],
@@ -723,7 +896,9 @@ class Kierkegaard(Philosopher):
         subjectivity: Dict[str, Any],
     ) -> str:
         """Construct Kierkegaardian existential reasoning."""
+        applied = self._apply_kierkegaard_to_problem(prompt)
         reasoning = (
+            f"{applied}\n\n"
             f"From Kierkegaard's existential perspective, this reflects the {stage['stage']}: {stage['description']}. "
             f"Anxiety: {anxiety['description']}. "
             f"Despair: {despair['description']}. "

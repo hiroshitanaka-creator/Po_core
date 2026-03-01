@@ -122,6 +122,7 @@ class Husserl(Philosopher):
 
         # Construct comprehensive reasoning
         reasoning = self._construct_reasoning(
+            prompt,
             epoche,
             intentionality,
             noesis_noema,
