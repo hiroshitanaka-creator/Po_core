@@ -12,11 +12,11 @@ from functools import lru_cache
 from typing import Dict, Optional
 
 from po_core.axis.spec import AxisSpec, load_axis_spec
-from po_core.text.normalize import normalize_text
 from po_core.tensors.axis_calibration import (
     AxisCalibrationModel,
     load_calibration_model_from_env,
 )
+from po_core.text.normalize import normalize_text
 
 _SCORING_CALIBRATION_ENV_VAR = "PO_AXIS_SCORING_CALIBRATION_PARAMS"
 

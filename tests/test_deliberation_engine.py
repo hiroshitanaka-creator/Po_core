@@ -7,8 +7,8 @@ Tests for multi-round philosopher dialogue.
 
 from __future__ import annotations
 
-import uuid
 import json
+import uuid
 
 from po_core.deliberation import DeliberationEngine
 from po_core.deliberation.engine import DeliberationResult, RoundTrace

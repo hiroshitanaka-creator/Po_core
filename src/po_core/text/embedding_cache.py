@@ -77,4 +77,3 @@ GLOBAL_EMBEDDING_CACHE = EmbeddingLRUCache()
 
 
 __all__ = ["EmbeddingLRUCache", "EmbeddingCacheStats", "GLOBAL_EMBEDDING_CACHE"]
-

@@ -7,15 +7,12 @@ from typing import Any, Dict, List, Sequence
 from po_core.domain.trace_event import TraceEvent
 
 
-
 def _safe_dict(value: Any) -> Dict[str, Any]:
     return dict(value) if isinstance(value, dict) else {}
 
 
-
 def _safe_list(value: Any) -> List[Any]:
     return list(value) if isinstance(value, list) else []
-
 
 
 def _events_from_tracer(tracer: Any) -> List[TraceEvent]:
@@ -32,13 +29,13 @@ def _events_from_tracer(tracer: Any) -> List[TraceEvent]:
     return []
 
 
-
-def _find_first_payload(events: Sequence[TraceEvent], event_type: str) -> Dict[str, Any]:
+def _find_first_payload(
+    events: Sequence[TraceEvent], event_type: str
+) -> Dict[str, Any]:
     for event in events:
         if event.event_type == event_type and isinstance(event.payload, dict):
             return dict(event.payload)
     return {}
-
 
 
 def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
