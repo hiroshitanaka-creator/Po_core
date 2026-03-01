@@ -25,6 +25,7 @@ MODE = "mode"
 FREEDOM_PRESSURE = "freedom_pressure"
 AUTHOR = "author"
 AUTHOR_RELIABILITY = "author_reliability"
+EMERGENCE_NOVELTY = "emergence_novelty"
 
 
 __all__ = [
@@ -41,4 +42,5 @@ __all__ = [
     "FREEDOM_PRESSURE",
     "AUTHOR",
     "AUTHOR_RELIABILITY",
+    "EMERGENCE_NOVELTY",
 ]

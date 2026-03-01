@@ -286,14 +286,16 @@ class TestRealDeliberation:
         assert engine is not None
         assert engine.max_rounds == 2
 
-    def test_deliberation_disabled_by_default(self):
-        """Default settings should not enable deliberation."""
+    def test_deliberation_enabled_by_default(self):
+        """Default settings enable deliberation with max_rounds=2."""
+        from po_core.deliberation.engine import DeliberationEngine
         from po_core.runtime.settings import Settings
         from po_core.runtime.wiring import _build_deliberation_engine
 
         settings = Settings()
         engine = _build_deliberation_engine(settings)
-        assert engine is None  # max_rounds=1 → no engine
+        assert isinstance(engine, DeliberationEngine)
+        assert engine.max_rounds == 2
 
 
 # ── Regression tests for bugfixes ─────────────────────────────────

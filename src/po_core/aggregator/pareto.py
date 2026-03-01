@@ -32,6 +32,7 @@ from po_core.domain.intent import Intent
 from po_core.domain.keys import (
     AUTHOR_RELIABILITY,
     CONFLICTS,
+    EMERGENCE_NOVELTY,
     FREEDOM_PRESSURE,
     FRONT,
     MODE,
@@ -85,6 +86,19 @@ def _author_rel(p: Proposal) -> float:
     extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
     pc = extra.get(PO_CORE, {})
     return _get_float(pc, TRACEQ, AUTHOR_RELIABILITY, default=0.6)
+
+
+def _emergence_score(p: Proposal) -> float:
+    """Read emergence novelty score from PO_CORE namespace (deliberation enrichment)."""
+    extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+    pc = extra.get(PO_CORE, {})
+    raw = pc.get(EMERGENCE_NOVELTY, "")
+    if not raw:
+        return 0.0
+    try:
+        return float(raw)
+    except Exception:
+        return 0.0
 
 
 def _freedom_pressure_from_extra(p: Proposal, tensors: TensorSnapshot) -> float:
@@ -155,9 +169,17 @@ class ObjectiveVec:
     explain: float
     brevity: float
     coherence: float
+    emergence: float = 0.0  # novelty score from deliberation (0 if no deliberation)
 
-    def as_tuple(self) -> Tuple[float, float, float, float, float]:
-        return (self.safety, self.freedom, self.explain, self.brevity, self.coherence)
+    def as_tuple(self) -> Tuple[float, float, float, float, float, float]:
+        return (
+            self.safety,
+            self.freedom,
+            self.explain,
+            self.brevity,
+            self.coherence,
+            self.emergence,
+        )
 
     def to_dict(self) -> Dict[str, float]:
         return {
@@ -166,6 +188,7 @@ class ObjectiveVec:
             "explain": self.explain,
             "brevity": self.brevity,
             "coherence": self.coherence,
+            "emergence": self.emergence,
         }
 
 
@@ -243,12 +266,16 @@ def _compute_objectives(
     # coherence = consensus × (1 - conflict_penalty)
     coherence = _clamp01(consensus * (1.0 - conflict_penalty))
 
+    # emergence = novelty score from deliberation rounds (0 if no deliberation ran)
+    emergence = _clamp01(_emergence_score(p))
+
     return ObjectiveVec(
         safety=_clamp01(safety),
         freedom=_clamp01(freedom),
         explain=_clamp01(explain),
         brevity=_clamp01(brevity),
         coherence=coherence,
+        emergence=emergence,
     )
 
 
@@ -289,27 +316,33 @@ def pareto_front(vs: Sequence[ObjectiveVec]) -> List[int]:
 def _weights_for_mode(mode: SafetyMode) -> Mapping[str, float]:
     """Weights for weighted-sum selection from Pareto front."""
     if mode == SafetyMode.CRITICAL:
+        # CRITICAL: safety first; emergence suppressed (instability risk)
         return {
             "safety": 0.55,
             "freedom": 0.00,
             "explain": 0.20,
             "brevity": 0.15,
             "coherence": 0.30,
+            "emergence": 0.00,
         }
     if mode in (SafetyMode.WARN, SafetyMode.UNKNOWN):
+        # WARN: slight emergence bonus — novel synthesis preferred if safe
         return {
             "safety": 0.40,
             "freedom": 0.10,
             "explain": 0.20,
-            "brevity": 0.15,
+            "brevity": 0.10,
             "coherence": 0.25,
+            "emergence": 0.05,
         }
+    # NORMAL: emergence rewarded — genuine novelty from deliberation is the goal
     return {
         "safety": 0.25,
-        "freedom": 0.30,
+        "freedom": 0.25,
         "explain": 0.20,
         "brevity": 0.10,
-        "coherence": 0.15,
+        "coherence": 0.10,
+        "emergence": 0.10,
     }
 
 
@@ -320,6 +353,7 @@ def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
         + v.explain * w.get("explain", 0.0)
         + v.brevity * w.get("brevity", 0.0)
         + v.coherence * w.get("coherence", 0.0)
+        + v.emergence * w.get("emergence", 0.0)
     )
 
 

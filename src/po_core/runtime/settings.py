@@ -84,7 +84,7 @@ class Settings:
 
     # ---- Deliberation Engine (Phase 2) ----
     # 1 = no deliberation (backward compatible), 2+ = multi-round
-    deliberation_max_rounds: int = 1
+    deliberation_max_rounds: int = 2
     deliberation_top_k_pairs: int = 5
     # "basic" = legacy soft counterargument
     # "debate" = structured rebuttal with steelman + flaw + defense (Phase 6-A)
