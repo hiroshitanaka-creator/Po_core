@@ -28,8 +28,8 @@ AUTHOR_RELIABILITY = "author_reliability"
 EMERGENCE_NOVELTY = "emergence_novelty"
 
 # Philosopher response provenance (set by base.propose())
-RATIONALE = "rationale"   # short justification extracted from reason() output
-CITATIONS = "citations"   # list of philosophical references returned by reason()
+RATIONALE = "rationale"  # short justification extracted from reason() output
+CITATIONS = "citations"  # list of philosophical references returned by reason()
 
 
 __all__ = [
