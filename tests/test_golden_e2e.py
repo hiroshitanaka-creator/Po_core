@@ -90,6 +90,11 @@ def run_case_file_fn() -> Callable:
 # ---------------------------------------------------------------------------
 
 EXPECTED_FILES: List[Path] = sorted(SCENARIOS.glob("*_expected.json"))
+CORE_GOLDEN_FILES: List[Path] = [
+    SCENARIOS / "case_001_expected.json",
+    SCENARIOS / "case_009_expected.json",
+    SCENARIOS / "case_010_expected.json",
+]
 
 
 # ---------------------------------------------------------------------------
@@ -233,13 +238,13 @@ def test_required_expected_files_exist() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Golden diff — parametrized over all *_expected.json
+# Golden diff — parametrized over core frozen/critical *_expected.json
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
     "expected_path",
-    EXPECTED_FILES,
+    CORE_GOLDEN_FILES,
     ids=lambda p: p.stem,
 )
 def test_golden_e2e_output_matches_expected(

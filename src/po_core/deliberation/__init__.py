@@ -5,10 +5,11 @@ from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.engine import DeliberationEngine, DeliberationResult, RoundTrace
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
 from po_core.deliberation.protocol import (
-    ArgumentCard,
-    CritiqueCard,
-    SynthesisEngine,
+    ArgumentCard as ProtocolArgumentCard,
+    CritiqueCard as ProtocolCritiqueCard,
+    SynthesisEngine as ProtocolSynthesisEngine,
     run_deliberation,
+)
 from po_core.deliberation.protocol import run_deliberation
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
@@ -55,11 +56,15 @@ __all__ = [
     "SYNTHESIZER_PHILOSOPHERS",
     "assign_role",
     "get_role_prompt_prefix",
+    "ProtocolArgumentCard",
+    "ProtocolCritiqueCard",
+    "ProtocolSynthesisEngine",
     "parse_roles_csv",
     "ArgumentCard",
     "CritiqueCard",
     "SynthesisEngine",
     "run_deliberation",
+    "ArgumentCard",
     "AxisSpec",
     "ScoreboardEntry",
     "SynthesisReport",
