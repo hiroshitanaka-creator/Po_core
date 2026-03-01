@@ -8,10 +8,12 @@ Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
 from po_core.domain.context import Context as DomainContext
+from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import (
     AUTHOR,
     AUTHOR_RELIABILITY,
@@ -169,6 +171,38 @@ class _PhasePreResult(NamedTuple):
     max_workers: int
     timeout_s: float
 
+
+
+
+def _debate_v1_enabled() -> bool:
+    return os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes")
+
+
+def _run_deliberation_protocol_v1(
+    *,
+    ctx: DomainContext,
+    philosophers: Sequence[PhilosopherProtocol],
+    proposals: Sequence[Any],
+    tracer: TracePort,
+) -> None:
+    settings = {"max_critiques_per_philosopher": 2}
+    cards, critiques, report = run_deliberation(
+        input={"prompt": ctx.user_input, "proposals": list(proposals)},
+        philosophers=philosophers,
+        axis_spec={"axes": ["ethics", "risk", "evidence"]},
+        settings=settings,
+    )
+    tracer.emit(
+        TraceEvent.now(
+            "DebateProtocolV1Completed",
+            ctx.request_id,
+            {
+                "cards": len(cards),
+                "critiques": len(critiques),
+                "report": report,
+            },
+        )
+    )
 
 def _proposal_author_key(proposal: Any) -> str:
     """Resolve proposal author key for normalization with legacy fallback."""
@@ -371,6 +405,14 @@ def _run_phase_post(
     timeout_s = pre.timeout_s
 
     raw_proposals: List[DomainProposal] = [p for p in ph_proposals if p is not None]
+
+    if _debate_v1_enabled() and raw_proposals:
+        _run_deliberation_protocol_v1(
+            ctx=ctx,
+            philosophers=pre.philosophers,
+            proposals=raw_proposals,
+            tracer=tracer,
+        )
 
     # Emit trace events for each philosopher execution result
     for result in run_results:

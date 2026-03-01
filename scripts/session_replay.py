@@ -198,6 +198,35 @@ def apply_rfc6902_patch(document: Dict[str, Any], patch_ops: Sequence[Dict[str, 
     return doc
 
 
+
+
+def _coerce_answers_payload(payload: Any, *, case_path: Path) -> Any:
+    """Backward-compatible coercion for legacy patch-only answers payload."""
+    if not isinstance(payload, dict):
+        return payload
+    has_required = all(k in payload for k in ("version", "case_ref", "answers", "patch"))
+    if has_required:
+        return payload
+    if isinstance(payload.get("patch"), list):
+        patch_paths = [
+            str(op.get("path", ""))
+            for op in payload["patch"]
+            if isinstance(op, dict) and str(op.get("path", ""))
+        ]
+        return {
+            "version": "1.0",
+            "case_ref": case_path.name,
+            "answers": [
+                {
+                    "question_id": "legacy.patch",
+                    "answer_text": "legacy patch payload",
+                    "applied_patch_paths": patch_paths,
+                }
+            ],
+            "patch": payload["patch"],
+        }
+    return payload
+
 def _normalize_answers_payload(payload: Any) -> List[Dict[str, Any]]:
     if isinstance(payload, list):
         patch = payload
@@ -305,7 +334,7 @@ def replay_session(
     seed: int = 0,
 ) -> Dict[str, Path]:
     case = _load_case_yaml(case_path)
-    answers_payload = _load_json(answers_path)
+    answers_payload = _coerce_answers_payload(_load_json(answers_path), case_path=case_path)
 
     input_validator = _load_validator("input_schema_v1.json")
     output_validator = _load_validator("output_schema_v1.json")

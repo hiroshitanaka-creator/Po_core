@@ -33,6 +33,7 @@ Parallel Execution:
 from __future__ import annotations
 
 import asyncio
+import os
 import functools
 import random
 import traceback
@@ -57,6 +58,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from po_core.domain.keys import AUTHOR, PO_CORE
+from po_core.deliberation.protocol import run_deliberation
 
 console = Console()
 
@@ -278,6 +280,17 @@ def run_philosophers(
             proposals.extend(proposals_by_index.get(idx, []))
     finally:
         executor.shutdown(wait=False, cancel_futures=True)
+
+    if os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes") and proposals:
+        try:
+            run_deliberation(
+                input={"prompt": getattr(ctx, "user_input", ""), "proposals": list(proposals)},
+                philosophers=philosophers,
+                axis_spec={"axes": ["ethics", "risk", "evidence"]},
+                settings={"max_critiques_per_philosopher": 2},
+            )
+        except Exception:
+            pass
 
     return proposals, results
 

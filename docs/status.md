@@ -24,3 +24,8 @@
 - **G（追加golden 2本）**:
   1. `unknowns × deadline` の組み合わせで、時間圧があるが未知情報が残るケースの裁定境界を固定する。
   2. stakeholders外部性（利害関係者複数）で、責任/倫理の観測とrule発火を固定する。
+
+## Deliberation Protocol v1 (PR-4)
+- 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
+- feature flag `PO_DEBATE_V1=1` 時、Ensemble/PartyMachine 内部で protocol v1 を実行し、最終出力互換を維持したまま相互批判の観測が可能。
+- synthesis report は `open_questions` と `disagreements` を含み、批判フェーズが空になりにくいようにデフォルト批判ルールを実装。
