@@ -30,6 +30,19 @@ from po_core.deliberation.engine import (
     RoundTrace,
 )
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
+from po_core.deliberation.protocol import (
+    ArgumentCard,
+    CritiqueCard,
+    SynthesisEngine,
+    run_deliberation,
+from po_core.deliberation.synthesis import (
+    ArgumentCard,
+    AxisSpec,
+    CritiqueCard,
+    ScoreboardEntry,
+    SynthesisEngine,
+    SynthesisReport,
+)
 from po_core.deliberation.roles import (
     DEFAULT_ROLES,
     PHILOSOPHER_ROLE_MAP,
@@ -61,4 +74,13 @@ __all__ = [
     "assign_role",
     "get_role_prompt_prefix",
     "parse_roles_csv",
+    "ArgumentCard",
+    "CritiqueCard",
+    "SynthesisEngine",
+    "run_deliberation",
+    "AxisSpec",
+    "CritiqueCard",
+    "ScoreboardEntry",
+    "SynthesisEngine",
+    "SynthesisReport",
 ]

@@ -7,11 +7,14 @@ Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
+import os
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
 from po_core.domain.context import Context as DomainContext
+from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import (
     AUTHOR,
     AUTHOR_RELIABILITY,
@@ -169,6 +172,38 @@ class _PhasePreResult(NamedTuple):
     max_workers: int
     timeout_s: float
 
+
+
+
+def _debate_v1_enabled() -> bool:
+    return os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes")
+
+
+def _run_deliberation_protocol_v1(
+    *,
+    ctx: DomainContext,
+    philosophers: Sequence[PhilosopherProtocol],
+    proposals: Sequence[Any],
+    tracer: TracePort,
+) -> None:
+    settings = {"max_critiques_per_philosopher": 2}
+    cards, critiques, report = run_deliberation(
+        input={"prompt": ctx.user_input, "proposals": list(proposals)},
+        philosophers=philosophers,
+        axis_spec={"axes": ["ethics", "risk", "evidence"]},
+        settings=settings,
+    )
+    tracer.emit(
+        TraceEvent.now(
+            "DebateProtocolV1Completed",
+            ctx.request_id,
+            {
+                "cards": len(cards),
+                "critiques": len(critiques),
+                "report": report,
+            },
+        )
+    )
 
 def _proposal_author_key(proposal: Any) -> str:
     """Resolve proposal author key for normalization with legacy fallback."""
@@ -371,6 +406,15 @@ def _run_phase_post(
     timeout_s = pre.timeout_s
 
     raw_proposals: List[DomainProposal] = [p for p in ph_proposals if p is not None]
+    synthesis_report: Optional[Dict[str, Any]] = None
+
+    if _debate_v1_enabled() and raw_proposals:
+        _run_deliberation_protocol_v1(
+            ctx=ctx,
+            philosophers=pre.philosophers,
+            proposals=raw_proposals,
+            tracer=tracer,
+        )
 
     # Emit trace events for each philosopher execution result
     for result in run_results:
@@ -485,6 +529,14 @@ def _run_phase_post(
         )
 
     proposals = enriched
+
+    # Internal structured synthesis (deterministic stats + enumeration).
+    # Default behavior is unchanged; report is only surfaced when requested.
+    try:
+        synthesis_report = _build_synthesis_report(proposals)
+    except Exception:
+        synthesis_report = None
+
     tracer.emit(
         TraceEvent.now("PolicyPrecheckSummary", ctx.request_id, precheck_counts)
     )
@@ -592,11 +644,65 @@ def _run_phase_post(
         ],
     )
 
-    return {
+    result: Dict[str, Any] = {
         "request_id": ctx.request_id,
         "status": "ok",
         "proposal": final_main.compact(),
     }
+
+    if _structured_output_enabled() and synthesis_report is not None:
+        result["synthesis_report"] = synthesis_report
+
+    return result
+
+
+def _structured_output_enabled() -> bool:
+    v = os.getenv("PO_STRUCTURED_OUTPUT", "").strip().lower()
+    return v in {"1", "true", "yes", "on"}
+
+
+def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
+    from po_core.deliberation.synthesis import ArgumentCard, AxisSpec, SynthesisEngine
+
+    cards: List[ArgumentCard] = []
+    axis_names: set[str] = set()
+    for p in proposals:
+        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+        po_core_meta = extra.get(PO_CORE, {})
+        pc = dict(po_core_meta) if isinstance(po_core_meta, Mapping) else {}
+
+        stance = str(pc.get("dialectic_role", p.action_type or "unknown"))
+        claims = [str(p.content).strip()] if str(p.content).strip() else []
+
+        axis_scores_raw = pc.get("axis_scores", {})
+        axis_scores: Dict[str, float] = {}
+        if isinstance(axis_scores_raw, Mapping):
+            for k, v in axis_scores_raw.items():
+                try:
+                    axis_scores[str(k)] = float(v)
+                except (TypeError, ValueError):
+                    continue
+        axis_names.update(axis_scores.keys())
+
+        questions = []
+        qs = pc.get("open_questions", [])
+        if isinstance(qs, Sequence) and not isinstance(qs, (str, bytes)):
+            questions = [str(q).strip() for q in qs if str(q).strip()]
+
+        cards.append(
+            ArgumentCard(
+                card_id=str(getattr(p, "proposal_id", "")),
+                stance=stance,
+                claims=claims,
+                axis_scores=axis_scores,
+                confidence=float(getattr(p, "confidence", 0.5)),
+                questions=questions,
+            )
+        )
+
+    axis_spec = AxisSpec(dimensions=sorted(axis_names))
+    report = SynthesisEngine().synthesize(axis_spec=axis_spec, cards=cards)
+    return report.to_dict()
 
 
 def _evaluate_candidate(

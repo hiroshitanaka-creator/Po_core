@@ -105,6 +105,60 @@ class Context:
         return cls(prompt=prompt)
 
 
+@dataclass(frozen=True)
+class ArgumentCard:
+    """Structured argument payload for philosopher outputs.
+
+    This is an additive compatibility layer over the legacy ``reason()`` API.
+    Existing call sites may keep consuming text while new call sites can consume
+    machine-readable cards.
+    """
+
+    philosopher: str
+    perspective: str
+    stance: str
+    claims: List[str]
+    assumptions: List[str]
+    risks: List[str]
+    questions: List[str]
+    actions: List[str]
+    axis_scores_self: Dict[str, float]
+    confidence: float
+    rationale: str = ""
+    citations: List[str] = field(default_factory=list)
+
+
+def render_argument_card(card: "ArgumentCard") -> str:
+    """Render an :class:`ArgumentCard` into legacy text format."""
+    if not card.claims:
+        return ""
+
+    sections: List[str] = [card.claims[0]]
+
+    if len(card.claims) > 1:
+        sections.append(
+            "Supporting claims: "
+            + " ".join(f"- {claim}" for claim in card.claims[1:] if claim)
+        )
+    if card.assumptions:
+        sections.append(
+            "Assumptions: "
+            + " ".join(f"- {item}" for item in card.assumptions if item)
+        )
+    if card.risks:
+        sections.append("Risks: " + " ".join(f"- {item}" for item in card.risks if item))
+    if card.questions:
+        sections.append(
+            "Open questions: " + " ".join(f"- {item}" for item in card.questions if item)
+        )
+    if card.actions:
+        sections.append(
+            "Suggested actions: " + " ".join(f"- {item}" for item in card.actions if item)
+        )
+
+    return "\n\n".join(s for s in sections if s)
+
+
 def normalize_response(
     raw_response: Dict[str, Any],
     philosopher_name: str,
@@ -345,6 +399,33 @@ class Philosopher(ABC):
 
         return normalized
 
+    def propose_card(
+        self, context: Context, axis_spec: Optional[Dict[str, Any]] = None
+    ) -> ArgumentCard:
+        """Build an ``ArgumentCard`` from legacy ``reason()`` output.
+
+        Default implementation preserves backward compatibility by adapting the
+        existing reasoning payload into a minimal card.
+        """
+        raw = self.reason(context.prompt, context.metadata if context.metadata else None)
+        normalized = normalize_response(raw, self.name, self.description)
+        reasoning_text = normalized.get("reasoning", "")
+
+        return ArgumentCard(
+            philosopher=self.name,
+            perspective=normalized.get("perspective", self.description),
+            stance="unknown",
+            claims=[reasoning_text] if reasoning_text else [],
+            assumptions=[],
+            risks=[],
+            questions=[],
+            actions=[],
+            axis_scores_self={},
+            confidence=0.3,
+            rationale=normalized.get("rationale", ""),
+            citations=list(normalized.get("citations", [])),
+        )
+
     def __repr__(self) -> str:
         """String representation of the philosopher."""
         return f"{self.__class__.__name__}(name='{self.name}')"
@@ -466,6 +547,38 @@ class Philosopher(ABC):
 
         return [proposal]
 
+
+    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+        """Default critique implementation for deliberation protocol v1.
+
+        Backward-compatible rule-based fallback used when philosopher subclasses
+        do not provide a custom critique method.
+        """
+        claims = getattr(target, "claims", [])
+        joined = " ".join(str(c) for c in claims).lower()
+
+        weakness = "insufficient_information"
+        detail = "前提が十分に定義されていません。"
+        question = "どの条件が満たされれば主張を支持できますか？"
+
+        if "risk" not in joined and "リスク" not in joined:
+            weakness = "risk_not_explicit"
+            detail = "リスク・副作用の明示が不足しています。"
+            question = "主要な失敗モードと緩和策は何ですか？"
+        elif "?" not in joined and "question" not in joined:
+            weakness = "questions_missing"
+            detail = "検証のための問いが不足しています。"
+            question = "反証可能な問いを1つ提示できますか？"
+
+        return {
+            "critic": self.name,
+            "target": str(getattr(target, "philosopher", "")),
+            "target_proposal_id": str(getattr(target, "proposal_id", "")),
+            "weakness": weakness,
+            "detail": detail,
+            "question": question,
+        }
+
     async def propose_async(
         self,
         ctx: "DomainContext",
@@ -564,6 +677,38 @@ class PhilosopherProtocol(TypingProtocol):
         """
         ...
 
+
+    def critique_card(self, target: Any, axis_spec: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+        """Default critique implementation for deliberation protocol v1.
+
+        Backward-compatible rule-based fallback used when philosopher subclasses
+        do not provide a custom critique method.
+        """
+        claims = getattr(target, "claims", [])
+        joined = " ".join(str(c) for c in claims).lower()
+
+        weakness = "insufficient_information"
+        detail = "前提が十分に定義されていません。"
+        question = "どの条件が満たされれば主張を支持できますか？"
+
+        if "risk" not in joined and "リスク" not in joined:
+            weakness = "risk_not_explicit"
+            detail = "リスク・副作用の明示が不足しています。"
+            question = "主要な失敗モードと緩和策は何ですか？"
+        elif "?" not in joined and "question" not in joined:
+            weakness = "questions_missing"
+            detail = "検証のための問いが不足しています。"
+            question = "反証可能な問いを1つ提示できますか？"
+
+        return {
+            "critic": self.name,
+            "target": str(getattr(target, "philosopher", "")),
+            "target_proposal_id": str(getattr(target, "proposal_id", "")),
+            "weakness": weakness,
+            "detail": detail,
+            "question": question,
+        }
+
     async def propose_async(
         self,
         ctx: DomainContext,
@@ -590,6 +735,8 @@ __all__ = [
     "PhilosopherResponse",
     "PhilosopherResponseRequired",
     "Context",
+    "ArgumentCard",
+    "render_argument_card",
     "normalize_response",
     "VALID_ACTION_TYPES",
     # New hexagonal architecture
