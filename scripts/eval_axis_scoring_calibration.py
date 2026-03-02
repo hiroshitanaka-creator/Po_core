@@ -55,7 +55,9 @@ def _coerce_label(value: object) -> float:
     return min(max(float(value), 0.0), 1.0)
 
 
-def _load_records(dataset_path: Path, dimension_ids: Sequence[str]) -> list[dict[str, object]]:
+def _load_records(
+    dataset_path: Path, dimension_ids: Sequence[str]
+) -> list[dict[str, object]]:
     records: list[dict[str, object]] = []
     for idx, rec in enumerate(_iter_jsonl(dataset_path), start=1):
         text = rec.get("text")
@@ -81,7 +83,9 @@ def _load_records(dataset_path: Path, dimension_ids: Sequence[str]) -> list[dict
     return records
 
 
-def _select_holdout(records: list[dict[str, object]], split: float, seed: int) -> list[dict[str, object]]:
+def _select_holdout(
+    records: list[dict[str, object]], split: float, seed: int
+) -> list[dict[str, object]]:
     if not (0.0 < split <= 1.0):
         raise ValueError("split must be within (0, 1].")
 
@@ -92,7 +96,9 @@ def _select_holdout(records: list[dict[str, object]], split: float, seed: int) -
     return shuffled[:holdout_size]
 
 
-def _compute_mae(records: list[dict[str, object]], dimension_ids: Sequence[str], spec: object) -> dict[str, object]:
+def _compute_mae(
+    records: list[dict[str, object]], dimension_ids: Sequence[str], spec: object
+) -> dict[str, object]:
     abs_error_sum = {dim: 0.0 for dim in dimension_ids}
     sample_count = len(records)
 
@@ -102,7 +108,9 @@ def _compute_mae(records: list[dict[str, object]], dimension_ids: Sequence[str],
         for dim in dimension_ids:
             abs_error_sum[dim] += abs(float(scores.get(dim, 0.0)) - float(labels[dim]))
 
-    per_dimension_mae = {dim: abs_error_sum[dim] / float(sample_count) for dim in dimension_ids}
+    per_dimension_mae = {
+        dim: abs_error_sum[dim] / float(sample_count) for dim in dimension_ids
+    }
     overall_mae = sum(per_dimension_mae.values()) / float(len(dimension_ids))
     return {
         "per_dimension_mae": per_dimension_mae,
@@ -141,7 +149,9 @@ def evaluate_axis_scoring_calibration(
             dim: calibrated_metrics["per_dimension_mae"][dim] - raw_metrics["per_dimension_mae"][dim]  # type: ignore[index]
             for dim in dimension_ids
         }
-        delta_overall = float(calibrated_metrics["overall_mae"]) - float(raw_metrics["overall_mae"])
+        delta_overall = float(calibrated_metrics["overall_mae"]) - float(
+            raw_metrics["overall_mae"]
+        )
         result["calibrated"] = calibrated_metrics
         result["delta"] = {
             "per_dimension_mae": delta_per_dim,
@@ -152,7 +162,9 @@ def evaluate_axis_scoring_calibration(
 
 
 def _print_metrics(metrics: Mapping[str, object], prefix: str) -> None:
-    print(f"[{prefix}] overall_mae={float(metrics['overall_mae']):.6f} samples={int(metrics['samples'])}")
+    print(
+        f"[{prefix}] overall_mae={float(metrics['overall_mae']):.6f} samples={int(metrics['samples'])}"
+    )
     per_dim = metrics["per_dimension_mae"]
     for dim, value in per_dim.items():
         print(f"[{prefix}] {dim}_mae={float(value):.6f}")
@@ -160,13 +172,17 @@ def _print_metrics(metrics: Mapping[str, object], prefix: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", required=True, help="Path to labeled JSONL dataset")
+    parser.add_argument(
+        "--dataset", required=True, help="Path to labeled JSONL dataset"
+    )
     parser.add_argument(
         "--params",
         default=None,
         help="Optional calibration params JSON path; if omitted evaluates raw only",
     )
-    parser.add_argument("--seed", type=int, default=0, help="Random seed for holdout split")
+    parser.add_argument(
+        "--seed", type=int, default=0, help="Random seed for holdout split"
+    )
     parser.add_argument(
         "--split",
         type=float,
