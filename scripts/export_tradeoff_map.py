@@ -49,16 +49,37 @@ def _render_disagreements(disagreements: List[Any]) -> str:
 
     lines: List[str] = []
     for item in disagreements:
-        if isinstance(item, dict):
-            axis = item.get("axis", "unknown")
-            spread = item.get("spread", "")
-            kind = item.get("kind", "")
-            n_stances = item.get("n_stances", "")
-            lines.append(
-                f"- axis={axis}, spread={spread}, kind={kind}, n_stances={n_stances}"
-            )
-        else:
+        if not isinstance(item, dict):
             lines.append(f"- {item}")
+            continue
+
+        dtype = item.get("type")
+        if dtype == "stance_split":
+            lines.append(
+                "- type=stance_split, n_stances={n_stances}, largest_group={largest_group}".format(
+                    n_stances=item.get("n_stances", ""),
+                    largest_group=item.get("largest_group", ""),
+                )
+            )
+            continue
+
+        if dtype == "axis_variance":
+            lines.append(
+                "- type=axis_variance, axis={axis}, variance={variance}, samples={samples}".format(
+                    axis=item.get("axis", "unknown"),
+                    variance=item.get("variance", ""),
+                    samples=item.get("samples", ""),
+                )
+            )
+            continue
+
+        axis = item.get("axis", "unknown")
+        spread = item.get("spread", "")
+        kind = item.get("kind", "")
+        n_stances = item.get("n_stances", "")
+        lines.append(
+            f"- axis={axis}, spread={spread}, kind={kind}, n_stances={n_stances}"
+        )
     return "\n".join(lines)
 
 
@@ -68,11 +89,42 @@ def _node_id(label: Any) -> str:
     return safe or "unknown"
 
 
-def _render_mermaid(influence_graph: List[Any]) -> str:
+def _safe_float(value: Any) -> float | None:
+    if isinstance(value, (int, float)):
+        return float(value)
+    return None
+
+
+def _flatten_influence_graph(influence_graph: Any) -> List[Dict[str, Any]]:
+    if not isinstance(influence_graph, dict):
+        return []
+
+    edges: List[Dict[str, Any]] = []
+    for sender, node in influence_graph.items():
+        if not isinstance(node, dict):
+            continue
+        influenced = node.get("influenced")
+        if not isinstance(influenced, dict):
+            continue
+
+        for recipient, delta in influenced.items():
+            weight = _safe_float(delta)
+            if not sender or not recipient or weight is None:
+                continue
+            edges.append({"from": str(sender), "to": str(recipient), "weight": weight})
+
+    return edges
+
+
+def _render_mermaid(influence_edges: List[Any], influence_graph: Any) -> str:
     lines: List[str] = ["```mermaid", "graph LR"]
 
+    candidates = influence_edges if isinstance(influence_edges, list) else []
+    if not candidates:
+        candidates = _flatten_influence_graph(influence_graph)
+
     added = False
-    for edge in influence_graph:
+    for edge in candidates:
         if not isinstance(edge, dict):
             continue
         src = edge.get("from") or edge.get("source") or edge.get("philosopher_a")
@@ -104,6 +156,7 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
     scoreboard = axis.get("scoreboard", {})
     disagreements = axis.get("disagreements", [])
     influence_graph = influence.get("influence_graph", [])
+    influence_edges = influence.get("influence_edges", [])
 
     lines = [
         "# Trade-off Map Report",
@@ -123,7 +176,10 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         _render_disagreements(disagreements if isinstance(disagreements, list) else []),
         "",
         "## Influence Graph",
-        _render_mermaid(influence_graph if isinstance(influence_graph, list) else []),
+        _render_mermaid(
+            influence_edges if isinstance(influence_edges, list) else [],
+            influence_graph,
+        ),
         "",
         "## Influence Disclaimer",
         "Influence scores are a proxy derived from cosine-distance movement across revisions, not causal proof.",
