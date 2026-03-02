@@ -48,7 +48,9 @@ def test_build_tradeoff_map_serializable_and_keys(monkeypatch) -> None:
             "DeliberationCompleted",
             "req-1",
             {
-                "influence_graph": [{"from": "kant", "to": "aristotle", "weight": 0.23}],
+                "influence_graph": [
+                    {"from": "kant", "to": "aristotle", "weight": 0.23}
+                ],
                 "top_influencers": [{"philosopher": "kant", "influence": 0.23}],
                 "rounds": [{"round": 1, "n_proposals": 2, "n_revised": 0}],
                 "interaction_summary": {"mean_harmony": 0.8},
