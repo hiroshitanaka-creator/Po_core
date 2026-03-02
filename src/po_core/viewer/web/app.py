@@ -342,6 +342,9 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
     influence_edges = (
         influence.get("influence_edges") if isinstance(influence, dict) else None
     )
+    axis_scoring_diagnostics = (
+        axis.get("axis_scoring_diagnostics") if isinstance(axis, dict) else None
+    )
 
     children = [html.H3("Trade-off Map")]
 
@@ -389,6 +392,34 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
         children.append(
             html.Ul([html.Li(str(item)) for item in disagreements]),
         )
+    else:
+        children.append(html.P("No tradeoff data available"))
+
+    children.extend([html.Hr(), html.H4("Axis Scoring Diagnostics")])
+    if isinstance(axis_scoring_diagnostics, dict) and axis_scoring_diagnostics:
+        children.append(
+            html.Ul(
+                [
+                    html.Li(
+                        f"n_vectors: {axis_scoring_diagnostics.get('n_vectors', 0)}"
+                    ),
+                    html.Li(f"hit_rate: {axis_scoring_diagnostics.get('hit_rate', 0)}"),
+                    html.Li(
+                        f"mean_total_hits: {axis_scoring_diagnostics.get('mean_total_hits', 0)}"
+                    ),
+                    html.Li(
+                        f"warn_no_signal: {axis_scoring_diagnostics.get('warn_no_signal', False)}"
+                    ),
+                ]
+            )
+        )
+        if axis_scoring_diagnostics.get("warn_no_signal") is True:
+            children.append(
+                html.P(
+                    "⚠️ Axis scoring appears low-signal; interpret axis trade-offs with care.",
+                    style={"color": "#f5a623", "fontWeight": "bold"},
+                )
+            )
     else:
         children.append(html.P("No tradeoff data available"))
 

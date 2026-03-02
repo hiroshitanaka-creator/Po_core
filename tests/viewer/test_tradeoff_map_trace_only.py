@@ -25,6 +25,12 @@ def test_build_tradeoff_map_supports_trace_only_mode() -> None:
                 "scoreboard": {"kant": 0.6, "aristotle": 0.4},
                 "disagreements": ["duty-vs-virtue"],
                 "axis_vectors": [{"axis": "duty", "kant": 0.9, "aristotle": 0.3}],
+                "axis_scoring_diagnostics": {
+                    "n_vectors": 1,
+                    "hit_rate": 0.0,
+                    "mean_total_hits": 0.0,
+                    "warn_no_signal": True,
+                },
             },
         ),
         _event(
@@ -53,3 +59,5 @@ def test_build_tradeoff_map_supports_trace_only_mode() -> None:
     assert tradeoff_map["meta"]["consensus_leader"] == "aristotle"
     assert tradeoff_map["meta"]["request_id"] == "req-trace-only"
     assert tradeoff_map["meta"]["degraded"] is True
+
+    assert tradeoff_map["axis"]["axis_scoring_diagnostics"]["warn_no_signal"] is True

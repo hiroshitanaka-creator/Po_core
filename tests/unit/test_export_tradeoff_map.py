@@ -31,6 +31,12 @@ def test_render_markdown_contains_axis_vectors_table_header() -> None:
                         "policy": "allow",
                     }
                 ],
+                "axis_scoring_diagnostics": {
+                    "n_vectors": 1,
+                    "hit_rate": 0.0,
+                    "mean_total_hits": 0.0,
+                    "warn_no_signal": True,
+                },
             },
             "influence": {"influence_graph": []},
         }
@@ -39,3 +45,6 @@ def test_render_markdown_contains_axis_vectors_table_header() -> None:
     assert (
         "| author | safety | benefit | feasibility | confidence | policy |" in markdown
     )
+
+    assert "## Axis Scoring Diagnostics" in markdown
+    assert "Warning: axis scoring appears low-signal" in markdown
