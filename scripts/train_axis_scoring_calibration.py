@@ -160,7 +160,9 @@ def train(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", required=True, help="Path to JSONL training dataset")
+    parser.add_argument(
+        "--dataset", required=True, help="Path to JSONL training dataset"
+    )
     parser.add_argument(
         "--output",
         default="calibration/axis_scoring_params_v1.json",
