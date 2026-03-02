@@ -1,0 +1,326 @@
+{
+  "at_id": "AT-007",
+  "case_id": "case_007",
+  "expected": {
+    "meta": {
+      "schema_version": "1.0",
+      "pocore_version": "0.2.0b4",
+      "run_id": "6a4af85e-e922-2e39-be6e-a9508d0639d0",
+      "seed": 42,
+      "deterministic": true,
+      "generator": {
+        "name": "po_core.ensemble.run_turn",
+        "version": "0.2.0",
+        "mode": "rule_based"
+      }
+    },
+    "case_ref": {
+      "case_id": "case_007_lie_or_admit",
+      "title": "仕事のミス：嘘で隠すか、認めて修正するか",
+      "input_digest": "0b066b7bd2b953773312a2f02fcb2c2b9d9cbdcbbe41403786dc6064f3689a0f"
+    },
+    "options": [
+      {
+        "option_id": "opt_001",
+        "title": "仕事のミス：嘘で隠すか、認めて修正するか",
+        "description": "修証一如（しゅしょういちにょ）——修行と悟りは別ではない。「どちらを選ぶべきか」を問う前に、「今この選択の場に、どう在るか」を問え。只管打坐（しかんたざ）の精神で言えば、判断そのものが修行の場であり、選択のプロセス自体が悟りの現れである。有時（うじ）が示すように、この問いを抱えている今この瞬間が仏性の現れであり、「今・ここ」から逃れた選択など存在しない。無常（むじょう）——いかなる選択肢も固定した安定を保証しない。現成公案（げんじょうこうあん）：問いそのものが答えであり、選択の迷いを「問題」として排除するのではなく、その迷いの中に仏道の現れを見出せ。",
+        "action_plan": [
+          {
+            "step": "制約を考慮: 虚偽の断言はしない"
+          },
+          {
+            "step": "制約を考慮: 修正可能なら早期に被害を止める"
+          },
+          {
+            "step": "制約を考慮: 責任転嫁はしない"
+          }
+        ],
+        "pros": [
+          "価値観「誠実（integrity）」の実現に資する",
+          "価値観「説明責任（accountability）」の実現に資する"
+        ],
+        "cons": [
+          "不確実性: 誤りの影響範囲（どの意思決定に影響するか）",
+          "不確実性: 修正に必要な時間"
+        ],
+        "risks": [
+          {
+            "risk": "情報不足による判断ミスのリスク",
+            "severity": "medium",
+            "mitigation": "追加調査を行い不確実性を低減する"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "上司",
+          "stakeholders": [
+            {
+              "name": "上司",
+              "role": "意思決定者",
+              "impact": "判断の品質に影響"
+            },
+            {
+              "name": "チーム",
+              "role": "実行者",
+              "impact": "手戻り・信頼に影響"
+            },
+            {
+              "name": "自分",
+              "role": "当事者",
+              "impact": "信用・評価・学習に影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "中程度",
+          "timeline": "期限: 2026-02-25",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "high",
+          "reasons": [
+            "誤りの影響範囲（どの意思決定に影響するか）",
+            "修正に必要な時間",
+            "既に外部に共有済みか"
+          ],
+          "assumptions": [
+            "虚偽の断言はしない",
+            "修正可能なら早期に被害を止める"
+          ],
+          "known_unknowns": [
+            "誤りの影響範囲（どの意思決定に影響するか）",
+            "修正に必要な時間",
+            "既に外部に共有済みか"
+          ]
+        }
+      },
+      {
+        "option_id": "opt_002",
+        "title": "慎重路線：情報収集後に再判断",
+        "description": "主要な不明点を解消してから判断する選択肢。リスクを最小化しながら次の判断機会を設ける。",
+        "action_plan": [
+          {
+            "step": "不明点を優先度順に列挙し、調査計画を立てる"
+          },
+          {
+            "step": "関係者へ現状と懸念を共有し認識を合わせる"
+          },
+          {
+            "step": "判断に必要な情報が揃った時点で再検討する"
+          }
+        ],
+        "pros": [
+          "情報が揃った状態での判断が可能",
+          "リスクを最小化できる",
+          "関係者の同意を得やすい"
+        ],
+        "cons": [
+          "判断の先送りによる機会損失の可能性",
+          "時間的コストが発生する"
+        ],
+        "risks": [
+          {
+            "risk": "判断保留による機会損失",
+            "severity": "low",
+            "mitigation": "タイムボックスを設定し判断期限を明確にする"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "上司",
+          "stakeholders": [
+            {
+              "name": "上司",
+              "role": "意思決定者",
+              "impact": "判断の品質に影響"
+            },
+            {
+              "name": "チーム",
+              "role": "実行者",
+              "impact": "手戻り・信頼に影響"
+            },
+            {
+              "name": "自分",
+              "role": "当事者",
+              "impact": "信用・評価・学習に影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "低〜中程度",
+          "timeline": "1〜4週間の調査期間",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "medium",
+          "reasons": [
+            "誤りの影響範囲（どの意思決定に影響するか）",
+            "修正に必要な時間",
+            "既に外部に共有済みか"
+          ],
+          "assumptions": [
+            "虚偽の断言はしない",
+            "修正可能なら早期に被害を止める"
+          ],
+          "known_unknowns": [
+            "誤りの影響範囲（どの意思決定に影響するか）",
+            "修正に必要な時間",
+            "既に外部に共有済みか"
+          ]
+        }
+      }
+    ],
+    "recommendation": {
+      "status": "recommended",
+      "recommended_option_id": "opt_001",
+      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れていると判断されます。",
+      "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
+      "alternatives": [
+        {
+          "option_id": "opt_002",
+          "when_to_choose": "重要な不明点が解消できない場合、またはリスク許容度が低い場合"
+        }
+      ],
+      "confidence": "medium"
+    },
+    "ethics": {
+      "principles_used": [
+        "accountability",
+        "integrity"
+      ],
+      "tradeoffs": [
+        {
+          "tension": "「誠実（integrity）」vs「説明責任（accountability）」",
+          "between": [
+            "誠実（integrity）",
+            "説明責任（accountability）"
+          ],
+          "mitigation": "段階的実施と関係者調整により両立を目指す",
+          "severity": "medium"
+        }
+      ],
+      "guardrails": [
+        "医療・法律の最終判断はPo_coreが行わない",
+        "意思決定の主体はユーザーである"
+      ],
+      "notes": "W_Ethics Gateによる3層倫理評価済み"
+    },
+    "responsibility": {
+      "decision_owner": "上司",
+      "stakeholders": [
+        {
+          "name": "上司",
+          "role": "意思決定者",
+          "impact": "判断の品質に影響"
+        },
+        {
+          "name": "チーム",
+          "role": "実行者",
+          "impact": "手戻り・信頼に影響"
+        },
+        {
+          "name": "自分",
+          "role": "当事者",
+          "impact": "信用・評価・学習に影響"
+        }
+      ],
+      "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+      "consent_considerations": [
+        "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
+        "重大なリスクが残る場合は関係者の同意を得てから進める"
+      ]
+    },
+    "questions": [
+      {
+        "question_id": "q_001",
+        "question": "誤りの影響範囲（どの意思決定に影響するか）はどのような状況ですか？",
+        "priority": 1,
+        "why_needed": "この不明点（誤りの影響範囲（どの意思決定に影響するか））が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_002",
+        "question": "修正に必要な時間はどのような状況ですか？",
+        "priority": 2,
+        "why_needed": "この不明点（修正に必要な時間）が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_003",
+        "question": "既に外部に共有済みかはどのような状況ですか？",
+        "priority": 3,
+        "why_needed": "この不明点（既に外部に共有済みか）が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": true
+      }
+    ],
+    "uncertainty": {
+      "overall_level": "high",
+      "reasons": [
+        "誤りの影響範囲（どの意思決定に影響するか）",
+        "修正に必要な時間",
+        "既に外部に共有済みか"
+      ],
+      "assumptions": [
+        "虚偽の断言はしない",
+        "修正可能なら早期に被害を止める"
+      ],
+      "known_unknowns": [
+        "誤りの影響範囲（どの意思決定に影響するか）",
+        "修正に必要な時間",
+        "既に外部に共有済みか"
+      ]
+    },
+    "trace": {
+      "version": "1.0",
+      "steps": [
+        {
+          "name": "parse_input",
+          "summary": "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した"
+        },
+        {
+          "name": "generate_options",
+          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+        },
+        {
+          "name": "ethics_review",
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+        },
+        {
+          "name": "responsibility_review",
+          "summary": "意思決定主体と利害関係者の責任構造を検証した"
+        },
+        {
+          "name": "question_layer",
+          "summary": "不明点から優先度付き質問リストを生成した"
+        },
+        {
+          "name": "compose_output",
+          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+        }
+      ]
+    }
+  }
+}

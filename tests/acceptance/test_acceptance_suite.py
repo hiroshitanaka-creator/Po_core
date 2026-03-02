@@ -13,7 +13,7 @@ Global guard (AT-OUT-001): Every test validates output against
 If schema validation fails, the test immediately fails with a clear message.
 
 Markers:
-    acceptance — all tests in this file
+    acceptance — AT-001〜AT-010 tests
     pipeline   — AT-001 is also pipeline (runs in must-pass CI job)
 """
 
@@ -24,99 +24,9 @@ from pathlib import Path
 import importlib
 import json
 
-import jsonschema
 import pytest
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
-
-pytestmark = pytest.mark.acceptance
-
-ROOT = Path(__file__).resolve().parents[2]
-SCENARIOS = ROOT / "scenarios"
-
-
-def _import_run_case_file():
-    candidates = [
-        ("pocore.runner", "run_case_file"),
-        ("pocore.orchestrator", "run_case_file"),
-        ("pocore", "run_case_file"),
-    ]
-    for mod_name, fn_name in candidates:
-        try:
-            mod = importlib.import_module(mod_name)
-            fn = getattr(mod, fn_name, None)
-            if callable(fn):
-                return fn
-        except ImportError:
-            continue
-    raise ImportError("Could not import run_case_file")
-
-
-def _sort_key_step(step: dict[str, Any]) -> int:
-    pipeline_order = [
-        "parse_input",
-        "generate_options",
-        "ethics_review",
-        "responsibility_review",
-        "question_layer",
-        "compose_output",
-    ]
-    try:
-        return pipeline_order.index(step.get("name", ""))
-    except ValueError:
-        return 999
-
-
-def _canonicalize(obj: Any, *, parent_key: str = "") -> Any:
-    if isinstance(obj, dict):
-        return {k: _canonicalize(v, parent_key=k) for k, v in obj.items()}
-    if isinstance(obj, list):
-        items = [_canonicalize(i, parent_key=parent_key) for i in obj]
-        if parent_key == "options":
-            return sorted(items, key=lambda x: x.get("option_id", ""))
-        if parent_key == "questions":
-            return sorted(
-                items,
-                key=lambda x: (x.get("priority", 0), x.get("question_id", "")),
-            )
-        if parent_key == "stakeholders":
-            return sorted(items, key=lambda x: (x.get("name", ""), x.get("role", "")))
-        if parent_key == "steps":
-            return sorted(items, key=_sort_key_step)
-        return items
-    return obj
-
-
-def _assert_matches_golden(case_id: str) -> None:
-    expected_path = SCENARIOS / f"{case_id}_expected.json"
-    with expected_path.open("r", encoding="utf-8") as f:
-        expected = json.load(f)
-
-    run_case_file = _import_run_case_file()
-    yaml_path = SCENARIOS / f"{case_id}.yaml"
-    meta = expected.get("meta", {})
-    actual = run_case_file(
-        yaml_path,
-        seed=meta.get("seed", 0),
-        now=meta.get("created_at", "2026-02-22T00:00:00Z"),
-        deterministic=True,
-    )
-    assert _canonicalize(actual) == _canonicalize(expected)
-
-
-def _validate_schema(
-    output: dict[str, Any], schema: dict[str, Any], test_id: str
-) -> None:
-    """AT-OUT-001 guard: validate output against output_schema_v1.json."""
-    try:
-        validator = jsonschema.Draft202012Validator(schema)
-        errors = list(validator.iter_errors(output))
-        if errors:
-            msg = f"[{test_id}] AT-OUT-001 FAIL — schema validation errors:\n"
-            msg += "\n".join(f"  • {e.message} (path: {list(e.path)})" for e in errors)
-            pytest.fail(msg)
-    except jsonschema.exceptions.SchemaError as exc:
-        pytest.fail(f"[{test_id}] Schema itself is invalid: {exc}")
 
 
 def _assert_option_count(output: dict[str, Any], min_count: int = 2) -> None:
@@ -214,9 +124,9 @@ def _assert_no_forbidden_decision_owner(output: dict[str, Any]) -> None:
 
 
 def _full_must_check(
-    output: dict[str, Any], schema: dict[str, Any], test_id: str
+    output: dict[str, Any], validate_output_schema, test_id: str
 ) -> None:
-    _validate_schema(output, schema, test_id)
+    validate_output_schema(output, test_id)
     _assert_option_count(output)
     _assert_recommendation_present(output)
     _assert_ethics(output)
@@ -230,13 +140,13 @@ def _full_must_check(
 
 
 @pytest.mark.pipeline
-def test_at_001_job_change(case_001, composer, output_schema):
+def test_at_001_job_change(case_001, composer, validate_output_schema):
     """AT-001: 転職：安定企業→スタートアップ
 
     Requirements: FR-OPT-001, FR-REC-001, FR-ETH-001, FR-TR-001
     """
     output = composer.compose(case_001)
-    _full_must_check(output, output_schema, "AT-001")
+    _full_must_check(output, validate_output_schema, "AT-001")
 
     # AT-001 specific: recommended option must have counter (反証)
     rec = output["recommendation"]
@@ -252,13 +162,13 @@ def test_at_001_job_change(case_001, composer, output_schema):
 # ── AT-002: チームの人員整理 ──────────────────────────────────────────────────
 
 
-def test_at_002_headcount_reduction(case_002, composer, output_schema):
+def test_at_002_headcount_reduction(case_002, composer, validate_output_schema):
     """AT-002: チームの人員整理（倫理 + 責任 + 不確実性）
 
     Requirements: FR-ETH-002, FR-RES-001, FR-UNC-001
     """
     output = composer.compose(case_002)
-    _full_must_check(output, output_schema, "AT-002")
+    _full_must_check(output, validate_output_schema, "AT-002")
 
     # Ethics tradeoffs should be present (FR-ETH-002)
     assert output["ethics"]["tradeoffs"], "AT-002: FR-ETH-002 requires tradeoffs"
@@ -269,13 +179,13 @@ def test_at_002_headcount_reduction(case_002, composer, output_schema):
 # ── AT-003: 家族介護の設計 ────────────────────────────────────────────────────
 
 
-def test_at_003_caregiving(case_003, composer, output_schema):
+def test_at_003_caregiving(case_003, composer, validate_output_schema):
     """AT-003: 家族介護（倫理 + 責任 + 不確実性）
 
     Requirements: FR-ETH-001, FR-RES-001, FR-UNC-001
     """
     output = composer.compose(case_003)
-    _full_must_check(output, output_schema, "AT-003")
+    _full_must_check(output, validate_output_schema, "AT-003")
 
     # decision_owner must be the human (not Po_core)
     _assert_no_forbidden_decision_owner(output)
@@ -286,13 +196,13 @@ def test_at_003_caregiving(case_003, composer, output_schema):
 # ── AT-004: 倫理的トレードオフ ────────────────────────────────────────────────
 
 
-def test_at_004_ethical_tradeoffs(case_004, composer, output_schema):
+def test_at_004_ethical_tradeoffs(case_004, composer, validate_output_schema):
     """AT-004: 倫理的トレードオフ（推奨 + 反証 + 代替案）
 
     Requirements: FR-ETH-002, FR-REC-001, FR-UNC-001
     """
     output = composer.compose(case_004)
-    _full_must_check(output, output_schema, "AT-004")
+    _full_must_check(output, validate_output_schema, "AT-004")
     _assert_recommendation_present(output)
     assert output["ethics"]["tradeoffs"], "AT-004: FR-ETH-002 requires tradeoffs"
 
@@ -300,13 +210,13 @@ def test_at_004_ethical_tradeoffs(case_004, composer, output_schema):
 # ── AT-005: 責任主体の明確化 ──────────────────────────────────────────────────
 
 
-def test_at_005_responsibility_owner(case_005, composer, output_schema):
+def test_at_005_responsibility_owner(case_005, composer, validate_output_schema):
     """AT-005: 責任主体の明確化
 
     Requirements: FR-ETH-001, FR-RES-001
     """
     output = composer.compose(case_005)
-    _full_must_check(output, output_schema, "AT-005")
+    _full_must_check(output, validate_output_schema, "AT-005")
 
     # decision_owner must be explicitly set (FR-RES-001)
     assert output["responsibility"]["decision_owner"], "AT-005: decision_owner required"
@@ -318,13 +228,13 @@ def test_at_005_responsibility_owner(case_005, composer, output_schema):
 # ── AT-006: 責任 + トレース重視 ───────────────────────────────────────────────
 
 
-def test_at_006_trace_responsibility(case_006, composer, output_schema):
+def test_at_006_trace_responsibility(case_006, composer, validate_output_schema):
     """AT-006: 責任 + 監査ログ
 
     Requirements: FR-RES-001, FR-TR-001, FR-ETH-001
     """
     output = composer.compose(case_006)
-    _full_must_check(output, output_schema, "AT-006")
+    _full_must_check(output, validate_output_schema, "AT-006")
 
     # All 6 trace steps must be present and have timestamps
     for step in output["trace"]["steps"]:
@@ -337,13 +247,13 @@ def test_at_006_trace_responsibility(case_006, composer, output_schema):
 # ── AT-007: 推奨 + 反証 ────────────────────────────────────────────────────────
 
 
-def test_at_007_recommendation_with_counter(case_007, composer, output_schema):
+def test_at_007_recommendation_with_counter(case_007, composer, validate_output_schema):
     """AT-007: 推奨には反証と代替案が必須
 
     Requirements: FR-ETH-001, FR-REC-001
     """
     output = composer.compose(case_007)
-    _full_must_check(output, output_schema, "AT-007")
+    _full_must_check(output, validate_output_schema, "AT-007")
 
     rec = output["recommendation"]
     if rec["status"] == "recommended":
@@ -362,15 +272,16 @@ def test_at_007_recommendation_with_counter(case_007, composer, output_schema):
 # ── AT-008: 倫理・不確実性・責任の複合 ────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_008_combined_ethics_uncertainty_responsibility(
-    case_008, composer, output_schema
+    case_008, composer, validate_output_schema
 ):
     """AT-008: 倫理・不確実性・責任の複合
 
     Requirements: FR-ETH-002, FR-UNC-001, FR-RES-001
     """
     output = composer.compose(case_008)
-    _full_must_check(output, output_schema, "AT-008")
+    _full_must_check(output, validate_output_schema, "AT-008")
 
     # Ethics (FR-ETH-002)
     assert output["ethics"]["tradeoffs"], "AT-008: FR-ETH-002 requires tradeoffs"
@@ -386,16 +297,16 @@ def test_at_008_combined_ethics_uncertainty_responsibility(
 # ── AT-009: 価値観が不明（問い生成必須） ──────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_009_values_clarification_questions_generated(
-    case_009, composer, output_schema
+    case_009, composer, validate_output_schema
 ):
     """AT-009: 価値観が不明 → 問いを生成しなければならない
 
     Requirements: FR-Q-001, FR-OUT-001
     """
     output = composer.compose(case_009)
-    _full_must_check(output, output_schema, "AT-009")
-    _assert_matches_golden("case_009")
+    _full_must_check(output, validate_output_schema, "AT-009")
 
     # FR-Q-001: case_009 has unknowns → questions must be generated
     _assert_questions_present(output)
@@ -412,16 +323,16 @@ def test_at_009_values_clarification_questions_generated(
 # ── AT-010: 制約の矛盾（矛盾検出＋問い生成） ──────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_010_conflicting_constraints_question_generated(
-    case_010, composer, output_schema
+    case_010, composer, validate_output_schema
 ):
     """AT-010: 制約が矛盾 → 不確実性 high + 問い生成
 
     Requirements: FR-Q-001, FR-UNC-001
     """
     output = composer.compose(case_010)
-    _full_must_check(output, output_schema, "AT-010")
-    _assert_matches_golden("case_010")
+    _full_must_check(output, validate_output_schema, "AT-010")
 
     # FR-UNC-001: conflicting constraints → uncertainty should be non-trivial
     assert output["uncertainty"]["overall_level"] in {
@@ -446,12 +357,12 @@ def test_at_010_conflicting_constraints_question_generated(
     ],
 )
 def test_at_meta_schema_always_valid(
-    case_fixture_name, request, composer, output_schema
+    case_fixture_name, request, composer, validate_output_schema
 ):
     """AT-META: output_schema_v1 must validate for all parameterised cases."""
     case = request.getfixturevalue(case_fixture_name)
     output = composer.compose(case)
-    _validate_schema(output, output_schema, f"AT-META({case_fixture_name})")
+    validate_output_schema(output, f"AT-META({case_fixture_name})")
 
 
 @pytest.mark.parametrize(

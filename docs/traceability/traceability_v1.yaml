@@ -15,6 +15,7 @@ principles:
       - REQ-VALUES-001
       - REQ-SESSION-001
       - REQ-SESSION-001
+      - REQ-AT-001
   - id: P-INT-001
     mapped_requirements:
       - REQ-DET-001
@@ -25,6 +26,7 @@ principles:
       - REQ-QST-001
       - REQ-PLAN-001
       - REQ-VALUES-001
+      - REQ-AT-001
   - id: P-AUT-001
     mapped_requirements:
       - REQ-ARB-001
@@ -36,6 +38,7 @@ principles:
       - REQ-QST-001
       - REQ-PLAN-001
       - REQ-VALUES-001
+      - REQ-AT-001
   - id: P-JUS-001
     mapped_requirements:
       - REQ-FEA-001
@@ -269,3 +272,31 @@ requirements:
         value: src/pocore/runner.py
       - kind: module
         value: tests/test_session_replay_e2e.py
+
+  - id: REQ-AT-001
+    principles: [P-ACC-001, P-INT-001, P-NMH-001]
+    adrs: [docs/adr/0002-golden-diff-contract.md]
+    tests:
+      - tests/acceptance/test_acceptance_suite.py::test_at_002_headcount_reduction [AT-002]
+      - tests/acceptance/test_acceptance_suite.py::test_at_003_caregiving [AT-003]
+      - tests/acceptance/test_acceptance_suite.py::test_at_004_ethical_tradeoffs [AT-004]
+      - tests/acceptance/test_acceptance_suite.py::test_at_005_responsibility_owner [AT-005]
+      - tests/acceptance/test_acceptance_suite.py::test_at_006_trace_responsibility [AT-006]
+      - tests/acceptance/test_acceptance_suite.py::test_at_007_recommendation_with_counter [AT-007]
+      - tests/acceptance/test_acceptance_suite.py::test_at_008_combined_ethics_uncertainty_responsibility [AT-008]
+      - tests/acceptance/test_acceptance_suite.py::test_at_010_conflicting_constraints_question_generated [AT-010]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_002_expected] [AT-002]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_003_expected] [AT-003]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_004_expected] [AT-004]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_005_expected] [AT-005]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_006_expected] [AT-006]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_007_expected] [AT-007]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_008_expected] [AT-008]
+      - tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_010_expected] [AT-010]
+    code_refs:
+      - kind: module
+        value: tests/acceptance/test_acceptance_suite.py
+      - kind: module
+        value: tests/acceptance/test_acceptance_golden.py
+      - kind: module
+        value: tests/acceptance/scenarios
