@@ -63,10 +63,18 @@ class WiredSystem:
 
 
 def _maybe_preload_models(settings: Settings) -> None:
-    if os.getenv("PO_PRELOAD_MODELS", "").strip() not in {"1", "true", "TRUE", "yes", "YES"}:
+    if os.getenv("PO_PRELOAD_MODELS", "").strip() not in {
+        "1",
+        "true",
+        "TRUE",
+        "yes",
+        "YES",
+    }:
         return
     try:
-        from po_core.tensors.metrics.semantic_delta import preload_models as preload_semantic
+        from po_core.tensors.metrics.semantic_delta import (
+            preload_models as preload_semantic,
+        )
 
         preload_semantic()
     except Exception:
@@ -74,12 +82,13 @@ def _maybe_preload_models(settings: Settings) -> None:
 
     if settings.use_freedom_pressure_v2:
         try:
-            from po_core.tensors.freedom_pressure_v2 import preload_model as preload_fpv2
+            from po_core.tensors.freedom_pressure_v2 import (
+                preload_model as preload_fpv2,
+            )
 
             preload_fpv2()
         except Exception:
             pass
-
 
 
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:

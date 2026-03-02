@@ -178,7 +178,6 @@ def _build_options(
 
     content = str(proposal.get("content", "")) or "哲学的観点からの主要推奨案"
     risk_tags: List[str] = list(proposal.get("risk_tags", []))
-    assumption_tags: List[str] = list(proposal.get("assumption_tags", []))
 
     # Action plan from constraints
     action_plan: List[Dict[str, Any]] = [
