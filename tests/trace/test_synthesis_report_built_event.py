@@ -115,6 +115,7 @@ def test_synthesis_report_built_payload_is_sanitized() -> None:
         "disagreements",
         "stance_distribution",
         "axis_vectors",
+        "axis_scoring_diagnostics",
     }
     assert set(payload.keys()).issubset(allowed_top_level_keys)
 

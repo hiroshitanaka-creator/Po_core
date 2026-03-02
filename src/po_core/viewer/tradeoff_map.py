@@ -173,6 +173,9 @@ def build_tradeoff_map(response: Any | None, tracer: Any) -> Dict[str, Any]:
         "disagreements": _safe_list(synthesis_report.get("disagreements")),
         "stance_distribution": _safe_dict(synthesis_report.get("stance_distribution")),
         "axis_vectors": _safe_list(synthesis_report.get("axis_vectors")),
+        "axis_scoring_diagnostics": _safe_dict(
+            synthesis_report.get("axis_scoring_diagnostics")
+        ),
     }
 
     influence = {

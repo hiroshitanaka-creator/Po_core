@@ -76,6 +76,23 @@ def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
     return "\n".join(lines) if len(lines) > 2 else "No axis vectors available."
 
 
+def _render_axis_scoring_diagnostics(diagnostics: Dict[str, Any]) -> str:
+    if not diagnostics:
+        return "No axis scoring diagnostics available."
+
+    lines: List[str] = [
+        f"- n_vectors: {diagnostics.get('n_vectors', 0)}",
+        f"- hit_rate: {diagnostics.get('hit_rate', 0)}",
+        f"- mean_total_hits: {diagnostics.get('mean_total_hits', 0)}",
+        f"- warn_no_signal: {diagnostics.get('warn_no_signal', False)}",
+    ]
+    if diagnostics.get("warn_no_signal") is True:
+        lines.append(
+            "- ⚠️ Warning: axis scoring appears low-signal; interpret axis trade-offs with care."
+        )
+    return "\n".join(lines)
+
+
 def _render_disagreements(disagreements: List[Any]) -> str:
     if not disagreements:
         return "No disagreements captured."
@@ -189,6 +206,7 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
     scoreboard = axis.get("scoreboard", {})
     disagreements = axis.get("disagreements", [])
     axis_vectors = axis.get("axis_vectors", [])
+    axis_scoring_diagnostics = axis.get("axis_scoring_diagnostics", {})
     preference_view = axis.get("preference_view", {})
     influence_graph = influence.get("influence_graph", [])
     influence_edges = influence.get("influence_edges", [])
@@ -216,6 +234,13 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         "## Axis Vectors",
         _render_axis_vectors_table(
             axis_vectors if isinstance(axis_vectors, list) else []
+        ),
+        "",
+        "## Axis Scoring Diagnostics",
+        _render_axis_scoring_diagnostics(
+            axis_scoring_diagnostics
+            if isinstance(axis_scoring_diagnostics, dict)
+            else {}
         ),
         "",
         "## Influence Graph",
