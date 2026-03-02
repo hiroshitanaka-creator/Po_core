@@ -10,7 +10,9 @@ from pathlib import Path
 
 
 def _load_render_markdown():
-    module_path = Path(__file__).resolve().parents[2] / "scripts" / "export_tradeoff_map.py"
+    module_path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "export_tradeoff_map.py"
+    )
     spec = importlib.util.spec_from_file_location("export_tradeoff_map", module_path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
@@ -56,8 +58,13 @@ def test_build_tradeoff_map_adds_influence_edges_from_graph_dict() -> None:
 
     tradeoff_map = build_tradeoff_map(response=response, tracer=events)
 
-    assert tradeoff_map["influence"]["influence_graph"]["kant"]["influenced"]["mill"] == 0.11
-    assert tradeoff_map["influence"]["interference_pairs_top"] == [["kant", "aristotle", 0.2]]
+    assert (
+        tradeoff_map["influence"]["influence_graph"]["kant"]["influenced"]["mill"]
+        == 0.11
+    )
+    assert tradeoff_map["influence"]["interference_pairs_top"] == [
+        ["kant", "aristotle", 0.2]
+    ]
     assert {edge["to"] for edge in tradeoff_map["influence"]["influence_edges"]} == {
         "aristotle",
         "mill",

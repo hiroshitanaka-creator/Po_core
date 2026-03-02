@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.tradeoff_map import build_tradeoff_map
 
-
 TS = datetime(2026, 2, 22, 0, 0, 0, tzinfo=timezone.utc)
 
 

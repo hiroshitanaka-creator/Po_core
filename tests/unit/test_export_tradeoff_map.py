@@ -3,8 +3,9 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-
-_MODULE_PATH = Path(__file__).resolve().parents[2] / "scripts" / "export_tradeoff_map.py"
+_MODULE_PATH = (
+    Path(__file__).resolve().parents[2] / "scripts" / "export_tradeoff_map.py"
+)
 _SPEC = importlib.util.spec_from_file_location("export_tradeoff_map", _MODULE_PATH)
 assert _SPEC is not None and _SPEC.loader is not None
 _MODULE = importlib.util.module_from_spec(_SPEC)
@@ -35,4 +36,6 @@ def test_render_markdown_contains_axis_vectors_table_header() -> None:
         }
     )
 
-    assert "| author | safety | benefit | feasibility | confidence | policy |" in markdown
+    assert (
+        "| author | safety | benefit | feasibility | confidence | policy |" in markdown
+    )
