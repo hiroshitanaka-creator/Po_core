@@ -342,8 +342,11 @@ def _build_recommendation(
 # ── Questions ──────────────────────────────────────────────────────────────
 
 
-def _build_questions(case: Dict[str, Any]) -> List[Dict[str, Any]]:
+def _build_questions(case: Dict[str, Any], *, suppress: bool = False) -> List[Dict[str, Any]]:
     """Build question list from unknowns + values clarification if needed."""
+    if suppress:
+        return []
+
     unknowns = case.get("unknowns", [])
     values = case.get("values", [])
     questions: List[Dict[str, Any]] = []
@@ -387,6 +390,19 @@ def _build_questions(case: Dict[str, Any]) -> List[Dict[str, Any]]:
         )
 
     return questions
+
+
+def _should_suppress_questions(case: Dict[str, Any], run_result: Dict[str, Any]) -> bool:
+    """Suppress question layer when IntentionGate degrades output or case is already sufficient."""
+    verdict = run_result.get("verdict")
+    if isinstance(verdict, dict):
+        decision = str(verdict.get("decision", "")).lower()
+        if decision in {"reject", "revise"}:
+            return True
+
+    unknowns = case.get("unknowns", [])
+    values = case.get("values", [])
+    return not unknowns and bool(values)
 
 
 # ── Trace ──────────────────────────────────────────────────────────────────
@@ -479,7 +495,10 @@ def adapt_to_schema(
 
     options = _build_options(case, proposal, principles)
     recommendation = _build_recommendation(case, proposal, status)
-    questions = _build_questions(case)
+    questions = _build_questions(
+        case,
+        suppress=_should_suppress_questions(case, run_result),
+    )
     uncertainty = _build_uncertainty(case)
 
     # Top-level ethics summary
