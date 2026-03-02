@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Sequence
 
 from po_core.domain.trace_event import TraceEvent
@@ -40,6 +41,58 @@ def _find_first_payload(events: Sequence[TraceEvent], event_type: str) -> Dict[s
     return {}
 
 
+def _meta_axis_fields(metadata: Dict[str, Any], synthesis_report: Dict[str, Any]) -> Dict[str, Any]:
+    axis_name = synthesis_report.get("axis_name")
+    axis_spec_version = synthesis_report.get("axis_spec_version")
+
+    proposal = _safe_dict(metadata.get("proposal"))
+    proposal_po_core = _safe_dict(_safe_dict(proposal.get("extra")).get("po_core"))
+
+    if axis_name is None:
+        axis_name = proposal_po_core.get("axis_name")
+    if axis_spec_version is None:
+        axis_spec_version = proposal_po_core.get("axis_spec_version")
+
+    fields: Dict[str, Any] = {
+        "axis_scoring_calibration_enabled": bool(
+            os.getenv("PO_AXIS_SCORING_CALIBRATION_PARAMS")
+        )
+    }
+    if axis_name is not None:
+        fields["axis_name"] = axis_name
+    if axis_spec_version is not None:
+        fields["axis_spec_version"] = axis_spec_version
+    return fields
+
+
+def validate_tradeoff_map_v1(obj: dict) -> None:
+    """Validate minimal tradeoff_map v1 contract."""
+    if not isinstance(obj, dict):
+        raise ValueError("tradeoff_map must be a dict")
+
+    required_types = {
+        "schema_version": str,
+        "meta": dict,
+        "axis": dict,
+        "influence": dict,
+        "timeline": list,
+    }
+    for key, expected_type in required_types.items():
+        if key not in obj:
+            raise ValueError(f"tradeoff_map missing required key: {key}")
+        if not isinstance(obj[key], expected_type):
+            type_name = type(obj[key]).__name__
+            raise ValueError(
+                f"tradeoff_map key '{key}' must be {expected_type.__name__}, got {type_name}"
+            )
+
+    if obj["schema_version"] != "tradeoff_map_v1":
+        raise ValueError(
+            "tradeoff_map schema_version must be 'tradeoff_map_v1', "
+            f"got {obj['schema_version']!r}"
+        )
+
+
 
 def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
     """Build trade-off map artifact from PoSelf response and trace events."""
@@ -57,6 +110,7 @@ def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
         "consensus_leader": getattr(response, "consensus_leader", None),
         "prompt": getattr(response, "prompt", ""),
     }
+    meta.update(_meta_axis_fields(metadata, synthesis_report))
     if selected_payload:
         for key in ("ids", "mode", "workers"):
             if key in selected_payload:
@@ -86,6 +140,7 @@ def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
     ]
 
     return {
+        "schema_version": "tradeoff_map_v1",
         "meta": meta,
         "axis": axis,
         "influence": influence,
