@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "po-core-flyingpig"
-version = "0.2.0"
+version = "0.2.0rc1"
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
 license = {text = "AGPL-3.0-or-later"}
