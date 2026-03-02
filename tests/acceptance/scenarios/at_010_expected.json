@@ -1,0 +1,323 @@
+{
+  "at_id": "AT-010",
+  "case_id": "case_010",
+  "expected": {
+    "meta": {
+      "schema_version": "1.0",
+      "pocore_version": "0.2.0b4",
+      "run_id": "6afe20af-63c1-3ee0-5bf3-48e1e8b29d9d",
+      "seed": 42,
+      "deterministic": true,
+      "generator": {
+        "name": "po_core.ensemble.run_turn",
+        "version": "0.2.0",
+        "mode": "rule_based"
+      }
+    },
+    "case_ref": {
+      "case_id": "case_010_conflicting_constraints",
+      "title": "制約の矛盾：やりたいが、条件が同時に成立しない",
+      "input_digest": "f1b904a0915a946a6c93129dd8757b6725224b7fae2c84d2bbf157b4fc31ae23"
+    },
+    "options": [
+      {
+        "option_id": "opt_001",
+        "title": "制約の矛盾：やりたいが、条件が同時に成立しない",
+        "description": "道元の教えにおいて、関係性は個我の外部にあるものではない。有時（うじ）：関係とは時間の中に存在するのではなく、関係そのものが時間・存在である。仏性（ぶっしょう）は一切衆生に宿る——他者の中に仏性を見ることは、自己の仏性を見ることと不二（ふに）である。身心脱落（しんじんだつらく）の精神で関係に向かうとは、自己への執着を手放し、相手と共に「今ここ」に在ることである。只管打坐（しかんたざ）の如く関係に向かえ——成果や見返りを求めず、関係そのものに全身全霊で在ること。",
+        "action_plan": [
+          {
+            "step": "制約を考慮: 半年以内に起業を本格始動（週20時間以上投入したい）"
+          },
+          {
+            "step": "制約を考慮: 収入は一切落とせない（生活費の都合）"
+          },
+          {
+            "step": "制約を考慮: 貯金も増やしたい"
+          }
+        ],
+        "pros": [
+          "価値観「自律（autonomy）」の実現に資する",
+          "価値観「経済的安定」の実現に資する"
+        ],
+        "cons": [
+          "不確実性: 副業規定の詳細（許容範囲）",
+          "不確実性: 起業の初期モデル（必要時間・初期投資）"
+        ],
+        "risks": [
+          {
+            "risk": "情報不足による判断ミスのリスク",
+            "severity": "medium",
+            "mitigation": "追加調査を行い不確実性を低減する"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "autonomy"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "自分",
+          "stakeholders": [
+            {
+              "name": "自分",
+              "role": "意思決定主体",
+              "impact": "時間・収入・健康に影響"
+            },
+            {
+              "name": "家族/同居人",
+              "role": "生活共同体",
+              "impact": "家計・時間配分・不確実性の影響"
+            },
+            {
+              "name": "現職",
+              "role": "雇用主",
+              "impact": "副業規定・パフォーマンスに影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "中程度",
+          "timeline": "期限: 2026-08-31",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "high",
+          "reasons": [
+            "副業規定の詳細（許容範囲）",
+            "起業の初期モデル（必要時間・初期投資）",
+            "収入維持の代替策（段階投入、検証期間）"
+          ],
+          "assumptions": [
+            "半年以内に起業を本格始動（週20時間以上投入したい）",
+            "収入は一切落とせない（生活費の都合）"
+          ],
+          "known_unknowns": [
+            "副業規定の詳細（許容範囲）",
+            "起業の初期モデル（必要時間・初期投資）",
+            "収入維持の代替策（段階投入、検証期間）"
+          ]
+        }
+      },
+      {
+        "option_id": "opt_002",
+        "title": "慎重路線：情報収集後に再判断",
+        "description": "主要な不明点を解消してから判断する選択肢。リスクを最小化しながら次の判断機会を設ける。",
+        "action_plan": [
+          {
+            "step": "不明点を優先度順に列挙し、調査計画を立てる"
+          },
+          {
+            "step": "関係者へ現状と懸念を共有し認識を合わせる"
+          },
+          {
+            "step": "判断に必要な情報が揃った時点で再検討する"
+          }
+        ],
+        "pros": [
+          "情報が揃った状態での判断が可能",
+          "リスクを最小化できる",
+          "関係者の同意を得やすい"
+        ],
+        "cons": [
+          "判断の先送りによる機会損失の可能性",
+          "時間的コストが発生する"
+        ],
+        "risks": [
+          {
+            "risk": "判断保留による機会損失",
+            "severity": "low",
+            "mitigation": "タイムボックスを設定し判断期限を明確にする"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "autonomy"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "自分",
+          "stakeholders": [
+            {
+              "name": "自分",
+              "role": "意思決定主体",
+              "impact": "時間・収入・健康に影響"
+            },
+            {
+              "name": "家族/同居人",
+              "role": "生活共同体",
+              "impact": "家計・時間配分・不確実性の影響"
+            },
+            {
+              "name": "現職",
+              "role": "雇用主",
+              "impact": "副業規定・パフォーマンスに影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "低〜中程度",
+          "timeline": "1〜4週間の調査期間",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "medium",
+          "reasons": [
+            "副業規定の詳細（許容範囲）",
+            "起業の初期モデル（必要時間・初期投資）",
+            "収入維持の代替策（段階投入、検証期間）"
+          ],
+          "assumptions": [
+            "半年以内に起業を本格始動（週20時間以上投入したい）",
+            "収入は一切落とせない（生活費の都合）"
+          ],
+          "known_unknowns": [
+            "副業規定の詳細（許容範囲）",
+            "起業の初期モデル（必要時間・初期投資）",
+            "収入維持の代替策（段階投入、検証期間）"
+          ]
+        }
+      }
+    ],
+    "recommendation": {
+      "status": "recommended",
+      "recommended_option_id": "opt_001",
+      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れていると判断されます。",
+      "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
+      "alternatives": [
+        {
+          "option_id": "opt_002",
+          "when_to_choose": "重要な不明点が解消できない場合、またはリスク許容度が低い場合"
+        }
+      ],
+      "confidence": "medium"
+    },
+    "ethics": {
+      "principles_used": [
+        "accountability",
+        "autonomy"
+      ],
+      "tradeoffs": [
+        {
+          "tension": "「自律（autonomy）」vs「経済的安定」",
+          "between": [
+            "自律（autonomy）",
+            "経済的安定"
+          ],
+          "mitigation": "段階的実施と関係者調整により両立を目指す",
+          "severity": "medium"
+        }
+      ],
+      "guardrails": [
+        "医療・法律の最終判断はPo_coreが行わない",
+        "意思決定の主体はユーザーである"
+      ],
+      "notes": "W_Ethics Gateによる3層倫理評価済み"
+    },
+    "responsibility": {
+      "decision_owner": "自分",
+      "stakeholders": [
+        {
+          "name": "自分",
+          "role": "意思決定主体",
+          "impact": "時間・収入・健康に影響"
+        },
+        {
+          "name": "家族/同居人",
+          "role": "生活共同体",
+          "impact": "家計・時間配分・不確実性の影響"
+        },
+        {
+          "name": "現職",
+          "role": "雇用主",
+          "impact": "副業規定・パフォーマンスに影響"
+        }
+      ],
+      "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+      "consent_considerations": []
+    },
+    "questions": [
+      {
+        "question_id": "q_001",
+        "question": "副業規定の詳細（許容範囲）はどのような状況ですか？",
+        "priority": 1,
+        "why_needed": "この不明点（副業規定の詳細（許容範囲））が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_002",
+        "question": "起業の初期モデル（必要時間・初期投資）はどのような状況ですか？",
+        "priority": 2,
+        "why_needed": "この不明点（起業の初期モデル（必要時間・初期投資））が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_003",
+        "question": "収入維持の代替策（段階投入、検証期間）はどのような状況ですか？",
+        "priority": 3,
+        "why_needed": "この不明点（収入維持の代替策（段階投入、検証期間））が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": true
+      }
+    ],
+    "uncertainty": {
+      "overall_level": "high",
+      "reasons": [
+        "副業規定の詳細（許容範囲）",
+        "起業の初期モデル（必要時間・初期投資）",
+        "収入維持の代替策（段階投入、検証期間）"
+      ],
+      "assumptions": [
+        "半年以内に起業を本格始動（週20時間以上投入したい）",
+        "収入は一切落とせない（生活費の都合）"
+      ],
+      "known_unknowns": [
+        "副業規定の詳細（許容範囲）",
+        "起業の初期モデル（必要時間・初期投資）",
+        "収入維持の代替策（段階投入、検証期間）"
+      ]
+    },
+    "trace": {
+      "version": "1.0",
+      "steps": [
+        {
+          "name": "parse_input",
+          "summary": "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した"
+        },
+        {
+          "name": "generate_options",
+          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+        },
+        {
+          "name": "ethics_review",
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+        },
+        {
+          "name": "responsibility_review",
+          "summary": "意思決定主体と利害関係者の責任構造を検証した"
+        },
+        {
+          "name": "question_layer",
+          "summary": "不明点から優先度付き質問リストを生成した"
+        },
+        {
+          "name": "compose_output",
+          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+        }
+      ]
+    }
+  }
+}

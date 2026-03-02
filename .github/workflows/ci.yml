@@ -64,6 +64,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
+        pip install jsonschema
 
     - name: Run pipeline tests (must pass)
       run: |
@@ -73,9 +74,17 @@ jobs:
       run: |
         pytest tests/test_golden_e2e.py tests/test_input_schema.py tests/test_output_schema.py -v
 
+    - name: Explicit JSON schema validation gate (must pass)
+      run: |
+        python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v
+
     - name: Run acceptance tests — AT-001 to AT-010 (must pass, M1)
       run: |
         pytest tests/acceptance/ -v -m acceptance
+
+    - name: Calculate acceptance golden coverage (M2 gate)
+      run: |
+        python scripts/calc_traceability_coverage.py --min-at 8
 
     - name: Run full test suite (best-effort)
       run: |

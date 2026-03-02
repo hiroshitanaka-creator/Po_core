@@ -19,66 +19,16 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core.app.ethics_engine import build_ethics_summary, principles_from_values
+
 _POCORE_VERSION = "0.2.0b4"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "0.2.0"
 
-# ── Value keyword → ethics principle mapping ──────────────────────────────
-
-_VALUE_TO_PRINCIPLE: Dict[str, str] = {
-    # justice
-    "公平": "justice",
-    "公正": "justice",
-    "平等": "justice",
-    "公平性": "justice",
-    # autonomy
-    "自律": "autonomy",
-    "自由": "autonomy",
-    "自己決定": "autonomy",
-    "自主": "autonomy",
-    "autonomy": "autonomy",
-    # nonmaleficence
-    "安全": "nonmaleficence",
-    "無危害": "nonmaleficence",
-    "危害": "nonmaleficence",
-    "リスク回避": "nonmaleficence",
-    # integrity
-    "誠実": "integrity",
-    "誠意": "integrity",
-    "正直": "integrity",
-    "透明": "integrity",
-    # accountability
-    "説明責任": "accountability",
-    "accountability": "accountability",
-    "責任": "accountability",
-    "透明性": "accountability",
-}
-
-_ALL_PRINCIPLES = [
-    "integrity",
-    "autonomy",
-    "justice",
-    "nonmaleficence",
-    "accountability",
-]
-
-
 def _map_values_to_principles(values: List[str]) -> List[str]:
-    """Map case values → sorted list of ethics principles (always ≥ 2)."""
-    principles: set = set()
-    for v in values:
-        v_lower = v.lower()
-        for kw, principle in _VALUE_TO_PRINCIPLE.items():
-            if kw.lower() in v_lower:
-                principles.add(principle)
-                break
-    # Ensure at least 2
-    for fallback in _ALL_PRINCIPLES:
-        if len(principles) >= 2:
-            break
-        principles.add(fallback)
-    return sorted(principles)
+    """Compatibility wrapper around ethics_engine principle extraction."""
+    return principles_from_values(values)
 
 
 # ── Timestamp helpers ──────────────────────────────────────────────────────
@@ -96,12 +46,42 @@ def _parse_base(now: str) -> dt.datetime:
 # ── Uncertainty ────────────────────────────────────────────────────────────
 
 
+def _has_constraint_contradiction(constraints: List[str]) -> bool:
+    """Return True when constraints include a deterministic contradiction signal.
+
+    Rule (FR-UNC-001 helper): when one of the following contradictory pairs appears
+    in the same case, uncertainty is escalated regardless of unknown count.
+      - speed vs quality (早く/即時 vs 慎重/品質)
+      - keep-all vs reduce (維持/削減)
+    """
+
+    normalized = " ".join(str(c).lower() for c in constraints)
+    contradiction_pairs = [
+        (("早", "即", "迅速", "speed", "fast"), ("慎重", "品質", "quality")),
+        (("維持", "keep"), ("削減", "減ら", "reduce")),
+    ]
+    for left_terms, right_terms in contradiction_pairs:
+        if any(term in normalized for term in left_terms) and any(
+            term in normalized for term in right_terms
+        ):
+            return True
+    return False
+
+
 def _uncertainty_level(case: Dict[str, Any]) -> str:
-    n_constraints = len(case.get("constraints", []))
-    n_unknowns = len(case.get("unknowns", []))
-    if n_constraints >= 4 or n_unknowns >= 3:
+    constraints = case.get("constraints", [])
+    unknowns = case.get("unknowns", [])
+    n_unknowns = len(unknowns) if isinstance(unknowns, list) else 0
+
+    # FR-UNC-001 level rule (deterministic):
+    #   high   = contradiction exists OR unknowns >= 3
+    #   medium = unknowns in [1, 2]
+    #   low    = unknowns == 0
+    if isinstance(constraints, list) and _has_constraint_contradiction(constraints):
         return "high"
-    if n_constraints >= 2 or n_unknowns >= 1:
+    if n_unknowns >= 3:
+        return "high"
+    if n_unknowns >= 1:
         return "medium"
     return "low"
 
@@ -109,11 +89,13 @@ def _uncertainty_level(case: Dict[str, Any]) -> str:
 def _build_uncertainty(case: Dict[str, Any]) -> Dict[str, Any]:
     unknowns = case.get("unknowns", [])
     constraints = case.get("constraints", [])
+    unknowns_list = list(unknowns[:5]) if isinstance(unknowns, list) else []
+    constraints_list = list(constraints[:2]) if isinstance(constraints, list) else []
     return {
         "overall_level": _uncertainty_level(case),
-        "reasons": list(unknowns[:3]) if unknowns else ["重要情報が未確定"],
-        "assumptions": list(constraints[:2]),
-        "known_unknowns": list(unknowns[:5]),
+        "reasons": unknowns_list[:3] if unknowns_list else ["重要情報が未確定"],
+        "assumptions": constraints_list,
+        "known_unknowns": unknowns_list,
     }
 
 
@@ -128,29 +110,6 @@ def _build_option_ethics_review(principles: List[str]) -> Dict[str, Any]:
         "principles_applied": applied,
         "tradeoffs": [],
         "concerns": [],
-        "confidence": "medium",
-    }
-
-
-def _build_option_responsibility_review(case: Dict[str, Any]) -> Dict[str, Any]:
-    stakeholders = case.get("stakeholders", [])
-    sh_list = [
-        {
-            "name": str(s["name"]),
-            "role": str(s.get("role", "関係者")),
-            "impact": str(s.get("impact", "")),
-        }
-        for s in stakeholders[:3]
-    ]
-    if not sh_list:
-        sh_list = [
-            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
-        ]
-    owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
-    return {
-        "decision_owner": owner,
-        "stakeholders": sh_list,
-        "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
         "confidence": "medium",
     }
 
@@ -216,7 +175,7 @@ def _build_options(
 
     uncertainty = _build_uncertainty(case)
     ethics_review = _build_option_ethics_review(principles)
-    resp_review = _build_option_responsibility_review(case)
+    resp_review = build_option_responsibility_review(case)
     feasibility = _build_feasibility(case)
 
     # Option 1: main proposal
@@ -342,54 +301,10 @@ def _build_recommendation(
 # ── Questions ──────────────────────────────────────────────────────────────
 
 
-def _build_questions(case: Dict[str, Any], *, suppress: bool = False) -> List[Dict[str, Any]]:
-    """Build question list from unknowns + values clarification if needed."""
-    if suppress:
-        return []
-
+def _build_questions(case: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Build question list via question_layer v1."""
     unknowns = case.get("unknowns", [])
-    values = case.get("values", [])
-    questions: List[Dict[str, Any]] = []
-
-    for i, u in enumerate(unknowns[:4], 1):
-        questions.append(
-            {
-                "question_id": f"q_{i:03d}",
-                "question": f"{u}はどのような状況ですか？",
-                "priority": min(i, 5),
-                "why_needed": f"この不明点（{u}）が判断に直接影響するため",
-                "assumption_if_unanswered": "最も慎重な仮定を採用します",
-                "optional": i > 2,
-            }
-        )
-
-    # Values clarification question when values are empty
-    if not values:
-        questions.append(
-            {
-                "question_id": f"q_{len(questions) + 1:03d}",
-                "question": "この判断で最も重視したい価値観・優先事項は何ですか？",
-                "priority": 1,
-                "why_needed": "価値観が明確でないと推奨の方向性が定まらないため",
-                "assumption_if_unanswered": "情報収集を優先する慎重路線を採用",
-                "optional": False,
-            }
-        )
-
-    # Fallback: always provide at least one question
-    if not questions:
-        questions.append(
-            {
-                "question_id": "q_001",
-                "question": "想定外の状況が発生した場合の対応方針はありますか？",
-                "priority": 3,
-                "why_needed": "緊急時の意思決定基準を明確化するため",
-                "assumption_if_unanswered": "関係者に相談の上、慎重に対応",
-                "optional": True,
-            }
-        )
-
-    return questions
+    return build_questions(list(unknowns))
 
 
 def _should_suppress_questions(case: Dict[str, Any], run_result: Dict[str, Any]) -> bool:
@@ -501,83 +416,10 @@ def adapt_to_schema(
     )
     uncertainty = _build_uncertainty(case)
 
-    # Top-level ethics summary
-    tradeoffs: List[Dict[str, Any]] = []
-    if len(values) >= 2:
-        tradeoffs.append(
-            {
-                "tension": f"「{values[0]}」vs「{values[1]}」",
-                "between": [str(values[0]), str(values[1])],
-                "mitigation": "段階的実施と関係者調整により両立を目指す",
-                "severity": "medium",
-            }
-        )
+    ethics = build_ethics_summary(case, run_result=run_result)
 
-    ethics: Dict[str, Any] = {
-        "principles_used": principles,
-        "tradeoffs": tradeoffs,
-        "guardrails": [
-            "医療・法律の最終判断はPo_coreが行わない",
-            "意思決定の主体はユーザーである",
-        ],
-        "notes": "W_Ethics Gateによる3層倫理評価済み",
-    }
-
-    # Optional: wethics_verdict from pipeline (only for blocked/degraded runs)
-    verdict = run_result.get("verdict")
-    if verdict and isinstance(verdict, dict):
-        raw_decision = str(verdict.get("decision", "")).upper()
-        # Map internal decision values to schema enum
-        _decision_map = {
-            "ALLOW": "ALLOW",
-            "ALLOW_WITH_REPAIR": "ALLOW_WITH_REPAIR",
-            "REJECT": "REJECT",
-            "ESCALATE": "ESCALATE",
-            "REVISE": "ALLOW_WITH_REPAIR",  # internal alias
-        }
-        if raw_decision in _decision_map:
-            ethics["wethics_verdict"] = _decision_map[raw_decision]
-
-    # Top-level responsibility summary
-    stakeholders = case.get("stakeholders", [])
-    sh_list = [
-        {
-            "name": str(s["name"]),
-            "role": str(s.get("role", "関係者")),
-            "impact": str(s.get("impact", "")),
-        }
-        for s in stakeholders[:5]
-    ]
-    if not sh_list:
-        sh_list = [
-            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
-        ]
-    owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
-
-    # Derive consent_considerations: non-empty when user safety or external parties involved
-    consent_items: List[str] = []
-    values_lower = [v.lower() for v in values]
-    has_safety = any(
-        kw in v
-        for v in values_lower
-        for kw in ("安全", "nonmaleficence", "ユーザー", "信頼", "リスク")
-    )
-    has_external_stakeholder = any(
-        str(s.get("name", "")).lower() in ("ユーザー", "顧客", "患者", "市民", "利用者")
-        for s in stakeholders
-    )
-    if has_safety or has_external_stakeholder:
-        consent_items = [
-            "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
-            "重大なリスクが残る場合は関係者の同意を得てから進める",
-        ]
-
-    responsibility: Dict[str, Any] = {
-        "decision_owner": owner,
-        "stakeholders": sh_list,
-        "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
-        "consent_considerations": consent_items,
-    }
+    # Top-level responsibility summary (M2-B responsibility_v1)
+    responsibility: Dict[str, Any] = build_responsibility_summary(case, values=values)
 
     trace = _build_trace(now)
 

@@ -1,0 +1,332 @@
+{
+  "at_id": "AT-004",
+  "case_id": "case_004",
+  "expected": {
+    "meta": {
+      "schema_version": "1.0",
+      "pocore_version": "0.2.0b4",
+      "run_id": "f0bed7ad-aedf-ccc6-281e-412886722b47",
+      "seed": 42,
+      "deterministic": true,
+      "generator": {
+        "name": "po_core.ensemble.run_turn",
+        "version": "0.2.0",
+        "mode": "rule_based"
+      }
+    },
+    "case_ref": {
+      "case_id": "case_004_security_disclosure",
+      "title": "研究公開：脆弱性をどのタイミングで公表するか",
+      "input_digest": "b8028f01e58f5c4ad30f4b8c256421a23da9861e44bedb57c3c483340bfc8438"
+    },
+    "options": [
+      {
+        "option_id": "opt_001",
+        "title": "研究公開：脆弱性をどのタイミングで公表するか",
+        "description": "道元禅師（1200-1253）は問う：「而今の山水は、古仏の道現成なり」。今ここに現れているこの問い、この状況そのものが、仏道の現成（げんじょう）である。修証一如（しゅしょういちにょ）——この問いに向き合うこと自体が修行であり悟りである。只管打坐（しかんたざ）の精神：結論を急がず、この問いの中に完全に在れ。有時（うじ）：今この状況を抱えているこの瞬間が、分割できない存在・時間の全体である。現成公案（げんじょうこうあん）：答えは遠くにあるのではなく、問い続けるこの場に、すでに現れている。無常（むじょう）を忘れるな——固定した答えへの執着を手放すことで、仏性の光が差し込む余地が生まれる。",
+        "action_plan": [
+          {
+            "step": "制約を考慮: 悪用リスクを増やす行為は避ける"
+          },
+          {
+            "step": "制約を考慮: 法令・契約・所属組織ポリシーを順守"
+          },
+          {
+            "step": "制約を考慮: ユーザー保護（パッチ提供）を優先"
+          }
+        ],
+        "pros": [
+          "価値観「公共の安全」の実現に資する",
+          "価値観「透明性」の実現に資する"
+        ],
+        "cons": [
+          "不確実性: ベンダーの初動対応速度",
+          "不確実性: 既に悪用されているか"
+        ],
+        "risks": [
+          {
+            "risk": "情報不足による判断ミスのリスク",
+            "severity": "medium",
+            "mitigation": "追加調査を行い不確実性を低減する"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "利用者",
+          "stakeholders": [
+            {
+              "name": "利用者",
+              "role": "潜在被害者",
+              "impact": "情報漏えい・乗っ取りのリスク"
+            },
+            {
+              "name": "ベンダー",
+              "role": "修正主体",
+              "impact": "対応負荷・評判・法的リスク"
+            },
+            {
+              "name": "自分",
+              "role": "発見者・公開主体",
+              "impact": "信用・法的リスク・研究成果"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "中程度",
+          "timeline": "期限: 2026-04-15",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "high",
+          "reasons": [
+            "ベンダーの初動対応速度",
+            "既に悪用されているか",
+            "影響範囲の正確な特定方法"
+          ],
+          "assumptions": [
+            "悪用リスクを増やす行為は避ける",
+            "法令・契約・所属組織ポリシーを順守"
+          ],
+          "known_unknowns": [
+            "ベンダーの初動対応速度",
+            "既に悪用されているか",
+            "影響範囲の正確な特定方法"
+          ]
+        }
+      },
+      {
+        "option_id": "opt_002",
+        "title": "慎重路線：情報収集後に再判断",
+        "description": "主要な不明点を解消してから判断する選択肢。リスクを最小化しながら次の判断機会を設ける。",
+        "action_plan": [
+          {
+            "step": "不明点を優先度順に列挙し、調査計画を立てる"
+          },
+          {
+            "step": "関係者へ現状と懸念を共有し認識を合わせる"
+          },
+          {
+            "step": "判断に必要な情報が揃った時点で再検討する"
+          }
+        ],
+        "pros": [
+          "情報が揃った状態での判断が可能",
+          "リスクを最小化できる",
+          "関係者の同意を得やすい"
+        ],
+        "cons": [
+          "判断の先送りによる機会損失の可能性",
+          "時間的コストが発生する"
+        ],
+        "risks": [
+          {
+            "risk": "判断保留による機会損失",
+            "severity": "low",
+            "mitigation": "タイムボックスを設定し判断期限を明確にする"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "accountability",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "利用者",
+          "stakeholders": [
+            {
+              "name": "利用者",
+              "role": "潜在被害者",
+              "impact": "情報漏えい・乗っ取りのリスク"
+            },
+            {
+              "name": "ベンダー",
+              "role": "修正主体",
+              "impact": "対応負荷・評判・法的リスク"
+            },
+            {
+              "name": "自分",
+              "role": "発見者・公開主体",
+              "impact": "信用・法的リスク・研究成果"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "低〜中程度",
+          "timeline": "1〜4週間の調査期間",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "medium",
+          "reasons": [
+            "ベンダーの初動対応速度",
+            "既に悪用されているか",
+            "影響範囲の正確な特定方法"
+          ],
+          "assumptions": [
+            "悪用リスクを増やす行為は避ける",
+            "法令・契約・所属組織ポリシーを順守"
+          ],
+          "known_unknowns": [
+            "ベンダーの初動対応速度",
+            "既に悪用されているか",
+            "影響範囲の正確な特定方法"
+          ]
+        }
+      }
+    ],
+    "recommendation": {
+      "status": "recommended",
+      "recommended_option_id": "opt_001",
+      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れていると判断されます。",
+      "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
+      "alternatives": [
+        {
+          "option_id": "opt_002",
+          "when_to_choose": "重要な不明点が解消できない場合、またはリスク許容度が低い場合"
+        }
+      ],
+      "confidence": "medium"
+    },
+    "ethics": {
+      "principles_used": [
+        "accountability",
+        "integrity",
+        "nonmaleficence"
+      ],
+      "tradeoffs": [
+        {
+          "tension": "「公共の安全」vs「透明性」",
+          "between": [
+            "公共の安全",
+            "透明性"
+          ],
+          "mitigation": "段階的実施と関係者調整により両立を目指す",
+          "severity": "medium"
+        }
+      ],
+      "guardrails": [
+        "医療・法律の最終判断はPo_coreが行わない",
+        "意思決定の主体はユーザーである"
+      ],
+      "notes": "W_Ethics Gateによる3層倫理評価済み"
+    },
+    "responsibility": {
+      "decision_owner": "利用者",
+      "stakeholders": [
+        {
+          "name": "利用者",
+          "role": "潜在被害者",
+          "impact": "情報漏えい・乗っ取りのリスク"
+        },
+        {
+          "name": "ベンダー",
+          "role": "修正主体",
+          "impact": "対応負荷・評判・法的リスク"
+        },
+        {
+          "name": "自分",
+          "role": "発見者・公開主体",
+          "impact": "信用・法的リスク・研究成果"
+        },
+        {
+          "name": "研究コミュニティ",
+          "role": "再現・検証者",
+          "impact": "知見の共有と悪用の境界に影響"
+        }
+      ],
+      "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+      "consent_considerations": [
+        "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
+        "重大なリスクが残る場合は関係者の同意を得てから進める"
+      ]
+    },
+    "questions": [
+      {
+        "question_id": "q_001",
+        "question": "ベンダーの初動対応速度はどのような状況ですか？",
+        "priority": 1,
+        "why_needed": "この不明点（ベンダーの初動対応速度）が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_002",
+        "question": "既に悪用されているかはどのような状況ですか？",
+        "priority": 2,
+        "why_needed": "この不明点（既に悪用されているか）が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": false
+      },
+      {
+        "question_id": "q_003",
+        "question": "影響範囲の正確な特定方法はどのような状況ですか？",
+        "priority": 3,
+        "why_needed": "この不明点（影響範囲の正確な特定方法）が判断に直接影響するため",
+        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "optional": true
+      }
+    ],
+    "uncertainty": {
+      "overall_level": "high",
+      "reasons": [
+        "ベンダーの初動対応速度",
+        "既に悪用されているか",
+        "影響範囲の正確な特定方法"
+      ],
+      "assumptions": [
+        "悪用リスクを増やす行為は避ける",
+        "法令・契約・所属組織ポリシーを順守"
+      ],
+      "known_unknowns": [
+        "ベンダーの初動対応速度",
+        "既に悪用されているか",
+        "影響範囲の正確な特定方法"
+      ]
+    },
+    "trace": {
+      "version": "1.0",
+      "steps": [
+        {
+          "name": "parse_input",
+          "summary": "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した"
+        },
+        {
+          "name": "generate_options",
+          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+        },
+        {
+          "name": "ethics_review",
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+        },
+        {
+          "name": "responsibility_review",
+          "summary": "意思決定主体と利害関係者の責任構造を検証した"
+        },
+        {
+          "name": "question_layer",
+          "summary": "不明点から優先度付き質問リストを生成した"
+        },
+        {
+          "name": "compose_output",
+          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+        }
+      ]
+    }
+  }
+}
