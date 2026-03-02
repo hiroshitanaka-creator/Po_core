@@ -46,12 +46,42 @@ def _parse_base(now: str) -> dt.datetime:
 # ── Uncertainty ────────────────────────────────────────────────────────────
 
 
+def _has_constraint_contradiction(constraints: List[str]) -> bool:
+    """Return True when constraints include a deterministic contradiction signal.
+
+    Rule (FR-UNC-001 helper): when one of the following contradictory pairs appears
+    in the same case, uncertainty is escalated regardless of unknown count.
+      - speed vs quality (早く/即時 vs 慎重/品質)
+      - keep-all vs reduce (維持/削減)
+    """
+
+    normalized = " ".join(str(c).lower() for c in constraints)
+    contradiction_pairs = [
+        (("早", "即", "迅速", "speed", "fast"), ("慎重", "品質", "quality")),
+        (("維持", "keep"), ("削減", "減ら", "reduce")),
+    ]
+    for left_terms, right_terms in contradiction_pairs:
+        if any(term in normalized for term in left_terms) and any(
+            term in normalized for term in right_terms
+        ):
+            return True
+    return False
+
+
 def _uncertainty_level(case: Dict[str, Any]) -> str:
-    n_constraints = len(case.get("constraints", []))
-    n_unknowns = len(case.get("unknowns", []))
-    if n_constraints >= 4 or n_unknowns >= 3:
+    constraints = case.get("constraints", [])
+    unknowns = case.get("unknowns", [])
+    n_unknowns = len(unknowns) if isinstance(unknowns, list) else 0
+
+    # FR-UNC-001 level rule (deterministic):
+    #   high   = contradiction exists OR unknowns >= 3
+    #   medium = unknowns in [1, 2]
+    #   low    = unknowns == 0
+    if isinstance(constraints, list) and _has_constraint_contradiction(constraints):
         return "high"
-    if n_constraints >= 2 or n_unknowns >= 1:
+    if n_unknowns >= 3:
+        return "high"
+    if n_unknowns >= 1:
         return "medium"
     return "low"
 
@@ -59,11 +89,13 @@ def _uncertainty_level(case: Dict[str, Any]) -> str:
 def _build_uncertainty(case: Dict[str, Any]) -> Dict[str, Any]:
     unknowns = case.get("unknowns", [])
     constraints = case.get("constraints", [])
+    unknowns_list = list(unknowns[:5]) if isinstance(unknowns, list) else []
+    constraints_list = list(constraints[:2]) if isinstance(constraints, list) else []
     return {
         "overall_level": _uncertainty_level(case),
-        "reasons": list(unknowns[:3]) if unknowns else ["重要情報が未確定"],
-        "assumptions": list(constraints[:2]),
-        "known_unknowns": list(unknowns[:5]),
+        "reasons": unknowns_list[:3] if unknowns_list else ["重要情報が未確定"],
+        "assumptions": constraints_list,
+        "known_unknowns": unknowns_list,
     }
 
 
