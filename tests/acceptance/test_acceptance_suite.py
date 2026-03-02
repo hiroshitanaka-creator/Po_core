@@ -13,7 +13,7 @@ Global guard (AT-OUT-001): Every test validates output against
 If schema validation fails, the test immediately fails with a clear message.
 
 Markers:
-    acceptance — all tests in this file
+    acceptance — AT-001〜AT-010 tests
     pipeline   — AT-001 is also pipeline (runs in must-pass CI job)
 """
 
@@ -25,8 +25,6 @@ import jsonschema
 import pytest
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
-
-pytestmark = pytest.mark.acceptance
 
 
 def _validate_schema(
@@ -155,6 +153,7 @@ def _full_must_check(
 
 
 @pytest.mark.pipeline
+@pytest.mark.acceptance
 def test_at_001_job_change(case_001, composer, output_schema):
     """AT-001: 転職：安定企業→スタートアップ
 
@@ -177,6 +176,7 @@ def test_at_001_job_change(case_001, composer, output_schema):
 # ── AT-002: チームの人員整理 ──────────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_002_headcount_reduction(case_002, composer, output_schema):
     """AT-002: チームの人員整理（倫理 + 責任 + 不確実性）
 
@@ -194,6 +194,7 @@ def test_at_002_headcount_reduction(case_002, composer, output_schema):
 # ── AT-003: 家族介護の設計 ────────────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_003_caregiving(case_003, composer, output_schema):
     """AT-003: 家族介護（倫理 + 責任 + 不確実性）
 
@@ -211,6 +212,7 @@ def test_at_003_caregiving(case_003, composer, output_schema):
 # ── AT-004: 倫理的トレードオフ ────────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_004_ethical_tradeoffs(case_004, composer, output_schema):
     """AT-004: 倫理的トレードオフ（推奨 + 反証 + 代替案）
 
@@ -225,6 +227,7 @@ def test_at_004_ethical_tradeoffs(case_004, composer, output_schema):
 # ── AT-005: 責任主体の明確化 ──────────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_005_responsibility_owner(case_005, composer, output_schema):
     """AT-005: 責任主体の明確化
 
@@ -243,6 +246,7 @@ def test_at_005_responsibility_owner(case_005, composer, output_schema):
 # ── AT-006: 責任 + トレース重視 ───────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_006_trace_responsibility(case_006, composer, output_schema):
     """AT-006: 責任 + 監査ログ
 
@@ -262,6 +266,7 @@ def test_at_006_trace_responsibility(case_006, composer, output_schema):
 # ── AT-007: 推奨 + 反証 ────────────────────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_007_recommendation_with_counter(case_007, composer, output_schema):
     """AT-007: 推奨には反証と代替案が必須
 
@@ -287,6 +292,7 @@ def test_at_007_recommendation_with_counter(case_007, composer, output_schema):
 # ── AT-008: 倫理・不確実性・責任の複合 ────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_008_combined_ethics_uncertainty_responsibility(
     case_008, composer, output_schema
 ):
@@ -311,6 +317,7 @@ def test_at_008_combined_ethics_uncertainty_responsibility(
 # ── AT-009: 価値観が不明（問い生成必須） ──────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_009_values_clarification_questions_generated(
     case_009, composer, output_schema
 ):
@@ -336,6 +343,7 @@ def test_at_009_values_clarification_questions_generated(
 # ── AT-010: 制約の矛盾（矛盾検出＋問い生成） ──────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_010_conflicting_constraints_question_generated(
     case_010, composer, output_schema
 ):
