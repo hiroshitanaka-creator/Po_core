@@ -17,6 +17,41 @@ def _safe_list(value: Any) -> List[Any]:
     return list(value) if isinstance(value, list) else []
 
 
+def _safe_dict_or_list(value: Any) -> Dict[str, Any] | List[Any]:
+    if isinstance(value, dict):
+        return dict(value)
+    if isinstance(value, list):
+        return list(value)
+    return {}
+
+
+def _safe_float(value: Any) -> float | None:
+    if isinstance(value, (int, float)):
+        return float(value)
+    return None
+
+
+def _flatten_influence_graph(influence_graph: Any) -> List[Dict[str, Any]]:
+    if not isinstance(influence_graph, dict):
+        return []
+
+    edges: List[Dict[str, Any]] = []
+    for sender, node in influence_graph.items():
+        if not isinstance(node, dict):
+            continue
+        influenced = node.get("influenced")
+        if not isinstance(influenced, dict):
+            continue
+
+        for recipient, delta in influenced.items():
+            weight = _safe_float(delta)
+            if not sender or not recipient or weight is None:
+                continue
+            edges.append({"from": str(sender), "to": str(recipient), "weight": weight})
+
+    return edges
+
+
 
 def _events_from_tracer(tracer: Any) -> List[TraceEvent]:
     if isinstance(tracer, list):
@@ -69,8 +104,14 @@ def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
     }
 
     influence = {
-        "influence_graph": _safe_list(deliberation_payload.get("influence_graph")),
+        "influence_graph": _safe_dict_or_list(deliberation_payload.get("influence_graph")),
+        "influence_edges": _flatten_influence_graph(
+            deliberation_payload.get("influence_graph")
+        ),
         "top_influencers": _safe_list(deliberation_payload.get("top_influencers")),
+        "interference_pairs_top": _safe_list(
+            deliberation_payload.get("interference_pairs_top")
+        ),
         "rounds": _safe_list(deliberation_payload.get("rounds")),
         "interaction_summary": _safe_dict(
             deliberation_payload.get("interaction_summary")
