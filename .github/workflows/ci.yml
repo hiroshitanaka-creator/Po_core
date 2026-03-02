@@ -103,6 +103,10 @@ jobs:
       run: |
         python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v
 
+    - name: Run traceability config lock check (must pass)
+      run: |
+        python scripts/update_traceability.py --check
+
     - name: Run acceptance tests — AT-001 to AT-010 (must pass, M1)
       run: |
         pytest tests/acceptance/ -v -m acceptance
