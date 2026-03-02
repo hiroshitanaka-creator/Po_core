@@ -16,7 +16,9 @@ SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+from po_core.axis.preferences import parse_weights_str
 from po_core.po_self import PoSelf
+from po_core.viewer.preference_view import apply_preference_view
 from po_core.viewer.tradeoff_map import build_tradeoff_map
 
 
@@ -41,8 +43,6 @@ def _render_axis_table(scoreboard: Dict[str, Any]) -> str:
             )
         )
     return "\n".join(lines) if len(lines) > 2 else "No axis scoreboard available."
-
-
 
 
 def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
@@ -74,6 +74,34 @@ def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
         )
 
     return "\n".join(lines) if len(lines) > 2 else "No axis vectors available."
+
+
+def _render_preference_table(preference_view: Dict[str, Any]) -> str:
+    if not preference_view:
+        return "No preference view available."
+
+    ranked_authors = preference_view.get("ranked_authors")
+    alignment_by_author = preference_view.get("alignment_by_author")
+    if not isinstance(ranked_authors, list) or not isinstance(
+        alignment_by_author, dict
+    ):
+        return "No preference view available."
+
+    lines: List[str] = [
+        "| rank | author | alignment |",
+        "|---:|---|---:|",
+    ]
+    for index, author in enumerate(ranked_authors, start=1):
+        lines.append(
+            "| {rank} | {author} | {alignment} |".format(
+                rank=index,
+                author=author,
+                alignment=alignment_by_author.get(author, ""),
+            )
+        )
+
+    return "\n".join(lines) if len(lines) > 2 else "No preference view available."
+
 
 def _render_disagreements(disagreements: List[Any]) -> str:
     if not disagreements:
@@ -170,7 +198,7 @@ def _render_mermaid(influence_edges: List[Any], influence_graph: Any) -> str:
             src_id = _node_id(src_text)
             dst_id = _node_id(dst_text)
             label = "" if weight is None else f"|{weight}|"
-            lines.append(f"  {src_id}[\"{src_text}\"] -->{label} {dst_id}[\"{dst_text}\"]")
+            lines.append(f'  {src_id}["{src_text}"] -->{label} {dst_id}["{dst_text}"]')
             added = True
 
     if not added:
@@ -188,6 +216,7 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
     scoreboard = axis.get("scoreboard", {})
     disagreements = axis.get("disagreements", [])
     axis_vectors = axis.get("axis_vectors", [])
+    preference_view = axis.get("preference_view", {})
     influence_graph = influence.get("influence_graph", [])
     influence_edges = influence.get("influence_edges", [])
 
@@ -209,7 +238,14 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         _render_disagreements(disagreements if isinstance(disagreements, list) else []),
         "",
         "## Axis Vectors",
-        _render_axis_vectors_table(axis_vectors if isinstance(axis_vectors, list) else []),
+        _render_axis_vectors_table(
+            axis_vectors if isinstance(axis_vectors, list) else []
+        ),
+        "",
+        "## Preference View",
+        _render_preference_table(
+            preference_view if isinstance(preference_view, dict) else {}
+        ),
         "",
         "## Influence Graph",
         _render_mermaid(
@@ -232,6 +268,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--out-md", default="tradeoff_map.md", help="Output Markdown path"
     )
+    parser.add_argument(
+        "--weights",
+        default=None,
+        help=(
+            "Optional preference weights, e.g. "
+            "'safety:0.5,benefit:0.3,feasibility:0.2'"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -244,6 +288,11 @@ def main() -> int:
     tracer = po.get_trace()
 
     tradeoff_map = build_tradeoff_map(response=response, tracer=tracer)
+    if args.weights is not None:
+        tradeoff_map = apply_preference_view(
+            tradeoff_map,
+            weights=parse_weights_str(args.weights),
+        )
 
     out_json = Path(args.out_json)
     out_json.write_text(
