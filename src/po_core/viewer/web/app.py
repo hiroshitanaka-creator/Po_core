@@ -339,6 +339,7 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
     )
 
     scoreboard = axis.get("scoreboard") if isinstance(axis, dict) else None
+    axis_vectors = axis.get("axis_vectors") if isinstance(axis, dict) else None
     disagreements = axis.get("disagreements") if isinstance(axis, dict) else None
     influence_edges = (
         influence.get("influence_edges") if isinstance(influence, dict) else None
@@ -350,7 +351,14 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
         children.append(html.P("No tradeoff data available"))
         return html.Div(children, style={"padding": "20px"})
 
-    children.append(html.H4("Axis Scoreboard"))
+    children.append(
+        html.P(
+            "Axis scores indicate relative emphasis (salience/keyword-hit ratio), "
+            "not truth, correctness, or outcome quality."
+        )
+    )
+
+    children.append(html.H4("Axis Salience Scoreboard"))
     if isinstance(scoreboard, dict) and scoreboard:
         rows = []
         for axis_name, values in scoreboard.items():
@@ -385,13 +393,11 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
     else:
         children.append(html.P("No tradeoff data available"))
 
-    children.extend([html.Hr(), html.H4("Axis Vectors")])
-    children.append(
-        dcc.Graph(
-            id="axis-ternary",
-            figure=build_axis_ternary_plot(tradeoff_map),
-        )
-    )
+    children.extend([html.Hr(), html.H4("Axis Salience Vectors")])
+    if isinstance(axis_vectors, list) and axis_vectors:
+        children.append(html.Ul([html.Li(str(item)) for item in axis_vectors]))
+    else:
+        children.append(html.P("No tradeoff data available"))
 
     children.extend([html.Hr(), html.H4("Disagreements")])
     if isinstance(disagreements, list) and disagreements:
