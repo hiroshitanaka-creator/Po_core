@@ -73,6 +73,7 @@ def test_build_tradeoff_map_serializable_and_keys(monkeypatch) -> None:
     assert tradeoff_map["meta"]["request_id"] == "req-1"
     assert tradeoff_map["meta"]["axis_name"] == "decision_axis"
     assert tradeoff_map["meta"]["axis_spec_version"] == "axis_spec_v1"
+    assert tradeoff_map["meta"]["axis_score_semantics"] == "salience"
     assert tradeoff_map["meta"]["axis_scoring_calibration_enabled"] is True
     assert tradeoff_map["axis"]["scoreboard"]["safety"]["samples"] == 2
     assert tradeoff_map["influence"]["influence_graph"][0]["from"] == "kant"

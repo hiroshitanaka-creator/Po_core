@@ -41,24 +41,8 @@ def test_render_markdown_contains_axis_vectors_table_header() -> None:
     )
 
 
-def test_render_markdown_contains_preference_table_when_present() -> None:
-    markdown = _MODULE._render_markdown(
-        {
-            "meta": {},
-            "axis": {
-                "scoreboard": {},
-                "disagreements": [],
-                "axis_vectors": [],
-                "preference_view": {
-                    "weights_used": {"safety": 0.6, "benefit": 0.4},
-                    "ranked_authors": ["kant", "mill"],
-                    "alignment_by_author": {"kant": 0.7, "mill": 0.5},
-                },
-            },
-            "influence": {"influence_graph": []},
-        }
-    )
+def test_render_markdown_contains_axis_scores_disclaimer() -> None:
+    markdown = _MODULE._render_markdown({"meta": {}, "axis": {}, "influence": {}})
 
-    assert "## Preference View" in markdown
-    assert "| rank | author | alignment |" in markdown
-    assert "| 1 | kant | 0.7 |" in markdown
+    assert "## Axis Scores Disclaimer" in markdown
+    assert "relative emphasis/salience" in markdown

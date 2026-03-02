@@ -76,33 +76,6 @@ def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
     return "\n".join(lines) if len(lines) > 2 else "No axis vectors available."
 
 
-def _render_preference_table(preference_view: Dict[str, Any]) -> str:
-    if not preference_view:
-        return "No preference view available."
-
-    ranked_authors = preference_view.get("ranked_authors")
-    alignment_by_author = preference_view.get("alignment_by_author")
-    if not isinstance(ranked_authors, list) or not isinstance(
-        alignment_by_author, dict
-    ):
-        return "No preference view available."
-
-    lines: List[str] = [
-        "| rank | author | alignment |",
-        "|---:|---|---:|",
-    ]
-    for index, author in enumerate(ranked_authors, start=1):
-        lines.append(
-            "| {rank} | {author} | {alignment} |".format(
-                rank=index,
-                author=author,
-                alignment=alignment_by_author.get(author, ""),
-            )
-        )
-
-    return "\n".join(lines) if len(lines) > 2 else "No preference view available."
-
-
 def _render_disagreements(disagreements: List[Any]) -> str:
     if not disagreements:
         return "No disagreements captured."
@@ -234,17 +207,15 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         "## Axis Scoreboard",
         _render_axis_table(scoreboard if isinstance(scoreboard, dict) else {}),
         "",
+        "## Axis Scores Disclaimer",
+        "axis_scores represent relative emphasis/salience (keyword-hit ratio), not truth/outcome evaluation.",
+        "",
         "## Disagreements",
         _render_disagreements(disagreements if isinstance(disagreements, list) else []),
         "",
         "## Axis Vectors",
         _render_axis_vectors_table(
             axis_vectors if isinstance(axis_vectors, list) else []
-        ),
-        "",
-        "## Preference View",
-        _render_preference_table(
-            preference_view if isinstance(preference_view, dict) else {}
         ),
         "",
         "## Influence Graph",
