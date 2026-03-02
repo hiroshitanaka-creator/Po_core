@@ -399,6 +399,57 @@ def build_interaction_heatmap(events: Sequence[TraceEvent]) -> go.Figure:
     return fig
 
 
+def build_influence_heatmap(tradeoff_map: dict) -> go.Figure:
+    """Heatmap-like table for influence edges in tradeoff map."""
+    influence = (
+        tradeoff_map.get("influence") if isinstance(tradeoff_map, dict) else None
+    )
+    edges = influence.get("influence_edges") if isinstance(influence, dict) else None
+
+    if not isinstance(edges, list) or not edges:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No influence edge data",
+            showarrow=False,
+            font_size=14,
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=250,
+        )
+        return fig
+
+    sources = [str(edge.get("from", "?")) for edge in edges if isinstance(edge, dict)]
+    targets = [str(edge.get("to", "?")) for edge in edges if isinstance(edge, dict)]
+    weights = [
+        float(edge.get("weight", 0.0)) for edge in edges if isinstance(edge, dict)
+    ]
+
+    fig = go.Figure(
+        data=[
+            go.Table(
+                header=dict(
+                    values=["From", "To", "Weight"], fill_color=_COLORS["accent"]
+                ),
+                cells=dict(
+                    values=[sources, targets, [f"{weight:.3f}" for weight in weights]],
+                    fill_color=_COLORS["surface"],
+                ),
+            )
+        ]
+    )
+    fig.update_layout(
+        title="Influence Edges",
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        plot_bgcolor=_COLORS["surface"],
+        height=max(250, 40 * len(weights) + 120),
+    )
+    return fig
+
+
 __all__ = [
     "build_tensor_chart",
     "build_philosopher_chart",
@@ -406,5 +457,6 @@ __all__ = [
     "build_drift_gauge",
     "build_deliberation_round_chart",
     "build_interaction_heatmap",
+    "build_influence_heatmap",
     "decision_badge_style",
 ]
