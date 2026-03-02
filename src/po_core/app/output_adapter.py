@@ -19,6 +19,8 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core.app.question_layer import build_questions
+
 _POCORE_VERSION = "0.2.0b4"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
@@ -343,50 +345,9 @@ def _build_recommendation(
 
 
 def _build_questions(case: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Build question list from unknowns + values clarification if needed."""
+    """Build question list via question_layer v1."""
     unknowns = case.get("unknowns", [])
-    values = case.get("values", [])
-    questions: List[Dict[str, Any]] = []
-
-    for i, u in enumerate(unknowns[:4], 1):
-        questions.append(
-            {
-                "question_id": f"q_{i:03d}",
-                "question": f"{u}はどのような状況ですか？",
-                "priority": min(i, 5),
-                "why_needed": f"この不明点（{u}）が判断に直接影響するため",
-                "assumption_if_unanswered": "最も慎重な仮定を採用します",
-                "optional": i > 2,
-            }
-        )
-
-    # Values clarification question when values are empty
-    if not values:
-        questions.append(
-            {
-                "question_id": f"q_{len(questions) + 1:03d}",
-                "question": "この判断で最も重視したい価値観・優先事項は何ですか？",
-                "priority": 1,
-                "why_needed": "価値観が明確でないと推奨の方向性が定まらないため",
-                "assumption_if_unanswered": "情報収集を優先する慎重路線を採用",
-                "optional": False,
-            }
-        )
-
-    # Fallback: always provide at least one question
-    if not questions:
-        questions.append(
-            {
-                "question_id": "q_001",
-                "question": "想定外の状況が発生した場合の対応方針はありますか？",
-                "priority": 3,
-                "why_needed": "緊急時の意思決定基準を明確化するため",
-                "assumption_if_unanswered": "関係者に相談の上、慎重に対応",
-                "optional": True,
-            }
-        )
-
-    return questions
+    return build_questions(list(unknowns))
 
 
 # ── Trace ──────────────────────────────────────────────────────────────────
