@@ -16,6 +16,21 @@ pip install click rich
 pip install -e .
 ```
 
+## 🚀 リリース成果物の作成（maintainer向け）
+
+```bash
+# ビルドツールをインストール
+pip install build twine
+
+# sdist/wheel を生成
+python -m build
+
+# PyPIメタデータ検証
+twine check dist/*
+```
+
+> 0.2.0 stable リリース前は、上記2コマンドが成功することを必須条件にしてください。
+
 ## ⚡ 30秒で試す
 
 ### 最小限のコード
