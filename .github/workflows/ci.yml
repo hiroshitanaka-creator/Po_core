@@ -77,6 +77,10 @@ jobs:
       run: |
         pytest tests/acceptance/ -v -m acceptance
 
+    - name: Calculate acceptance golden coverage (M2 gate)
+      run: |
+        python scripts/calc_traceability_coverage.py --min-at 8
+
     - name: Run full test suite (best-effort)
       run: |
         pytest tests/ -v --cov=po_core --cov-report=xml --cov-report=term-missing || true
