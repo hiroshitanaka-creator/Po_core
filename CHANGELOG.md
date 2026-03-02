@@ -31,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0rc1] - 2026-02-22 (Phase 3: M1-C CI必須ゲート化 + RC版)
+
+### Changed
+
+- CI workflow (`.github/workflows/ci.yml`) now makes schema + golden + acceptance gates explicit in the test job.
+- Added an explicit JSON Schema gate step (`python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v`) and explicit `jsonschema` dependency install in CI setup.
+- Package version bumped from `0.2.0b4` to `0.2.0rc1` in `pyproject.toml` for RC publish readiness.
+
 ## [0.2.0b3] - 2026-02-21 (Phase 5 complete)
 
 ### Phase 5-E: Performance Benchmarks (2026-02-19)
