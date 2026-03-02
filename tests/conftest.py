@@ -1,5 +1,7 @@
 """Root-level test configuration and shared fixtures."""
 
+import asyncio
+
 import pytest
 
 from po_core.domain.context import Context
@@ -61,9 +63,6 @@ def make_proposal():
         )
 
     return _make
-
-
-import asyncio
 
 
 def pytest_pyfunc_call(pyfuncitem):

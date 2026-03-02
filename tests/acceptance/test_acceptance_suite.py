@@ -171,7 +171,6 @@ def test_at_001_job_change(case_001, composer, output_schema):
     assert rec["recommended_option_id"] in {o["option_id"] for o in output["options"]}
 
     # options contain stakeholder references (家族, 現職チーム, etc.)
-    option_descs = " ".join(o["description"] for o in output["options"])
     assert output["responsibility"]["decision_owner"], "AT-001: decision_owner required"
 
 
@@ -387,8 +386,6 @@ def test_at_meta_determinism(case_fixture_name, request, output_schema):
     case = request.getfixturevalue(case_fixture_name)
     c1 = StubComposer(seed=42)
     c2 = StubComposer(seed=42)
-
-    import json
 
     out1 = c1.compose(case)
     out2 = c2.compose(case)

@@ -27,7 +27,6 @@ from po_core.domain.trace_event import TraceEvent
 from po_core.safety.wethics_gate.explanation import ExplanationChain
 from po_core.viewer.tradeoff_map import build_tradeoff_map
 from po_core.viewer.web.figures import (
-    build_axis_ternary_plot,
     build_deliberation_round_chart,
     build_drift_gauge,
     build_influence_heatmap,

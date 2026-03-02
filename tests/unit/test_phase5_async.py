@@ -21,12 +21,12 @@ from __future__ import annotations
 import asyncio
 import time
 from typing import List
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from po_core.domain.proposal import Proposal
-from po_core.party_machine import AsyncPartyMachine, RunResult, async_run_philosophers
+from po_core.party_machine import AsyncPartyMachine, async_run_philosophers
 from po_core.trace.in_memory import InMemoryTracer
 
 # ---------------------------------------------------------------------------
@@ -343,7 +343,6 @@ def test_async_run_turn_emits_philosopher_completed_events():
 @pytest.mark.phase5
 def test_propose_async_default_implementation():
     """Philosopher.propose_async() default wraps propose() via thread executor."""
-    from po_core.app.api import run
     from po_core.domain.safety_mode import SafetyMode
     from po_core.philosophers.base import Philosopher
     from po_core.runtime.settings import Settings

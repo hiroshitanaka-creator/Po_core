@@ -19,7 +19,6 @@ import pytest
 
 from po_core.deliberation.engine import (
     DeliberationEngine,
-    DeliberationResult,
     RoundTrace,
     _collect_synthesis_counterarguments,
 )
