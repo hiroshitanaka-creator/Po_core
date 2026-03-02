@@ -25,9 +25,11 @@ except ImportError:
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.safety.wethics_gate.explanation import ExplanationChain
+from po_core.viewer.tradeoff_map import build_tradeoff_map
 from po_core.viewer.web.figures import (
     build_deliberation_round_chart,
     build_drift_gauge,
+    build_influence_heatmap,
     build_interaction_heatmap,
     build_philosopher_chart,
     build_pipeline_chart,
@@ -327,6 +329,106 @@ def _build_deliberation_tab(
     return html.Div(children, style={"padding": "20px"})
 
 
+def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
+    """Trade-off map tab with axis scoreboards, disagreements and influence edges."""
+    tradeoff_map = build_tradeoff_map(response=None, tracer=events)
+    axis = tradeoff_map.get("axis") if isinstance(tradeoff_map, dict) else None
+    influence = (
+        tradeoff_map.get("influence") if isinstance(tradeoff_map, dict) else None
+    )
+
+    scoreboard = axis.get("scoreboard") if isinstance(axis, dict) else None
+    disagreements = axis.get("disagreements") if isinstance(axis, dict) else None
+    influence_edges = (
+        influence.get("influence_edges") if isinstance(influence, dict) else None
+    )
+
+    children = [html.H3("Trade-off Map")]
+
+    if not scoreboard and not disagreements and not influence_edges:
+        children.append(html.P("No tradeoff data available"))
+        return html.Div(children, style={"padding": "20px"})
+
+    children.append(html.H4("Axis Scoreboard"))
+    if isinstance(scoreboard, dict) and scoreboard:
+        rows = []
+        for axis_name, values in scoreboard.items():
+            value_dict = values if isinstance(values, dict) else {}
+            rows.append(
+                html.Tr(
+                    [
+                        html.Td(str(axis_name)),
+                        html.Td(f"{value_dict.get('mean', 0.0):.3f}"),
+                        html.Td(f"{value_dict.get('variance', 0.0):.3f}"),
+                        html.Td(str(value_dict.get("samples", 0))),
+                    ]
+                )
+            )
+        children.append(
+            html.Table(
+                [
+                    html.Thead(
+                        html.Tr(
+                            [
+                                html.Th("Axis"),
+                                html.Th("Mean"),
+                                html.Th("Variance"),
+                                html.Th("Samples"),
+                            ]
+                        )
+                    ),
+                    html.Tbody(rows),
+                ]
+            )
+        )
+    else:
+        children.append(html.P("No tradeoff data available"))
+
+    children.extend([html.Hr(), html.H4("Disagreements")])
+    if isinstance(disagreements, list) and disagreements:
+        children.append(
+            html.Ul([html.Li(str(item)) for item in disagreements]),
+        )
+    else:
+        children.append(html.P("No tradeoff data available"))
+
+    children.extend([html.Hr(), html.H4("Influence Edges")])
+    if isinstance(influence_edges, list) and influence_edges:
+        edge_rows = []
+        for edge in influence_edges:
+            if not isinstance(edge, dict):
+                continue
+            edge_rows.append(
+                html.Tr(
+                    [
+                        html.Td(str(edge.get("from", "?"))),
+                        html.Td(str(edge.get("to", "?"))),
+                        html.Td(f"{float(edge.get('weight', 0.0)):.3f}"),
+                    ]
+                )
+            )
+        children.append(
+            html.Table(
+                [
+                    html.Thead(
+                        html.Tr([html.Th("From"), html.Th("To"), html.Th("Weight")])
+                    ),
+                    html.Tbody(edge_rows),
+                ]
+            )
+        )
+        children.append(
+            dcc.Graph(
+                id="influence-edges-figure",
+                figure=build_influence_heatmap(tradeoff_map),
+            )
+        )
+    else:
+        children.append(html.P("No tradeoff data available"))
+
+    return html.Div(children, style={"padding": "20px"})
+
+
 # ── App factory ──────────────────────────────────────────────────
 
 
@@ -406,6 +508,11 @@ def create_app(
                         label="Deliberation",
                         value="tab-deliberation",
                         children=_build_deliberation_tab(ev_list),
+                    ),
+                    dcc.Tab(
+                        label="Trade-off Map",
+                        value="tab-tradeoff",
+                        children=_build_tradeoff_tab(ev_list),
                     ),
                 ],
             ),
