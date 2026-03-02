@@ -13,14 +13,15 @@ Use JSONL (`.jsonl`) where each line is one record with:
 Example:
 
 ```json
-{"text":"今すぐ決断しないと機会を失うかもしれない。","labels":{"choice":0.8,"responsibility":0.6,"urgency":0.9,"ethics":0.5,"social":0.4,"authenticity":0.7},"meta":{"lang":"ja","domain":"career"}}
-{"text":"時間をかけて関係者に相談してから決めたい。","labels":{"choice":0.5,"responsibility":0.8,"urgency":0.2,"ethics":0.7,"social":0.9,"authenticity":0.6}}
+{"text":"今すぐ決断しないと機会を失うかもしれない。","labels":{"safety":0.8,"benefit":0.6,"feasibility":0.9},"meta":{"lang":"ja","domain":"career"}}
+{"text":"時間をかけて関係者に相談してから決めたい。","labels":{"safety":0.5,"benefit":0.8,"feasibility":0.2}}
 ```
 
 Notes:
 
-- Training requires labels for all axis dimensions defined by the active spec.
+- Training requires labels for all axis dimensions defined by the active spec (Decision Axis Spec v1: `safety`, `benefit`, `feasibility`).
 - Keep dataset order stable for reproducibility.
+- Labels are salience targets (relative emphasis/keyword-hit ratio), not truth or outcome-quality judgments.
 - See also: `calibration/dataset_format.md`.
 
 ## 2) Train calibration parameters
