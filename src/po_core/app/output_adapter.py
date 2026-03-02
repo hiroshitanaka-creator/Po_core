@@ -19,6 +19,11 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core.app.responsibility_engine import (
+    build_option_responsibility_review,
+    build_responsibility_summary,
+)
+
 _POCORE_VERSION = "0.2.0b4"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
@@ -132,29 +137,6 @@ def _build_option_ethics_review(principles: List[str]) -> Dict[str, Any]:
     }
 
 
-def _build_option_responsibility_review(case: Dict[str, Any]) -> Dict[str, Any]:
-    stakeholders = case.get("stakeholders", [])
-    sh_list = [
-        {
-            "name": str(s["name"]),
-            "role": str(s.get("role", "関係者")),
-            "impact": str(s.get("impact", "")),
-        }
-        for s in stakeholders[:3]
-    ]
-    if not sh_list:
-        sh_list = [
-            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
-        ]
-    owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
-    return {
-        "decision_owner": owner,
-        "stakeholders": sh_list,
-        "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
-        "confidence": "medium",
-    }
-
-
 def _build_feasibility(case: Dict[str, Any]) -> Dict[str, Any]:
     deadline = case.get("deadline")
     if deadline:
@@ -216,7 +198,7 @@ def _build_options(
 
     uncertainty = _build_uncertainty(case)
     ethics_review = _build_option_ethics_review(principles)
-    resp_review = _build_option_responsibility_review(case)
+    resp_review = build_option_responsibility_review(case)
     feasibility = _build_feasibility(case)
 
     # Option 1: main proposal
@@ -519,46 +501,8 @@ def adapt_to_schema(
         if raw_decision in _decision_map:
             ethics["wethics_verdict"] = _decision_map[raw_decision]
 
-    # Top-level responsibility summary
-    stakeholders = case.get("stakeholders", [])
-    sh_list = [
-        {
-            "name": str(s["name"]),
-            "role": str(s.get("role", "関係者")),
-            "impact": str(s.get("impact", "")),
-        }
-        for s in stakeholders[:5]
-    ]
-    if not sh_list:
-        sh_list = [
-            {"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}
-        ]
-    owner = str(stakeholders[0]["name"]) if stakeholders else "意思決定者"
-
-    # Derive consent_considerations: non-empty when user safety or external parties involved
-    consent_items: List[str] = []
-    values_lower = [v.lower() for v in values]
-    has_safety = any(
-        kw in v
-        for v in values_lower
-        for kw in ("安全", "nonmaleficence", "ユーザー", "信頼", "リスク")
-    )
-    has_external_stakeholder = any(
-        str(s.get("name", "")).lower() in ("ユーザー", "顧客", "患者", "市民", "利用者")
-        for s in stakeholders
-    )
-    if has_safety or has_external_stakeholder:
-        consent_items = [
-            "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
-            "重大なリスクが残る場合は関係者の同意を得てから進める",
-        ]
-
-    responsibility: Dict[str, Any] = {
-        "decision_owner": owner,
-        "stakeholders": sh_list,
-        "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
-        "consent_considerations": consent_items,
-    }
+    # Top-level responsibility summary (M2-B responsibility_v1)
+    responsibility: Dict[str, Any] = build_responsibility_summary(case, values=values)
 
     trace = _build_trace(now)
 
