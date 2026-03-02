@@ -9,6 +9,7 @@ import pytest
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.viewer.web.figures import (
+    build_axis_ternary_plot,
     build_drift_gauge,
     build_philosopher_chart,
     build_pipeline_chart,
@@ -200,6 +201,13 @@ class TestDriftGauge:
     def test_custom_thresholds(self):
         fig = build_drift_gauge(0.5, threshold_escalate=0.3, threshold_reject=0.6)
         assert fig is not None
+
+
+class TestAxisTernaryPlot:
+    def test_empty_axis_vectors_does_not_raise(self):
+        fig = build_axis_ternary_plot({"axis": {"axis_vectors": []}})
+        assert fig is not None
+        assert len(fig.layout.annotations) > 0
 
 
 # ── Decision Badge Tests ─────────────────────────────────────────

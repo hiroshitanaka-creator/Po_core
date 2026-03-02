@@ -450,6 +450,101 @@ def build_influence_heatmap(tradeoff_map: dict) -> go.Figure:
     return fig
 
 
+def build_axis_ternary_plot(tradeoff_map: dict) -> go.Figure:
+    """Ternary plot for axis vectors (safety, benefit, feasibility)."""
+    axis = tradeoff_map.get("axis") if isinstance(tradeoff_map, dict) else None
+    axis_vectors = axis.get("axis_vectors") if isinstance(axis, dict) else None
+
+    if not isinstance(axis_vectors, list) or not axis_vectors:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No axis vector data",
+            showarrow=False,
+            font_size=14,
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=320,
+        )
+        return fig
+
+    safety_scores = []
+    benefit_scores = []
+    feasibility_scores = []
+    hover_text = []
+
+    for vector in axis_vectors:
+        if not isinstance(vector, dict):
+            continue
+        axis_scores = vector.get("axis_scores")
+        axis_scores = axis_scores if isinstance(axis_scores, dict) else {}
+
+        safety = float(axis_scores.get("safety", 0.0))
+        benefit = float(axis_scores.get("benefit", 0.0))
+        feasibility = float(axis_scores.get("feasibility", 0.0))
+
+        safety_scores.append(safety)
+        benefit_scores.append(benefit)
+        feasibility_scores.append(feasibility)
+
+        hover_text.append(
+            "<br>".join(
+                [
+                    f"author: {vector.get('author', '?')}",
+                    f"policy: {vector.get('policy', '?')}",
+                    f"confidence: {float(vector.get('confidence', 0.0)):.3f}",
+                    f"safety: {safety:.3f}",
+                    f"benefit: {benefit:.3f}",
+                    f"feasibility: {feasibility:.3f}",
+                ]
+            )
+        )
+
+    if not safety_scores:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No axis vector data",
+            showarrow=False,
+            font_size=14,
+        )
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor=_COLORS["bg"],
+            plot_bgcolor=_COLORS["surface"],
+            height=320,
+        )
+        return fig
+
+    fig = go.Figure(
+        data=[
+            go.Scatterternary(
+                a=safety_scores,
+                b=benefit_scores,
+                c=feasibility_scores,
+                mode="markers",
+                marker=dict(size=10, color=_COLORS["highlight"], opacity=0.85),
+                hovertext=hover_text,
+                hoverinfo="text",
+            )
+        ]
+    )
+    fig.update_layout(
+        title="Axis Vectors (Safety / Benefit / Feasibility)",
+        template="plotly_dark",
+        paper_bgcolor=_COLORS["bg"],
+        plot_bgcolor=_COLORS["surface"],
+        height=420,
+        ternary=dict(
+            aaxis=dict(title="Safety", min=0),
+            baxis=dict(title="Benefit", min=0),
+            caxis=dict(title="Feasibility", min=0),
+        ),
+    )
+    return fig
+
+
 __all__ = [
     "build_tensor_chart",
     "build_philosopher_chart",
@@ -458,5 +553,6 @@ __all__ = [
     "build_deliberation_round_chart",
     "build_interaction_heatmap",
     "build_influence_heatmap",
+    "build_axis_ternary_plot",
     "decision_badge_style",
 ]
