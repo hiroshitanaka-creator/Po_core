@@ -1,0 +1,8 @@
+version: 1
+tracked_configs:
+- path: 02_architecture/philosophy/pareto_table.yaml
+  config_version: '1'
+  sha256: c62af7645998d40859f9ba15216b1240cfff4737139755c07226c401ff9218bd
+- path: 02_architecture/philosophy/battalion_table.yaml
+  config_version: '1'
+  sha256: c2cae85b55cb72edb239ac7d3baa3e17132ad92ac0bb0a05d7f0299cf6baf934
