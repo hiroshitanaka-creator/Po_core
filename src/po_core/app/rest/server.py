@@ -29,7 +29,13 @@ from slowapi.errors import RateLimitExceeded
 
 from po_core.app.rest.config import APISettings, get_api_settings, set_api_settings
 from po_core.app.rest.rate_limit import limiter
-from po_core.app.rest.routers import health, philosophers, reason, trace
+from po_core.app.rest.routers import (
+    health,
+    philosophers,
+    reason,
+    trace,
+    tradeoff_map,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +119,10 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
                 "description": "Audit trail and trace event retrieval",
             },
             {
+                "name": "tradeoff-map",
+                "description": "Trade-off map retrieval for recorded sessions",
+            },
+            {
                 "name": "health",
                 "description": "Server health and status",
             },
@@ -144,6 +154,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
     application.include_router(reason.router)
     application.include_router(philosophers.router)
     application.include_router(trace.router)
+    application.include_router(tradeoff_map.router)
     application.include_router(health.router)
 
     @application.on_event("startup")

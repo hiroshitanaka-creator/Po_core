@@ -272,6 +272,26 @@ def test_trace_found_after_reason(client_no_auth):
     assert "events" in body
 
 
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_tradeoff_map_found_after_reason(client_no_auth):
+    """Tradeoff-map endpoint returns a v1 artifact after a reason call."""
+    session_id = "tradeoff-map-test"
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+        client_no_auth.post(
+            "/v1/reason",
+            json={
+                "input": "How should we balance freedom and safety?",
+                "session_id": session_id,
+            },
+        )
+
+    resp = client_no_auth.get(f"/v1/tradeoff-map/{session_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["schema_version"] == "tradeoff_map_v1"
+
+
 # ---------------------------------------------------------------------------
 # Streaming (SSE)
 # ---------------------------------------------------------------------------
