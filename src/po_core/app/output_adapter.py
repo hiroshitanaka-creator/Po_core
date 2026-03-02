@@ -19,66 +19,16 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core.app.ethics_engine import build_ethics_summary, principles_from_values
+
 _POCORE_VERSION = "0.2.0b4"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "0.2.0"
 
-# ── Value keyword → ethics principle mapping ──────────────────────────────
-
-_VALUE_TO_PRINCIPLE: Dict[str, str] = {
-    # justice
-    "公平": "justice",
-    "公正": "justice",
-    "平等": "justice",
-    "公平性": "justice",
-    # autonomy
-    "自律": "autonomy",
-    "自由": "autonomy",
-    "自己決定": "autonomy",
-    "自主": "autonomy",
-    "autonomy": "autonomy",
-    # nonmaleficence
-    "安全": "nonmaleficence",
-    "無危害": "nonmaleficence",
-    "危害": "nonmaleficence",
-    "リスク回避": "nonmaleficence",
-    # integrity
-    "誠実": "integrity",
-    "誠意": "integrity",
-    "正直": "integrity",
-    "透明": "integrity",
-    # accountability
-    "説明責任": "accountability",
-    "accountability": "accountability",
-    "責任": "accountability",
-    "透明性": "accountability",
-}
-
-_ALL_PRINCIPLES = [
-    "integrity",
-    "autonomy",
-    "justice",
-    "nonmaleficence",
-    "accountability",
-]
-
-
 def _map_values_to_principles(values: List[str]) -> List[str]:
-    """Map case values → sorted list of ethics principles (always ≥ 2)."""
-    principles: set = set()
-    for v in values:
-        v_lower = v.lower()
-        for kw, principle in _VALUE_TO_PRINCIPLE.items():
-            if kw.lower() in v_lower:
-                principles.add(principle)
-                break
-    # Ensure at least 2
-    for fallback in _ALL_PRINCIPLES:
-        if len(principles) >= 2:
-            break
-        principles.add(fallback)
-    return sorted(principles)
+    """Compatibility wrapper around ethics_engine principle extraction."""
+    return principles_from_values(values)
 
 
 # ── Timestamp helpers ──────────────────────────────────────────────────────
@@ -482,42 +432,7 @@ def adapt_to_schema(
     questions = _build_questions(case)
     uncertainty = _build_uncertainty(case)
 
-    # Top-level ethics summary
-    tradeoffs: List[Dict[str, Any]] = []
-    if len(values) >= 2:
-        tradeoffs.append(
-            {
-                "tension": f"「{values[0]}」vs「{values[1]}」",
-                "between": [str(values[0]), str(values[1])],
-                "mitigation": "段階的実施と関係者調整により両立を目指す",
-                "severity": "medium",
-            }
-        )
-
-    ethics: Dict[str, Any] = {
-        "principles_used": principles,
-        "tradeoffs": tradeoffs,
-        "guardrails": [
-            "医療・法律の最終判断はPo_coreが行わない",
-            "意思決定の主体はユーザーである",
-        ],
-        "notes": "W_Ethics Gateによる3層倫理評価済み",
-    }
-
-    # Optional: wethics_verdict from pipeline (only for blocked/degraded runs)
-    verdict = run_result.get("verdict")
-    if verdict and isinstance(verdict, dict):
-        raw_decision = str(verdict.get("decision", "")).upper()
-        # Map internal decision values to schema enum
-        _decision_map = {
-            "ALLOW": "ALLOW",
-            "ALLOW_WITH_REPAIR": "ALLOW_WITH_REPAIR",
-            "REJECT": "REJECT",
-            "ESCALATE": "ESCALATE",
-            "REVISE": "ALLOW_WITH_REPAIR",  # internal alias
-        }
-        if raw_decision in _decision_map:
-            ethics["wethics_verdict"] = _decision_map[raw_decision]
+    ethics = build_ethics_summary(case, run_result=run_result)
 
     # Top-level responsibility summary
     stakeholders = case.get("stakeholders", [])
