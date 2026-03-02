@@ -43,6 +43,38 @@ def _render_axis_table(scoreboard: Dict[str, Any]) -> str:
     return "\n".join(lines) if len(lines) > 2 else "No axis scoreboard available."
 
 
+
+
+def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
+    if not axis_vectors:
+        return "No axis vectors available."
+
+    lines: List[str] = [
+        "| author | safety | benefit | feasibility | confidence | policy |",
+        "|---|---:|---:|---:|---:|---|",
+    ]
+
+    rows: List[Dict[str, Any]] = []
+    for item in axis_vectors:
+        if isinstance(item, dict):
+            rows.append(item)
+
+    for item in sorted(rows, key=lambda row: str(row.get("author") or "")):
+        scores = item.get("axis_scores", {})
+        scores = scores if isinstance(scores, dict) else {}
+        lines.append(
+            "| {author} | {safety} | {benefit} | {feasibility} | {confidence} | {policy} |".format(
+                author=item.get("author", ""),
+                safety=scores.get("safety", ""),
+                benefit=scores.get("benefit", ""),
+                feasibility=scores.get("feasibility", ""),
+                confidence=item.get("confidence", ""),
+                policy=item.get("policy", ""),
+            )
+        )
+
+    return "\n".join(lines) if len(lines) > 2 else "No axis vectors available."
+
 def _render_disagreements(disagreements: List[Any]) -> str:
     if not disagreements:
         return "No disagreements captured."
@@ -103,6 +135,7 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
 
     scoreboard = axis.get("scoreboard", {})
     disagreements = axis.get("disagreements", [])
+    axis_vectors = axis.get("axis_vectors", [])
     influence_graph = influence.get("influence_graph", [])
 
     lines = [
@@ -121,6 +154,9 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         "",
         "## Disagreements",
         _render_disagreements(disagreements if isinstance(disagreements, list) else []),
+        "",
+        "## Axis Vectors",
+        _render_axis_vectors_table(axis_vectors if isinstance(axis_vectors, list) else []),
         "",
         "## Influence Graph",
         _render_mermaid(influence_graph if isinstance(influence_graph, list) else []),

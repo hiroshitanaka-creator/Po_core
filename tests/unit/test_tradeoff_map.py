@@ -29,6 +29,7 @@ def test_build_tradeoff_map_serializable_and_keys() -> None:
                 "scoreboard": {"safety": {"mean": 0.7, "variance": 0.02, "samples": 2}},
                 "disagreements": [{"axis": "safety", "spread": 0.3}],
                 "stance_distribution": {"pro": 1, "con": 1},
+                "axis_vectors": [{"author": "kant", "axis_scores": {"safety": 0.7}}],
             },
         },
     )
@@ -59,6 +60,7 @@ def test_build_tradeoff_map_serializable_and_keys() -> None:
     assert tradeoff_map["meta"]["request_id"] == "req-1"
     assert tradeoff_map["axis"]["scoreboard"]["safety"]["samples"] == 2
     assert tradeoff_map["influence"]["influence_graph"][0]["from"] == "kant"
+    assert tradeoff_map["axis"]["axis_vectors"][0]["author"] == "kant"
     assert tradeoff_map["timeline"][0]["event_type"] == "PhilosophersSelected"
 
     # Must be JSON serializable
