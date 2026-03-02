@@ -25,3 +25,23 @@ def test_create_app_includes_tradeoff_tab_and_builds_layout() -> None:
     tabs = app.layout.children[1]
     labels = [tab.label for tab in tabs.children]
     assert "Trade-off Map" in labels
+
+
+def test_tradeoff_tab_uses_salience_wording() -> None:
+    events = [
+        TraceEvent(
+            event_type="SynthesisReportBuilt",
+            occurred_at=datetime(2026, 2, 22, tzinfo=timezone.utc),
+            correlation_id="req-2",
+            payload={
+                "scoreboard": {"safety": {"mean": 0.4, "variance": 0.1, "samples": 2}},
+                "axis_vectors": [{"author": "kant", "axis_scores": {"safety": 0.4}}],
+            },
+        )
+    ]
+    app = create_app(events=events)
+
+    layout_text = str(app.layout)
+    assert "Axis Salience Scoreboard" in layout_text
+    assert "Axis Salience Vectors" in layout_text
+    assert "relative emphasis (salience/keyword-hit ratio)" in layout_text

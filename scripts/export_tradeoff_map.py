@@ -43,8 +43,6 @@ def _render_axis_table(scoreboard: Dict[str, Any]) -> str:
     return "\n".join(lines) if len(lines) > 2 else "No axis scoreboard available."
 
 
-
-
 def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
     if not axis_vectors:
         return "No axis vectors available."
@@ -74,6 +72,7 @@ def _render_axis_vectors_table(axis_vectors: List[Any]) -> str:
         )
 
     return "\n".join(lines) if len(lines) > 2 else "No axis vectors available."
+
 
 def _render_disagreements(disagreements: List[Any]) -> str:
     if not disagreements:
@@ -170,7 +169,7 @@ def _render_mermaid(influence_edges: List[Any], influence_graph: Any) -> str:
             src_id = _node_id(src_text)
             dst_id = _node_id(dst_text)
             label = "" if weight is None else f"|{weight}|"
-            lines.append(f"  {src_id}[\"{src_text}\"] -->{label} {dst_id}[\"{dst_text}\"]")
+            lines.append(f'  {src_id}["{src_text}"] -->{label} {dst_id}["{dst_text}"]')
             added = True
 
     if not added:
@@ -205,11 +204,16 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
         "## Axis Scoreboard",
         _render_axis_table(scoreboard if isinstance(scoreboard, dict) else {}),
         "",
+        "## Axis Scores Disclaimer",
+        "axis_scores represent relative emphasis/salience (keyword-hit ratio), not truth/outcome evaluation.",
+        "",
         "## Disagreements",
         _render_disagreements(disagreements if isinstance(disagreements, list) else []),
         "",
         "## Axis Vectors",
-        _render_axis_vectors_table(axis_vectors if isinstance(axis_vectors, list) else []),
+        _render_axis_vectors_table(
+            axis_vectors if isinstance(axis_vectors, list) else []
+        ),
         "",
         "## Influence Graph",
         _render_mermaid(
