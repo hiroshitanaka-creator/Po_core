@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
 
 from po_core import philosophers
-from po_core.axis.scoring import score_text
+from po_core.axis.scoring import score_text_with_debug
 from po_core.axis.spec import load_axis_spec
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.context import Context as DomainContext
@@ -519,7 +519,11 @@ def _run_phase_post(
         }
         precheck_counts[v.decision.value] = precheck_counts.get(v.decision.value, 0) + 1
         pc[FREEDOM_PRESSURE] = fp_str
-        pc["axis_scores"] = score_text(str(p.content), axis_spec)
+        axis_scores, axis_scoring_debug = score_text_with_debug(
+            str(p.content), axis_spec
+        )
+        pc["axis_scores"] = axis_scores
+        pc["axis_scoring_debug"] = axis_scoring_debug
         pc["axis_name"] = axis_spec.axis_name
         pc["axis_spec_version"] = axis_spec.spec_version
         extra[PO_CORE] = pc
@@ -682,6 +686,7 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
     cards: List[ArgumentCard] = []
     axis_vectors: List[Dict[str, Any]] = []
     axis_names: set[str] = set()
+    total_hits_values: List[int] = []
     for p in proposals:
         extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
         po_core_meta = extra.get(PO_CORE, {})
@@ -720,6 +725,17 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
                 }
             )
 
+        axis_scoring_debug_raw = pc.get("axis_scoring_debug", {})
+        axis_scoring_debug = (
+            dict(axis_scoring_debug_raw)
+            if isinstance(axis_scoring_debug_raw, Mapping)
+            else {}
+        )
+        try:
+            total_hits_values.append(int(axis_scoring_debug.get("total_hits", 0)))
+        except (TypeError, ValueError):
+            total_hits_values.append(0)
+
         questions = []
         qs = pc.get("open_questions", [])
         if isinstance(qs, Sequence) and not isinstance(qs, (str, bytes)):
@@ -740,6 +756,18 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
     report = SynthesisEngine().synthesize(axis_spec=axis_spec, cards=cards)
     report_dict = report.to_dict()
     report_dict["axis_vectors"] = axis_vectors
+    n_vectors = len(total_hits_values)
+    hit_count = sum(1 for v in total_hits_values if v > 0)
+    hit_rate = (float(hit_count) / float(n_vectors)) if n_vectors > 0 else 0.0
+    mean_total_hits = (
+        float(sum(total_hits_values)) / float(n_vectors) if n_vectors > 0 else 0.0
+    )
+    report_dict["axis_scoring_diagnostics"] = {
+        "n_vectors": n_vectors,
+        "hit_rate": hit_rate,
+        "mean_total_hits": mean_total_hits,
+        "warn_no_signal": hit_rate < 0.3,
+    }
     return report_dict
 
 

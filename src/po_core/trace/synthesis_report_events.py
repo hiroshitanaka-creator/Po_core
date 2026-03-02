@@ -18,6 +18,7 @@ _ALLOWED_KEYS = (
     "disagreements",
     "stance_distribution",
     "axis_vectors",
+    "axis_scoring_diagnostics",
 )
 
 

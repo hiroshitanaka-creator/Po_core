@@ -4,7 +4,11 @@ import json
 
 import pytest
 
-from po_core.axis.scoring import _clear_scoring_calibration_model_cache, score_text
+from po_core.axis.scoring import (
+    _clear_scoring_calibration_model_cache,
+    score_text,
+    score_text_with_debug,
+)
 from po_core.axis.spec import load_axis_spec
 
 
@@ -58,3 +62,53 @@ def test_score_text_with_calibration_env_changes_distribution(
     assert calibrated_scores["safety"] > raw_scores["safety"]
     assert calibrated_scores != raw_scores
     assert sum(calibrated_scores.values()) == pytest.approx(1.0)
+
+
+def test_score_text_with_debug_includes_hit_counts(monkeypatch) -> None:
+    monkeypatch.delenv("PO_AXIS_SCORING_CALIBRATION_PARAMS", raising=False)
+    _clear_scoring_calibration_model_cache()
+
+    spec = load_axis_spec()
+    text = "risk harm value feasible"
+
+    scores, debug = score_text_with_debug(text, spec)
+
+    assert scores == {
+        "safety": 0.5,
+        "benefit": 0.25,
+        "feasibility": 0.25,
+    }
+    assert debug == {
+        "total_hits": 4,
+        "hits_by_dimension": {"safety": 2, "benefit": 1, "feasibility": 1},
+        "calibrated": False,
+    }
+
+
+def test_score_text_with_debug_marks_calibrated_when_model_loaded(
+    tmp_path, monkeypatch
+) -> None:
+    params_path = tmp_path / "axis_scoring_params.json"
+    params_path.write_text(
+        json.dumps(
+            {
+                "version": "axis_scoring_calibration_v1",
+                "feature_order": ["safety", "benefit", "feasibility"],
+                "labels": {
+                    "safety": {"weights": [1.2, 0.0, 0.0], "bias": 0.0},
+                    "benefit": {"weights": [0.0, 1.0, 0.0], "bias": 0.0},
+                    "feasibility": {"weights": [0.0, 0.0, 1.0], "bias": 0.0},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setenv("PO_AXIS_SCORING_CALIBRATION_PARAMS", str(params_path))
+    _clear_scoring_calibration_model_cache()
+
+    spec = load_axis_spec()
+    _, debug = score_text_with_debug("risk value", spec)
+
+    assert debug["total_hits"] == 2
+    assert debug["calibrated"] is True
