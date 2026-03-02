@@ -13,7 +13,7 @@ Global guard (AT-OUT-001): Every test validates output against
 If schema validation fails, the test immediately fails with a clear message.
 
 Markers:
-    acceptance — all tests in this file
+    acceptance — AT-001〜AT-010 tests
     pipeline   — AT-001 is also pipeline (runs in must-pass CI job)
 """
 
@@ -24,8 +24,6 @@ from typing import Any
 import pytest
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
-
-pytestmark = pytest.mark.acceptance
 
 
 def _assert_option_count(output: dict[str, Any], min_count: int = 2) -> None:
@@ -271,6 +269,7 @@ def test_at_007_recommendation_with_counter(case_007, composer, validate_output_
 # ── AT-008: 倫理・不確実性・責任の複合 ────────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_008_combined_ethics_uncertainty_responsibility(
     case_008, composer, validate_output_schema
 ):
@@ -295,6 +294,7 @@ def test_at_008_combined_ethics_uncertainty_responsibility(
 # ── AT-009: 価値観が不明（問い生成必須） ──────────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_009_values_clarification_questions_generated(
     case_009, composer, validate_output_schema
 ):
@@ -320,6 +320,7 @@ def test_at_009_values_clarification_questions_generated(
 # ── AT-010: 制約の矛盾（矛盾検出＋問い生成） ──────────────────────────────────
 
 
+@pytest.mark.acceptance
 def test_at_010_conflicting_constraints_question_generated(
     case_010, composer, validate_output_schema
 ):
