@@ -20,6 +20,9 @@ Markers:
 from __future__ import annotations
 
 from typing import Any
+from pathlib import Path
+import importlib
+import json
 
 import jsonschema
 import pytest
@@ -27,6 +30,78 @@ import pytest
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 pytestmark = pytest.mark.acceptance
+
+ROOT = Path(__file__).resolve().parents[2]
+SCENARIOS = ROOT / "scenarios"
+
+
+def _import_run_case_file():
+    candidates = [
+        ("pocore.runner", "run_case_file"),
+        ("pocore.orchestrator", "run_case_file"),
+        ("pocore", "run_case_file"),
+    ]
+    for mod_name, fn_name in candidates:
+        try:
+            mod = importlib.import_module(mod_name)
+            fn = getattr(mod, fn_name, None)
+            if callable(fn):
+                return fn
+        except ImportError:
+            continue
+    raise ImportError("Could not import run_case_file")
+
+
+def _sort_key_step(step: dict[str, Any]) -> int:
+    pipeline_order = [
+        "parse_input",
+        "generate_options",
+        "ethics_review",
+        "responsibility_review",
+        "question_layer",
+        "compose_output",
+    ]
+    try:
+        return pipeline_order.index(step.get("name", ""))
+    except ValueError:
+        return 999
+
+
+def _canonicalize(obj: Any, *, parent_key: str = "") -> Any:
+    if isinstance(obj, dict):
+        return {k: _canonicalize(v, parent_key=k) for k, v in obj.items()}
+    if isinstance(obj, list):
+        items = [_canonicalize(i, parent_key=parent_key) for i in obj]
+        if parent_key == "options":
+            return sorted(items, key=lambda x: x.get("option_id", ""))
+        if parent_key == "questions":
+            return sorted(
+                items,
+                key=lambda x: (x.get("priority", 0), x.get("question_id", "")),
+            )
+        if parent_key == "stakeholders":
+            return sorted(items, key=lambda x: (x.get("name", ""), x.get("role", "")))
+        if parent_key == "steps":
+            return sorted(items, key=_sort_key_step)
+        return items
+    return obj
+
+
+def _assert_matches_golden(case_id: str) -> None:
+    expected_path = SCENARIOS / f"{case_id}_expected.json"
+    with expected_path.open("r", encoding="utf-8") as f:
+        expected = json.load(f)
+
+    run_case_file = _import_run_case_file()
+    yaml_path = SCENARIOS / f"{case_id}.yaml"
+    meta = expected.get("meta", {})
+    actual = run_case_file(
+        yaml_path,
+        seed=meta.get("seed", 0),
+        now=meta.get("created_at", "2026-02-22T00:00:00Z"),
+        deterministic=True,
+    )
+    assert _canonicalize(actual) == _canonicalize(expected)
 
 
 def _validate_schema(
@@ -320,6 +395,7 @@ def test_at_009_values_clarification_questions_generated(
     """
     output = composer.compose(case_009)
     _full_must_check(output, output_schema, "AT-009")
+    _assert_matches_golden("case_009")
 
     # FR-Q-001: case_009 has unknowns → questions must be generated
     _assert_questions_present(output)
@@ -345,6 +421,7 @@ def test_at_010_conflicting_constraints_question_generated(
     """
     output = composer.compose(case_010)
     _full_must_check(output, output_schema, "AT-010")
+    _assert_matches_golden("case_010")
 
     # FR-UNC-001: conflicting constraints → uncertainty should be non-trivial
     assert output["uncertainty"]["overall_level"] in {
