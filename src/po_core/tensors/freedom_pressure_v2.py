@@ -511,7 +511,6 @@ class FreedomPressureV2(Tensor):
         return float(np.linalg.norm(last - first))
 
 
-
 def preload_model(model_name: str = "all-MiniLM-L6-v2") -> dict[str, str]:
     """Best-effort preload hook used by runtime wiring."""
     status: dict[str, str] = {"model": model_name}

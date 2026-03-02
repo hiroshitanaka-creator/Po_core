@@ -8,10 +8,8 @@ from typing import Any, Dict, List, Sequence
 from po_core.domain.trace_event import TraceEvent
 
 
-
 def _safe_dict(value: Any) -> Dict[str, Any]:
     return dict(value) if isinstance(value, dict) else {}
-
 
 
 def _safe_list(value: Any) -> List[Any]:
@@ -53,7 +51,6 @@ def _flatten_influence_graph(influence_graph: Any) -> List[Dict[str, Any]]:
     return edges
 
 
-
 def _events_from_tracer(tracer: Any) -> List[TraceEvent]:
     if isinstance(tracer, list):
         return [e for e in tracer if isinstance(e, TraceEvent)]
@@ -68,15 +65,18 @@ def _events_from_tracer(tracer: Any) -> List[TraceEvent]:
     return []
 
 
-
-def _find_first_payload(events: Sequence[TraceEvent], event_type: str) -> Dict[str, Any]:
+def _find_first_payload(
+    events: Sequence[TraceEvent], event_type: str
+) -> Dict[str, Any]:
     for event in events:
         if event.event_type == event_type and isinstance(event.payload, dict):
             return dict(event.payload)
     return {}
 
 
-def _meta_axis_fields(metadata: Dict[str, Any], synthesis_report: Dict[str, Any]) -> Dict[str, Any]:
+def _meta_axis_fields(
+    metadata: Dict[str, Any], synthesis_report: Dict[str, Any]
+) -> Dict[str, Any]:
     axis_name = synthesis_report.get("axis_name")
     axis_spec_version = synthesis_report.get("axis_spec_version")
 
@@ -128,7 +128,6 @@ def validate_tradeoff_map_v1(obj: dict) -> None:
         )
 
 
-
 def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
     """Build trade-off map artifact from PoSelf response and trace events."""
     metadata = _safe_dict(getattr(response, "metadata", {}))
@@ -159,7 +158,9 @@ def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
     }
 
     influence = {
-        "influence_graph": _safe_dict_or_list(deliberation_payload.get("influence_graph")),
+        "influence_graph": _safe_dict_or_list(
+            deliberation_payload.get("influence_graph")
+        ),
         "influence_edges": _flatten_influence_graph(
             deliberation_payload.get("influence_graph")
         ),

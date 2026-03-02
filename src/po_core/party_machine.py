@@ -196,8 +196,6 @@ def run_philosophers(
     ema_alpha = float(os.getenv("PO_PHILOSOPHER_LATENCY_EMA_ALPHA", "0.3"))
     seq_threshold_ms = float(os.getenv("PO_PHILOSOPHER_SEQUENTIAL_THRESHOLD_MS", "0.0"))
 
-    global _LATENCY_EMA_BY_PHILOSOPHER
-
     def _update_ema(pid: str, dt: Optional[int]) -> None:
         if dt is None:
             return
@@ -205,7 +203,9 @@ def run_philosophers(
         if prev is None:
             _LATENCY_EMA_BY_PHILOSOPHER[pid] = float(dt)
             return
-        _LATENCY_EMA_BY_PHILOSOPHER[pid] = ema_alpha * float(dt) + (1.0 - ema_alpha) * prev
+        _LATENCY_EMA_BY_PHILOSOPHER[pid] = (
+            ema_alpha * float(dt) + (1.0 - ema_alpha) * prev
+        )
 
     result_by_index: Dict[int, RunResult] = {}
     proposals_by_index: Dict[int, List[Proposal]] = {}
@@ -244,7 +244,10 @@ def run_philosophers(
     if parallel_indices:
         executor = ThreadPoolExecutor(max_workers=max_workers)
         try:
-            futures = {idx: executor.submit(_run_single, philosophers[idx]) for idx in parallel_indices}
+            futures = {
+                idx: executor.submit(_run_single, philosophers[idx])
+                for idx in parallel_indices
+            }
             done, not_done = wait(list(futures.values()), timeout=timeout_s)
             for idx in parallel_indices:
                 future = futures[idx]

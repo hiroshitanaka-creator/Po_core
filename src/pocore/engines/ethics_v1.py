@@ -192,7 +192,6 @@ def apply(
         return options, summary
 
     # ── Generic: feature-driven ───────────────────────────────────────────
-    feats = features or {}
     fired = _collect_rules_fired(short_id=short_id, features=features)
     fired_set = set(fired)
 
