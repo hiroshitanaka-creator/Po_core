@@ -671,6 +671,7 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
     from po_core.deliberation.synthesis import ArgumentCard, AxisSpec, SynthesisEngine
 
     cards: List[ArgumentCard] = []
+    axis_vectors: List[Dict[str, Any]] = []
     axis_names: set[str] = set()
     for p in proposals:
         extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
@@ -690,6 +691,26 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
                     continue
         axis_names.update(axis_scores.keys())
 
+        policy = pc.get(POLICY, {})
+        policy_decision: Optional[str] = None
+        if isinstance(policy, Mapping):
+            decision = policy.get("decision")
+            if decision is not None:
+                policy_decision = str(decision)
+
+        if axis_scores:
+            author_raw = pc.get(AUTHOR)
+            author = str(author_raw) if author_raw is not None else None
+            axis_vectors.append(
+                {
+                    "author": author,
+                    "proposal_id": str(getattr(p, "proposal_id", "")),
+                    "confidence": float(getattr(p, "confidence", 0.5)),
+                    "axis_scores": axis_scores,
+                    "policy": policy_decision,
+                }
+            )
+
         questions = []
         qs = pc.get("open_questions", [])
         if isinstance(qs, Sequence) and not isinstance(qs, (str, bytes)):
@@ -708,7 +729,9 @@ def _build_synthesis_report(proposals: Sequence[Any]) -> Dict[str, Any]:
 
     axis_spec = AxisSpec(dimensions=sorted(axis_names))
     report = SynthesisEngine().synthesize(axis_spec=axis_spec, cards=cards)
-    return report.to_dict()
+    report_dict = report.to_dict()
+    report_dict["axis_vectors"] = axis_vectors
+    return report_dict
 
 
 def _evaluate_candidate(
