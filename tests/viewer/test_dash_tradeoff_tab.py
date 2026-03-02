@@ -28,6 +28,7 @@ def test_create_app_includes_tradeoff_tab_and_builds_layout() -> None:
 
 
 def test_create_app_tradeoff_tab_shows_axis_no_signal_warning() -> None:
+def test_tradeoff_tab_uses_salience_wording() -> None:
     events = [
         TraceEvent(
             event_type="SynthesisReportBuilt",
@@ -51,3 +52,14 @@ def test_create_app_tradeoff_tab_shows_axis_no_signal_warning() -> None:
     tradeoff_tab = next(tab for tab in tabs.children if tab.value == "tab-tradeoff")
     tab_text = str(tradeoff_tab.children)
     assert "low-signal" in tab_text
+                "scoreboard": {"safety": {"mean": 0.4, "variance": 0.1, "samples": 2}},
+                "axis_vectors": [{"author": "kant", "axis_scores": {"safety": 0.4}}],
+            },
+        )
+    ]
+    app = create_app(events=events)
+
+    layout_text = str(app.layout)
+    assert "Axis Salience Scoreboard" in layout_text
+    assert "Axis Salience Vectors" in layout_text
+    assert "relative emphasis (salience/keyword-hit ratio)" in layout_text

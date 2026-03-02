@@ -89,9 +89,10 @@ def _meta_axis_fields(
         axis_spec_version = proposal_po_core.get("axis_spec_version")
 
     fields: Dict[str, Any] = {
+        "axis_score_semantics": "salience",
         "axis_scoring_calibration_enabled": bool(
             os.getenv("PO_AXIS_SCORING_CALIBRATION_PARAMS")
-        )
+        ),
     }
     if axis_name is not None:
         fields["axis_name"] = axis_name
