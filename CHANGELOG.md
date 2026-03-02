@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-02-22 (Phase 14: Release準備)
+
+### Changed
+
+- `pyproject.toml` release metadata stabilized for 0.2.0:
+  - version `0.2.0`
+  - classifier `Development Status :: 5 - Production/Stable`
+  - `[tool.po_core.project].status=stable`
+
+### Documentation
+
+- `QUICKSTART.md` release packaging section added for maintainers:
+  - `python -m build`
+  - `twine check dist/*`
+- PyPI release verification flow documented as part of 0.2.0 publish checklist.
+
 ## [Unreleased] — Spec Scaffolding M0 (2026-02-22)
 
 ### Added — Documentation / Specification
