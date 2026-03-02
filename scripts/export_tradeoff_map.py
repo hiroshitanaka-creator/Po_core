@@ -16,7 +16,9 @@ SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+from po_core.axis.preferences import parse_weights_str
 from po_core.po_self import PoSelf
+from po_core.viewer.preference_view import apply_preference_view
 from po_core.viewer.tradeoff_map import build_tradeoff_map
 
 
@@ -187,6 +189,7 @@ def _render_markdown(tradeoff_map: Dict[str, Any]) -> str:
     scoreboard = axis.get("scoreboard", {})
     disagreements = axis.get("disagreements", [])
     axis_vectors = axis.get("axis_vectors", [])
+    preference_view = axis.get("preference_view", {})
     influence_graph = influence.get("influence_graph", [])
     influence_edges = influence.get("influence_edges", [])
 
@@ -236,6 +239,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--out-md", default="tradeoff_map.md", help="Output Markdown path"
     )
+    parser.add_argument(
+        "--weights",
+        default=None,
+        help=(
+            "Optional preference weights, e.g. "
+            "'safety:0.5,benefit:0.3,feasibility:0.2'"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -248,6 +259,11 @@ def main() -> int:
     tracer = po.get_trace()
 
     tradeoff_map = build_tradeoff_map(response=response, tracer=tracer)
+    if args.weights is not None:
+        tradeoff_map = apply_preference_view(
+            tradeoff_map,
+            weights=parse_weights_str(args.weights),
+        )
 
     out_json = Path(args.out_json)
     out_json.write_text(

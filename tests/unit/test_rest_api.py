@@ -286,10 +286,13 @@ def test_tradeoff_map_found_after_reason(client_no_auth):
             },
         )
 
-    resp = client_no_auth.get(f"/v1/tradeoff-map/{session_id}")
+    resp = client_no_auth.get(
+        f"/v1/tradeoff-map/{session_id}?weights=safety:0.5,benefit:0.3,feasibility:0.2"
+    )
     assert resp.status_code == 200
     body = resp.json()
     assert body["schema_version"] == "tradeoff_map_v1"
+    assert "preference_view" in body["axis"]
 
 
 # ---------------------------------------------------------------------------
