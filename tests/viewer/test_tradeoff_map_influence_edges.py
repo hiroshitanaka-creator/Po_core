@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import importlib.util
 from datetime import datetime, timezone
+from pathlib import Path
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.po_self import PoSelfResponse
 from po_core.viewer.tradeoff_map import build_tradeoff_map
-import importlib.util
-from pathlib import Path
 
 
 def _load_render_markdown():

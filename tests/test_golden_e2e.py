@@ -24,7 +24,6 @@ To regenerate goldens intentionally:
 
 from __future__ import annotations
 
-import datetime as _dt
 import difflib
 import importlib
 import json

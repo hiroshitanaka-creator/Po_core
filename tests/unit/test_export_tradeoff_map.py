@@ -49,6 +49,7 @@ def test_render_markdown_contains_axis_vectors_table_header() -> None:
     assert "## Axis Scoring Diagnostics" in markdown
     assert "Warning: axis scoring appears low-signal" in markdown
 
+
 def test_render_markdown_contains_axis_scores_disclaimer() -> None:
     markdown = _MODULE._render_markdown({"meta": {}, "axis": {}, "influence": {}})
 

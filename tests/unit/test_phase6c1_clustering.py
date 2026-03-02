@@ -14,7 +14,6 @@ Markers: phase6c1
 from __future__ import annotations
 
 import uuid
-from typing import List
 
 import numpy as np
 import pytest
