@@ -48,6 +48,7 @@ from po_core.trace.decision_events import (
     emit_safety_override_applied,
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
+from po_core.trace.synthesis_report_events import emit_synthesis_report_built
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 
@@ -541,7 +542,15 @@ def _run_phase_post(
     try:
         synthesis_report = _build_synthesis_report(proposals)
     except Exception:
-        synthesis_report = None
+        synthesis_report = {}
+
+    emit_synthesis_report_built(
+        tracer,
+        ctx,
+        synthesis_report,
+        axis_name=axis_spec.axis_name,
+        axis_spec_version=axis_spec.spec_version,
+    )
 
     tracer.emit(
         TraceEvent.now("PolicyPrecheckSummary", ctx.request_id, precheck_counts)
@@ -656,7 +665,7 @@ def _run_phase_post(
         "proposal": final_main.compact(),
     }
 
-    if _structured_output_enabled() and synthesis_report is not None:
+    if _structured_output_enabled() and synthesis_report:
         result["synthesis_report"] = synthesis_report
 
     return result
