@@ -128,20 +128,37 @@ def validate_tradeoff_map_v1(obj: dict) -> None:
         )
 
 
-def build_tradeoff_map(response: Any, tracer: Any) -> Dict[str, Any]:
+def build_tradeoff_map(response: Any | None, tracer: Any) -> Dict[str, Any]:
     """Build trade-off map artifact from PoSelf response and trace events."""
     metadata = _safe_dict(getattr(response, "metadata", {}))
     synthesis_report = _safe_dict(metadata.get("synthesis_report"))
 
     events = _events_from_tracer(tracer)
     deliberation_payload = _find_first_payload(events, "DeliberationCompleted")
+    decision_payload = _find_first_payload(events, "DecisionEmitted")
     selected_payload = _find_first_payload(events, "PhilosophersSelected")
+    synthesis_built_payload = _find_first_payload(events, "SynthesisReportBuilt")
+
+    if not synthesis_report:
+        synthesis_report = synthesis_built_payload
+
+    request_id = metadata.get("request_id")
+    if request_id is None:
+        request_id = next((event.correlation_id for event in events), None)
+
+    degraded = metadata.get("degraded")
+    if degraded is None:
+        degraded = decision_payload.get("degraded")
+
+    consensus_leader = getattr(response, "consensus_leader", None)
+    if consensus_leader is None:
+        consensus_leader = _safe_dict(decision_payload.get("final")).get("author")
 
     meta: Dict[str, Any] = {
-        "request_id": metadata.get("request_id"),
+        "request_id": request_id,
         "status": metadata.get("status"),
-        "degraded": metadata.get("degraded"),
-        "consensus_leader": getattr(response, "consensus_leader", None),
+        "degraded": degraded,
+        "consensus_leader": consensus_leader,
         "prompt": getattr(response, "prompt", ""),
     }
     meta.update(_meta_axis_fields(metadata, synthesis_report))
