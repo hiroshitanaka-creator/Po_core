@@ -643,69 +643,111 @@
     // ─── Live mode ────────────────────────────────────────────────
     async function runLive(input) {
       const apiUrl = document.getElementById('api-url-input').value.trim();
+      const wsUrl = apiUrl.replace(/^http/i, 'ws').replace(/\/$/, '');
 
-      appendLog('<div class="t-step">Calling Po_core API…</div>');
+      appendLog('<div class="t-step">Connecting WebSocket stream…</div>');
       setGate('gate-intent', '', 'Intention Gate: Evaluating…');
 
       const body = { input };
       if (sessionId) body.session_id = sessionId;
 
-      let data;
-      try {
-        const r = await fetch(`${apiUrl}/v1/reason`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(60000),
-        });
-        if (!r.ok) {
-          const txt = await r.text();
-          throw new Error(`HTTP ${r.status}: ${txt.slice(0, 200)}`);
-        }
-        data = await r.json();
-      } catch (e) {
+      await new Promise((resolve, reject) => {
+        const ws = new WebSocket(`${wsUrl}/v1/ws/reason`);
+        let resolved = false;
+
+        ws.onopen = () => {
+          ws.send(JSON.stringify(body));
+        };
+
+        ws.onmessage = (ev) => {
+          let chunk;
+          try {
+            chunk = JSON.parse(ev.data);
+          } catch {
+            return;
+          }
+
+          const type = chunk.chunk_type;
+          const payload = chunk.payload || {};
+
+          if (type === 'started') {
+            if (payload.session_id) {
+              sessionId = payload.session_id;
+              localStorage.setItem('po_session', sessionId);
+              updateSessionLabel();
+            }
+            appendLog('<div class="t-sys">WebSocket stream started.</div>');
+            return;
+          }
+
+          if (type === 'event') {
+            const eventType = payload.event_type || 'trace';
+            appendLog(`<div class="t-sys">event: ${escHtml(eventType)}</div>`);
+            return;
+          }
+
+          if (type === 'result') {
+            const t = payload.tensors || {};
+            setTensors(t.freedom_pressure, t.semantic_delta, t.blocked_tensor);
+            appendLog(`<div class="t-step">Tensors computed</div>`);
+
+            const blocked = payload.status === 'blocked';
+            setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+            setGate('gate-action',  blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+
+            if (payload.philosophers && payload.philosophers.length > 0) {
+              appendLog('<div class="t-step">Philosopher deliberations</div>');
+              payload.philosophers.forEach(p => {
+                appendLog(`
+                  <div class="t-talk">
+                    <span class="t-name">[${p.name}]</span>
+                    <span class="t-weight">w=${(p.weight*100).toFixed(0)}%</span><br/>
+                    <span style="color:var(--text)">${p.proposal || '…'}</span>
+                  </div>`);
+              });
+              highlightPhilosophers(payload.philosophers);
+            }
+
+            setVerdict(payload.status || 'approved');
+            const ms = payload.processing_time_ms != null ? payload.processing_time_ms.toFixed(0) : '—';
+            document.getElementById('proc-time').innerText = `${ms} ms | SafetyMode: ${payload.safety_mode || '—'}`;
+
+            appendLog('<div class="t-step">Final Response</div>');
+            appendLog(`<div class="t-final">${escHtml(payload.response || '')}</div>`);
+            return;
+          }
+
+          if (type === 'error') {
+            ws.close();
+            reject(new Error(payload.message || 'WebSocket stream error'));
+            return;
+          }
+
+          if (type === 'done') {
+            ws.close();
+            if (!resolved) {
+              resolved = true;
+              resolve();
+            }
+          }
+        };
+
+        ws.onerror = () => {
+          if (!resolved) {
+            reject(new Error('WebSocket connection failed'));
+          }
+        };
+
+        ws.onclose = () => {
+          if (!resolved) {
+            resolved = true;
+            resolve();
+          }
+        };
+      }).catch((e) => {
         setGate('gate-intent', 'block', 'Intention Gate: CONNECTION ERROR');
         throw e;
-      }
-
-      // Save session
-      if (data.session_id) {
-        sessionId = data.session_id;
-        localStorage.setItem('po_session', sessionId);
-        updateSessionLabel();
-      }
-
-      // Tensors
-      const t = data.tensors || {};
-      setTensors(t.freedom_pressure, t.semantic_delta, t.blocked_tensor);
-      appendLog(`<div class="t-step">Tensors computed</div>`);
-
-      // Gates
-      const blocked = data.status === 'blocked';
-      setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
-      setGate('gate-action',  blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
-
-      // Philosophers
-      if (data.philosophers && data.philosophers.length > 0) {
-        appendLog('<div class="t-step">Philosopher deliberations</div>');
-        data.philosophers.forEach(p => {
-          appendLog(`
-            <div class="t-talk">
-              <span class="t-name">[${p.name}]</span>
-              <span class="t-weight">w=${(p.weight*100).toFixed(0)}%</span><br/>
-              <span style="color:var(--text)">${p.proposal || '…'}</span>
-            </div>`);
-        });
-        highlightPhilosophers(data.philosophers);
-      }
-
-      // Verdict + response
-      setVerdict(data.status || 'approved');
-      const ms = data.processing_time_ms != null ? data.processing_time_ms.toFixed(0) : '—';
-      document.getElementById('proc-time').innerText = `${ms} ms | SafetyMode: ${data.safety_mode || '—'}`;
-
-      appendLog('<div class="t-step">Final Response</div>');
-      appendLog(`<div class="t-final">${escHtml(data.response || '')}</div>`);
+      });
     }
 
     // ─── Demo mode ────────────────────────────────────────────────
