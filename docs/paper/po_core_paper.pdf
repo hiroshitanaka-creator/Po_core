@@ -1,0 +1,93 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Count 1 /Kids [3 0 R] >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj
+4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+5 0 obj << /Length 1558 >> stream
+BT
+/F1 11 Tf
+50 780 Td
+14 TL
+(# Po_core: A Philosophy-Driven AI Deliberation Framework for Ethical Decision Support) Tj
+T*
+( ) Tj
+T*
+(## Abstract) Tj
+T*
+( ) Tj
+T*
+(Po_core proposes a deterministic, accountable AI deliberation stack that prioritizes ethical reasoni) Tj
+T*
+( ) Tj
+T*
+(## Introduction) Tj
+T*
+( ) Tj
+T*
+(Recent criticism frames LLM systems as "stochastic parrots" that cannot justify decisions. Po_core a) Tj
+T*
+( ) Tj
+T*
+(## Method) Tj
+T*
+( ) Tj
+T*
+(1. Generate deterministic experiment snapshots under `docs/paper/experiments/`.) Tj
+T*
+(2. Build comparative benchmark artifacts under `docs/paper/benchmarks/results/`.) Tj
+T*
+(3. Compile `paper.md` with embedded snapshot metadata.) Tj
+T*
+(4. Render a deterministic PDF from the compiled manuscript.) Tj
+T*
+( ) Tj
+T*
+(## Experiments) Tj
+T*
+( ) Tj
+T*
+(Core experiment outputs are versioned under `docs/paper/experiments/` and benchmark summaries under ) Tj
+T*
+( ) Tj
+T*
+(## Limitations) Tj
+T*
+( ) Tj
+T*
+(The current PDF builder intentionally focuses on deterministic single-page rendering to keep infrast) Tj
+T*
+( ) Tj
+T*
+(## References) Tj
+T*
+( ) Tj
+T*
+(1. Po_core repository specs and ADRs \(`docs/spec/`, `docs/adr/`\).) Tj
+T*
+(2. Acceptance and governance tests \(`tests/acceptance/`, `tests/test_traceability.py`\).) Tj
+T*
+(3. Deterministic paper pipeline scripts \(`scripts/paper/`\).) Tj
+T*
+( ) Tj
+T*
+(## Embedded Experiment Snapshot) Tj
+T*
+(- scenario_count: 15) Tj
+T*
+(- golden_count: 11) Tj
+T*
+(- scenario_digest: 47da511ef65b1eb5b6b92703fbf4eda0c59326871da2dff57cf26b48be1ca8fe) Tj
+ET
+endstream endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+1921
+%%EOF

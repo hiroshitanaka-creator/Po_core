@@ -15,6 +15,10 @@ make paper-build
 
 This command runs the experiment snapshot generation and then builds the PDF from the paper source.
 
+Generated PDF output path:
+
+- `docs/paper/po_core_paper.pdf`
+
 ## Comparative benchmark (Phase 23 / 4-B)
 
 ```bash
