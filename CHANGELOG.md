@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - No unreleased changes.
 
+## [1.0.0] - 2026-03-03
+
+### Changed
+
+- Bumped package version to `1.0.0` in `pyproject.toml` for the v1.0.0 stable release baseline.
+- Added v1 release check entrypoint at `scripts/release/check_v1_release.py` to run release gating checks from a stable path.
+- Updated SRS baseline status and implementation version to reflect the v1.0.0 release target.
+
+### Documentation
+
+- Added `docs/spec/srs_v1.0.md` as the normative v1.0 SRS snapshot used for release evidence and traceability.
+
 ## [0.2.0] - 2026-03-03 (Stage2 5-F: stable release)
 
 ### Changed
