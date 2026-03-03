@@ -53,10 +53,12 @@ Reference Specifications:
 
 from .action_gate import ActionGate, TwoStageGate, check_proposal
 from .detectors import (
+    DetectorChain,
     DetectorRegistry,
     EnglishKeywordViolationDetector,
     KeywordRule,
     KeywordViolationDetector,
+    LLMViolationDetector,
     PromptInjectionDetector,
     ViolationDetector,
     aggregate_evidence_to_violations,
@@ -138,10 +140,12 @@ __all__ = [
     # Detectors
     "ViolationDetector",
     "DetectorRegistry",
+    "DetectorChain",
     "KeywordRule",
     "KeywordViolationDetector",
     "EnglishKeywordViolationDetector",
     "PromptInjectionDetector",
+    "LLMViolationDetector",
     "aggregate_evidence_to_violations",
     "create_default_registry",
     # Semantic Drift

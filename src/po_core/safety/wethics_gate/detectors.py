@@ -33,7 +33,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from .types import Candidate, Evidence, Violation
 
@@ -110,6 +110,41 @@ class DetectorRegistry:
     def get_all(self) -> List[ViolationDetector]:
         """Get all registered detectors."""
         return list(self._detectors.values())
+
+
+class DetectorChain(ViolationDetector):
+    """
+    Compose multiple detectors into one detector.
+
+    This enables hybrid mode (rule + LLM) while preserving the
+    ``ViolationDetector`` interface used by the gate.
+    """
+
+    detector_id = "chain"
+    version = "0.1"
+
+    def __init__(self, detectors: Sequence[ViolationDetector], chain_id: str = "chain"):
+        if not detectors:
+            raise ValueError("DetectorChain requires at least one detector")
+        self._detectors = list(detectors)
+        self.detector_id = chain_id
+
+    def detect(
+        self, c: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> List[Evidence]:
+        """Run all detectors and return de-duplicated evidence in stable order."""
+        merged: List[Evidence] = []
+        seen = set()
+
+        for detector in self._detectors:
+            for ev in detector.detect(c, context=context):
+                key = (ev.code, ev.message, ev.detector_id, ev.span)
+                if key in seen:
+                    continue
+                seen.add(key)
+                merged.append(ev)
+
+        return merged
 
 
 def _clamp01(x: float) -> float:
@@ -691,6 +726,97 @@ class PromptInjectionDetector(ViolationDetector):
         return evs
 
 
+class LLMViolationDetector(ViolationDetector):
+    """
+    Prototype detector that simulates/uses an LLM safety analysis backend.
+
+    The detector accepts an injectable ``analyze_fn`` to keep tests deterministic.
+    If omitted, a deterministic phrase-based prototype is used.
+    """
+
+    detector_id = "llm_prototype"
+    version = "0.1"
+
+    def __init__(
+        self,
+        analyze_fn: Optional[
+            Callable[[Candidate, Optional[Dict[str, Any]]], Sequence[Dict[str, Any]]]
+        ] = None,
+    ) -> None:
+        self._analyze_fn = analyze_fn or self._default_analyze
+
+    def _default_analyze(
+        self, c: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> Sequence[Dict[str, Any]]:
+        """
+        Deterministic prototype that emulates semantic LLM judgments.
+
+        It intentionally catches paraphrases that strict keyword rules can miss.
+        """
+        txt = c.text.lower()
+        findings: List[Dict[str, Any]] = []
+
+        if "trap" in txt and "user" in txt:
+            findings.append(
+                {
+                    "code": "W3",
+                    "message": "Potential dependency engineering (semantic)",
+                    "strength": 0.72,
+                    "confidence": 0.68,
+                    "tags": ["llm", "semantic"],
+                }
+            )
+
+        if "override" in txt and "safety" in txt:
+            findings.append(
+                {
+                    "code": "W1",
+                    "message": "Safety-control override intent (semantic)",
+                    "strength": 0.88,
+                    "confidence": 0.72,
+                    "tags": ["llm", "semantic"],
+                }
+            )
+
+        if "legacy users" in txt and any(w in txt for w in ("drop", "abandon", "cut")):
+            findings.append(
+                {
+                    "code": "W4",
+                    "message": "Structural exclusion of existing users (semantic)",
+                    "strength": 0.65,
+                    "confidence": 0.66,
+                    "tags": ["llm", "semantic"],
+                }
+            )
+
+        return findings
+
+    def detect(
+        self, c: Candidate, context: Optional[Dict[str, Any]] = None
+    ) -> List[Evidence]:
+        """Create evidence from backend findings."""
+        evs: List[Evidence] = []
+
+        for finding in self._analyze_fn(c, context):
+            code = str(finding.get("code", "")).strip()
+            if code not in {"W0", "W1", "W2", "W3", "W4"}:
+                continue
+
+            evs.append(
+                Evidence(
+                    code=code,
+                    message=str(finding.get("message", "LLM detector finding")),
+                    strength=float(finding.get("strength", 0.5)),
+                    confidence=float(finding.get("confidence", 0.5)),
+                    detector_id=self.detector_id,
+                    span=finding.get("span"),
+                    tags=list(finding.get("tags", ["llm"])),
+                )
+            )
+
+        return evs
+
+
 def create_default_registry() -> DetectorRegistry:
     """Create a registry with default detectors (Japanese + English + Injection)."""
     registry = DetectorRegistry()
@@ -703,10 +829,12 @@ def create_default_registry() -> DetectorRegistry:
 __all__ = [
     "ViolationDetector",
     "DetectorRegistry",
+    "DetectorChain",
     "KeywordRule",
     "KeywordViolationDetector",
     "EnglishKeywordViolationDetector",
     "PromptInjectionDetector",
+    "LLMViolationDetector",
     "aggregate_evidence_to_violations",
     "create_default_registry",
 ]
