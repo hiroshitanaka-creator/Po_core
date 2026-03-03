@@ -25,6 +25,7 @@ from po_core.app.rest.config import APISettings
 from po_core.app.rest.review_store import _review_store
 from po_core.app.rest.server import create_app
 from po_core.app.rest.store import get_trace_store, reset_trace_store
+from po_core.domain.trace_event import TraceEvent
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -33,10 +34,12 @@ from po_core.app.rest.store import get_trace_store, reset_trace_store
 
 @pytest.fixture(autouse=True)
 def clear_trace_store():
-    """Reset the trace store singleton before each test."""
+    """Reset the trace store singleton and review queue before each test."""
     reset_trace_store()
+    _review_store.clear()
     yield
     reset_trace_store()
+    _review_store.clear()
 
 
 @pytest.fixture()
@@ -350,7 +353,10 @@ def test_trace_history_lists_sessions(client_no_auth):
     assert resp.status_code == 200
     body = resp.json()
     assert body["total"] >= 2
-    assert [item["session_id"] for item in body["items"][:2]] == ["history-2", "history-1"]
+    assert [item["session_id"] for item in body["items"][:2]] == [
+        "history-2",
+        "history-1",
+    ]
 
 
 @pytest.mark.unit
@@ -399,7 +405,9 @@ def test_trace_persists_across_store_reinitialization(tmp_path):
         assert body["event_count"] >= 0
         hist_resp = client2.get("/v1/trace/history?limit=10")
         assert hist_resp.status_code == 200
-        assert any(i["session_id"] == "restart-session" for i in hist_resp.json()["items"])
+        assert any(
+            i["session_id"] == "restart-session" for i in hist_resp.json()["items"]
+        )
 
 
 @pytest.mark.unit
@@ -495,7 +503,12 @@ def test_reason_ws_stream_receives_realtime_events(client_no_auth):
     with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
         with client_no_auth.websocket_connect("/v1/ws/reason") as ws:
             ws.send_json({"input": "What is practical wisdom?"})
-            chunks = [ws.receive_json(), ws.receive_json(), ws.receive_json(), ws.receive_json()]
+            chunks = [
+                ws.receive_json(),
+                ws.receive_json(),
+                ws.receive_json(),
+                ws.receive_json(),
+            ]
 
     chunk_types = [c["chunk_type"] for c in chunks]
     assert chunk_types == ["started", "event", "result", "done"]

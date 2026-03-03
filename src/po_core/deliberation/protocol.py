@@ -1,15 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import (
-    Any,
-    Dict,
-    List,
-    Mapping,
-    Optional,
-    Sequence,
-    Tuple,
-)
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.domain.proposal import Proposal

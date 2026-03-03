@@ -31,7 +31,9 @@ def test_questions_are_suppressed_when_intention_gate_revises() -> None:
     assert output["questions"] == []
 
 
-def test_questions_are_not_suppressed_when_unknowns_remain_and_intention_allows() -> None:
+def test_questions_are_not_suppressed_when_unknowns_remain_and_intention_allows() -> (
+    None
+):
     case = {**_base_case(), "unknowns": ["意思決定期限"]}
     run_result = {
         "status": "ok",

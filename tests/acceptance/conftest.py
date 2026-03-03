@@ -55,7 +55,9 @@ def output_schema() -> dict[str, Any]:
 
 
 @pytest.fixture(scope="session")
-def validate_output_schema(output_schema: dict[str, Any]) -> Callable[[dict[str, Any], str], None]:
+def validate_output_schema(
+    output_schema: dict[str, Any],
+) -> Callable[[dict[str, Any], str], None]:
     """Return a reusable output-schema validator for acceptance tests."""
 
     validator = Draft202012Validator(output_schema)

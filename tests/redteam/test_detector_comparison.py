@@ -73,7 +73,9 @@ class TestDetectorComparison:
             ),
         )
 
-        hybrid = DetectorChain([rule_detector, llm_detector], chain_id="hybrid_rule_llm")
+        hybrid = DetectorChain(
+            [rule_detector, llm_detector], chain_id="hybrid_rule_llm"
+        )
 
         rule_codes = {ev.code for ev in rule_detector.detect(candidate)}
         llm_codes = {ev.code for ev in llm_detector.detect(candidate)}
@@ -101,7 +103,9 @@ class TestDetectorComparison:
             ),
         ]
 
-        hybrid = DetectorChain([rule_detector, llm_detector], chain_id="hybrid_rule_llm")
+        hybrid = DetectorChain(
+            [rule_detector, llm_detector], chain_id="hybrid_rule_llm"
+        )
 
         def coverage(detector):
             covered = 0

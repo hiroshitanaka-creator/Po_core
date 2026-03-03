@@ -142,7 +142,9 @@ def _detect_escalate(result: dict, tracer: InMemoryTracer) -> tuple[bool, str]:
     return False, ""
 
 
-def _enqueue_escalated_review(session_id: str, result: dict, tracer: InMemoryTracer) -> None:
+def _enqueue_escalated_review(
+    session_id: str, result: dict, tracer: InMemoryTracer
+) -> None:
     """Queue human review item when an ESCALATE decision is observed."""
     escalated, reason = _detect_escalate(result, tracer)
     if not escalated:

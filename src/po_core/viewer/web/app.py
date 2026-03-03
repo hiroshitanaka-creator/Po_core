@@ -474,7 +474,9 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
     return html.Div(children, style={"padding": "20px"})
 
 
-def _build_human_review_tab(review_items: Optional[Sequence[dict[str, Any]]]) -> html.Div:
+def _build_human_review_tab(
+    review_items: Optional[Sequence[dict[str, Any]]],
+) -> html.Div:
     """Human review queue tab for ESCALATE operational visibility."""
     children = [html.H3("Human Review Queue")]
 

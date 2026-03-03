@@ -13,10 +13,7 @@ from po_core.app.rest.models import (
     ReviewItem,
     ReviewPendingResponse,
 )
-from po_core.app.rest.review_store import (
-    apply_review_decision,
-    get_pending_reviews,
-)
+from po_core.app.rest.review_store import apply_review_decision, get_pending_reviews
 from po_core.app.rest.store import append_trace_event
 from po_core.domain.trace_event import TraceEvent
 
@@ -45,7 +42,9 @@ async def review_decision(
 ) -> ReviewDecisionResponse:
     decision = body.decision.strip().lower()
     if decision not in {"approve", "reject"}:
-        raise HTTPException(status_code=422, detail="decision must be 'approve' or 'reject'")
+        raise HTTPException(
+            status_code=422, detail="decision must be 'approve' or 'reject'"
+        )
 
     item = apply_review_decision(
         review_id,

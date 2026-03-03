@@ -28,7 +28,9 @@ def _normalize_subject(value: str) -> str:
     return " ".join(value.strip().lower().split())
 
 
-def sanitize_decision_owner(owner: str | None, *, fallback: str = _DEFAULT_OWNER) -> str:
+def sanitize_decision_owner(
+    owner: str | None, *, fallback: str = _DEFAULT_OWNER
+) -> str:
     """Return a schema-safe decision owner.
 
     Empty/forbidden subjects are replaced by ``fallback``.
@@ -56,7 +58,9 @@ def _build_stakeholders(case: dict[str, Any], *, limit: int) -> list[dict[str, s
     return [{"name": "関係者", "role": "利害関係者", "impact": "直接影響を受ける"}]
 
 
-def build_responsibility_summary(case: dict[str, Any], *, values: list[str]) -> dict[str, Any]:
+def build_responsibility_summary(
+    case: dict[str, Any], *, values: list[str]
+) -> dict[str, Any]:
     """Build top-level responsibility summary (FR-RES-001 compliant)."""
     stakeholders = case.get("stakeholders", [])
     raw_owner = str(stakeholders[0].get("name", "")) if stakeholders else ""
