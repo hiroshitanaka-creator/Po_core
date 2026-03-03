@@ -45,8 +45,9 @@ def test_run_comparative_benchmark_outputs_are_created(tmp_path: Path) -> None:
         "emergence",
     }
 
-    assert "| System | Diversity | Explainability | Safety | Emergence | Overall |" in md_path.read_text(
-        encoding="utf-8"
+    assert (
+        "| System | Diversity | Explainability | Safety | Emergence | Overall |"
+        in md_path.read_text(encoding="utf-8")
     )
     assert "<svg" in svg_path.read_text(encoding="utf-8")
 

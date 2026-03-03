@@ -46,7 +46,7 @@ app: FastAPI | None = None
 
 def _rate_limit_handler(request: Request, exc: Exception) -> Response:
     """Typed wrapper so mypy accepts the handler signature for add_exception_handler."""
-    return _rate_limit_exceeded_handler(request, exc)  # type: ignore[arg-type]
+    return _rate_limit_exceeded_handler(request, exc)
 
 
 def _parse_cors_origins(cors_origins: str) -> list[str]:

@@ -22,7 +22,9 @@ def test_template_propose_contract_po_core_fields() -> None:
     ph = TemplatePhilosopher()
 
     ctx = Context.now(request_id="plugin-template-001", user_input="What should we do?")
-    proposals = ph.propose(ctx, Intent.neutral(), TensorSnapshot.empty(), MemorySnapshot.empty())
+    proposals = ph.propose(
+        ctx, Intent.neutral(), TensorSnapshot.empty(), MemorySnapshot.empty()
+    )
 
     assert proposals
     proposal = proposals[0]
