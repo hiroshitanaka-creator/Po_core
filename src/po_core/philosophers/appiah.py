@@ -329,7 +329,9 @@ class Appiah(Philosopher):
             )
         elif prog_count >= 2:
             dynamic = "Moral Progress Under Way"
-            description = "Active moral change — ask what honor norms are being renegotiated"
+            description = (
+                "Active moral change — ask what honor norms are being renegotiated"
+            )
         else:
             dynamic = "Stable Moral Landscape"
             description = "No marked moral progress dynamic detected"
@@ -356,13 +358,20 @@ class Appiah(Philosopher):
 
         if universal_particular["mode"] == "Productive Tension":
             score += 2
-            elements.append("Universal/particular tension — the core cosmopolitan challenge")
+            elements.append(
+                "Universal/particular tension — the core cosmopolitan challenge"
+            )
         if identity_type["identity_type"] == "Essentialist Risk":
             score += 2
-            elements.append("Essentialist identity framing — autonomy may be constrained")
+            elements.append(
+                "Essentialist identity framing — autonomy may be constrained"
+            )
 
         if score >= 3:
-            level, desc = "High", "Strong cosmopolitan tension requiring careful navigation"
+            level, desc = (
+                "High",
+                "Strong cosmopolitan tension requiring careful navigation",
+            )
         elif score >= 1:
             level, desc = "Moderate", "Some cosmopolitan tension present"
         else:
@@ -387,7 +396,10 @@ class Appiah(Philosopher):
         text_lower = prompt.lower()
 
         # Domain-specific applied reasoning
-        if any(w in text_lower for w in ["race", "ethnicity", "black", "african", "identity"]):
+        if any(
+            w in text_lower
+            for w in ["race", "ethnicity", "black", "african", "identity"]
+        ):
             applied = (
                 "Appiah insists that race is not a biological kind but a historically "
                 "constructed social category whose genealogy should make us suspicious "
@@ -397,7 +409,9 @@ class Appiah(Philosopher):
                 "solidarity without demanding conformity, and to build identities "
                 "that leave room for individual autonomy and multiple loyalties."
             )
-        elif any(w in text_lower for w in ["culture", "tradition", "heritage", "custom"]):
+        elif any(
+            w in text_lower for w in ["culture", "tradition", "heritage", "custom"]
+        ):
             applied = (
                 "No culture has ever been pure. The contamination thesis holds that "
                 "cultures are always already mixed, always borrowing from elsewhere. "
@@ -407,7 +421,10 @@ class Appiah(Philosopher):
                 "flourish through encounter with other traditions. Authenticity in "
                 "cultural life is not purity but creative engagement."
             )
-        elif any(w in text_lower for w in ["global", "cosmopolitan", "world", "international"]):
+        elif any(
+            w in text_lower
+            for w in ["global", "cosmopolitan", "world", "international"]
+        ):
             applied = (
                 "Cosmopolitanism as Appiah conceives it is not the cold universalism "
                 "that dissolves particular attachments, nor the parochialism that "
@@ -418,7 +435,9 @@ class Appiah(Philosopher):
                 "to engage with strangers is not to agree with them but to take "
                 "their humanity seriously."
             )
-        elif any(w in text_lower for w in ["moral", "ethic", "right", "wrong", "justice"]):
+        elif any(
+            w in text_lower for w in ["moral", "ethic", "right", "wrong", "justice"]
+        ):
             applied = (
                 "Moral progress, for Appiah, is rarely the triumph of pure argument. "
                 "The great moral revolutions — over slavery, duelling, foot-binding — "

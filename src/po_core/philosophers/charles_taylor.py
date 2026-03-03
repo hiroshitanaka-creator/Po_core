@@ -177,7 +177,9 @@ class CharlesTaylor(Philosopher):
             )
         else:
             level = "Evaluative Stance Unclear"
-            description = "Neither strong evaluation nor bare preference clearly dominant"
+            description = (
+                "Neither strong evaluation nor bare preference clearly dominant"
+            )
 
         return {
             "level": level,
@@ -236,8 +238,15 @@ class CharlesTaylor(Philosopher):
         spi = sum(1 for w in spiritual_words if w in text_lower)
         sec = sum(1 for w in secular_words if w in text_lower)
 
-        scores = {"liberal": lib, "communitarian": com, "spiritual": spi, "secular": sec}
-        dominant = max(scores, key=lambda k: scores[k]) if any(scores.values()) else "implicit"
+        scores = {
+            "liberal": lib,
+            "communitarian": com,
+            "spiritual": spi,
+            "secular": sec,
+        }
+        dominant = (
+            max(scores, key=lambda k: scores[k]) if any(scores.values()) else "implicit"
+        )
 
         return {
             "dominant_framework": dominant,
@@ -441,7 +450,9 @@ class CharlesTaylor(Philosopher):
             )
         elif len(detected) == 1:
             severity = f"Single Malaise: {detected[0]}"
-            description = f"{detected[0]} detected — one of Taylor's three malaises of modernity"
+            description = (
+                f"{detected[0]} detected — one of Taylor's three malaises of modernity"
+            )
         else:
             severity = "Malaises Not Dominant"
             description = "No marked malaises of modernity detected"
@@ -472,7 +483,9 @@ class CharlesTaylor(Philosopher):
 
         if strong_eval["level"] == "Preference Satisfaction Mode":
             score += 2
-            elements.append("Preference-only framing evacuates qualitative worth distinctions")
+            elements.append(
+                "Preference-only framing evacuates qualitative worth distinctions"
+            )
         if "Atomism" in malaises.get("detected_malaises", []):
             score += 1
             elements.append("Atomism: self severed from community and tradition")
@@ -481,16 +494,24 @@ class CharlesTaylor(Philosopher):
             elements.append("Instrumental reason crowding out qualitative goods")
         if "Political Disengagement" in malaises.get("detected_malaises", []):
             score += 1
-            elements.append("Political disengagement — the soft despotism Tocqueville feared")
+            elements.append(
+                "Political disengagement — the soft despotism Tocqueville feared"
+            )
 
         if score >= 4:
             level, desc = "High", "Deep malaises of modernity — framework collapse risk"
         elif score >= 2:
-            level, desc = "Moderate", "Some modern malaises present — background framework endangered"
+            level, desc = (
+                "Moderate",
+                "Some modern malaises present — background framework endangered",
+            )
         elif score >= 1:
             level, desc = "Low", "Minor modern malaise signals"
         else:
-            level, desc = "Very Low", "Strong qualitative evaluations and moral horizons intact"
+            level, desc = (
+                "Very Low",
+                "Strong qualitative evaluations and moral horizons intact",
+            )
 
         return {
             "level": level,
@@ -511,7 +532,10 @@ class CharlesTaylor(Philosopher):
         """Construct Charles Taylor's communitarian-hermeneutic reasoning."""
         text_lower = prompt.lower()
 
-        if any(w in text_lower for w in ["identity", "self", "who am i", "authentic", "meaning"]):
+        if any(
+            w in text_lower
+            for w in ["identity", "self", "who am i", "authentic", "meaning"]
+        ):
             applied = (
                 "For Taylor, the self is not a pre-given entity that then acquires "
                 "values and commitments — it is constituted through its 'webs of "
@@ -523,7 +547,10 @@ class CharlesTaylor(Philosopher):
                 "dissolution of selfhood. Authentic identity requires horizons of "
                 "significance that are not of the self's own making."
             )
-        elif any(w in text_lower for w in ["community", "culture", "multicultur", "recognit", "minority"]):
+        elif any(
+            w in text_lower
+            for w in ["community", "culture", "multicultur", "recognit", "minority"]
+        ):
             applied = (
                 "Taylor's politics of recognition distinguishes two demands that are "
                 "often confused: the politics of equal dignity (everyone deserves "
@@ -535,7 +562,10 @@ class CharlesTaylor(Philosopher):
                 "being seen through a false or demeaning image — is not merely "
                 "disrespectful; it inflicts a wound on identity itself."
             )
-        elif any(w in text_lower for w in ["modern", "secular", "religion", "belief", "meaning"]):
+        elif any(
+            w in text_lower
+            for w in ["modern", "secular", "religion", "belief", "meaning"]
+        ):
             applied = (
                 "Taylor's *A Secular Age* charts the rise of what he calls the "
                 "'immanent frame' — the condition in which the world is experienced "
