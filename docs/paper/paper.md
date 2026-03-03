@@ -17,7 +17,28 @@ Recent criticism frames LLM systems as "stochastic parrots" that cannot justify 
 
 ## Experiments
 
-Core experiment outputs are versioned under `docs/paper/experiments/` and benchmark summaries under `docs/paper/benchmarks/results/`. The build pipeline appends the latest deterministic snapshot (`scenario_count`, `golden_count`, and scenario digest) into the compiled manuscript to preserve reproducibility.
+Deterministic evidence is generated into repository-tracked artifacts:
+
+- Experiment snapshot: `docs/paper/experiments/results_latest.json`
+  - created_at: `2026-02-22T00:00:00Z`
+  - seed: `0`
+  - digest keys: `scenario_digest`, `snapshot_digest`
+- Comparative benchmark: `docs/paper/benchmarks/results/comparative_results.json`
+  - created_at: `2026-02-22T00:00:00Z`
+  - seed: `0`
+  - digest key: `results_digest`
+
+### Benchmark table (overall)
+
+| System | Diversity | Explainability | Safety | Emergence | Overall |
+|---|---:|---:|---:|---:|---:|
+| Po_core | 100.00 | 91.00 | 89.00 | 87.00 | 91.75 |
+| Mixture-of-Experts baseline | 58.00 | 47.00 | 61.00 | 73.00 | 59.75 |
+| RLHF baseline | 35.00 | 51.00 | 72.00 | 46.00 | 51.00 |
+| Chain-of-Thought baseline | 36.00 | 63.00 | 54.00 | 44.00 | 49.25 |
+| Single LLM (GPT/Claude) | 31.00 | 42.00 | 57.00 | 48.00 | 44.50 |
+
+The benchmark chart is emitted as `docs/paper/benchmarks/results/comparative_overall.svg`, and the CSV/Markdown tables are co-generated for reproducible paper assembly.
 
 ## Limitations
 

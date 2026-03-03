@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "pipeline": "paper_experiments_v1",
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "seed": 0
+  },
+  "stats": {
+    "scenario_count": 15,
+    "golden_count": 11,
+    "scenario_digest": "47da511ef65b1eb5b6b92703fbf4eda0c59326871da2dff57cf26b48be1ca8fe",
+    "snapshot_digest": "e46dd423d59b08b8739a6093cd137f9c8a06d611af557f7063dfabb7f4c6b972"
+  }
+}
