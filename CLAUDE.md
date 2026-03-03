@@ -57,7 +57,7 @@ src/po_core/
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
-- Version: `0.2.0b4` (beta) → `0.2.0rc1` after M1 → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
+- Version: `0.2.0rc1` (release candidate, M1 complete) → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
 
 ## Current Status (2026-03-03)
 
@@ -108,16 +108,19 @@ Key files:
 
 **Spec M0: COMPLETE** (2026-02-28) — PRD / SRS / Schema / TestCases / Traceability
 
-### 進行中マイルストーン
+### ✅ M1 COMPLETE (2026-03-03)
 
-**🔄 M1: LLMなしE2E（期限: 2026-03-15）**
+**M1: LLMなしE2E — 全完了**
 
 - ✅ StubComposer → `output_schema_v1.json` 準拠出力 (`src/po_core/app/composer.py`)
 - ✅ AT-001〜AT-010 テストスイート追加 (`tests/acceptance/`)
-- 🔲 `jsonschema` CI バリデーションゲート追加
-- 🔲 Golden files: `case_001_expected.json`, `case_009_expected.json`
+- ✅ `jsonschema` CI バリデーションゲート (`schema-gate` job + `validate_output_schema` fixture)
+- ✅ Golden files: `at_001_expected.json`, `at_009_expected.json` (全10件 in `tests/acceptance/scenarios/`)
+- ✅ `@pytest.mark.acceptance` を AT-001〜AT-007 に追加 → CI `-m acceptance` で全10件カバー
 
-**完了基準:** `pytest tests/acceptance/ -v` が全10件グリーン（スタブ実装で）
+**結果:** `pytest tests/acceptance/ -v` → **27 passed** / `pytest tests/acceptance/ -v -m acceptance` → **20 passed**
+
+### 次のマイルストーン → M2
 
 ---
 
@@ -135,7 +138,7 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 
 | マイルストーン | 期限 | 内容 | 状態 |
 |---|---|---|---|
-| **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | 🔄 進行中 |
+| **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | ✅ **COMPLETE** (2026-03-03) |
 | **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | 🔲 未着手 |
 | **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | 🔲 未着手 |
 | **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | 🔲 未着手 |
@@ -145,8 +148,8 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 ### バージョン戦略
 
 ```
-現在: 0.2.0b4 (beta)
-M1:   0.2.0rc1 (release candidate)
+現在: 0.2.0rc1 (release candidate, M1 COMPLETE)
+~~M1:   0.2.0rc1~~ → 完了
 M4:   0.2.0    (stable, PyPI)
 v1.0: 1.0.0    (全AT通過 + 論文ドラフト完成)
 ```

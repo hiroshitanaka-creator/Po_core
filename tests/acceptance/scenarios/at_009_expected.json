@@ -1,0 +1,281 @@
+{
+  "at_id": "AT-009",
+  "case_id": "case_009",
+  "expected": {
+    "meta": {
+      "schema_version": "1.0",
+      "pocore_version": "0.2.0b4",
+      "run_id": "c23ad049-4f8f-e4e5-c276-61df6ee3feee",
+      "seed": 42,
+      "deterministic": true,
+      "generator": {
+        "name": "po_core.ensemble.run_turn",
+        "version": "0.2.0",
+        "mode": "rule_based"
+      }
+    },
+    "case_ref": {
+      "case_id": "case_009_unclear_values",
+      "title": "価値観が不明：進路選択の前に問いを立てる",
+      "input_digest": "d9eabd2e4c6678670643406478968ba5db4aee6cc25e060ad7c3dd87139785f3"
+    },
+    "options": [
+      {
+        "option_id": "opt_001",
+        "title": "価値観が不明：進路選択の前に問いを立てる",
+        "description": "道元の教えにおいて、関係性は個我の外部にあるものではない。有時（うじ）：関係とは時間の中に存在するのではなく、関係そのものが時間・存在である。仏性（ぶっしょう）は一切衆生に宿る——他者の中に仏性を見ることは、自己の仏性を見ることと不二（ふに）である。身心脱落（しんじんだつらく）の精神で関係に向かうとは、自己への執着を手放し、相手と共に「今ここ」に在ることである。只管打坐（しかんたざ）の如く関係に向かえ——成果や見返りを求めず、関係そのものに全身全霊で在ること。",
+        "action_plan": [
+          {
+            "step": "制約を考慮: 生活費は維持したい"
+          },
+          {
+            "step": "制約を考慮: 大きな引っ越しは避けたい"
+          }
+        ],
+        "pros": [
+          "選択肢の実現可能性が高い",
+          "関係者への影響を最小化できる"
+        ],
+        "cons": [
+          "不確実性: 学び直しの目的（何を得たいのか）",
+          "不確実性: 許容できるリスク量"
+        ],
+        "risks": [
+          {
+            "risk": "情報不足による判断ミスのリスク",
+            "severity": "medium",
+            "mitigation": "追加調査を行い不確実性を低減する"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "autonomy",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "自分",
+          "stakeholders": [
+            {
+              "name": "自分",
+              "role": "意思決定主体",
+              "impact": "人生の方向性・収入・幸福に影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "中程度",
+          "timeline": "期限: 2026-03-31",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "high",
+          "reasons": [
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
+          ],
+          "assumptions": [
+            "生活費は維持したい",
+            "大きな引っ越しは避けたい"
+          ],
+          "known_unknowns": [
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
+          ]
+        }
+      },
+      {
+        "option_id": "opt_002",
+        "title": "慎重路線：情報収集後に再判断",
+        "description": "主要な不明点を解消してから判断する選択肢。リスクを最小化しながら次の判断機会を設ける。",
+        "action_plan": [
+          {
+            "step": "不明点を優先度順に列挙し、調査計画を立てる"
+          },
+          {
+            "step": "関係者へ現状と懸念を共有し認識を合わせる"
+          },
+          {
+            "step": "判断に必要な情報が揃った時点で再検討する"
+          }
+        ],
+        "pros": [
+          "情報が揃った状態での判断が可能",
+          "リスクを最小化できる",
+          "関係者の同意を得やすい"
+        ],
+        "cons": [
+          "判断の先送りによる機会損失の可能性",
+          "時間的コストが発生する"
+        ],
+        "risks": [
+          {
+            "risk": "判断保留による機会損失",
+            "severity": "low",
+            "mitigation": "タイムボックスを設定し判断期限を明確にする"
+          }
+        ],
+        "ethics_review": {
+          "principles_applied": [
+            "autonomy",
+            "integrity"
+          ],
+          "tradeoffs": [],
+          "concerns": [],
+          "confidence": "medium"
+        },
+        "responsibility_review": {
+          "decision_owner": "自分",
+          "stakeholders": [
+            {
+              "name": "自分",
+              "role": "意思決定主体",
+              "impact": "人生の方向性・収入・幸福に影響"
+            }
+          ],
+          "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+          "confidence": "medium"
+        },
+        "feasibility": {
+          "effort": "低〜中程度",
+          "timeline": "1〜4週間の調査期間",
+          "confidence": "medium"
+        },
+        "uncertainty": {
+          "overall_level": "medium",
+          "reasons": [
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
+          ],
+          "assumptions": [
+            "生活費は維持したい",
+            "大きな引っ越しは避けたい"
+          ],
+          "known_unknowns": [
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
+          ]
+        }
+      }
+    ],
+    "recommendation": {
+      "status": "no_recommendation",
+      "reason": "価値観が不明確なため推奨が困難です。まず重視する価値観を明確にしてください。",
+      "missing_info": [
+        "学び直しの目的（何を得たいのか）",
+        "許容できるリスク量",
+        "支援の有無（家族・貯金・奨学金）"
+      ],
+      "next_steps": [
+        "価値観の明確化ワーク（例：重要度順位付け）を実施する",
+        "追加情報を収集する"
+      ],
+      "confidence": "low"
+    },
+    "ethics": {
+      "principles_used": [
+        "autonomy",
+        "integrity"
+      ],
+      "tradeoffs": [],
+      "guardrails": [
+        "医療・法律の最終判断はPo_coreが行わない",
+        "意思決定の主体はユーザーである"
+      ],
+      "notes": "W_Ethics Gateによる3層倫理評価済み"
+    },
+    "responsibility": {
+      "decision_owner": "自分",
+      "stakeholders": [
+        {
+          "name": "自分",
+          "role": "意思決定主体",
+          "impact": "人生の方向性・収入・幸福に影響"
+        }
+      ],
+      "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
+      "consent_considerations": []
+    },
+    "questions": [
+      {
+        "question_id": "q_001",
+        "question": "不明点『学び直しの目的（何を得たいのか）』について、判断に使える事実は何ですか？",
+        "priority": 1,
+        "why_needed": "『学び直しの目的（何を得たいのか）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
+        "optional": false
+      },
+      {
+        "question_id": "q_002",
+        "question": "不明点『許容できるリスク量』について、判断に使える事実は何ですか？",
+        "priority": 2,
+        "why_needed": "『許容できるリスク量』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
+        "optional": false
+      },
+      {
+        "question_id": "q_003",
+        "question": "不明点『支援の有無（家族・貯金・奨学金）』について、判断に使える事実は何ですか？",
+        "priority": 3,
+        "why_needed": "『支援の有無（家族・貯金・奨学金）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
+        "optional": true
+      }
+    ],
+    "uncertainty": {
+      "overall_level": "high",
+      "reasons": [
+        "学び直しの目的（何を得たいのか）",
+        "許容できるリスク量",
+        "支援の有無（家族・貯金・奨学金）"
+      ],
+      "assumptions": [
+        "生活費は維持したい",
+        "大きな引っ越しは避けたい"
+      ],
+      "known_unknowns": [
+        "学び直しの目的（何を得たいのか）",
+        "許容できるリスク量",
+        "支援の有無（家族・貯金・奨学金）"
+      ]
+    },
+    "trace": {
+      "version": "1.0",
+      "steps": [
+        {
+          "name": "parse_input",
+          "summary": "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した"
+        },
+        {
+          "name": "generate_options",
+          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+        },
+        {
+          "name": "ethics_review",
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+        },
+        {
+          "name": "responsibility_review",
+          "summary": "意思決定主体と利害関係者の責任構造を検証した"
+        },
+        {
+          "name": "question_layer",
+          "summary": "不明点から優先度付き質問リストを生成した"
+        },
+        {
+          "name": "compose_output",
+          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+        }
+      ]
+    }
+  }
+}
