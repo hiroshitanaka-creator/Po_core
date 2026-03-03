@@ -258,26 +258,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "医師の見立て（進行予測、必要ケアレベル）はどのような状況ですか？",
+        "question": "不明点『医師の見立て（進行予測、必要ケアレベル）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（医師の見立て（進行予測、必要ケアレベル））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『医師の見立て（進行予測、必要ケアレベル）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "利用可能なサービス枠・施設の空きはどのような状況ですか？",
+        "question": "不明点『利用可能なサービス枠・施設の空き』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（利用可能なサービス枠・施設の空き）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『利用可能なサービス枠・施設の空き』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "兄弟姉妹の協力度合いはどのような状況ですか？",
+        "question": "不明点『兄弟姉妹の協力度合い』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（兄弟姉妹の協力度合い）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『兄弟姉妹の協力度合い』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

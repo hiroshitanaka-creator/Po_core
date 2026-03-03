@@ -250,26 +250,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "副業規定の詳細（許容範囲）はどのような状況ですか？",
+        "question": "不明点『副業規定の詳細（許容範囲）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（副業規定の詳細（許容範囲））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『副業規定の詳細（許容範囲）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "起業の初期モデル（必要時間・初期投資）はどのような状況ですか？",
+        "question": "不明点『起業の初期モデル（必要時間・初期投資）』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（起業の初期モデル（必要時間・初期投資））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『起業の初期モデル（必要時間・初期投資）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "収入維持の代替策（段階投入、検証期間）はどのような状況ですか？",
+        "question": "不明点『収入維持の代替策（段階投入、検証期間）』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（収入維持の代替策（段階投入、検証期間））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『収入維持の代替策（段階投入、検証期間）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

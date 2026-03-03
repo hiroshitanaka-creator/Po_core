@@ -253,26 +253,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "最低限守るべき品質ライン（SLO/重大バグ定義）はどのような状況ですか？",
+        "question": "不明点『最低限守るべき品質ライン（SLO/重大バグ定義）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（最低限守るべき品質ライン（SLO/重大バグ定義））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『最低限守るべき品質ライン（SLO/重大バグ定義）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "段階リリース（限定公開）が可能かはどのような状況ですか？",
+        "question": "不明点『段階リリース（限定公開）が可能か』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（段階リリース（限定公開）が可能か）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『段階リリース（限定公開）が可能か』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "延期の代替（告知文、補償）はどのような状況ですか？",
+        "question": "不明点『延期の代替（告知文、補償）』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（延期の代替（告知文、補償））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『延期の代替（告知文、補償）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],
