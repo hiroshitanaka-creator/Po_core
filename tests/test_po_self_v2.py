@@ -162,10 +162,10 @@ class TestPoSelfInitialization:
         po = PoSelf()
         available = po.get_available_philosophers()
         assert isinstance(available, list)
-        assert len(available) == 44
+        assert len(available) == 43
         assert "aristotle" in available
         assert "confucius" in available
-        assert "claude_anthropic" in available
+        assert "appiah" in available
 
     def test_po_trace_property_returns_none(self):
         """Legacy po_trace property should return None (deprecated)."""

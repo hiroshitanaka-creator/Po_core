@@ -5,13 +5,14 @@ This module contains the philosophical reasoning engines.
 Each philosopher represents a different perspective and approach to meaning generation.
 """
 
+from po_core.philosophers.appiah import Appiah
 from po_core.philosophers.arendt import Arendt
 from po_core.philosophers.aristotle import Aristotle
 from po_core.philosophers.badiou import Badiou
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.beauvoir import Beauvoir
 from po_core.philosophers.butler import Butler
-from po_core.philosophers.claude_anthropic import ClaudeAnthropic
+from po_core.philosophers.charles_taylor import CharlesTaylor
 from po_core.philosophers.confucius import Confucius
 from po_core.philosophers.deleuze import Deleuze
 from po_core.philosophers.derrida import Derrida
@@ -19,10 +20,8 @@ from po_core.philosophers.descartes import Descartes
 from po_core.philosophers.dewey import Dewey
 from po_core.philosophers.dogen import Dogen
 from po_core.philosophers.epicurus import Epicurus
+from po_core.philosophers.fanon import Fanon
 from po_core.philosophers.foucault import Foucault
-from po_core.philosophers.gemini_google import GeminiGoogle
-from po_core.philosophers.gpt_chatgpt import GPTChatGPT
-from po_core.philosophers.grok_xai import GrokXAI
 from po_core.philosophers.hegel import Hegel
 from po_core.philosophers.heidegger import Heidegger
 from po_core.philosophers.husserl import Husserl
@@ -52,12 +51,13 @@ from po_core.philosophers.zhuangzi import Zhuangzi
 
 __all__ = [
     "Philosopher",
+    "Appiah",
     "Arendt",
     "Aristotle",
     "Badiou",
     "Beauvoir",
     "Butler",
-    "ClaudeAnthropic",
+    "CharlesTaylor",
     "Confucius",
     "Deleuze",
     "Derrida",
@@ -65,6 +65,7 @@ __all__ = [
     "Dewey",
     "Dogen",
     "Epicurus",
+    "Fanon",
     "Foucault",
     "Hegel",
     "Heidegger",
@@ -92,7 +93,4 @@ __all__ = [
     "Weil",
     "Wittgenstein",
     "Zhuangzi",
-    "GrokXAI",
-    "GeminiGoogle",
-    "GPTChatGPT",
 ]

@@ -5,7 +5,7 @@
 
 ## What is Po_core?
 
-Philosophy-driven AI: 39 philosopher AI personas deliberate via tensor calculations
+Philosophy-driven AI: 42 philosopher AI personas deliberate via tensor calculations
 (Freedom Pressure, Semantic Delta, Blocked Tensor) and a 3-layer W_Ethics Gate
 to generate ethically responsible responses.
 
@@ -27,7 +27,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 
 ```
 src/po_core/
-├── philosophers/     # 39 philosopher modules + manifest + registry
+├── philosophers/     # 42 philosopher modules + manifest + registry
 ├── tensors/          # TensorEngine + metrics/ (freedom_pressure, semantic_delta, blocked_tensor)
 ├── safety/           # W_Ethics Gate (wethics_gate/), fallback, policy_scoring
 ├── aggregator/       # Pareto, conflict_resolver, policy_aware, weighted_vote
@@ -47,7 +47,7 @@ src/po_core/
 - **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`
 - CI requires **pipeline-marked tests to pass**; full suite is best-effort
 - Philosopher risk levels: 0 (safe), 1 (standard), 2 (risky) — defined in `manifest.py`
-- SafetyMode: NORMAL (39 philosophers) / WARN (5) / CRITICAL (1)
+- SafetyMode: NORMAL (42 philosophers) / WARN (5) / CRITICAL (1)
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
