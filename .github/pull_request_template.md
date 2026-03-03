@@ -22,5 +22,11 @@
 ## Validation
 - [ ] `pytest -q` を実行し全通
 
+## Determinism & Compatibility Checklist
+- [ ] 凍結golden（`case_001` / `case_009`）を変更していない
+- [ ] schema互換性を確認した（`tests/test_input_schema.py` / `tests/test_output_schema.py`）
+- [ ] golden契約を確認した（`tests/test_golden_e2e.py`）
+- [ ] 互換性に影響がある場合、`docs/operations/migration_guide_v1.md` を更新した
+
 ## Notes
 - 追加の注意事項・制約:
