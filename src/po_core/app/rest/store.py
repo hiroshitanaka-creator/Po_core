@@ -7,10 +7,16 @@ from collections import OrderedDict
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
-from typing import List
+from typing import List, TypedDict
 
 from po_core.app.rest.config import get_api_settings
 from po_core.domain.trace_event import TraceEvent
+
+
+class TraceHistorySummary(TypedDict):
+    session_id: str
+    event_count: int
+    last_occurred_at: datetime
 
 
 class TraceStore(ABC):
@@ -25,7 +31,7 @@ class TraceStore(ABC):
         """Persist trace events for a session."""
 
     @abstractmethod
-    def history(self, limit: int = 50) -> List[dict[str, object]]:
+    def history(self, limit: int = 50) -> List[TraceHistorySummary]:
         """Return recent session summaries sorted by newest first."""
 
 
@@ -60,9 +66,9 @@ class InMemoryTraceStore(TraceStore):
             stale_id, _ = self._sessions.popitem(last=False)
             self._store.pop(stale_id, None)
 
-    def history(self, limit: int = 50) -> List[dict[str, object]]:
+    def history(self, limit: int = 50) -> List[TraceHistorySummary]:
         items = list(self._sessions.items())[-limit:]
-        summaries: List[dict[str, object]] = []
+        summaries: List[TraceHistorySummary] = []
         for session_id, updated_at in reversed(items):
             events = self._store.get(session_id, [])
             summaries.append(
@@ -206,7 +212,7 @@ class SQLiteTraceStore(TraceStore):
                 [(sid,) for sid in stale_session_ids],
             )
 
-    def history(self, limit: int = 50) -> List[dict[str, object]]:
+    def history(self, limit: int = 50) -> List[TraceHistorySummary]:
         with self._connect() as conn:
             rows = conn.execute(
                 """
@@ -222,11 +228,11 @@ class SQLiteTraceStore(TraceStore):
                 (limit,),
             ).fetchall()
         return [
-            {
-                "session_id": row["session_id"],
-                "event_count": int(row["event_count"]),
-                "last_occurred_at": datetime.fromisoformat(row["last_occurred_at"]),
-            }
+            TraceHistorySummary(
+                session_id=str(row["session_id"]),
+                event_count=int(row["event_count"]),
+                last_occurred_at=datetime.fromisoformat(str(row["last_occurred_at"])),
+            )
             for row in rows
         ]
 
