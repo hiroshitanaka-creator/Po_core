@@ -4,7 +4,7 @@
   "expected": {
     "meta": {
       "schema_version": "1.0",
-      "pocore_version": "0.2.0b4",
+      "pocore_version": "0.2.0rc1",
       "run_id": "2dea63ef-4bd3-fc1c-af45-b5c2f16b4f4c",
       "seed": 42,
       "deterministic": true,
@@ -193,7 +193,7 @@
     "recommendation": {
       "status": "recommended",
       "recommended_option_id": "opt_001",
-      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れていると判断されます。",
+      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。重視する価値観「安全（無危害）・信頼関係」との整合性が高い。",
       "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
       "alternatives": [
         {
@@ -222,9 +222,10 @@
       ],
       "guardrails": [
         "医療・法律の最終判断はPo_coreが行わない",
-        "意思決定の主体はユーザーである"
+        "意思決定の主体はユーザーである",
+        "価値軸が空のまま推奨を断言しない"
       ],
-      "notes": "W_Ethics Gateによる3層倫理評価済み"
+      "notes": "W_Ethics Gateによる3層倫理評価済み (rules_fired: ETH-R-001, ETH-R-002, ETH-R-003)"
     },
     "responsibility": {
       "decision_owner": "友人",
@@ -253,25 +254,41 @@
     },
     "questions": [
       {
+        "question_id": "q_d01",
+        "question": "期限（-3日以内）の柔軟性はありますか？期限を延長・分割できる余地があれば、リスクを大幅に低減できます。",
+        "priority": 1,
+        "why_needed": "期限の硬直性が判断の幅を大きく左右するため",
+        "assumption_if_unanswered": "期限は固定と仮定して保守的に対応します",
+        "optional": false
+      },
+      {
+        "question_id": "q_d02",
+        "question": "期限までに暫定対応（部分的・リスクを限定した行動）は許容されますか？完全な解決を待つより、段階的実施で対応できる可能性があります。",
+        "priority": 2,
+        "why_needed": "暫定対応の余地があるかで選択肢の質が変わるため",
+        "assumption_if_unanswered": "暫定対応は許容されないと仮定します",
+        "optional": false
+      },
+      {
         "question_id": "q_001",
         "question": "不明点『頻度（1回だけか、習慣か）』について、判断に使える事実は何ですか？",
-        "priority": 1,
+        "priority": 3,
         "why_needed": "『頻度（1回だけか、習慣か）』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
-        "optional": false
+        "optional": true
       },
       {
         "question_id": "q_002",
         "question": "不明点『本人の改善意思の強さ』について、判断に使える事実は何ですか？",
-        "priority": 2,
+        "priority": 5,
         "why_needed": "『本人の改善意思の強さ』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
-        "optional": false
+        "optional": true
       },
       {
         "question_id": "q_003",
         "question": "不明点『代替手段（タクシー、代行、支援）の利用可能性』について、判断に使える事実は何ですか？",
-        "priority": 3,
+        "priority": 5,
         "why_needed": "『代替手段（タクシー、代行、支援）の利用可能性』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
@@ -303,11 +320,18 @@
         },
         {
           "name": "generate_options",
-          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+          "summary": "42人の哲学者による審議を経て選択肢を生成した"
         },
         {
           "name": "ethics_review",
-          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した",
+          "metrics": {
+            "rules_fired": [
+              "ETH-R-001",
+              "ETH-R-002",
+              "ETH-R-003"
+            ]
+          }
         },
         {
           "name": "responsibility_review",
@@ -315,11 +339,15 @@
         },
         {
           "name": "question_layer",
-          "summary": "不明点から優先度付き質問リストを生成した"
+          "summary": "不明点から優先度付き質問リストを生成した（deadline 優先順位付き）"
         },
         {
           "name": "compose_output",
-          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+          "summary": "推奨・反証・代替案を含む出力を組み立てた",
+          "metrics": {
+            "arbitration_code": "RECOMMEND_OPT_001",
+            "policy_version": "policy_v1"
+          }
         }
       ]
     }

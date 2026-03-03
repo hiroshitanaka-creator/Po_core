@@ -120,7 +120,20 @@ Key files:
 
 **結果:** `pytest tests/acceptance/ -v` → **27 passed** / `pytest tests/acceptance/ -v -m acceptance` → **20 passed**
 
-### 次のマイルストーン → M2
+### ✅ M2 COMPLETE (2026-03-03)
+
+**M2: ethics_v1 + responsibility_v1 + 不確実性ラベル — 全完了**
+
+- ✅ `policy_engine.py` — policy_v1 arbitration (REQ-ARB-001): arbitration_code
+- ✅ `ethics_engine.py` 強化 — rule_id / rules_fired tracking (REQ-ETH-002)
+- ✅ `question_layer.py` 強化 — deadline × unknowns 優先順位 (REQ-QST-001)
+- ✅ `output_adapter.py` 統合 — trace に arbitration_code + rules_fired 記録
+- ✅ バージョン更新: `0.2.0b4` → `0.2.0rc1`, "39人" → "42人" in trace
+- ✅ Golden files 10件再生成 → 27件全パス
+
+**結果:** `pytest tests/acceptance/ -v` → **27 passed**
+
+### 次のマイルストーン → M3
 
 ---
 
@@ -139,7 +152,7 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 | マイルストーン | 期限 | 内容 | 状態 |
 |---|---|---|---|
 | **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | ✅ **COMPLETE** (2026-03-03) |
-| **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | 🔲 未着手 |
+| **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | ✅ **COMPLETE** (2026-03-03) |
 | **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | 🔲 未着手 |
 | **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | 🔲 未着手 |
 | **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 0.2.0`) | 🔲 未着手 |

@@ -4,7 +4,7 @@
   "expected": {
     "meta": {
       "schema_version": "1.0",
-      "pocore_version": "0.2.0b4",
+      "pocore_version": "0.2.0rc1",
       "run_id": "c23ad049-4f8f-e4e5-c276-61df6ee3feee",
       "seed": 42,
       "deterministic": true,
@@ -169,15 +169,14 @@
     ],
     "recommendation": {
       "status": "no_recommendation",
-      "reason": "価値観が不明確なため推奨が困難です。まず重視する価値観を明確にしてください。",
+      "reason": "価値観・優先事項が不明確なため、推奨を断言できません。",
       "missing_info": [
-        "学び直しの目的（何を得たいのか）",
-        "許容できるリスク量",
-        "支援の有無（家族・貯金・奨学金）"
+        "重視する価値観（例: 公平・自律・安全）の明確化"
       ],
       "next_steps": [
-        "価値観の明確化ワーク（例：重要度順位付け）を実施する",
-        "追加情報を収集する"
+        "価値観の優先順位付けワークを実施する（重要度 1〜5 で評価）",
+        "ステークホルダーと価値観を共有・合意形成する",
+        "価値観が明確になった後に再検討する"
       ],
       "confidence": "low"
     },
@@ -189,9 +188,10 @@
       "tradeoffs": [],
       "guardrails": [
         "医療・法律の最終判断はPo_coreが行わない",
-        "意思決定の主体はユーザーである"
+        "意思決定の主体はユーザーである",
+        "価値軸が空のまま推奨を断言しない"
       ],
-      "notes": "W_Ethics Gateによる3層倫理評価済み"
+      "notes": "W_Ethics Gateによる3層倫理評価済み (rules_fired: ETH-R-002)"
     },
     "responsibility": {
       "decision_owner": "自分",
@@ -217,15 +217,15 @@
       {
         "question_id": "q_002",
         "question": "不明点『許容できるリスク量』について、判断に使える事実は何ですか？",
-        "priority": 2,
+        "priority": 3,
         "why_needed": "『許容できるリスク量』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
-        "optional": false
+        "optional": true
       },
       {
         "question_id": "q_003",
         "question": "不明点『支援の有無（家族・貯金・奨学金）』について、判断に使える事実は何ですか？",
-        "priority": 3,
+        "priority": 5,
         "why_needed": "『支援の有無（家族・貯金・奨学金）』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
@@ -257,11 +257,16 @@
         },
         {
           "name": "generate_options",
-          "summary": "39人の哲学者による審議を経て選択肢を生成した"
+          "summary": "42人の哲学者による審議を経て選択肢を生成した"
         },
         {
           "name": "ethics_review",
-          "summary": "W_Ethics Gateによる3層倫理評価を適用した"
+          "summary": "W_Ethics Gateによる3層倫理評価を適用した",
+          "metrics": {
+            "rules_fired": [
+              "ETH-R-002"
+            ]
+          }
         },
         {
           "name": "responsibility_review",
@@ -269,11 +274,15 @@
         },
         {
           "name": "question_layer",
-          "summary": "不明点から優先度付き質問リストを生成した"
+          "summary": "不明点から優先度付き質問リストを生成した（deadline 優先順位付き）"
         },
         {
           "name": "compose_output",
-          "summary": "推奨・反証・代替案を含む出力を組み立てた"
+          "summary": "推奨・反証・代替案を含む出力を組み立てた",
+          "metrics": {
+            "arbitration_code": "VALUES_EMPTY",
+            "policy_version": "policy_v1"
+          }
         }
       ]
     }

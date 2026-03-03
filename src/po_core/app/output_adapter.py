@@ -19,14 +19,19 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
-from po_core.app.ethics_engine import build_ethics_summary, principles_from_values
+from po_core.app.ethics_engine import (
+    build_ethics_summary,
+    get_rules_fired,
+    principles_from_values,
+)
+from po_core.app.policy_engine import arbitrate, build_recommendation
 from po_core.app.question_layer import build_questions
 from po_core.app.responsibility_engine import (
     build_option_responsibility_review,
     build_responsibility_summary,
 )
 
-_POCORE_VERSION = "0.2.0b4"
+_POCORE_VERSION = "0.2.0rc1"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "0.2.0"
@@ -308,13 +313,13 @@ def _build_recommendation(
 
 
 def _build_questions(
-    case: Dict[str, Any], *, suppress: bool = False
+    case: Dict[str, Any], *, suppress: bool = False, now: str | None = None
 ) -> List[Dict[str, Any]]:
-    """Build question list via question_layer v1."""
+    """Build question list via question_layer v1 with deadline priority (REQ-QST-001)."""
     if suppress:
         return []
     unknowns = case.get("unknowns", [])
-    return build_questions(list(unknowns))
+    return build_questions(list(unknowns), case=case, now=now)
 
 
 def _should_suppress_questions(
@@ -335,28 +340,58 @@ def _should_suppress_questions(
 # ── Trace ──────────────────────────────────────────────────────────────────
 
 
-def _build_trace(now: str) -> Dict[str, Any]:
-    """Build FR-TR-001 compliant 6-step trace."""
+def _build_trace(
+    now: str,
+    *,
+    arbitration_code: str = "",
+    rules_fired: List[str] | None = None,
+) -> Dict[str, Any]:
+    """Build FR-TR-001 compliant 6-step trace.
+
+    REQ-TRC-001: compose_output step carries arbitration_code in metrics.
+    REQ-ETH-002: ethics_review step carries rules_fired in metrics.
+    """
     base = _parse_base(now)
-    step_defs = [
-        (
-            "parse_input",
-            "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した",
-        ),
-        ("generate_options", "39人の哲学者による審議を経て選択肢を生成した"),
-        ("ethics_review", "W_Ethics Gateによる3層倫理評価を適用した"),
-        ("responsibility_review", "意思決定主体と利害関係者の責任構造を検証した"),
-        ("question_layer", "不明点から優先度付き質問リストを生成した"),
-        ("compose_output", "推奨・反証・代替案を含む出力を組み立てた"),
-    ]
+
     steps = [
         {
-            "name": name,
-            "started_at": _ts(base, i * 2),
-            "ended_at": _ts(base, i * 2 + 1),
-            "summary": summary,
-        }
-        for i, (name, summary) in enumerate(step_defs)
+            "name": "parse_input",
+            "started_at": _ts(base, 0),
+            "ended_at": _ts(base, 1),
+            "summary": "入力YAMLを解析し、case_id・problem・values・constraints等を抽出した",
+        },
+        {
+            "name": "generate_options",
+            "started_at": _ts(base, 2),
+            "ended_at": _ts(base, 3),
+            "summary": "42人の哲学者による審議を経て選択肢を生成した",
+        },
+        {
+            "name": "ethics_review",
+            "started_at": _ts(base, 4),
+            "ended_at": _ts(base, 5),
+            "summary": "W_Ethics Gateによる3層倫理評価を適用した",
+            "metrics": {"rules_fired": list(rules_fired or [])},
+        },
+        {
+            "name": "responsibility_review",
+            "started_at": _ts(base, 6),
+            "ended_at": _ts(base, 7),
+            "summary": "意思決定主体と利害関係者の責任構造を検証した",
+        },
+        {
+            "name": "question_layer",
+            "started_at": _ts(base, 8),
+            "ended_at": _ts(base, 9),
+            "summary": "不明点から優先度付き質問リストを生成した（deadline 優先順位付き）",
+        },
+        {
+            "name": "compose_output",
+            "started_at": _ts(base, 10),
+            "ended_at": _ts(base, 11),
+            "summary": "推奨・反証・代替案を含む出力を組み立てた",
+            "metrics": {"arbitration_code": arbitration_code, "policy_version": "policy_v1"},
+        },
     ]
     return {"version": "1.0", "steps": steps}
 
@@ -415,25 +450,32 @@ def adapt_to_schema(
         Dict conforming to output_schema_v1.json.
     """
     proposal: Dict[str, Any] = run_result.get("proposal") or {}
-    status: str = run_result.get("status", "ok")
 
     values = case.get("values", [])
     principles = _map_values_to_principles(values)
 
+    # REQ-ARB-001: policy_v1 arbitration (M2)
+    arbitration_code, recommended_option_id = arbitrate(case, run_result)
+
     options = _build_options(case, proposal, principles)
-    recommendation = _build_recommendation(case, proposal, status)
+    recommendation = build_recommendation(
+        case, run_result, arbitration_code, recommended_option_id
+    )
     questions = _build_questions(
         case,
         suppress=_should_suppress_questions(case, run_result),
+        now=now,
     )
     uncertainty = _build_uncertainty(case)
 
+    # REQ-ETH-002: ethics_engine with rules_fired tracking (M2)
     ethics = build_ethics_summary(case, run_result=run_result)
+    rules_fired = get_rules_fired(case, run_result=run_result)
 
-    # Top-level responsibility summary (M2-B responsibility_v1)
+    # M2-B responsibility_v1
     responsibility: Dict[str, Any] = build_responsibility_summary(case, values=values)
 
-    trace = _build_trace(now)
+    trace = _build_trace(now, arbitration_code=arbitration_code, rules_fired=rules_fired)
 
     return {
         "meta": {
