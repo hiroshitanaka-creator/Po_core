@@ -246,7 +246,9 @@ class Fanon(Philosopher):
             )
         else:
             status = "Humanisation Unmarked"
-            description = "Neither dehumanisation nor explicit dignity affirmation detected"
+            description = (
+                "Neither dehumanisation nor explicit dignity affirmation detected"
+            )
 
         return {
             "status": status,
@@ -389,7 +391,9 @@ class Fanon(Philosopher):
 
         if colonial_structure["risk"] == "High":
             score += 3
-            elements.append("Colonial/Manichean structures detected — demand for rupture")
+            elements.append(
+                "Colonial/Manichean structures detected — demand for rupture"
+            )
         elif colonial_structure["risk"] == "Moderate":
             score += 1
             elements.append("Possible colonial echo — structural analysis required")
@@ -434,7 +438,10 @@ class Fanon(Philosopher):
         """Construct Fanon's decolonial philosophical reasoning."""
         text_lower = prompt.lower()
 
-        if any(w in text_lower for w in ["race", "racism", "black", "white", "skin", "colour"]):
+        if any(
+            w in text_lower
+            for w in ["race", "racism", "black", "white", "skin", "colour"]
+        ):
             applied = (
                 "Fanon's *Black Skin, White Masks* diagnoses the psychopathology "
                 "of colonialism: the Black person is forced to see themselves "
@@ -448,7 +455,9 @@ class Fanon(Philosopher):
                 "racist social order. Liberation requires not therapy "
                 "but the dismantling of the racist structure itself."
             )
-        elif any(w in text_lower for w in ["colonial", "decoloni", "empire", "postcolonial"]):
+        elif any(
+            w in text_lower for w in ["colonial", "decoloni", "empire", "postcolonial"]
+        ):
             applied = (
                 "Decolonisation, for Fanon, is not a metaphor and it is not "
                 "a programme of gradual reform. It is the replacement of one "
@@ -462,7 +471,10 @@ class Fanon(Philosopher):
                 "the position of the colonial master without transforming "
                 "the structure of exploitation."
             )
-        elif any(w in text_lower for w in ["justice", "oppression", "power", "liberation", "freedom"]):
+        elif any(
+            w in text_lower
+            for w in ["justice", "oppression", "power", "liberation", "freedom"]
+        ):
             applied = (
                 "Fanon's political philosophy is a philosophy of total liberation: "
                 "justice for the wretched of the earth cannot be achieved by "

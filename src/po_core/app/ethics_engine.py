@@ -89,8 +89,17 @@ _ETHICS_RULES: list[dict[str, Any]] = [
 ]
 
 _MEDICAL_LEGAL_KEYWORDS = [
-    "医療", "medical", "治療", "診断", "手術",
-    "法律", "legal", "訴訟", "契約", "規制", "コンプライアンス",
+    "医療",
+    "medical",
+    "治療",
+    "診断",
+    "手術",
+    "法律",
+    "legal",
+    "訴訟",
+    "契約",
+    "規制",
+    "コンプライアンス",
 ]
 
 

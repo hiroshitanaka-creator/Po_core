@@ -157,12 +157,18 @@ def build_recommendation(
     proposal: dict[str, Any] = run_result.get("proposal") or {}
     confidence_raw = float(proposal.get("confidence", 0.5))
     conf_label = (
-        "high" if confidence_raw >= 0.7 else ("medium" if confidence_raw >= 0.45 else "low")
+        "high"
+        if confidence_raw >= 0.7
+        else ("medium" if confidence_raw >= 0.45 else "low")
     )
 
-    reason_parts = ["価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。"]
+    reason_parts = [
+        "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。"
+    ]
     if values:
-        reason_parts.append(f"重視する価値観「{'・'.join(values[:2])}」との整合性が高い。")
+        reason_parts.append(
+            f"重視する価値観「{'・'.join(values[:2])}」との整合性が高い。"
+        )
 
     return {
         "status": "recommended",

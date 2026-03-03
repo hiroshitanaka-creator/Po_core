@@ -16,9 +16,9 @@ import pytest
 import yaml
 
 from po_core.app.composer import StubComposer
+from po_core.app.plan_builder import needs_two_track_plan
 from po_core.app.session_engine import apply_session_answers, load_session_answers
 from po_core.app.values_clarifier import needs_values_clarification
-from po_core.app.plan_builder import needs_two_track_plan
 
 _SCENARIOS_DIR = Path(__file__).parent.parent.parent / "scenarios"
 _GOLDEN_DIR = Path(__file__).parent / "scenarios"
