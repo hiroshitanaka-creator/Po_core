@@ -430,3 +430,8 @@ visualization_outputs*/
 
 # Temporary experiment results (keep important ones in experiments/results/)
 # results/
+# Paper evidence artifacts (Phase31)
+!docs/paper/experiments/results_latest.json
+!docs/paper/benchmarks/results/comparative_results.json
+!docs/paper/benchmarks/results/comparative_table.csv
+

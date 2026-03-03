@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
 
 DEFAULT_TIMESTAMP = "2026-02-22T00:00:00Z"
+DEFAULT_SEED = 0
 AXES = ("diversity", "explainability", "safety", "emergence")
 
 
@@ -156,7 +158,12 @@ def _render_svg_chart(rows: list[dict[str, object]]) -> str:
     return "\n".join(svg_lines) + "\n"
 
 
-def run(repo_root: Path, output_dir: Path, created_at: str) -> dict[str, object]:
+def _result_digest(rows: list[dict[str, object]]) -> str:
+    normalized = json.dumps(rows, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(normalized).hexdigest()
+
+
+def run(repo_root: Path, output_dir: Path, created_at: str, seed: int) -> dict[str, object]:
     profiles = _load_profiles(repo_root)
     rows = _to_result_rows(profiles)
 
@@ -165,8 +172,10 @@ def run(repo_root: Path, output_dir: Path, created_at: str) -> dict[str, object]
             "benchmark": "phase_23_comparative_v1",
             "created_at": created_at,
             "deterministic": True,
+            "seed": seed,
             "axes": list(AXES),
             "po_core_philosopher_count": _count_philosophers(repo_root),
+            "results_digest": _result_digest(rows),
         },
         "results": rows,
     }
@@ -209,11 +218,12 @@ def main() -> None:
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--output-dir", default="docs/paper/benchmarks/results")
     parser.add_argument("--created-at", default=DEFAULT_TIMESTAMP)
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
     output_dir = (repo_root / args.output_dir).resolve()
-    run(repo_root=repo_root, output_dir=output_dir, created_at=args.created_at)
+    run(repo_root=repo_root, output_dir=output_dir, created_at=args.created_at, seed=args.seed)
 
 
 if __name__ == "__main__":

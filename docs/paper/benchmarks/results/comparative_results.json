@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "benchmark": "phase_23_comparative_v1",
+    "created_at": "2026-02-22T00:00:00Z",
+    "deterministic": true,
+    "seed": 0,
+    "axes": [
+      "diversity",
+      "explainability",
+      "safety",
+      "emergence"
+    ],
+    "po_core_philosopher_count": 48,
+    "results_digest": "a20f803a029153e840cbccde428b54ac0488cb565edf897c664710a17c479843"
+  },
+  "results": [
+    {
+      "system_id": "po_core",
+      "label": "Po_core",
+      "axis_scores": {
+        "diversity": 100.0,
+        "explainability": 91.0,
+        "safety": 89.0,
+        "emergence": 87.0
+      },
+      "overall": 91.75
+    },
+    {
+      "system_id": "moe_baseline",
+      "label": "Mixture-of-Experts baseline",
+      "axis_scores": {
+        "diversity": 58.0,
+        "explainability": 47.0,
+        "safety": 61.0,
+        "emergence": 73.0
+      },
+      "overall": 59.75
+    },
+    {
+      "system_id": "rlhf_baseline",
+      "label": "RLHF baseline",
+      "axis_scores": {
+        "diversity": 35.0,
+        "explainability": 51.0,
+        "safety": 72.0,
+        "emergence": 46.0
+      },
+      "overall": 51.0
+    },
+    {
+      "system_id": "cot_baseline",
+      "label": "Chain-of-Thought baseline",
+      "axis_scores": {
+        "diversity": 36.0,
+        "explainability": 63.0,
+        "safety": 54.0,
+        "emergence": 44.0
+      },
+      "overall": 49.25
+    },
+    {
+      "system_id": "single_llm",
+      "label": "Single LLM (GPT/Claude)",
+      "axis_scores": {
+        "diversity": 31.0,
+        "explainability": 42.0,
+        "safety": 57.0,
+        "emergence": 48.0
+      },
+      "overall": 44.5
+    }
+  ]
+}
