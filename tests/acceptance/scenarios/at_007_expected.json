@@ -253,26 +253,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "誤りの影響範囲（どの意思決定に影響するか）はどのような状況ですか？",
+        "question": "不明点『誤りの影響範囲（どの意思決定に影響するか）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（誤りの影響範囲（どの意思決定に影響するか））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『誤りの影響範囲（どの意思決定に影響するか）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "修正に必要な時間はどのような状況ですか？",
+        "question": "不明点『修正に必要な時間』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（修正に必要な時間）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『修正に必要な時間』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "既に外部に共有済みかはどのような状況ですか？",
+        "question": "不明点『既に外部に共有済みか』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（既に外部に共有済みか）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『既に外部に共有済みか』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

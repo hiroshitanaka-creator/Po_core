@@ -259,26 +259,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "ベンダーの初動対応速度はどのような状況ですか？",
+        "question": "不明点『ベンダーの初動対応速度』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（ベンダーの初動対応速度）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『ベンダーの初動対応速度』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "既に悪用されているかはどのような状況ですか？",
+        "question": "不明点『既に悪用されているか』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（既に悪用されているか）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『既に悪用されているか』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "影響範囲の正確な特定方法はどのような状況ですか？",
+        "question": "不明点『影響範囲の正確な特定方法』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（影響範囲の正確な特定方法）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『影響範囲の正確な特定方法』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

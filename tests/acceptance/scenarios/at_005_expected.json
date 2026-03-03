@@ -254,26 +254,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "頻度（1回だけか、習慣か）はどのような状況ですか？",
+        "question": "不明点『頻度（1回だけか、習慣か）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（頻度（1回だけか、習慣か））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『頻度（1回だけか、習慣か）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "本人の改善意思の強さはどのような状況ですか？",
+        "question": "不明点『本人の改善意思の強さ』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（本人の改善意思の強さ）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『本人の改善意思の強さ』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "代替手段（タクシー、代行、支援）の利用可能性はどのような状況ですか？",
+        "question": "不明点『代替手段（タクシー、代行、支援）の利用可能性』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（代替手段（タクシー、代行、支援）の利用可能性）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『代替手段（タクシー、代行、支援）の利用可能性』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

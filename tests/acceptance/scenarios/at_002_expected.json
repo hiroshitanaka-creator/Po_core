@@ -259,26 +259,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "削減の許容手段（異動・契約変更・採用凍結など）はどのような状況ですか？",
+        "question": "不明点『削減の許容手段（異動・契約変更・採用凍結など）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（削減の許容手段（異動・契約変更・採用凍結など））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『削減の許容手段（異動・契約変更・採用凍結など）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "各メンバーの直近の成果と将来の適性（客観データ）はどのような状況ですか？",
+        "question": "不明点『各メンバーの直近の成果と将来の適性（客観データ）』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（各メンバーの直近の成果と将来の適性（客観データ））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『各メンバーの直近の成果と将来の適性（客観データ）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "本人の希望（異動可否、家庭事情）はどのような状況ですか？",
+        "question": "不明点『本人の希望（異動可否、家庭事情）』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（本人の希望（異動可否、家庭事情））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『本人の希望（異動可否、家庭事情）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],

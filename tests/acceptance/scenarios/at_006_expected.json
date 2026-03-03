@@ -254,26 +254,26 @@
     "questions": [
       {
         "question_id": "q_001",
-        "question": "実際に外部閲覧があったか（ログ分析）はどのような状況ですか？",
+        "question": "不明点『実際に外部閲覧があったか（ログ分析）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "この不明点（実際に外部閲覧があったか（ログ分析））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『実際に外部閲覧があったか（ログ分析）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "漏えい範囲（対象ユーザー数、項目）はどのような状況ですか？",
+        "question": "不明点『漏えい範囲（対象ユーザー数、項目）』について、判断に使える事実は何ですか？",
         "priority": 2,
-        "why_needed": "この不明点（漏えい範囲（対象ユーザー数、項目））が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『漏えい範囲（対象ユーザー数、項目）』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_003",
-        "question": "再発防止に必要な改修範囲はどのような状況ですか？",
+        "question": "不明点『再発防止に必要な改修範囲』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "この不明点（再発防止に必要な改修範囲）が判断に直接影響するため",
-        "assumption_if_unanswered": "最も慎重な仮定を採用します",
+        "why_needed": "『再発防止に必要な改修範囲』が選択肢評価に影響するため",
+        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],
