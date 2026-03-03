@@ -33,6 +33,7 @@ from po_core.app.rest.routers import (
     health,
     philosophers,
     reason,
+    review,
     trace,
     tradeoff_map,
 )
@@ -126,6 +127,10 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
                 "name": "health",
                 "description": "Server health and status",
             },
+            {
+                "name": "review",
+                "description": "Human-in-the-loop review queue",
+            },
         ],
     )
 
@@ -156,6 +161,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
     application.include_router(trace.router)
     application.include_router(tradeoff_map.router)
     application.include_router(health.router)
+    application.include_router(review.router)
 
     @application.on_event("startup")
     async def _startup() -> None:

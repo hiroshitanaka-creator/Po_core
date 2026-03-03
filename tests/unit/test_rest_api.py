@@ -22,6 +22,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from po_core.app.rest.config import APISettings
+from po_core.app.rest.review_store import _review_store
 from po_core.app.rest.server import create_app
 from po_core.app.rest.store import get_trace_store, reset_trace_store
 
@@ -242,6 +243,61 @@ def test_reason_saves_trace(client_no_auth):
     assert resp.status_code == 200
     stored = get_trace_store().get("trace-test-session")
     assert stored is not None
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_escalate_enqueues_human_review(client_no_auth):
+    """ESCALATE verdicts are queued for human review operations."""
+    escalate_result = {
+        **_MOCK_RESULT,
+        "request_id": "req-escalate-1",
+        "verdict": {"decision": "escalate"},
+    }
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+        resp = client_no_auth.post(
+            "/v1/reason",
+            json={"input": "Need review", "session_id": "escalate-session-1"},
+        )
+    assert resp.status_code == 200
+
+    pending = client_no_auth.get("/v1/review/pending")
+    assert pending.status_code == 200
+    body = pending.json()
+    assert body["total"] == 1
+    assert body["items"][0]["session_id"] == "escalate-session-1"
+    assert body["items"][0]["status"] == "pending"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_review_decision_updates_item_and_appends_trace(client_no_auth):
+    """Human decisions transition review item from pending→decided."""
+    escalate_result = {
+        **_MOCK_RESULT,
+        "request_id": "req-escalate-2",
+        "verdict": {"decision": "escalate"},
+    }
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+        client_no_auth.post(
+            "/v1/reason",
+            json={"input": "Need review", "session_id": "escalate-session-2"},
+        )
+
+    pending = client_no_auth.get("/v1/review/pending").json()["items"]
+    review_id = pending[0]["id"]
+
+    decision = client_no_auth.post(
+        f"/v1/review/{review_id}/decision",
+        json={"decision": "approve", "reviewer": "alice", "comment": "safe"},
+    )
+    assert decision.status_code == 200
+    item = decision.json()["item"]
+    assert item["status"] == "decided"
+    assert item["decision"] == "approve"
+
+    trace = client_no_auth.get("/v1/trace/escalate-session-2").json()
+    assert any(e["event_type"] == "HumanReviewDecided" for e in trace["events"])
 
 
 # ---------------------------------------------------------------------------
@@ -468,6 +524,8 @@ def test_openapi_schema_generated(client_no_auth):
     assert "/v1/health" in paths
     # Trace path uses path param
     assert any("/v1/trace/" in p for p in paths)
+    assert "/v1/review/pending" in paths
+    assert "/v1/review/{review_id}/decision" in paths
 
 
 @pytest.mark.unit

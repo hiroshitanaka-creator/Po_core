@@ -71,3 +71,27 @@ def test_tradeoff_tab_uses_salience_wording() -> None:
     assert "Axis Salience Scoreboard" in layout_text
     assert "Axis Salience Vectors" in layout_text
     assert "relative emphasis (salience/keyword-hit ratio)" in layout_text
+
+
+def test_create_app_includes_human_review_tab() -> None:
+    app = create_app(
+        events=[],
+        review_items=[
+            {
+                "id": "sess-1:req-1",
+                "session_id": "sess-1",
+                "status": "pending",
+                "decision": None,
+                "reviewer": None,
+            }
+        ],
+    )
+
+    tabs = app.layout.children[1]
+    labels = [tab.label for tab in tabs.children]
+    assert "Human Review" in labels
+
+    review_tab = next(tab for tab in tabs.children if tab.value == "tab-human-review")
+    tab_text = str(review_tab.children)
+    assert "Human Review Queue" in tab_text
+    assert "Pending: 1" in tab_text

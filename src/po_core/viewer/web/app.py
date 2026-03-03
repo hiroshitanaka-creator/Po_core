@@ -474,12 +474,69 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
     return html.Div(children, style={"padding": "20px"})
 
 
+def _build_human_review_tab(review_items: Optional[Sequence[dict[str, Any]]]) -> html.Div:
+    """Human review queue tab for ESCALATE operational visibility."""
+    children = [html.H3("Human Review Queue")]
+
+    items = [dict(i) for i in (review_items or [])]
+    if not items:
+        children.append(html.P("No human review items loaded."))
+        return html.Div(children, style={"padding": "20px"})
+
+    pending = [i for i in items if str(i.get("status")) == "pending"]
+    decided = [i for i in items if str(i.get("status")) == "decided"]
+    children.append(
+        html.Ul(
+            [
+                html.Li(f"Total: {len(items)}"),
+                html.Li(f"Pending: {len(pending)}"),
+                html.Li(f"Decided: {len(decided)}"),
+            ]
+        )
+    )
+
+    rows = []
+    for item in items:
+        rows.append(
+            html.Tr(
+                [
+                    html.Td(str(item.get("id", ""))),
+                    html.Td(str(item.get("session_id", ""))),
+                    html.Td(str(item.get("status", ""))),
+                    html.Td(str(item.get("decision", "") or "-")),
+                    html.Td(str(item.get("reviewer", "") or "-")),
+                ]
+            )
+        )
+    children.append(
+        html.Table(
+            [
+                html.Thead(
+                    html.Tr(
+                        [
+                            html.Th("Review ID"),
+                            html.Th("Session"),
+                            html.Th("Status"),
+                            html.Th("Decision"),
+                            html.Th("Reviewer"),
+                        ]
+                    )
+                ),
+                html.Tbody(rows),
+            ]
+        )
+    )
+
+    return html.Div(children, style={"padding": "20px"})
+
+
 # ── App factory ──────────────────────────────────────────────────
 
 
 def create_app(
     events: Optional[Sequence[TraceEvent]] = None,
     explanation: Optional[ExplanationChain] = None,
+    review_items: Optional[Sequence[dict[str, Any]]] = None,
     title: str = "Po_core Viewer",
     debug: bool = False,
 ) -> dash.Dash:
@@ -558,6 +615,11 @@ def create_app(
                         label="Trade-off Map",
                         value="tab-tradeoff",
                         children=_build_tradeoff_tab(ev_list),
+                    ),
+                    dcc.Tab(
+                        label="Human Review",
+                        value="tab-human-review",
+                        children=_build_human_review_tab(review_items),
                     ),
                 ],
             ),
