@@ -1,0 +1,24 @@
+case_id: case_s01_career_transition_base
+title: "キャリア転換検討（価値観未定義 → セッション回答で補完）"
+locale: ja-JP
+problem: "現在の仕事を続けるか、全く異なる分野にキャリアチェンジするか迷っている。"
+context:
+  background: "10年同じ業界に在籍。充実感が薄れてきた。"
+constraints:
+  - "生活費は現状維持が必要"
+  - "転職活動に使える時間は週5時間程度"
+values: []
+deadline: "2026-06-30"
+stakeholders:
+  - name: "自分"
+    role: "意思決定主体"
+    impact: "キャリア・収入・幸福感に直接影響"
+  - name: "家族"
+    role: "生活共同体"
+    impact: "家計・生活水準に影響"
+unknowns:
+  - "転職先候補の具体的な条件（業種・年収・働き方）"
+  - "現職継続時のキャリアパス"
+extensions:
+  scenario_profile: "session_replay_v1"
+  session_target: "session_001"

@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "case_ref": "case_s01_career_transition_base",
+  "answers": [
+    {
+      "question_id": "q_vc_01",
+      "answer_text": "新しいスキルを習得し、社会的な意義を感じられる仕事に就けた状態",
+      "applied_patch_paths": ["/values/0", "/values/1"]
+    },
+    {
+      "question_id": "q_vc_02",
+      "answer_text": "収入が30%以上下がること、家族への生活水準への影響",
+      "applied_patch_paths": ["/constraints/2"]
+    }
+  ],
+  "patch": [
+    {"op": "add", "path": "/values/0", "value": "自己成長"},
+    {"op": "add", "path": "/values/1", "value": "社会的意義"},
+    {"op": "add", "path": "/constraints/2", "value": "収入は現状の70%以上を維持する"}
+  ]
+}

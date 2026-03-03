@@ -24,11 +24,17 @@ from po_core.app.ethics_engine import (
     get_rules_fired,
     principles_from_values,
 )
+from po_core.app.plan_builder import build_two_track_plan, needs_two_track_plan
 from po_core.app.policy_engine import arbitrate, build_recommendation
 from po_core.app.question_layer import build_questions
 from po_core.app.responsibility_engine import (
     build_option_responsibility_review,
     build_responsibility_summary,
+)
+from po_core.app.values_clarifier import (
+    build_values_clarification_action_plan,
+    build_values_clarification_questions,
+    needs_values_clarification,
 )
 
 _POCORE_VERSION = "0.2.0rc1"
@@ -140,8 +146,15 @@ def _build_options(
     case: Dict[str, Any],
     proposal: Dict[str, Any],
     principles: List[str],
+    now: str | None = None,
 ) -> List[Dict[str, Any]]:
-    """Build 2 options: main (from proposal) + cautious alternative."""
+    """Build 2 options: main (from proposal) + cautious alternative.
+
+    REQ-VALUES-001: When values is empty, opt_001 action_plan becomes the
+    Values Clarification Pack (5-step procedure).
+    REQ-PLAN-001: When unknowns + deadline pressure, opt_001 action_plan
+    becomes a Two-Track Plan (Track A: reversible actions / Track B: unknowns).
+    """
     constraints = case.get("constraints", [])
     values = case.get("values", [])
     unknowns = case.get("unknowns", [])
@@ -149,12 +162,17 @@ def _build_options(
     content = str(proposal.get("content", "")) or "哲学的観点からの主要推奨案"
     risk_tags: List[str] = list(proposal.get("risk_tags", []))
 
-    # Action plan from constraints
-    action_plan: List[Dict[str, Any]] = [
-        {"step": f"制約を考慮: {c}"} for c in constraints[:3]
-    ]
-    if not action_plan:
-        action_plan = [{"step": "状況の詳細確認と関係者への情報共有"}]
+    # ── Action plan selection (REQ-VALUES-001, REQ-PLAN-001) ──────────────
+    if needs_values_clarification(case):
+        # REQ-VALUES-001: values empty → value-elicitation procedure
+        action_plan: List[Dict[str, Any]] = build_values_clarification_action_plan()
+    elif needs_two_track_plan(case, now):
+        # REQ-PLAN-001: unknowns + time pressure → Two-Track Plan
+        action_plan = build_two_track_plan(case, now)
+    else:
+        action_plan = [{"step": f"制約を考慮: {c}"} for c in constraints[:3]]
+        if not action_plan:
+            action_plan = [{"step": "状況の詳細確認と関係者への情報共有"}]
 
     # Pros: from values + assumption_tags
     pros: List[str] = [f"価値観「{v}」の実現に資する" for v in values[:2]]
@@ -315,11 +333,23 @@ def _build_recommendation(
 def _build_questions(
     case: Dict[str, Any], *, suppress: bool = False, now: str | None = None
 ) -> List[Dict[str, Any]]:
-    """Build question list via question_layer v1 with deadline priority (REQ-QST-001)."""
+    """Build question list with values clarification or deadline priority.
+
+    Priority order:
+    1. Suppressed (IntentionGate reject / information complete) → []
+    2. REQ-VALUES-001: values empty → Values Clarification Pack questions
+    3. REQ-QST-001: unknowns + deadline → question_layer with deadline priority
+    """
     if suppress:
         return []
     unknowns = case.get("unknowns", [])
-    return build_questions(list(unknowns), case=case, now=now)
+    base_questions = build_questions(list(unknowns), case=case, now=now)
+
+    # REQ-VALUES-001: when values empty, prepend value-clarification questions
+    if needs_values_clarification(case):
+        return build_values_clarification_questions(case, base_questions)
+
+    return base_questions
 
 
 def _should_suppress_questions(
@@ -334,6 +364,9 @@ def _should_suppress_questions(
 
     unknowns = case.get("unknowns", [])
     values = case.get("values", [])
+    # Never suppress when values is empty — questions must be generated
+    if not values:
+        return False
     return not unknowns and bool(values)
 
 
@@ -390,7 +423,10 @@ def _build_trace(
             "started_at": _ts(base, 10),
             "ended_at": _ts(base, 11),
             "summary": "推奨・反証・代替案を含む出力を組み立てた",
-            "metrics": {"arbitration_code": arbitration_code, "policy_version": "policy_v1"},
+            "metrics": {
+                "arbitration_code": arbitration_code,
+                "policy_version": "policy_v1",
+            },
         },
     ]
     return {"version": "1.0", "steps": steps}
@@ -457,7 +493,7 @@ def adapt_to_schema(
     # REQ-ARB-001: policy_v1 arbitration (M2)
     arbitration_code, recommended_option_id = arbitrate(case, run_result)
 
-    options = _build_options(case, proposal, principles)
+    options = _build_options(case, proposal, principles, now=now)
     recommendation = build_recommendation(
         case, run_result, arbitration_code, recommended_option_id
     )
@@ -475,7 +511,9 @@ def adapt_to_schema(
     # M2-B responsibility_v1
     responsibility: Dict[str, Any] = build_responsibility_summary(case, values=values)
 
-    trace = _build_trace(now, arbitration_code=arbitration_code, rules_fired=rules_fired)
+    trace = _build_trace(
+        now, arbitration_code=arbitration_code, rules_fired=rules_fired
+    )
 
     return {
         "meta": {
