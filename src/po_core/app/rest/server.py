@@ -20,6 +20,7 @@ Security:
 from __future__ import annotations
 
 import logging
+from typing import cast
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,7 +47,7 @@ app: FastAPI | None = None
 
 def _rate_limit_handler(request: Request, exc: Exception) -> Response:
     """Typed wrapper so mypy accepts the handler signature for add_exception_handler."""
-    return _rate_limit_exceeded_handler(request, exc)
+    return _rate_limit_exceeded_handler(request, cast(RateLimitExceeded, exc))
 
 
 def _parse_cors_origins(cors_origins: str) -> list[str]:
