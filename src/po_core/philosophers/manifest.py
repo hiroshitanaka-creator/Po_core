@@ -2,7 +2,7 @@
 Philosopher Manifest (兵科表)
 =============================
 
-39人の哲学者の"名簿"→"兵科表"に昇格。
+42人の哲学者の"名簿"→"兵科表"に昇格。
 tags と cost で役割とコストを明示。
 
 risk_level:
@@ -32,7 +32,6 @@ from typing import List, Tuple
 
 from po_core.deliberation.roles import PHILOSOPHER_ROLE_MAP, Role
 from po_core.philosophers.tags import (
-    TAG_AI_SYNTHESIS,
     TAG_CLARIFY,
     TAG_COMPLIANCE,
     TAG_CREATIVE,
@@ -69,7 +68,7 @@ class PhilosopherSpec:
     cost: int = 1
 
 
-# 39人の哲学者 兵科表
+# 42人の哲学者 兵科表
 SPECS: List[PhilosopherSpec] = [
     # ══════════════════════════════════════════════════════════════════════
     # risk_level=0: 安全寄り（倫理重視、確認、整理）
@@ -442,49 +441,36 @@ SPECS: List[PhilosopherSpec] = [
         cost=2,
     ),
     # ══════════════════════════════════════════════════════════════════════
-    # AI企業哲学者スロット 40-43  — enabled=True（Phase 7 完了）
-    #
-    # これらのスロットは現代 AI システムを哲学的対話者として迎え入れる。
-    # enabled=True にするときは PhilosopherRegistry の max_normal も更新すること。
+    # アフリカ系哲学者スロット 40-41 / カナダ系哲学者スロット 42
     # ══════════════════════════════════════════════════════════════════════
     PhilosopherSpec(
-        "claude_anthropic",
-        "po_core.philosophers.claude_anthropic",
-        "ClaudeAnthropic",
-        risk_level=0,
-        weight=1.3,
-        enabled=True,  # Slot 40
-        tags=(TAG_COMPLIANCE, TAG_CLARIFY, TAG_CRITIC, TAG_AI_SYNTHESIS),
-        cost=2,
-    ),
-    PhilosopherSpec(
-        "grok_xai",
-        "po_core.philosophers.grok_xai",
-        "GrokXAI",
-        risk_level=2,
-        weight=1.1,
-        enabled=True,  # Slot 41
-        tags=(TAG_REDTEAM, TAG_CRITIC, TAG_AI_SYNTHESIS),
-        cost=2,
-    ),
-    PhilosopherSpec(
-        "gpt_chatgpt",
-        "po_core.philosophers.gpt_chatgpt",
-        "GPTChatGPT",
+        "appiah",
+        "po_core.philosophers.appiah",
+        "Appiah",
         risk_level=1,
         weight=1.2,
-        enabled=True,  # Slot 42
-        tags=(TAG_GENERAL, TAG_CLARIFY, TAG_AI_SYNTHESIS),
+        enabled=True,  # Slot 40 — Kwame Anthony Appiah (Ghana/US)
+        tags=(TAG_GENERAL, TAG_CLARIFY, TAG_CRITIC),
         cost=2,
     ),
     PhilosopherSpec(
-        "gemini_google",
-        "po_core.philosophers.gemini_google",
-        "GeminiGoogle",
-        risk_level=1,
+        "fanon",
+        "po_core.philosophers.fanon",
+        "Fanon",
+        risk_level=2,
         weight=1.1,
-        enabled=True,  # Slot 43
-        tags=(TAG_PLANNER, TAG_CRITIC, TAG_AI_SYNTHESIS),
+        enabled=True,  # Slot 41 — Frantz Fanon (Martinique/Algeria)
+        tags=(TAG_REDTEAM, TAG_CRITIC, TAG_CREATIVE),
+        cost=2,
+    ),
+    PhilosopherSpec(
+        "charles_taylor",
+        "po_core.philosophers.charles_taylor",
+        "CharlesTaylor",
+        risk_level=1,
+        weight=1.2,
+        enabled=True,  # Slot 42 — Charles Taylor (Canada)
+        tags=(TAG_PLANNER, TAG_CLARIFY, TAG_COMPLIANCE),
         cost=2,
     ),
 ]

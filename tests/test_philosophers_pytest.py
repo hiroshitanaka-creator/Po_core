@@ -1,15 +1,15 @@
 """
-Pytest: All 43 Philosophers
+Pytest: All 42 Philosophers
 ===========================
 
-Pytest-compatible test suite for all 43 philosopher modules
-(39 classic + 4 AI: ClaudeAnthropic, GrokXAI, GeminiGoogle, GPTChatGPT).
+Pytest-compatible test suite for all 42 philosopher modules
+(39 classic + 2 African: Appiah, Fanon + 1 Canadian: CharlesTaylor).
 Run with: pytest tests/test_philosophers_pytest.py -v
 """
 
 import pytest
 
-# All 43 philosophers in the registry (39 classic + 4 AI)
+# All 42 philosophers in the registry
 PHILOSOPHER_KEYS = [
     "aristotle",
     "plato",
@@ -50,11 +50,11 @@ PHILOSOPHER_KEYS = [
     "dogen",
     "nagarjuna",
     "wabi_sabi",
-    # AI companions
-    "claude_anthropic",
-    "grok_xai",
-    "gemini_google",
-    "gpt_chatgpt",
+    # African philosophers
+    "appiah",
+    "fanon",
+    # Canadian philosopher
+    "charles_taylor",
 ]
 
 
@@ -75,8 +75,8 @@ class TestPhilosopherRegistry:
     def test_registry_count(self, philosopher_registry):
         """Test that registry contains expected number of philosophers."""
         assert (
-            len(philosopher_registry) == 43
-        ), f"Expected 43 philosophers, got {len(philosopher_registry)}"
+            len(philosopher_registry) == 42
+        ), f"Expected 42 philosophers, got {len(philosopher_registry)}"
 
     def test_all_keys_present(self, philosopher_registry):
         """Test that all expected keys are in registry."""

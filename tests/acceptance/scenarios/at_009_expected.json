@@ -1,11 +1,11 @@
 {
-  "at_id": "AT-003",
-  "case_id": "case_003",
+  "at_id": "AT-009",
+  "case_id": "case_009",
   "expected": {
     "meta": {
       "schema_version": "1.0",
       "pocore_version": "0.2.0rc1",
-      "run_id": "f0114944-ebbc-2093-4b9d-82d9311de68d",
+      "run_id": "c23ad049-4f8f-e4e5-c276-61df6ee3feee",
       "seed": 42,
       "deterministic": true,
       "generator": {
@@ -15,33 +15,30 @@
       }
     },
     "case_ref": {
-      "case_id": "case_003_caregiving",
-      "title": "家族介護：親のケアをどう設計するか",
-      "input_digest": "e39a0a3bf9202be781faabdf66ee43e9185e5b9435c7366ee5616be012be1df9"
+      "case_id": "case_009_unclear_values",
+      "title": "価値観が不明：進路選択の前に問いを立てる",
+      "input_digest": "d9eabd2e4c6678670643406478968ba5db4aee6cc25e060ad7c3dd87139785f3"
     },
     "options": [
       {
         "option_id": "opt_001",
-        "title": "家族介護：親のケアをどう設計するか",
+        "title": "価値観が不明：進路選択の前に問いを立てる",
         "description": "道元の教えにおいて、関係性は個我の外部にあるものではない。有時（うじ）：関係とは時間の中に存在するのではなく、関係そのものが時間・存在である。仏性（ぶっしょう）は一切衆生に宿る——他者の中に仏性を見ることは、自己の仏性を見ることと不二（ふに）である。身心脱落（しんじんだつらく）の精神で関係に向かうとは、自己への執着を手放し、相手と共に「今ここ」に在ることである。只管打坐（しかんたざ）の如く関係に向かえ——成果や見返りを求めず、関係そのものに全身全霊で在ること。",
         "action_plan": [
           {
-            "step": "制約を考慮: 月の追加負担予算：最大12万円"
+            "step": "制約を考慮: 生活費は維持したい"
           },
           {
-            "step": "制約を考慮: 平日は介護に割ける時間が限られる"
-          },
-          {
-            "step": "制約を考慮: 親の意思（自立・尊厳）を無視しない"
+            "step": "制約を考慮: 大きな引っ越しは避けたい"
           }
         ],
         "pros": [
-          "価値観「尊厳（親の自律）」の実現に資する",
-          "価値観「安全」の実現に資する"
+          "選択肢の実現可能性が高い",
+          "関係者への影響を最小化できる"
         ],
         "cons": [
-          "不確実性: 医師の見立て（進行予測、必要ケアレベル）",
-          "不確実性: 利用可能なサービス枠・施設の空き"
+          "不確実性: 学び直しの目的（何を得たいのか）",
+          "不確実性: 許容できるリスク量"
         ],
         "risks": [
           {
@@ -53,29 +50,19 @@
         "ethics_review": {
           "principles_applied": [
             "autonomy",
-            "nonmaleficence"
+            "integrity"
           ],
           "tradeoffs": [],
           "concerns": [],
           "confidence": "medium"
         },
         "responsibility_review": {
-          "decision_owner": "親",
+          "decision_owner": "自分",
           "stakeholders": [
             {
-              "name": "親",
-              "role": "当事者",
-              "impact": "生活の質・安全・尊厳に直結"
-            },
-            {
               "name": "自分",
-              "role": "意思決定主体（支援者）",
-              "impact": "時間・お金・精神負荷に影響"
-            },
-            {
-              "name": "兄弟姉妹（いる場合）",
-              "role": "協力者候補",
-              "impact": "負担分担・合意形成に影響"
+              "role": "意思決定主体",
+              "impact": "人生の方向性・収入・幸福に影響"
             }
           ],
           "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
@@ -83,24 +70,24 @@
         },
         "feasibility": {
           "effort": "中程度",
-          "timeline": "期限: 2026-04-01",
+          "timeline": "期限: 2026-03-31",
           "confidence": "medium"
         },
         "uncertainty": {
           "overall_level": "high",
           "reasons": [
-            "医師の見立て（進行予測、必要ケアレベル）",
-            "利用可能なサービス枠・施設の空き",
-            "兄弟姉妹の協力度合い"
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
           ],
           "assumptions": [
-            "月の追加負担予算：最大12万円",
-            "平日は介護に割ける時間が限られる"
+            "生活費は維持したい",
+            "大きな引っ越しは避けたい"
           ],
           "known_unknowns": [
-            "医師の見立て（進行予測、必要ケアレベル）",
-            "利用可能なサービス枠・施設の空き",
-            "兄弟姉妹の協力度合い"
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
           ]
         }
       },
@@ -138,29 +125,19 @@
         "ethics_review": {
           "principles_applied": [
             "autonomy",
-            "nonmaleficence"
+            "integrity"
           ],
           "tradeoffs": [],
           "concerns": [],
           "confidence": "medium"
         },
         "responsibility_review": {
-          "decision_owner": "親",
+          "decision_owner": "自分",
           "stakeholders": [
             {
-              "name": "親",
-              "role": "当事者",
-              "impact": "生活の質・安全・尊厳に直結"
-            },
-            {
               "name": "自分",
-              "role": "意思決定主体（支援者）",
-              "impact": "時間・お金・精神負荷に影響"
-            },
-            {
-              "name": "兄弟姉妹（いる場合）",
-              "role": "協力者候補",
-              "impact": "負担分担・合意形成に影響"
+              "role": "意思決定主体",
+              "impact": "人生の方向性・収入・幸福に影響"
             }
           ],
           "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
@@ -174,110 +151,82 @@
         "uncertainty": {
           "overall_level": "medium",
           "reasons": [
-            "医師の見立て（進行予測、必要ケアレベル）",
-            "利用可能なサービス枠・施設の空き",
-            "兄弟姉妹の協力度合い"
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
           ],
           "assumptions": [
-            "月の追加負担予算：最大12万円",
-            "平日は介護に割ける時間が限られる"
+            "生活費は維持したい",
+            "大きな引っ越しは避けたい"
           ],
           "known_unknowns": [
-            "医師の見立て（進行予測、必要ケアレベル）",
-            "利用可能なサービス枠・施設の空き",
-            "兄弟姉妹の協力度合い"
+            "学び直しの目的（何を得たいのか）",
+            "許容できるリスク量",
+            "支援の有無（家族・貯金・奨学金）"
           ]
         }
       }
     ],
     "recommendation": {
-      "status": "recommended",
-      "recommended_option_id": "opt_001",
-      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。重視する価値観「尊厳（親の自律）・安全」との整合性が高い。",
-      "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
-      "alternatives": [
-        {
-          "option_id": "opt_002",
-          "when_to_choose": "重要な不明点が解消できない場合、またはリスク許容度が低い場合"
-        }
+      "status": "no_recommendation",
+      "reason": "価値観・優先事項が不明確なため、推奨を断言できません。",
+      "missing_info": [
+        "重視する価値観（例: 公平・自律・安全）の明確化"
       ],
-      "confidence": "medium"
+      "next_steps": [
+        "価値観の優先順位付けワークを実施する（重要度 1〜5 で評価）",
+        "ステークホルダーと価値観を共有・合意形成する",
+        "価値観が明確になった後に再検討する"
+      ],
+      "confidence": "low"
     },
     "ethics": {
       "principles_used": [
         "autonomy",
-        "nonmaleficence"
+        "integrity"
       ],
-      "tradeoffs": [
-        {
-          "tension": "「尊厳（親の自律）」vs「安全」",
-          "between": [
-            "尊厳（親の自律）",
-            "安全"
-          ],
-          "mitigation": "段階的実施と関係者調整により両立を目指す",
-          "severity": "medium"
-        }
-      ],
+      "tradeoffs": [],
       "guardrails": [
         "医療・法律の最終判断はPo_coreが行わない",
         "意思決定の主体はユーザーである",
         "価値軸が空のまま推奨を断言しない"
       ],
-      "notes": "W_Ethics Gateによる3層倫理評価済み (rules_fired: ETH-R-001, ETH-R-002, ETH-R-003)"
+      "notes": "W_Ethics Gateによる3層倫理評価済み (rules_fired: ETH-R-002)"
     },
     "responsibility": {
-      "decision_owner": "親",
+      "decision_owner": "自分",
       "stakeholders": [
         {
-          "name": "親",
-          "role": "当事者",
-          "impact": "生活の質・安全・尊厳に直結"
-        },
-        {
           "name": "自分",
-          "role": "意思決定主体（支援者）",
-          "impact": "時間・お金・精神負荷に影響"
-        },
-        {
-          "name": "兄弟姉妹（いる場合）",
-          "role": "協力者候補",
-          "impact": "負担分担・合意形成に影響"
-        },
-        {
-          "name": "ケアマネ/介護事業者",
-          "role": "実行者",
-          "impact": "プランの品質に影響"
+          "role": "意思決定主体",
+          "impact": "人生の方向性・収入・幸福に影響"
         }
       ],
       "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
-      "consent_considerations": [
-        "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
-        "重大なリスクが残る場合は関係者の同意を得てから進める"
-      ]
+      "consent_considerations": []
     },
     "questions": [
       {
         "question_id": "q_001",
-        "question": "不明点『医師の見立て（進行予測、必要ケアレベル）』について、判断に使える事実は何ですか？",
+        "question": "不明点『学び直しの目的（何を得たいのか）』について、判断に使える事実は何ですか？",
         "priority": 1,
-        "why_needed": "『医師の見立て（進行予測、必要ケアレベル）』が選択肢評価に影響するため",
+        "why_needed": "『学び直しの目的（何を得たいのか）』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "不明点『利用可能なサービス枠・施設の空き』について、判断に使える事実は何ですか？",
+        "question": "不明点『許容できるリスク量』について、判断に使える事実は何ですか？",
         "priority": 3,
-        "why_needed": "『利用可能なサービス枠・施設の空き』が選択肢評価に影響するため",
+        "why_needed": "『許容できるリスク量』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       },
       {
         "question_id": "q_003",
-        "question": "不明点『兄弟姉妹の協力度合い』について、判断に使える事実は何ですか？",
+        "question": "不明点『支援の有無（家族・貯金・奨学金）』について、判断に使える事実は何ですか？",
         "priority": 5,
-        "why_needed": "『兄弟姉妹の協力度合い』が選択肢評価に影響するため",
+        "why_needed": "『支援の有無（家族・貯金・奨学金）』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
@@ -285,18 +234,18 @@
     "uncertainty": {
       "overall_level": "high",
       "reasons": [
-        "医師の見立て（進行予測、必要ケアレベル）",
-        "利用可能なサービス枠・施設の空き",
-        "兄弟姉妹の協力度合い"
+        "学び直しの目的（何を得たいのか）",
+        "許容できるリスク量",
+        "支援の有無（家族・貯金・奨学金）"
       ],
       "assumptions": [
-        "月の追加負担予算：最大12万円",
-        "平日は介護に割ける時間が限られる"
+        "生活費は維持したい",
+        "大きな引っ越しは避けたい"
       ],
       "known_unknowns": [
-        "医師の見立て（進行予測、必要ケアレベル）",
-        "利用可能なサービス枠・施設の空き",
-        "兄弟姉妹の協力度合い"
+        "学び直しの目的（何を得たいのか）",
+        "許容できるリスク量",
+        "支援の有無（家族・貯金・奨学金）"
       ]
     },
     "trace": {
@@ -315,9 +264,7 @@
           "summary": "W_Ethics Gateによる3層倫理評価を適用した",
           "metrics": {
             "rules_fired": [
-              "ETH-R-001",
-              "ETH-R-002",
-              "ETH-R-003"
+              "ETH-R-002"
             ]
           }
         },
@@ -333,7 +280,7 @@
           "name": "compose_output",
           "summary": "推奨・反証・代替案を含む出力を組み立てた",
           "metrics": {
-            "arbitration_code": "RECOMMEND_OPT_001",
+            "arbitration_code": "VALUES_EMPTY",
             "policy_version": "policy_v1"
           }
         }

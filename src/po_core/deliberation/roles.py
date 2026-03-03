@@ -134,10 +134,9 @@ PHILOSOPHER_ROLE_MAP: Mapping[str, Role] = {
     "lacan": Role.RED_TEAM,
     "badiou": Role.RED_TEAM,
     "butler": Role.CARE,
-    "claude_anthropic": Role.DEONTOLOGIST,
-    "grok_xai": Role.RED_TEAM,
-    "gpt_chatgpt": Role.PRAGMATIST,
-    "gemini_google": Role.SYSTEMS,
+    "appiah": Role.CARE,
+    "fanon": Role.RED_TEAM,
+    "charles_taylor": Role.SYSTEMS,
 }
 
 

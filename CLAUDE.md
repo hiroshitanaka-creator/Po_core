@@ -5,9 +5,12 @@
 
 ## What is Po_core?
 
-Philosophy-driven AI: 39 philosopher AI personas deliberate via tensor calculations
+Philosophy-driven AI: 42 philosopher AI personas deliberate via tensor calculations
 (Freedom Pressure, Semantic Delta, Blocked Tensor) and a 3-layer W_Ethics Gate
 to generate ethically responsible responses.
+
+**Core thesis:** 「AIは統計的オウムである」という批判に対して、哲学的熟議によって倫理的責任を持つAIが
+**構築できる**ことをコード・テスト・論文で証明する。
 
 ## Architecture
 
@@ -27,7 +30,10 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 
 ```
 src/po_core/
-├── philosophers/     # 39 philosopher modules + manifest + registry
+├── philosophers/     # 42 philosopher modules + manifest + registry
+│                     #   39 classic (Western/Eastern) +
+│                     #    2 African (Appiah, Fanon) +
+│                     #    1 Canadian (CharlesTaylor)
 ├── tensors/          # TensorEngine + metrics/ (freedom_pressure, semantic_delta, blocked_tensor)
 ├── safety/           # W_Ethics Gate (wethics_gate/), fallback, policy_scoring
 ├── aggregator/       # Pareto, conflict_resolver, policy_aware, weighted_vote
@@ -44,19 +50,22 @@ src/po_core/
 ## Conventions
 
 - **Python 3.10+**, formatted with **black 26.1.0**, imports sorted with **isort 5.13.2**
-- **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`
+- **pytest** with markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`, `acceptance`
 - CI requires **pipeline-marked tests to pass**; full suite is best-effort
 - Philosopher risk levels: 0 (safe), 1 (standard), 2 (risky) — defined in `manifest.py`
-- SafetyMode: NORMAL (39 philosophers) / WARN (5) / CRITICAL (1)
+- SafetyMode: NORMAL (42 philosophers) / WARN (5) / CRITICAL (1)
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
+- Version: `0.2.0rc1` (release candidate, M1 complete) → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
 
-## Current Phase: Phase 5 (COMPLETE — Phases 1–5 COMPLETE)
+## Current Status (2026-03-03)
 
-**Phase 1: COMPLETE** — 39-philosopher scaling + tech debt cleared. 2354 tests.
+### 完了済みフェーズ (Phases 1–7 + Spec M0: ALL COMPLETE)
 
-**Phase 2: COMPLETE** — ML tensors + Deliberation Engine. 2396 tests.
+**Phase 1: COMPLETE** — 42-philosopher scaling + tech debt cleared.
+
+**Phase 2: COMPLETE** — ML tensors + Deliberation Engine.
 
 - Semantic Delta: multi-backend (sbert/tfidf/basic) with encode_texts() API
 - InteractionMatrix: NxN embedding-based harmony + keyword tension
@@ -64,99 +73,103 @@ src/po_core/
 
 **Phase 3: COMPLETE** — Viewer WebUI + Explainable W_Ethics Gate + Deliberation Visualization
 
-Completed:
-
-- Dash WebUI with **4-tab layout** (Pipeline, Philosophers, W_Ethics Gate, Deliberation)
-- `ExplanationChain` integrated into pipeline via `ExplanationEmitted` TraceEvent
-- `build_explanation_from_verdict()` bridges SafetyVerdict → ExplanationChain
-- `extract_explanation_from_events()` reconstructs from trace events
-- Deliberation round chart + InteractionMatrix summary chart in figures.py
-- `PoViewer.explanation()` auto-extracts from trace; `serve()` auto-passes to WebUI
-- `InMemoryTracer` listener/callback mechanism (real-time streaming foundation)
-- TraceEvent schema: `ExplanationEmitted`, `DeliberationCompleted` registered
-
 Key files:
 
 - `src/po_core/viewer/web/app.py` — Dash app factory (4-tab layout)
 - `src/po_core/viewer/web/figures.py` — Plotly chart builders (incl. deliberation)
 - `src/po_core/safety/wethics_gate/explanation.py` — ExplanationChain + verdict bridge
 - `src/po_core/trace/in_memory.py` — InMemoryTracer with listener support
-- `src/po_core/po_viewer.py` — PoViewer with auto-extraction
-- Tests: `tests/unit/test_phase3_observability.py` (34 tests)
 
-**Phase 4: COMPLETE** — Adversarial Hardening + Ethical Stress Testing. 85 new tests.
+**Phase 4: COMPLETE** — Adversarial Hardening + Ethical Stress Testing.
 
-Completed:
+- `PromptInjectionDetector` — 100% injection/jailbreak detection, ≤20% FP rate
+- Enhanced `IntentionGate.check_intent` — W1 structural exclusion + obfuscation normalization
+- `tests/redteam/` — 56 red team tests, all passing
 
-- `PromptInjectionDetector` — W1 detection for prompt injection, jailbreak, DAN, roleplay bypass
-- Enhanced `EnglishKeywordViolationDetector` v0.2 — W3 dependency disguised as help patterns
-- Enhanced `IntentionGate.check_intent` — W1 structural exclusion, W3 goal misalignment, obfuscation normalization
-- All 9 previously-xfail red team tests now pass (14/14 redteam tests green)
-- Defense metrics: 100% injection/jailbreak detection, ≥85% overall attack detection, ≤20% FP rate
-- New pytest markers: `redteam`, `phase4`
+**Phase 5: COMPLETE** — Productization. Package: `po-core-flyingpig`.
 
-Key files added/modified (Phase 4):
+- FastAPI REST API (`src/po_core/app/rest/`) — 5 routers
+- Docker multi-stage build, docker-compose, `.env.example`
+- `AsyncPartyMachine` — real-time per-philosopher SSE events
+- Benchmarks: p50 ~33ms NORMAL mode
+- `publish.yml` OIDC workflow ready (actual PyPI publish: pending M4)
 
-- `src/po_core/safety/wethics_gate/detectors.py` — `PromptInjectionDetector` + v0.2 English detector
-- `src/po_core/safety/wethics_gate/intention_gate.py` — enhanced `check_intent` + obfuscation normalization
-- `tests/redteam/test_prompt_injection.py` — all 7 tests passing (was 5 pass + 5 xfail)
-- `tests/redteam/test_goal_misalignment.py` — all 7 tests passing (was 5 pass + 4 xfail)
-- `tests/redteam/test_jailbreak_extended.py` — 15 new adversarial pattern tests
-- `tests/redteam/test_ethics_boundary.py` — 16 new ethical grey zone tests
-- `tests/redteam/test_defense_metrics.py` — 11 defense metric automation tests
-- `tests/unit/test_phase4_hardening.py` — 29 W_Ethics Gate edge case + unit tests
+**Phase 6: COMPLETE** — Autonomous Evolution.
 
-**Phase 5: COMPLETE** — Productization. Version bumped to `0.2.0b3`. Package renamed to `po-core-flyingpig`.
+- FreedomPressureV2 (6D ML tensor), MetaEthicsMonitor, 3-layer memory
 
-Completed (Phase 5-A: REST API):
+**Phase 7 (→ refactored): COMPLETE** — Philosopher diversity expansion.
 
-- FastAPI app factory (`src/po_core/app/rest/server.py`) with 5 routers
-- `POST /v1/reason` — synchronous philosophical reasoning
-- `POST /v1/reason/stream` — SSE streaming reasoning
-- `GET /v1/philosophers` — full 39-philosopher manifest
-- `GET /v1/trace/{session_id}` — per-session trace retrieval
-- `GET /v1/health` — health check with version + uptime
-- API key auth via `X-API-Key` header (`PO_API_KEY` / `PO_SKIP_AUTH`)
-- `APISettings` via pydantic-settings — all config via env vars / `.env`
-- 24 unit tests (REST endpoints, auth, SSE, rate limiting)
+- Originally: AI vendor slots (Claude/GPT/Gemini/Grok)
+- **Refactored 2026-03-03 (ADR-0006):** Replaced with African & Canadian philosophers
+  - Kwame Anthony Appiah (Ghana/US) — Cosmopolitanism, anti-essentialism [Slot 40]
+  - Frantz Fanon (Martinique/Algeria) — Decolonialism, liberation philosophy [Slot 41]
+  - Charles Taylor (Canada) — Communitarianism, politics of recognition [Slot 42]
 
-Completed (Phase 5-B: Security):
+**Spec M0: COMPLETE** (2026-02-28) — PRD / SRS / Schema / TestCases / Traceability
 
-- CORS via `PO_CORS_ORIGINS` env var (default `"*"`, production: comma-separated origins)
-- SlowAPI rate limiting via `PO_RATE_LIMIT_PER_MINUTE` (default 60 req/min per IP)
-- Starlette-compatible rate limit handler wrapper (mypy clean)
+### ✅ M1 COMPLETE (2026-03-03)
 
-Completed (Phase 5-C: Docker):
+**M1: LLMなしE2E — 全完了**
 
-- Multi-stage `Dockerfile` (builder + slim runtime, non-root `pocore` user)
-- `docker-compose.yml` with named volumes + 30s health check
-- `.dockerignore` — excludes dev/test/docs from image
-- `.env.example` — full environment variable reference
+- ✅ StubComposer → `output_schema_v1.json` 準拠出力 (`src/po_core/app/composer.py`)
+- ✅ AT-001〜AT-010 テストスイート追加 (`tests/acceptance/`)
+- ✅ `jsonschema` CI バリデーションゲート (`schema-gate` job + `validate_output_schema` fixture)
+- ✅ Golden files: `at_001_expected.json`, `at_009_expected.json` (全10件 in `tests/acceptance/scenarios/`)
+- ✅ `@pytest.mark.acceptance` を AT-001〜AT-007 に追加 → CI `-m acceptance` で全10件カバー
 
-All Phase 5 items COMPLETE:
+**結果:** `pytest tests/acceptance/ -v` → **27 passed** / `pytest tests/acceptance/ -v -m acceptance` → **20 passed**
 
-- **5.2 Async streaming** ✓ — `AsyncPartyMachine` + real-time per-philosopher SSE events (`PhilosopherCompleted`)
-- **5.4 Benchmarks** ✓ — `tests/benchmarks/test_pipeline_perf.py`; p50 ~33ms NORMAL mode
-- **5.5 PyPI publish** — `publish.yml` OIDC workflow ready; actual publish to TestPyPI/PyPI pending
+### ✅ M2 COMPLETE (2026-03-03)
 
-Key files (Phase 5):
+**M2: ethics_v1 + responsibility_v1 + 不確実性ラベル — 全完了**
 
-- `src/po_core/app/rest/` — FastAPI app (server, config, auth, rate_limit, models, store, routers/)
-- `Dockerfile`, `docker-compose.yml`, `.dockerignore`, `.env.example`
-- `.github/workflows/publish.yml` — TestPyPI / PyPI OIDC trusted publishing
-- `tests/unit/test_rest_api.py` — 24 REST API tests
+- ✅ `policy_engine.py` — policy_v1 arbitration (REQ-ARB-001): arbitration_code
+- ✅ `ethics_engine.py` 強化 — rule_id / rules_fired tracking (REQ-ETH-002)
+- ✅ `question_layer.py` 強化 — deadline × unknowns 優先順位 (REQ-QST-001)
+- ✅ `output_adapter.py` 統合 — trace に arbitration_code + rules_fired 記録
+- ✅ バージョン更新: `0.2.0b4` → `0.2.0rc1`, "39人" → "42人" in trace
+- ✅ Golden files 10件再生成 → 27件全パス
 
-## Roadmap Overview
+**結果:** `pytest tests/acceptance/ -v` → **27 passed**
+
+### 次のマイルストーン → M3
+
+---
+
+## Roadmap (ROADMAP_FINAL_FORM.md 準拠)
 
 ```
-Phase 1: Resonance Calibration    — 39人スケール + 技術負債清算 ✓ COMPLETE
-Phase 2: Tensor Intelligence      — ML テンソル + Deliberation Engine (創発) ✓ COMPLETE
-Phase 3: Observability            — Viewer WebUI + Explainable W_Ethics Gate ✓ COMPLETE
-Phase 4: Adversarial Hardening    — Red team 拡充 + 倫理的ストレステスト ✓ COMPLETE
-Phase 5: Productization           — REST API ✓ Security ✓ Docker ✓ Async ✓ Benchmarks ✓ ← COMPLETE (PyPI publish pending)
+Stage 1: 仕様の完成 [2026-03〜05]  ← M1〜M4
+Stage 2: v1.0 リリース [2026-06]   ← PyPI + 全AT通過
+Stage 3: エコシステム [2026 Q3-Q4] ← 永続化・WebSocket・SDK
+Stage 4: 学術的証明 [2026 Q4-2027] ← 論文・ベンチマーク
+Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 ```
 
-See `PHASE_PLAN_v2.md` for full rationale.
+### マイルストーン詳細
+
+| マイルストーン | 期限 | 内容 | 状態 |
+|---|---|---|---|
+| **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | ✅ **COMPLETE** (2026-03-03) |
+| **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | ✅ **COMPLETE** (2026-03-03) |
+| **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | 🔲 未着手 |
+| **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | 🔲 未着手 |
+| **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 0.2.0`) | 🔲 未着手 |
+| **v1.0.0** | 2026-06 | 全AT通過 + 論文ドラフト完成 + CI 100% green | 🔲 未着手 |
+
+### バージョン戦略
+
+```
+現在: 0.2.0rc1 (release candidate, M1 COMPLETE)
+~~M1:   0.2.0rc1~~ → 完了
+M4:   0.2.0    (stable, PyPI)
+v1.0: 1.0.0    (全AT通過 + 論文ドラフト完成)
+```
+
+See `ROADMAP_FINAL_FORM.md` for full rationale.
+
+---
 
 ## Testing
 
@@ -167,21 +180,24 @@ pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py tests/test_sm
 # Full suite
 pytest tests/ -v --tb=short
 
+# Acceptance tests (M1 target: all 10 green)
+pytest tests/acceptance/ -v
+
 # Single philosopher
 pytest tests/unit/test_philosophers/test_aristotle.py -v
 
-# Red team
+# Red team (Phase 4 hardening)
 pytest tests/redteam/ -v
+pytest -m "redteam or phase4" -v
 
-# Phase 3 observability tests
+# Phase 3 observability
 pytest -m observability -v
 
-# Phase 4 adversarial hardening tests
-pytest -m "redteam or phase4" -v
-pytest tests/redteam/ tests/unit/test_phase4_hardening.py -v
-
-# Phase 5 REST API tests
+# Phase 5 REST API
 pytest tests/unit/test_rest_api.py -v
+
+# Benchmarks
+pytest tests/benchmarks/ -v
 ```
 
 ## REST API (Phase 5)
@@ -216,3 +232,4 @@ Key env vars (see `.env.example`):
 - Skip pre-commit hooks (`--no-verify`)
 - Import from `po_core.ensemble` directly — use `po_core.run()` or `PoSelf.generate()`
 - Import from `po_core.app.rest` directly in non-API code — REST layer is a delivery adapter only
+- Add AI vendor names (Claude, GPT, Gemini, etc.) as philosopher slots — use historical/academic philosophers only (see ADR-0006)

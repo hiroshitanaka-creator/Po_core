@@ -78,7 +78,7 @@ class PhilosopherRegistry:
     SafetyModeに応じて哲学者を編成し、動的にロードする。
     - CRITICAL: 1人（最も安全な哲学者のみ）, コスト予算3
     - WARN: 5人（安全〜標準の哲学者）, コスト予算12
-    - NORMAL: 39人（全員）, コスト予算80
+    - NORMAL: 42人（全員）, コスト予算80
 
     battalion_plans が渡されるとそちらを優先する（外部設定）。
     """
@@ -87,7 +87,7 @@ class PhilosopherRegistry:
         self,
         specs: Sequence[PhilosopherSpec] = SPECS,
         *,
-        max_normal: int = 39,
+        max_normal: int = 42,
         max_warn: int = 5,
         max_critical: int = 1,
         budget_normal: int = 80,
@@ -172,8 +172,6 @@ class PhilosopherRegistry:
                 for s in candidates
                 if PHILOSOPHER_ROLE_MAP.get(s.philosopher_id) in role_values
             ]
-        if mode == SafetyMode.NORMAL:
-            candidates = [s for s in candidates if "ai_synthesis" not in s.tags]
         if mode == SafetyMode.CRITICAL:
             candidates = [s for s in candidates if s.philosopher_id != "dummy"]
         # 安定順：安全→重み→id（決定論）

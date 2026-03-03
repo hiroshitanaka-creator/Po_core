@@ -36,7 +36,7 @@ from typing import Any
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 _SCHEMA_VERSION = "1.0"
-_POCORE_VERSION = "0.2.0b4"
+_POCORE_VERSION = "0.2.0rc1"
 _GENERATOR_NAME = "po_core.app.composer.StubComposer"
 _GENERATOR_VERSION = "0.1.0"
 
