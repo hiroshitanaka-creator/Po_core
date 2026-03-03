@@ -13,7 +13,7 @@ from po_core.app.rest.models import (
     TraceHistoryResponse,
     TraceResponse,
 )
-from po_core.app.rest.store import TraceStore, get_trace_store
+from po_core.app.rest.store import TraceHistorySummary, TraceStore, get_trace_store
 
 router = APIRouter(tags=["trace"])
 
@@ -30,11 +30,11 @@ async def get_trace_history(
     store: TraceStore = Depends(get_trace_store),
 ) -> TraceHistoryResponse:
     """Return recent trace session summaries in descending recency order."""
-    summaries = store.history(limit=limit)
+    summaries: list[TraceHistorySummary] = store.history(limit=limit)
     items = [
         TraceHistoryItem(
-            session_id=str(s["session_id"]),
-            event_count=int(s["event_count"]),
+            session_id=s["session_id"],
+            event_count=s["event_count"],
             last_occurred_at=s["last_occurred_at"],
         )
         for s in summaries
