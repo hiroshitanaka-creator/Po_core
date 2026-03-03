@@ -31,6 +31,28 @@ twine check dist/*
 
 > 0.2.0 stable リリース前は、上記2コマンドが成功することを必須条件にしてください。
 
+
+### ✅ 0.2.0 公開後の最短検証（maintainer向け）
+
+```bash
+# 1) 公開済みstableをクリーン環境へ導入
+python -m pip install --upgrade pip
+pip install "po-core-flyingpig==0.2.0"
+
+# 2) import 成功確認
+python -c "import po_core; print(po_core.__name__)"
+
+# 3) 最短クイックスタート確認（生成APIの疎通）
+python - <<'PY'
+from po_core.po_self import PoSelf
+po = PoSelf()
+res = po.generate("公開後の動作確認")
+print(bool(res.text), res.consensus_leader)
+PY
+```
+
+期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。
+
 ## ⚡ 30秒で試す
 
 ### 最小限のコード
