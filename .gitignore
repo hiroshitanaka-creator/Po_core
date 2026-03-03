@@ -253,6 +253,9 @@ data/processed/
 *.jsonl
 *.parquet
 
+# Keep acceptance golden fixtures
+!tests/acceptance/scenarios/*.json
+
 # Except: Keep small example datasets
 !examples/**/*.csv
 !examples/**/*.json

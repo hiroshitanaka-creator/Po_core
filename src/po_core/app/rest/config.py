@@ -57,6 +57,8 @@ class APISettings(BaseSettings):
 
     # Trace storage
     max_trace_sessions: int = 1000
+    trace_store_backend: str = "sqlite"  # sqlite | memory
+    trace_db_path: str = ".po_core/trace_store.sqlite3"
 
     class Config:
         env_prefix = "PO_"
