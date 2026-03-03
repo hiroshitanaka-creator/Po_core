@@ -25,3 +25,15 @@ python scripts/paper/run_comparative_benchmark.py \
 ```
 
 See `docs/paper/benchmarks/README.md` for full reproducibility notes.
+
+
+## arXiv-ready section checklist
+
+`docs/paper/paper.md` maintains the minimum section set required by this roadmap phase:
+
+- Abstract
+- Introduction
+- Method
+- Experiments
+- Limitations
+- References

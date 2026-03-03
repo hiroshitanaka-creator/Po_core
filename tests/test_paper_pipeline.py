@@ -67,3 +67,17 @@ def test_build_paper_pdf(tmp_path: Path) -> None:
     data = pdf.read_bytes()
     assert data.startswith(b"%PDF-1.4")
     assert b"startxref" in data
+
+
+def test_paper_contains_arxiv_required_sections() -> None:
+    paper = Path("docs/paper/paper.md").read_text(encoding="utf-8")
+    required_headers = [
+        "## Abstract",
+        "## Introduction",
+        "## Method",
+        "## Experiments",
+        "## Limitations",
+        "## References",
+    ]
+    for header in required_headers:
+        assert header in paper
