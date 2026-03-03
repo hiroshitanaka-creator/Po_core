@@ -92,6 +92,20 @@ Po_core welcomes contributions across multiple dimensions:
 
 ## Getting Started
 
+### ✅ Contributor Onboarding (Fast Track)
+
+Phase 25 では外部再現性を重視するため、最初に以下を実行してください。
+
+```bash
+python scripts/phase25_reproduce.py --profile external
+```
+
+加えて、次の運用ドキュメントを先に読むことを推奨します。
+
+- `docs/operations/compatibility_policy_v1.md`
+- `docs/operations/migration_guide_v1.md`
+- `docs/operations/reproducibility_runbook.md`
+
 ### Prerequisites
 
 **Required:**
