@@ -427,6 +427,26 @@ def test_reason_stream_result_has_response(client_no_auth):
     assert "Justice" in result_chunk["payload"]["response"]
 
 
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_stream_receives_realtime_events(client_no_auth):
+    """WebSocket endpoint streams started/event/result/done chunks."""
+
+    async def _fake_async_run(*, user_input, settings, tracer):
+        tracer.emit(TraceEvent.now("pipeline_step", "req-ws", {"step": "start"}))
+        return _MOCK_RESULT
+
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
+        with client_no_auth.websocket_connect("/v1/ws/reason") as ws:
+            ws.send_json({"input": "What is practical wisdom?"})
+            chunks = [ws.receive_json(), ws.receive_json(), ws.receive_json(), ws.receive_json()]
+
+    chunk_types = [c["chunk_type"] for c in chunks]
+    assert chunk_types == ["started", "event", "result", "done"]
+    assert chunks[1]["payload"]["event_type"] == "pipeline_step"
+    assert chunks[2]["payload"]["response"] == "Justice is giving each their due."
+
+
 # ---------------------------------------------------------------------------
 # OpenAPI schema
 # ---------------------------------------------------------------------------
