@@ -76,7 +76,7 @@ def main() -> None:
     parser.add_argument("--paper", default="docs/paper/paper.md")
     parser.add_argument("--experiments", default="docs/paper/experiments/results_latest.json")
     parser.add_argument("--compiled", default="docs/paper/build/paper_compiled.md")
-    parser.add_argument("--pdf", default="docs/paper/build/paper.pdf")
+    parser.add_argument("--pdf", default="docs/paper/po_core_paper.pdf")
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
