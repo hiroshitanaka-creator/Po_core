@@ -4,13 +4,42 @@ GET /v1/trace/{session_id} — Trace Retrieval
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from po_core.app.rest.auth import require_api_key
-from po_core.app.rest.models import TraceEventOut, TraceResponse
-from po_core.app.rest.store import get_trace_store
+from po_core.app.rest.models import (
+    TraceEventOut,
+    TraceHistoryItem,
+    TraceHistoryResponse,
+    TraceResponse,
+)
+from po_core.app.rest.store import TraceStore, get_trace_store
 
 router = APIRouter(tags=["trace"])
+
+
+@router.get(
+    "/v1/trace/history",
+    response_model=TraceHistoryResponse,
+    summary="Retrieve persisted trace history",
+    description="Returns recent trace sessions with event counts.",
+)
+async def get_trace_history(
+    limit: int = Query(default=50, ge=1, le=500),
+    _: None = Depends(require_api_key),
+    store: TraceStore = Depends(get_trace_store),
+) -> TraceHistoryResponse:
+    """Return recent trace session summaries in descending recency order."""
+    summaries = store.history(limit=limit)
+    items = [
+        TraceHistoryItem(
+            session_id=str(s["session_id"]),
+            event_count=int(s["event_count"]),
+            last_occurred_at=s["last_occurred_at"],
+        )
+        for s in summaries
+    ]
+    return TraceHistoryResponse(total=len(items), items=items)
 
 
 @router.get(
@@ -26,7 +55,7 @@ router = APIRouter(tags=["trace"])
 async def get_trace(
     session_id: str,
     _: None = Depends(require_api_key),
-    store: dict = Depends(get_trace_store),
+    store: TraceStore = Depends(get_trace_store),
 ) -> TraceResponse:
     """Return trace events for the given session_id."""
     events = store.get(session_id)

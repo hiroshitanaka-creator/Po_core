@@ -24,7 +24,7 @@ from fastapi.testclient import TestClient
 from po_core.app.rest.config import APISettings
 from po_core.app.rest.review_store import _review_store
 from po_core.app.rest.server import create_app
-from po_core.app.rest.store import _store
+from po_core.app.rest.store import get_trace_store, reset_trace_store
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -33,40 +33,42 @@ from po_core.app.rest.store import _store
 
 @pytest.fixture(autouse=True)
 def clear_trace_store():
-    """Clear the in-memory trace store before each test."""
-    _store.clear()
-    _review_store.clear()
+    """Reset the trace store singleton before each test."""
+    reset_trace_store()
     yield
-    _store.clear()
-    _review_store.clear()
+    reset_trace_store()
 
 
 @pytest.fixture()
-def client_no_auth():
+def client_no_auth(tmp_path):
     """TestClient with auth disabled (dev mode)."""
 
-    def _override_settings() -> APISettings:
-        return APISettings(skip_auth=True, api_key="")
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    from po_core.app.rest import auth
 
-    app = create_app()
-    from po_core.app.rest import auth, config
-
-    app.dependency_overrides[config.get_api_settings] = _override_settings
     app.dependency_overrides[auth.require_api_key] = lambda: None
     return TestClient(app, raise_server_exceptions=True)
 
 
 @pytest.fixture()
-def client_with_auth():
+def client_with_auth(tmp_path):
     """TestClient with API key authentication enabled."""
 
-    def _override_settings() -> APISettings:
-        return APISettings(skip_auth=False, api_key="test-secret-key")
-
-    from po_core.app.rest import config
-
-    app = create_app()
-    app.dependency_overrides[config.get_api_settings] = _override_settings
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="test-secret-key",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
     return TestClient(app, raise_server_exceptions=True)
 
 
@@ -239,8 +241,8 @@ def test_reason_saves_trace(client_no_auth):
             json={"input": "What is beauty?", "session_id": "trace-test-session"},
         )
     assert resp.status_code == 200
-    # Trace store should have this session
-    assert "trace-test-session" in _store
+    stored = get_trace_store().get("trace-test-session")
+    assert stored is not None
 
 
 @pytest.mark.unit
@@ -332,6 +334,76 @@ def test_trace_found_after_reason(client_no_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_trace_history_lists_sessions(client_no_auth):
+    """Trace history endpoint returns persisted sessions in recency order."""
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+        client_no_auth.post(
+            "/v1/reason",
+            json={"input": "First", "session_id": "history-1"},
+        )
+        client_no_auth.post(
+            "/v1/reason",
+            json={"input": "Second", "session_id": "history-2"},
+        )
+
+    resp = client_no_auth.get("/v1/trace/history?limit=10")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total"] >= 2
+    assert [item["session_id"] for item in body["items"][:2]] == ["history-2", "history-1"]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_trace_persists_across_store_reinitialization(tmp_path):
+    """SQLite trace store survives singleton reset (simulated restart)."""
+    db_path = tmp_path / "trace_store.sqlite3"
+
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+
+    with TestClient(app, raise_server_exceptions=True) as client:
+        with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+            reason_resp = client.post(
+                "/v1/reason",
+                json={"input": "Persist me", "session_id": "restart-session"},
+            )
+        assert reason_resp.status_code == 200
+
+    reset_trace_store()
+
+    app2 = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+        )
+    )
+    app2.dependency_overrides[auth.require_api_key] = lambda: None
+
+    with TestClient(app2, raise_server_exceptions=True) as client2:
+        trace_resp = client2.get("/v1/trace/restart-session")
+        assert trace_resp.status_code == 200
+        body = trace_resp.json()
+        assert body["session_id"] == "restart-session"
+        assert body["event_count"] >= 0
+        hist_resp = client2.get("/v1/trace/history?limit=10")
+        assert hist_resp.status_code == 200
+        assert any(i["session_id"] == "restart-session" for i in hist_resp.json()["items"])
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_tradeoff_map_found_after_reason(client_no_auth):
     """Tradeoff-map endpoint returns a v1 artifact after a reason call."""
     session_id = "tradeoff-map-test"
@@ -409,6 +481,26 @@ def test_reason_stream_result_has_response(client_no_auth):
     assert result_chunk is not None
     assert "response" in result_chunk["payload"]
     assert "Justice" in result_chunk["payload"]["response"]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_stream_receives_realtime_events(client_no_auth):
+    """WebSocket endpoint streams started/event/result/done chunks."""
+
+    async def _fake_async_run(*, user_input, settings, tracer):
+        tracer.emit(TraceEvent.now("pipeline_step", "req-ws", {"step": "start"}))
+        return _MOCK_RESULT
+
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
+        with client_no_auth.websocket_connect("/v1/ws/reason") as ws:
+            ws.send_json({"input": "What is practical wisdom?"})
+            chunks = [ws.receive_json(), ws.receive_json(), ws.receive_json(), ws.receive_json()]
+
+    chunk_types = [c["chunk_type"] for c in chunks]
+    assert chunk_types == ["started", "event", "result", "done"]
+    assert chunks[1]["payload"]["event_type"] == "pipeline_step"
+    assert chunks[2]["payload"]["response"] == "Justice is giving each their due."
 
 
 # ---------------------------------------------------------------------------

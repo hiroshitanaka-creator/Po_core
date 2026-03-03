@@ -143,6 +143,21 @@ class TraceResponse(BaseModel):
     events: List[TraceEventOut]
 
 
+class TraceHistoryItem(BaseModel):
+    """Summary row for persisted trace history."""
+
+    session_id: str
+    event_count: int
+    last_occurred_at: datetime
+
+
+class TraceHistoryResponse(BaseModel):
+    """Response body for trace history endpoint."""
+
+    total: int
+    items: List[TraceHistoryItem]
+
+
 # ---------------------------------------------------------------------------
 # GET /v1/health
 # ---------------------------------------------------------------------------

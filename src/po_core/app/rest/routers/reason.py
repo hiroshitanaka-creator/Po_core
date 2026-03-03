@@ -13,7 +13,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, AsyncGenerator, Dict
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, WebSocket
+from fastapi.exceptions import WebSocketException
 from fastapi.responses import StreamingResponse
 
 from po_core.app.api import async_run as po_async_run
@@ -248,83 +249,85 @@ async def _sse_generator(
         data = json.dumps({"chunk_type": event_type, "payload": payload})
         return f"data: {data}\n\n"
 
-    session_id = body.session_id or str(uuid.uuid4())
-
     try:
-        yield _fmt("started", {"session_id": session_id})
-
-        # Queue-based real-time bridge: tracer → SSE client
-        queue: asyncio.Queue = asyncio.Queue()
-        _DONE = object()  # sentinel
-
-        tracer = InMemoryTracer()
-
-        def _on_event(event: Any) -> None:
-            # Called synchronously inside async_run_turn (event loop context).
-            # put_nowait is safe here since we're already in the event loop.
-            queue.put_nowait(event)
-
-        tracer.add_listener(_on_event)
-
-        t0 = time.perf_counter()
-        po_settings = _build_po_settings(api_settings)
-
-        result_box: list = []
-        exc_box: list = []
-
-        async def _run_and_signal() -> None:
-            try:
-                res = await po_async_run(
-                    user_input=body.input,
-                    settings=po_settings,
-                    tracer=tracer,
-                )
-                result_box.append(res)
-            except Exception as e:
-                exc_box.append(e)
-            finally:
-                await queue.put(_DONE)
-
-        asyncio.create_task(_run_and_signal())
-
-        # Drain queue: stream each trace event to the SSE client immediately
-        while True:
-            item = await queue.get()
-            if item is _DONE:
-                break
-            yield _fmt(
-                "event",
-                {
-                    "event_type": item.event_type,
-                    "occurred_at": item.occurred_at.isoformat(),
-                    "payload": dict(item.payload),
-                },
-            )
-
-        elapsed_ms = (time.perf_counter() - t0) * 1000.0
-        save_trace(session_id, list(tracer.events))
-        _enqueue_escalated_review(session_id, result_box[0] if result_box else {}, tracer)
-
-        if exc_box:
-            yield _fmt("error", {"message": str(exc_box[0])})
-            return
-
-        result = result_box[0]
-        yield _fmt(
-            "result",
-            {
-                "request_id": result.get("request_id", str(uuid.uuid4())),
-                "session_id": session_id,
-                "status": _normalize_status(str(result.get("status") or "")),
-                "response": _extract_response_text(result),
-                "safety_mode": str(result.get("safety_mode", "NORMAL")),
-                "processing_time_ms": round(elapsed_ms, 2),
-            },
-        )
-        yield _fmt("done", {})
+        async for chunk in _stream_reasoning_chunks(body, api_settings):
+            yield _fmt(str(chunk["chunk_type"]), dict(chunk.get("payload") or {}))
 
     except Exception as exc:
         yield _fmt("error", {"message": str(exc)})
+
+
+async def _stream_reasoning_chunks(
+    body: ReasonRequest, api_settings: Any
+) -> AsyncGenerator[Dict[str, Any], None]:
+    """Shared real-time chunk stream for SSE and WebSocket transports."""
+    session_id = body.session_id or str(uuid.uuid4())
+    yield {"chunk_type": "started", "payload": {"session_id": session_id}}
+
+    queue: asyncio.Queue = asyncio.Queue()
+    _DONE = object()
+    tracer = InMemoryTracer()
+
+    def _on_event(event: Any) -> None:
+        queue.put_nowait(event)
+
+    tracer.add_listener(_on_event)
+    po_settings = _build_po_settings(api_settings)
+    t0 = time.perf_counter()
+
+    result_box: list = []
+    exc_box: list = []
+
+    async def _run_and_signal() -> None:
+        try:
+            res = await po_async_run(
+                user_input=body.input,
+                settings=po_settings,
+                tracer=tracer,
+            )
+            result_box.append(res)
+        except Exception as e:
+            exc_box.append(e)
+        finally:
+            await queue.put(_DONE)
+
+    asyncio.create_task(_run_and_signal())
+
+    while True:
+        item = await queue.get()
+        if item is _DONE:
+            break
+        yield {
+            "chunk_type": "event",
+            "payload": {
+                "event_type": item.event_type,
+                "occurred_at": item.occurred_at.isoformat(),
+                "payload": dict(item.payload),
+            },
+        }
+
+    elapsed_ms = (time.perf_counter() - t0) * 1000.0
+    save_trace(session_id, list(tracer.events))
+
+    if exc_box:
+        yield {"chunk_type": "error", "payload": {"message": str(exc_box[0])}}
+        return
+
+    result = result_box[0]
+    yield {
+        "chunk_type": "result",
+        "payload": {
+            "request_id": result.get("request_id", str(uuid.uuid4())),
+            "session_id": session_id,
+            "status": _normalize_status(str(result.get("status") or "")),
+            "response": _extract_response_text(result),
+            "safety_mode": str(result.get("safety_mode", "NORMAL")),
+            "processing_time_ms": round(elapsed_ms, 2),
+            "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
+            "tensors": _extract_tensors(result).model_dump(),
+        },
+    }
+    yield {"chunk_type": "done", "payload": {}}
 
 
 @router.post(
@@ -364,3 +367,36 @@ async def reason_stream(
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.websocket("/v1/ws/reason")
+async def reason_ws(websocket: WebSocket) -> None:
+    """WebSocket reasoning stream: client sends one ReasonRequest JSON payload."""
+    from po_core.app.rest.config import get_api_settings
+
+    await websocket.accept()
+    try:
+        raw_body = await websocket.receive_json()
+        body = ReasonRequest.model_validate(raw_body)
+    except Exception as exc:
+        await websocket.send_json(
+            {"chunk_type": "error", "payload": {"message": str(exc)}}
+        )
+        await websocket.close(code=1003)
+        return
+
+    api_settings = get_api_settings()
+
+    try:
+        async for chunk in _stream_reasoning_chunks(body, api_settings):
+            await websocket.send_json(chunk)
+            if chunk.get("chunk_type") in {"done", "error"}:
+                break
+    except WebSocketException:
+        return
+    except Exception as exc:
+        await websocket.send_json(
+            {"chunk_type": "error", "payload": {"message": str(exc)}}
+        )
+    finally:
+        await websocket.close()
