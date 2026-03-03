@@ -69,7 +69,9 @@ class InMemoryTraceStore(TraceStore):
                 {
                     "session_id": session_id,
                     "event_count": len(events),
-                    "last_occurred_at": events[-1].occurred_at if events else updated_at,
+                    "last_occurred_at": (
+                        events[-1].occurred_at if events else updated_at
+                    ),
                 }
             )
         return summaries
@@ -92,16 +94,13 @@ class SQLiteTraceStore(TraceStore):
 
     def _init_db(self) -> None:
         with self._connect() as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS trace_sessions (
                     session_id TEXT PRIMARY KEY,
                     updated_at TEXT NOT NULL
                 )
-                """
-            )
-            conn.execute(
-                """
+                """)
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS trace_events (
                     session_id TEXT NOT NULL,
                     event_idx INTEGER NOT NULL,
@@ -111,8 +110,7 @@ class SQLiteTraceStore(TraceStore):
                     payload_json TEXT NOT NULL,
                     PRIMARY KEY (session_id, event_idx)
                 )
-                """
-            )
+                """)
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_trace_events_session ON trace_events(session_id)"
             )
@@ -154,9 +152,18 @@ class SQLiteTraceStore(TraceStore):
             with self._connect() as conn:
                 conn.execute(
                     "INSERT OR REPLACE INTO trace_sessions(session_id, updated_at) VALUES (?, ?)",
-                    (session_id, (events[-1].occurred_at.isoformat() if events else datetime.utcnow().isoformat())),
+                    (
+                        session_id,
+                        (
+                            events[-1].occurred_at.isoformat()
+                            if events
+                            else datetime.utcnow().isoformat()
+                        ),
+                    ),
                 )
-                conn.execute("DELETE FROM trace_events WHERE session_id = ?", (session_id,))
+                conn.execute(
+                    "DELETE FROM trace_events WHERE session_id = ?", (session_id,)
+                )
                 conn.executemany(
                     """
                     INSERT INTO trace_events (
@@ -170,7 +177,9 @@ class SQLiteTraceStore(TraceStore):
                             event.event_type,
                             event.occurred_at.isoformat(),
                             event.correlation_id,
-                            json.dumps(dict(event.payload), ensure_ascii=False, sort_keys=True),
+                            json.dumps(
+                                dict(event.payload), ensure_ascii=False, sort_keys=True
+                            ),
                         )
                         for idx, event in enumerate(events)
                     ],
@@ -181,13 +190,11 @@ class SQLiteTraceStore(TraceStore):
     def _evict_if_needed(self, conn: sqlite3.Connection, max_sessions: int) -> None:
         if max_sessions <= 0:
             return
-        rows = conn.execute(
-            """
+        rows = conn.execute("""
             SELECT session_id
             FROM trace_sessions
             ORDER BY updated_at DESC
-            """
-        ).fetchall()
+            """).fetchall()
         stale_session_ids = [row["session_id"] for row in rows[max_sessions:]]
         if stale_session_ids:
             conn.executemany(
@@ -249,7 +256,6 @@ def reset_trace_store() -> None:
     _trace_store_singleton = None
 
 
-
 class _LegacyStoreCompat:
     """Compatibility shim for tests importing module-level _store."""
 
@@ -262,6 +268,14 @@ class _LegacyStoreCompat:
 
 _store = _LegacyStoreCompat()
 
+
 def save_trace(session_id: str, events: List[TraceEvent]) -> None:
     """Persist trace events for a session via configured store backend."""
     get_trace_store().save(session_id, events)
+
+
+def append_trace_event(session_id: str, event: TraceEvent) -> None:
+    """Append a single trace event to an existing session."""
+    store = get_trace_store()
+    existing = store.get(session_id) or []
+    store.save(session_id, existing + [event])

@@ -19,10 +19,10 @@ Markers:
 
 from __future__ import annotations
 
-from typing import Any
-from pathlib import Path
 import importlib
 import json
+from pathlib import Path
+from typing import Any
 
 import pytest
 

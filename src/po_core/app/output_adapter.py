@@ -20,11 +20,17 @@ import datetime as dt
 from typing import Any, Dict, List
 
 from po_core.app.ethics_engine import build_ethics_summary, principles_from_values
+from po_core.app.question_layer import build_questions
+from po_core.app.responsibility_engine import (
+    build_option_responsibility_review,
+    build_responsibility_summary,
+)
 
 _POCORE_VERSION = "0.2.0b4"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "0.2.0"
+
 
 def _map_values_to_principles(values: List[str]) -> List[str]:
     """Compatibility wrapper around ethics_engine principle extraction."""
@@ -301,13 +307,19 @@ def _build_recommendation(
 # ── Questions ──────────────────────────────────────────────────────────────
 
 
-def _build_questions(case: Dict[str, Any]) -> List[Dict[str, Any]]:
+def _build_questions(
+    case: Dict[str, Any], *, suppress: bool = False
+) -> List[Dict[str, Any]]:
     """Build question list via question_layer v1."""
+    if suppress:
+        return []
     unknowns = case.get("unknowns", [])
     return build_questions(list(unknowns))
 
 
-def _should_suppress_questions(case: Dict[str, Any], run_result: Dict[str, Any]) -> bool:
+def _should_suppress_questions(
+    case: Dict[str, Any], run_result: Dict[str, Any]
+) -> bool:
     """Suppress question layer when IntentionGate degrades output or case is already sufficient."""
     verdict = run_result.get("verdict")
     if isinstance(verdict, dict):

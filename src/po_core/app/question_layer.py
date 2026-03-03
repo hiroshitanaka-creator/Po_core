@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 _MAX_QUESTIONS = 5
 
 
