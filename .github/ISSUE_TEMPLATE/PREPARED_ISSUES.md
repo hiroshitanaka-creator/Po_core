@@ -20,20 +20,23 @@ Labels to create first:
 ```markdown
 ## Which philosopher should we add to Po_core's ensemble next?
 
-Po_core currently has 39 philosopher AI personas:
-Aristotle, Kant, Bentham, Mill, Rawls, Hegel, Nietzsche, Heidegger, Sartre,
-Camus, de Beauvoir, Arendt, Wittgenstein, Peirce, Dewey, Habermas, Foucault,
-Derrida, Baudrillard, Zizek, Spinoza, Leibniz, Descartes, Locke, Hume,
-Rousseau, Marx, Freud, Jung, Confucius, Laozi, Nagarjuna, Nishida, Watsuji,
-Dogen, Suzuki, Mulla Sadra, Rumi, Ibn Rushd.
+Po_core currently has 42 philosopher modules:
+
+**Western (31):** Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche,
+Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou,
+Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil
+
+**Eastern (8):** Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi
+
+**African & Canadian (3):** Appiah (cosmopolitanism/African ethics), Fanon (decolonialism), Charles Taylor (communitarianism)
 
 **What's missing?** We'd love contributions from:
-- **African philosophy** (Ubuntu ethics, Kwame Gyekye)
-- **Indigenous / land-based ethics** (Robin Wall Kimmerer)
+- **Indigenous / land-based ethics** (Robin Wall Kimmerer, Vine Deloria Jr.)
 - **Feminist ethics** (Carol Gilligan, Nel Noddings, María Lugones)
 - **Pragmatist ethics** (Cornel West)
 - **Buddhist-Christian dialogue** (Thomas Merton, Thich Nhat Hanh)
 - **Environmental ethics** (Aldo Leopold, Holmes Rolston III)
+- **Latin American philosophy** (Enrique Dussel, Leopoldo Zea)
 
 ### How to contribute (no coding required)
 1. Comment with your philosopher proposal
@@ -146,7 +149,7 @@ Reference: `src/po_core/safety/wethics_gate/`, `tests/redteam/`
 
 ---
 
-## Issue #26: [Phil-Easy] Review philosophical consistency of existing 39 philosophers
+## Issue #26: [Phil-Easy] Review philosophical consistency of existing 42 philosophers
 
 **Labels:** `phil-easy`, `philosophy`, `documentation`
 **Milestone:** M2
@@ -154,7 +157,7 @@ Reference: `src/po_core/safety/wethics_gate/`, `tests/redteam/`
 ```markdown
 ## Philosophical Consistency Review
 
-Are our 39 philosopher modules philosophically accurate?
+Are our 42 philosopher modules philosophically accurate?
 
 Each philosopher module encodes a specific ethical stance as a tensor weight
 vector and a `generate()` function.  We need philosophy domain experts to review:
@@ -175,10 +178,11 @@ vector and a `generate()` function.  We need philosophy domain experts to review
 **No coding required.** This is a philosophy task.
 
 ### Particularly seeking expertise in:
-- Islamic philosophy (Mulla Sadra, Ibn Rushd, Rumi)
-- Buddhist philosophy (Nagarjuna, Dogen, Suzuki)
+- African philosophy (Appiah's cosmopolitanism, Fanon's decolonialism)
+- Canadian communitarianism (Charles Taylor's hermeneutics of the self)
+- Buddhist philosophy (Nagarjuna, Dogen)
 - Kyoto School (Nishida, Watsuji)
-- Feminist philosophy (de Beauvoir)
+- Feminist philosophy (de Beauvoir, Butler)
 ```
 
 ---

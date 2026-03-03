@@ -18,7 +18,7 @@ pip install po-core-flyingpig
 
 ### TL;DR
 
-- **43 philosophers** as interacting **tensors** → accountable LLM reasoning
+- **42 philosophers** as interacting **tensors** → accountable LLM reasoning
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
@@ -55,7 +55,7 @@ Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
-Po_core is a **philosophy-driven AI system** that integrates 39 philosophers to generate ethically responsible, contextually aware responses.
+Po_core is a **philosophy-driven AI system** that integrates 42 philosophers to generate ethically responsible, contextually aware responses.
 
 Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
 
@@ -97,9 +97,9 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 
 ### Philosophical Ensemble
 
-- **43 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) and Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi) and AI (Claude/Anthropic, GPT/OpenAI, Gemini/Google, Grok/xAI)
+- **42 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) · Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi) · African & Canadian (Appiah, Fanon, Charles Taylor)
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
-- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, Zen Buddhism, Eastern wisdom traditions, and AI ethics
+- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, decolonialism, communitarianism, Zen Buddhism, and Eastern wisdom traditions
 
 ### Tensor-Based Architecture
 
@@ -166,7 +166,7 @@ Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20
 │  └─────────────┘  └─────────────┘  └─────────────┘                │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Philosophers: 39 modules (PhilosopherProtocol)                │ │
+│  │ Philosophers: 42 modules (PhilosopherProtocol)                │ │
 │  │  propose(DomainContext) → List[Proposal]                     │ │
 │  │                                                              │ │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │ │
@@ -239,13 +239,12 @@ src/po_core/
 │   └── battalion_table.py
 ├── aggregator/                # Multi-objective optimization
 │   └── pareto.py
-├── philosophers/              # 43 philosopher modules (Phase 7: slots 40–43)
-│   ├── manifest.py            # 43 philosopher specs (risk/cost/tags)
+├── philosophers/              # 42 philosopher modules (39 classic + 2 African + 1 Canadian)
+│   ├── manifest.py            # 42 philosopher specs (risk/cost/tags)
 │   ├── registry.py            # SafetyMode-based selection
-│   ├── claude_anthropic.py    # AI slot 40: Claude/Anthropic
-│   ├── gpt_chatgpt.py         # AI slot 41: GPT/OpenAI
-│   ├── gemini_google.py       # AI slot 42: Gemini/Google
-│   └── grok_xai.py            # AI slot 43: Grok/xAI
+│   ├── appiah.py              # Slot 40: Kwame Anthony Appiah (Ghana/US)
+│   ├── fanon.py               # Slot 41: Frantz Fanon (Martinique/Algeria)
+│   └── charles_taylor.py      # Slot 42: Charles Taylor (Canada)
 ├── tensors/                   # Tensor computation
 │   ├── engine.py              # TensorEngine (MetricFn registry)
 │   ├── freedom_pressure_v2.py # ML-native 6D tensor (Phase 6-A)
@@ -332,13 +331,13 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Beta (v0.2.0b3) — Phases 1–7 Complete, Heading to v1.0**
+**Current Phase: Beta (v0.2.0b4) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
 
 ### Completed Components
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 39 philosophers, risk levels, tags |
+| Philosophical Framework | ✅ Complete | 42 philosophers, risk levels, tags |
 | Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
 | TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
 | ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
@@ -356,32 +355,40 @@ experiments/
 | **EmergenceDetector** | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
 | **MetaEthicsMonitor** | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
 | **3-Layer Memory** | ✅ Complete | Semantic + procedural + philosophical memory stores |
-| **AI Philosophers (40–43)** | ✅ Complete | Claude, GPT, Gemini, Grok as philosophical personas |
+| **Philosopher Diversity (40–42)** | ✅ Complete | Appiah (Africa/cosmopolitanism), Fanon (decolonialism), Charles Taylor (communitarianism) |
 | PyPI Publish | 🔄 Ready | `publish.yml` OIDC workflow ready; not yet published |
 
 ### Roadmap
 
 ```
-Phase 1      Phase 2        Phase 3       Phase 4      Phase 5      Phase 6      Phase 7
-基盤固め  →  知性強化    →  可視化    →  防御強化  →  配布      →  自律進化  →  AI哲学者
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-技術負債清算  ML テンソル   WebUI         Red Team     REST API     FP-V2 ML     AI Slots
-39人スケール  Deliberation  Explainable   Grey Zone    Docker       Emergence    Claude/GPT
-テスト基盤    Interaction   リアルタイム   CI防御指標   Streaming    MetaEthics   Gemini/Grok
-二重IF除去    Semantic      Argument      LLM Detect   PyPI         3-Layer Mem  倫理比較
+Stage 1          Stage 2             Stage 3          Stage 4           Stage 5
+Spec-Honesty  →  Deliberation     →  Observability →  Production    →  Research
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AT alignment     ML tensors          WebUI             REST API          Paper
+StubComposer     Deliberation        Explainable       Docker            PyPI v1.0
+acceptance/      InteractionMatrix   ExplanationChain  Security          AT-001~010
+scenarios/       multi-round         リアルタイム       Async SSE         full green
 ```
 
-| Phase | Name | Focus | Status |
+| Stage | Name | Focus | Status |
 |-------|------|-------|--------|
-| **1** | Resonance Calibration | 39-philosopher scaling + tech debt cleanup | ✅ **COMPLETE** |
-| **2** | Tensor Intelligence | ML tensors + Deliberation Engine (emergence) | ✅ **COMPLETE** |
-| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate | ✅ **COMPLETE** |
-| **4** | Adversarial Hardening | Red team expansion + ethical stress testing | ✅ **COMPLETE** |
-| **5** | Productization | REST API, Docker, Security, Async, Benchmarks | ✅ **COMPLETE** |
-| **6** | Autonomous Evolution | FreedomPressureV2, Emergence, MetaEthics, 3-Layer Memory | ✅ **COMPLETE** |
-| **7** | AI Philosopher Slots | Claude, GPT, Gemini, Grok as philosophical personas (40–43) | ✅ **COMPLETE** |
+| **1** | Spec-Honesty | AT-001–010 acceptance tests + StubComposer + scenario YAML | 🔄 **M1 (3/15)** |
+| **2** | Deliberation-Intelligence | ML tensors + multi-round DeliberationEngine | ✅ **COMPLETE** |
+| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate + real-time trace | ✅ **COMPLETE** |
+| **4** | Production | REST API, Docker, Security, Async SSE, Benchmarks | ✅ **COMPLETE** |
+| **5** | Research | Academic paper + PyPI stable v1.0 | 🗓 **M4 (5/10)** |
 
-See [PHASE_PLAN_v2.md](./PHASE_PLAN_v2.md) for the full roadmap with rationale.
+**Milestones:**
+
+| Milestone | Due | Goal |
+|-----------|-----|------|
+| **M1** | 3/15 | All 10 AT pass · `pytest tests/acceptance/ -v` green |
+| **M2** | 4/5 | StubComposer → real LLM; philosopher consistency review |
+| **M3** | 4/26 | Pilot study launched; paper draft submitted |
+| **M4** | 5/10 | PyPI stable `0.2.0`; paper accepted / arXiv posted |
+| **v1.0** | TBD | All AT green + paper published |
+
+See [ROADMAP_FINAL_FORM.md](./ROADMAP_FINAL_FORM.md) for the full roadmap with rationale.
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics. Next frontier: PyPI publish, v1.0 stabilization, and academic paper.
 
@@ -418,7 +425,7 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v0.2.0b3
+po-core version   # v0.2.0b4
 po-core status
 po-core --help
 ```
