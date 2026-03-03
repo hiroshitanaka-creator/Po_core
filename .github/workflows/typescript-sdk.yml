@@ -1,0 +1,65 @@
+name: TypeScript SDK
+
+on:
+  push:
+    branches: [ main, develop, 'claude/**' ]
+    paths:
+      - 'clients/typescript/**'
+      - 'docs/openapi/po_core.openapi.json'
+      - 'scripts/export_openapi.py'
+      - 'scripts/generate_ts_openapi_types.py'
+      - '.github/workflows/typescript-sdk.yml'
+  pull_request:
+    paths:
+      - 'clients/typescript/**'
+      - 'docs/openapi/po_core.openapi.json'
+      - 'scripts/export_openapi.py'
+      - 'scripts/generate_ts_openapi_types.py'
+      - '.github/workflows/typescript-sdk.yml'
+  workflow_dispatch:
+
+jobs:
+  sdk-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refresh OpenAPI + TS types
+        run: |
+          PYTHONPATH=src python scripts/export_openapi.py
+          python scripts/generate_ts_openapi_types.py
+
+      - name: Build and test SDK
+        working-directory: clients/typescript
+        run: |
+          npm run build
+          npm run test
+
+  npm-publish-dry-run:
+    runs-on: ubuntu-latest
+    needs: sdk-build-test
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare package
+        run: |
+          python scripts/generate_ts_openapi_types.py
+          cd clients/typescript
+          npm pack
