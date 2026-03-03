@@ -26,6 +26,7 @@ from po_core.app.rest.models import (
     TensorSnapshot,
 )
 from po_core.app.rest.rate_limit import limiter
+from po_core.app.rest.review_store import enqueue_review
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import Settings
 from po_core.trace.in_memory import InMemoryTracer
@@ -118,6 +119,45 @@ def _extract_tensors(result: dict) -> TensorSnapshot:
     )
 
 
+def _detect_escalate(result: dict, tracer: InMemoryTracer) -> tuple[bool, str]:
+    """Return (is_escalated, reason) derived from result and trace events."""
+    verdict = result.get("verdict")
+    if isinstance(verdict, dict):
+        decision = str(verdict.get("decision") or "").lower()
+        if decision == "escalate":
+            return True, "verdict.decision=escalate"
+
+    for event in tracer.events:
+        payload = dict(event.payload)
+        if event.event_type == "DecisionEmitted":
+            gate = payload.get("gate")
+            gate_dict = dict(gate) if isinstance(gate, dict) else {}
+            if str(gate_dict.get("decision") or "").lower() == "escalate":
+                return True, "DecisionEmitted.gate.decision=escalate"
+        if event.event_type == "ExplanationEmitted":
+            if str(payload.get("decision") or "").lower() == "escalate":
+                return True, "ExplanationEmitted.decision=escalate"
+
+    return False, ""
+
+
+def _enqueue_escalated_review(session_id: str, result: dict, tracer: InMemoryTracer) -> None:
+    """Queue human review item when an ESCALATE decision is observed."""
+    escalated, reason = _detect_escalate(result, tracer)
+    if not escalated:
+        return
+
+    request_id = str(result.get("request_id") or session_id)
+    review_id = f"{session_id}:{request_id}"
+    enqueue_review(
+        review_id=review_id,
+        session_id=session_id,
+        request_id=request_id,
+        reason=reason,
+        source="/v1/reason",
+    )
+
+
 def _run_reasoning(
     request: ReasonRequest, api_settings: Any
 ) -> tuple[str, dict, InMemoryTracer]:
@@ -171,6 +211,7 @@ async def reason(
 
     # Persist trace
     save_trace(session_id, list(tracer.events))
+    _enqueue_escalated_review(session_id, result, tracer)
 
     return ReasonResponse(
         request_id=result.get("request_id", str(uuid.uuid4())),
@@ -262,6 +303,7 @@ async def _sse_generator(
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
         save_trace(session_id, list(tracer.events))
+        _enqueue_escalated_review(session_id, result_box[0] if result_box else {}, tracer)
 
         if exc_box:
             yield _fmt("error", {"message": str(exc_box[0])})

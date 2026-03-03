@@ -35,3 +35,10 @@ def save_trace(session_id: str, events: List[TraceEvent]) -> None:
     # LRU eviction
     while len(_store) > settings.max_trace_sessions:
         _store.popitem(last=False)
+
+
+def append_trace_event(session_id: str, event: TraceEvent) -> None:
+    """Append a trace event to an existing session if present."""
+    if session_id not in _store:
+        return
+    _store[session_id] = [*_store[session_id], event]

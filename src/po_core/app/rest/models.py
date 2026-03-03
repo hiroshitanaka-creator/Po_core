@@ -155,3 +155,46 @@ class HealthResponse(BaseModel):
     version: str
     philosophers_loaded: int
     uptime_seconds: float
+
+
+# ---------------------------------------------------------------------------
+# Human Review Queue
+# ---------------------------------------------------------------------------
+
+
+class ReviewItem(BaseModel):
+    """A queued human-review item for ESCALATE decisions."""
+
+    id: str
+    session_id: str
+    request_id: str
+    status: str = Field(description="'pending' | 'decided'")
+    reason: str
+    source: str
+    decision: Optional[str] = Field(default=None, description="'approve' | 'reject'")
+    reviewer: Optional[str] = None
+    comment: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    decided_at: Optional[datetime] = None
+
+
+class ReviewPendingResponse(BaseModel):
+    """Response body for pending review queue."""
+
+    total: int
+    items: List[ReviewItem]
+
+
+class ReviewDecisionRequest(BaseModel):
+    """Human decision payload for a review item."""
+
+    decision: str = Field(description="'approve' or 'reject'")
+    reviewer: str = Field(min_length=1, max_length=128)
+    comment: Optional[str] = Field(default=None, max_length=2000)
+
+
+class ReviewDecisionResponse(BaseModel):
+    """Response body for review decision updates."""
+
+    item: ReviewItem
