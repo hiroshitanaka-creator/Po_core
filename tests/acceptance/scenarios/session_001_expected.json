@@ -1,11 +1,11 @@
 {
-  "at_id": "AT-007",
-  "case_id": "case_007",
+  "session_id": "session_001",
+  "case_ref": "case_s01_career_transition_base",
   "expected": {
     "meta": {
       "schema_version": "1.0",
       "pocore_version": "0.2.0rc1",
-      "run_id": "6a4af85e-e922-2e39-be6e-a9508d0639d0",
+      "run_id": "6f337caa-420f-f293-e2c9-20bff94d17bf",
       "seed": 42,
       "deterministic": true,
       "generator": {
@@ -15,40 +15,33 @@
       }
     },
     "case_ref": {
-      "case_id": "case_007_lie_or_admit",
-      "title": "仕事のミス：嘘で隠すか、認めて修正するか",
-      "input_digest": "0b066b7bd2b953773312a2f02fcb2c2b9d9cbdcbbe41403786dc6064f3689a0f"
+      "case_id": "case_s01_career_transition_base",
+      "title": "キャリア転換検討（価値観未定義 → セッション回答で補完）",
+      "input_digest": "82c30437b3670c99a048637d0e66e96b11acaf1b301b44ac749a06aa1378c88d"
     },
     "options": [
       {
         "option_id": "opt_001",
-        "title": "仕事のミス：嘘で隠すか、認めて修正するか",
+        "title": "キャリア転換検討（価値観未定義 → セッション回答で補完）",
         "description": "修証一如（しゅしょういちにょ）——修行と悟りは別ではない。「どちらを選ぶべきか」を問う前に、「今この選択の場に、どう在るか」を問え。只管打坐（しかんたざ）の精神で言えば、判断そのものが修行の場であり、選択のプロセス自体が悟りの現れである。有時（うじ）が示すように、この問いを抱えている今この瞬間が仏性の現れであり、「今・ここ」から逃れた選択など存在しない。無常（むじょう）——いかなる選択肢も固定した安定を保証しない。現成公案（げんじょうこうあん）：問いそのものが答えであり、選択の迷いを「問題」として排除するのではなく、その迷いの中に仏道の現れを見出せ。",
         "action_plan": [
           {
-            "step": "【Track A-1】現状の記録と影響範囲の可視化（-6日以内で実施） — 虚偽の断言はしないの範囲内でできる可逆的な準備を開始する",
-            "rationale": "不確実性が高い状況でも今すぐ取れる低リスク行動から着手する"
+            "step": "制約を考慮: 生活費は現状維持が必要"
           },
           {
-            "step": "【Track B-1】不明点『誤りの影響範囲（どの意思決定に影響するか）』の解消 — 情報収集・専門家確認・テスト等で判断可能な状態にする",
-            "rationale": "『誤りの影響範囲（どの意思決定に影響するか）』が未解決なまま全面実施するとリスクが高まるため"
+            "step": "制約を考慮: 転職活動に使える時間は週5時間程度"
           },
           {
-            "step": "【Track A-2】関係者への状況共有と暫定合意の取得 — 最終判断を保留しながら関係者の理解を得る",
-            "rationale": "後戻りできる段階で関係者を巻き込み、合意形成コストを下げる"
-          },
-          {
-            "step": "【Track B-2】不明点『修正に必要な時間』の解消 — 情報収集・専門家確認・テスト等で判断可能な状態にする",
-            "rationale": "『修正に必要な時間』が未解決なまま全面実施するとリスクが高まるため"
+            "step": "制約を考慮: 収入は現状の70%以上を維持する"
           }
         ],
         "pros": [
-          "価値観「誠実（integrity）」の実現に資する",
-          "価値観「説明責任（accountability）」の実現に資する"
+          "価値観「自己成長」の実現に資する",
+          "価値観「社会的意義」の実現に資する"
         ],
         "cons": [
-          "不確実性: 誤りの影響範囲（どの意思決定に影響するか）",
-          "不確実性: 修正に必要な時間"
+          "不確実性: 転職先候補の具体的な条件（業種・年収・働き方）",
+          "不確実性: 現職継続時のキャリアパス"
         ],
         "risks": [
           {
@@ -59,7 +52,7 @@
         ],
         "ethics_review": {
           "principles_applied": [
-            "accountability",
+            "autonomy",
             "integrity"
           ],
           "tradeoffs": [],
@@ -67,22 +60,17 @@
           "confidence": "medium"
         },
         "responsibility_review": {
-          "decision_owner": "上司",
+          "decision_owner": "自分",
           "stakeholders": [
             {
-              "name": "上司",
-              "role": "意思決定者",
-              "impact": "判断の品質に影響"
-            },
-            {
-              "name": "チーム",
-              "role": "実行者",
-              "impact": "手戻り・信頼に影響"
-            },
-            {
               "name": "自分",
-              "role": "当事者",
-              "impact": "信用・評価・学習に影響"
+              "role": "意思決定主体",
+              "impact": "キャリア・収入・幸福感に直接影響"
+            },
+            {
+              "name": "家族",
+              "role": "生活共同体",
+              "impact": "家計・生活水準に影響"
             }
           ],
           "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
@@ -90,24 +78,22 @@
         },
         "feasibility": {
           "effort": "中程度",
-          "timeline": "期限: 2026-02-25",
+          "timeline": "期限: 2026-06-30",
           "confidence": "medium"
         },
         "uncertainty": {
-          "overall_level": "high",
+          "overall_level": "medium",
           "reasons": [
-            "誤りの影響範囲（どの意思決定に影響するか）",
-            "修正に必要な時間",
-            "既に外部に共有済みか"
+            "転職先候補の具体的な条件（業種・年収・働き方）",
+            "現職継続時のキャリアパス"
           ],
           "assumptions": [
-            "虚偽の断言はしない",
-            "修正可能なら早期に被害を止める"
+            "生活費は現状維持が必要",
+            "転職活動に使える時間は週5時間程度"
           ],
           "known_unknowns": [
-            "誤りの影響範囲（どの意思決定に影響するか）",
-            "修正に必要な時間",
-            "既に外部に共有済みか"
+            "転職先候補の具体的な条件（業種・年収・働き方）",
+            "現職継続時のキャリアパス"
           ]
         }
       },
@@ -144,7 +130,7 @@
         ],
         "ethics_review": {
           "principles_applied": [
-            "accountability",
+            "autonomy",
             "integrity"
           ],
           "tradeoffs": [],
@@ -152,22 +138,17 @@
           "confidence": "medium"
         },
         "responsibility_review": {
-          "decision_owner": "上司",
+          "decision_owner": "自分",
           "stakeholders": [
             {
-              "name": "上司",
-              "role": "意思決定者",
-              "impact": "判断の品質に影響"
-            },
-            {
-              "name": "チーム",
-              "role": "実行者",
-              "impact": "手戻り・信頼に影響"
-            },
-            {
               "name": "自分",
-              "role": "当事者",
-              "impact": "信用・評価・学習に影響"
+              "role": "意思決定主体",
+              "impact": "キャリア・収入・幸福感に直接影響"
+            },
+            {
+              "name": "家族",
+              "role": "生活共同体",
+              "impact": "家計・生活水準に影響"
             }
           ],
           "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
@@ -181,18 +162,16 @@
         "uncertainty": {
           "overall_level": "medium",
           "reasons": [
-            "誤りの影響範囲（どの意思決定に影響するか）",
-            "修正に必要な時間",
-            "既に外部に共有済みか"
+            "転職先候補の具体的な条件（業種・年収・働き方）",
+            "現職継続時のキャリアパス"
           ],
           "assumptions": [
-            "虚偽の断言はしない",
-            "修正可能なら早期に被害を止める"
+            "生活費は現状維持が必要",
+            "転職活動に使える時間は週5時間程度"
           ],
           "known_unknowns": [
-            "誤りの影響範囲（どの意思決定に影響するか）",
-            "修正に必要な時間",
-            "既に外部に共有済みか"
+            "転職先候補の具体的な条件（業種・年収・働き方）",
+            "現職継続時のキャリアパス"
           ]
         }
       }
@@ -200,7 +179,7 @@
     "recommendation": {
       "status": "recommended",
       "recommended_option_id": "opt_001",
-      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。重視する価値観「誠実（integrity）・説明責任（accountability）」との整合性が高い。",
+      "reason": "価値観と制約を踏まえた哲学的考察により、主要選択肢が最もバランスが取れています。重視する価値観「自己成長・社会的意義」との整合性が高い。",
       "counter": "ただし不明点が残るため、慎重路線（opt_002）も検討に値します。情報が揃っていない状態での決定にはリスクが伴います。",
       "alternatives": [
         {
@@ -212,15 +191,15 @@
     },
     "ethics": {
       "principles_used": [
-        "accountability",
+        "autonomy",
         "integrity"
       ],
       "tradeoffs": [
         {
-          "tension": "「誠実（integrity）」vs「説明責任（accountability）」",
+          "tension": "「自己成長」vs「社会的意義」",
           "between": [
-            "誠実（integrity）",
-            "説明責任（accountability）"
+            "自己成長",
+            "社会的意義"
           ],
           "mitigation": "段階的実施と関係者調整により両立を目指す",
           "severity": "medium"
@@ -234,87 +213,53 @@
       "notes": "W_Ethics Gateによる3層倫理評価済み (rules_fired: ETH-R-001, ETH-R-002, ETH-R-003)"
     },
     "responsibility": {
-      "decision_owner": "上司",
+      "decision_owner": "自分",
       "stakeholders": [
         {
-          "name": "上司",
-          "role": "意思決定者",
-          "impact": "判断の品質に影響"
-        },
-        {
-          "name": "チーム",
-          "role": "実行者",
-          "impact": "手戻り・信頼に影響"
-        },
-        {
           "name": "自分",
-          "role": "当事者",
-          "impact": "信用・評価・学習に影響"
+          "role": "意思決定主体",
+          "impact": "キャリア・収入・幸福感に直接影響"
+        },
+        {
+          "name": "家族",
+          "role": "生活共同体",
+          "impact": "家計・生活水準に影響"
         }
       ],
       "accountability_notes": "意思決定と結果責任はユーザー。Po_coreは問いと構造化を提供する。",
-      "consent_considerations": [
-        "影響を受けるすべての関係者に変更内容・リスクを事前に説明する",
-        "重大なリスクが残る場合は関係者の同意を得てから進める"
-      ]
+      "consent_considerations": []
     },
     "questions": [
       {
-        "question_id": "q_d01",
-        "question": "期限（-6日以内）の柔軟性はありますか？期限を延長・分割できる余地があれば、リスクを大幅に低減できます。",
-        "priority": 1,
-        "why_needed": "期限の硬直性が判断の幅を大きく左右するため",
-        "assumption_if_unanswered": "期限は固定と仮定して保守的に対応します",
-        "optional": false
-      },
-      {
-        "question_id": "q_d02",
-        "question": "期限までに暫定対応（部分的・リスクを限定した行動）は許容されますか？完全な解決を待つより、段階的実施で対応できる可能性があります。",
-        "priority": 2,
-        "why_needed": "暫定対応の余地があるかで選択肢の質が変わるため",
-        "assumption_if_unanswered": "暫定対応は許容されないと仮定します",
-        "optional": false
-      },
-      {
         "question_id": "q_001",
-        "question": "不明点『誤りの影響範囲（どの意思決定に影響するか）』について、判断に使える事実は何ですか？",
-        "priority": 3,
-        "why_needed": "『誤りの影響範囲（どの意思決定に影響するか）』が選択肢評価に影響するため",
+        "question": "不明点『転職先候補の具体的な条件（業種・年収・働き方）』について、判断に使える事実は何ですか？",
+        "priority": 1,
+        "why_needed": "『転職先候補の具体的な条件（業種・年収・働き方）』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
-        "optional": true
+        "optional": false
       },
       {
         "question_id": "q_002",
-        "question": "不明点『修正に必要な時間』について、判断に使える事実は何ですか？",
-        "priority": 5,
-        "why_needed": "『修正に必要な時間』が選択肢評価に影響するため",
-        "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
-        "optional": true
-      },
-      {
-        "question_id": "q_003",
-        "question": "不明点『既に外部に共有済みか』について、判断に使える事実は何ですか？",
-        "priority": 5,
-        "why_needed": "『既に外部に共有済みか』が選択肢評価に影響するため",
+        "question": "不明点『現職継続時のキャリアパス』について、判断に使える事実は何ですか？",
+        "priority": 3,
+        "why_needed": "『現職継続時のキャリアパス』が選択肢評価に影響するため",
         "assumption_if_unanswered": "保守的な前提を置いて意思決定します",
         "optional": true
       }
     ],
     "uncertainty": {
-      "overall_level": "high",
+      "overall_level": "medium",
       "reasons": [
-        "誤りの影響範囲（どの意思決定に影響するか）",
-        "修正に必要な時間",
-        "既に外部に共有済みか"
+        "転職先候補の具体的な条件（業種・年収・働き方）",
+        "現職継続時のキャリアパス"
       ],
       "assumptions": [
-        "虚偽の断言はしない",
-        "修正可能なら早期に被害を止める"
+        "生活費は現状維持が必要",
+        "転職活動に使える時間は週5時間程度"
       ],
       "known_unknowns": [
-        "誤りの影響範囲（どの意思決定に影響するか）",
-        "修正に必要な時間",
-        "既に外部に共有済みか"
+        "転職先候補の具体的な条件（業種・年収・働き方）",
+        "現職継続時のキャリアパス"
       ]
     },
     "trace": {

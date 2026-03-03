@@ -133,7 +133,21 @@ Key files:
 
 **結果:** `pytest tests/acceptance/ -v` → **27 passed**
 
-### 次のマイルストーン → M3
+### ✅ M3 COMPLETE (2026-03-03)
+
+**M3: question_layer v1（問い生成・問い抑制）— 全完了**
+
+- ✅ `values_clarifier.py` — REQ-VALUES-001: 価値観空時の問い生成 (q_vc_01〜05) + action_plan 5ステップ
+- ✅ `plan_builder.py` — REQ-PLAN-001: Two-Track Plan (Track A: 可逆行動 / Track B: unknowns解消, ≤30日トリガー)
+- ✅ `session_engine.py` — REQ-SESSION-001: JSON Patch session replay (RFC6902 互換)
+- ✅ `output_adapter.py` 統合 — values_clarifier / plan_builder を _build_options / _build_questions に接続
+- ✅ session シナリオ: `session_001_base.yaml` + `session_001_answers.json` + golden file
+- ✅ `test_m3_acceptance.py` — 21 件 (ValuesClArification×10, TwoTrackPlan×4, SessionReplay×7)
+- ✅ Golden files 10件再生成 → 全48件パス
+
+**結果:** `pytest tests/acceptance/ -v` → **48 passed**
+
+### 次のマイルストーン → M4
 
 ---
 
@@ -153,7 +167,7 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 |---|---|---|---|
 | **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | ✅ **COMPLETE** (2026-03-03) |
 | **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | ✅ **COMPLETE** (2026-03-03) |
-| **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | 🔲 未着手 |
+| **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | ✅ **COMPLETE** (2026-03-03) |
 | **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | 🔲 未着手 |
 | **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 0.2.0`) | 🔲 未着手 |
 | **v1.0.0** | 2026-06 | 全AT通過 + 論文ドラフト完成 + CI 100% green | 🔲 未着手 |
