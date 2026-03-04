@@ -24,6 +24,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
         pip install black==26.1.0
+        pip install mypy==1.11.2
+
+    - name: Show mypy version
+      run: |
+        mypy --version
 
     - name: Lint with flake8
       run: |
