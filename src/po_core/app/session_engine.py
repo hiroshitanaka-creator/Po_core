@@ -17,14 +17,16 @@ from __future__ import annotations
 
 import copy
 import json
-from typing import Any
+from typing import Any, TypeVar, cast
+
+T = TypeVar("T")
 
 
 class SessionPatchError(ValueError):
     """Raised when a JSON Patch operation fails."""
 
 
-def _apply_patch(obj: Any, operations: list[dict[str, Any]]) -> Any:
+def _apply_patch(obj: T, operations: list[dict[str, Any]]) -> T:
     """Apply RFC6902-compatible JSON Patch operations to a Python object.
 
     Supports: add, remove, replace.
@@ -181,4 +183,9 @@ def load_session_answers(path: str) -> dict[str, Any]:
         Parsed session answers dict.
     """
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+
+    if not isinstance(data, dict):
+        raise ValueError("Session answers JSON must be an object")
+
+    return cast(dict[str, Any], data)
