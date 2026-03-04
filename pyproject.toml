@@ -251,6 +251,11 @@ module = [
     "scipy.*",
     "sklearn.*",
     "plotly.*",
+    "fastapi.*",
+    "pydantic.*",
+    "pydantic_settings.*",
+    "slowapi.*",
+    "uvicorn.*",
 ]
 ignore_missing_imports = true
 
