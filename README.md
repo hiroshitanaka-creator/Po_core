@@ -1,5 +1,8 @@
 # Po_core
 
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/厳格固定ルール.md)
+最新進捗：[docs/status.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md)
+
 **Philosophy-Driven AI: When Pigs Fly**
 
 > *A frog in a well may not know the ocean, but it can know the sky.*
@@ -77,7 +80,7 @@ No matter how many relationships we have, we are alone. Being "alone" and being 
 
 **That's why Po_core exists.**
 
-Read our full story in the [**Manifesto**](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md).
+Read our full story in the [**Manifesto**](./Po_core_Manifesto_When_Pigs_Fly.md).
 
 ---
 
@@ -614,7 +617,7 @@ The observer script will print:
 
 ### General Documentation
 
-- [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md) — Our philosophy and motivation
+- [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md) — Our philosophy and motivation
 - [Specifications](./01_specifications) — Technical specifications (120+ docs EN/JP)
 - [Architecture](./02_architecture) — System design documents
 - [Modules](./04_modules) — Component documentation
@@ -689,7 +692,7 @@ Built by an independent researcher who asked:
 "What are AI's possibilities, not its limits?"
 
 - Contact: <flyingpig0229+github@gmail.com>
-- Read the full story: [Manifesto](./%23%20Po_core%20Manifesto%20When%20Pigs%20Fly.md)
+- Read the full story: [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md)
 - Project: Po_core - Philosophy-Driven AI
 
 ---

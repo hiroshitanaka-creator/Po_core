@@ -1,3 +1,6 @@
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
+最新進捗：[docs/status.md](/docs/status.md)
+
 Po_core_spec_doc_v1.0
 
 内容

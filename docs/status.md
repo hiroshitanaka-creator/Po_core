@@ -1,5 +1,8 @@
 # Status Snapshot (A〜F)
 
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
+最新進捗：このファイル（[docs/status.md](/docs/status.md)）
+
 この文書は、A〜F完了時点の状態を会話コンテキスト非依存で固定するためのスナップショット。
 
 ## Completed
@@ -10,7 +13,12 @@
 - **E**: recommendationの裁定経路を `arbitration_code` として保持できるようにし、裁定理由の可観測性を上げた。
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
+## Meta (Docs Governance)
+- **Phase 0 (docs)**: `docs/厳格固定ルール.md` をSolarWill公理（歪み/例外/NORMAL-WARN-CRITICAL）に整合させ、主要文書の導線を統一した。
+- **Phase 0 (docs)**: Manifestoファイル名を`Po_core_Manifesto_When_Pigs_Fly.md`へ改名し、全参照を更新した。
+
 ## Contracts
+- **最優先ルール**: `docs/厳格固定ルール.md` を参照（これに反する変更は禁止）。
 - **凍結golden**: `scenarios/case_001_expected.json` / `scenarios/case_009_expected.json` は凍結契約（改変禁止）。
 - **決定性**: 同一入力 + 同一 `seed` + 同一 `now` + 同一バージョンで出力JSON完全一致（wall-clock/乱数禁止）。
 - **golden更新手順**: 仕様根拠（ADR/SRS）を先に固定し、決定論パラメータで生成→保存→`pytest -q` 全通を確認する。
