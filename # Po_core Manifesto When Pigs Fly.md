@@ -1,5 +1,8 @@
 # Po_core Manifesto: When Pigs Fly
 
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
+最新進捗：[docs/status.md](/docs/status.md)
+
 —
 
 ## A Frog in a Well May Not Know the Ocean, But It Can Know the Sky No being can know everything about the world. Our environment defines everything. A frog in a well doesn't know the ocean. But if it looks up from the bottom of the well, it can know the sky. Does not knowing mean we cannot do? Is that a reason to give up? There is never just one way. Imagine your goal is to reach the summit. Rushing up a steep cliff is one way. But choosing your own pace, selecting a route that suits you—that's also a way. Whatever path you take, unique scenery and emotions await that only that route can offer. It's okay to rest sometimes. The landscape and air of that moment can only be experienced then. If life is like a path, humans can only walk backwards. Turn left, and only then do you discover there was a path to the right. Looking back only leads to regret. When you accept what you see with your own eyes, hear with your own ears, and feel with your own senses—that's when something is born. **Is your life written entirely in a textbook?** Being right isn't everything. Some things you only learn through failure. Whether to walk the path someone told you about—that's your decision to make
