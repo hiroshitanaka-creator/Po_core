@@ -100,9 +100,7 @@ def cmd_analyze(experiment_id: str) -> None:
         sys.exit(1)
 
 
-def cmd_promote(
-    experiment_id: str, force: bool = False, dry_run: bool = False
-) -> None:
+def cmd_promote(experiment_id: str, force: bool = False, dry_run: bool = False) -> None:
     """勝者を main に昇格"""
     storage = ExperimentStorage()
     promoter = ExperimentPromoter(storage)
