@@ -22,11 +22,12 @@ from sqlalchemy import (
     Text,
     create_engine,
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session as DBSession
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session as DBSession, relationship, sessionmaker
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """SQLAlchemy declarative base."""
+
 
 
 class SessionModel(Base):
@@ -342,8 +343,11 @@ class DatabaseManager:
             philosopher_counts: Dict[str, int] = {}
             sessions = db.query(SessionModel).all()
             for session in sessions:
-                for phil in session.philosophers:
-                    philosopher_counts[phil] = philosopher_counts.get(phil, 0) + 1
+                philosophers: list[Any] = (
+                    session.philosophers if isinstance(session.philosophers, list) else []
+                )
+                for phil in philosophers:
+                    philosopher_counts[str(phil)] = philosopher_counts.get(str(phil), 0) + 1
 
             return {
                 "total_sessions": total_sessions,

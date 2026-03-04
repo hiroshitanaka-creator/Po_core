@@ -27,7 +27,7 @@ from po_core.experiments.promoter import ExperimentPromoter
 from po_core.experiments.storage import ExperimentStorage
 
 
-def _print_help():
+def _print_help() -> None:
     """ヘルプメッセージを表示"""
     print("""
 Po_core Experiment CLI
@@ -46,7 +46,7 @@ Commands:
 """)
 
 
-def cmd_list():
+def cmd_list() -> None:
     """実験一覧を表示"""
     storage = ExperimentStorage()
     experiments = storage.list_experiments()
@@ -64,7 +64,7 @@ def cmd_list():
             print(f"  - {exp_id}")
 
 
-def cmd_analyze(experiment_id: str):
+def cmd_analyze(experiment_id: str) -> None:
     """実験を分析"""
     storage = ExperimentStorage()
     analyzer = ExperimentAnalyzer(storage)
@@ -100,7 +100,9 @@ def cmd_analyze(experiment_id: str):
         sys.exit(1)
 
 
-def cmd_promote(experiment_id: str, force: bool = False, dry_run: bool = False):
+def cmd_promote(
+    experiment_id: str, force: bool = False, dry_run: bool = False
+) -> None:
     """勝者を main に昇格"""
     storage = ExperimentStorage()
     promoter = ExperimentPromoter(storage)
@@ -120,7 +122,7 @@ def cmd_promote(experiment_id: str, force: bool = False, dry_run: bool = False):
         sys.exit(1)
 
 
-def cmd_rollback(backup_name: str | None = None):
+def cmd_rollback(backup_name: str | None = None) -> None:
     """バックアップから復元"""
     storage = ExperimentStorage()
     promoter = ExperimentPromoter(storage)
@@ -153,7 +155,7 @@ def cmd_rollback(backup_name: str | None = None):
         sys.exit(1)
 
 
-def main_simple():
+def main_simple() -> None:
     """簡易CLI（click なし）"""
     if len(sys.argv) < 2:
         _print_help()
@@ -191,18 +193,18 @@ def main_simple():
 if HAS_CLICK:
     # click を使った実装
     @click.group()
-    def cli():
+    def cli() -> None:
         """Po_core Experiment Management CLI"""
         pass
 
     @cli.command()
-    def list():
+    def list() -> None:
         """List all experiments"""
         cmd_list()
 
     @cli.command()
     @click.argument("experiment_id")
-    def analyze(experiment_id):
+    def analyze(experiment_id: str) -> None:
         """Analyze experiment results"""
         cmd_analyze(experiment_id)
 
@@ -212,13 +214,13 @@ if HAS_CLICK:
         "--force", is_flag=True, help="Force promotion even if not recommended"
     )
     @click.option("--dry-run", is_flag=True, help="Dry run (don't actually copy files)")
-    def promote(experiment_id, force, dry_run):
+    def promote(experiment_id: str, force: bool, dry_run: bool) -> None:
         """Promote winner to main"""
         cmd_promote(experiment_id, force=force, dry_run=dry_run)
 
     @cli.command()
     @click.option("--backup", default=None, help="Backup name (default: latest)")
-    def rollback(backup):
+    def rollback(backup: str | None) -> None:
         """Rollback to previous backup"""
         cmd_rollback(backup)
 
