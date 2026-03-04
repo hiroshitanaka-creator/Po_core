@@ -1,5 +1,8 @@
 # Po_core
 
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/厳格固定ルール.md)
+最新進捗：[docs/status.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md)
+
 **Philosophy-Driven AI: When Pigs Fly**
 
 > *A frog in a well may not know the ocean, but it can know the sky.*

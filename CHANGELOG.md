@@ -1,5 +1,8 @@
 # Changelog
 
+最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
+最新進捗：[docs/status.md](/docs/status.md)
+
 All notable changes to Po_core will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -9,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Documentation
 
-- No unreleased changes.
+- docs: tighten `docs/厳格固定ルール.md` to align with SolarWill axioms (distortion/lifecycle exceptions), normalize top link blocks, and switch README SSOT/status links to GitHub full URLs.
 
 ## [0.2.0] - 2026-03-03 (Stage2 5-F: stable release)
 
