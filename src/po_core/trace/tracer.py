@@ -126,7 +126,7 @@ class ReasoningTracer:
         self.completed_at: Optional[str] = None
 
         # Statistics
-        self.stats = {
+        self.stats: Dict[str, Any] = {
             "total_entries": 0,
             "by_level": {level.value: 0 for level in TraceLevel},
             "by_philosopher": {},

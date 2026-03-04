@@ -47,7 +47,7 @@ def _build_pipeline_tab(
     tensor_fig = build_tensor_chart(events) if events else None
     pipeline_fig = build_pipeline_chart(events) if events else None
 
-    children = [
+    children: list[Any] = [
         html.H3("Pipeline Progression"),
     ]
 
@@ -116,7 +116,7 @@ def _build_philosopher_tab(
     """Philosophers tab layout with charts."""
     ph_fig = build_philosopher_chart(events) if events else None
 
-    children = [
+    children: list[Any] = [
         html.H3("Philosopher Participation"),
     ]
 
@@ -173,7 +173,7 @@ def _build_ethics_tab(
     explanation: Optional[ExplanationChain] = None,
 ) -> html.Div:
     """W_Ethics Gate Decisions tab layout with explanation chain rendering."""
-    children = [html.H3("W_Ethics Gate Decision")]
+    children: list[Any] = [html.H3("W_Ethics Gate Decision")]
 
     if explanation is None:
         children.append(html.P("No W_Ethics Gate data loaded."))
@@ -274,7 +274,7 @@ def _build_deliberation_tab(
     events: Sequence[TraceEvent],
 ) -> html.Div:
     """Deliberation tab layout with round progression and interaction charts."""
-    children = [html.H3("Deliberation Engine")]
+    children: list[Any] = [html.H3("Deliberation Engine")]
 
     # Round progression chart
     round_fig = build_deliberation_round_chart(events) if events else None
@@ -347,7 +347,7 @@ def _build_tradeoff_tab(events: Sequence[TraceEvent]) -> html.Div:
         axis.get("axis_scoring_diagnostics") if isinstance(axis, dict) else None
     )
 
-    children = [html.H3("Trade-off Map")]
+    children: list[Any] = [html.H3("Trade-off Map")]
 
     if not scoreboard and not disagreements and not influence_edges:
         children.append(html.P("No tradeoff data available"))
@@ -478,7 +478,7 @@ def _build_human_review_tab(
     review_items: Optional[Sequence[dict[str, Any]]],
 ) -> html.Div:
     """Human review queue tab for ESCALATE operational visibility."""
-    children = [html.H3("Human Review Queue")]
+    children: list[Any] = [html.H3("Human Review Queue")]
 
     items = [dict(i) for i in (review_items or [])]
     if not items:
