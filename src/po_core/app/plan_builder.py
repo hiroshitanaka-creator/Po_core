@@ -81,8 +81,8 @@ def build_two_track_plan(
     unknowns: list[str] = list(case.get("unknowns", []) or [])
     constraints: list[str] = list(case.get("constraints", []) or [])
     deadline = case.get("deadline")
-    days = _days_to_deadline(deadline, now)
-    days_str = f"{days}日以内" if days is not None else "期限内"
+    # Use absolute deadline date for determinism (not wall-clock-relative "X日以内")
+    days_str = f"期限（{str(deadline).strip()[:10]}）" if deadline else "期限内"
 
     # Track A: reversible/low-risk immediate actions
     track_a_steps: list[dict[str, Any]] = []

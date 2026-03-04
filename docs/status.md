@@ -12,6 +12,11 @@
 - **D**: ethics guardrails v1 を拡張しつつ、recommendation裁定への非干渉（非介入）契約を明文化した。
 - **E**: recommendationの裁定経路を `arbitration_code` として保持できるようにし、裁定理由の可観測性を上げた。
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
+- **G**: 追加golden 2本を追加し、裁定境界を固定した。
+  1. `case_016`（AT-011）: `unknowns × deadline` — 時間圧（≤30日）＋未知情報3件でTwo-Track Plan発動、期限緊急（≤14日）でq_d01/q_d02優先質問を固定。
+  2. `case_017`（AT-012）: stakeholders外部性 — 複数外部利害関係者（6名）＋規制キーワードでETH-R-001/R-002/R-003/R-004/R-005の5ルール発火・WARN縮退を固定。
+  - あわせてwall-clock依存バグ修正: `plan_builder.py`・`question_layer.py` の「X日以内」を絶対deadline日付に変更し決定論を保証（決定性contract準拠）。
+  - `tests/acceptance/` golden全12件再生成 → 50 passed。
 
 ## Meta (Docs Governance)
 - **Phase 0 (docs)**: `docs/厳格固定ルール.md` をSolarWill公理（歪み/例外/NORMAL-WARN-CRITICAL）に整合させ、主要文書の導線を統一した。
@@ -28,9 +33,12 @@
   - `ethics` はガードレール/トレードオフ提示（裁定はしない）
 
 ## Next
-- **G（追加golden 2本）**:
-  1. `unknowns × deadline` の組み合わせで、時間圧があるが未知情報が残るケースの裁定境界を固定する。
-  2. stakeholders外部性（利害関係者複数）で、責任/倫理の観測とrule発火を固定する。
+- **M4（ガバナンス完成）**:
+  1. CI に `jsonschema` 検証必須ゲート追加（`.github/workflows/ci.yml`）
+  2. PR テンプレート（要件ID参照必須）追加（`.github/PULL_REQUEST_TEMPLATE.md`）
+  3. ADR 運用フロー文書化（`docs/spec/adr_guide.md`）
+  4. `config_version` 変更時の自動チェック（CI hook）
+  5. Traceability Matrix 自動更新スクリプト（`scripts/update_traceability.py`）
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。

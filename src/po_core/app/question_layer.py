@@ -87,13 +87,13 @@ def build_questions(
 
     # REQ-QST-001: Deadline urgency → prepend deadline-specific questions
     if urgent and deadline_raw:
-        days = _days_to_deadline(deadline_raw, now)
-        days_str = f"{days}日以内" if days is not None else "近日中"
+        # Use absolute deadline date for determinism (not wall-clock-relative "X日以内")
+        deadline_label = str(deadline_raw).strip()[:10]
         questions.append(
             {
                 "question_id": "q_d01",
                 "question": (
-                    f"期限（{days_str}）の柔軟性はありますか？"
+                    f"期限（{deadline_label}）の柔軟性はありますか？"
                     "期限を延長・分割できる余地があれば、リスクを大幅に低減できます。"
                 ),
                 "priority": 1,
