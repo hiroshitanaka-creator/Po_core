@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- test(solarwill): freeze universe-ethics axioms for SolarWill NORMAL mode via `compute_intent` contract test (survival-structure/distortion goals, non-distortion exceptions in constraints).
+
 - docs: tighten `docs/厳格固定ルール.md` to align with SolarWill axioms (distortion/lifecycle exceptions), normalize top link blocks, and switch README SSOT/status links to GitHub full URLs.
 - docs: rename manifesto file to `Po_core_Manifesto_When_Pigs_Fly.md` and update repository references.
 - docs: purge legacy Manifesto filename/URL-encoded references and verify README links target the renamed file.
