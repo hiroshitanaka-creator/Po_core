@@ -14,7 +14,7 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
-- **Phase2-PR-1**: G-1（unknowns×deadline）goldenを追加し境界を固定した。
+- **Phase2-PR-1**: G-1（unknowns×deadline）golden追加に加え、acceptanceのnow基準を決定論で固定してgolden腐敗（日次ドリフト）を防止した。
 - **Phase 0 (docs)**: `docs/厳格固定ルール.md` をSolarWill公理（歪み/例外/NORMAL-WARN-CRITICAL）に整合させ、主要文書の導線を統一した。
 - **Phase1-PR-1**: Manifestoファイル名をPo_core_Manifesto_When_Pigs_Fly.mdへ改名し、全参照を更新した。
 - **Phase1-PR-2**: 旧Manifesto参照（URLエンコード含む）を全掃討し、参照0件を保証した。
