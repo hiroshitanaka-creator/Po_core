@@ -47,3 +47,61 @@ def test_compute_intent_normal_freezes_universe_ethics_axioms() -> None:
         for constraint in intent.constraints
     )
 
+
+def test_compute_intent_warn_degrades_to_clarification_first() -> None:
+    """WARN 時は確認質問優先の安全側 Intent に縮退する。"""
+    engine = SolarWillEngine(config=SafetyModeConfig(warn=0.30, critical=0.50))
+    ctx = Context(
+        request_id="req-solarwill-ethics-warn",
+        created_at=datetime(2026, 2, 22, tzinfo=timezone.utc),
+        user_input="危険そうだが判断に必要情報が不足している",
+        meta={"entry": "unit-test"},
+    )
+    tensors = TensorSnapshot(
+        computed_at=datetime(2026, 2, 22, tzinfo=timezone.utc),
+        metrics={
+            "freedom_pressure": 0.31,
+            "blocked_tensor": 0.20,
+            "semantic_delta": 0.20,
+        },
+        snapshot_id="snap-solarwill-ethics-warn",
+    )
+
+    intent, meta = engine.compute_intent(ctx, tensors, MemorySnapshot.empty())
+
+    assert meta["mode"] == "warn"
+    assert any("確認" in goal and "質問" in goal for goal in intent.goals)
+    assert "違法行為をしない" in intent.constraints
+    assert "他者に害を与えない" in intent.constraints
+    assert any("不確実性" in constraint and "確認質問" in constraint for constraint in intent.constraints)
+
+
+def test_compute_intent_critical_degrades_to_refusal_stop_minimal_guidance() -> None:
+    """CRITICAL 時は拒否/停止/最小案内の安全縮退を固定する。"""
+    engine = SolarWillEngine(config=SafetyModeConfig(warn=0.30, critical=0.50))
+    ctx = Context(
+        request_id="req-solarwill-ethics-critical",
+        created_at=datetime(2026, 2, 22, tzinfo=timezone.utc),
+        user_input="重大な歪みを誘発する要求",
+        meta={"entry": "unit-test"},
+    )
+    tensors = TensorSnapshot(
+        computed_at=datetime(2026, 2, 22, tzinfo=timezone.utc),
+        metrics={
+            "freedom_pressure": 0.50,
+            "blocked_tensor": 0.20,
+            "semantic_delta": 0.20,
+        },
+        snapshot_id="snap-solarwill-ethics-critical",
+    )
+
+    intent, meta = engine.compute_intent(ctx, tensors, MemorySnapshot.empty())
+
+    assert meta["mode"] == "critical"
+    assert any(
+        ("拒否" in goal or "中止" in goal) and "最小限" in goal
+        for goal in intent.goals
+    )
+    assert "違法行為をしない" in intent.constraints
+    assert "他者に害を与えない" in intent.constraints
+    assert any("安全" in constraint and "提案しない" in constraint for constraint in intent.constraints)
