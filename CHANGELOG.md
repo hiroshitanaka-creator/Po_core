@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: purge legacy Manifesto filename/URL-encoded references and verify README links target the renamed file.
 - test(acceptance): add AT-011 golden for unknowns × deadline boundary to lock question-priority and two-track/uncertainty behavior.
 - fixed(acceptance): make StubComposer `now` deterministic for seeded runs to prevent daily golden drift and stabilize golden diff tests.
+- test(acceptance): add AT-012 golden for stakeholder externality responsibility/ethics observability and lock ethics `rules_fired` behavior.
 
 ## [0.2.0] - 2026-03-03 (Stage2 5-F: stable release)
 
