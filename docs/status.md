@@ -14,6 +14,7 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
+- **Phase3-PR-1**: SolarWillの宇宙ルール倫理（NORMAL）をテストで凍結した。
 - **Phase2-PR-2**: G-2（stakeholders外部性）goldenを追加し観測境界を固定した。
 - **Phase2-PR-1**: G-1（unknowns×deadline）golden追加に加え、acceptanceのnow基準を決定論で固定してgolden腐敗（日次ドリフト）を防止した。
 - **Phase 0 (docs)**: `docs/厳格固定ルール.md` をSolarWill公理（歪み/例外/NORMAL-WARN-CRITICAL）に整合させ、主要文書の導線を統一した。
