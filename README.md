@@ -716,8 +716,15 @@ The pig has clearance for takeoff.
   <i>"A frog in a well may not know the ocean, but it can know the sky."</i>
 </p>
 
+---
+
 ⚠️ **WARNING: THIS IS THE ORIGINAL Po_core REPOSITORY**
-- Official sources: GitHub (hiroshitanaka-creator), Note.com "tensor mania" (https://note.com/tender_flea2177), Academia.edu (僕 僕)
-- DMCA申請中 (Reference ID: #あなたの番号)
+
+- **Official sources**:
+  - GitHub: [hiroshitanaka-creator/Po_core](https://github.com/hiroshitanaka-creator/Po_core)
+  - Note.com: [tensor mania](https://note.com/tender_flea2177)
+  - Academia.edu: [僕 僕](https://independent.academia.edu/%E5%83%95%E5%83%95)
+
+- DMCA申請中 (Reference ID: #4124875
 - Any full copy, license rewrite (MIT), or impersonation (flying_pig) will be reported and removed.
 - Commercial use requires separate license. Unauthorized copies detected via tensor mania series.
