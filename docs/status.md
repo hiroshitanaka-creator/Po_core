@@ -15,6 +15,7 @@
 
 ## Meta (Docs Governance)
 - **Phase 0 (docs)**: `docs/厳格固定ルール.md` をSolarWill公理（歪み/例外/NORMAL-WARN-CRITICAL）に整合させ、主要文書の導線を統一した。
+- **Phase1-PR-1**: Manifestoファイル名をPo_core_Manifesto_When_Pigs_Fly.mdへ改名し、全参照を更新した。
 
 ## Contracts
 - **最優先ルール**: `docs/厳格固定ルール.md` を参照（これに反する変更は禁止）。
