@@ -401,5 +401,24 @@ def test_at_meta_determinism(case_fixture_name, request, output_schema):
     ), "AT-META: non-deterministic output for same seed"
 
 
+def test_at_meta_now_override_has_priority(case_001):
+    """AT-META: case['now'] must override seeded deterministic default."""
+    case = dict(case_001)
+    case["now"] = "2030-01-02T03:04:05Z"
+
+    out = StubComposer(seed=42).compose(case)
+
+    assert out["meta"]["created_at"] == "2030-01-02T03:04:05Z"
+
+
+def test_at_meta_seeded_default_now_is_fixed(case_001):
+    """AT-META: seeded runs must use fixed now when case['now'] is absent."""
+    case = dict(case_001)
+    case.pop("now", None)
+
+    out = StubComposer(seed=42).compose(case)
+
+    assert out["meta"]["created_at"] == "2026-03-03T00:00:00Z"
+
 # Need to import StubComposer at module level for the parametrize test
 from po_core.app.composer import StubComposer  # noqa: E402
