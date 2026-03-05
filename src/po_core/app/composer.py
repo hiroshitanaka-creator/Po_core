@@ -118,9 +118,15 @@ class StubComposer:
         from po_core.app.api import run as _po_run
         from po_core.app.output_adapter import adapt_to_schema, build_user_input
 
-        now_str = datetime.datetime.now(datetime.timezone.utc).strftime(
-            "%Y-%m-%dT%H:%M:%SZ"
-        )
+        case_now = case.get("now")
+        if isinstance(case_now, str) and case_now.strip():
+            now_str = case_now.strip()
+        elif self.seed is not None:
+            now_str = "2026-03-03T00:00:00Z"
+        else:
+            now_str = datetime.datetime.now(datetime.timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            )
 
         # Deterministic run_id: derived from case_id + seed
         case_id = str(case.get("case_id", "case_unknown"))

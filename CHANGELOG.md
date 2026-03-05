@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: tighten `docs/厳格固定ルール.md` to align with SolarWill axioms (distortion/lifecycle exceptions), normalize top link blocks, and switch README SSOT/status links to GitHub full URLs.
 - docs: rename manifesto file to `Po_core_Manifesto_When_Pigs_Fly.md` and update repository references.
 - docs: purge legacy Manifesto filename/URL-encoded references and verify README links target the renamed file.
+- test(acceptance): add AT-011 golden for unknowns × deadline boundary to lock question-priority and two-track/uncertainty behavior.
+- fixed(acceptance): make StubComposer `now` deterministic for seeded runs to prevent daily golden drift and stabilize golden diff tests.
 
 ## [0.2.0] - 2026-03-03 (Stage2 5-F: stable release)
 
