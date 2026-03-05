@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- tools: add `scripts/eval_emergence.py` to compare deliberation on/off (`deliberation_max_rounds=1` vs `2/3`) and report emergence signal count, peak novelty, and average novelty.
+
 ### Documentation
 
 - test(solarwill): freeze WARN/CRITICAL degradation behavior for SolarWill `compute_intent` (WARN=clarification-first constraints, CRITICAL=refusal/stop/minimal-guidance constraints).

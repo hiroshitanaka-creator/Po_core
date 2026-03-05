@@ -405,6 +405,7 @@ class TestDeliberationResultNewFields:
         assert summary["emergence"]["detected"] is True
         assert summary["emergence"]["n_signals"] == 1
         assert summary["emergence"]["peak_novelty"] == 0.75
+        assert summary["emergence"]["avg_novelty"] == 0.75
 
     def test_summary_includes_top_influencers(self):
         weights = {"Hegel": InfluenceWeight("Hegel", {"Marx": 0.8})}
