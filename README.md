@@ -334,7 +334,7 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Beta (v0.3.0) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
+**Current Phase: Stable (v0.3.0) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
 
 ### Completed Components
 
