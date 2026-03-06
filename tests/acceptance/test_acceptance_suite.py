@@ -420,5 +420,6 @@ def test_at_meta_seeded_default_now_is_fixed(case_001):
 
     assert out["meta"]["created_at"] == "2026-03-03T00:00:00Z"
 
+
 # Need to import StubComposer at module level for the parametrize test
 from po_core.app.composer import StubComposer  # noqa: E402

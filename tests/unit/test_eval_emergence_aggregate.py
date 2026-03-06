@@ -10,7 +10,9 @@ import pytest
 def _load_eval_emergence_module():
     repo_root = Path(__file__).resolve().parents[2]
     module_path = repo_root / "scripts" / "eval_emergence.py"
-    spec = importlib.util.spec_from_file_location("eval_emergence_for_tests", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "eval_emergence_for_tests", module_path
+    )
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)

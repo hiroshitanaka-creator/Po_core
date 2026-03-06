@@ -407,7 +407,9 @@ class TestDeliberationResultNewFields:
             EmergenceSignal(0.88, "Nietzsche", ("Nietzsche", "Hegel"), 2),
             EmergenceSignal(0.65, "Hume", ("Hume", "Locke"), 3),
         ]
-        assert self._make_result(sigs, {}).avg_novelty == pytest.approx((0.72 + 0.88 + 0.65) / 3)
+        assert self._make_result(sigs, {}).avg_novelty == pytest.approx(
+            (0.72 + 0.88 + 0.65) / 3
+        )
 
     def test_summary_includes_emergence_section(self):
         sig = EmergenceSignal(0.75, "Sartre", ("Sartre", "Kant"), 2)
