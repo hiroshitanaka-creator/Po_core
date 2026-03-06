@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- fixed(tools): correct avg_novelty aggregation in eval_emergence
+
 - test(solarwill): freeze WARN/CRITICAL degradation behavior for SolarWill `compute_intent` (WARN=clarification-first constraints, CRITICAL=refusal/stop/minimal-guidance constraints).
 
 - test(solarwill): freeze universe-ethics axioms for SolarWill NORMAL mode via `compute_intent` contract test (survival-structure/distortion goals, non-distortion exceptions in constraints).
