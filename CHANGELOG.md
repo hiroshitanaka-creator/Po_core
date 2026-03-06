@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs: add `.github/pull_request_template.md` checklist to enforce SSOT確認・`docs/status.md`更新・テスト結果報告・影響範囲/ロールバック記載。
 - feat(tools): add standalone Phase4 emergence compare CLI (`scripts/eval_emergence.py`) with baseline/with-deliberation execution, human-readable diff, and optional JSON report output.
 - changed(deliberation): add `avg_novelty` to `DeliberationResult` and include it in `summary()["emergence"]` for trace/summary observability.
 
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs: add `.github/pull_request_template.md` checklist to enforce SSOT確認・`docs/status.md`更新・テスト結果報告・影響範囲/ロールバック記載。
 - Package version finalized from `0.2.0rc1` to `0.2.0` in `pyproject.toml` for stable release publication.
 - Release notes normalized in Keep a Changelog order (`Unreleased` → `0.2.0` → `0.2.0rc1`).
 
@@ -52,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs: add `.github/pull_request_template.md` checklist to enforce SSOT確認・`docs/status.md`更新・テスト結果報告・影響範囲/ロールバック記載。
 - CI workflow (`.github/workflows/ci.yml`) now makes schema + golden + acceptance gates explicit in the test job.
 - Added an explicit JSON Schema gate step (`python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v`) and explicit `jsonschema` dependency install in CI setup.
 - Package version bumped from `0.2.0b4` to `0.2.0rc1` in `pyproject.toml` for RC publish readiness.
@@ -79,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
 
+- docs: add `.github/pull_request_template.md` checklist to enforce SSOT確認・`docs/status.md`更新・テスト結果報告・影響範囲/ロールバック記載。
 - Version bumped to `0.2.0b3` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
 - Package renamed from `po-core` → `po-core-flyingpig` in `pyproject.toml`
 - `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
