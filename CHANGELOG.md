@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- fixed(tools): correct avg_novelty aggregation in eval_emergence script.
+- fixed(tools): correct avg_novelty aggregation in eval_emergence
 - tools: add `scripts/eval_emergence.py` to compare deliberation on/off (`deliberation_max_rounds=1` vs `2/3`) and report emergence signal count, peak novelty, and average novelty.
 
 ### Documentation
