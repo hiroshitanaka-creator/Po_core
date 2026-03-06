@@ -60,7 +60,7 @@ src/po_core/
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
-- Version: `0.3.0` (release candidate, M1 complete) → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
+- Version: `0.2.0rc1` (release candidate, M1 complete) → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
 
 ## Current Status (2026-03-03)
 
@@ -131,7 +131,7 @@ Key files:
 - ✅ `ethics_engine.py` 強化 — rule_id / rules_fired tracking (REQ-ETH-002)
 - ✅ `question_layer.py` 強化 — deadline × unknowns 優先順位 (REQ-QST-001)
 - ✅ `output_adapter.py` 統合 — trace に arbitration_code + rules_fired 記録
-- ✅ バージョン更新: `0.3.0` → `0.3.0`, "39人" → "42人" in trace
+- ✅ バージョン更新: `0.2.0b4` → `0.2.0rc1`, "39人" → "42人" in trace
 - ✅ Golden files 10件再生成 → 27件全パス
 
 **結果:** `pytest tests/acceptance/ -v` → **27 passed**
@@ -178,8 +178,8 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 ### バージョン戦略
 
 ```
-現在: 0.3.0 (release candidate, M1 COMPLETE)
-~~M1:   0.3.0~~ → 完了
+現在: 0.2.0rc1 (release candidate, M1 COMPLETE)
+~~M1:   0.2.0rc1~~ → 完了
 M4:   0.2.0    (stable, PyPI)
 v1.0: 1.0.0    (全AT通過 + 論文ドラフト完成)
 ```

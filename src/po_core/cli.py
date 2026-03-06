@@ -63,7 +63,7 @@ def _render_sample_generation(prompt: str) -> str:
 def hello(sample: bool) -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
-    console.print("Philosophy-Driven AI System - v0.3.0")
+    console.print(f"Philosophy-Driven AI System - v{__version__}")
     console.print(
         "\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]"
     )

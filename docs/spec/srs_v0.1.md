@@ -4,7 +4,7 @@
 **Date:** 2026-02-28
 **Status:** Active Draft — M0 Complete, M1 In Progress
 **参照 PRD:** docs/spec/prd.md
-**実装バージョン:** po-core-flyingpig v0.3.0
+**実装バージョン:** po-core-flyingpig v0.2.0b4
 
 ---
 
