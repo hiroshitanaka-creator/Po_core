@@ -665,7 +665,7 @@ If you use Po_core in academic work, please cite:
 
 Po_core uses **dual licensing**:
 
-License: AGPL-3.0-or-later (Community) / Commercial license available for proprietary use.
+Po_core is available under AGPL-3.0-or-later for community use, with a commercial license available for proprietary use.
 
 | Use case | License |
 |---|---|
