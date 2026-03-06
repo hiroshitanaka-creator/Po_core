@@ -22,7 +22,7 @@ SAMPLE_PROMPT = "What does it mean to live authentically?"
 
 
 @click.group()
-@click.version_option(version="0.1.0-alpha", prog_name="po-core")
+@click.version_option(version=__version__, prog_name="po-core")
 def main() -> None:
     """
     Po_core: Philosophy-Driven AI System 🐷🎈
@@ -63,7 +63,7 @@ def _render_sample_generation(prompt: str) -> str:
 def hello(sample: bool) -> None:
     """Say hello from Po_core"""
     console.print("[bold blue]🐷🎈 Po_core へようこそ![/bold blue]")
-    console.print("Philosophy-Driven AI System - Alpha v0.1.0")
+    console.print("Philosophy-Driven AI System - v0.2.0")
     console.print(
         "\n[italic]A frog in a well may not know the ocean, but it can know the sky.[/italic]"
     )
