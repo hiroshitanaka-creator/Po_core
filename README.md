@@ -334,7 +334,7 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Beta (v0.2.0b4) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
+**Current Phase: Stable (v0.3.0) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
 
 ### Completed Components
 
@@ -428,7 +428,7 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v0.2.0b4
+po-core version   # v0.3.0
 po-core status
 po-core --help
 ```
@@ -664,6 +664,8 @@ If you use Po_core in academic work, please cite:
 ## License
 
 Po_core uses **dual licensing**:
+
+Po_core is available under AGPL-3.0-or-later for community use, with a commercial license available for proprietary use.
 
 | Use case | License |
 |---|---|

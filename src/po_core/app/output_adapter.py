@@ -37,10 +37,10 @@ from po_core.app.values_clarifier import (
     needs_values_clarification,
 )
 
-_POCORE_VERSION = "0.2.0rc1"
+_POCORE_VERSION = "0.3.0"
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
-_GENERATOR_VERSION = "0.2.0"
+_GENERATOR_VERSION = "0.3.0"
 
 
 def _map_values_to_principles(values: List[str]) -> List[str]:

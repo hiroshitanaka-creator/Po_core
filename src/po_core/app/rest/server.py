@@ -100,13 +100,13 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 → PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
 ```
         """,
-        version="0.2.0-beta",
+        version="0.3.0",
         contact={
             "name": "Flying Pig Project",
             "url": "https://github.com/hiroshitanaka-creator/Po_core",
             "email": "flyingpig0229+github@gmail.com",
         },
-        license_info={"name": "MIT"},
+        license_info={"name": "AGPL-3.0-or-later + Commercial"},
         openapi_tags=[
             {
                 "name": "reason",
