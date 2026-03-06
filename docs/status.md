@@ -14,6 +14,7 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
+- **Phase6-PR-1**: user-facing version表示（__version__/CLI）を0.2.0へ統一した。
 - **Phase5-PR-2**: PR本文ガバナンスチェックを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を pull_request 時に検査するようにした。
 - **Phase5-PR-1**: PRテンプレを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を要求するようにした。
 - **Phase4-PR-1**: 創発比較スクリプトを追加し、議論あり/なしの比較計測（avg_novelty 集計修正と回帰テスト固定を含む）を可能にした。

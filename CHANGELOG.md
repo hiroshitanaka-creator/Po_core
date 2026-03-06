@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore(version): unify user-facing version strings (`__version__`/CLI) to `0.2.0`.
 - ci: add pull-request governance workflow to validate SSOT/status/test-report requirements.
 - docs: add PR template checklist to require SSOT acknowledgment, docs/status updates, test reporting, and impact/rollback notes.
 - feat(tools): add standalone Phase4 emergence compare CLI (`scripts/eval_emergence.py`) with baseline/with-deliberation execution, human-readable diff, and optional JSON report output.
