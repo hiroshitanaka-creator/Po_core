@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- ci: add pull-request governance workflow to validate SSOT/status/test-report requirements.
 - docs: add PR template checklist to require SSOT acknowledgment, docs/status updates, test reporting, and impact/rollback notes.
 - feat(tools): add standalone Phase4 emergence compare CLI (`scripts/eval_emergence.py`) with baseline/with-deliberation execution, human-readable diff, and optional JSON report output.
 - changed(deliberation): add `avg_novelty` to `DeliberationResult` and include it in `summary()["emergence"]` for trace/summary observability.

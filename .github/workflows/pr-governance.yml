@@ -1,0 +1,24 @@
+name: PR Governance
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+jobs:
+  pr-governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate PR governance template requirements
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python scripts/check_pr_governance.py
