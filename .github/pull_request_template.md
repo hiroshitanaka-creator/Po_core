@@ -7,6 +7,7 @@
 - [ ] `docs/status.md` を更新した（どこを動かしたかを記載）
 - [ ] 実行したテストコマンドと結果を下記に記載した
 - [ ] 影響範囲とロールバック手順を下記に記載した
+- [ ] 既存の policy/golden/schema/migration チェック項目を削除していない（下位セクションで確認）
 
 ## Status Update
 - 更新箇所（Completed / Meta / Next など）:
