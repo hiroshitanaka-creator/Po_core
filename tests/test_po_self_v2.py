@@ -14,6 +14,7 @@ import warnings
 
 import pytest
 
+from po_core.philosophers.manifest import SPECS
 from po_core.po_self import PoSelf, PoSelfResponse
 
 pytestmark = pytest.mark.pipeline
@@ -146,9 +147,10 @@ class TestPoSelfInitialization:
         assert len(po.philosophers) > 0
         assert po.enable_trace is True
 
-    def test_default_has_44_philosophers(self):
+    def test_default_has_manifest_enabled_philosophers(self):
         po = PoSelf()
-        assert len(po.philosophers) == 44
+        expected = len([s for s in SPECS if s.enabled])
+        assert len(po.philosophers) == expected
 
     def test_custom_philosophers_stored(self):
         po = PoSelf(philosophers=["aristotle", "nietzsche"])
@@ -162,7 +164,8 @@ class TestPoSelfInitialization:
         po = PoSelf()
         available = po.get_available_philosophers()
         assert isinstance(available, list)
-        assert len(available) == 43
+        expected = len([s for s in SPECS if s.enabled])
+        assert len(available) == expected
         assert "aristotle" in available
         assert "confucius" in available
         assert "appiah" in available

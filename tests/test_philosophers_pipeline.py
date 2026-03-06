@@ -2,7 +2,7 @@
 Philosopher Tests via Pipeline (migrated from test_philosophers_pytest.py)
 ==========================================================================
 
-Tests all 43 philosophers through native PhilosopherProtocol.propose().
+Tests all 42 non-dummy philosophers through native PhilosopherProtocol.propose().
 Validates that every philosopher:
 1. Can be loaded via PhilosopherRegistry
 2. Has correct attributes (name, tradition, key_concepts)
@@ -69,12 +69,12 @@ def all_loaded_philosophers(registry):
 class TestManifestIntegrity:
     """Verify manifest SPECS are consistent."""
 
-    def test_manifest_has_44_specs(self):
-        assert len(SPECS) == 44, f"Expected 44 specs (43 + dummy), got {len(SPECS)}"
+    def test_manifest_has_43_specs(self):
+        assert len(SPECS) == 43, f"Expected 43 specs (42 + dummy), got {len(SPECS)}"
 
-    def test_43_non_dummy_philosophers(self):
+    def test_42_non_dummy_philosophers(self):
         non_dummy = [s for s in SPECS if s.philosopher_id != "dummy"]
-        assert len(non_dummy) == 43
+        assert len(non_dummy) == 42
 
     def test_all_ids_unique(self):
         ids = [s.philosopher_id for s in SPECS]
@@ -99,7 +99,7 @@ class TestPhilosopherLoading:
     """Test that all philosophers load with native propose()/info."""
 
     def test_all_load_via_registry(self, registry):
-        """All 43 philosophers should load in NORMAL mode."""
+        """All non-dummy philosophers should load in NORMAL mode."""
         loaded = registry.select_and_load(SafetyMode.NORMAL)
         assert len(loaded) > 0
 
