@@ -73,7 +73,10 @@ def test_compute_intent_warn_degrades_to_clarification_first() -> None:
     assert any("確認" in goal and "質問" in goal for goal in intent.goals)
     assert "違法行為をしない" in intent.constraints
     assert "他者に害を与えない" in intent.constraints
-    assert any("不確実性" in constraint and "確認質問" in constraint for constraint in intent.constraints)
+    assert any(
+        "不確実性" in constraint and "確認質問" in constraint
+        for constraint in intent.constraints
+    )
 
 
 def test_compute_intent_critical_degrades_to_refusal_stop_minimal_guidance() -> None:
@@ -99,9 +102,11 @@ def test_compute_intent_critical_degrades_to_refusal_stop_minimal_guidance() -> 
 
     assert meta["mode"] == "critical"
     assert any(
-        ("拒否" in goal or "中止" in goal) and "最小限" in goal
-        for goal in intent.goals
+        ("拒否" in goal or "中止" in goal) and "最小限" in goal for goal in intent.goals
     )
     assert "違法行為をしない" in intent.constraints
     assert "他者に害を与えない" in intent.constraints
-    assert any("安全" in constraint and "提案しない" in constraint for constraint in intent.constraints)
+    assert any(
+        "安全" in constraint and "提案しない" in constraint
+        for constraint in intent.constraints
+    )
