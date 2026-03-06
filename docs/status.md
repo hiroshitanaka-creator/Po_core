@@ -14,6 +14,7 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
+- **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をPR本文へ追記し、golden更新がversion metadata中心であることを明記した。
 - **Phase6-PR-1**: バージョン表記を0.3.0へ統一し、OpenAPI license表示をAGPL-3.0-or-later + Commercialへ更新した。
 - **Phase5-PR-2**: PR本文ガバナンスチェックを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を pull_request 時に検査するようにした。
 - **Phase5-PR-1**: PRテンプレを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を要求するようにした。
