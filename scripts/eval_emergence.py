@@ -5,10 +5,12 @@ Runs the same input set with two settings:
 - baseline: deliberation_max_rounds=1
 - variant:  deliberation_max_rounds=N (2 or 3)
 
-Outputs per-case and aggregate comparison for:
-- emergence_signals count
-- peak_novelty
-- average novelty (if signals exist)
+Metric definitions (strict):
+- n_signals: count of detected emergence signals.
+- peak_novelty: maximum novelty score among all signals.
+- avg_novelty: signal-weighted mean novelty across all emergence signals.
+  (i.e., global mean over all signals, not mean of per-case peaks)
+- avg_peak_novelty: arithmetic mean of per-case peak_novelty (reported separately).
 """
 
 from __future__ import annotations
@@ -61,6 +63,7 @@ class AggregateMetrics:
     total_cases: int
     total_signals: int
     peak_novelty: float
+    avg_peak_novelty: float
     avg_novelty: float
     avg_signals_per_case: float
 
@@ -69,6 +72,7 @@ class AggregateMetrics:
             "total_cases": self.total_cases,
             "total_signals": self.total_signals,
             "peak_novelty": round(self.peak_novelty, 4),
+            "avg_peak_novelty": round(self.avg_peak_novelty, 4),
             "avg_novelty": round(self.avg_novelty, 4),
             "avg_signals_per_case": round(self.avg_signals_per_case, 4),
         }
@@ -108,21 +112,32 @@ def _run_case(prompt: str, rounds: int) -> CaseMetrics:
 
     n_signals = int(emergence.get("n_signals", 0) or 0)
     peak = float(emergence.get("peak_novelty", 0.0) or 0.0)
-
     avg = float(emergence.get("avg_novelty", 0.0) or 0.0)
-    return CaseMetrics(prompt=prompt, n_signals=n_signals, peak_novelty=peak, avg_novelty=avg)
+
+    return CaseMetrics(
+        prompt=prompt,
+        n_signals=n_signals,
+        peak_novelty=peak,
+        avg_novelty=avg,
+    )
 
 
 def _aggregate(rows: list[CaseMetrics]) -> AggregateMetrics:
     total_cases = len(rows)
     total_signals = sum(r.n_signals for r in rows)
     peak = max((r.peak_novelty for r in rows), default=0.0)
-    avg_novelty = statistics.fmean([r.peak_novelty for r in rows]) if rows else 0.0
+    avg_peak_novelty = statistics.fmean([r.peak_novelty for r in rows]) if rows else 0.0
+    avg_novelty = (
+        sum(r.avg_novelty * r.n_signals for r in rows) / total_signals
+        if total_signals > 0
+        else 0.0
+    )
     avg_signals = (total_signals / total_cases) if total_cases else 0.0
     return AggregateMetrics(
         total_cases=total_cases,
         total_signals=total_signals,
         peak_novelty=peak,
+        avg_peak_novelty=avg_peak_novelty,
         avg_novelty=avg_novelty,
         avg_signals_per_case=avg_signals,
     )
@@ -137,6 +152,7 @@ def _print_human_readable(
     print("=== Emergence Evaluation (deliberation on/off) ===")
     print(f"baseline deliberation_max_rounds={baseline_rounds}")
     print(f"variant  deliberation_max_rounds={variant_rounds}")
+    print("metric defs: avg_novelty=signal-weighted mean, avg_peak_novelty=mean(per-case peak)")
     print()
 
     print("[Per-case]")
@@ -162,18 +178,21 @@ def _print_human_readable(
         "baseline: "
         f"total_signals={base_aggr.total_signals}, "
         f"peak_novelty={base_aggr.peak_novelty:.4f}, "
+        f"avg_peak_novelty={base_aggr.avg_peak_novelty:.4f}, "
         f"avg_novelty={base_aggr.avg_novelty:.4f}"
     )
     print(
         "variant : "
         f"total_signals={var_aggr.total_signals}, "
         f"peak_novelty={var_aggr.peak_novelty:.4f}, "
+        f"avg_peak_novelty={var_aggr.avg_peak_novelty:.4f}, "
         f"avg_novelty={var_aggr.avg_novelty:.4f}"
     )
     print(
         "delta   : "
         f"signals={var_aggr.total_signals - base_aggr.total_signals:+d}, "
         f"peak_novelty={var_aggr.peak_novelty - base_aggr.peak_novelty:+.4f}, "
+        f"avg_peak_novelty={var_aggr.avg_peak_novelty - base_aggr.avg_peak_novelty:+.4f}, "
         f"avg_novelty={var_aggr.avg_novelty - base_aggr.avg_novelty:+.4f}"
     )
 

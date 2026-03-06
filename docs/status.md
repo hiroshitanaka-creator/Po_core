@@ -14,6 +14,7 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
+- **Phase4-PR-1.1**: 創発比較スクリプトのavg_novelty集計バグを修正し、回帰テストで固定した。
 - **Phase4-PR-1**: 創発比較スクリプトを追加し、議論あり/なしの計測を可能にした。
 - **Phase3-PR-2**: SolarWillのWARN/CRITICAL縮退をテストで凍結した。
 - **Phase3-PR-1**: SolarWillの宇宙ルール倫理（NORMAL）をテストで凍結した。
