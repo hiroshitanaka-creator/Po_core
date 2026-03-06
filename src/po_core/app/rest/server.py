@@ -100,7 +100,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 → PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
 ```
         """,
-        version="0.2.0-beta",
+        version="0.3.0",
         contact={
             "name": "Flying Pig Project",
             "url": "https://github.com/hiroshitanaka-creator/Po_core",

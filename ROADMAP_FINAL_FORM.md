@@ -4,7 +4,7 @@
 最新進捗：[docs/status.md](/docs/status.md)
 
 > **策定日:** 2026-03-02
-> **現在地:** Phases 1–7 完了 · M0 完了 · v0.2.0b4 · M1 進行中
+> **現在地:** Phases 1–7 完了 · M0 完了 · v0.3.0 · M1 進行中
 >
 > 「AIは統計的オウムである」という批判に対して、
 > 哲学的熟議によって倫理的責任を持つAIが**構築できる**ことを
@@ -136,7 +136,7 @@ gh workflow run publish.yml -f environment=pypi       # 本番 PyPI
 
 | チェック項目 | 状態 |
 |------------|------|
-| `pyproject.toml` version = `0.2.0b4` | ✅ |
+| `pyproject.toml` version = `0.3.0` | ✅ |
 | `publish.yml` OIDC trusted publishing | ✅ |
 | `QUICKSTART.md` REST API 例 | ✅ |
 | `CHANGELOG.md` エントリ | ✅ |
@@ -161,8 +161,8 @@ gh workflow run publish.yml -f environment=pypi       # 本番 PyPI
 **バージョン戦略:**
 
 ```
-現在: 0.2.0b4  (beta)
-M1:   0.2.0rc1 (release candidate)
+現在: 0.3.0  (beta)
+M1:   0.3.0 (release candidate)
 M4:   0.2.0    (stable, PyPI)
 v1.0: 1.0.0    (全AT通過 + 論文ドラフト完成)
 ```

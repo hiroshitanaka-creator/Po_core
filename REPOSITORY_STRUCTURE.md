@@ -4,7 +4,7 @@
 
 **Document Status:** v2.0 — Reflects actual production state (Phase 5 complete)
 **Last Updated:** 2026-02-28
-**Package Version:** `po-core-flyingpig` v0.2.0b4
+**Package Version:** `po-core-flyingpig` v0.3.0
 
 > This document describes the **actual** repository structure as of Phase 5 completion.
 > It replaces the earlier planning document (v1.0, 2025-11-02).
@@ -174,7 +174,7 @@ Po_core/
 ├── .markdownlint.json
 ├── .markdownlintignore
 ├── .pre-commit-config.yaml
-├── pyproject.toml                   # PEP 517/518 packaging (po-core-flyingpig v0.2.0b4)
+├── pyproject.toml                   # PEP 517/518 packaging (po-core-flyingpig v0.3.0)
 ├── pytest.ini                       # Pytest configuration + markers
 ├── regenerate_golden.py             # Golden file regeneration script
 ├── requirements.txt                 # Production dependencies
@@ -431,7 +431,7 @@ output = composer.compose(case_dict)  # Returns output_schema_v1-compliant dict
 
 | File | Purpose |
 |------|---------|
-| `pyproject.toml` | PEP 517/518 packaging; `po-core-flyingpig` v0.2.0b4; `AGPL-3.0-or-later` |
+| `pyproject.toml` | PEP 517/518 packaging; `po-core-flyingpig` v0.3.0; `AGPL-3.0-or-later` |
 | `pytest.ini` | Markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`, `acceptance` |
 | `config/pareto_table.yaml` | Pareto weights (config_version tracked — must increment on change) |
 | `config/battalion_table.yaml` | Philosopher battalions (config_version tracked) |
@@ -458,7 +458,7 @@ SPDX-License-Identifier: `AGPL-3.0-or-later`
 | Phase 2 | ML tensors + Deliberation Engine | ✅ COMPLETE (2396 tests) |
 | Phase 3 | Viewer WebUI + Explainable W_Ethics Gate | ✅ COMPLETE |
 | Phase 4 | Adversarial Hardening (85 new tests) | ✅ COMPLETE |
-| Phase 5 | REST API + Security + Docker + Async + Benchmarks | ✅ COMPLETE (v0.2.0b4) |
+| Phase 5 | REST API + Security + Docker + Async + Benchmarks | ✅ COMPLETE (v0.3.0) |
 | M0 | Spec Scaffolding (PRD/SRS/Schema/Traceability) | ✅ COMPLETE |
 | M1 | Stub Composer + E2E Acceptance Runner | 🔄 IN PROGRESS |
 

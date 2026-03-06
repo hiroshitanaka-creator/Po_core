@@ -113,7 +113,7 @@ We're working on an arXiv paper — your real-world test cases could become data
 ```
 🐷✨ Po_core update: 39 philosopher AIs now deliberate via tensor calculus to support ethical decision-making.
 
-New in v0.2.0b4:
+New in v0.3.0:
 → StubComposer: rule-based ethical output, zero LLM required
 → AT-001–AT-010: acceptance test suite
 → arXiv draft: Tensorized Philosophy

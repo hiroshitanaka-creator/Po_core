@@ -202,7 +202,7 @@ Phases 1–7 complete. v0.2.0b3 (po-core-flyingpig). Spec scaffolding (M0) in pr
 
 **Labels:** `phase-5`, `release`
 
-- [x] Version bumped to `0.2.0-beta` in `pyproject.toml`
+- [x] Version bumped to `0.3.0` in `pyproject.toml`
 - [x] CHANGELOG.md updated with all phase accomplishments
 - [x] `.github/workflows/publish.yml` — OIDC trusted publishing workflow ready
 - [ ] Publish to TestPyPI (manual `workflow_dispatch`)

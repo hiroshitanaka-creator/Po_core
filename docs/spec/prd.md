@@ -3,7 +3,7 @@
 **Version:** 0.3
 **Date:** 2026-02-28
 **Status:** Active — Phases 1–5 Complete · M0 Complete · M1 In Progress
-**Package:** `po-core-flyingpig` v0.2.0b4
+**Package:** `po-core-flyingpig` v0.3.0
 
 ---
 

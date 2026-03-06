@@ -49,7 +49,7 @@ python scripts/phase25_reproduce.py --profile full
 失敗時は最初の failing command を表示し、即時終了する。
 
 
-## TestPyPI publish verification (v0.2.0rc1)
+## TestPyPI publish verification (v0.3.0)
 
 Phase 5-F（PyPI公開）の運用手順。`publish.yml` は `workflow_dispatch` で `target=testpypi` を受け取り、TestPyPI 公開ジョブを起動する。
 
@@ -77,7 +77,7 @@ python -m pip install --upgrade pip
 pip install \
   --index-url https://test.pypi.org/simple/ \
   --extra-index-url https://pypi.org/simple \
-  po-core-flyingpig==0.2.0rc1
+  po-core-flyingpig==0.3.0
 
 python -c "import po_core; print(po_core.__name__)"
 ```

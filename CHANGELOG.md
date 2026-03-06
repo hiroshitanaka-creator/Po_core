@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- chore(version): unify user-facing version strings (`__version__`/CLI) to `0.2.0`.
+- chore(version): unify user-facing version strings (`__version__`/CLI) to `0.3.0`.
 - ci: add pull-request governance workflow to validate SSOT/status/test-report requirements.
 - docs: add PR template checklist to require SSOT acknowledgment, docs/status updates, test reporting, and impact/rollback notes.
 - feat(tools): add standalone Phase4 emergence compare CLI (`scripts/eval_emergence.py`) with baseline/with-deliberation execution, human-readable diff, and optional JSON report output.
@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed(tools): correct `avg_novelty` aggregation in eval_emergence to signals-weighted mean and lock behavior with regression tests.
 
 ### Documentation
+
+- version metadata unified to `0.3.0`.
 
 - test(solarwill): freeze WARN/CRITICAL degradation behavior for SolarWill `compute_intent` (WARN=clarification-first constraints, CRITICAL=refusal/stop/minimal-guidance constraints).
 
@@ -41,8 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Package version finalized from `0.2.0rc1` to `0.2.0` in `pyproject.toml` for stable release publication.
-- Release notes normalized in Keep a Changelog order (`Unreleased` → `0.2.0` → `0.2.0rc1`).
+- Package version finalized from `0.3.0` to `0.2.0` in `pyproject.toml` for stable release publication.
+- Release notes normalized in Keep a Changelog order (`Unreleased` → `0.2.0` → `0.3.0`).
 
 ### Documentation
 
@@ -51,13 +53,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - import smoke check
   - minimum quickstart execution path
 
-## [0.2.0rc1] - 2026-02-22 (Phase 3: M1-C CI必須ゲート化 + RC版)
+## [0.3.0] - 2026-02-22 (Phase 3: M1-C CI必須ゲート化 + RC版)
 
 ### Changed
 
 - CI workflow (`.github/workflows/ci.yml`) now makes schema + golden + acceptance gates explicit in the test job.
 - Added an explicit JSON Schema gate step (`python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v`) and explicit `jsonschema` dependency install in CI setup.
-- Package version bumped from `0.2.0b4` to `0.2.0rc1` in `pyproject.toml` for RC publish readiness.
+- Package version bumped from `0.3.0` to `0.3.0` in `pyproject.toml` for RC publish readiness.
 
 ## [0.2.0b3] - 2026-02-21 (Phase 5 complete)
 
@@ -82,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
 
-- Version bumped to `0.2.0b3` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
+- Version bumped to `0.2.0b3` (PEP 440 compliant; `0.3.0` was non-conformant)
 - Package renamed from `po-core` → `po-core-flyingpig` in `pyproject.toml`
 - `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
 - `publish.yml` OIDC workflow verified: ready for TestPyPI / PyPI publish
@@ -176,7 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed — PyPI / Package (Phase 5-D)
 
-- Version bumped from `0.1.0-alpha` → `0.2.0-beta`
+- Version bumped from `0.1.0-alpha` → `0.3.0`
 - Development Status classifier updated to `4 - Beta`
 - `pytest.ini` + `pyproject.toml` markers: added `phase5`, `redteam`, `phase4`
 - `.github/workflows/publish.yml` — OIDC trusted publishing for TestPyPI and PyPI

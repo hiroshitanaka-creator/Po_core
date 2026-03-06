@@ -37,7 +37,7 @@ twine check dist/*
 ```bash
 # 1) 公開済みstableをクリーン環境へ導入
 python -m pip install --upgrade pip
-pip install "po-core-flyingpig==0.2.0"
+pip install "po-core-flyingpig==0.3.0"
 
 # 2) import 成功確認
 python -c "import po_core; print(po_core.__name__)"
