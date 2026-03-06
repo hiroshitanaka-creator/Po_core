@@ -12,9 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Documentation
+### Changed
 
-- fixed(tools): correct avg_novelty aggregation in eval_emergence
+- feat(tools): add standalone Phase4 emergence compare CLI (`scripts/eval_emergence.py`) with baseline/with-deliberation execution, human-readable diff, and optional JSON report output.
+- changed(deliberation): add `avg_novelty` to `DeliberationResult` and include it in `summary()["emergence"]` for trace/summary observability.
+
+### Fixed
+
+- fixed(tools): correct `avg_novelty` aggregation in eval_emergence to signals-weighted mean and lock behavior with regression tests.
+
+### Documentation
 
 - test(solarwill): freeze WARN/CRITICAL degradation behavior for SolarWill `compute_intent` (WARN=clarification-first constraints, CRITICAL=refusal/stop/minimal-guidance constraints).
 

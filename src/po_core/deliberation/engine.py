@@ -84,6 +84,15 @@ class DeliberationResult:
             return 0.0
         return max(s.novelty_score for s in self.emergence_signals)
 
+    @property
+    def avg_novelty(self) -> float:
+        """Mean novelty score across all emergence signals (0.0 if none)."""
+        if not self.emergence_signals:
+            return 0.0
+        return sum(s.novelty_score for s in self.emergence_signals) / len(
+            self.emergence_signals
+        )
+
     def summary(self) -> Dict:
         top_influencers = sorted(
             [(n, w.total_influence()) for n, w in self.influence_weights.items()],
@@ -120,6 +129,7 @@ class DeliberationResult:
                 "detected": self.has_emergence,
                 "n_signals": len(self.emergence_signals),
                 "peak_novelty": round(self.peak_novelty, 4),
+                "avg_novelty": round(self.avg_novelty, 4),
             },
             "top_influencers": [
                 {"philosopher": n, "influence": round(s, 4)} for n, s in top_influencers

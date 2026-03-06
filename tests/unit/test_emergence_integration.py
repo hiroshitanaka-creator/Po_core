@@ -377,7 +377,7 @@ class TestEmergenceDetectorIntegration:
     ):
         """
         result.summary() must include an 'emergence' section with keys:
-        'detected', 'n_signals', 'peak_novelty'.
+        'detected', 'n_signals', 'peak_novelty', 'avg_novelty'.
         """
         round1 = [
             _make_proposal(TENSION_A_TEXT, "Sartre"),
@@ -397,10 +397,12 @@ class TestEmergenceDetectorIntegration:
         assert "detected" in emg
         assert "n_signals" in emg
         assert "peak_novelty" in emg
+        assert "avg_novelty" in emg
         # Value consistency
         assert emg["detected"] == result.has_emergence
         assert emg["n_signals"] == len(result.emergence_signals)
         assert abs(emg["peak_novelty"] - result.peak_novelty) < 1e-9
+        assert abs(emg["avg_novelty"] - result.avg_novelty) < 1e-9
 
     # ── Test 9 ──────────────────────────────────────────────────────────
 
