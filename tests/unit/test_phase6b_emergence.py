@@ -398,6 +398,17 @@ class TestDeliberationResultNewFields:
         ]
         assert self._make_result(sigs, {}).peak_novelty == 0.88
 
+    def test_avg_novelty_empty(self):
+        assert self._make_result([], {}).avg_novelty == 0.0
+
+    def test_avg_novelty_mean(self):
+        sigs = [
+            EmergenceSignal(0.72, "Sartre", ("Sartre", "Kant"), 2),
+            EmergenceSignal(0.88, "Nietzsche", ("Nietzsche", "Hegel"), 2),
+            EmergenceSignal(0.65, "Hume", ("Hume", "Locke"), 3),
+        ]
+        assert self._make_result(sigs, {}).avg_novelty == pytest.approx((0.72 + 0.88 + 0.65) / 3)
+
     def test_summary_includes_emergence_section(self):
         sig = EmergenceSignal(0.75, "Sartre", ("Sartre", "Kant"), 2)
         summary = self._make_result([sig], {}).summary()
@@ -405,6 +416,7 @@ class TestDeliberationResultNewFields:
         assert summary["emergence"]["detected"] is True
         assert summary["emergence"]["n_signals"] == 1
         assert summary["emergence"]["peak_novelty"] == 0.75
+        assert summary["emergence"]["avg_novelty"] == 0.75
 
     def test_summary_includes_top_influencers(self):
         weights = {"Hegel": InfluenceWeight("Hegel", {"Marx": 0.8})}
@@ -423,6 +435,7 @@ class TestDeliberationResultNewFields:
         assert result.influence_weights == {}
         assert result.has_emergence is False
         assert result.peak_novelty == 0.0
+        assert result.avg_novelty == 0.0
 
 
 # ── DeliberationEngine flags ──────────────────────────────────────────
