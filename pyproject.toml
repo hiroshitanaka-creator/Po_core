@@ -311,7 +311,7 @@ motto = "井の中の蛙、大海は知らずとも、大空を知る"
 [tool.po_core.project]
 status = "stable"
 implementation_progress = 1.0
-philosophers_integrated = 42
+philosophers_integrated = 39
 design_documents = 120
 started = "2024"
 
