@@ -99,6 +99,10 @@ Leave empty or set `PO_SKIP_AUTH=true` for development mode.
 MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSelect
 → PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
 ```
+
+### License
+- Open source: [AGPL-3.0-or-later](https://github.com/hiroshitanaka-creator/Po_core/blob/main/LICENSE)
+- Commercial: [Commercial License Terms](https://github.com/hiroshitanaka-creator/Po_core/blob/main/COMMERCIAL_LICENSE.md)
         """,
         version="0.3.0",
         contact={
@@ -106,7 +110,10 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
             "url": "https://github.com/hiroshitanaka-creator/Po_core",
             "email": "flyingpig0229+github@gmail.com",
         },
-        license_info={"name": "AGPL-3.0-or-later + Commercial"},
+        license_info={
+            "name": "AGPL-3.0-or-later + Commercial",
+            "url": "https://github.com/hiroshitanaka-creator/Po_core/blob/main/LICENSE",
+        },
         openapi_tags=[
             {
                 "name": "reason",

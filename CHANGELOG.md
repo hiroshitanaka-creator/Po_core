@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs(api): fix OpenAPI `license_info` metadata to AGPL-3.0-or-later + Commercial and add explicit license links in API description.
 - chore(release): bump package/runtime metadata to `0.3.0`, update OpenAPI license label, and align acceptance meta contracts while recording acceptance must-pass evidence (acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`).
 - ci: add pull-request governance workflow to validate SSOT/status/test-report requirements.
 - docs: add PR template checklist to require SSOT acknowledgment, docs/status updates, test reporting, and impact/rollback notes.
