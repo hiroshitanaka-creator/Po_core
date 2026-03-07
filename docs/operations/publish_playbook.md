@@ -19,7 +19,7 @@
      - `pytest tests/acceptance/ -v -m acceptance`
      - `pytest tests/test_output_schema.py -v`
      - `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v`
-   - `pytest -q` は **推奨（best-effort）** とし、既知fail（bench/coverage/policy_lab など）がある間は release ブロック条件にしない。
+   - `pytest -q` は **推奨（best-effort）** とし、既知fail（bench/coverage/policy_lab など）がある間は release blocker にしない（publish開始判定は must-pass の成否で固定）。
 3. **タグ運用の整合**
    - `vX.Y.Z` 形式のタグ方針に従う（例: `v0.3.1`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
@@ -49,7 +49,7 @@ twine check dist/*
 pytest -q
 ```
 
-`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する（publish開始判定は must-pass の成否で固定）。
+`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する。
 
 ---
 
