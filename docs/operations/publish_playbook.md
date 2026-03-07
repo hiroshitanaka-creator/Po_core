@@ -49,7 +49,7 @@ twine check dist/*
 pytest -q
 ```
 
-`pytest -q` で既知fail（bench/coverage/policy_lab など）が出る場合は、失敗内容を記録した上で publish must-pass の成否を優先する。
+`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する（publish開始判定は must-pass の成否で固定）。
 
 ---
 
@@ -67,6 +67,7 @@ pytest -q
 python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==<VERSION>
 python -c "import po_core; print(po_core.__version__)"
 python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"
+python -c "from po_core import run; out = run('smoke'); print(out.get('proposal', {}).get('content', ''))"
 ```
 
 期待値:
