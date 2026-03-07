@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- docs(release): add `docs/operations/publish_playbook.md` to standardize reproducible TestPyPI→PyPI operations (preconditions, workflow_dispatch steps, and rollback playbook), and link it from `docs/status.md`.
 - test(solarwill): freeze WARN/CRITICAL degradation behavior for SolarWill `compute_intent` (WARN=clarification-first constraints, CRITICAL=refusal/stop/minimal-guidance constraints).
 
 - test(solarwill): freeze universe-ethics axioms for SolarWill NORMAL mode via `compute_intent` contract test (survival-structure/distortion goals, non-distortion exceptions in constraints).

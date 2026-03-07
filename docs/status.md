@@ -3,6 +3,8 @@
 最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
 最新進捗：このファイル（[docs/status.md](/docs/status.md)）
 
+公開手順（再現可能Runbook）：[docs/operations/publish_playbook.md](/docs/operations/publish_playbook.md)
+
 この文書は、A〜F完了時点の状態を会話コンテキスト非依存で固定するためのスナップショット。
 
 ## Completed
@@ -14,8 +16,9 @@
 - **F**: ethicsをruleset化し、`rule_id` と `rules_fired` により「どの規則が発火したか」を追跡可能にした。
 
 ## Meta (Docs Governance)
-- **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をPR本文へ追記し、golden更新がversion metadata中心であることを明記した。
-- **Phase6-PR-2**: OpenAPIライセンス表記をAGPL+Commercialに修正した。
+- **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
+- **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をrepo内に固定した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
+- **Phase6-PR-4**: OpenAPIライセンス表記をAGPL+Commercialに修正し、OpenAPI description にライセンスリンクを追加した。
 - **Phase6-PR-3**: 42人表記へ統一した。
 - **Phase6-PR-1**: バージョン表記を0.3.0へ統一し、OpenAPI license表示をAGPL-3.0-or-later + Commercialへ更新した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
 - **Phase7-PR-1**: PRD（`docs/spec/prd.md`）のStatus/Package/人数/マイルストーンを`docs/status.md`と現行実装（v0.3.0・42人・M0/M1完了）に整合させた。
