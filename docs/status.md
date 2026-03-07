@@ -16,6 +16,7 @@
 ## Meta (Docs Governance)
 - **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をPR本文へ追記し、golden更新がversion metadata中心であることを明記した。
 - **Phase6-PR-2**: OpenAPIライセンス表記をAGPL+Commercialに修正した。
+- **Phase6-PR-3**: 42人表記へ統一した。
 - **Phase6-PR-1**: バージョン表記を0.3.0へ統一し、OpenAPI license表示をAGPL-3.0-or-later + Commercialへ更新した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
 - **Phase5-PR-2**: PR本文ガバナンスチェックを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を pull_request 時に検査するようにした。
 - **Phase5-PR-1**: PRテンプレを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を要求するようにした。

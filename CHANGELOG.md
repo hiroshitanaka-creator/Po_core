@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs(api): unify public philosopher count references to 42 (OpenAPI summary/description and project metadata).
 - docs(api): fix OpenAPI `license_info` metadata to AGPL-3.0-or-later + Commercial and add explicit license links in API description.
 - chore(release): bump package/runtime metadata to `0.3.0`, update OpenAPI license label, and align acceptance meta contracts while recording acceptance must-pass evidence (acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`).
 - ci: add pull-request governance workflow to validate SSOT/status/test-report requirements.
@@ -42,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs(api): unify public philosopher count references to 42 (OpenAPI summary/description and project metadata).
 - Package version finalized from `0.2.0rc1` to `0.2.0` in `pyproject.toml` for stable release publication.
 - Release notes normalized in Keep a Changelog order (`Unreleased` → `0.2.0` → `0.2.0rc1`).
 
@@ -56,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- docs(api): unify public philosopher count references to 42 (OpenAPI summary/description and project metadata).
 - CI workflow (`.github/workflows/ci.yml`) now makes schema + golden + acceptance gates explicit in the test job.
 - Added an explicit JSON Schema gate step (`python -m pytest tests/test_input_schema.py tests/test_output_schema.py -v`) and explicit `jsonschema` dependency install in CI setup.
 - Package version bumped from `0.2.0b4` to `0.2.0rc1` in `pyproject.toml` for RC publish readiness.
@@ -83,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
 
+- docs(api): unify public philosopher count references to 42 (OpenAPI summary/description and project metadata).
 - Version bumped to `0.2.0b3` (PEP 440 compliant; `0.2.0-beta` was non-conformant)
 - Package renamed from `po-core` → `po-core-flyingpig` in `pyproject.toml`
 - `pyproject.toml` metadata updated: 39 philosophers, status=beta, progress=0.95
