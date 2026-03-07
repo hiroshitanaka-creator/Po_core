@@ -18,6 +18,7 @@
 - **Phase6-PR-2**: OpenAPIライセンス表記をAGPL+Commercialに修正した。
 - **Phase6-PR-3**: 42人表記へ統一した。
 - **Phase6-PR-1**: バージョン表記を0.3.0へ統一し、OpenAPI license表示をAGPL-3.0-or-later + Commercialへ更新した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
+- **Phase7-PR-1**: PRD（`docs/spec/prd.md`）のStatus/Package/人数/マイルストーンを`docs/status.md`と現行実装（v0.3.0・42人・M0/M1完了）に整合させた。
 - **Phase5-PR-2**: PR本文ガバナンスチェックを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を pull_request 時に検査するようにした。
 - **Phase5-PR-1**: PRテンプレを追加し、SSOT確認・進捗更新・テスト報告・影響範囲記載を要求するようにした。
 - **Phase4-PR-1**: 創発比較スクリプトを追加し、議論あり/なしの比較計測（avg_novelty 集計修正と回帰テスト固定を含む）を可能にした。
