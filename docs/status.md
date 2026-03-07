@@ -19,6 +19,7 @@
 - **ci-fix-black**: `pyproject.toml` の `black==23.12.1` を `26.1.0` に統一し、CI lint ジョブと `.pre-commit-config.yaml` のバージョンを一致させた（コミット #379 のダウングレードを修正）。
 
 ## Meta (Docs Governance)
+- **Phase9-PR-3**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）のしきい値を `max(r1 * 4.0, 0.70)` に更新し、ms級ノイズによるフレークを抑制。
 - **Phase9-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
 - **Phase9-PR-2**: policy_lab/coverageの定数参照を動的化し、テストを安定化。
 - **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
