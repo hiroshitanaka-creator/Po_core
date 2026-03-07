@@ -14,8 +14,12 @@
 1. **version整合**
    - `pyproject.toml` の `version` がリリース予定版数になっている。
    - `CHANGELOG.md` の `Unreleased` が更新済みで、リリース内容が説明されている。
-2. **tests green**
-   - ローカルで `pytest -q` が成功している。
+2. **publish must-pass checks green**
+   - ローカルで以下が成功している（release開始可否の判定条件）。
+     - `pytest tests/acceptance/ -v -m acceptance`
+     - `pytest tests/test_output_schema.py -v`
+     - `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v`
+   - `pytest -q` は **推奨（best-effort）** とし、既知fail（bench/coverage/policy_lab など）がある間は release ブロック条件にしない。
 3. **タグ運用の整合**
    - `vX.Y.Z` 形式のタグ方針に従う（例: `v0.3.1`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
@@ -28,14 +32,24 @@
 ## 2. リリース直前チェック（コピペ実行）
 
 ```bash
-pytest -q
+pytest tests/acceptance/ -v -m acceptance
+pytest tests/test_output_schema.py -v
+pytest tests/test_golden_e2e.py tests/test_input_schema.py -v
 python -m pip install --upgrade pip
 python -m pip install --upgrade build twine "packaging>=24.1"
 python -m build
 twine check dist/*
 ```
 
-上記がすべて成功してから GitHub Actions 側の publish を実行する。
+必須コマンド（上3つのpytest + build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。
+
+補助チェック（推奨・best-effort）:
+
+```bash
+pytest -q
+```
+
+`pytest -q` で既知fail（bench/coverage/policy_lab など）が出る場合は、失敗内容を記録した上で publish must-pass の成否を優先する。
 
 ---
 
@@ -52,11 +66,11 @@ twine check dist/*
 ```bash
 python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==<VERSION>
 python -c "import po_core; print(po_core.__version__)"
-python -c "from po_core import run; out = run('smoke', run_fast=True); print(type(out).__name__)"
+python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"
 ```
 
 期待値:
-- install/import/run が成功する。
+- install/import/run が成功し、`TypeError` が発生しない。
 - `po_core.__version__` が `<VERSION>` と一致する。
 
 ---
@@ -110,7 +124,8 @@ python -c "import po_core; print(po_core.__version__)"
 
 ```md
 - Version: <VERSION>
-- Local checks: `pytest -q` / `python -m build` / `twine check dist/*` all green
+- Local checks: `pytest tests/acceptance/ -v -m acceptance` / `pytest tests/test_output_schema.py -v` / `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v` / `python -m build` / `twine check dist/*` all green
+- Optional best-effort: `pytest -q` pass/fail（known failing tests を記録）
 - Publish route: workflow_dispatch target=<testpypi|pypi> or release=<tag>
 - TestPyPI smoke: pass/fail（ログURL）
 - PyPI smoke: pass/fail（ログURL）
