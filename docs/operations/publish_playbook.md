@@ -49,7 +49,7 @@ twine check dist/*
 pytest -q
 ```
 
-`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する。
+`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する（この結果単体は release blocker にしない）。
 
 ---
 
