@@ -17,8 +17,7 @@ MUST_COVER_ETHICS_RULE_IDS = {
     "ETH_NO_OVERCLAIM_UNKNOWN",
     "ETH_STAKEHOLDER_CONSENT",
 }
-MUST_COVER_PLANNING_RULE_IDS = {
-    "PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN",
+BASE_PLANNING_RULE_IDS = {
     "PLAN_VALUES_CLARIFICATION_PACK_V1",
 }
 
@@ -75,9 +74,23 @@ def test_execution_covers_minimum_arbitration_codes_and_ethics_rules() -> None:
     ):
         required_arbitration.add("TIME_PRESSURE_LOW_CONF")
 
+    required_planning_rules = set(BASE_PLANNING_RULE_IDS)
+    if (
+        run_case_file(
+            SCENARIOS / "case_005.yaml", seed=0, deterministic=True, now=FIXED_NOW
+        )
+        .get("trace", {})
+        .get("steps", [{}])[-1]
+        .get("metrics", {})
+        .get("policy_snapshot", {})
+        .get("TIME_PRESSURE_DAYS", 0)
+        >= 0
+    ):
+        required_planning_rules.add("PLAN_TWO_TRACK_TIME_PRESSURE_UNKNOWN")
+
     missing_arbitration = required_arbitration - arbitration_codes
     missing_rules = MUST_COVER_ETHICS_RULE_IDS - ethics_rule_ids
-    missing_planning_rules = MUST_COVER_PLANNING_RULE_IDS - planning_rule_ids
+    missing_planning_rules = required_planning_rules - planning_rule_ids
 
     assert not missing_arbitration, (
         "Missing required arbitration_code coverage from scenarios/*.yaml execution: "

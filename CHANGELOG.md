@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix(pocore): make `TIME_PRESSURE_DAYS` references dynamic for policy_lab override compatibility and align execution coverage planning-rule expectations with policy snapshots.
 - fixed(tools): correct `avg_novelty` aggregation in eval_emergence to signals-weighted mean and lock behavior with regression tests.
 
 ### Documentation
