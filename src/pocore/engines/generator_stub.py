@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from ..policy_v1 import TIME_PRESSURE_DAYS
+from .. import policy_v1
 
 PROFILE_CASE_001 = "job_change_transition_v1"
 PROFILE_CASE_009 = "values_clarification_v1"
@@ -60,7 +60,7 @@ def _needs_two_track_plan(features: Dict[str, Any]) -> bool:
     return (
         int(features.get("unknowns_count", 0) or 0) > 0
         and isinstance(days_to_deadline, int)
-        and days_to_deadline <= TIME_PRESSURE_DAYS
+        and days_to_deadline <= policy_v1.TIME_PRESSURE_DAYS
     )
 
 
