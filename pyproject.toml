@@ -156,39 +156,7 @@ ensure_newline_before_comments = true
 skip_gitignore = true
 src_paths = ["src", "tests"]
 
-# ==================
-# Pytest Configuration
-# ==================
-[tool.pytest.ini_options]
-minversion = "7.0"
-testpaths = ["tests"]
-pythonpath = ["src"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "--strict-markers",
-    "--strict-config",
-    "-ra",
-    "--verbose",
-]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
-    "philosophical: marks tests for philosophical consistency",
-    "unit: marks tests as unit tests",
-    "pipeline: marks tests as pipeline tests (must-pass in CI)",
-    "observability: marks tests for Phase 3 observability features",
-    "redteam: marks tests as adversarial red team tests (Phase 4)",
-    "phase4: marks tests for Phase 4 adversarial hardening",
-    "phase5: marks tests for Phase 5 productization (REST API, Docker, PyPI)",
-    "benchmark: marks performance benchmark tests (run with -m benchmark)",
-]
-filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
-    "ignore::PendingDeprecationWarning",
-]
+# pytest config is defined in pytest.ini
 
 # ==================
 # Coverage Configuration
