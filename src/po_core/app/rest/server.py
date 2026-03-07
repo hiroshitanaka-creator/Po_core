@@ -78,14 +78,14 @@ def create_app(settings: APISettings | None = None) -> FastAPI:
 
     application = FastAPI(
         title="Po_core REST API",
-        summary="Philosophy-driven AI deliberation via 39 philosopher personas",
+        summary="Philosophy-driven AI deliberation via 42 philosopher personas",
         description="""
 ## Po_core REST API
 
 A production REST API for the **Po_core** philosophical deliberation engine.
 
 ### Architecture
-39 philosopher AI personas deliberate via tensor calculations
+42 philosopher AI personas deliberate via tensor calculations
 (Freedom Pressure, Semantic Delta, Blocked Tensor) and a 3-layer **W_Ethics Gate**
 to generate ethically responsible responses.
 
