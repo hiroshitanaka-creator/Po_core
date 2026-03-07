@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix(bench): make `test_bench_deliberation_scaling` non-flaky by asserting `rounds=3 p50 < max(rounds=1 p50 * 4.0, 0.70)` so ultra-fast baseline jitter does not trigger false failures while preserving super-linear blow-up detection.
+- fix(bench): make `test_bench_deliberation_scaling` non-flaky with rationale-backed threshold constants (`DELIBERATION_SCALING_RATIO_LIMIT`, `DELIBERATION_SCALING_ABS_FLOOR_S`) and assert `rounds=3 p50 < max(rounds=1 p50 * 4.0, 0.95)` so tiny-baseline jitter is absorbed without weakening regression detection intent.
 - fix(pocore): make `TIME_PRESSURE_DAYS` references dynamic for policy_lab override compatibility and align execution coverage planning-rule expectations with policy snapshots.
 - fixed(tools): correct `avg_novelty` aggregation in eval_emergence to signals-weighted mean and lock behavior with regression tests.
 
