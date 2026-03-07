@@ -2,8 +2,8 @@
 
 **Version:** 0.3
 **Date:** 2026-02-28
-**Status:** Active — Phases 1–5 Complete · M0 Complete · M1 In Progress
-**Package:** `po-core-flyingpig` v0.2.0b4
+**Status:** Active — Phases 1–7 Complete · Spec M0 Complete · M1 Complete
+**Package:** `po-core-flyingpig`（過去に v0.2.0b4 を公開済み／現行リポジトリ版: v0.3.0）
 
 ---
 
@@ -15,7 +15,7 @@ Po_core は「人間が決断するとき、倫理的な軸と説明責任を一
 Po_core は正解を断言する装置ではなく、選択肢・理由・反証・不確実性・
 追加で問うべき事項を **哲学的議論を通じて** 構造化して提示する装置である。
 
-内部では 39 人の哲学者 AI ペルソナが **テンソル演算** と **多ラウンド合意形成**
+内部では 42 人（クラシック 39 + AI スロット 3）の哲学者 AI ペルソナが **テンソル演算** と **多ラウンド合意形成**
 を通じて協議し、3 層の倫理ゲート（W_Ethics Gate）が出力を審査する。
 
 ---
@@ -35,7 +35,7 @@ Po_core は正解を断言する装置ではなく、選択肢・理由・反証
 
 ### 3.1 対象 (In Scope)
 
-- **哲学的審議**：39 人（＋AI スロット 4 名）の哲学者による多ラウンド議論
+- **哲学的審議**：42 人（クラシック 39 + AI スロット 3）の哲学者による多ラウンド議論
 - **意思決定支援**：複数案提示・推奨・根拠・反証・不確実性・質問
 - **倫理評価**：W_Ethics Gate（3 層）による ALLOW / REJECT / REVISE 判定と根拠チェーン
 - **責任・説明責任の明示**：意思決定主体・影響を受ける関係者・監査ログ
@@ -100,7 +100,7 @@ User Input
 │  2. TensorCompute  ← FP-V2, SD, BT │
 │  3. SolarWill                       │
 │  4. IntentionGate  ← W_Ethics L1   │
-│  5. PhilosopherSelect (39 人)       │
+│  5. PhilosopherSelect (42 人)       │
 │  6. PartyMachine + Deliberation     │
 │  7. ParetoAggregate                 │
 │  8. ShadowPareto (A/B)              │
@@ -134,8 +134,8 @@ Structured Output (output_schema_v1.json)
 
 | マイルストーン | 期限 | 主な成果物 | 状態 |
 |--------------|------|-----------|------|
-| M0：仕様化の土台 | 2026-03-01 | PRD / SRS / Schema / TestCases / Traceability | 🔄 In Progress |
-| M1：LLM なし E2E | 2026-03-15 | スタブ生成器 + orchestrator + E2E テスト | 🔲 Pending |
+| M0：仕様化の土台 | 2026-03-01 | PRD / SRS / Schema / TestCases / Traceability | ✅ COMPLETE |
+| M1：LLM なし E2E | 2026-03-15 | スタブ生成器 + orchestrator + E2E テスト | ✅ COMPLETE |
 | M2：倫理・責任 v1 | 2026-04-05 | ethics_v1 / responsibility_v1 | 🔲 Pending |
 | M3：問いの層 v1 | 2026-04-26 | question_v1 | 🔲 Pending |
 | M4：ガバナンス完成 | 2026-05-10 | CI / テンプレ / ADR 運用 | 🔲 Pending |
@@ -144,7 +144,7 @@ Structured Output (output_schema_v1.json)
 
 | タスク | 状態 |
 |--------|------|
-| **PyPI 公開**（5-F）| 🔲 PENDING — `publish.yml` 準備済み、未実行 |
+| **PyPI 公開履歴**（5-F）| ✅ v0.2.0b4 は公開済み（次回公開版は現行リポジトリ版 v0.3.0 を基準に運用） |
 | v1.0 安定化 | 🔲 Pending |
 | 学術論文 | 🔲 Draft in preparation |
 
