@@ -19,6 +19,7 @@
 - **ci-fix-black**: `pyproject.toml` の `black==23.12.1` を `26.1.0` に統一し、CI lint ジョブと `.pre-commit-config.yaml` のバージョンを一致させた（コミット #379 のダウングレードを修正）。
 
 ## Meta (Docs Governance)
+- **Phase9-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
 - **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
 - **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をrepo内に固定した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
 - **Phase6-PR-4**: OpenAPIライセンス表記をAGPL+Commercialに修正し、OpenAPI description にライセンスリンクを追加した。
