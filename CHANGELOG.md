@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
+- chore(pocore): align legacy contract-core metadata to `0.3.0` by updating `src/pocore/orchestrator.py` default version and synchronizing non-frozen golden meta (`meta.pocore_version` / `meta.generator.version`), while preserving frozen contracts for `case_001` and `case_009`.
 
 ## [0.3.0] - 2026-03-08
 
