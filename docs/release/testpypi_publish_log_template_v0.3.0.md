@@ -45,11 +45,37 @@
   TODO: paste observed output (release env expected: ok)
   ```
 
+## Local source smoke observed in this environment
+- Command:
+  ```bash
+  PYTHONPATH=src python -c "import po_core; print(po_core.__version__)"
+  ```
+- Observed output:
+  ```text
+  0.3.0
+  ```
+- Command:
+  ```bash
+  PYTHONPATH=src python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"
+  ```
+- Observed output:
+  ```text
+  No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+  ok
+  ```
+
 ## 問題があった場合のメモ
 - この環境での実測:
   - TestPyPI install は `ProxyError: Tunnel connection failed: 403 Forbidden` で失敗
-  - local source smoke (`PYTHONPATH=src`) は `0.3.0` / `ok` を確認
+  - GitHub/TestPyPI の outbound access が 403 で制限され、remote 証跡の取得不可
 
 ## Result summary
 - Status: Template only（証跡は未固定）。
 - Next action: release 実行権限・ネットワーク到達性がある環境で successful run URL と smoke 実結果を記入し、evidence 文書へ昇格する。
+
+## Promotion to evidence
+- [ ] Successful TestPyPI run URL（`https://github.com/.../actions/runs/<id>`）を記入する。
+- [ ] `pip install` の実成功ログを記入する。
+- [ ] import smoke（`python -c "import po_core; print(po_core.__version__)"`）の実出力を記入する。
+- [ ] run smoke（`python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"`）の実出力を記入する。
+- [ ] ファイル名を `docs/release/testpypi_publish_log_v0.3.0.md` に変更して evidence として固定する。
