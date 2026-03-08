@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- No unreleased changes.
+
+## [0.3.0] - 2026-03-08
+
+### Changed
+
 - chore(test): make `pytest.ini` the single source of truth by removing duplicated pytest options from `pyproject.toml`.
 - docs(prd): align `docs/spec/prd.md` status/package/headcount/milestones with SSOT snapshot (`docs/status.md`) and current repository reality (`v0.3.0`, 42 philosophers, M0/M1 complete), and remove PyPI-state ambiguity by documenting `v0.2.0b4` as published history.
 - docs(api): unify public philosopher count references to 42 (OpenAPI summary/description and project metadata).
