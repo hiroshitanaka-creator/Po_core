@@ -5,8 +5,8 @@
 - Commit/tag reference at verification: `779c6ac` / `v0.3.0`
 
 ## workflow run URL
-- Adopted workflow page URL: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
-- Successful run URL (run ID付きURL): この環境では `github.com` へのアクセスが proxy policy により `HTTP 403` となるため取得不可。
+- Workflow page URL: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
+- Successful TestPyPI run URL: unavailable at authoring time in this environment (GitHub access blocked by proxy with `HTTP 403`).
 
 ## 公開したバージョン
 - `0.3.0`
