@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- No unreleased changes.
+
+## [0.3.0] - 2026-03-08
+
 ### Changed
 
 - chore(test): make `pytest.ini` the single source of truth by removing duplicated pytest options from `pyproject.toml`.
