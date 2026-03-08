@@ -75,7 +75,7 @@
 ## Result summary
 - Status: Template only（証跡は未固定）。
 - Next action: release 実行権限・ネットワーク到達性がある環境で successful run URL と smoke 実結果を記入し、evidence 文書へ昇格する。
-- Future note: `docs/release/templates/` 配下への整理は将来検討（今回は構成変更しない）。
+- Template location: this template is stored under `docs/release/templates/`.
 
 When all checklist items are complete, rename this file to `docs/release/testpypi_publish_log_v0.3.0.md`.
 
