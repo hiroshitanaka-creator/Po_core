@@ -62,7 +62,7 @@
   ```text
   ok
   ```
-- Note: local environment emitted a sentence-transformers initialization warning before the status output.
+- Note: local environment emitted a sentence-transformers initialization message before the final status output.
 
 ## 問題があった場合のメモ
 - この環境での実測:
