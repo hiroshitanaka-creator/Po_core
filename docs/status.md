@@ -20,6 +20,7 @@
 
 ## Meta (Docs Governance)
 - **Phase13-PR-2**: legacy `pocore` 契約メタデータのバージョン整合を実施。`src/pocore/orchestrator.py` の `POCORE_VERSION` を `0.3.0` 方針へ更新し、凍結契約（`case_001` / `case_009`）は `scenario_profile` ベースで `0.1.0` を維持。非凍結 golden の `meta.pocore_version` / `meta.generator.version` は `0.3.0` へ同期した。
+- **Phase13-PR-3**: policy override と execution coverage を整合。`src/pocore/orchestrator.py` に policy override 互換（`UNKNOWN_BLOCK` / `TIME_PRESSURE_DAYS`）を維持しつつ trace `policy_snapshot` を同一閾値で記録するよう修正し、`scripts/policy_lab.py` の一時 override 実行中に planning・recommendation 判定と整合する状態へ改善した。
 - **Phase13-PR-1**: `docs/status.md` を現実の main 状態へ再同期し、Phase9〜12・`0.3.0` 到達点・公開運用証跡（publish playbook / acceptance proof / PyPI publish evidence）との整合を更新した。
 - **Phase11-prep-1**: TestPyPI `0.3.0` の evidence 本体は未作成（template only / evidence pending: outbound access `HTTP 403`）。`docs/release/templates/testpypi_publish_log_template_v0.3.0.md` を追加した。
 - **Phase11-prep-2**: 2026-03-08 に TestPyPI evidence 昇格可否を再検証したが、`python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==0.3.0` は `ProxyError: Tunnel connection failed: 403 Forbidden` で失敗し、GitHub Actions workflow URL 取得（`curl -I -L https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml`）も `CONNECT tunnel failed, response 403` のため、evidence 本体は未作成のまま。
