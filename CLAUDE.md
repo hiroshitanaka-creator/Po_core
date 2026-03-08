@@ -150,7 +150,21 @@ Key files:
 
 **結果:** `pytest tests/acceptance/ -v` → **48 passed**
 
-### 次のマイルストーン → M4
+### ✅ M4 COMPLETE (2026-03-08)
+
+**M4: ガバナンス完成 — 全完了**
+
+- ✅ `jsonschema` CI 必須ゲート (`schema-gate` job) — 既存実装確認
+- ✅ `.github/PULL_REQUEST_TEMPLATE.md` — ガバナンス準拠形式に統一（重複テンプレート問題解消）
+- ✅ `docs/spec/adr_guide.md` — ADR運用フロー文書化済み確認
+- ✅ `config_version` CI 自動チェック (`scripts/update_traceability.py --check`) — 既存実装確認
+- ✅ `scripts/update_traceability.py` — Traceabilityスクリプト実装済み確認
+- ✅ `scripts/check_pr_governance.py` — M4ゲート追加: 実質的変更PRに要件ID参照を必須化 (NFR-GOV-001)
+- ✅ `pr-governance.yml` — PR マージ時に自動チェック実行
+
+**結果:** PR マージ時に自動で Traceability チェックが走る → 充足
+
+### 次のマイルストーン → 5-F (PyPI公開) / 論文ドラフト着手
 
 ---
 
@@ -171,7 +185,7 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 | **M1** | 2026-03-15 | LLMなしE2E: AT-001〜010 スタブで全通過 + jsonschema CI gate | ✅ **COMPLETE** (2026-03-03) |
 | **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | ✅ **COMPLETE** (2026-03-03) |
 | **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | ✅ **COMPLETE** (2026-03-03) |
-| **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | 🔲 未着手 |
+| **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | ✅ **COMPLETE** (2026-03-08) |
 | **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 0.2.0`) | 🔲 未着手 |
 | **v1.0.0** | 2026-06 | 全AT通過 + 論文ドラフト完成 + CI 100% green | 🔲 未着手 |
 
