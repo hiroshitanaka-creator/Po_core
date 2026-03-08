@@ -205,12 +205,12 @@ def _smoke_minimal_valid_output() -> dict:
     out = {
         "meta": {
             "schema_version": "1.0",
-            "pocore_version": "0.1.0",
+            "pocore_version": "0.3.0",
             "run_id": "smoke-run-0001",
             "created_at": "2026-02-22T00:00:00Z",
             "seed": 0,
             "deterministic": True,
-            "generator": {"name": "generator_stub", "version": "0.1.0", "mode": "stub"},
+            "generator": {"name": "generator_stub", "version": "0.3.0", "mode": "stub"},
         },
         "case_ref": {
             "case_id": "case_smoke",

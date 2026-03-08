@@ -26,7 +26,8 @@ from .policy_v1 import TIME_PRESSURE_DAYS, UNKNOWN_BLOCK
 from .tracer import build_trace
 from .utils import deterministic_run_id, input_digest, normalize_now
 
-POCORE_VERSION = "0.1.0"
+POCORE_VERSION = "0.3.0"
+FROZEN_PROFILE_POCORE_VERSION = "0.1.0"
 SCHEMA_VERSION = "1.0"
 
 
@@ -48,6 +49,15 @@ def run_case(
     parsed = parse_input.parse(case, case_path=case_path, now=created_at)
     short_id = parsed.short_id
     features = parsed.features
+    profile = str(features.get("scenario_profile", "")) if isinstance(features, dict) else ""
+
+    # Frozen golden contracts keep legacy metadata as-is.
+    # See AGENTS.md freeze rule for case_001/case_009.
+    pocore_version = (
+        FROZEN_PROFILE_POCORE_VERSION
+        if profile in {"job_change_transition_v1", "values_clarification_v1"}
+        else POCORE_VERSION
+    )
 
     # Deterministic run_id (golden contract)
     run_id = deterministic_run_id(short_id)
@@ -92,14 +102,14 @@ def run_case(
     return {
         "meta": {
             "schema_version": SCHEMA_VERSION,
-            "pocore_version": POCORE_VERSION,
+            "pocore_version": pocore_version,
             "run_id": run_id,
             "created_at": created_at,
             "seed": int(seed),
             "deterministic": bool(deterministic),
             "generator": {
                 "name": "generator_stub",
-                "version": POCORE_VERSION,
+                "version": pocore_version,
                 "mode": "stub",
             },
         },
