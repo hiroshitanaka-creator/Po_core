@@ -5,9 +5,9 @@
 > successful workflow run URL や TestPyPI install 成功の実証跡を取得できないため。
 
 - Purpose: TestPyPI publish 記録を残すためのテンプレート（証跡取得可能な環境で実値を記入する）。
-- Execution time (UTC): 2026-03-08T04:20:00Z
-- Release target tag reference: `v0.3.0`
-- Template last updated at commit: `14f9168`
+- Execution time (UTC): `TODO: <YYYY-MM-DDTHH:MM:SSZ>`
+- Release target tag reference: `TODO: <tag>`（例: `v0.3.0`）
+- Template last updated at commit: `TODO: <short_sha>`
 
 ## workflow run URL
 - Publish workflow page: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
@@ -46,7 +46,7 @@
   TODO: paste observed output (release env expected: ok)
   ```
 
-## Local source smoke observed in this environment
+## Appendix: local non-release smoke
 - Command:
   ```bash
   PYTHONPATH=src python -c "import po_core; print(po_core.__version__)"
