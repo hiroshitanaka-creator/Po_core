@@ -1,12 +1,12 @@
-# TestPyPI Publish Evidence for v0.3.0
+# TestPyPI Publish Log for v0.3.0 (Environment-Limited Record)
 
-- Purpose: Fix and preserve auditable evidence for the TestPyPI publish and smoke verification of `po-core-flyingpig==0.3.0`.
-- Execution time (UTC): 2026-03-08T03:35:00Z
-- Commit reference: `v0.3.0` / repo HEAD `08f167c`
+- Purpose: Record what can be directly verified in this environment for `po-core-flyingpig==0.3.0`, and explicitly separate non-verifiable remote evidence.
+- Execution time (UTC): 2026-03-08T03:55:00Z
+- Commit/tag reference at verification: `779c6ac` / `v0.3.0`
 
 ## workflow run URL
-- https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
-- Note: This execution environment cannot access GitHub Actions run detail pages (`github.com` returns HTTP 403 via proxy), so the exact successful run-id URL cannot be dereferenced here.
+- Adopted workflow page URL: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
+- Successful run URL (`/actions/runs/<run_id>`): not obtainable from this environment because direct access to `github.com` is blocked by proxy policy (`HTTP 403`).
 
 ## 公開したバージョン
 - `0.3.0`
@@ -16,9 +16,12 @@
   ```bash
   python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==0.3.0
   ```
-- Observed result in this environment:
-  - `ProxyError('Tunnel connection failed: 403 Forbidden')`
-  - `ERROR: No matching distribution found for po-core-flyingpig==0.3.0`
+- Observed result:
+  ```text
+  ProxyError: Tunnel connection failed: 403 Forbidden
+  ERROR: Could not find a version that satisfies the requirement po-core-flyingpig==0.3.0 (from versions: none)
+  ERROR: No matching distribution found for po-core-flyingpig==0.3.0
+  ```
 
 ## import smoke（python -c "import po_core; print(po_core.__version__)"）
 - Command:
@@ -42,9 +45,9 @@
   ```
 
 ## 問題があった場合のメモ
-- Network egress to GitHub/TestPyPI is blocked by proxy policy in this environment (`403 Forbidden`), therefore remote publish/install evidence cannot be re-fetched directly from here.
-- Local source smoke confirms package version string and `run('smoke')` status behavior.
+- GitHub/TestPyPI への outbound access が proxy policy で `403 Forbidden` になり、remote publish artifact（successful run URL / TestPyPI index listing）の直接再検証は不可。
+- このため本ドキュメントは「remote publish 成功の完全証跡」ではなく、「環境制約付きの検証ログ」として固定する。
 
 ## Result summary
-- Local smoke verification: `po_core.__version__ == 0.3.0` and `run('smoke')` returns `ok`.
-- Remote TestPyPI install verification from this environment: not reachable due to proxy restrictions.
+- Local source smoke checks: pass (`po_core.__version__ == 0.3.0`, `run('smoke') == ok`).
+- Remote TestPyPI install check: blocked by environment policy (`403 Forbidden`).
