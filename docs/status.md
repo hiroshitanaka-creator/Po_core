@@ -21,6 +21,7 @@
 ## Meta (Docs Governance)
 - **Phase11-prep-1**: TestPyPI `0.3.0` の evidence 本体は未作成（template only / evidence pending: outbound access `HTTP 403`）。`docs/release/templates/testpypi_publish_log_template_v0.3.0.md` を追加した。
 - **Phase11-prep-2**: 2026-03-08 に TestPyPI evidence 昇格可否を再検証したが、`python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==0.3.0` は `ProxyError: Tunnel connection failed: 403 Forbidden` で失敗し、GitHub Actions workflow URL 取得（`curl -I -L https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml`）も `CONNECT tunnel failed, response 403` のため、evidence 本体は未作成のまま。
+- **Phase12-PR-1**: PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し、workflow URL / PyPI URL / `pip install po-core-flyingpig==0.3.0` / import smoke + `run()` 最小呼び出し例を記録した。
 - **Phase10-PR-1**: CHANGELOGのUnreleased項目を `0.3.0` release sectionへ切り出し、Unreleasedを空（No unreleased changes）に戻した。
 - **Phase9-PR-3**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）のしきい値を、実測（複数回計測で rounds=3 p50 が概ね 0.84–0.87s）に基づく根拠付き定数 `max(r1 * 4.0, 0.95)` へ見直し。scheduler/CI jitter によるフレークを抑えつつ、退行検知感度を維持。
 - **Phase9-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
