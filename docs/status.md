@@ -5,7 +5,7 @@
 
 公開手順（再現可能Runbook）：[docs/operations/publish_playbook.md](/docs/operations/publish_playbook.md)
 
-この文書は、A〜F完了時点の状態を会話コンテキスト非依存で固定するためのスナップショット。
+この文書は、A〜Fおよび Phase9〜12 反映後の状態を会話コンテキスト非依存で固定するためのスナップショット。
 
 ## Completed
 - **A**: 入力正規化として `features` 抽出レイヤを導入し、case固有分岐増殖を抑制した。
@@ -19,6 +19,7 @@
 - **ci-fix-black**: `pyproject.toml` の `black==23.12.1` を `26.1.0` に統一し、CI lint ジョブと `.pre-commit-config.yaml` のバージョンを一致させた（コミット #379 のダウングレードを修正）。
 
 ## Meta (Docs Governance)
+- **Phase13-PR-1**: `docs/status.md` を現実の main 状態へ再同期し、Phase9〜12・`0.3.0` 到達点・公開運用証跡（publish playbook / acceptance proof / PyPI publish evidence）との整合を更新した。
 - **Phase11-prep-1**: TestPyPI `0.3.0` の evidence 本体は未作成（template only / evidence pending: outbound access `HTTP 403`）。`docs/release/templates/testpypi_publish_log_template_v0.3.0.md` を追加した。
 - **Phase11-prep-2**: 2026-03-08 に TestPyPI evidence 昇格可否を再検証したが、`python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple po-core-flyingpig==0.3.0` は `ProxyError: Tunnel connection failed: 403 Forbidden` で失敗し、GitHub Actions workflow URL 取得（`curl -I -L https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml`）も `CONNECT tunnel failed, response 403` のため、evidence 本体は未作成のまま。
 - **Phase12-PR-1**: PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し、workflow URL / PyPI URL / `pip install po-core-flyingpig==0.3.0` / import smoke + `run()` 最小呼び出し例を記録した。
@@ -63,9 +64,8 @@
 M4 完了基準「PR マージ時に自動で Traceability チェックが走る」→ ✅ 充足。
 
 ## Next
-- **G（追加golden 2本）**:
-  1. `unknowns × deadline` の組み合わせで、時間圧があるが未知情報が残るケースの裁定境界を固定する。 ✅ 完了（AT-011 / case_011 で固定）
-  2. stakeholders外部性（利害関係者複数）で、責任/倫理の観測とrule発火を固定する。 ✅ 完了（AT-012 / case_012 で固定）
+- **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
+- **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
