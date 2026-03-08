@@ -9,7 +9,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/po-core-flyingpig)](https://pypi.org/project/po-core-flyingpig/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
-[![Status: Beta](https://img.shields.io/badge/Status-Beta-blue.svg)]()
+[![Status: Stable](https://img.shields.io/badge/Status-Stable-brightgreen.svg)]()
 
 ```bash
 pip install po-core-flyingpig
