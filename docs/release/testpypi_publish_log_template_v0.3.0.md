@@ -6,7 +6,8 @@
 
 - Purpose: TestPyPI publish 記録を残すためのテンプレート（証跡取得可能な環境で実値を記入する）。
 - Execution time (UTC): 2026-03-08T04:20:00Z
-- Commit/tag reference at template update: `9922d0b` / `v0.3.0`
+- Release target tag reference: `v0.3.0`
+- Template last updated at commit: `14f9168`
 
 ## workflow run URL
 - Publish workflow page: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
