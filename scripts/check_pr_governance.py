@@ -23,6 +23,9 @@ REQUIRED_CHECKBOXES = {
     "impact/rollback": "影響範囲とロールバック手順を下記に記載した",
 }
 
+# Matches requirement IDs like REQ-ARB-001, NFR-GOV-001, FR-ETH-002
+REQ_ID_PATTERN = re.compile(r"\b(?:REQ|NFR|FR)-[A-Z0-9]+-\d{3}\b")
+
 SUBSTANTIVE_PREFIXES = (
     "src/",
     "tests/",
@@ -141,6 +144,13 @@ def validate_body(body: str, changed_files: list[str]) -> list[str]:
 
     if requires_status_update(changed_files) and "docs/status.md" not in changed_files:
         failures.append("docs/status.md must be updated for code-affecting changes")
+
+    # M4ゲート: 実質的な変更PRは要件IDを少なくとも1つ参照すること
+    if requires_status_update(changed_files) and not REQ_ID_PATTERN.search(body):
+        failures.append(
+            "Substantive PRs must reference at least one requirement ID "
+            "(e.g. REQ-xxx-001, NFR-GOV-001, FR-ETH-001) — M4 gate"
+        )
 
     return failures
 

@@ -54,6 +54,14 @@
   - `recommendation` は最終裁定の単独責務
   - `ethics` はガードレール/トレードオフ提示（裁定はしない）
 
+## M4 Governance (2026-03-08 完了)
+
+- **M4-PR**: `.github/PULL_REQUEST_TEMPLATE.md`（大文字）を `pull_request_template.md` と統一。全セクションをガバナンス準拠形式に更新し、重複テンプレート問題を解消した。
+- **M4-REQ**: `scripts/check_pr_governance.py` に M4ゲートを追加。実質的な変更PRに対し `REQ-xxx-001` / `NFR-xxx-001` / `FR-xxx-001` 形式の要件ID参照を必須化した（NFR-GOV-001 準拠）。
+- **M4-STATUS**: 既存の CI `jsonschema` 必須ゲート（schema-gate job）・`update_traceability.py --check`・`calc_traceability_coverage.py --min-at 8`・`pr-governance.yml` ワークフローはすべて実装済みを確認。
+
+M4 完了基準「PR マージ時に自動で Traceability チェックが走る」→ ✅ 充足。
+
 ## Next
 - **G（追加golden 2本）**:
   1. `unknowns × deadline` の組み合わせで、時間圧があるが未知情報が残るケースの裁定境界を固定する。 ✅ 完了（AT-011 / case_011 で固定）
