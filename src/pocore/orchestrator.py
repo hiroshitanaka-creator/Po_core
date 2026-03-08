@@ -22,9 +22,13 @@ from .engines import (
     responsibility_v1,
     uncertainty_v1,
 )
-from .policy_v1 import TIME_PRESSURE_DAYS, UNKNOWN_BLOCK
+from . import policy_v1
 from .tracer import build_trace
 from .utils import deterministic_run_id, input_digest, normalize_now
+
+# Backward-compatible module attributes for policy override tests/tools.
+UNKNOWN_BLOCK = policy_v1.UNKNOWN_BLOCK
+TIME_PRESSURE_DAYS = policy_v1.TIME_PRESSURE_DAYS
 
 POCORE_VERSION = "0.3.0"
 FROZEN_PROFILE_POCORE_VERSION = "0.1.0"
