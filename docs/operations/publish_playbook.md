@@ -75,6 +75,7 @@ python -c "from po_core import run; out = run('smoke'); print(out.get('proposal'
 - `po_core.__version__` が `<VERSION>` と一致する。
 
 テンプレート昇格手順（evidence化）:
+- Rule: remote evidence（run URL / install成功ログ / smoke実出力）を捏造しない。未取得なら pending として記録する。
 - successful TestPyPI run 確認後、`docs/release/templates/testpypi_publish_log_template_v0.3.0.md` を複製して `docs/release/testpypi_publish_log_v0.3.0.md` を作成する。
 - その evidence ファイルに run URL / install成功ログ / import/run smoke 実出力を実値で記入し、`docs/status.md` の該当行を template から evidence fixed 表現へ更新する。
 

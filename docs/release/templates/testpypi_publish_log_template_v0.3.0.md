@@ -70,6 +70,8 @@
   - TestPyPI install は `ProxyError: Tunnel connection failed: 403 Forbidden` で失敗
   - GitHub/TestPyPI の outbound access が 403 で制限され、remote 証跡の取得不可
 
+- Rule: do not fabricate remote evidence（run URL / install成功ログ / smoke実出力の捏造禁止）。
+
 ## Result summary
 - Status: Template only（証跡は未固定）。
 - Next action: release 実行権限・ネットワーク到達性がある環境で successful run URL と smoke 実結果を記入し、evidence 文書へ昇格する。
