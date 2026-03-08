@@ -1,4 +1,4 @@
-# TestPyPI Publish Log for v0.3.0 (Environment-Limited Record)
+# TestPyPI Publish Verification Log for v0.3.0 (Environment-Limited)
 
 - Purpose: Record what can be directly verified in this environment for `po-core-flyingpig==0.3.0`, and explicitly separate non-verifiable remote evidence.
 - Execution time (UTC): 2026-03-08T03:55:00Z
@@ -6,7 +6,7 @@
 
 ## workflow run URL
 - Adopted workflow page URL: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
-- Successful run URL (`/actions/runs/<run_id>`): not obtainable from this environment because direct access to `github.com` is blocked by proxy policy (`HTTP 403`).
+- Successful run URL (run ID付きURL): この環境では `github.com` へのアクセスが proxy policy により `HTTP 403` となるため取得不可。
 
 ## 公開したバージョン
 - `0.3.0`
