@@ -6,11 +6,11 @@
 
 - Purpose: TestPyPI publish 記録を残すためのテンプレート（証跡取得可能な環境で実値を記入する）。
 - Execution time (UTC): 2026-03-08T04:20:00Z
-- Commit/tag reference at template update: `7fb0e81` / `v0.3.0`
+- Commit/tag reference at template update: `9922d0b` / `v0.3.0`
 
 ## workflow run URL
 - Publish workflow page: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
-- Successful TestPyPI run URL（実値を記入）: `<paste successful /actions/runs/<RUN_ID> URL here>`
+- Successful TestPyPI run URL（実値を記入）: `TODO: paste successful /actions/runs/<numeric-run-id> URL here`
 
 ## 公開したバージョン
 - `0.3.0`
@@ -22,7 +22,7 @@
   ```
 - Record observed output（成功ログを貼る）:
   ```text
-  <paste successful install output>
+  TODO: paste successful install output
   ```
 
 ## import smoke（python -c "import po_core; print(po_core.__version__)"）
@@ -32,7 +32,7 @@
   ```
 - Record observed output:
   ```text
-  <paste output; expected in release env: 0.3.0>
+  TODO: paste observed output (release env expected: 0.3.0)
   ```
 
 ## run smoke（python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"）
@@ -42,7 +42,7 @@
   ```
 - Record observed output:
   ```text
-  <paste output; expected in release env: ok>
+  TODO: paste observed output (release env expected: ok)
   ```
 
 ## 問題があった場合のメモ
