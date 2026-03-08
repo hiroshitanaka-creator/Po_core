@@ -10,7 +10,7 @@
 
 ## workflow run URL
 - Publish workflow page: https://github.com/hiroshitanaka-creator/Po_core/actions/workflows/publish.yml
-- Successful TestPyPI run URL（実値を記入）: `TODO: paste successful /actions/runs/<numeric-run-id> URL here`
+- Successful TestPyPI run URL（実値を記入）: `TODO: paste successful /actions/runs/1234567890 URL here`
 
 ## 公開したバージョン
 - `0.3.0`
