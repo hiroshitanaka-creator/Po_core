@@ -47,6 +47,7 @@
   ```
 
 ## Appendix: local non-release smoke
+- This appendix is local-only and must not be interpreted as TestPyPI publish evidence.
 - Command:
   ```bash
   PYTHONPATH=src python -c "import po_core; print(po_core.__version__)"
