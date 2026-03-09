@@ -66,9 +66,15 @@
 
 M4 完了基準「PR マージ時に自動で Traceability チェックが走る」→ ✅ 充足。
 
+## CLI Migration (2026-03-09)
+
+- **cli-click-PR**: `src/po_core/cli/commands.py` を新規追加。Click ベースの非インタラクティブ CLI（`hello` / `status` / `version` / `prompt` / `log` コマンド）を実装し、`cli/__init__.py` の `main` をこの Click group に差し替えた。`InteractiveReasoningSession` は `po-interactive` エントリポイント向けに継続保持。
+- **test-cli-unskip**: `tests/unit/test_cli.py` の `pytestmark = pytest.mark.skip` を削除し、16 テストを全パスに変換（3534 → 3550 passed）。ハードコードされた "0.1.0-alpha" バージョン検証を `__version__` 参照に修正した（REQ-CLI-001 対応）。
+
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
+- **Legacy tests remaining**: 118 skips（test_po_trace/test_po_viewer/test_prototypes/test_philosophers_legacy）は InMemoryTracer/run_turn API への移行待ち。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
