@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat(cli): add `src/po_core/cli/commands.py` — Click-based non-interactive CLI subcommand group (`hello`, `status`, `version`, `prompt`, `log`) replacing legacy interactive `main`. Entrypoint `po-core` now routes to this handler.
 - docs(paper): expand `docs/paper/paper.md` from 51-line skeleton to 433-line academic draft with arXiv-standard sections (Abstract, Introduction, Background, Method, Experiments, Comparative Evaluation, Implementation, Limitations, Conclusion, References, Appendices A–C).
+- feat(sdk): add `clients/typescript/package.json` and `tsconfig.json` — TypeScript SDK now fully buildable (`npm run build` → `tsc`) and testable (`npm run test` → node test.mjs) as required by `typescript-sdk.yml` CI.
 
 ### Changed
 
