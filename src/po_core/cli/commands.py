@@ -7,6 +7,7 @@ Provides subcommands: hello, status, version, prompt, log.
 
 import json
 import sys
+from typing import Any, Dict, List, cast
 
 import click
 
@@ -18,7 +19,7 @@ from po_core.app.api import run as _run
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def _run_reasoning(user_input: str) -> dict:
+def _run_reasoning(user_input: str) -> Dict[str, Any]:
     """Run reasoning and return a normalised result dict."""
     result = _run(user_input=user_input)
     proposal = result.get("proposal", {})
@@ -160,9 +161,11 @@ def prompt_cmd(prompt_text: str, fmt: str) -> None:
         )
     else:
         click.echo(f"Prompt  : {data['prompt']}")
-        for resp in data["responses"]:
+        responses = cast(List[Dict[str, Any]], data["responses"])
+        metrics = cast(Dict[str, Any], data["metrics"])
+        for resp in responses:
             click.echo(f"Response: [{resp['philosopher']}] {resp['content'][:120]}")
-        click.echo(f"Metrics : confidence={data['metrics'].get('confidence', 0):.3f}")
+        click.echo(f"Metrics : confidence={metrics.get('confidence', 0):.3f}")
 
 
 @main.command(name="log")
