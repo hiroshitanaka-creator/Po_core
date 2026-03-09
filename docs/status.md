@@ -27,7 +27,7 @@
 - **Phase12-PR-1**: PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し、workflow URL / PyPI URL / `pip install po-core-flyingpig==0.3.0` / import smoke + `run()` 最小呼び出し例を記録した。
 - **Phase10-PR-1**: CHANGELOGのUnreleased項目を `0.3.0` release sectionへ切り出し、Unreleasedを空（No unreleased changes）に戻した。
 - **Phase9-PR-3**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）のしきい値を、実測（複数回計測で rounds=3 p50 が概ね 0.84–0.87s）に基づく根拠付き定数 `max(r1 * 4.0, 0.95)` へ見直し。scheduler/CI jitter によるフレークを抑えつつ、退行検知感度を維持。
-- **Phase13-PR-4**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）のフレークを追加抑制。判定しきい値を `max(r1 * 4.0, 1.10)` に調整し、極小レイテンシ基準時のCI jitter耐性を高めつつ、異常な遅延退行の検知性を維持。
+- **Phase13-PR-4**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）の計測手法を安定化。`stable-p50`（複数バッチのp50中央値）を導入し、判定しきい値 `max(r1 * 4.0, 0.95)` を維持したままCI jitter由来のフレークを抑制して回帰検知感度を保った。
 - **Phase9-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
 - **Phase9-PR-2**: policy_lab/coverageの定数参照を動的化し、テストを安定化。
 - **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
