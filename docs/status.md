@@ -28,7 +28,7 @@
 - **Phase10-PR-1**: CHANGELOGのUnreleased項目を `0.3.0` release sectionへ切り出し、Unreleasedを空（No unreleased changes）に戻した。
 - **Phase9-PR-3**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）のしきい値を、実測（複数回計測で rounds=3 p50 が概ね 0.84–0.87s）に基づく根拠付き定数 `max(r1 * 4.0, 0.95)` へ見直し。scheduler/CI jitter によるフレークを抑えつつ、退行検知感度を維持。
 - **Phase13-PR-4**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）の計測手法を安定化。`stable-p50`（複数バッチのp50中央値）を導入し、判定しきい値 `max(r1 * 4.0, 0.95)` を維持したままCI jitter由来のフレークを抑制して回帰検知感度を保った。
-- **Phase14-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
+- **Phase14-PR-1**: pytest設定の単一真実化（pytest.ini）を再発防止まで固定。`tests/test_release_readiness.py` に `pyproject.toml` へ `[tool.pytest.ini_options]` を再導入した場合に失敗するガードテストを追加し、`pytest.ini` の存在も合わせて検証する運用へ強化。
 - **Phase9-PR-2**: policy_lab/coverageの定数参照を動的化し、テストを安定化。
 - **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
 - **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をrepo内に固定した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。

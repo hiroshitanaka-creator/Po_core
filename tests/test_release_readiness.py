@@ -20,3 +20,11 @@ def test_quickstart_has_release_build_commands() -> None:
     quickstart = (ROOT / "QUICKSTART.md").read_text(encoding="utf-8")
     assert "python -m build" in quickstart
     assert "twine check dist/*" in quickstart
+
+
+def test_pytest_config_single_source_of_truth() -> None:
+    pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "[tool.pytest.ini_options]" not in pyproject_text
+
+    pytest_ini = ROOT / "pytest.ini"
+    assert pytest_ini.exists()
