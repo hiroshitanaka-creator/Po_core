@@ -14,7 +14,6 @@ from po_core.po_trace import EventType
 from po_core.po_trace_db import PoTraceDB
 
 
-
 class TestPoTraceDBBasicFunctionality:
     """Test basic Po_trace DB functionality."""
 

@@ -14,7 +14,6 @@ import pytest
 
 from po_core.po_viewer import PoViewer
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Shared fixture — one run for the whole module to keep tests fast
 # ──────────────────────────────────────────────────────────────────────────────

@@ -18,7 +18,6 @@ import pytest
 from po_core.po_trace import Event, EventType, PoTrace, Session
 
 
-
 class TestEventType:
     """Test EventType enum."""
 

@@ -13,7 +13,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from . import parse_input
+from . import parse_input, policy_v1
 from .engines import (
     ethics_v1,
     generator_stub,
@@ -22,7 +22,6 @@ from .engines import (
     responsibility_v1,
     uncertainty_v1,
 )
-from . import policy_v1
 from .tracer import build_trace
 from .utils import deterministic_run_id, input_digest, normalize_now
 
