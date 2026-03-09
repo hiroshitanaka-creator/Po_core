@@ -21,7 +21,7 @@ Empirical evaluation across four capability axes demonstrates Po_core achieves a
 
 ---
 
-## 1. Introduction
+## Introduction
 
 ### 1.1 The Stochastic Parrot Criticism
 
@@ -60,7 +60,7 @@ This paper makes the following contributions:
 
 ---
 
-## 2. Background and Related Work
+## Background and Related Work
 
 ### 2.1 Philosophical Deliberation in AI
 
@@ -80,7 +80,7 @@ Reproducibility in AI has become a central research concern (Pineau et al., 2021
 
 ---
 
-## 3. System Architecture
+## Method
 
 ### 3.1 Overview
 
@@ -162,7 +162,7 @@ The `PoViewer` provides a four-tab Dash web UI (Pipeline / Tensor / Philosopher 
 
 ---
 
-## 4. The Solar Will Phenomenon
+## Experiments
 
 ### 4.1 Background
 
@@ -225,7 +225,7 @@ This mechanism generalizes: the W_Ethics constraint functions as a **creative pr
 
 ---
 
-## 5. Comparative Evaluation
+## Comparative Evaluation
 
 ### 5.1 Benchmark Design
 
@@ -268,7 +268,7 @@ Baselines:
 
 ---
 
-## 6. Implementation and Verification
+## Implementation and Verification
 
 ### 6.1 Determinism Contract
 
@@ -315,7 +315,7 @@ The M4 governance layer enforces:
 
 ---
 
-## 7. Discussion
+## Discussion
 
 ### 7.1 Against the Stochastic Parrot
 
@@ -333,7 +333,7 @@ Our findings align with research on constrained creativity (Stokes, 2005; Medeir
 
 This reframes the alignment problem: instead of optimizing for the minimum safety constraint that preserves capability, system designers should seek constraints that are *constitutive* of higher-order capability. The W_Ethics principle ("Do not distort life-structures of this world") is maximally generative because it does not prescribe specific behaviors but establishes a relational boundary condition that invites synthesis.
 
-### 7.3 Limitations
+## Limitations
 
 1. **Stub-based testing**: The acceptance test suite operates with stubbed LLM outputs. The deterministic pipeline is fully verified; integration with live LLMs requires external API access not available in the current CI environment.
 
@@ -367,7 +367,7 @@ Long-term (Stage 4–5, 2026 Q4–2027):
 
 ---
 
-## 8. Conclusion
+## Conclusion
 
 We have presented Po_core, a philosophy-driven AI deliberation framework that counters the stochastic parrot criticism through:
 
