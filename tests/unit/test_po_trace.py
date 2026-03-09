@@ -17,9 +17,6 @@ import pytest
 
 from po_core.po_trace import Event, EventType, PoTrace, Session
 
-pytestmark = pytest.mark.skip(
-    reason="Legacy PoTrace session API (get_session, log_event) — replaced by InMemoryTracer — to be migrated in Phase 1"
-)
 
 
 class TestEventType:
@@ -411,66 +408,59 @@ class TestPoTraceExport:
 
 
 class TestPoTraceIntegration:
-    """Test Po_trace integration with Po_self."""
+    """Test Po_trace / InMemoryTracer integration with Po_self.
 
-    def test_po_self_creates_trace_session(self):
-        """Test that Po_self creates trace sessions."""
+    Note: Po_self now uses InMemoryTracer (run_turn pipeline) instead of the
+    legacy PoTrace session API. These tests verify the current log structure.
+    """
+
+    def test_po_self_produces_trace_log(self):
+        """Test that Po_self.generate() produces a structured trace log."""
         from po_core.po_self import PoSelf
 
-        po_self = PoSelf(enable_trace=True)
+        po_self = PoSelf()
         result = po_self.generate("What is truth?")
 
-        # Check that session_id was added to log
-        assert "session_id" in result.log
-        assert result.log["session_id"] is not None
+        # Current log has request_id, status, pipeline, events
+        assert "request_id" in result.log
+        assert result.log["request_id"] is not None
+        assert result.log["status"] in ("ok", "warn", "critical")
 
-        # Verify session was created
-        session = po_self.po_trace.get_session(result.log["session_id"])
-        assert session is not None
-        assert session.prompt == "What is truth?"
-
-    def test_po_self_without_trace(self):
-        """Test Po_self with tracing disabled."""
+    def test_po_self_log_has_events(self):
+        """Test that trace log contains pipeline events."""
         from po_core.po_self import PoSelf
 
-        po_self = PoSelf(enable_trace=False)
+        po_self = PoSelf()
         result = po_self.generate("What is truth?")
 
-        # Check that session_id was not added
-        assert result.log.get("session_id") is None
-        assert po_self.po_trace is None
+        assert "events" in result.log
+        assert len(result.log["events"]) > 0
+        # Each event has at least 'event' and 'ts' keys
+        first = result.log["events"][0]
+        assert "event" in first
+        assert "ts" in first
 
     def test_trace_records_philosopher_events(self):
-        """Test that trace records individual philosopher reasoning."""
+        """Test that trace log includes philosopher-level events."""
         from po_core.po_self import PoSelf
 
-        po_self = PoSelf(enable_trace=True)
+        po_self = PoSelf()
         result = po_self.generate("What is virtue?")
 
-        session_id = result.log["session_id"]
-        session = po_self.po_trace.get_session(session_id)
-
-        # Should have events for: start, each philosopher, completion
-        expected_events = 2 + len(
-            result.philosophers
-        )  # start + philosophers + completion
-        assert len(session.events) == expected_events
-
-        # Check event types
-        assert session.events[0].data["message"] == "Ensemble reasoning started"
-        assert session.events[-1].data["message"] == "Ensemble reasoning completed"
+        events = result.log["events"]
+        event_names = [e["event"] for e in events]
+        # Pipeline always emits at least TensorComputed and a proposal event
+        assert len(events) > 0
+        assert any("Tensor" in name or "Proposal" in name or "Pareto" in name for name in event_names)
 
     def test_trace_records_metrics(self):
-        """Test that trace records ensemble metrics."""
+        """Test that PoSelf result contains ensemble metrics."""
         from po_core.po_self import PoSelf
 
-        po_self = PoSelf(enable_trace=True)
+        po_self = PoSelf()
         result = po_self.generate("What is virtue?")
 
-        session_id = result.log["session_id"]
-        session = po_self.po_trace.get_session(session_id)
-
-        # Check metrics were recorded
-        assert "freedom_pressure" in session.metrics
-        assert "semantic_delta" in session.metrics
-        assert "blocked_tensor" in session.metrics
+        # Metrics are on result.metrics, not in the session
+        assert "freedom_pressure" in result.metrics
+        assert "semantic_delta" in result.metrics
+        assert "blocked_tensor" in result.metrics

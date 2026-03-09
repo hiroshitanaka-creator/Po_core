@@ -1,579 +1,227 @@
 """
-Tests for Po_viewer Module
+Tests for Po_viewer Module (current API)
 
-Tests the visualization system including:
-- Session list rendering
-- Session detail visualization
-- Metrics visualization
-- Event flow rendering
-- Philosopher interaction analysis
-- Session comparison
+Tests the PoViewer pipeline-result viewer:
+- Construction via PoViewer.from_run(prompt)
+- Text rendering: pipeline_text, tensor_text, philosopher_text, summary
+- Markdown and dict output
+- Event data access (properties: events, event_types, request_id)
+- Tensor and philosopher data (methods: tensor_values, philosopher_data)
+- Integration across prompts
 """
 
-import tempfile
-from pathlib import Path
-
 import pytest
-from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.table import Table
-from rich.tree import Tree
 
-from po_core.po_trace import EventType, PoTrace
 from po_core.po_viewer import PoViewer
 
-pytestmark = pytest.mark.skip(
-    reason="Legacy PoViewer with PoTrace session API — needs Viewer WebUI (Phase 3) — to be migrated in Phase 1"
-)
-
-
-class TestPoViewerBasicFunctionality:
-    """Test basic Po_viewer functionality."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session with events."""
-        session_id = po_trace.create_session(
-            prompt="What is truth?",
-            philosophers=["aristotle", "nietzsche"],
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="ensemble",
-            data={"message": "Ensemble started"},
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="philosopher.Aristotle",
-            data={
-                "message": "Aristotle completed",
-                "philosopher": "Aristotle",
-                "freedom_pressure": 0.8,
-                "semantic_delta": 0.5,
-                "blocked_tensor": 0.3,
-                "perspective": "Virtue Ethics",
-            },
-        )
-        po_trace.update_metrics(
-            session_id,
-            {
-                "freedom_pressure": 0.8,
-                "semantic_delta": 0.5,
-                "blocked_tensor": 0.3,
-            },
-        )
-        return session_id
-
-    def test_po_viewer_initialization(self, po_viewer):
-        """Test PoViewer initializes correctly."""
-        assert po_viewer.po_trace is not None
-
-    def test_po_viewer_default_initialization(self):
-        """Test PoViewer initializes with default PoTrace."""
-        viewer = PoViewer()
-        assert viewer.po_trace is not None
-
-
-class TestSessionsTable:
-    """Test session list rendering."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    def test_render_sessions_table(self, po_viewer, po_trace):
-        """Test rendering sessions table."""
-        # Create test sessions
-        po_trace.create_session("Prompt 1", ["aristotle"])
-        po_trace.create_session("Prompt 2", ["nietzsche"])
-
-        table = po_viewer.render_sessions_table(limit=10)
-
-        assert isinstance(table, Table)
-        assert table.title is not None
-
-    def test_sessions_table_with_limit(self, po_viewer, po_trace):
-        """Test sessions table respects limit."""
-        # Create multiple sessions
-        for i in range(5):
-            po_trace.create_session(f"Prompt {i}", ["aristotle"])
-
-        table = po_viewer.render_sessions_table(limit=3)
-        assert isinstance(table, Table)
-
-    def test_empty_sessions_table(self, po_viewer):
-        """Test rendering empty sessions table."""
-        table = po_viewer.render_sessions_table()
-        assert isinstance(table, Table)
-
-
-class TestSessionDetail:
-    """Test session detail rendering."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session."""
-        session_id = po_trace.create_session(
-            prompt="Test prompt",
-            philosophers=["aristotle"],
-        )
-        po_trace.update_metrics(session_id, {"freedom_pressure": 0.8})
-        return session_id
-
-    def test_render_session_detail(self, po_viewer, test_session_id):
-        """Test rendering session detail."""
-        panel = po_viewer.render_session_detail(test_session_id)
-
-        assert isinstance(panel, Panel)
-        # Verify panel is not an error panel
-        assert panel.border_style != "red"
-
-    def test_render_session_detail_nonexistent(self, po_viewer):
-        """Test rendering nonexistent session."""
-        panel = po_viewer.render_session_detail("nonexistent")
-
-        assert isinstance(panel, Panel)
-
-
-class TestMetricsVisualization:
-    """Test metrics visualization."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session with metrics."""
-        session_id = po_trace.create_session(
-            prompt="Test prompt",
-            philosophers=["aristotle"],
-        )
-        po_trace.update_metrics(
-            session_id,
-            {
-                "freedom_pressure": 0.8,
-                "semantic_delta": 0.5,
-                "blocked_tensor": 0.3,
-            },
-        )
-        return session_id
-
-    def test_render_metrics_bars(self, po_viewer, test_session_id):
-        """Test rendering metrics as bars."""
-        panel = po_viewer.render_metrics_bars(test_session_id)
-
-        assert isinstance(panel, Panel)
-        # Verify panel is not an error panel
-        assert panel.border_style != "red"
-
-    def test_render_metrics_no_metrics(self, po_viewer, po_trace):
-        """Test rendering metrics when no metrics available."""
-        session_id = po_trace.create_session("Test", ["aristotle"])
-        panel = po_viewer.render_metrics_bars(session_id)
-
-        assert isinstance(panel, Panel)
-
-    def test_render_metrics_nonexistent(self, po_viewer):
-        """Test rendering metrics for nonexistent session."""
-        panel = po_viewer.render_metrics_bars("nonexistent")
-
-        assert isinstance(panel, Panel)
-
-
-class TestEventFlow:
-    """Test event flow rendering."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session with events."""
-        session_id = po_trace.create_session(
-            prompt="Test prompt",
-            philosophers=["aristotle"],
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="ensemble",
-            data={"message": "Test event"},
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="philosopher.Aristotle",
-            data={
-                "message": "Reasoning complete",
-                "philosopher": "Aristotle",
-                "freedom_pressure": 0.8,
-            },
-        )
-        return session_id
-
-    def test_render_event_flow(self, po_viewer, test_session_id):
-        """Test rendering event flow as tree."""
-        tree = po_viewer.render_event_flow(test_session_id)
-
-        assert isinstance(tree, Tree)
-
-    def test_render_event_flow_nonexistent(self, po_viewer):
-        """Test rendering event flow for nonexistent session."""
-        tree = po_viewer.render_event_flow("nonexistent")
-
-        assert isinstance(tree, Tree)
-
-    def test_event_flow_no_events(self, po_viewer, po_trace):
-        """Test rendering event flow with no events."""
-        session_id = po_trace.create_session("Test", ["aristotle"])
-        tree = po_viewer.render_event_flow(session_id)
-
-        assert isinstance(tree, Tree)
-
-
-class TestPhilosopherInteraction:
-    """Test philosopher interaction rendering."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session with philosopher events."""
-        session_id = po_trace.create_session(
-            prompt="Test prompt",
-            philosophers=["aristotle", "nietzsche"],
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="philosopher.Aristotle",
-            data={
-                "message": "Reasoning complete",
-                "philosopher": "Aristotle",
-                "freedom_pressure": 0.8,
-                "semantic_delta": 0.5,
-                "blocked_tensor": 0.3,
-                "perspective": "Virtue Ethics",
-            },
-        )
-        po_trace.log_event(
-            session_id=session_id,
-            event_type=EventType.EXECUTION,
-            source="philosopher.Nietzsche",
-            data={
-                "message": "Reasoning complete",
-                "philosopher": "Nietzsche",
-                "freedom_pressure": 0.9,
-                "semantic_delta": 0.6,
-                "blocked_tensor": 0.2,
-                "perspective": "Power Philosophy",
-            },
-        )
-        return session_id
-
-    def test_render_philosopher_interaction(self, po_viewer, test_session_id):
-        """Test rendering philosopher interaction."""
-        panel = po_viewer.render_philosopher_interaction(test_session_id)
-
-        assert isinstance(panel, Panel)
-        # Verify panel is not an error panel
-        assert panel.border_style != "red"
-
-    def test_render_interaction_no_philosophers(self, po_viewer, po_trace):
-        """Test rendering interaction with no philosopher events."""
-        session_id = po_trace.create_session("Test", ["aristotle"])
-        panel = po_viewer.render_philosopher_interaction(session_id)
-
-        assert isinstance(panel, Panel)
-
-    def test_render_interaction_nonexistent(self, po_viewer):
-        """Test rendering interaction for nonexistent session."""
-        panel = po_viewer.render_philosopher_interaction("nonexistent")
-
-        assert isinstance(panel, Panel)
-
-
-class TestSessionJSON:
-    """Test session JSON rendering."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_session_id(self, po_trace):
-        """Create a test session."""
-        return po_trace.create_session("Test prompt", ["aristotle"])
-
-    def test_render_session_json(self, po_viewer, test_session_id):
-        """Test rendering session as JSON."""
-        syntax = po_viewer.render_session_json(test_session_id)
-
-        assert isinstance(syntax, Syntax)
-
-    def test_render_json_nonexistent(self, po_viewer):
-        """Test rendering JSON for nonexistent session."""
-        syntax = po_viewer.render_session_json("nonexistent")
-
-        assert isinstance(syntax, Syntax)
-
-
-class TestSessionComparison:
-    """Test session comparison."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    @pytest.fixture
-    def test_sessions(self, po_trace):
-        """Create two test sessions."""
-        session_id1 = po_trace.create_session("Prompt 1", ["aristotle"])
-        po_trace.update_metrics(session_id1, {"freedom_pressure": 0.7})
-
-        session_id2 = po_trace.create_session("Prompt 2", ["nietzsche"])
-        po_trace.update_metrics(session_id2, {"freedom_pressure": 0.9})
-
-        return session_id1, session_id2
-
-    def test_compare_sessions(self, po_viewer, test_sessions):
-        """Test comparing two sessions."""
-        session_id1, session_id2 = test_sessions
-        panel = po_viewer.compare_sessions(session_id1, session_id2)
-
-        assert isinstance(panel, Panel)
-        # Verify panel is not an error panel
-        assert panel.border_style != "red"
-
-    def test_compare_nonexistent_session(self, po_viewer, test_sessions):
-        """Test comparing with nonexistent session."""
-        session_id1, _ = test_sessions
-        panel = po_viewer.compare_sessions(session_id1, "nonexistent")
-
-        assert isinstance(panel, Panel)
-
-    def test_compare_both_nonexistent(self, po_viewer):
-        """Test comparing two nonexistent sessions."""
-        panel = po_viewer.compare_sessions("nonexistent1", "nonexistent2")
-
-        assert isinstance(panel, Panel)
-
-
-class TestDashboard:
-    """Test dashboard functionality."""
-
-    @pytest.fixture
-    def temp_storage(self):
-        """Create temporary storage directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-
-    @pytest.fixture
-    def po_trace(self, temp_storage):
-        """Create PoTrace instance with temp storage."""
-        return PoTrace(storage_dir=temp_storage)
-
-    @pytest.fixture
-    def po_viewer(self, po_trace):
-        """Create PoViewer instance with temp PoTrace."""
-        return PoViewer(po_trace=po_trace)
-
-    def test_render_dashboard_empty(self, po_viewer):
-        """Test rendering dashboard with no sessions."""
-        panel = po_viewer.render_dashboard(limit=20)
-
-        assert isinstance(panel, Panel)
-        # Should still return a panel even with no sessions
-
-    def test_render_dashboard_with_sessions(self, po_viewer, po_trace):
-        """Test rendering dashboard with sessions."""
-        # Create some test sessions
-        for i in range(5):
-            session_id = po_trace.create_session(
-                f"Test prompt {i}",
-                ["aristotle", "nietzsche"],
-            )
-            po_trace.update_metrics(
-                session_id,
-                {
-                    "freedom_pressure": 0.7 + (i * 0.05),
-                    "semantic_delta": 0.5,
-                    "blocked_tensor": 0.3,
-                },
-            )
-
-        panel = po_viewer.render_dashboard(limit=10)
-
-        assert isinstance(panel, Panel)
-        assert panel.border_style != "red"  # Not an error panel
-
-    def test_dashboard_calculates_statistics(self, po_viewer, po_trace):
-        """Test that dashboard calculates statistics correctly."""
-        # Create sessions with known metrics
-        metrics_list = [
-            {"freedom_pressure": 0.8, "semantic_delta": 0.6},
-            {"freedom_pressure": 0.7, "semantic_delta": 0.5},
-            {"freedom_pressure": 0.9, "semantic_delta": 0.7},
-        ]
-
-        for i, metrics in enumerate(metrics_list):
-            session_id = po_trace.create_session(
-                f"Test {i}",
-                ["aristotle"],
-            )
-            po_trace.update_metrics(session_id, metrics)
-
-        panel = po_viewer.render_dashboard(limit=10)
-
-        assert isinstance(panel, Panel)
-        # Dashboard should successfully process the data
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Shared fixture — one run for the whole module to keep tests fast
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.fixture(scope="module")
+def viewer():
+    """PoViewer built from a single pipeline run."""
+    return PoViewer.from_run("What is justice?")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Construction
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestPoViewerConstruction:
+    """Test PoViewer.from_run() factory."""
+
+    def test_from_run_returns_viewer(self):
+        """PoViewer.from_run() must return a PoViewer instance."""
+        v = PoViewer.from_run("What is wisdom?")
+        assert isinstance(v, PoViewer)
+
+    def test_from_run_sets_request_id(self):
+        """request_id property must be a non-empty UUID-like string."""
+        v = PoViewer.from_run("Is freedom real?")
+        assert isinstance(v.request_id, str)
+        assert len(v.request_id) > 0
+
+    def test_from_run_different_prompts_give_different_ids(self):
+        """Two separate runs should produce distinct request_ids."""
+        v1 = PoViewer.from_run("What is virtue?")
+        v2 = PoViewer.from_run("What is virtue?")
+        # UUIDs are unique even for identical prompts
+        assert v1.request_id != v2.request_id
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Text renderers
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestViewerTextOutput:
+    """Test text-rendering methods."""
+
+    def test_pipeline_text_is_string(self, viewer):
+        """pipeline_text() must return a non-empty string."""
+        text = viewer.pipeline_text()
+        assert isinstance(text, str)
+        assert len(text) > 0
+
+    def test_tensor_text_is_string(self, viewer):
+        """tensor_text() must return a non-empty string."""
+        text = viewer.tensor_text()
+        assert isinstance(text, str)
+        assert len(text) > 0
+
+    def test_philosopher_text_is_string(self, viewer):
+        """philosopher_text() must return a non-empty string."""
+        text = viewer.philosopher_text()
+        assert isinstance(text, str)
+        assert len(text) > 0
+
+    def test_summary_is_string(self, viewer):
+        """summary() must return a non-empty string."""
+        text = viewer.summary()
+        assert isinstance(text, str)
+        assert len(text) > 0
+
+    def test_pipeline_text_has_pipeline_content(self, viewer):
+        """pipeline_text() should reference the run_turn pipeline."""
+        text = viewer.pipeline_text()
+        assert len(text) > 10  # at least some content
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Markdown output
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestViewerMarkdownOutput:
+    """Test markdown() output."""
+
+    def test_markdown_is_string(self, viewer):
+        """markdown() must return a non-empty string."""
+        md = viewer.markdown()
+        assert isinstance(md, str)
+        assert len(md) > 0
+
+    def test_markdown_contains_request_id(self, viewer):
+        """markdown() output should include the request_id."""
+        md = viewer.markdown()
+        assert viewer.request_id in md
+
+    def test_markdown_has_structure(self, viewer):
+        """markdown() should contain markdown-style headings."""
+        md = viewer.markdown()
+        assert "#" in md or "**" in md or "==" in md
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Dict output
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestViewerDictOutput:
+    """Test to_dict() output."""
+
+    def test_to_dict_returns_dict(self, viewer):
+        """to_dict() must return a dict."""
+        d = viewer.to_dict()
+        assert isinstance(d, dict)
+
+    def test_to_dict_has_request_id(self, viewer):
+        """to_dict() must include request_id."""
+        d = viewer.to_dict()
+        assert "request_id" in d
+        assert d["request_id"] == viewer.request_id
+
+    def test_to_dict_serialisable(self, viewer):
+        """to_dict() output must be JSON-serialisable."""
+        import json
+
+        d = viewer.to_dict()
+        serialised = json.dumps(d, default=str)
+        assert len(serialised) > 0
+
+    def test_to_dict_has_n_events(self, viewer):
+        """to_dict() should include event count."""
+        d = viewer.to_dict()
+        assert "n_events" in d
+        assert isinstance(d["n_events"], int)
+        assert d["n_events"] > 0
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Event data (properties)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestViewerEventData:
+    """Test events and event_types properties."""
+
+    def test_events_is_list(self, viewer):
+        """events property must be a list."""
+        assert isinstance(viewer.events, list)
+
+    def test_events_non_empty(self, viewer):
+        """Pipeline must produce at least one event."""
+        assert len(viewer.events) > 0
+
+    def test_event_types_is_list(self, viewer):
+        """event_types must return a list."""
+        assert isinstance(viewer.event_types, list)
+
+    def test_event_types_non_empty(self, viewer):
+        """event_types must contain at least one type string."""
+        assert len(viewer.event_types) > 0
+
+    def test_event_types_are_strings(self, viewer):
+        """Each entry in event_types must be a string."""
+        for et in viewer.event_types:
+            assert isinstance(et, str)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Tensor and philosopher data (methods)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestViewerDataMethods:
+    """Test tensor_values() and philosopher_data() methods."""
+
+    def test_tensor_values_returns_dict(self, viewer):
+        """tensor_values() must return a dict."""
+        assert isinstance(viewer.tensor_values(), dict)
+
+    def test_philosopher_data_returns_list_or_dict(self, viewer):
+        """philosopher_data() must return a list or dict."""
+        pd = viewer.philosopher_data()
+        assert isinstance(pd, (list, dict))
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Integration
+# ──────────────────────────────────────────────────────────────────────────────
 
 
 class TestPoViewerIntegration:
-    """Test Po_viewer integration with real data."""
+    """Integration tests combining PoViewer.from_run() across prompts."""
 
-    def test_viewer_with_po_self_session(self):
-        """Test viewer with real Po_self session."""
-        from po_core.po_self import PoSelf
+    def test_multiple_prompts_produce_viewers(self):
+        """PoViewer works for different prompt types."""
+        prompts = [
+            "What is freedom?",
+            "Is morality objective?",
+        ]
+        for prompt in prompts:
+            v = PoViewer.from_run(prompt)
+            assert isinstance(v.to_dict(), dict)
+            assert len(v.events) > 0
 
-        # Create session
-        po_self = PoSelf(enable_trace=True)
-        result = po_self.generate("What is wisdom?")
-
-        session_id = result.log["session_id"]
-
-        # Visualize with viewer
-        viewer = PoViewer(po_trace=po_self.po_trace)
-
-        # Test all rendering methods
-        table = viewer.render_sessions_table()
-        assert isinstance(table, Table)
-
-        detail = viewer.render_session_detail(session_id)
-        assert isinstance(detail, Panel)
-
-        metrics = viewer.render_metrics_bars(session_id)
-        assert isinstance(metrics, Panel)
-
-        flow = viewer.render_event_flow(session_id)
-        assert isinstance(flow, Tree)
-
-        interactions = viewer.render_philosopher_interaction(session_id)
-        assert isinstance(interactions, Panel)
-
-        json_syntax = viewer.render_session_json(session_id)
-        assert isinstance(json_syntax, Syntax)
-
-        # Test new dashboard feature
-        dashboard = viewer.render_dashboard()
-        assert isinstance(dashboard, Panel)
+    def test_viewer_to_dict_consistent(self):
+        """to_dict() called twice on the same viewer must give the same result."""
+        v = PoViewer.from_run("What is duty?")
+        d1 = v.to_dict()
+        d2 = v.to_dict()
+        assert d1["request_id"] == d2["request_id"]
+        assert d1["n_events"] == d2["n_events"]

@@ -66,15 +66,24 @@
 
 M4 完了基準「PR マージ時に自動で Traceability チェックが走る」→ ✅ 充足。
 
-## CLI Migration (2026-03-09)
+## Legacy Test Migration (2026-03-09)
 
-- **cli-click-PR**: `src/po_core/cli/commands.py` を新規追加。Click ベースの非インタラクティブ CLI（`hello` / `status` / `version` / `prompt` / `log` コマンド）を実装し、`cli/__init__.py` の `main` をこの Click group に差し替えた。`InteractiveReasoningSession` は `po-interactive` エントリポイント向けに継続保持。
-- **test-cli-unskip**: `tests/unit/test_cli.py` の `pytestmark = pytest.mark.skip` を削除し、16 テストを全パスに変換（3534 → 3550 passed）。ハードコードされた "0.1.0-alpha" バージョン検証を `__version__` 参照に修正した（REQ-CLI-001 対応）。
+大規模レガシーテスト移行を実施。3534 passed / 134 skipped → **3640 passed / 27 skipped**（+106 tests, −107 skips）。
+
+- **cli-click-PR**: `src/po_core/cli/commands.py` 新規追加。Click ベース非インタラクティブ CLI（`hello` / `status` / `version` / `prompt` / `log`）を実装。`test_cli.py` 16 件パス化。
+- **potrace-fix**: `PoTrace.log_event()` がイベントIDを返すよう修正・存在しないセッションに対し `ValueError` を raise するよう修正。`update_metrics()` も同様。`test_po_trace.py` 28 件パス化。
+- **philosophers-legacy**: テストの 3 件の誤ったアサーション（`🧠` emoji、`temporal_dimension["has_past"]`、Sartre description のタイポ）を修正。16 件パス化。
+- **potracedb-fix**: `test_po_trace_db.py` の `EventType.ENSEMBLE_STARTED`（非存在）→ `EXECUTION` へ修正、`philosophers` key チェックを `session_id` へ修正。21 件パス化。
+- **visualization-update**: `test_visualizations.py` の唯一のスキップ（`test_visualizer_with_po_self_session`）を InMemoryTracer ベースの現行 API テストに書き換え。1 件パス化。
+- **po-viewer-rewrite**: `test_po_viewer.py` を `PoViewer.from_run(prompt)` の現行 API に完全書き換え（25 件 → 24 件）。全件パス化。
+
+残存スキップ（27 件）：
+- `test_prototypes.py`（26 件）: `BatchAnalyzer` / `PhilosopherComparison` は削除済み API
+- `test_nietzsche.py`（1 件）: 単語マッチ issue（"again" が "never" 含む場合にマッチ）
 
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
-- **Legacy tests remaining**: 118 skips（test_po_trace/test_po_viewer/test_prototypes/test_philosophers_legacy）は InMemoryTracer/run_turn API への移行待ち。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
