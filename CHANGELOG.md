@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
+- chore(test): make `pytest.ini` the single source of truth and keep pytest configuration out of `pyproject.toml`.
 
 ### Fixed
 
