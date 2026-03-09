@@ -81,9 +81,17 @@ M4 完了基準「PR マージ時に自動で Traceability チェックが走る
 
 残存スキップ（0 件）：全スキップ解消。
 
+## 論文ドラフト完成 (2026-03-09)
+
+`docs/paper/paper.md` を 51 行のスケルトンから 433 行の完全ドラフトへ拡張。arXiv 標準セクション構成（Abstract / Introduction / Background / Method / Experiments / Comparative Evaluation / Implementation / Discussion / Limitations / Conclusion / References / Appendix A–C）を満たし、`test_paper_contains_arxiv_required_sections` を含む全 3 件の paper pipeline テストが通過。
+
+- **v1.0.0 マイルストーン進捗**: 全AT通過 ✅ / CI 100% green ✅ / 論文ドラフト完成 ✅
+- **テスト結果**: 3682 passed / 0 failed / 0 skipped
+
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
+- **v1.0.0 残タスク**: Live LLM 統合テスト（外部 API 接続要）、arXiv 投稿（論文査読後）。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
