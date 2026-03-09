@@ -100,7 +100,8 @@ def _stable_p50(fn: Callable[[], object], repeats: int, batches: int = 2) -> flo
     scheduler noise. Taking multiple small batches and then the median of their
     p50 values dampens outliers while preserving regression sensitivity.
     """
-    assert batches >= 1, "batches must be >= 1"
+    if batches < 1:
+        raise ValueError("batches must be >= 1")
     batch_p50s: list[float] = []
     for _ in range(batches):
         samples = _timeit(fn, repeats)
