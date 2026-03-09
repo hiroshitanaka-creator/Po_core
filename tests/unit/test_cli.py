@@ -16,10 +16,6 @@ from click.testing import CliRunner
 from po_core import __version__
 from po_core.cli import main
 
-pytestmark = pytest.mark.skip(
-    reason="Legacy: CLI main is an interactive function, not click.Group (Phase 5 scope)"
-)
-
 
 class TestCLIBasicCommands:
     """Test basic CLI commands."""
@@ -164,7 +160,7 @@ class TestCLIErrorHandling:
         result = runner.invoke(main, ["--version"])
 
         assert result.exit_code == 0
-        assert "0.1.0-alpha" in result.output
+        assert __version__ in result.output
 
 
 class TestCLIIntegration:

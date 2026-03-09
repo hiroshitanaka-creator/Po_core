@@ -255,6 +255,9 @@ data/processed/
 
 # Keep acceptance golden fixtures
 !tests/acceptance/scenarios/*.json
+# Keep TypeScript SDK config
+!clients/typescript/package.json
+!clients/typescript/tsconfig.json
 
 # Except: Keep small example datasets
 !examples/**/*.csv

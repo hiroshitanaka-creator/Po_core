@@ -66,9 +66,32 @@
 
 M4 完了基準「PR マージ時に自動で Traceability チェックが走る」→ ✅ 充足。
 
+## Legacy Test Migration (2026-03-09)
+
+大規模レガシーテスト移行を実施。3534 passed / 134 skipped → **3682 passed / 0 skipped**（+148 tests, −134 skips）。
+
+- **cli-click-PR**: `src/po_core/cli/commands.py` 新規追加。Click ベース非インタラクティブ CLI（`hello` / `status` / `version` / `prompt` / `log`）を実装。`test_cli.py` 16 件パス化。
+- **potrace-fix**: `PoTrace.log_event()` がイベントIDを返すよう修正・存在しないセッションに対し `ValueError` を raise するよう修正。`update_metrics()` も同様。`test_po_trace.py` 28 件パス化。
+- **philosophers-legacy**: テストの 3 件の誤ったアサーション（`🧠` emoji、`temporal_dimension["has_past"]`、Sartre description のタイポ）を修正。16 件パス化。
+- **potracedb-fix**: `test_po_trace_db.py` の `EventType.ENSEMBLE_STARTED`（非存在）→ `EXECUTION` へ修正、`philosophers` key チェックを `session_id` へ修正。21 件パス化。
+- **visualization-update**: `test_visualizations.py` の唯一のスキップ（`test_visualizer_with_po_self_session`）を InMemoryTracer ベースの現行 API テストに書き換え。1 件パス化。
+- **po-viewer-rewrite**: `test_po_viewer.py` を `PoViewer.from_run(prompt)` の現行 API に完全書き換え（25 件 → 24 件）。全件パス化。
+- **prototypes-migration**: `test_prototypes.py`（26 件）を examples/ の現行 API（`BatchAnalyzer.po` / `AnalysisResult` dataclass / `export_json(filepath)` / `export_csv(filepath)` / `session_store`）に移行。26 件全通パス化。
+- **nietzsche-fix**: `_check_eternal_recurrence` の条件順序を修正（reject を affirm より先にチェック）。"never again" を含む文が誤って "Passes" と判定される単語マッチ bug を解消。`test_nietzsche.py` 1 件パス化（58 件、0 スキップ）。
+
+残存スキップ（0 件）：全スキップ解消。
+
+## 論文ドラフト完成 (2026-03-09)
+
+`docs/paper/paper.md` を 51 行のスケルトンから 433 行の完全ドラフトへ拡張。arXiv 標準セクション構成（Abstract / Introduction / Background / Method / Experiments / Comparative Evaluation / Implementation / Discussion / Limitations / Conclusion / References / Appendix A–C）を満たし、`test_paper_contains_arxiv_required_sections` を含む全 3 件の paper pipeline テストが通過。
+
+- **v1.0.0 マイルストーン進捗**: 全AT通過 ✅ / CI 100% green ✅ / 論文ドラフト完成 ✅
+- **テスト結果**: 3682 passed / 0 failed / 0 skipped
+
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
+- **v1.0.0 残タスク**: Live LLM 統合テスト（外部 API 接続要）、arXiv 投稿（論文査読後）。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。

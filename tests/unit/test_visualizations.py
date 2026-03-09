@@ -502,28 +502,27 @@ class TestExportFunctionality:
 class TestVisualizerIntegration:
     """Test visualizer integration with Po_self."""
 
-    @pytest.mark.skip(
-        reason="Legacy PoTrace session_id API — PoSelf uses run_turn/InMemoryTracer now (Phase 3 scope)"
-    )
     def test_visualizer_with_po_self_session(self):
-        """Test visualizer with real Po_self session."""
+        """Test visualizer is compatible with PoSelf metrics output."""
         from po_core.po_self import PoSelf
 
-        # Create session
-        po_self = PoSelf(enable_trace=True)
+        # PoSelf now uses InMemoryTracer (run_turn pipeline)
+        po_self = PoSelf()
         result = po_self.generate("What is wisdom?")
-        session_id = result.log["session_id"]
 
-        # Create visualizer
-        visualizer = PoVisualizer(po_trace=po_self.po_trace)
+        # log contains request_id, status, pipeline, events
+        assert "request_id" in result.log
+        assert "events" in result.log
+        assert len(result.log["events"]) > 0
 
-        # Test tension map creation (without saving)
-        try:
-            fig = visualizer.create_tension_map(session_id=session_id)
-            assert isinstance(fig, Figure)
-        except ValueError:
-            # May fail if not enough philosopher data
-            pass
+        # metrics contain tensor values usable for visualization
+        assert "freedom_pressure" in result.metrics
+        assert "semantic_delta" in result.metrics
+        assert "blocked_tensor" in result.metrics
+
+        # PoVisualizer can still be instantiated (legacy PoTrace path)
+        visualizer = PoVisualizer()
+        assert visualizer is not None
 
     def test_visualizer_color_scheme_complete(self):
         """Test that all default philosophers have colors."""

@@ -1,0 +1,37 @@
+{
+  "name": "@po-core/sdk",
+  "version": "0.3.0",
+  "description": "TypeScript client SDK for the Po_core philosophical reasoning API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "node test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "po-core",
+    "philosophy",
+    "ai",
+    "ethical-ai",
+    "deliberation"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

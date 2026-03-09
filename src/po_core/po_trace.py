@@ -316,11 +316,17 @@ class PoTrace:
         source: str,
         data: Dict[str, Any],
         metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """Log an event to a session."""
+    ) -> str:
+        """Log an event to a session.
+
+        Returns:
+            The UUID of the created event.
+
+        Raises:
+            ValueError: If the session does not exist.
+        """
         if session_id not in self.sessions:
-            console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
-            return
+            raise ValueError(f"Session {session_id} not found")
 
         event_id = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat() + "Z"
@@ -336,16 +342,20 @@ class PoTrace:
         )
 
         self.sessions[session_id].events.append(event)
+        return event_id
 
     def update_metrics(
         self,
         session_id: str,
         metrics: Dict[str, float],
     ) -> None:
-        """Update session metrics."""
+        """Update session metrics.
+
+        Raises:
+            ValueError: If the session does not exist.
+        """
         if session_id not in self.sessions:
-            console.print(f"[yellow]Warning: Session {session_id} not found[/yellow]")
-            return
+            raise ValueError(f"Session {session_id} not found")
 
         self.sessions[session_id].metrics.update(metrics)
 

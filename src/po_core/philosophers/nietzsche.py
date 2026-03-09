@@ -318,11 +318,15 @@ class Nietzsche(Philosopher):
         moment_words = ["now", "moment", "present", "today", "instant"]
         has_moment = sum(1 for word in moment_words if word in text_lower)
 
-        if has_eternal >= 1 and has_affirm_repeat >= 1:
+        if has_reject >= 1:
+            test_result = "Fails Eternal Recurrence"
+            description = "Would not want to repeat this life - life-denying"
+            attitude = "Regret"
+        elif has_eternal >= 1 and has_affirm_repeat >= 1:
             test_result = "Passes Eternal Recurrence"
             description = "Would affirm this life eternally - ultimate life affirmation"
             attitude = "Amor fati"
-        elif has_reject >= 1 or (has_eternal >= 1 and has_affirm_repeat == 0):
+        elif (has_eternal >= 1 and has_affirm_repeat == 0):
             test_result = "Fails Eternal Recurrence"
             description = "Would not want to repeat this life - life-denying"
             attitude = "Regret"
