@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
-- chore(test): enforce `pytest.ini` as the only pytest config source by adding a release-readiness guard test that fails if `[tool.pytest.ini_options]` reappears in `pyproject.toml` and also verifies `pytest.ini` exists.
+- chore(test): enforce `pytest.ini` as the only pytest config source by adding a release-readiness guard test that TOML-parses `pyproject.toml` and fails if `tool.pytest.ini_options` reappears, while also verifying `pytest.ini` exists with `[pytest]` section.
 
 ### Fixed
 

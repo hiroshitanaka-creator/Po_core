@@ -23,8 +23,12 @@ def test_quickstart_has_release_build_commands() -> None:
 
 
 def test_pytest_config_single_source_of_truth() -> None:
-    pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    assert "[tool.pytest.ini_options]" not in pyproject_text
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    tool_config = pyproject.get("tool", {})
+
+    pytest_config = tool_config.get("pytest")
+    assert pytest_config is None or "ini_options" not in pytest_config
 
     pytest_ini = ROOT / "pytest.ini"
     assert pytest_ini.exists()
+    assert "[pytest]" in pytest_ini.read_text(encoding="utf-8")
