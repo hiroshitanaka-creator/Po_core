@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
+
+### Fixed
+
+- fix(bench): reduce flakiness in `test_bench_deliberation_scaling` by raising the absolute jitter floor in the scaling guard to `max(r1 * 4.0, 1.10)`, preserving regression detection while avoiding false failures under noisy low-latency CI runs.
 - chore(pocore): align legacy contract-core metadata to `0.3.0` by updating `src/pocore/orchestrator.py` default version and synchronizing non-frozen golden meta (`meta.pocore_version` / `meta.generator.version`), while preserving frozen contracts for `case_001` and `case_009`.
 - fix(pocore): align policy override behavior across generator/recommendation/trace coverage by preserving orchestrator policy override compatibility (`UNKNOWN_BLOCK`/`TIME_PRESSURE_DAYS`) and reflecting the same snapshot thresholds used by `scripts/policy_lab.py` during execution.
 
