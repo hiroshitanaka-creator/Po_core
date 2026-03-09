@@ -100,6 +100,7 @@ def _stable_p50(fn: Callable[[], object], repeats: int, batches: int = 2) -> flo
     scheduler noise. Taking multiple small batches and then the median of their
     p50 values dampens outliers while preserving regression sensitivity.
     """
+    assert batches >= 1, "batches must be >= 1"
     batch_p50s: list[float] = []
     for _ in range(batches):
         samples = _timeit(fn, repeats)
@@ -369,9 +370,9 @@ def test_bench_deliberation_scaling():
         DELIBERATION_SCALING_ABS_FLOOR_S,
     )
     assert r3 < threshold, (
-        "Deliberation scaling: "
-        f"rounds=3 p50={r3:.3f}s > "
-        f"max({DELIBERATION_SCALING_RATIO_LIMIT:.1f}× rounds=1 p50={r1:.3f}s, "
+        "Deliberation scaling (stable-p50): "
+        f"rounds=3 stable-p50={r3:.3f}s > "
+        f"max({DELIBERATION_SCALING_RATIO_LIMIT:.1f}× rounds=1 stable-p50={r1:.3f}s, "
         f"{DELIBERATION_SCALING_ABS_FLOOR_S:.2f}s)"
     )
 
