@@ -12,15 +12,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- feat(cli): add `src/po_core/cli/commands.py` — Click-based non-interactive CLI subcommand group (`hello`, `status`, `version`, `prompt`, `log`) replacing legacy interactive `main`. Entrypoint `po-core` now routes to this handler.
+- docs(paper): expand `docs/paper/paper.md` from 51-line skeleton to 433-line academic draft with arXiv-standard sections (Abstract, Introduction, Background, Method, Experiments, Comparative Evaluation, Implementation, Limitations, Conclusion, References, Appendices A–C).
+
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
+- chore(lint): fix isort import ordering in `src/pocore/orchestrator.py`, `tests/unit/test_po_trace.py`, `tests/unit/test_po_trace_db.py`, `tests/unit/test_po_viewer.py`.
 
 ### Fixed
 
+- fix(nietzsche): correct `_check_eternal_recurrence` condition ordering so rejection phrases ("never again", "once is enough") are checked before affirmation keywords — resolves false "Passes" verdict when prompt contains both.
+- fix(po_trace): `PoTrace.log_event()` now returns the created event_id (`str`) and raises `ValueError` (instead of silently returning) when `session_id` is not found; `update_metrics()` raises the same error consistently.
 - fix(bench): stabilize `test_bench_deliberation_scaling` via measurement hardening (`stable-p50` from multiple batch medians) while keeping the original regression guard semantics `max(r1 * 4.0, 0.95)` to avoid weakening slowdown detection.
 - chore(pocore): align legacy contract-core metadata to `0.3.0` by updating `src/pocore/orchestrator.py` default version and synchronizing non-frozen golden meta (`meta.pocore_version` / `meta.generator.version`), while preserving frozen contracts for `case_001` and `case_009`.
 - fix(pocore): align policy override behavior across generator/recommendation/trace coverage by preserving orchestrator policy override compatibility (`UNKNOWN_BLOCK`/`TIME_PRESSURE_DAYS`) and reflecting the same snapshot thresholds used by `scripts/policy_lab.py` during execution.
+
+### Tests
+
+- test(migration): migrate 8 legacy skipped test files to current API — 3534→3682 passed, 134→0 skipped (+148 tests). Files: `test_cli.py`, `test_po_trace.py`, `test_philosophers_legacy.py`, `test_po_trace_db.py`, `test_visualizations.py`, `test_po_viewer.py`, `test_prototypes.py`, `test_nietzsche.py`.
 
 ## [0.3.0] - 2026-03-08
 
