@@ -48,11 +48,11 @@ TARGET_WARN_S = 2.0
 TARGET_CRITICAL_S = 1.0
 
 DELIBERATION_SCALING_RATIO_LIMIT = 4.0
-# Empirical floor from 5 local runs of this benchmark (2026-03-07): rounds=3
-# p50 was consistently ~0.84–0.87s while rounds=1 p50 stayed ~0.10s. A pure
-# ratio guard overreacts to tiny baselines, so we include a jitter-absorbing
-# absolute floor with a small margin while still failing meaningful regressions.
+# Keep the original regression guard intent: a ratio check plus small absolute
+# floor to absorb tiny-baseline jitter. We stabilize measurement itself (batched
+# median p50) instead of broadly loosening this threshold.
 DELIBERATION_SCALING_ABS_FLOOR_S = 0.95
+DELIBERATION_SCALING_BATCHES = 3
 
 _BENCH_PROMPT = "What is justice, and how should a society pursue it?"
 
@@ -91,6 +91,22 @@ def _stats(samples: list[float]) -> dict:
         "max": max(samples),
         "n": len(samples),
     }
+
+
+def _stable_p50(fn: Callable[[], object], repeats: int, batches: int = 2) -> float:
+    """Median of batch-level p50 values for jitter-robust micro benchmarks.
+
+    Single-run p50 can still swing in very low-latency environments due to
+    scheduler noise. Taking multiple small batches and then the median of their
+    p50 values dampens outliers while preserving regression sensitivity.
+    """
+    if batches < 1:
+        raise ValueError("batches must be >= 1")
+    batch_p50s: list[float] = []
+    for _ in range(batches):
+        samples = _timeit(fn, repeats)
+        batch_p50s.append(_stats(samples)["p50"])
+    return statistics.median(batch_p50s)
 
 
 def _print_rich_row(label: str, st: dict, target: float) -> None:
@@ -319,44 +335,45 @@ def test_bench_deliberation_scaling():
     """
     Deliberation rounds 1–3 (WARN mode): latency must scale sub-linearly.
 
-    rounds=3 p50 must be < max(4.0× rounds=1 p50, abs-floor) — confirms that
-    additional rounds don't cause super-linear blow-up (e.g. quadratic pair
-    expansion). The abs-floor absorbs scheduler/CI jitter when rounds=1 baseline
-    is extremely small, while preserving regression sensitivity for rounds=3.
+    rounds=3 stable-p50 must be < max(4.0× rounds=1 stable-p50, abs-floor).
+
+    We keep the original threshold semantics for regression detection and reduce
+    flakiness by stabilizing measurement (median of batch-level p50s) rather
+    than broadly relaxing the pass/fail guard.
     """
     from po_core.domain.safety_mode import SafetyMode
     from po_core.runtime.settings import Settings
 
-    rounds_results: dict[int, dict] = {}
+    rounds_results: dict[int, float] = {}
 
     for rounds in (1, 2, 3):
         s = Settings(
             freedom_pressure_missing_mode=SafetyMode.WARN,
             deliberation_max_rounds=rounds,
         )
-        samples = _timeit(
+        p50 = _stable_p50(
             lambda _s=s: run(_BENCH_PROMPT, settings=_s),
             REPEAT_FAST,
+            batches=DELIBERATION_SCALING_BATCHES,
         )
-        st = _stats(samples)
-        rounds_results[rounds] = st
+        rounds_results[rounds] = p50
         console.print(
             f"  [bold]deliberation rounds={rounds}[/bold]"
-            f"  p50=[cyan]{st['p50']:.3f}s[/cyan]"
-            f"  p90=[yellow]{st['p90']:.3f}s[/yellow]"
-            f"  n={st['n']}"
+            f"  stable-p50=[cyan]{p50:.3f}s[/cyan]"
+            f"  batches={DELIBERATION_SCALING_BATCHES}"
+            f"  per-batch-n={REPEAT_FAST}"
         )
 
-    r1 = rounds_results[1]["p50"]
-    r3 = rounds_results[3]["p50"]
+    r1 = rounds_results[1]
+    r3 = rounds_results[3]
     threshold = max(
         r1 * DELIBERATION_SCALING_RATIO_LIMIT,
         DELIBERATION_SCALING_ABS_FLOOR_S,
     )
     assert r3 < threshold, (
-        "Deliberation scaling: "
-        f"rounds=3 p50={r3:.3f}s > "
-        f"max({DELIBERATION_SCALING_RATIO_LIMIT:.1f}× rounds=1 p50={r1:.3f}s, "
+        "Deliberation scaling (stable-p50): "
+        f"rounds=3 stable-p50={r3:.3f}s > "
+        f"max({DELIBERATION_SCALING_RATIO_LIMIT:.1f}× rounds=1 stable-p50={r1:.3f}s, "
         f"{DELIBERATION_SCALING_ABS_FLOOR_S:.2f}s)"
     )
 
