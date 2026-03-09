@@ -68,7 +68,7 @@ M4 完了基準「PR マージ時に自動で Traceability チェックが走る
 
 ## Legacy Test Migration (2026-03-09)
 
-大規模レガシーテスト移行を実施。3534 passed / 134 skipped → **3640 passed / 27 skipped**（+106 tests, −107 skips）。
+大規模レガシーテスト移行を実施。3534 passed / 134 skipped → **3682 passed / 0 skipped**（+148 tests, −134 skips）。
 
 - **cli-click-PR**: `src/po_core/cli/commands.py` 新規追加。Click ベース非インタラクティブ CLI（`hello` / `status` / `version` / `prompt` / `log`）を実装。`test_cli.py` 16 件パス化。
 - **potrace-fix**: `PoTrace.log_event()` がイベントIDを返すよう修正・存在しないセッションに対し `ValueError` を raise するよう修正。`update_metrics()` も同様。`test_po_trace.py` 28 件パス化。
@@ -76,10 +76,10 @@ M4 完了基準「PR マージ時に自動で Traceability チェックが走る
 - **potracedb-fix**: `test_po_trace_db.py` の `EventType.ENSEMBLE_STARTED`（非存在）→ `EXECUTION` へ修正、`philosophers` key チェックを `session_id` へ修正。21 件パス化。
 - **visualization-update**: `test_visualizations.py` の唯一のスキップ（`test_visualizer_with_po_self_session`）を InMemoryTracer ベースの現行 API テストに書き換え。1 件パス化。
 - **po-viewer-rewrite**: `test_po_viewer.py` を `PoViewer.from_run(prompt)` の現行 API に完全書き換え（25 件 → 24 件）。全件パス化。
+- **prototypes-migration**: `test_prototypes.py`（26 件）を examples/ の現行 API（`BatchAnalyzer.po` / `AnalysisResult` dataclass / `export_json(filepath)` / `export_csv(filepath)` / `session_store`）に移行。26 件全通パス化。
+- **nietzsche-fix**: `_check_eternal_recurrence` の条件順序を修正（reject を affirm より先にチェック）。"never again" を含む文が誤って "Passes" と判定される単語マッチ bug を解消。`test_nietzsche.py` 1 件パス化（58 件、0 スキップ）。
 
-残存スキップ（27 件）：
-- `test_prototypes.py`（26 件）: `BatchAnalyzer` / `PhilosopherComparison` は削除済み API
-- `test_nietzsche.py`（1 件）: 単語マッチ issue（"again" が "never" 含む場合にマッチ）
+残存スキップ（0 件）：全スキップ解消。
 
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
