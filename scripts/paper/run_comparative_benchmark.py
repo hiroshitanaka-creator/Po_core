@@ -20,14 +20,24 @@ class SystemProfile:
 
 
 def _count_philosophers(repo_root: Path) -> int:
+    """Count canonical philosopher persona modules (excludes infra files and dummy)."""
     philosophers_dir = repo_root / "src" / "po_core" / "philosophers"
-    ignore = {"__init__.py", "manifest.py"}
+    ignore = {
+        "__init__.py",
+        "manifest.py",
+        "base.py",
+        "registry.py",
+        "dummy.py",
+        "template.py",
+        "tags.py",
+    }
     return sum(1 for p in philosophers_dir.glob("*.py") if p.name not in ignore)
 
 
 def _load_profiles(repo_root: Path) -> list[SystemProfile]:
     philosopher_count = _count_philosophers(repo_root)
-    diversity_score = min(philosopher_count / 43.0, 1.0)
+    # 42 is the canonical corpus size; score is 1.0 when all 42 slots are filled.
+    diversity_score = min(philosopher_count / 42.0, 1.0)
 
     return [
         SystemProfile(
