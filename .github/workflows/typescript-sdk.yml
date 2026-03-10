@@ -34,6 +34,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Python dependencies
+        run: pip install -e . --quiet
+
       - name: Refresh OpenAPI + TS types
         run: |
           PYTHONPATH=src python scripts/export_openapi.py
@@ -58,8 +61,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install Python dependencies
+        run: pip install -e . --quiet
       - name: Prepare package
         run: |
+          PYTHONPATH=src python scripts/export_openapi.py
           python scripts/generate_ts_openapi_types.py
           cd clients/typescript
           npm pack
