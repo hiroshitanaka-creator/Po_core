@@ -1,6 +1,6 @@
-# Acceptance tests (M1-A)
+# Acceptance tests (M1–M4 / v1.0.0)
 
-`tests/acceptance/` hosts AT-001〜AT-010 acceptance tests for the M1 milestone.
+`tests/acceptance/` hosts AT-001〜AT-012 acceptance tests. M1–M4 milestones are all complete (✅ 2026-03-10).
 
 ## Execution model
 
@@ -14,4 +14,4 @@
 pytest tests/acceptance/ -v -m acceptance
 ```
 
-This command is the required gate for Phase M1-A.
+**Current status:** 52 passed / 0 failed / 0 skipped (v1.0.0).

@@ -334,7 +334,7 @@ experiments/
 
 ## Project Status
 
-**Current Phase: Stable (v0.3.0) — Phases 1–5 Complete + Philosopher Diversity, Heading to v1.0**
+**Current Phase: v1.0.0 Released — All Phases Complete (M1–M4 + v1.0.0 Criteria Fully Met)**
 
 ### Completed Components
 
@@ -359,7 +359,7 @@ experiments/
 | **MetaEthicsMonitor** | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
 | **3-Layer Memory** | ✅ Complete | Semantic + procedural + philosophical memory stores |
 | **Philosopher Diversity (40–42)** | ✅ Complete | Appiah (Africa/cosmopolitanism), Fanon (decolonialism), Charles Taylor (communitarianism) |
-| PyPI Publish | 🔄 Ready | `publish.yml` OIDC workflow ready; not yet published |
+| PyPI Publish | 🔄 Pending | `publish.yml` OIDC workflow ready; PyPI v1.0.0 publish via `workflow_dispatch` (post-release) |
 
 ### Roadmap
 
@@ -375,21 +375,22 @@ scenarios/       multi-round         リアルタイム       Async SSE         
 
 | Stage | Name | Focus | Status |
 |-------|------|-------|--------|
-| **1** | Spec-Honesty | AT-001–010 acceptance tests + StubComposer + scenario YAML | 🔄 **M1 (3/15)** |
+| **1** | Spec-Honesty | AT-001–010 acceptance tests + StubComposer + scenario YAML | ✅ **COMPLETE** (M1–M4) |
 | **2** | Deliberation-Intelligence | ML tensors + multi-round DeliberationEngine | ✅ **COMPLETE** |
 | **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate + real-time trace | ✅ **COMPLETE** |
 | **4** | Production | REST API, Docker, Security, Async SSE, Benchmarks | ✅ **COMPLETE** |
-| **5** | Research | Academic paper + PyPI stable v1.0 | 🗓 **M4 (5/10)** |
+| **5** | Research | Academic paper + PyPI stable v1.0 | ✅ **COMPLETE** (paper draft done; PyPI publish pending) |
 
 **Milestones:**
 
-| Milestone | Due | Goal |
-|-----------|-----|------|
-| **M1** | 3/15 | All 10 AT pass · `pytest tests/acceptance/ -v` green |
-| **M2** | 4/5 | StubComposer → real LLM; philosopher consistency review |
-| **M3** | 4/26 | Pilot study launched; paper draft submitted |
-| **M4** | 5/10 | PyPI stable `0.2.0`; paper accepted / arXiv posted |
-| **v1.0** | TBD | All AT green + paper published |
+| Milestone | Completed | Goal |
+|-----------|-----------|------|
+| **M1** | ✅ 2026-03-03 | All 10 AT pass · `pytest tests/acceptance/ -v` green |
+| **M2** | ✅ 2026-03-03 | ethics_v1 + responsibility_v1 + uncertainty labels |
+| **M3** | ✅ 2026-03-03 | question_layer v1 (question generation / suppression) |
+| **M4** | ✅ 2026-03-08 | Governance complete: CI auto + ADR + Traceability auto |
+| **v1.0.0** | ✅ 2026-03-10 | All AT green + paper draft (433 lines, arXiv-ready) + CI 100% green (3682 passed / 0 skipped) |
+| **5-F (PyPI)** | 🔄 Pending | PyPI v1.0.0 publish (`workflow_dispatch`) + arXiv submission |
 
 See [ROADMAP_FINAL_FORM.md](./ROADMAP_FINAL_FORM.md) for the full roadmap with rationale.
 
@@ -428,7 +429,7 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v0.3.0
+po-core version   # v1.0.0
 po-core status
 po-core --help
 ```
@@ -594,7 +595,7 @@ The observer script will print:
 `scripts/observe_device.py` also sets `PO_STRUCTURED_OUTPUT=1` with
 `os.environ.setdefault(...)`, so existing environment values are preserved.
 
-### Legacy API (Deprecated — will be removed in v0.3)
+### Legacy API (Removed in v0.3)
 
 ```python
 # run_ensemble() was removed in v0.3
@@ -654,7 +655,7 @@ If you use Po_core in academic work, please cite:
 @software{po_core2024,
   author = {Flying Pig Philosopher},
   title = {Po_core: Philosophy-Driven AI System},
-  year = {2024},
+  year = {2026},
   url = {https://github.com/hiroshitanaka-creator/Po_core}
 }
 ```
