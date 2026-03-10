@@ -55,7 +55,9 @@ class LLMPhilosopher(Philosopher):
     # ── Public factory ──────────────────────────────────────────────
 
     @classmethod
-    def from_persona(cls, philosopher_id: str, adapter: "LLMAdapter") -> "LLMPhilosopher":
+    def from_persona(
+        cls, philosopher_id: str, adapter: "LLMAdapter"
+    ) -> "LLMPhilosopher":
         """philosopher_id とアダプターから LLMPhilosopher を生成する。"""
         return cls(philosopher_id=philosopher_id, adapter=adapter)
 
