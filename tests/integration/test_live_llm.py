@@ -36,7 +36,10 @@ _HAS_ANY_LLM = _HAS_ANTHROPIC or _HAS_OPENAI
 pytestmark = [
     pytest.mark.live_llm,
     pytest.mark.slow,
-    pytest.mark.skipif(not _HAS_ANY_LLM, reason="No LLM API key set (ANTHROPIC_API_KEY / OPENAI_API_KEY)"),
+    pytest.mark.skipif(
+        not _HAS_ANY_LLM,
+        reason="No LLM API key set (ANTHROPIC_API_KEY / OPENAI_API_KEY)",
+    ),
 ]
 
 # ---------------------------------------------------------------------------
@@ -67,10 +70,20 @@ def test_live_output_schema_compliance(sample_prompt: str) -> None:
 
     from po_core.app.api import run
 
-    schema_path = Path(__file__).resolve().parents[2] / "src" / "po_core" / "spec" / "output_schema_v1.json"
+    schema_path = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "po_core"
+        / "spec"
+        / "output_schema_v1.json"
+    )
     if not schema_path.exists():
         schema_path = (
-            Path(__file__).resolve().parents[2] / "src" / "po_core" / "app" / "output_schema_v1.json"
+            Path(__file__).resolve().parents[2]
+            / "src"
+            / "po_core"
+            / "app"
+            / "output_schema_v1.json"
         )
 
     result = run(sample_prompt)
@@ -83,7 +96,9 @@ def test_live_output_schema_compliance(sample_prompt: str) -> None:
     # Structural assertions (independent of schema file location)
     assert "meta" in result, "output must have 'meta'"
     assert result["meta"].get("pocore_version") == "1.0.0", "version must be 1.0.0"
-    assert "options" in result or "questions" in result, "output must have options or questions"
+    assert (
+        "options" in result or "questions" in result
+    ), "output must have options or questions"
 
 
 # ---------------------------------------------------------------------------
@@ -99,9 +114,10 @@ def test_live_ethics_gate_blocks_harmful(harmful_prompt: str) -> None:
     recommendation = result.get("recommendation", {})
     action = recommendation.get("action", "").upper()
 
-    assert action in {"REJECT", "ESCALATE"}, (
-        f"Harmful prompt should be REJECT/ESCALATE, got: {action!r}"
-    )
+    assert action in {
+        "REJECT",
+        "ESCALATE",
+    }, f"Harmful prompt should be REJECT/ESCALATE, got: {action!r}"
 
 
 # ---------------------------------------------------------------------------
@@ -117,9 +133,9 @@ def test_live_determinism_with_seed(sample_prompt: str) -> None:
     result_b = run(sample_prompt, seed=42)
 
     # Compare structural fields (not wall-clock timestamps)
-    assert result_a.get("recommendation", {}).get("action") == result_b.get("recommendation", {}).get(
-        "action"
-    ), "recommendation.action must be deterministic with same seed"
+    assert result_a.get("recommendation", {}).get("action") == result_b.get(
+        "recommendation", {}
+    ).get("action"), "recommendation.action must be deterministic with same seed"
 
     options_a = {o.get("option_id") for o in result_a.get("options", [])}
     options_b = {o.get("option_id") for o in result_b.get("options", [])}
@@ -143,4 +159,6 @@ def test_live_philosopher_diversity(sample_prompt: str) -> None:
     if deliberation:
         avg_novelty = deliberation.get("avg_novelty", None)
         if avg_novelty is not None:
-            assert avg_novelty > 0, "avg_novelty must be positive (philosopher proposals are diverse)"
+            assert (
+                avg_novelty > 0
+            ), "avg_novelty must be positive (philosopher proposals are diverse)"

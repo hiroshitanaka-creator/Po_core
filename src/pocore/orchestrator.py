@@ -52,7 +52,9 @@ def run_case(
     parsed = parse_input.parse(case, case_path=case_path, now=created_at)
     short_id = parsed.short_id
     features = parsed.features
-    profile = str(features.get("scenario_profile", "")) if isinstance(features, dict) else ""
+    profile = (
+        str(features.get("scenario_profile", "")) if isinstance(features, dict) else ""
+    )
 
     # Frozen golden contracts keep legacy metadata as-is.
     # See AGENTS.md freeze rule for case_001/case_009.
