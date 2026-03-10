@@ -38,9 +38,9 @@
     "generator": {
       "mode": "stub",
       "name": "generator_stub",
-      "version": "0.3.0"
+      "version": "1.0.0"
     },
-    "pocore_version": "0.3.0",
+    "pocore_version": "1.0.0",
     "run_id": "case_011_expected_stub_compact_v1",
     "schema_version": "1.0",
     "seed": 0

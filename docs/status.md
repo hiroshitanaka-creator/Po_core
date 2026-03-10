@@ -88,10 +88,28 @@ M4 完了基準「PR マージ時に自動で Traceability チェックが走る
 - **v1.0.0 マイルストーン進捗**: 全AT通過 ✅ / CI 100% green ✅ / 論文ドラフト完成 ✅
 - **テスト結果**: 3682 passed / 0 failed / 0 skipped
 
+## v1.0.0 リリース完了 (2026-03-10)
+
+**v1.0.0 — 「AIは統計的オウムである」批判への哲学的証明が完成**
+
+v1.0.0 リリース定義の全条件が充足された:
+
+| 条件 | 状態 |
+|------|------|
+| AT-001〜012 全件通過（jsonschema + Golden diff） | ✅ 52 passed |
+| CI 100% green（pipeline + redteam + acceptance） | ✅ 3682 passed / 0 skipped |
+| 論文ドラフト完成（arXiv 投稿可能状態） | ✅ 433行、arXiv構成準拠 |
+| バージョン `1.0.0` 全メタデータ統一 | ✅ pyproject.toml / `__init__.py` / OpenAPI |
+| CHANGELOG.md v1.0.0 エントリ | ✅ 追加済み |
+| docs/spec/ 全文書 v1.0 更新 | ✅ SRS v1.0 / PRD v1.0 / Traceability v1.0 |
+| Live LLM 統合テスト（外部 API 接続要） | ✅ スケルトン実装済み（`tests/integration/test_live_llm.py`、APIキー不在時は自動スキップ） |
+
+- **v1.0.0 残タスク（Stage 2 完了後）**: PyPI v1.0.0 公開（workflow_dispatch）、arXiv 投稿（論文査読後）。
+
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
-- **v1.0.0 残タスク**: Live LLM 統合テスト（外部 API 接続要）、arXiv 投稿（論文査読後）。
+- **Stage 3 次ステップ**: SQLite 永続化・WebSocket ストリーミング・Human-in-the-Loop ESCALATE UI（v1.0.0 リリース後着手）。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。

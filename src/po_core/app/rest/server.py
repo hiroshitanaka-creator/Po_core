@@ -104,7 +104,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 - Open source: [AGPL-3.0-or-later](https://github.com/hiroshitanaka-creator/Po_core/blob/main/LICENSE)
 - Commercial: [Commercial License Terms](https://github.com/hiroshitanaka-creator/Po_core/blob/main/COMMERCIAL_LICENSE.md)
         """,
-        version="0.3.0",
+        version="1.0.0",
         contact={
             "name": "Flying Pig Project",
             "url": "https://github.com/hiroshitanaka-creator/Po_core",
