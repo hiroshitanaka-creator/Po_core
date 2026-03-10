@@ -215,16 +215,33 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             )
 
     # PhilosopherRegistry (SafetyModeに応じた編成制御 + cost budget)
-    registry = PhilosopherRegistry(
-        max_normal=settings.philosophers_max_normal,
-        max_warn=settings.philosophers_max_warn,
-        max_critical=settings.philosophers_max_critical,
-        budget_normal=settings.philosopher_cost_budget_normal,
-        budget_warn=settings.philosopher_cost_budget_warn,
-        budget_critical=settings.philosopher_cost_budget_critical,
-        battalion_plans=battalion_plans,
-        required_roles=selected_roles,
-    )
+    if getattr(settings, "enable_llm_philosophers", False):
+        from po_core.adapters.llm_adapter import LLMAdapter
+        from po_core.philosophers.llm_philosopher import build_llm_philosopher_registry
+
+        llm_adapter = LLMAdapter.from_settings(settings)
+        registry = build_llm_philosopher_registry(
+            adapter=llm_adapter,
+            max_normal=settings.philosophers_max_normal,
+            max_warn=settings.philosophers_max_warn,
+            max_critical=settings.philosophers_max_critical,
+            budget_normal=settings.philosopher_cost_budget_normal,
+            budget_warn=settings.philosopher_cost_budget_warn,
+            budget_critical=settings.philosopher_cost_budget_critical,
+            battalion_plans=battalion_plans,
+            required_roles=selected_roles,
+        )
+    else:
+        registry = PhilosopherRegistry(
+            max_normal=settings.philosophers_max_normal,
+            max_warn=settings.philosophers_max_warn,
+            max_critical=settings.philosophers_max_critical,
+            budget_normal=settings.philosopher_cost_budget_normal,
+            budget_warn=settings.philosopher_cost_budget_warn,
+            budget_critical=settings.philosopher_cost_budget_critical,
+            battalion_plans=battalion_plans,
+            required_roles=selected_roles,
+        )
 
     return WiredSystem(
         memory_read=mem,
