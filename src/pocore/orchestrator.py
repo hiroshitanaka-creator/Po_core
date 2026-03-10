@@ -29,7 +29,7 @@ from .utils import deterministic_run_id, input_digest, normalize_now
 UNKNOWN_BLOCK = policy_v1.UNKNOWN_BLOCK
 TIME_PRESSURE_DAYS = policy_v1.TIME_PRESSURE_DAYS
 
-POCORE_VERSION = "0.3.0"
+POCORE_VERSION = "1.0.0"
 FROZEN_PROFILE_POCORE_VERSION = "0.1.0"
 SCHEMA_VERSION = "1.0"
 

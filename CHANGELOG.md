@@ -12,16 +12,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [1.0.0] - 2026-03-10
+
+**v1.0.0 — 哲学的AI推論の証明完成: 全AT通過 · CI 100% green · 論文ドラフト完成**
+
 ### Added
 
 - feat(cli): add `src/po_core/cli/commands.py` — Click-based non-interactive CLI subcommand group (`hello`, `status`, `version`, `prompt`, `log`) replacing legacy interactive `main`. Entrypoint `po-core` now routes to this handler.
 - docs(paper): expand `docs/paper/paper.md` from 51-line skeleton to 433-line academic draft with arXiv-standard sections (Abstract, Introduction, Background, Method, Experiments, Comparative Evaluation, Implementation, Limitations, Conclusion, References, Appendices A–C).
 - feat(sdk): add `clients/typescript/package.json` and `tsconfig.json` — TypeScript SDK now fully buildable (`npm run build` → `tsc`) and testable (`npm run test` → node test.mjs) as required by `typescript-sdk.yml` CI.
+- chore(release): bump package version to `1.0.0` — first stable release. All v1.0.0 conditions met: AT-001〜012 全件通過, CI 100% green (3682 passed / 0 skipped), paper draft complete (arXiv-ready).
 
 ### Changed
 
 - docs(status): resync `docs/status.md` snapshot with merged Phase9–12 reality and current main-state governance/progress facts.
 - chore(lint): fix isort import ordering in `src/pocore/orchestrator.py`, `tests/unit/test_po_trace.py`, `tests/unit/test_po_trace_db.py`, `tests/unit/test_po_viewer.py`.
+- chore(version): update all runtime version metadata (`__version__`, `POCORE_VERSION`, `_POCORE_VERSION`, `_GENERATOR_VERSION`, OpenAPI `version`) to `1.0.0`.
+- docs(spec): update SRS, PRD, Traceability Matrix to v1.0 Released status reflecting 42-philosopher architecture and all milestones (M0–M4) complete.
 
 ### Fixed
 
@@ -34,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Tests
 
 - test(migration): migrate 8 legacy skipped test files to current API — 3534→3682 passed, 134→0 skipped (+148 tests). Files: `test_cli.py`, `test_po_trace.py`, `test_philosophers_legacy.py`, `test_po_trace_db.py`, `test_visualizations.py`, `test_po_viewer.py`, `test_prototypes.py`, `test_nietzsche.py`.
+- test(acceptance): all 52 acceptance tests pass (AT-001〜012 + session + M3 suite). Golden files updated to v1.0.0.
 
 ## [0.3.0] - 2026-03-08
 

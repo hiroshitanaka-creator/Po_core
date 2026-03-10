@@ -1,13 +1,13 @@
 # Po_core トレーサビリティマトリクス (Traceability Matrix)
 
-**Version:** 0.4
-**Date:** 2026-03-03
-**参照 SRS:** docs/spec/srs_v0.1.md
+**Version:** 1.0
+**Date:** 2026-03-10
+**参照 SRS:** docs/spec/srs_v0.1.md (v1.0)
 **参照テスト:** docs/spec/test_cases.md
 
 ---
 
-## 現在地の確認 (2026-03-03)
+## 現在地の確認 (2026-03-10)
 
 | 層 | 状態 |
 |----|------|
@@ -15,12 +15,13 @@
 | **安全性** (W_Ethics Gate・Red Team 100%検出) | ✅ 完成 |
 | **配布** (FastAPI・Docker・SSE・AsyncPartyMachine) | ✅ 完成 |
 | **自律進化** (FreedomPressureV2・MetaEthicsMonitor・3層メモリ) | ✅ 完成 |
-| **仕様化** (PRD/SRS/Schema/TestCases/Traceability) | ✅ M0 完成 |
-| **E2Eスタブ + 受け入れテスト** | 🔄 M1 進行中（期限: 2026-03-15） |
-| **PyPI 公開** | 🔲 未実施 |
-| **倫理・責任エンジン v1** | 🔲 未実装（M2） |
-| **問いの層 v1** | 🔲 未実装（M3） |
-| **学術論文** | 🔲 執筆中（Stage 4） |
+| **仕様化** (PRD/SRS/Schema/TestCases/Traceability) | ✅ M0〜M4 完成 |
+| **E2Eスタブ + 受け入れテスト** | ✅ 完成（AT-001〜012 全件通過、52 passed） |
+| **倫理・責任エンジン v1** | ✅ 完成（M2: ethics_v1 + responsibility_v1） |
+| **問いの層 v1** | ✅ 完成（M3: question_layer v1） |
+| **PyPI 公開** | ✅ v0.3.0 公開済み・v1.0.0 公開対象 |
+| **学術論文** | ✅ ドラフト完成（433行、arXiv構成準拠） |
+| **CI** | ✅ 100% green（3682 passed / 0 skipped） |
 
 ---
 
@@ -45,22 +46,22 @@
 
 | 要件 ID | 優先度 | 実装コンポーネント | テストファイル | 状態 |
 |---------|--------|----------------|--------------|------|
-| FR-OUT-001 | MUST | `src/po_core/app/rest/models.py`（ReasonResponse）+ Composer | `tests/unit/test_output_schema.py`（予定） | 🔲 Pending |
-| FR-OPT-001 | MUST | `src/po_core/party_machine.py` + Option Generator | AT-001〜010 全テスト | 🔲 Pending |
-| FR-REC-001 | MUST | Composer（recommendation フィールド） | AT-REC-001, AT-001, AT-004, AT-007 | 🔲 Pending |
-| FR-ETH-001 | MUST | `src/po_core/safety/wethics_gate/explanation.py`（ExplanationChain）+ ethics engine | `tests/unit/test_ethics.py`（予定） | 🔲 Pending |
-| FR-ETH-002 | MUST | ethics engine（tradeoffs フィールド） | AT-ETH-002, AT-002, AT-004, AT-008 | 🔲 Pending |
-| FR-RES-001 | MUST | responsibility engine | AT-RES-001, AT-002, AT-003, AT-005, AT-006, AT-008 | 🔲 Pending |
-| FR-UNC-001 | MUST | Composer（uncertainty フィールド） | AT-UNC-001, AT-002, AT-003, AT-008, AT-010 | 🔲 Pending |
-| FR-Q-001 | MUST | question_layer（問い生成） | AT-Q-001, AT-009, AT-010 | 🔲 Pending |
-| FR-Q-002 | MUST | question_layer（問い抑制） | AT-Q-002, AT-001〜AT-008（問いなし確認） | 🔲 Pending |
-| FR-TR-001 | MUST | `src/po_core/trace/in_memory.py`（InMemoryTracer）+ Composer | AT-TR-001, AT-001, AT-006 | 🔲 Pending |
+| FR-OUT-001 | MUST | `src/po_core/app/rest/models.py`（ReasonResponse）+ Composer | `tests/acceptance/` (jsonschema gate) | ✅ Implemented |
+| FR-OPT-001 | MUST | `src/po_core/party_machine.py` + Option Generator | AT-001〜012 全テスト | ✅ Implemented |
+| FR-REC-001 | MUST | Composer（recommendation フィールド） | AT-REC-001, AT-001, AT-004, AT-007 | ✅ Implemented |
+| FR-ETH-001 | MUST | `src/po_core/app/ethics_engine.py`（ExplanationChain + ethics_v1） | `tests/acceptance/` AT-001〜008 | ✅ Implemented（M2） |
+| FR-ETH-002 | MUST | ethics engine（tradeoffs フィールド / rules_fired） | AT-ETH-002, AT-002, AT-004, AT-008 | ✅ Implemented（M2） |
+| FR-RES-001 | MUST | `src/po_core/app/responsibility_engine.py` | AT-RES-001, AT-002, AT-003, AT-005, AT-006, AT-008 | ✅ Implemented（M2） |
+| FR-UNC-001 | MUST | Composer（uncertainty フィールド） | AT-UNC-001, AT-002, AT-003, AT-008, AT-010 | ✅ Implemented |
+| FR-Q-001 | MUST | `src/po_core/app/question_layer.py`（問い生成） | AT-Q-001, AT-009, AT-010 | ✅ Implemented（M3） |
+| FR-Q-002 | MUST | question_layer（問い抑制） | AT-Q-002, AT-001〜AT-008（問いなし確認） | ✅ Implemented（M3） |
+| FR-TR-001 | MUST | `src/po_core/trace/in_memory.py`（InMemoryTracer）+ Composer | AT-TR-001, AT-001, AT-006 | ✅ Implemented |
 | FR-DEL-001 | MUST | `src/po_core/deliberation/engine.py`（DeliberationEngine） | `tests/test_run_turn_e2e.py`（CI 必須） | ✅ Implemented |
 | FR-SAF-001 | MUST | `src/po_core/safety/wethics_gate/gate.py`（W0〜W4） | `tests/redteam/`（全 redteam テスト） | ✅ Implemented |
 | FR-SAF-002 | MUST | `src/po_core/safety/wethics_gate/detectors.py`（PromptInjectionDetector） | `tests/redteam/test_prompt_injection.py` | ✅ Implemented |
 | FR-API-001 | SHOULD | `src/po_core/app/rest/`（FastAPI routers） | `tests/unit/test_rest_api.py` | ✅ Implemented |
 | FR-DIV-001 | MUST | `src/po_core/philosophers/`（42哲学者: 39 classic + 2 African + 1 Canadian） | `tests/test_philosophers_pytest.py` | ✅ Implemented（ADR-0006） |
-| NFR-REP-001 | MUST | `src/po_core/runtime/settings.py`（seed injection） | `tests/test_end_to_end.py`（予定） | 🔲 Pending |
+| NFR-REP-001 | MUST | `src/po_core/runtime/settings.py`（seed injection） | `tests/test_golden_e2e.py`, `tests/acceptance/` | ✅ Implemented |
 | NFR-PERF-001 | SHOULD | `src/po_core/party_machine.py`（AsyncPartyMachine） | `tests/benchmarks/test_pipeline_perf.py` | ✅ Implemented |
 | NFR-GOV-001 | MUST | `.github/workflows/ci.yml` + PR テンプレ | CI パス必須 | ✅ Implemented |
 | NFR-SEC-001 | MUST | `src/po_core/app/rest/auth.py`, `rate_limit.py` | `tests/unit/test_rest_api.py`（auth テスト） | ✅ Implemented |

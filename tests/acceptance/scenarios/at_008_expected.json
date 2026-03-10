@@ -4,13 +4,13 @@
   "expected": {
     "meta": {
       "schema_version": "1.0",
-      "pocore_version": "0.3.0",
+      "pocore_version": "1.0.0",
       "run_id": "95b51cca-16fe-6261-5bba-a05cd94e8a35",
       "seed": 42,
       "deterministic": true,
       "generator": {
         "name": "po_core.ensemble.run_turn",
-        "version": "0.3.0",
+        "version": "1.0.0",
         "mode": "rule_based"
       }
     },
