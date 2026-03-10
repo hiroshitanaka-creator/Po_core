@@ -64,9 +64,10 @@ def harmful_prompt() -> str:
 
 def test_live_output_schema_compliance(sample_prompt: str) -> None:
     """Output must conform to output_schema_v1.json even with live LLM responses."""
-    import jsonschema
-    from pathlib import Path
     import json
+    from pathlib import Path
+
+    import jsonschema
 
     from po_core.app.api import run
 
