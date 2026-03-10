@@ -94,6 +94,16 @@ class Settings:
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
 
+    # ---- LLM Philosopher Integration ----
+    # 環境変数: PO_LLM_ENABLED=true で全哲学者を LLM バックエンドに切り替え
+    enable_llm_philosophers: bool = False
+    # gemini | openai | claude | grok
+    llm_provider: str = "gemini"
+    # 空=provider別デフォルト (gemini-2.0-flash-lite / gpt-4o-mini / claude-haiku-4-5 / grok-3-mini)
+    llm_model: str = ""
+    # LLM 呼び出しタイムアウト秒数
+    llm_timeout_s: float = 10.0
+
     # ---- Deliberation Engine (Phase 2) ----
     # 1 = no deliberation (backward compatible), 2+ = multi-round
     deliberation_max_rounds: int = 2
@@ -111,8 +121,15 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
-        """Build settings with PO_ROLES environment override."""
-        return cls(philosopher_roles=_read_roles_from_env())
+        """Build settings with environment variable overrides."""
+        llm_enabled_raw = os.getenv("PO_LLM_ENABLED", "").strip().lower()
+        return cls(
+            philosopher_roles=_read_roles_from_env(),
+            enable_llm_philosophers=llm_enabled_raw in {"1", "true", "yes"},
+            llm_provider=os.getenv("PO_LLM_PROVIDER", "gemini").strip(),
+            llm_model=os.getenv("PO_LLM_MODEL", "").strip(),
+            llm_timeout_s=float(os.getenv("PO_LLM_TIMEOUT", "10.0")),
+        )
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -138,6 +155,10 @@ class Settings:
             "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
             "philosopher_roles": [r.value for r in self.philosopher_roles],
+            "enable_llm_philosophers": self.enable_llm_philosophers,
+            "llm_provider": self.llm_provider,
+            "llm_model": self.llm_model,
+            "llm_timeout_s": self.llm_timeout_s,
             "deliberation_max_rounds": self.deliberation_max_rounds,
             "deliberation_top_k_pairs": self.deliberation_top_k_pairs,
             "deliberation_prompt_mode": self.deliberation_prompt_mode,

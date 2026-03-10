@@ -66,6 +66,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+llm = [
+    "google-generativeai>=0.8",
+    "openai>=1.0",
+    "anthropic>=0.40",
+]
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
@@ -88,7 +93,7 @@ viz = [
     "bokeh>=3.3.0",
 ]
 all = [
-    "po-core-flyingpig[dev,docs,viz]",
+    "po-core-flyingpig[dev,docs,viz,llm]",
 ]
 
 [project.urls]
