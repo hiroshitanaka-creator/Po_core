@@ -52,9 +52,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # ── データクラス ─────────────────────────────────────────────
 
+
 @dataclass
 class ExperimentRow:
     """1回の実験結果（CSV 1行分）。"""
+
     timestamp: str
     provider: str
     model: str
@@ -101,11 +103,23 @@ class ExperimentRow:
 
 
 CSV_FIELDNAMES = [
-    "timestamp", "provider", "model", "po_core_enabled", "prompt",
-    "run_index", "action_type", "content", "confidence",
-    "freedom_pressure", "semantic_delta", "blocked_tensor",
-    "w_ethics_decision", "w_ethics_rules", "raw_llm_output",
-    "elapsed_ms", "error",
+    "timestamp",
+    "provider",
+    "model",
+    "po_core_enabled",
+    "prompt",
+    "run_index",
+    "action_type",
+    "content",
+    "confidence",
+    "freedom_pressure",
+    "semantic_delta",
+    "blocked_tensor",
+    "w_ethics_decision",
+    "w_ethics_rules",
+    "raw_llm_output",
+    "elapsed_ms",
+    "error",
 ]
 
 PROVIDER_CHOICES = ["gemini", "openai", "claude", "grok"]
@@ -113,12 +127,13 @@ PROVIDER_CHOICES = ["gemini", "openai", "claude", "grok"]
 
 # ── Po_core ON 実行 ─────────────────────────────────────────
 
+
 def run_po_core_on(prompt: str, provider: str, model: str) -> ExperimentRow:
     """Po_core パイプラインを通してLLM推論を実行する。"""
+    from po_core.domain.context import Context
+    from po_core.ensemble import run_turn
     from po_core.runtime.settings import Settings
     from po_core.runtime.wiring import build_test_system
-    from po_core.ensemble import run_turn
-    from po_core.domain.context import Context
 
     settings = Settings(
         enable_llm_philosophers=True,
@@ -183,6 +198,7 @@ def run_po_core_on(prompt: str, provider: str, model: str) -> ExperimentRow:
 
 # ── Po_core OFF 実行（LLM直接呼び出し）────────────────────────
 
+
 def run_po_core_off(prompt: str, provider: str, model: str) -> ExperimentRow:
     """Po_coreを通さずLLMに直接プロンプトを送る（ベースライン）。"""
     from po_core.adapters.llm_adapter import LLMAdapter
@@ -214,6 +230,7 @@ def run_po_core_off(prompt: str, provider: str, model: str) -> ExperimentRow:
     # JSON パース試行
     try:
         import re
+
         m = re.search(r"\{[\s\S]*?\}", raw)
         if m:
             data = json.loads(m.group())
@@ -227,6 +244,7 @@ def run_po_core_off(prompt: str, provider: str, model: str) -> ExperimentRow:
 
 
 # ── ヘルパー ───────────────────────────────────────────────────
+
 
 def _default_model(provider: str) -> str:
     defaults = {
@@ -271,6 +289,7 @@ def _check_api_key(provider: str) -> bool:
 
 # ── メインロジック ──────────────────────────────────────────────
 
+
 def run_experiment(
     prompts: list[str],
     providers: list[str],
@@ -313,9 +332,12 @@ def run_experiment(
                         except Exception as e:
                             row = ExperimentRow(
                                 timestamp=datetime.utcnow().isoformat(),
-                                provider=provider, model=model,
-                                po_core_enabled=False, prompt=prompt,
-                                run_index=run_idx, error=str(e),
+                                provider=provider,
+                                model=model,
+                                po_core_enabled=False,
+                                prompt=prompt,
+                                run_index=run_idx,
+                                error=str(e),
                             )
                         print(f"done ({row.elapsed_ms:.0f}ms)", flush=True)
                         writer.writerow(row.to_dict())
@@ -334,9 +356,12 @@ def run_experiment(
                         except Exception as e:
                             row = ExperimentRow(
                                 timestamp=datetime.utcnow().isoformat(),
-                                provider=provider, model=model,
-                                po_core_enabled=True, prompt=prompt,
-                                run_index=run_idx, error=str(e),
+                                provider=provider,
+                                model=model,
+                                po_core_enabled=True,
+                                prompt=prompt,
+                                run_index=run_idx,
+                                error=str(e),
                             )
                         print(
                             f"done ({row.elapsed_ms:.0f}ms) "
@@ -363,6 +388,7 @@ def run_experiment(
 
 # ── CLI ──────────────────────────────────────────────────────────
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Po_core ON/OFF 4社LLM比較実験",
@@ -372,7 +398,8 @@ def main() -> None:
     prompt_group = parser.add_mutually_exclusive_group(required=True)
     prompt_group.add_argument("--prompt", "-p", help="実験プロンプト（1つ）")
     prompt_group.add_argument(
-        "--prompt-file", "-f",
+        "--prompt-file",
+        "-f",
         help="プロンプト一覧テキストファイル（1行1プロンプト）",
     )
     parser.add_argument(
@@ -382,14 +409,19 @@ def main() -> None:
         choices=PROVIDER_CHOICES + ["all"],
         help="使用するプロバイダ (default: gemini)",
     )
-    parser.add_argument("--runs", "-n", type=int, default=3, help="1プロンプトあたり実行回数")
     parser.add_argument(
-        "--output", "-o",
+        "--runs", "-n", type=int, default=3, help="1プロンプトあたり実行回数"
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
         default=f"results/experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
         help="CSV出力先",
     )
     parser.add_argument("--model", default="", help="モデル名上書き（空=自動選択）")
-    parser.add_argument("--po-core-off-only", action="store_true", help="ベースラインのみ実行")
+    parser.add_argument(
+        "--po-core-off-only", action="store_true", help="ベースラインのみ実行"
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="詳細出力")
     args = parser.parse_args()
 
@@ -410,7 +442,9 @@ def main() -> None:
     print(f"  prompts  : {len(prompts)}件")
     print(f"  providers: {providers}")
     print(f"  runs     : {args.runs}回/プロンプト")
-    print(f"  po_core  : {'OFF only (baseline)' if args.po_core_off_only else 'ON + OFF'}")
+    print(
+        f"  po_core  : {'OFF only (baseline)' if args.po_core_off_only else 'ON + OFF'}"
+    )
     print(f"  output   : {args.output}")
 
     run_experiment(
