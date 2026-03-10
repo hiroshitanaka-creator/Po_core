@@ -326,7 +326,7 @@ class Nietzsche(Philosopher):
             test_result = "Passes Eternal Recurrence"
             description = "Would affirm this life eternally - ultimate life affirmation"
             attitude = "Amor fati"
-        elif (has_eternal >= 1 and has_affirm_repeat == 0):
+        elif has_eternal >= 1 and has_affirm_repeat == 0:
             test_result = "Fails Eternal Recurrence"
             description = "Would not want to repeat this life - life-denying"
             attitude = "Regret"

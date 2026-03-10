@@ -450,7 +450,10 @@ class TestPoTraceIntegration:
         event_names = [e["event"] for e in events]
         # Pipeline always emits at least TensorComputed and a proposal event
         assert len(events) > 0
-        assert any("Tensor" in name or "Proposal" in name or "Pareto" in name for name in event_names)
+        assert any(
+            "Tensor" in name or "Proposal" in name or "Pareto" in name
+            for name in event_names
+        )
 
     def test_trace_records_metrics(self):
         """Test that PoSelf result contains ensemble metrics."""
