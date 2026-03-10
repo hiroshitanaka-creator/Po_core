@@ -42,6 +42,10 @@ jobs:
           PYTHONPATH=src python scripts/export_openapi.py
           python scripts/generate_ts_openapi_types.py
 
+      - name: Install Node dependencies
+        working-directory: clients/typescript
+        run: npm install
+
       - name: Build and test SDK
         working-directory: clients/typescript
         run: |
@@ -68,4 +72,5 @@ jobs:
           PYTHONPATH=src python scripts/export_openapi.py
           python scripts/generate_ts_openapi_types.py
           cd clients/typescript
+          npm install
           npm pack
