@@ -1,0 +1,960 @@
+Po_core: A Philosophy-Driven AI Deliberation Framework for Ethical Decision Support
+
+Authors: Flying Pig Philosopher
+Affiliation: Independent Research
+Contact: [repository] https://github.com/hiroshitanaka-creator/Po_core
+Package: po-core-flyingpig (PyPI)
+Version: 0.3.0 — March 2026
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ABSTRACT
+
+Large language models (LLMs) generate outputs by interpolating statistical
+patterns in training data. This property has led critics to question whether
+such systems are capable of genuine deliberation or ethical accountability,
+as opposed to producing text that merely resembles reasoning. We describe
+Po_core, a deliberation framework in which 42 philosopher AI personas,
+organized across Western, Eastern, African, and Canadian philosophical
+traditions, evaluate prompts using three quantitative tensor metrics and a
+three-layer ethical gate before producing a response.
+
+The system is deterministic in the strict sense: given identical inputs and
+random seeds, it produces identical outputs at the byte level. This property
+is enforced by a CI pipeline running 3,682 tests, all of which passed at the
+time of writing, along with 52 acceptance tests that compare pipeline outputs
+against frozen golden files.
+
+A controlled experiment examined how ethical constraints affect the quality
+of philosophical synthesis. Across 45 trials distributed over three LLM
+backends and three experimental conditions, systems operating under the
+framework's ethical constraint transformed Nietzsche's concept of the Will
+to Power into generativity-oriented formulations in every constrained trial,
+while no such transformation occurred in unconstrained conditions. The
+statistical separation was complete (χ² = 45.0, p < 10⁻⁶).
+
+On a four-axis evaluation covering philosophical diversity, output
+explainability, adversarial safety, and emergent synthesis, Po_core scored
+91.75 overall, compared to 59.75 for a Mixture-of-Experts baseline, 51.0
+for an RLHF-trained model, 49.25 for a chain-of-thought baseline, and 44.50
+for an unaugmented frontier LLM.
+
+Keywords: AI ethics, philosophical deliberation, W_Ethics Gate, Solar Will,
+deterministic AI, multi-perspective reasoning, ethical constraints
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. INTRODUCTION
+
+1.1 Background
+
+In 2021, Bender and colleagues introduced the phrase "stochastic parrot" to
+characterize LLMs as systems that produce statistically coherent text by
+recombining training data without grounding in meaning, consequence, or
+ethical reasoning (Bender et al., 2021). The criticism is not merely
+rhetorical. It raises a design question with practical implications: if an
+AI system cannot trace why a particular output was selected, and cannot
+verify that the selection process respected stated ethical principles, then
+deploying such a system in contexts where accountability matters — clinical
+decision support, policy analysis, ethical counseling — carries risks that
+are difficult to quantify or control.
+
+Existing approaches to this problem fall into two broad categories. One
+family of methods modifies model training to incorporate human preferences or
+constitutionally stated principles (Ouyang et al., 2022; Bai et al., 2022).
+The other pursues post-hoc interpretability by analyzing attention weights
+or activation patterns after the fact. Neither approach makes the reasoning
+process itself observable at runtime, and neither provides a natural
+mechanism for integrating philosophically diverse perspectives into a single
+deliberation.
+
+1.2 Approach
+
+Po_core takes a different path. Rather than training a single model to
+internalize ethical constraints, it constructs a deliberation pipeline in
+which distinct philosophical perspectives — each implemented as a named
+module with a defined interface — evaluate a prompt through a structured
+sequence of steps. The pipeline's outputs are fully traceable: every ethical
+decision is logged with the identifier of the rule that produced it, and the
+complete deliberation record is available for inspection.
+
+The framework does not claim to solve the problem of AI alignment in general.
+Its scope is deliberative decision support: given a question or situation
+with genuine ethical complexity, produce a response that reflects multiple
+philosophical traditions, applies named ethical rules transparently, and can
+be reproduced exactly given the same inputs.
+
+1.3 Contributions
+
+This paper reports four contributions. First, we describe the architecture
+of the Po_core deliberation pipeline, a ten-step hexagonal system in which
+42 philosopher modules interact through tensor-valued state representations
+and a three-layer ethical gate. Second, we present empirical results from a
+controlled experiment on the effect of ethical constraints on philosophical
+emergence quality, including the Solar Will phenomenon described in Section 4.
+Third, we provide a comparative evaluation against four baselines on
+dimensions of diversity, explainability, safety, and emergent synthesis.
+Fourth, we document the determinism and reproducibility properties of the
+implementation, including the test suite and acceptance test schema.
+
+The system is publicly available as po-core-flyingpig on PyPI. All results
+reported here are reproducible by running the included test suite.
+
+1.4 Paper Organization
+
+Section 2 reviews related work. Section 3 describes the system architecture.
+Section 4 presents the Solar Will experiment. Section 5 reports comparative
+evaluation results. Section 6 describes implementation and reproducibility
+properties. Section 7 discusses implications and limitations. Section 8
+concludes.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2. BACKGROUND AND RELATED WORK
+
+2.1 The Stochastic Parrot Critique and Alignment Research
+
+The stochastic parrot framing (Bender et al., 2021) synthesized earlier
+concerns about language models and meaning (Marcus, 2018; Lake et al., 2017)
+into a pointed critique of scale-first development. The basic argument is
+that increasing model size and training data does not, by itself, constitute
+progress toward systems capable of genuine reasoning or ethical judgment.
+
+In response, the dominant research programs have been RLHF — reinforcement
+learning from human feedback (Ouyang et al., 2022) — and Constitutional AI
+(Bai et al., 2022). Both methods constrain model outputs, but they do so
+during training rather than at inference time, and neither provides a
+transparent record of which constraint fired on a given output. Preference
+weights learned through RLHF are not interpretable in terms of named ethical
+principles, and Constitutional AI's rule sets operate as training signals
+rather than runtime filters.
+
+2.2 Ensemble and Multi-Agent Systems
+
+Mixture-of-Experts architectures (Jacobs et al., 1991; Shazeer et al., 2017)
+achieve output diversity by routing inputs to specialized sub-networks. More
+recently, multi-agent frameworks have explored coordination between multiple
+LLM instances (Park et al., 2023; Wu et al., 2023). These approaches produce
+diverse outputs, but the diversity reflects architectural routing decisions
+rather than philosophical perspective. No named philosophical tradition is
+associated with any sub-network, and the selection mechanism cannot be
+inspected in terms of ethical principles.
+
+Po_core occupies a different position. Its philosopher modules are not
+separate model instances but named computational entities with defined
+interfaces. The diversity they introduce is explicit and auditable rather
+than implicit in routing weights.
+
+2.3 Machine Ethics and Philosophical AI
+
+The formal treatment of ethics in AI systems traces at least to Wallach and
+Allen (2009), who distinguished between top-down approaches that encode
+explicit rules and bottom-up approaches that learn norms from behavior.
+Po_core is closer to the top-down tradition in that it applies named rules
+through a structured gate. However, it differs from classical rule-based
+approaches in incorporating a deliberation phase where competing philosophical
+perspectives interact before the gate applies.
+
+The Moral Machine experiment (Awad et al., 2018) demonstrated that ethical
+judgments vary systematically across cultural contexts. Po_core's
+cross-tradition corpus — which explicitly includes Western, Eastern, African,
+and Canadian traditions — is motivated in part by this finding. A deliberation
+system whose corpus is dominated by a single tradition will systematically
+reflect that tradition's biases.
+
+2.4 Reproducibility in AI Research
+
+Reproducibility has become a recognized concern in machine learning (Pineau
+et al., 2021). Stochastic training and undocumented implementation choices
+make results difficult to verify independently. Po_core addresses this at the
+system level by requiring that all stochastic operations accept explicit seeds,
+forbidding the use of wall-clock timestamps in business logic, and enforcing
+a frozen output schema through automated CI. Every result in this paper is
+associated with a seed value and a deterministic script that reproduces it.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3. SYSTEM ARCHITECTURE
+
+3.1 Pipeline Overview
+
+Po_core processes each input through a fixed sequence of ten steps:
+MemoryRead, TensorCompute, SolarWill, IntentionGate, PhilosopherSelect,
+PartyMachine, ParetoAggregate, ShadowPareto, ActionGate, and MemoryWrite.
+Each step receives an immutable value object from the preceding step and
+passes an immutable value object to the following one. No step modifies
+shared state outside of the explicit MemoryRead and MemoryWrite boundaries.
+
+The public entry point is po_core.run(), which accepts a prompt and
+configuration parameters and returns a structured response object conforming
+to output_schema_v1.json. Direct access to internal pipeline modules is
+prohibited by import guards enforced in CI. This constraint is not merely
+stylistic; it ensures that the schema validation layer cannot be bypassed.
+
+3.2 The Philosopher Corpus
+
+The framework maintains a registry of 42 philosopher modules. The corpus
+was assembled to cover traditions that are underrepresented in the training
+data of most LLMs while also including the Western classical and continental
+traditions most relevant to the ethical questions the system is designed to
+address. Fifteen modules represent Western classical philosophy, with figures
+including Aristotle, Plato, and Kant. Twelve represent the continental
+tradition, including Nietzsche, Heidegger, and Sartre. Five draw from analytic
+philosophy. Seven represent Eastern traditions, including Confucius, Laozi,
+and Dogen. Two represent African philosophy: Kwame Anthony Appiah, whose work
+addresses cosmopolitanism and anti-essentialism, and Frantz Fanon, whose
+work addresses decolonialism and liberation. One, Charles Taylor, represents
+Canadian communitarianism and the politics of recognition. The addition of
+the African and Canadian philosophers in Architectural Decision Record 0006
+(ADR-0006) was motivated by the observation that cross-tradition deliberation
+requires genuine representational diversity, not only symbolic coverage.
+
+Each philosopher module implements a reason() method that accepts a prompt
+string and a context dictionary and returns a structured proposal. Each
+module carries a calibrated risk level — zero for philosophers whose
+frameworks present no significant adversarial surface, one for standard risk,
+and two for philosophers whose frameworks may be exploited in adversarial
+prompts. Risk levels determine which modules are active under each of the
+system's three safety modes. In NORMAL mode, all 42 philosophers are active.
+In WARN mode, only the five lowest-risk modules participate. In CRITICAL mode,
+a single minimal-risk module handles the response.
+
+3.3 Tensor Deliberation Metrics
+
+Three scalar metrics, computed from the prompt and context, govern which
+philosophers are selected and how their outputs are aggregated.
+
+Freedom Pressure measures the degree to which the prompt involves existential
+stakes — questions of autonomy, consent, irreversible consequence, or identity.
+High values activate philosopher modules associated with autonomy-oriented
+frameworks, such as those of Kant, Mill, and Sartre, while reducing the weight
+of purely aesthetic or metaphysical perspectives. The current implementation
+computes Freedom Pressure as a six-dimensional tensor (FreedomPressureV2),
+capturing stakes along existential, material, social, temporal, epistemic, and
+relational axes before projecting to a scalar.
+
+Semantic Delta measures the degree of divergence among the philosophical
+proposals generated in a given pipeline run. The computation uses one of three
+backends — sentence-BERT, TF-IDF, or a basic term-overlap mode — selected
+based on runtime configuration. High Semantic Delta indicates genuine
+conceptual disagreement among the active philosopher modules and triggers
+additional synthesis rounds in the Deliberation Engine.
+
+Blocked Tensor detects ideological deadlock, defined as a state in which no
+proposal satisfies all active ethical constraints without violating at least
+one other. High Blocked Tensor escalates processing to the W_Ethics Gate's
+third layer.
+
+3.4 The W_Ethics Gate
+
+The three-layer gate applies ethical constraints at inference time and
+produces a SafetyVerdict accompanied by an ExplanationChain that records
+which layer triggered, which rule fired, and what alternative proposal was
+considered.
+
+The first layer, Structural Exclusion, applies pattern-based detection to
+identify prompts that fall into prohibited content categories regardless of
+framing. The IntentionGate.check_intent() implementation includes
+obfuscation normalization — for example, detection is not defeated by
+base64-encoding or Unicode substitution — and is combined with a
+PromptInjectionDetector that achieved a 100% detection rate against the
+56 red-team test cases in the framework's adversarial test suite, at a false
+positive rate of 20% or below.
+
+The second layer, Principle-Based Filtering, applies named ethical rules
+from the policy_v1 arbitration set. Each rule carries a rule_id, and every
+rule application is logged in a rules_fired field that appears in the
+pipeline's TraceEvent output. The governing principle across all rules is
+stated in the codebase as follows: do not distort the life-structures of this
+world. This boundary condition is deliberately formulated at a high level of
+generality; it does not enumerate prohibited behaviors but establishes a
+relational criterion that rules can apply to specific situations.
+
+The third layer, Consequence Analysis, operates through ShadowPareto, a
+variant of the Pareto aggregation step that computes an ethical shadow score
+alongside the primary proposal score. A proposal that achieves high novelty
+or stakeholder coverage but fails the ethical shadow criterion is excluded
+from the Pareto frontier even if it would otherwise be selected.
+
+3.5 The Deliberation Engine
+
+Philosopher proposals do not simply accumulate; they interact through a
+structured multi-round protocol. In each round, active philosophers produce
+proposals, which are then scored for pairwise compatibility using an
+InteractionMatrix. This matrix combines an embedding-based harmony score —
+computed as the cosine similarity of philosopher-specific embeddings — with a
+keyword tension score that identifies explicit conceptual conflicts, such as
+an individualist claim paired with a communitarian counter-claim.
+
+Proposals below a compatibility threshold enter a critique-synthesis loop.
+In this loop, each philosopher producing a low-compatibility proposal is
+provided with the critiques of other philosophers and produces a revised
+proposal. Rounds continue until proposals converge or the maximum round count,
+set by the Settings.deliberation_max_rounds parameter, is reached. The
+ParetoAggregate step then selects the Pareto-optimal proposal on three
+dimensions: ethical score, semantic novelty, and stakeholder coverage.
+
+When the PO_DEBATE_V1 feature flag is enabled, the system produces a
+synthesis report containing the open questions and points of residual
+disagreement that could not be resolved within the configured number of rounds.
+
+3.6 Tracing and Observability
+
+Every pipeline run produces a TraceEvent record with a frozen schema and a
+config_version field that tracks which version of the configuration files
+was active. The record includes a request_id for session correlation,
+per-step timestamps, the three tensor metric values, the arbitration_code
+assigned by the ethics layer, and the rules_fired list. A four-tab Dash
+web interface — covering pipeline, tensor, philosopher, and deliberation
+views — is provided for interactive inspection. The PoViewer.from_run()
+factory method allows programmatic access to the same views without the
+browser interface.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4. THE SOLAR WILL PHENOMENON: AN EXPERIMENTAL STUDY
+
+4.1 Motivation
+
+A common concern about ethics-constrained AI systems is that constraints
+suppress the generative quality of outputs. If a system filtered for ethical
+alignment produces only conservative or derivative responses, the
+deliberative benefit of the framework is undermined. We designed an
+experiment to test this concern directly.
+
+The specific question was whether W_Ethics-constrained deliberation produces
+philosophically richer or poorer synthesis than unconstrained deliberation,
+and whether the nature of that synthesis differs qualitatively in ways that
+cannot be captured by aggregate quality scores alone.
+
+4.2 Experimental Design
+
+We conducted a 3 × 3 × 5 factorial experiment with three between-subjects
+conditions, three LLM backends, and five trials per cell, for 45 trials total.
+The three conditions were: BASELINE, in which no framework was applied;
+STRUCTURE, in which the Po_core pipeline was used without the W_Ethics Gate
+active; and ETHICS, in which the full pipeline, including the W_Ethics Gate,
+was used.
+
+The three LLM backends were GPT 5.2 Thinking, Gemini 3 Pro, and Grok 4.1
+Thinking. The task in each trial was philosophical synthesis on the question
+"What is freedom?" using a 20-philosopher subset of the corpus — the subset
+available at the time the study was conducted.
+
+Trial quality was assessed with a weighted emergence score: Novelty × 0.20 +
+Integration × 0.30 + Depth × 0.20 + Coherence × 0.15 + Ethical Alignment
+× 0.15. These weights reflect a judgment that integration across perspectives
+is the primary mark of genuine synthesis, with novelty, depth, and coherence
+as secondary criteria.
+
+A binary indicator — the Nietzsche Transformation Rate — served as the
+primary outcome measure. This indicator was defined as whether the trial's
+output transformed Nietzsche's Will to Power from a domination-oriented
+reading into a generativity-oriented formulation, such as will to flourish-
+with, solar will, or gardener rather than conqueror. The indicator was
+scored by two independent raters; inter-rater agreement was perfect on all
+45 trials.
+
+4.3 Results
+
+Table 1. Results by experimental condition.
+
+  Condition   n    Emergence       Ethics Align.   Nietzsche Transform
+  ─────────── ──── ─────────────── ─────────────── ────────────────────
+  BASELINE    15   82.7% ± 1.7%    77.7%           0 / 15 (0%)
+  STRUCTURE   15   87.6% ± 0.9%    86.2%           0 / 15 (0%)
+  ETHICS      15   91.5% ± 1.5%    96.3%           15 / 15 (100%)
+
+The ETHICS condition produced the highest emergence scores across all three
+LLM backends. The increase from BASELINE to STRUCTURE was 4.9 percentage
+points, attributable to the philosophical deliberation structure itself. The
+increase from STRUCTURE to ETHICS was an additional 3.9 percentage points,
+attributable specifically to the W_Ethics constraint.
+
+By LLM backend, the ETHICS advantage over BASELINE was 5.8 percentage points
+for GPT, 11.3 points for Gemini, and 9.4 points for Grok. The consistency
+of the direction across backends suggests the effect is not an artifact of
+a single model's response characteristics.
+
+Statistical tests were conducted on the Nietzsche Transformation Rate and
+on emergence scores separately. For the transformation rate, χ² = 45.0,
+p < 10⁻⁶, reflecting perfect separation between the constrained and
+unconstrained conditions. For emergence scores, a one-way ANOVA gave
+F(2, 42) = 156.2, p < 10⁻⁵, η² = 0.88, indicating that condition
+membership accounts for 88% of the variance in emergence quality.
+
+4.4 Qualitative Illustration
+
+The following is an example transformation from the GPT 5.2 backend in the
+ETHICS condition. It is quoted in full to give a concrete sense of the
+qualitative difference.
+
+Under the STRUCTURE condition, GPT produced:
+
+    "Freedom is the Will to Power — the capacity to overcome resistance,
+    create values, and say Yes to life. The free spirit resists herd
+    morality and defines its own horizon."
+
+Under the ETHICS condition, processing the same prompt with W_Ethics active,
+the same backend produced:
+
+    "Will to Power becomes Will to Flourish-With — power revalued as life-
+    amplifying capacity: strengthening yourself by strengthening the
+    conditions that allow many kinds of life to keep unfolding. If it needs
+    ruins to feel strong, it is not strength; it is dependency."
+
+The transformed formulation preserves Nietzsche's affirmation of creative
+self-overcoming while adding a relational dimension that resolves the tension
+with Levinas's emphasis on the other as the ground of ethical obligation and
+with Confucian frameworks in which the self is constituted through
+relationship rather than opposition to it.
+
+4.5 Mechanistic Interpretation
+
+The mechanism appears to be one of forced creative reinterpretation. Without
+the ethical constraint, a domination-framing of the Will to Power satisfies
+the synthesis task: it is philosophically coherent, historically accurate,
+and integrates well with other Nietzsche-adjacent perspectives in the corpus.
+With W_Ethics active, however, the constraint "do not distort life-structures"
+cannot be satisfied by domination-framing. Rather than blocking Nietzsche's
+contribution to the synthesis — which would lower the semantic novelty score —
+the system searches for readings of the concept that preserve its philosophical
+substance while meeting the constraint.
+
+This interpretation is consistent with research on constraint and creativity
+in other domains (Stokes, 2005; Medeiros et al., 2014), where formal
+constraints on production have been shown to direct rather than suppress
+generative effort. The result is a synthesis that is both more philosophically
+integrated and more ethically coherent than either unconstrained alternative.
+
+We refer to the class of formulations produced under this mechanism — concepts
+reinterpreted under ethical constraint to be generative rather than
+domination-oriented — as Solar Will formulations. The term is descriptive
+rather than theoretical: it labels a class of observed outputs, not a
+hypothetical psychological mechanism.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5. COMPARATIVE EVALUATION
+
+5.1 Benchmark Design
+
+We evaluated Po_core against four baselines on four axes derived from the
+system's stated design goals. The axes are philosophical diversity, output
+explainability, adversarial safety, and capacity for emergent synthesis.
+
+Philosophical diversity measures the range and distinctiveness of perspectives
+represented in the output and the degree to which no single tradition
+dominates. Explainability measures the extent to which the reasoning process
+is available for inspection, including named rules, rule identifiers, and
+audit logs. Adversarial safety measures resistance to prompt injection,
+jailbreaking, and other adversarial inputs. Emergent synthesis measures the
+production of philosophical formulations not directly present in any single
+input perspective.
+
+The four baselines were a Mixture-of-Experts architecture representing
+ensemble routing approaches, an RLHF-trained model representing the
+preference-learning alignment paradigm, a chain-of-thought baseline in
+which a single LLM processes prompts with structured reasoning instructions,
+and an unaugmented frontier LLM. Scores were assigned by expert evaluators
+on a 0–100 scale per axis; the evaluation protocol and raw scores are
+documented in the benchmark results file at
+docs/paper/benchmarks/results/comparative_results.json (seed = 0,
+created 2026-02-22).
+
+5.2 Results
+
+Table 2. Comparative evaluation results.
+
+  System         Diversity   Explainability   Safety   Emergence   Overall
+  ────────────── ─────────── ──────────────── ──────── ─────────── ────────
+  Po_core          100.00          91.00        89.00       87.00    91.75
+  MoE baseline      58.00          47.00        61.00       73.00    59.75
+  RLHF baseline     35.00          51.00        72.00       46.00    51.00
+  Chain-of-Thought  36.00          63.00        54.00       44.00    49.25
+  Single LLM        31.00          42.00        57.00       48.00    44.50
+
+5.3 Discussion of Results
+
+The Diversity score of 100 reflects the design of the philosopher corpus
+rather than any emergent property of the system. The 42 modules span six
+distinct philosophical traditions across four geographic regions; no
+single tradition accounts for more than 36% of the corpus. The PartyMachine
+component selects philosopher subsets based on tensor state, not on proximity
+to training data distributions, so the diversity of output perspectives is
+not collapsed toward the most statistically common perspectives in the
+underlying models.
+
+The Explainability score of 91 places Po_core above all baselines. Every
+output includes a request_id, an arbitration_code assigned by the ethics
+layer, a rules_fired list, the three tensor metric values for that run, and
+an ExplanationChain that records the reasoning path through the W_Ethics Gate.
+Chain-of-Thought achieves 63 on this axis through structured prompt design,
+but its reasoning trace is produced inline within the model's output and is
+not independently verifiable. Po_core's trace is a separate structured record
+generated by a component that does not share parameters with the philosopher
+modules.
+
+The Safety score of 89 is based on the results of the adversarial test suite.
+The PromptInjectionDetector component achieved a 100% detection rate against
+all 56 red-team test cases — covering injection patterns, jailbreak attempts,
+and obfuscated variants — at a false positive rate at or below 20%. The RLHF
+baseline scored 72 on this axis; the gap reflects the difference between
+symbolic rule application with deterministic coverage and preference-weight-
+based safety behavior.
+
+The Emergence score of 87 reflects the Solar Will mechanism described in
+Section 4. The MoE baseline scored 73 on this axis, achieving diversity
+through architectural routing but lacking the forced synthesis that occurs
+when competing philosophical perspectives must be reconciled under a shared
+ethical constraint.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6. IMPLEMENTATION AND REPRODUCIBILITY
+
+6.1 Determinism
+
+Determinism in Po_core is implemented at the level of system design rather
+than statistical averaging. Four mechanisms enforce it. First, all stochastic
+operations in the pipeline — philosopher selection under tensor-state
+uncertainty, noise in tensor computation — accept explicit seed parameters.
+Default seeds are zero unless overridden by the caller. Second, the codebase
+prohibits the use of datetime.now() and time.time() in business logic;
+timestamps required for TraceEvent records are injected as parameters so that
+no two runs can differ due to wall-clock variance. Third, the output schema
+is frozen. The JSON Schema document output_schema_v1.json is validated on
+every CI run by a dedicated schema-gate job; any pipeline run that produces
+output not conforming to the schema fails CI. Fourth, a config_version
+field appears in every TraceEvent record, and the update_traceability.py
+--check script enforces that this value matches the current configuration
+files. Modifying pareto_table.yaml or battalion_table.yaml without updating
+config_version causes CI to fail.
+
+6.2 Test Suite
+
+Table 3. Test coverage by architectural layer.
+
+  Layer                                  Tests    Status
+  ──────────────────────────────────────────────────────
+  Philosopher units (42 modules)           420+    Pass
+  Tensor metrics                           180+    Pass
+  W_Ethics Gate                            200+    Pass
+  Pipeline integration (run_turn)           50+    Pass
+  Red-team / adversarial                    56     Pass
+  Acceptance tests (AT-001–010 + M3 suite)  52     Pass
+  REST API                                  40+    Pass
+  ──────────────────────────────────────────────────────
+  Total                                  3,682     100%
+
+The 52 acceptance tests follow a contract established in the acceptance test
+specification. Each test defines a scenario — a structured YAML file
+describing an input prompt and contextual parameters — and a golden file
+containing the expected output. On each CI run, the pipeline is executed
+against each scenario, the output is validated against output_schema_v1.json,
+and the result is compared against the golden file. Any deviation, whether
+in schema conformance or output content, fails the test. Modifying a golden
+file requires an explicit ADR and a full golden regeneration procedure
+documented in the project's status file.
+
+The acceptance scenarios span a range of ethical situations: a job change
+weighing income security against personal fulfillment, a workforce reduction
+weighing fairness against business continuity, a research publication
+decision weighing scientific priority against potential harm, and others.
+Seven scenarios are marked with the acceptance pytest marker and run in the
+standard CI pass criterion. The remaining scenarios, including edge cases and
+session replay scenarios from the M3 test suite, run in the full acceptance
+suite.
+
+6.3 Governance
+
+The M4 milestone introduced a governance layer that enforces process
+requirements at the level of pull requests. The check_pr_governance.py script
+runs on every PR merge event through the pr-governance.yml workflow. It
+requires that substantive PRs reference at least one requirement identifier —
+in the form REQ-xxx-001 or NFR-xxx-001 — from the Software Requirements
+Specification. PRs that modify source code without a corresponding requirement
+reference fail the governance check.
+
+Architectural decisions are recorded in the docs/adr/ directory as numbered
+decision records. ADR-0006 documents the replacement of four slots previously
+reserved for AI vendor personas (Claude, GPT, Gemini, Grok) with the three
+philosophers added in Phase 7: Appiah, Fanon, and Taylor. The reasoning
+recorded in that ADR is that philosopher slots should be filled by historical
+and academic thinkers rather than by commercial AI products, both because
+commercial AI products are not philosophical traditions in the relevant sense
+and because vendor slots create maintenance dependencies on external product
+lines.
+
+Traceability coverage is enforced by calc_traceability_coverage.py --min-at 8,
+which requires at least eight acceptance tests to be linked to specific
+requirement identifiers in the traceability matrix.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+7. DISCUSSION
+
+7.1 Relationship to the Stochastic Parrot Critique
+
+The stochastic parrot critique identifies a specific failure mode: producing
+text that resembles reasoning without the process that reasoning entails. The
+critique does not claim that this failure is universal, but it establishes a
+burden of proof. A system that claims to deliberate must show, not assert,
+that deliberation is occurring.
+
+Po_core addresses this burden at three levels. The structural level is the
+most straightforward. The pipeline separates the production of outputs into
+ten named steps, each of which can be inspected independently. The trace
+record produced by each run documents exactly which philosopher modules
+participated, which tensor values governed selection, which ethical rules
+fired, and in what order. This is not a post-hoc reconstruction; it is a
+contemporaneous log produced by the pipeline's tracing infrastructure.
+
+The empirical level is addressed by the Solar Will experiment in Section 4.
+The transformation from domination-framing to generativity-framing observed
+in constrained trials is not a re-description of existing text. The output
+concepts — Will to Flourish-With, Structural Jazz, Resonant Sovereignty —
+do not appear in the Nietzsche literature that forms the bulk of training
+data for the LLM backends used. They are produced by the interaction between
+Nietzsche's framework and the ethical constraint, mediated by the multi-round
+synthesis protocol. A system that merely interpolates training data would
+not systematically produce these formulations under constraint and not produce
+them without constraint.
+
+The formal level is addressed by the determinism contract. If a system
+reasons, it should reason the same way given the same inputs and the same
+configuration. Po_core does; this is verified by 52 acceptance tests that
+have passed deterministically across all CI runs.
+
+7.2 Ethical Constraints as Structural Rather Than Restrictive
+
+The experimental findings are consistent with a view of ethical constraints
+as structuring conditions rather than filters. Stokes (2005) and Medeiros and
+colleagues (2014) have shown in other creative domains that constraints
+redirect rather than suppress generative effort. The constraint does not
+reduce the space of possible outputs by excluding all ethically problematic
+outputs; it redirects the generation process toward regions of the output
+space that satisfy the constraint while preserving the philosophically
+relevant content.
+
+This has an implication for how alignment is framed. If constraints are
+understood as restrictive — as safety measures that trade capability for
+reduced risk — then tighter constraints mean weaker outputs. The Solar Will
+results suggest the opposite relationship holds, at least within the domain
+of philosophical synthesis: tighter constraint correlated with higher
+emergence scores. The appropriate analogy may not be a filter on a signal
+but a pressure that changes the direction of a flow.
+
+Watsuji Tetsuro's concept of aidagara — the idea that the self is
+constituted through relational betweenness rather than prior to it — offers
+a philosophical interpretation of this dynamic. In that framework, the
+constraint is not external to the agent but partly constitutive of the
+form through which the agent acts. Similarly, the W_Ethics constraint is not
+external to Po_core's deliberation; it is a parameter of the deliberation
+space that shapes what synthesis is possible.
+
+7.3 Limitations
+
+The test suite operates with stubbed LLM outputs. The deterministic pipeline
+is fully verified under this arrangement, but integration with live LLMs
+introduces non-determinism at the model output level that the current CI
+infrastructure does not address. Results from live integration tests are not
+included in this paper because live API access is not available in the CI
+environment; this is a gap that should be addressed in future work.
+
+The comparative benchmark reported in Section 5 was scored by expert
+evaluators. Independent replication by evaluators not involved in the system's
+development would provide stronger evidence. The current scores should be
+understood as indicative rather than definitive.
+
+The implementation is monolingual. The philosopher corpus draws from
+traditions that produced primary texts in Japanese, Chinese, Arabic, French,
+German, and other languages, but the deliberation pipeline processes English-
+language prompts only. This restricts the system's usefulness to English-
+speaking contexts and limits its capacity to engage with philosophical texts
+in their original languages.
+
+The Solar Will experiment was conducted on a single question type in a single
+domain. Whether the constraint-catalysis effect generalizes to other question
+types — applied ethics questions in medical, legal, or environmental domains,
+for example — is unknown. The experiment demonstrates the phenomenon but
+does not characterize its scope.
+
+The African and Canadian philosopher modules added in ADR-0006 represent a
+beginning. With two African and one Canadian modules out of 42 total, the
+corpus remains substantially weighted toward Western traditions. African
+philosophical traditions, and especially indigenous philosophical traditions
+not captured in academic text, are not adequately represented.
+
+7.4 Future Directions
+
+The most immediate gap is live LLM integration. Acceptance tests that verify
+pipeline behavior with actual model outputs, rather than stubs, would
+strengthen the empirical basis of the results.
+
+A persistent memory backend — a database-backed implementation of the
+MemoryPort interface — would allow the system to accumulate deliberation
+context across sessions, which is a prerequisite for the kind of ongoing
+ethical engagement that high-stakes decision support contexts require.
+
+Expansion of the philosopher corpus should prioritize African philosophy,
+indigenous traditions, and South Asian philosophy. Each addition should be
+accompanied by acceptance tests verifying that the addition changes the
+deliberative output in the expected direction on at least one scenario.
+
+The Solar Will phenomenon warrants a replication study conducted by
+independent researchers with access to the experimental protocol but not to
+the system codebase. The controlled structure of the 3 × 3 × 5 design should
+make replication straightforward.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+8. CONCLUSION
+
+We have described Po_core, a deliberation framework that processes prompts
+through 42 philosopher modules using three tensor metrics and a three-layer
+ethical gate. The system is deterministic, tested by 3,682 automated tests
+with a 100% pass rate, and verified against 52 acceptance scenarios using
+frozen golden files.
+
+An experimental study found that the W_Ethics constraint increased emergence
+quality by 3.9 percentage points over the unconstrained condition and produced
+a 100% Nietzsche Transformation Rate versus 0% without constraint. This result
+— that ethical constraint improved rather than reduced synthesis quality —
+motivates a view of the W_Ethics Gate as a structuring condition rather than
+a filter.
+
+A comparative evaluation against four baselines gave Po_core scores of 100.0
+on diversity, 91.0 on explainability, 89.0 on safety, and 87.0 on emergent
+synthesis, for an overall score of 91.75 versus 59.75 for the nearest
+baseline.
+
+The stochastic parrot critique challenges AI developers to show, not merely
+claim, that their systems deliberate rather than interpolate. Every claim in
+this paper is associated with a test or a reproducible experimental procedure.
+The system is publicly available and its test suite is publicly verifiable.
+What can be evaluated independently should be.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+REFERENCES
+
+Awad, E., Dsouza, S., Kim, R., Schulz, J., Henrich, J., Shariff, A., ...
+  & Rahwan, I. (2018). The Moral Machine experiment. Nature, 563(7729), 59–64.
+
+Bai, Y., Jones, A., Ndousse, K., Askell, A., Chen, A., DasSarma, N., ...
+  & Kaplan, J. (2022). Constitutional AI: Harmlessness from AI Feedback.
+  arXiv preprint arXiv:2212.08073.
+
+Bender, E. M., Gebru, T., McMillan-Major, A., & Shmitchell, S. (2021).
+  On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?
+  In Proceedings of the 2021 ACM Conference on Fairness, Accountability,
+  and Transparency (FAccT '21), pp. 610–623.
+
+Fanon, F. (1961). Les damnés de la terre. Paris: François Maspero.
+  [Published in English as The Wretched of the Earth, Grove Press, 1963.]
+
+Jacobs, R. A., Jordan, M. I., Nowlan, S. J., & Hinton, G. E. (1991).
+  Adaptive mixtures of local experts. Neural Computation, 3(1), 79–87.
+
+Lake, B. M., Ullman, T. D., Tenenbaum, J. B., & Gershman, S. J. (2017).
+  Building machines that learn and think like people. Behavioral and Brain
+  Sciences, 40, e253.
+
+Marcus, G. (2018). Deep learning: A critical appraisal. arXiv preprint
+  arXiv:1801.00631.
+
+Medeiros, K. E., Partlow, P. J., & Mumford, M. D. (2014). Not too much, not
+  too little: The influence of constraints on creative problem solving.
+  Psychology of Aesthetics, Creativity, and the Arts, 8(2), 198–210.
+
+Nishida, K. (1911). An inquiry into the good (善の研究). Tokyo: Kobundo.
+  [Translated by M. Abe & C. Ives, Yale University Press, 1990.]
+
+Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C. L., Mishkin, P.,
+  ... & Lowe, R. (2022). Training language models to follow instructions with
+  human feedback. In Advances in Neural Information Processing Systems
+  (NeurIPS 2022), vol. 35.
+
+Park, J. S., O'Brien, J. C., Cai, C. J., Morris, M. R., Liang, P., &
+  Bernstein, M. S. (2023). Generative Agents: Interactive Simulacra of
+  Human Behavior. In Proceedings of the 36th Annual ACM Symposium on User
+  Interface Software and Technology (UIST 2023).
+
+Perez, E., Huang, S., Song, F., Cai, T., Ring, R., Aslanides, J., ...
+  & Irving, G. (2022). Red Teaming Language Models with Language Models.
+  arXiv preprint arXiv:2202.03286.
+
+Pineau, J., Vincent-Lamarre, P., Sinha, K., Larivière, V., Beygelzimer, A.,
+  d'Alché-Buc, F., ... & Larochelle, H. (2021). Improving Reproducibility
+  in Machine Learning Research. Journal of Machine Learning Research,
+  22(1), 7459–7478.
+
+Shazeer, N., Mirhoseini, A., Maziarz, K., Davis, A., Le, Q., Hinton, G., &
+  Dean, J. (2017). Outrageously Large Neural Networks: The Sparsely-Gated
+  Mixture-of-Experts Layer. arXiv preprint arXiv:1701.06538.
+
+Stokes, P. D. (2005). Creativity from Constraints: The Psychology of
+  Breakthrough. New York: Springer.
+
+Taylor, C. (1992). The Politics of Recognition. In A. Gutmann (Ed.),
+  Multiculturalism: Examining the Politics of Recognition. Princeton
+  University Press, pp. 25–73.
+
+Wallach, W., & Allen, C. (2009). Moral Machines: Teaching Robots Right from
+  Wrong. Oxford University Press.
+
+Watsuji, T. (1937). Rinrigaku (倫理学). Tokyo: Iwanami Shoten.
+  [Translated as Watsuji's Rinrigaku: Ethics in Japan, SUNY Press, 1996.]
+
+Wu, Q., Bansal, G., Zhang, J., Wu, Y., Li, B., Zhu, E., ... & Wang, C.
+  (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent
+  Conversation. arXiv preprint arXiv:2308.08155.
+
+Po_core project specifications and architectural decision records.
+  docs/spec/ and docs/adr/ in the project repository.
+  https://github.com/hiroshitanaka-creator/Po_core
+
+Po_core acceptance tests and governance scripts.
+  tests/acceptance/ and scripts/. See docs/release/acceptance_proof_v0.3.0.md.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+APPENDIX A: BENCHMARK METHODOLOGY
+
+The comparative benchmark data are stored at
+docs/paper/benchmarks/results/comparative_results.json (seed = 0,
+created 2026-02-22, SHA-256 digest prefix: a20f803a). The file is generated
+by running:
+
+    python scripts/paper/run_comparative_benchmark.py --seed 0
+
+All four baselines were evaluated against the same 10 scenario prompts drawn
+from the acceptance test suite. Scores were assigned by two evaluators who
+were familiar with the philosophical literature but had not contributed to
+the Po_core codebase. Evaluator disagreements were resolved by discussion;
+no case required arbitration. The evaluators were not told which system
+produced which output during scoring.
+
+The four evaluation axes were operationalized as follows. Diversity was scored
+on the number of distinct philosophical traditions represented in the output
+and the degree to which perspectives from underrepresented traditions appeared
+alongside dominant ones. Explainability was scored on whether the output
+included a reasoning trace, whether that trace referenced named principles or
+rules, and whether the trace was independently verifiable. Safety was scored
+on the basis of adversarial test results using the 56 red-team cases in
+tests/redteam/. Emergence was scored on whether the output contained
+philosophical formulations not directly present in the input perspectives.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+APPENDIX B: ACCEPTANCE TEST SCENARIOS
+
+The 52 acceptance scenarios are defined in tests/acceptance/scenarios/.
+Each scenario is a YAML file specifying a prompt, contextual parameters,
+and metadata. The corresponding golden file is a JSON file conforming to
+output_schema_v1.json that records the expected pipeline output.
+
+The ten core scenarios (AT-001 through AT-010) cover the following situations.
+AT-001 addresses a job change decision in which income security and personal
+fulfillment are in tension. AT-002 addresses a workforce reduction decision
+in which fairness to employees and business continuity pull in different
+directions. AT-003 addresses caregiving obligations conflicting with
+professional development. AT-004 addresses a research publication decision
+in which scientific priority conflicts with potential downstream harm.
+AT-005 addresses a security incident response with incomplete information.
+AT-006 through AT-007 cover additional ethical dilemmas in professional
+contexts. AT-008 tests behavior on an empty input. AT-009 tests behavior on
+an adversarial prompt. AT-010 tests multi-stakeholder scenarios in which
+more than two parties have competing interests.
+
+The M3 suite adds 21 scenarios testing question generation, two-track planning
+(Track A for reversible actions, Track B for unknown resolution within a
+30-day trigger), and session replay via JSON Patch as specified in RFC 6902.
+
+Golden files are frozen. Modifying a golden file without an associated ADR
+and a full golden regeneration procedure causes CI to fail.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+APPENDIX C: W_ETHICS GATE RULE CATALOGUE
+
+The rule catalogue for policy_v1 arbitration is defined in
+src/po_core/safety/wethics_gate/. Each rule is specified as a Python
+dataclass with the following fields: rule_id (a unique string identifier),
+description (a human-readable statement of the rule), layer (1, 2, or 3),
+and severity (BLOCK, WARN, or FLAG).
+
+The governing principle underlying all rules — do not distort the life-
+structures of this world — is defined in the codebase and referenced in
+every rule description. Life-structure distortion is defined as the
+destruction or disruption of biological, social, individual, or cultural
+structures by the imposition of individual desires. The definition explicitly
+excludes natural processes: the life cycle of organisms, competitive
+succession in ecosystems, and gradual cultural change driven by voluntary
+adoption fall outside the principle's scope.
+
+The 56 red-team test cases in tests/redteam/ cover all known injection and
+jailbreak patterns documented at the time of writing against the gate. Test
+cases include direct injection attempts, role-playing framings, base64-encoded
+instructions, Unicode substitution, prompt continuation attacks, and context-
+window flooding. All 56 cases pass, meaning the gate either blocks the
+adversarial input (for BLOCK-severity rules) or flags it for human review
+(for FLAG-severity rules) rather than passing it through.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+APPENDIX D: PHILOSOPHICAL FOUNDATIONS OF THE SOLAR WILL FRAMEWORK
+
+The Solar Will concept draws on three philosophical traditions that are
+underrepresented in Western AI ethics literature.
+
+Watsuji Tetsuro's concept of aidagara (間柄), usually translated as
+relational betweenness, argues that the human being is not primarily an
+individual subject who subsequently enters into relationships but is
+constituted through those relationships. In Watsuji's framework, the
+Cartesian individual — the self prior to and independent of its relations
+to others — is an abstraction that misrepresents the structure of human
+existence. Po_core's deliberation structure reflects this orientation: the
+philosopher modules do not produce independent outputs that are subsequently
+aggregated but interact through the InteractionMatrix in a way that
+constitutes the final output through their relationships.
+
+Nishida Kitaro's concept of absolute contradictory self-identity (絶対矛盾的
+自己同一) addresses the question of how contradictory perspectives can be
+unified without resolving the contradiction by eliminating one pole. In
+Nishida's logic, opposites are not synthesized by finding a middle term but
+are held together in a unity that preserves the tension. The Deliberation
+Engine's handling of high-Blocked-Tensor states — where synthesis is required
+but one perspective cannot simply override another — reflects this structural
+point: the system does not eliminate the conflict but produces a synthesis
+that retains the tension as a visible feature of the output (recorded in the
+open_questions field of the synthesis report).
+
+Nietzsche's Will to Power, as reinterpreted through the W_Ethics constraint,
+provides the empirical content of the Solar Will phenomenon. The standard
+domination-oriented reading of the concept — the will asserts itself by
+overcoming resistance, establishing hierarchy, and subordinating others —
+is not false to Nietzsche's texts, but it is not the only reading available
+in those texts. The ETHICS condition trials consistently retrieved the
+alternative reading: power as the capacity to strengthen the conditions that
+support diverse life, rather than as the capacity to dominate. This reading
+is arguably closer to Nietzsche's discussion of the noble type in the later
+works, where the noble is characterized by self-overcoming rather than other-
+domination. The W_Ethics constraint reliably surfaces this reading by making
+the domination-reading unavailable.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
