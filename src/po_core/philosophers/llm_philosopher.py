@@ -22,13 +22,53 @@ from __future__ import annotations
 
 import json
 import re
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
+
+import yaml
 
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.llm_personas import get_persona
 
 if TYPE_CHECKING:
     from po_core.adapters.llm_adapter import LLMAdapter
+
+
+_LLM_PHILOSOPHER_MAP_PATH = (
+    Path(__file__).resolve().parent.parent / "config" / "llm_philosopher_map.yaml"
+)
+
+
+def _load_llm_philosopher_map(path: Path | None = None) -> dict[str, dict[str, str]]:
+    """Load philosopher-specific LLM provider/model overrides from YAML."""
+    yaml_path = path or _LLM_PHILOSOPHER_MAP_PATH
+    if not yaml_path.exists():
+        return {}
+
+    payload = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    if not isinstance(payload, dict):
+        return {}
+
+    philosophers = payload.get("philosophers", {})
+    if not isinstance(philosophers, dict):
+        return {}
+
+    normalized: dict[str, dict[str, str]] = {}
+    for philosopher_id, cfg in philosophers.items():
+        if not isinstance(philosopher_id, str) or not isinstance(cfg, dict):
+            continue
+
+        provider = cfg.get("provider")
+        model = cfg.get("model")
+        if not isinstance(provider, str) or not provider.strip():
+            continue
+
+        entry: dict[str, str] = {"provider": provider.strip()}
+        if isinstance(model, str):
+            entry["model"] = model.strip()
+        normalized[philosopher_id] = entry
+
+    return normalized
 
 
 class LLMPhilosopher(Philosopher):
@@ -174,6 +214,7 @@ class LLMPhilosopher(Philosopher):
 def build_llm_philosopher_registry(
     adapter: "LLMAdapter",
     specs: Any = None,
+    llm_philosopher_map: Optional[dict[str, dict[str, str]]] = None,
     *,
     max_normal: int = 42,
     max_warn: int = 5,
@@ -194,6 +235,7 @@ def build_llm_philosopher_registry(
     Args:
         adapter: 全哲学者で共有する LLMAdapter
         specs: PhilosopherSpec リスト（None なら manifest.SPECS を使用）
+        llm_philosopher_map: 哲学者ごとの provider/model 上書き設定
         ...その他は PhilosopherRegistry と同じパラメータ
 
     Returns:
@@ -204,6 +246,7 @@ def build_llm_philosopher_registry(
 
     if specs is None:
         specs = SPECS
+    philosopher_map = llm_philosopher_map or _load_llm_philosopher_map()
 
     registry = PhilosopherRegistry(
         specs=specs,
@@ -224,9 +267,26 @@ def build_llm_philosopher_registry(
             continue  # dummy は元の DummyPhilosopher のまま
         if not spec.enabled:
             continue
+
+        philosopher_adapter = adapter
+        mapped = philosopher_map.get(spec.philosopher_id)
+        if mapped:
+            from po_core.adapters.llm_adapter import LLMAdapter
+
+            provider = mapped.get("provider", "")
+            model = mapped.get("model", "")
+            try:
+                philosopher_adapter = LLMAdapter(
+                    provider=provider,
+                    model=model,
+                    timeout=adapter.timeout,
+                )
+            except Exception:
+                philosopher_adapter = adapter
+
         registry._instances[spec.philosopher_id] = LLMPhilosopher(
             philosopher_id=spec.philosopher_id,
-            adapter=adapter,
+            adapter=philosopher_adapter,
         )
 
     return registry
