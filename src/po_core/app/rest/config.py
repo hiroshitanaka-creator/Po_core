@@ -54,6 +54,10 @@ class APISettings(BaseSettings):
     enable_solarwill: bool = True
     enable_intention_gate: bool = True
     enable_action_gate: bool = True
+    enable_llm_philosophers: bool = False
+    llm_provider: str = "gemini"
+    llm_model: str = ""
+    llm_timeout_s: float = 10.0
 
     # Trace storage
     max_trace_sessions: int = 1000

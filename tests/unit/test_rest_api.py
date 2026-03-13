@@ -236,6 +236,53 @@ def test_reason_auth_valid_key(client_with_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_passes_llm_settings_when_enabled(client_no_auth):
+    """Reason endpoint forwards LLM settings from API settings to core settings."""
+    from po_core.runtime.settings import Settings
+
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            enable_llm_philosophers=True,
+            llm_provider="openai",
+            llm_model="gpt-4o-mini",
+            llm_timeout_s=3.5,
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+        resp = client.post("/v1/reason", json={"input": "What is justice?"})
+
+    assert resp.status_code == 200
+    settings = mock_run.call_args.kwargs["settings"]
+    assert isinstance(settings, Settings)
+    assert settings.enable_llm_philosophers is True
+    assert settings.llm_provider == "openai"
+    assert settings.llm_model == "gpt-4o-mini"
+    assert settings.llm_timeout_s == pytest.approx(3.5)
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_keeps_llm_settings_disabled_by_default(client_no_auth):
+    """Reason endpoint keeps LLM integration disabled when API settings do not enable it."""
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+        resp = client_no_auth.post("/v1/reason", json={"input": "What is justice?"})
+
+    assert resp.status_code == 200
+    settings = mock_run.call_args.kwargs["settings"]
+    assert settings.enable_llm_philosophers is False
+    assert settings.llm_provider == "gemini"
+    assert settings.llm_model == ""
+    assert settings.llm_timeout_s == pytest.approx(10.0)
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_saves_trace(client_no_auth):
     """Reason endpoint saves trace events to the store."""
     with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
