@@ -1,0 +1,15 @@
+# Philosopher-specific LLM routing map.
+#
+# Keys under `philosophers` are philosopher_id values from manifest.py.
+# Each philosopher can override provider/model independently.
+#
+# provider: gemini | openai | claude | grok
+# model: optional, empty string means provider default
+
+philosophers:
+  # kant:
+  #   provider: openai
+  #   model: gpt-4o-mini
+  # nietzsche:
+  #   provider: claude
+  #   model: claude-haiku-4-5
