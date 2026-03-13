@@ -733,3 +733,39 @@ def test_rate_limit_429_on_excess():
     assert rate_limiter.hit(limit, "127.0.0.1") is True
     # Second hit within the same window: blocked
     assert rate_limiter.hit(limit, "127.0.0.1") is False
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_api_settings_reads_runtime_llm_env_names(monkeypatch):
+    """APISettings accepts runtime-compatible LLM env names."""
+    monkeypatch.setenv("PO_LLM_ENABLED", "true")
+    monkeypatch.setenv("PO_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("PO_LLM_MODEL", "gpt-4o-mini")
+    monkeypatch.setenv("PO_LLM_TIMEOUT", "3.25")
+
+    settings = APISettings()
+
+    assert settings.enable_llm_philosophers is True
+    assert settings.llm_provider == "openai"
+    assert settings.llm_model == "gpt-4o-mini"
+    assert settings.llm_timeout_s == pytest.approx(3.25)
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_api_settings_keeps_backward_compat_llm_env_names(monkeypatch):
+    """APISettings also accepts legacy/newly introduced env aliases."""
+    monkeypatch.delenv("PO_LLM_ENABLED", raising=False)
+    monkeypatch.delenv("PO_LLM_TIMEOUT", raising=False)
+    monkeypatch.setenv("PO_ENABLE_LLM_PHILOSOPHERS", "1")
+    monkeypatch.setenv("PO_LLM_PROVIDER", "claude")
+    monkeypatch.setenv("PO_LLM_MODEL", "claude-haiku-4-5")
+    monkeypatch.setenv("PO_LLM_TIMEOUT_S", "7.0")
+
+    settings = APISettings()
+
+    assert settings.enable_llm_philosophers is True
+    assert settings.llm_provider == "claude"
+    assert settings.llm_model == "claude-haiku-4-5"
+    assert settings.llm_timeout_s == pytest.approx(7.0)
