@@ -45,7 +45,11 @@ def _load_llm_philosopher_map(path: Path | None = None) -> dict[str, dict[str, s
     if not yaml_path.exists():
         return {}
 
-    payload = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    try:
+        payload = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except (yaml.YAMLError, OSError):
+        return {}
+
     if not isinstance(payload, dict):
         return {}
 
@@ -246,7 +250,11 @@ def build_llm_philosopher_registry(
 
     if specs is None:
         specs = SPECS
-    philosopher_map = llm_philosopher_map or _load_llm_philosopher_map()
+    philosopher_map = (
+        _load_llm_philosopher_map()
+        if llm_philosopher_map is None
+        else llm_philosopher_map
+    )
 
     registry = PhilosopherRegistry(
         specs=specs,

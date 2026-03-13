@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from po_core.adapters.llm_adapter import LLMAdapter
 from po_core.philosophers.llm_philosopher import (
     _load_llm_philosopher_map,
@@ -75,3 +77,36 @@ philosophers:
         "kant": {"provider": "openai", "model": "gpt-4o-mini"},
         "aristotle": {"provider": "gemini"},
     }
+
+
+def test_load_llm_philosopher_map_returns_empty_for_malformed_yaml(tmp_path) -> None:
+    mapping_file = tmp_path / "llm_map.yaml"
+    mapping_file.write_text("philosophers: [invalid", encoding="utf-8")
+
+    loaded = _load_llm_philosopher_map(mapping_file)
+
+    assert loaded == {}
+
+
+def test_build_registry_with_explicit_empty_map_does_not_read_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    shared = LLMAdapter(provider="gemini", model="gemini-2.0-flash-lite", timeout=6.0)
+    specs = [_spec("kant"), _spec("aristotle")]
+
+    def _should_not_be_called(*args, **kwargs):
+        raise AssertionError("default map loader should not be called")
+
+    monkeypatch.setattr(
+        "po_core.philosophers.llm_philosopher._load_llm_philosopher_map",
+        _should_not_be_called,
+    )
+
+    registry = build_llm_philosopher_registry(
+        adapter=shared,
+        specs=specs,
+        llm_philosopher_map={},
+    )
+
+    assert registry._instances["kant"]._adapter is shared
+    assert registry._instances["aristotle"]._adapter is shared
