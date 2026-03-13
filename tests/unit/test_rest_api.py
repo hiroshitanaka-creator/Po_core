@@ -283,6 +283,39 @@ def test_reason_keeps_llm_settings_disabled_by_default(client_no_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_passes_philosopher_limits_and_budgets_from_api_settings(client_no_auth):
+    """Reason endpoint forwards selection limits/budgets from API settings."""
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            philosophers_max_normal=42,
+            philosophers_max_warn=7,
+            philosophers_max_critical=2,
+            philosopher_cost_budget_normal=90,
+            philosopher_cost_budget_warn=15,
+            philosopher_cost_budget_critical=4,
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+        resp = client.post("/v1/reason", json={"input": "What is justice?"})
+
+    assert resp.status_code == 200
+    settings = mock_run.call_args.kwargs["settings"]
+    assert settings.philosophers_max_normal == 42
+    assert settings.philosophers_max_warn == 7
+    assert settings.philosophers_max_critical == 2
+    assert settings.philosopher_cost_budget_normal == 90
+    assert settings.philosopher_cost_budget_warn == 15
+    assert settings.philosopher_cost_budget_critical == 4
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_saves_trace(client_no_auth):
     """Reason endpoint saves trace events to the store."""
     with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
@@ -769,3 +802,23 @@ def test_api_settings_keeps_backward_compat_llm_env_names(monkeypatch):
     assert settings.llm_provider == "claude"
     assert settings.llm_model == "claude-haiku-4-5"
     assert settings.llm_timeout_s == pytest.approx(7.0)
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_api_settings_reads_philosopher_limits_and_budgets_from_env(monkeypatch):
+    monkeypatch.setenv("PO_PHILOSOPHERS_MAX_NORMAL", "42")
+    monkeypatch.setenv("PO_PHILOSOPHERS_MAX_WARN", "7")
+    monkeypatch.setenv("PO_PHILOSOPHERS_MAX_CRITICAL", "2")
+    monkeypatch.setenv("PO_PHILOSOPHER_COST_BUDGET_NORMAL", "90")
+    monkeypatch.setenv("PO_PHILOSOPHER_COST_BUDGET_WARN", "15")
+    monkeypatch.setenv("PO_PHILOSOPHER_COST_BUDGET_CRITICAL", "4")
+
+    settings = APISettings()
+
+    assert settings.philosophers_max_normal == 42
+    assert settings.philosophers_max_warn == 7
+    assert settings.philosophers_max_critical == 2
+    assert settings.philosopher_cost_budget_normal == 90
+    assert settings.philosopher_cost_budget_warn == 15
+    assert settings.philosopher_cost_budget_critical == 4
