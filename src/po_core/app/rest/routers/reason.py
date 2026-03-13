@@ -70,6 +70,10 @@ def _build_po_settings(api_settings: Any) -> Settings:
         enable_solarwill=api_settings.enable_solarwill,
         enable_intention_gate=api_settings.enable_intention_gate,
         enable_action_gate=api_settings.enable_action_gate,
+        enable_llm_philosophers=api_settings.enable_llm_philosophers,
+        llm_provider=api_settings.llm_provider,
+        llm_model=api_settings.llm_model,
+        llm_timeout_s=api_settings.llm_timeout_s,
     )
 
 

@@ -19,6 +19,7 @@ Example .env:
 
 from __future__ import annotations
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings
 
 
@@ -54,6 +55,16 @@ class APISettings(BaseSettings):
     enable_solarwill: bool = True
     enable_intention_gate: bool = True
     enable_action_gate: bool = True
+    enable_llm_philosophers: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS"),
+    )
+    llm_provider: str = "gemini"
+    llm_model: str = ""
+    llm_timeout_s: float = Field(
+        default=10.0,
+        validation_alias=AliasChoices("PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S"),
+    )
 
     # Trace storage
     max_trace_sessions: int = 1000
@@ -65,6 +76,7 @@ class APISettings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        populate_by_name = True
 
 
 # Module-level singleton (overridable in tests via dependency injection)
