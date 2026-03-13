@@ -1,6 +1,6 @@
 {
   "name": "@po-core/sdk",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "TypeScript client SDK for the Po_core philosophical reasoning API",
   "type": "module",
   "main": "./dist/index.js",
