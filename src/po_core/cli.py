@@ -79,12 +79,15 @@ def hello(sample: bool) -> None:
 def status(sample: bool) -> None:
     """Show project status"""
     console.print("[bold]📊 Po_core Project Status[/bold]\n")
-    console.print("✅ Philosophical Framework: 100%")
-    console.print("✅ Documentation: 100%")
-    console.print("✅ Architecture Design: 100%")
-    console.print("🔄 Implementation: 60% (ensemble + Po_trace)")
-    console.print("🔄 Testing: 20% (unit coverage for ensemble/CLI)")
-    console.print("⏳ Visualization: 10% (CLI stub, visuals pending)")
+    console.print(f"Version: [bold cyan]{__version__}[/bold cyan]")
+    console.print("")
+    console.print("✅ Phase 1: 39-philosopher scaling + tech debt cleared")
+    console.print("✅ Phase 2: ML tensors + Deliberation Engine")
+    console.print("✅ Phase 3: Viewer WebUI + Explainable W_Ethics Gate")
+    console.print("✅ Phase 4: Adversarial Hardening + Red team tests")
+    console.print("✅ Phase 5: REST API + Docker + Async streaming")
+    console.print("")
+    console.print("[dim]3100+ tests · 39 philosopher personas · Production-ready[/dim]")
     if sample:
         console.print("\n[dim]Running Po_self sample...[/dim]")
         console.print(_render_sample_generation(SAMPLE_PROMPT))
