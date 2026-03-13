@@ -49,8 +49,12 @@ def test_raising_normal_limit_and_budget_increases_selection_count():
 
 
 def test_budget_control_is_effective_under_same_limit():
-    generous_budget = Settings(philosophers_max_normal=42, philosopher_cost_budget_normal=80)
-    tight_budget = Settings(philosophers_max_normal=42, philosopher_cost_budget_normal=20)
+    generous_budget = Settings(
+        philosophers_max_normal=42, philosopher_cost_budget_normal=80
+    )
+    tight_budget = Settings(
+        philosophers_max_normal=42, philosopher_cost_budget_normal=20
+    )
 
     generous_count = _selected_count_from_settings(generous_budget, SafetyMode.NORMAL)
     tight_count = _selected_count_from_settings(tight_budget, SafetyMode.NORMAL)

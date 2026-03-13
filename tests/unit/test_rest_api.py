@@ -254,7 +254,9 @@ def test_reason_passes_llm_settings_when_enabled(client_no_auth):
     app.dependency_overrides[auth.require_api_key] = lambda: None
     client = TestClient(app, raise_server_exceptions=True)
 
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
         resp = client.post("/v1/reason", json={"input": "What is justice?"})
 
     assert resp.status_code == 200
@@ -270,7 +272,9 @@ def test_reason_passes_llm_settings_when_enabled(client_no_auth):
 @pytest.mark.phase5
 def test_reason_keeps_llm_settings_disabled_by_default(client_no_auth):
     """Reason endpoint keeps LLM integration disabled when API settings do not enable it."""
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
         resp = client_no_auth.post("/v1/reason", json={"input": "What is justice?"})
 
     assert resp.status_code == 200
@@ -301,7 +305,9 @@ def test_reason_passes_philosopher_limits_and_budgets_from_api_settings(client_n
     app.dependency_overrides[auth.require_api_key] = lambda: None
     client = TestClient(app, raise_server_exceptions=True)
 
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
         resp = client.post("/v1/reason", json={"input": "What is justice?"})
 
     assert resp.status_code == 200
@@ -827,7 +833,9 @@ def test_reason_endpoint_reflects_env_based_api_settings(monkeypatch, tmp_path):
     app.dependency_overrides[auth.require_api_key] = lambda: None
     client = TestClient(app, raise_server_exceptions=True)
 
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
         resp = client.post("/v1/reason", json={"input": "What is justice?"})
 
     assert resp.status_code == 200

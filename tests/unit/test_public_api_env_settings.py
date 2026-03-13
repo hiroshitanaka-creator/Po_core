@@ -26,7 +26,9 @@ def _stub_system():
 
 @pytest.mark.unit
 @pytest.mark.phase5
-def test_public_run_uses_settings_from_env_when_settings_is_none(monkeypatch, _stub_system):
+def test_public_run_uses_settings_from_env_when_settings_is_none(
+    monkeypatch, _stub_system
+):
     from po_core.app import api
 
     monkeypatch.setenv("PO_PHILOSOPHERS_MAX_NORMAL", "42")
