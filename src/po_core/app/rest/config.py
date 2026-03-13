@@ -66,7 +66,6 @@ class APISettings(BaseSettings):
         validation_alias=AliasChoices("PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S"),
     )
 
-
     # Philosopher selection tuning (limit + budget per SafetyMode)
     philosopher_cost_budget_normal: int = 80
     philosopher_cost_budget_warn: int = 12
