@@ -106,7 +106,7 @@ def run(
     Returns:
         Result dictionary with request_id, status, and proposal or verdict
     """
-    settings = settings or Settings()
+    settings = settings or Settings.from_env()
 
     if getattr(settings, "deliberation_max_rounds", 1) <= 1:
         time.sleep(0.002)
@@ -168,7 +168,7 @@ async def async_run(
     Returns:
         Result dictionary with request_id, status, and proposal or verdict
     """
-    settings = settings or Settings()
+    settings = settings or Settings.from_env()
 
     if memory_backend is not None:
         system = build_system(memory=memory_backend, settings=settings)

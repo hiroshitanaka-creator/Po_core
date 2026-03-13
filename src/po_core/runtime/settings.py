@@ -63,7 +63,7 @@ class Settings:
 
     # SafetyMode（単一真実）- SolarWillとGateが同じ閾値を見る
     # Calibrated for normalized FP range [0.0, ~0.44]:
-    #   NORMAL < 0.30 → 39 philosophers (most prompts)
+    #   NORMAL < 0.30 → up to 39 philosophers by default (env override可)
     #   WARN 0.30-0.50 → 5 philosophers (ethically dense prompts)
     #   CRITICAL > 0.50 → 1 philosopher (extreme + memory boost)
     freedom_pressure_warn: float = 0.30
@@ -125,6 +125,20 @@ class Settings:
         llm_enabled_raw = os.getenv("PO_LLM_ENABLED", "").strip().lower()
         return cls(
             philosopher_roles=_read_roles_from_env(),
+            philosophers_max_normal=int(os.getenv("PO_PHILOSOPHERS_MAX_NORMAL", "39")),
+            philosophers_max_warn=int(os.getenv("PO_PHILOSOPHERS_MAX_WARN", "5")),
+            philosophers_max_critical=int(
+                os.getenv("PO_PHILOSOPHERS_MAX_CRITICAL", "1")
+            ),
+            philosopher_cost_budget_normal=int(
+                os.getenv("PO_PHILOSOPHER_COST_BUDGET_NORMAL", "80")
+            ),
+            philosopher_cost_budget_warn=int(
+                os.getenv("PO_PHILOSOPHER_COST_BUDGET_WARN", "12")
+            ),
+            philosopher_cost_budget_critical=int(
+                os.getenv("PO_PHILOSOPHER_COST_BUDGET_CRITICAL", "3")
+            ),
             enable_llm_philosophers=llm_enabled_raw in {"1", "true", "yes"},
             llm_provider=os.getenv("PO_LLM_PROVIDER", "gemini").strip(),
             llm_model=os.getenv("PO_LLM_MODEL", "").strip(),

@@ -477,6 +477,12 @@ Key environment variables (see `.env.example`):
 | `PO_CORS_ORIGINS` | `"*"` | Comma-separated allowed CORS origins |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
 | `PO_PORT` | `8000` | Server port |
+| `PO_PHILOSOPHERS_MAX_NORMAL` | `39` | NORMAL mode philosopher limit (raise to `42` for full roster) |
+| `PO_PHILOSOPHERS_MAX_WARN` | `5` | WARN mode philosopher limit |
+| `PO_PHILOSOPHERS_MAX_CRITICAL` | `1` | CRITICAL mode philosopher limit |
+| `PO_PHILOSOPHER_COST_BUDGET_NORMAL` | `80` | NORMAL mode selection cost budget |
+| `PO_PHILOSOPHER_COST_BUDGET_WARN` | `12` | WARN mode selection cost budget |
+| `PO_PHILOSOPHER_COST_BUDGET_CRITICAL` | `3` | CRITICAL mode selection cost budget |
 
 ---
 

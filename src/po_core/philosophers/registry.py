@@ -78,7 +78,7 @@ class PhilosopherRegistry:
     SafetyModeに応じて哲学者を編成し、動的にロードする。
     - CRITICAL: 1人（最も安全な哲学者のみ）, コスト予算3
     - WARN: 5人（安全〜標準の哲学者）, コスト予算12
-    - NORMAL: 42人（全員）, コスト予算80
+    - NORMAL: 42人を上限に編成（runtimeのlimit/cost_budgetで制御）, コスト予算80
 
     battalion_plans が渡されるとそちらを優先する（外部設定）。
     """

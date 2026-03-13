@@ -66,6 +66,15 @@ class APISettings(BaseSettings):
         validation_alias=AliasChoices("PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S"),
     )
 
+
+    # Philosopher selection tuning (limit + budget per SafetyMode)
+    philosopher_cost_budget_normal: int = 80
+    philosopher_cost_budget_warn: int = 12
+    philosopher_cost_budget_critical: int = 3
+    philosophers_max_normal: int = 39
+    philosophers_max_warn: int = 5
+    philosophers_max_critical: int = 1
+
     # Trace storage
     max_trace_sessions: int = 1000
     trace_store_backend: str = "sqlite"  # sqlite | memory
