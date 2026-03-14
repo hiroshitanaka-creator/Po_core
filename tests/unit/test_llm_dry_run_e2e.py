@@ -104,6 +104,12 @@ def test_public_run_dry_run_e2e_uses_mapped_and_shared_providers(
     assert "openai" in providers
     assert "gemini" in providers
 
+    proposals = result.get("proposals", [])
+    assert proposals
+    assert all("philosopher_id" in proposal for proposal in proposals)
+    assert all("content" in proposal for proposal in proposals)
+    assert all("weight" in proposal for proposal in proposals)
+
 
 @pytest.mark.unit
 @pytest.mark.phase5
@@ -159,9 +165,30 @@ def test_rest_reason_dry_run_e2e_records_fake_llm_calls(
     providers = {call["provider"] for call in fake_llm_generate}
 
     assert response.status_code == 200
+    body = response.json()
     assert fake_llm_generate
     assert "openai" in providers
     assert "gemini" in providers
+
+    philosophers = body.get("philosophers", [])
+    assert philosophers
+
+    observed_providers = {p.get("provider") for p in philosophers if p.get("provider")}
+    observed_models = {p.get("model") for p in philosophers if p.get("model")}
+
+    assert observed_providers
+    assert observed_models
+    assert "openai" in observed_providers
+    assert "gemini" in observed_providers
+
+    trace_resp = client.get(f"/v1/trace/{body['session_id']}")
+    assert trace_resp.status_code == 200
+    trace_events = trace_resp.json().get("events", [])
+    assert any(
+        "llm_provider" in json.dumps(event.get("payload", {}), ensure_ascii=False)
+        and "llm_model" in json.dumps(event.get("payload", {}), ensure_ascii=False)
+        for event in trace_events
+    )
 
 
 @pytest.mark.unit

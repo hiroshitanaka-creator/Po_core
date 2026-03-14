@@ -99,24 +99,69 @@ def _extract_response_text(result: dict) -> str:
 
 
 def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
-    """Extract philosopher contributions from result."""
+    """Extract philosopher contributions and LLM routing metadata from result."""
     contribs: list[PhilosopherContribution] = []
     proposals = result.get("proposals", [])
     if not proposals:
         return contribs
+
     for p in proposals[:5]:  # top 5
-        if isinstance(p, dict):
-            name: str = str(p.get("philosopher_id") or p.get("name") or "unknown")
-            weight_raw = (
-                p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+        if not isinstance(p, dict):
+            continue
+
+        name: str = str(p.get("philosopher_id") or p.get("name") or "unknown")
+        weight_raw = p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+
+        normalized = p.get("normalized_response")
+        normalized_dict = normalized if isinstance(normalized, dict) else {}
+        normalized_meta = normalized_dict.get("metadata")
+        normalized_meta_dict = normalized_meta if isinstance(normalized_meta, dict) else {}
+
+        proposal_meta = p.get("metadata")
+        proposal_meta_dict = proposal_meta if isinstance(proposal_meta, dict) else {}
+
+        provider = (
+            p.get("llm_provider")
+            or normalized_meta_dict.get("llm_provider")
+            or proposal_meta_dict.get("llm_provider")
+        )
+        model = (
+            p.get("llm_model")
+            or normalized_meta_dict.get("llm_model")
+            or proposal_meta_dict.get("llm_model")
+        )
+
+        llm_fallback_val = (
+            p.get("llm_fallback")
+            if p.get("llm_fallback") is not None
+            else normalized_meta_dict.get("llm_fallback")
+        )
+        if llm_fallback_val is None:
+            llm_fallback_val = proposal_meta_dict.get("llm_fallback")
+
+        fallback_reason = (
+            p.get("fallback_reason")
+            or normalized_meta_dict.get("fallback_reason")
+            or proposal_meta_dict.get("fallback_reason")
+        )
+
+        contribs.append(
+            PhilosopherContribution(
+                name=name,
+                proposal=str(p.get("content") or p.get("proposal") or ""),
+                weight=float(weight_raw if weight_raw is not None else 0.0),
+                provider=str(provider) if provider not in (None, "") else None,
+                model=str(model) if model not in (None, "") else None,
+                llm_fallback=(
+                    bool(llm_fallback_val) if llm_fallback_val is not None else None
+                ),
+                fallback_reason=(
+                    str(fallback_reason)
+                    if fallback_reason not in (None, "")
+                    else None
+                ),
             )
-            contribs.append(
-                PhilosopherContribution(
-                    name=name,
-                    proposal=str(p.get("content") or p.get("proposal") or ""),
-                    weight=float(weight_raw if weight_raw is not None else 0.0),
-                )
-            )
+        )
     return contribs
 
 
