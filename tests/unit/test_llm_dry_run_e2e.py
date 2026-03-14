@@ -75,8 +75,12 @@ def _runtime_settings() -> Settings:
     )
 
 
-def _disable_external_battalion_table(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
-    monkeypatch.setenv("PO_CORE_BATTALION_TABLE", str(tmp_path / "missing_battalion.yaml"))
+def _disable_external_battalion_table(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.setenv(
+        "PO_CORE_BATTALION_TABLE", str(tmp_path / "missing_battalion.yaml")
+    )
 
 
 @pytest.mark.unit
@@ -114,7 +118,9 @@ async def test_public_async_run_dry_run_e2e_uses_mapped_and_shared_providers(
     _disable_external_battalion_table(monkeypatch, tmp_path)
     monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", _write_map_file(tmp_path))
 
-    result = await api.async_run("dry run public api async", settings=_runtime_settings())
+    result = await api.async_run(
+        "dry run public api async", settings=_runtime_settings()
+    )
 
     providers = {call["provider"] for call in fake_llm_generate}
 
