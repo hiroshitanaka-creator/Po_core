@@ -162,17 +162,13 @@ def _build_options(
     content = str(proposal.get("content", "")) or "哲学的観点からの主要推奨案"
     risk_tags: List[str] = list(proposal.get("risk_tags", []))
 
-    # REQ-PLAN-001 timing reference is business-time (`case.now`) when provided.
-    # `now` argument is output metadata timestamp and may be fixed for determinism.
-    case_now = case.get("now") if isinstance(case.get("now"), str) else None
-
     # ── Action plan selection (REQ-VALUES-001, REQ-PLAN-001) ──────────────
     if needs_values_clarification(case):
         # REQ-VALUES-001: values empty → value-elicitation procedure
         action_plan: List[Dict[str, Any]] = build_values_clarification_action_plan()
-    elif needs_two_track_plan(case, case_now):
+    elif needs_two_track_plan(case, now):
         # REQ-PLAN-001: unknowns + time pressure → Two-Track Plan
-        action_plan = build_two_track_plan(case, case_now)
+        action_plan = build_two_track_plan(case, now)
     else:
         action_plan = [{"step": f"制約を考慮: {c}"} for c in constraints[:3]]
         if not action_plan:

@@ -140,7 +140,10 @@ class TestTwoTrackPlan:
         """Case with unknowns + deadline 20 days from now."""
         import datetime
 
-        deadline = (datetime.date.today() + datetime.timedelta(days=20)).isoformat()
+        today = datetime.date.today()
+        deadline = (today + datetime.timedelta(days=20)).isoformat()
+        # Align deadline baseline with composer now-reference to keep urgency deterministic.
+        now = f"{today.isoformat()}T00:00:00Z"
         return {
             "case_id": "test_two_track",
             "title": "緊急判断テスト",
@@ -152,6 +155,7 @@ class TestTwoTrackPlan:
                 {"name": "自分", "role": "意思決定主体", "impact": "直接影響"}
             ],
             "unknowns": ["予算の上限", "法的リスクの有無"],
+            "now": now,
         }
 
     def test_needs_two_track_when_urgent(self):
