@@ -10,6 +10,7 @@ import functools
 import json
 import time
 import uuid
+from collections import defaultdict, deque
 from datetime import datetime, timezone
 from typing import Any, AsyncGenerator, Dict
 
@@ -34,6 +35,11 @@ from po_core.trace.in_memory import InMemoryTracer
 
 router = APIRouter(tags=["reason"])
 
+# Best-effort in-memory limiter for WebSocket handshake requests.
+# Uses monotonic timestamps to avoid wall-clock jumps.
+_WS_WINDOW_SECONDS = 60.0
+_ws_rate_log: dict[str, deque[float]] = defaultdict(deque)
+
 
 def _reason_limit() -> str:
     """Return the SlowAPI limit string derived from the current APISettings.
@@ -49,6 +55,29 @@ def _reason_limit() -> str:
 
     rpm: int = get_api_settings().rate_limit_per_minute
     return f"{rpm}/minute"
+
+
+def _is_ws_authorized(websocket: WebSocket, api_key: str, skip_auth: bool) -> bool:
+    """Validate WebSocket API key from header or query parameter."""
+    if skip_auth or not api_key:
+        return True
+    presented = websocket.headers.get("x-api-key") or websocket.query_params.get(
+        "api_key"
+    )
+    return presented == api_key
+
+
+def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
+    """Return True when the client exceeded the per-minute WS request budget."""
+    client_ip = websocket.client.host if websocket.client else "unknown"
+    now = time.monotonic()
+    timestamps = _ws_rate_log[client_ip]
+    while timestamps and now - timestamps[0] > _WS_WINDOW_SECONDS:
+        timestamps.popleft()
+    if len(timestamps) >= max(rpm, 1):
+        return True
+    timestamps.append(now)
+    return False
 
 
 # Internal run() returns "ok" on success; map to the published API contract.
@@ -433,6 +462,18 @@ async def reason_ws(websocket: WebSocket) -> None:
     """WebSocket reasoning stream: client sends one ReasonRequest JSON payload."""
     from po_core.app.rest.config import get_api_settings
 
+    api_settings = get_api_settings()
+
+    if not _is_ws_authorized(
+        websocket, api_settings.api_key, skip_auth=api_settings.skip_auth
+    ):
+        await websocket.close(code=1008, reason="Invalid or missing API key")
+        return
+
+    if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute):
+        await websocket.close(code=1008, reason="Rate limit exceeded")
+        return
+
     await websocket.accept()
     try:
         raw_body = await websocket.receive_json()
@@ -443,8 +484,6 @@ async def reason_ws(websocket: WebSocket) -> None:
         )
         await websocket.close(code=1003)
         return
-
-    api_settings = get_api_settings()
 
     try:
         async for chunk in _stream_reasoning_chunks(body, api_settings):

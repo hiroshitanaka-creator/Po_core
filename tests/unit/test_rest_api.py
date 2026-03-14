@@ -638,6 +638,34 @@ def test_reason_ws_stream_receives_realtime_events(client_no_auth):
     assert chunks[2]["payload"]["response"] == "Justice is giving each their due."
 
 
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_auth_required(client_with_auth):
+    """WebSocket reason endpoint requires a valid API key when auth is enabled."""
+    with pytest.raises(Exception):
+        with client_with_auth.websocket_connect("/v1/ws/reason"):
+            pass
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_accepts_valid_api_key(client_with_auth):
+    """WebSocket reason endpoint accepts valid API key via header."""
+
+    async def _fake_async_run(*, user_input, settings, tracer):
+        tracer.emit(TraceEvent.now("pipeline_step", "req-ws-auth", {"step": "start"}))
+        return _MOCK_RESULT
+
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
+        with client_with_auth.websocket_connect(
+            "/v1/ws/reason", headers={"X-API-Key": "test-secret-key"}
+        ) as ws:
+            ws.send_json({"input": "Is fairness objective?"})
+            first = ws.receive_json()
+
+    assert first["chunk_type"] == "started"
+
+
 # ---------------------------------------------------------------------------
 # OpenAPI schema
 # ---------------------------------------------------------------------------
