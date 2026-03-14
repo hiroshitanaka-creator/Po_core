@@ -88,6 +88,51 @@ def test_load_llm_philosopher_map_returns_empty_for_malformed_yaml(tmp_path) -> 
     assert loaded == {}
 
 
+def test_load_llm_philosopher_map_uses_env_override_path(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    mapping_file = tmp_path / "custom_map.yaml"
+    mapping_file.write_text(
+        """
+philosophers:
+  spinoza:
+    provider: openai
+    model: gpt-4o-mini
+""".strip(),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", str(mapping_file))
+
+    loaded = _load_llm_philosopher_map()
+
+    assert loaded == {"spinoza": {"provider": "openai", "model": "gpt-4o-mini"}}
+
+
+def test_load_llm_philosopher_map_returns_empty_for_missing_env_override_path(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    missing = tmp_path / "missing_map.yaml"
+    monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", str(missing))
+
+    loaded = _load_llm_philosopher_map()
+
+    assert loaded == {}
+
+
+def test_load_llm_philosopher_map_returns_empty_for_malformed_env_override_yaml(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    mapping_file = tmp_path / "malformed_map.yaml"
+    mapping_file.write_text("philosophers: [invalid", encoding="utf-8")
+    monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", str(mapping_file))
+
+    loaded = _load_llm_philosopher_map()
+
+    assert loaded == {}
+
 def test_build_registry_with_explicit_empty_map_does_not_read_default(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
