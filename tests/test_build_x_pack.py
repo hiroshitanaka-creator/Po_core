@@ -22,7 +22,9 @@ def _demo_data() -> dict:
             "requires_human_confirm": True,
             "reasons": ["r1", "r2"],
         },
-        "audit": {"verify_command": "po-cosmic verify runs/high_bias_affiliate.badge.json"},
+        "audit": {
+            "verify_command": "po-cosmic verify runs/high_bias_affiliate.badge.json"
+        },
         "content": {
             "headline": "h",
             "hook": "k",
@@ -47,7 +49,9 @@ def test_thread_variant_selection_matches_actual_label(tmp_path: Path) -> None:
         skip_card=True,
         copy_assets=False,
     )
-    assert (out / "thread.md").read_text(encoding="utf-8") == variants["thread.blocked.md"]
+    assert (out / "thread.md").read_text(encoding="utf-8") == variants[
+        "thread.blocked.md"
+    ]
 
 
 def test_meta_json_generation(tmp_path: Path) -> None:
