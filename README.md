@@ -42,21 +42,6 @@ pip install po-core-flyingpig
 - その結果を golden（期待JSON）へ固定し、CI（`pytest -q`）で契約を検証する。
 - 凍結golden `scenarios/case_001_expected.json` / `scenarios/case_009_expected.json` は変更禁止。
 
-
-## X Runway (manual distribution pack)
-
-X Runway は、X API や自動投稿を使わずに、手動投稿の効果検証を行うためのローカル配信パック生成機能です。
-`demo-shopping` 由来の audit/badge データを元に、thread 文面・checklist・meta・画像カードをケースごとに出力します。
-
-```bash
-make x-assets
-make x-pack CASE=high_bias_affiliate
-make x-pack-all
-make x-metrics-init
-```
-
-生成例: `dist/x/high_bias_affiliate/thread.md`, `dist/x/high_bias_affiliate/meta.json`, `dist/x/high_bias_affiliate/checklist.md`
-
 ## Contribution Tracks
 
 ### <a id="ai-track"></a> AI Track
