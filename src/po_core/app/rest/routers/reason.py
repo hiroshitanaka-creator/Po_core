@@ -57,13 +57,22 @@ def _reason_limit() -> str:
     return f"{rpm}/minute"
 
 
-def _resolve_ws_auth_key(websocket: WebSocket) -> str | None:
+def _resolve_ws_auth_key(websocket: WebSocket, *, allow_query_api_key: bool) -> str | None:
     """Resolve API key for WebSocket handshake.
 
-    WebSocket browser clients cannot set arbitrary headers in many environments,
-    so we support the ``api_key`` query parameter as a compatibility fallback.
+    By default, only the ``X-API-Key`` header is accepted because query-string
+    secrets are easier to leak via logs/history/referers.
+
+    If ``allow_query_api_key`` is explicitly enabled, ``?api_key=...`` is accepted
+    as a browser-compatibility fallback for environments that cannot set custom
+    WebSocket headers.
     """
-    return websocket.headers.get("x-api-key") or websocket.query_params.get("api_key")
+    header_key = websocket.headers.get("x-api-key")
+    if header_key:
+        return header_key
+    if allow_query_api_key:
+        return websocket.query_params.get("api_key")
+    return None
 
 
 def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
@@ -466,7 +475,9 @@ async def reason_ws(websocket: WebSocket) -> None:
     auth_decision = evaluate_auth_policy(
         skip_auth=api_settings.skip_auth,
         configured_api_key=api_settings.api_key,
-        presented_api_key=_resolve_ws_auth_key(websocket),
+        presented_api_key=_resolve_ws_auth_key(
+            websocket, allow_query_api_key=api_settings.ws_allow_query_api_key
+        ),
     )
     if not auth_decision.allowed:
         await websocket.close(code=1008, reason=auth_decision.message)

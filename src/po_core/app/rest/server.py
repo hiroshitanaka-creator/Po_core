@@ -62,6 +62,23 @@ def _parse_cors_origins(cors_origins: str) -> list[str]:
     return [o.strip() for o in cors_origins.split(",") if o.strip()]
 
 
+def _validate_startup_auth_configuration(settings: APISettings) -> None:
+    """Fail fast on startup when production auth is misconfigured."""
+    auth_state = evaluate_auth_policy(
+        skip_auth=settings.skip_auth,
+        configured_api_key=settings.api_key,
+        presented_api_key=settings.api_key,
+    )
+    if auth_state.allowed:
+        return
+    if auth_state.is_misconfigured:
+        raise RuntimeError(
+            "Startup aborted: authentication is enabled (PO_SKIP_AUTH=false) "
+            "but PO_API_KEY is unset or blank. "
+            "Set PO_API_KEY to a non-empty value, or set PO_SKIP_AUTH=true for development only."
+        )
+
+
 def create_app(settings: APISettings | None = None) -> FastAPI:
     """
     Create and configure the FastAPI application.
@@ -93,6 +110,7 @@ to generate ethically responsible responses.
 ### Authentication
 Include your API key in the `X-API-Key` header for all requests.
 Set `PO_API_KEY` and keep `PO_SKIP_AUTH=false` to enforce authentication.
+If `PO_SKIP_AUTH=false` and `PO_API_KEY` is empty/blank, startup fails fast by design.
 Set `PO_SKIP_AUTH=true` only for development mode.
 
 ### Pipeline
@@ -186,13 +204,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
             },
         )
 
-        auth_state = evaluate_auth_policy(
-            skip_auth=settings.skip_auth,
-            configured_api_key=settings.api_key,
-            presented_api_key=settings.api_key,
-        )
-        if not auth_state.allowed and auth_state.is_misconfigured:
-            logger.error(auth_state.message)
+        _validate_startup_auth_configuration(settings)
 
     return application
 
