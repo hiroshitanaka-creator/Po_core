@@ -272,6 +272,28 @@ def test_reason_auth_valid_key(client_with_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_auth_returns_503_when_key_not_configured(tmp_path):
+    """Reason endpoint fails closed when auth is enabled without PO_API_KEY."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    client = TestClient(app, raise_server_exceptions=True)
+
+    resp = client.post(
+        "/v1/reason",
+        json={"input": "test"},
+        headers={"X-API-Key": "wrong"},
+    )
+    assert resp.status_code == 503
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_passes_llm_settings_when_enabled(client_no_auth):
     """Reason endpoint forwards LLM settings from API settings to core settings."""
     from po_core.runtime.settings import Settings

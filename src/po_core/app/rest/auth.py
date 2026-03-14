@@ -12,7 +12,7 @@ Usage:
     ):
         ...
 
-When PO_SKIP_AUTH=true or PO_API_KEY is empty the check is bypassed
+When PO_SKIP_AUTH=true the check is bypassed
 (useful for local development and unit tests).
 """
 
@@ -34,10 +34,16 @@ async def require_api_key(
     FastAPI dependency that validates the X-API-Key header.
 
     Raises 401 when the key is missing or incorrect.
-    Bypassed when skip_auth=True or api_key is empty (dev mode).
+    Raises 503 when API key auth is enabled but PO_API_KEY is not configured.
+    Bypassed only when skip_auth=True (dev mode).
     """
-    if settings.skip_auth or not settings.api_key:
+    if settings.skip_auth:
         return
+    if not settings.api_key:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="API key authentication is enabled but PO_API_KEY is not configured",
+        )
     if api_key != settings.api_key:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
