@@ -192,7 +192,7 @@ def _run_reasoning(
     summary="Synchronous philosophical reasoning",
     description=(
         "Submit a prompt for philosophical deliberation. "
-        "The 39-philosopher ensemble deliberates, passes through the "
+        "A configurable philosopher ensemble (up to 42) deliberates, passes through the "
         "W_Ethics Gate, and returns a synthesised response. "
         "Blocks until the full pipeline completes."
     ),

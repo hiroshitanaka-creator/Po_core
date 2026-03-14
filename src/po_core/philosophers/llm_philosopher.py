@@ -21,6 +21,7 @@ LLM Philosopher — LLM API バックエンドを持つ哲学者基底クラス
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -37,11 +38,24 @@ if TYPE_CHECKING:
 _LLM_PHILOSOPHER_MAP_PATH = (
     Path(__file__).resolve().parent.parent / "config" / "llm_philosopher_map.yaml"
 )
+_LLM_PHILOSOPHER_MAP_ENV = "PO_LLM_PHILOSOPHER_MAP_PATH"
+
+
+def _resolve_llm_philosopher_map_path(path: Path | None = None) -> Path:
+    """Resolve map path from explicit arg, env var, or bundled default."""
+    if path is not None:
+        return path
+
+    override = os.getenv(_LLM_PHILOSOPHER_MAP_ENV, "").strip()
+    if override:
+        return Path(override).expanduser()
+
+    return _LLM_PHILOSOPHER_MAP_PATH
 
 
 def _load_llm_philosopher_map(path: Path | None = None) -> dict[str, dict[str, str]]:
     """Load philosopher-specific LLM provider/model overrides from YAML."""
-    yaml_path = path or _LLM_PHILOSOPHER_MAP_PATH
+    yaml_path = _resolve_llm_philosopher_map_path(path)
     if not yaml_path.exists():
         return {}
 
