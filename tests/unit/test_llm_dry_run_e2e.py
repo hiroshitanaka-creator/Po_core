@@ -295,7 +295,9 @@ def test_rest_stream_sse_dry_run_exposes_llm_routing_observability(
     assert any("llm_provider" in payload for payload in philosopher_payloads)
     assert any("llm_model" in payload for payload in philosopher_payloads)
 
-    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    result_chunk = next(
+        chunk for chunk in chunks if chunk.get("chunk_type") == "result"
+    )
     philosophers = result_chunk.get("payload", {}).get("philosophers", [])
     assert philosophers
     assert any(p.get("provider") for p in philosophers)
@@ -343,7 +345,9 @@ def test_rest_ws_dry_run_exposes_llm_routing_observability(
     assert any("llm_provider" in payload for payload in philosopher_payloads)
     assert any("llm_model" in payload for payload in philosopher_payloads)
 
-    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    result_chunk = next(
+        chunk for chunk in chunks if chunk.get("chunk_type") == "result"
+    )
     philosophers = result_chunk.get("payload", {}).get("philosophers", [])
     assert philosophers
     assert any(p.get("provider") for p in philosophers)
@@ -352,8 +356,6 @@ def test_rest_ws_dry_run_exposes_llm_routing_observability(
     recorder_providers = {call["provider"] for call in fake_llm_generate}
     assert "openai" in recorder_providers
     assert "gemini" in recorder_providers
-
-
 
 
 @pytest.mark.unit
@@ -395,13 +397,14 @@ def test_rest_stream_sse_dry_run_exposes_llm_fallback_observability(
         for payload in philosopher_payloads
     )
 
-    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    result_chunk = next(
+        chunk for chunk in chunks if chunk.get("chunk_type") == "result"
+    )
     philosophers = result_chunk.get("payload", {}).get("philosophers", [])
     assert philosophers
     assert any(p.get("llm_fallback") is True for p in philosophers)
     assert any(
-        p.get("llm_fallback") is True
-        and p.get("fallback_reason") == "llm_unavailable"
+        p.get("llm_fallback") is True and p.get("fallback_reason") == "llm_unavailable"
         for p in philosophers
     )
 
@@ -448,13 +451,14 @@ def test_rest_ws_dry_run_exposes_llm_fallback_observability(
         for payload in philosopher_payloads
     )
 
-    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    result_chunk = next(
+        chunk for chunk in chunks if chunk.get("chunk_type") == "result"
+    )
     philosophers = result_chunk.get("payload", {}).get("philosophers", [])
     assert philosophers
     assert any(p.get("llm_fallback") is True for p in philosophers)
     assert any(
-        p.get("llm_fallback") is True
-        and p.get("fallback_reason") == "llm_unavailable"
+        p.get("llm_fallback") is True and p.get("fallback_reason") == "llm_unavailable"
         for p in philosophers
     )
 
@@ -491,12 +495,12 @@ def test_rest_stream_sse_dry_run_uses_shared_fallback_on_malformed_map(
     ]
     assert philosopher_events
 
-    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    result_chunk = next(
+        chunk for chunk in chunks if chunk.get("chunk_type") == "result"
+    )
     philosophers = result_chunk.get("payload", {}).get("philosophers", [])
     assert philosophers
-    assert {p.get("provider") for p in philosophers if p.get("provider")} == {
-        "gemini"
-    }
+    assert {p.get("provider") for p in philosophers if p.get("provider")} == {"gemini"}
 
     recorder_providers = {call["provider"] for call in fake_llm_generate}
     assert recorder_providers == {"gemini"}
