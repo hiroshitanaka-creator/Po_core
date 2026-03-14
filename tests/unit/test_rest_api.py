@@ -272,6 +272,43 @@ def test_reason_auth_valid_key(client_with_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_auth_wrong_key_returns_401(client_with_auth):
+    """Reason endpoint rejects wrong API key with 401."""
+    resp = client_with_auth.post(
+        "/v1/reason",
+        json={"input": "test"},
+        headers={"X-API-Key": "wrong"},
+    )
+    assert resp.status_code == 401
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_protected_http_returns_503_when_auth_misconfigured(tmp_path):
+    """Protected HTTP endpoints fail closed when auth is enabled but key is unset."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    client = TestClient(app, raise_server_exceptions=False)
+
+    reason_resp = client.post("/v1/reason", json={"input": "test"})
+    stream_resp = client.post("/v1/reason/stream", json={"input": "test"})
+    trace_hist_resp = client.get("/v1/trace/history")
+    trace_get_resp = client.get("/v1/trace/any-session")
+
+    assert reason_resp.status_code == 503
+    assert stream_resp.status_code == 503
+    assert trace_hist_resp.status_code == 503
+    assert trace_get_resp.status_code == 503
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_passes_llm_settings_when_enabled(client_no_auth):
     """Reason endpoint forwards LLM settings from API settings to core settings."""
     from po_core.runtime.settings import Settings
@@ -664,6 +701,99 @@ def test_reason_ws_accepts_valid_api_key(client_with_auth):
             first = ws.receive_json()
 
     assert first["chunk_type"] == "started"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_stream_auth_matrix(client_with_auth):
+    """SSE endpoint enforces same auth policy as REST."""
+    missing = client_with_auth.post("/v1/reason/stream", json={"input": "test"})
+    wrong = client_with_auth.post(
+        "/v1/reason/stream",
+        json={"input": "test"},
+        headers={"X-API-Key": "wrong"},
+    )
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=AsyncMock(return_value=_MOCK_RESULT)):
+        ok = client_with_auth.post(
+            "/v1/reason/stream",
+            json={"input": "test"},
+            headers={"X-API-Key": "test-secret-key"},
+        )
+
+    assert missing.status_code == 401
+    assert wrong.status_code == 401
+    assert ok.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_trace_endpoints_auth_matrix(client_with_auth):
+    """Trace endpoints enforce missing/wrong/valid key behavior."""
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+        client_with_auth.post(
+            "/v1/reason",
+            json={"input": "seed trace", "session_id": "trace-auth-session"},
+            headers={"X-API-Key": "test-secret-key"},
+        )
+
+    for path in ("/v1/trace/history", "/v1/trace/trace-auth-session"):
+        missing = client_with_auth.get(path)
+        wrong = client_with_auth.get(path, headers={"X-API-Key": "wrong"})
+        valid = client_with_auth.get(path, headers={"X-API-Key": "test-secret-key"})
+        assert missing.status_code == 401
+        assert wrong.status_code == 401
+        assert valid.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_rejects_wrong_api_key(client_with_auth):
+    """WebSocket reason endpoint rejects wrong API key."""
+    with pytest.raises(Exception):
+        with client_with_auth.websocket_connect(
+            "/v1/ws/reason", headers={"X-API-Key": "wrong"}
+        ):
+            pass
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_accepts_valid_api_key_query_param(client_with_auth):
+    """WebSocket reason endpoint accepts query-param API key for browser compatibility."""
+
+    async def _fake_async_run(*, user_input, settings, tracer):
+        tracer.emit(TraceEvent.now("pipeline_step", "req-ws-query-auth", {"step": "start"}))
+        return _MOCK_RESULT
+
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
+        with client_with_auth.websocket_connect(
+            "/v1/ws/reason?api_key=test-secret-key"
+        ) as ws:
+            ws.send_json({"input": "Is fairness objective?"})
+            first = ws.receive_json()
+
+    assert first["chunk_type"] == "started"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_misconfigured_auth_is_rejected_pre_accept(tmp_path):
+    """WebSocket rejects before accept when auth is enabled but PO_API_KEY is unset."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with pytest.raises(Exception):
+        with client.websocket_connect("/v1/ws/reason"):
+            pass
+
+
 
 
 # ---------------------------------------------------------------------------
