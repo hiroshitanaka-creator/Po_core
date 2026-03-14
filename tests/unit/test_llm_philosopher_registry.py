@@ -133,6 +133,7 @@ def test_load_llm_philosopher_map_returns_empty_for_malformed_env_override_yaml(
 
     assert loaded == {}
 
+
 def test_build_registry_with_explicit_empty_map_does_not_read_default(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
