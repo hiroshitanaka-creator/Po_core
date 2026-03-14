@@ -7,6 +7,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from po_core.app.rest.auth import require_api_key
+from po_core.app.rest.config import APISettings, get_api_settings
 from po_core.app.rest.models import (
     TraceEventOut,
     TraceHistoryItem,
@@ -27,9 +28,16 @@ router = APIRouter(tags=["trace"])
 async def get_trace_history(
     limit: int = Query(default=50, ge=1, le=500),
     _: None = Depends(require_api_key),
+    settings: APISettings = Depends(get_api_settings),
     store: TraceStore = Depends(get_trace_store),
 ) -> TraceHistoryResponse:
     """Return recent trace session summaries in descending recency order."""
+    if not settings.enable_trace_history:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trace history endpoint is disabled",
+        )
+
     summaries: list[TraceHistorySummary] = store.history(limit=limit)
     items = [
         TraceHistoryItem(
