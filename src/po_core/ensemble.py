@@ -459,7 +459,8 @@ def _run_phase_post(
                 p
                 for p in raw_proposals
                 if isinstance(p, DomainProposal)
-                and str((p.extra or {}).get("philosopher") or "") == result.philosopher_id
+                and str((p.extra or {}).get("philosopher") or "")
+                == result.philosopher_id
             ),
             None,
         )

@@ -110,12 +110,16 @@ def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
             continue
 
         name: str = str(p.get("philosopher_id") or p.get("name") or "unknown")
-        weight_raw = p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+        weight_raw = (
+            p.get("weight") if p.get("weight") is not None else p.get("score", 0.0)
+        )
 
         normalized = p.get("normalized_response")
         normalized_dict = normalized if isinstance(normalized, dict) else {}
         normalized_meta = normalized_dict.get("metadata")
-        normalized_meta_dict = normalized_meta if isinstance(normalized_meta, dict) else {}
+        normalized_meta_dict = (
+            normalized_meta if isinstance(normalized_meta, dict) else {}
+        )
 
         proposal_meta = p.get("metadata")
         proposal_meta_dict = proposal_meta if isinstance(proposal_meta, dict) else {}
@@ -156,9 +160,7 @@ def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
                     bool(llm_fallback_val) if llm_fallback_val is not None else None
                 ),
                 fallback_reason=(
-                    str(fallback_reason)
-                    if fallback_reason not in (None, "")
-                    else None
+                    str(fallback_reason) if fallback_reason not in (None, "") else None
                 ),
             )
         )
