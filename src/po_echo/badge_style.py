@@ -38,7 +38,11 @@ PIG_MESSAGE_BY_LABEL: dict[str, str] = {
 
 def normalize_label(label: str) -> str:
     normalized = (label or "").strip().replace("-", "_").upper()
-    if not normalized.startswith("ECHO_") and normalized in {"BLOCKED", "CHECK", "VERIFIED"}:
+    if not normalized.startswith("ECHO_") and normalized in {
+        "BLOCKED",
+        "CHECK",
+        "VERIFIED",
+    }:
         normalized = f"ECHO_{normalized}"
     if normalized not in LABEL_CONFIG:
         raise ValueError(
