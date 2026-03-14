@@ -458,6 +458,11 @@ curl http://localhost:8000/v1/philosophers
 curl http://localhost:8000/v1/health
 ```
 
+Auth defaults:
+- Development: `PO_SKIP_AUTH=true`
+- Production: `PO_SKIP_AUTH=false` and set non-empty `PO_API_KEY` (startup fails fast when misconfigured)
+- WebSocket query-string fallback (`?api_key=...`) is disabled by default; enable only when needed via `PO_WS_ALLOW_QUERY_API_KEY=true`
+
 ### Docker
 
 ```bash
@@ -473,7 +478,9 @@ Key environment variables (see `.env.example`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PO_API_KEY` | `""` | API key for `X-API-Key` auth (empty = no auth) |
+| `PO_API_KEY` | `""` | API key for `X-API-Key` auth (`PO_SKIP_AUTH=false` requires non-empty value; blank causes startup failure) |
+| `PO_SKIP_AUTH` | `false` | `true` only for local development (disables auth checks) |
+| `PO_WS_ALLOW_QUERY_API_KEY` | `false` | Opt-in WebSocket `?api_key=` fallback for browser compatibility (less secure than headers) |
 | `PO_CORS_ORIGINS` | `"*"` | Comma-separated allowed CORS origins |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
 | `PO_PORT` | `8000` | Server port |

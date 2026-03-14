@@ -41,6 +41,7 @@ class APISettings(BaseSettings):
     api_key: str = ""
     api_key_header: str = "X-API-Key"
     skip_auth: bool = False  # Set True for local dev / testing
+    ws_allow_query_api_key: bool = False
 
     # CORS — comma-separated list of allowed origins.
     # Use "*" (default) to allow all origins in development.

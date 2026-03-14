@@ -98,20 +98,19 @@ def bench_client():
     Auth and rate limiting are disabled so repeated calls don't hit
     the 60 req/min cap and each request isn't penalised by key lookup.
     """
-    from po_core.app.rest import auth, config
-
-    def _settings() -> APISettings:
-        return APISettings(
+    app = create_app(
+        APISettings(
             skip_auth=True,
             api_key="",
             rate_limit_per_minute=10_000,
         )
-
-    app = create_app()
-    app.dependency_overrides[config.get_api_settings] = _settings
-    app.dependency_overrides[auth.require_api_key] = lambda: None
+    )
 
     with TestClient(app, raise_server_exceptions=True) as client:
+        # Warm-up once to avoid cold-start initialization cost (e.g. embeddings)
+        # skewing the benchmark smoke threshold.
+        warmup = client.post("/v1/reason", json={"input": _BENCH_PROMPT})
+        assert warmup.status_code == 200
         yield client
 
     _store.clear()

@@ -5,7 +5,7 @@ version: "3.9"
 # =============================================================================
 #
 # Quick start:
-#   cp .env.example .env          # edit PO_API_KEY
+#   cp .env.example .env          # set PO_SKIP_AUTH/PO_API_KEY for your env
 #   docker compose up             # starts API server on :8000
 #
 # With optional tracing DB:
@@ -36,6 +36,7 @@ services:
       - PO_LOG_LEVEL=${PO_LOG_LEVEL:-info}
       - PO_API_KEY=${PO_API_KEY:-}
       - PO_SKIP_AUTH=${PO_SKIP_AUTH:-false}
+      - PO_WS_ALLOW_QUERY_API_KEY=${PO_WS_ALLOW_QUERY_API_KEY:-false}
       - PO_CORS_ORIGINS=${PO_CORS_ORIGINS:-*}
       - PO_RATE_LIMIT_PER_MINUTE=${PO_RATE_LIMIT_PER_MINUTE:-60}
       - PO_ENABLE_SOLARWILL=${PO_ENABLE_SOLARWILL:-true}

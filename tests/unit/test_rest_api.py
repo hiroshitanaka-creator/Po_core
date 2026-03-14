@@ -309,6 +309,60 @@ def test_protected_http_returns_503_when_auth_misconfigured(tmp_path):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_startup_fails_fast_when_auth_enabled_without_api_key(tmp_path):
+    """startup should fail fast when PO_SKIP_AUTH=false and API key is blank."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="   ",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+
+    with pytest.raises(RuntimeError, match="Startup aborted"):
+        with TestClient(app, raise_server_exceptions=True):
+            pass
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_startup_allows_dev_mode_without_api_key(tmp_path):
+    """startup should succeed when PO_SKIP_AUTH=true even if API key is blank."""
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+
+    with TestClient(app, raise_server_exceptions=True) as client:
+        resp = client.get("/v1/health")
+    assert resp.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_startup_allows_auth_enabled_with_api_key(tmp_path):
+    """startup should succeed when PO_SKIP_AUTH=false and API key is configured."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="secret",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+
+    with TestClient(app, raise_server_exceptions=True) as client:
+        resp = client.get("/v1/health")
+    assert resp.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_passes_llm_settings_when_enabled(client_no_auth):
     """Reason endpoint forwards LLM settings from API settings to core settings."""
     from po_core.runtime.settings import Settings
@@ -758,40 +812,40 @@ def test_reason_ws_rejects_wrong_api_key(client_with_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
-def test_reason_ws_accepts_valid_api_key_query_param(client_with_auth):
-    """WebSocket reason endpoint accepts query-param API key for browser compatibility."""
+def test_reason_ws_rejects_query_param_api_key_by_default(client_with_auth):
+    """WebSocket query-param API key is rejected unless explicitly enabled."""
+    with pytest.raises(Exception):
+        with client_with_auth.websocket_connect(
+            "/v1/ws/reason?api_key=test-secret-key"
+        ):
+            pass
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_accepts_query_param_api_key_when_opted_in(tmp_path):
+    """WebSocket query-param API key works only with explicit opt-in."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="test-secret-key",
+            ws_allow_query_api_key=True,
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
 
     async def _fake_async_run(*, user_input, settings, tracer):
         tracer.emit(TraceEvent.now("pipeline_step", "req-ws-query-auth", {"step": "start"}))
         return _MOCK_RESULT
 
     with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
-        with client_with_auth.websocket_connect(
-            "/v1/ws/reason?api_key=test-secret-key"
-        ) as ws:
-            ws.send_json({"input": "Is fairness objective?"})
-            first = ws.receive_json()
+        with TestClient(app, raise_server_exceptions=True) as client:
+            with client.websocket_connect("/v1/ws/reason?api_key=test-secret-key") as ws:
+                ws.send_json({"input": "Is fairness objective?"})
+                first = ws.receive_json()
 
     assert first["chunk_type"] == "started"
-
-
-@pytest.mark.unit
-@pytest.mark.phase5
-def test_reason_ws_misconfigured_auth_is_rejected_pre_accept(tmp_path):
-    """WebSocket rejects before accept when auth is enabled but PO_API_KEY is unset."""
-    app = create_app(
-        APISettings(
-            skip_auth=False,
-            api_key="",
-            trace_store_backend="sqlite",
-            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
-        )
-    )
-    client = TestClient(app, raise_server_exceptions=True)
-
-    with pytest.raises(Exception):
-        with client.websocket_connect("/v1/ws/reason"):
-            pass
 
 
 
