@@ -438,9 +438,3 @@ visualization_outputs*/
 !docs/paper/benchmarks/results/comparative_results.json
 !docs/paper/benchmarks/results/comparative_table.csv
 
-
-# X runway local generated binaries
-assets/*.gif
-assets/*.png
-assets/*.jpg
-assets/*.jpeg
