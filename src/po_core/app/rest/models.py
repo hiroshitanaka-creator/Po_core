@@ -46,6 +46,22 @@ class PhilosopherContribution(BaseModel):
     name: str
     proposal: str
     weight: float = Field(ge=0.0, le=1.0)
+    provider: Optional[str] = Field(
+        default=None,
+        description="LLM provider used by this philosopher contribution, if available.",
+    )
+    model: Optional[str] = Field(
+        default=None,
+        description="LLM model used by this philosopher contribution, if available.",
+    )
+    llm_fallback: Optional[bool] = Field(
+        default=None,
+        description="Whether this contribution used an LLM fallback path.",
+    )
+    fallback_reason: Optional[str] = Field(
+        default=None,
+        description="Fallback reason when llm_fallback is true.",
+    )
 
 
 class TensorSnapshot(BaseModel):

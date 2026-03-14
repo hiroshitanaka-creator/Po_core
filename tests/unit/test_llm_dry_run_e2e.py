@@ -159,9 +159,29 @@ def test_rest_reason_dry_run_e2e_records_fake_llm_calls(
     providers = {call["provider"] for call in fake_llm_generate}
 
     assert response.status_code == 200
+    body = response.json()
     assert fake_llm_generate
     assert "openai" in providers
     assert "gemini" in providers
+
+    philosophers = body.get("philosophers", [])
+    observed_providers = {p.get("provider") for p in philosophers if p.get("provider")}
+    observed_models = {p.get("model") for p in philosophers if p.get("model")}
+
+    trace_resp = client.get(f"/v1/trace/{body['session_id']}")
+    assert trace_resp.status_code == 200
+    events = trace_resp.json().get("events", [])
+
+    def _event_has_llm_metadata(event: dict) -> bool:
+        payload = event.get("payload", {})
+        return (
+            "llm_provider" in json.dumps(payload, ensure_ascii=False)
+            and "llm_model" in json.dumps(payload, ensure_ascii=False)
+        )
+
+    assert (observed_providers and observed_models) or any(
+        _event_has_llm_metadata(e) for e in events
+    )
 
 
 @pytest.mark.unit

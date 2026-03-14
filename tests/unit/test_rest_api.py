@@ -186,6 +186,42 @@ def test_reason_success(client_no_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_exposes_llm_routing_metadata_in_philosophers(client_no_auth):
+    """Reason endpoint exposes provider/model/fallback metadata per philosopher."""
+    mock_result = {
+        **_MOCK_RESULT,
+        "proposals": [
+            {
+                "philosopher_id": "kant",
+                "content": "Act only on maxims fit for universal law.",
+                "weight": 0.91,
+                "normalized_response": {
+                    "metadata": {
+                        "llm_provider": "openai",
+                        "llm_model": "gpt-4o-mini",
+                        "llm_fallback": True,
+                        "fallback_reason": "llm_unavailable",
+                    }
+                },
+            }
+        ],
+    }
+
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=mock_result):
+        resp = client_no_auth.post("/v1/reason", json={"input": "What should I do?"})
+
+    assert resp.status_code == 200
+    philosophers = resp.json()["philosophers"]
+    assert len(philosophers) == 1
+    assert philosophers[0]["name"] == "kant"
+    assert philosophers[0]["provider"] == "openai"
+    assert philosophers[0]["model"] == "gpt-4o-mini"
+    assert philosophers[0]["llm_fallback"] is True
+    assert philosophers[0]["fallback_reason"] == "llm_unavailable"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_custom_session_id(client_no_auth):
     """Reason endpoint preserves caller-supplied session_id."""
     with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):

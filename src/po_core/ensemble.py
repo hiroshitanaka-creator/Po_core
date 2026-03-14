@@ -418,23 +418,54 @@ def _run_phase_post(
             tracer=tracer,
         )
 
+    def _extract_llm_route(proposal: DomainProposal | None) -> Dict[str, Any]:
+        if proposal is None:
+            return {}
+
+        extra = proposal.extra if isinstance(proposal.extra, Mapping) else {}
+        normalized = extra.get("normalized_response")
+        normalized_dict = normalized if isinstance(normalized, Mapping) else {}
+        metadata = normalized_dict.get("metadata")
+        metadata_dict = metadata if isinstance(metadata, Mapping) else {}
+
+        route: Dict[str, Any] = {}
+        provider = metadata_dict.get("llm_provider")
+        model = metadata_dict.get("llm_model")
+        llm_fallback = metadata_dict.get("llm_fallback")
+        fallback_reason = metadata_dict.get("fallback_reason")
+
+        if provider not in (None, ""):
+            route["llm_provider"] = str(provider)
+        if model not in (None, ""):
+            route["llm_model"] = str(model)
+        if llm_fallback is not None:
+            route["llm_fallback"] = bool(llm_fallback)
+        if fallback_reason not in (None, ""):
+            route["fallback_reason"] = str(fallback_reason)
+        return route
+
     # Emit trace events for each philosopher execution result
     for result in run_results:
-        tracer.emit(
-            TraceEvent.now(
-                "PhilosopherResult",
-                ctx.request_id,
-                {
-                    "name": result.philosopher_id,
-                    "n": result.n,
-                    "timed_out": result.timed_out,
-                    "error": "" if result.error is None else result.error[:200],
-                    "latency_ms": (
-                        -1 if result.latency_ms is None else result.latency_ms
-                    ),
-                },
-            )
+        payload: Dict[str, Any] = {
+            "name": result.philosopher_id,
+            "n": result.n,
+            "timed_out": result.timed_out,
+            "error": "" if result.error is None else result.error[:200],
+            "latency_ms": (-1 if result.latency_ms is None else result.latency_ms),
+        }
+
+        matched_proposal = next(
+            (
+                p
+                for p in raw_proposals
+                if isinstance(p, DomainProposal)
+                and str((p.extra or {}).get("philosopher") or "") == result.philosopher_id
+            ),
+            None,
         )
+        payload.update(_extract_llm_route(matched_proposal))
+
+        tracer.emit(TraceEvent.now("PhilosopherResult", ctx.request_id, payload))
 
     # 6.5 Deliberation Engine (multi-round philosopher dialogue)
     if deps.deliberation_engine is not None and hasattr(
