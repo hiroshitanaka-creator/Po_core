@@ -20,7 +20,7 @@ from fastapi.responses import StreamingResponse
 
 from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
-from po_core.app.rest.auth import require_api_key
+from po_core.app.rest.auth import evaluate_auth_policy, require_api_key
 from po_core.app.rest.models import (
     PhilosopherContribution,
     ReasonRequest,
@@ -57,14 +57,13 @@ def _reason_limit() -> str:
     return f"{rpm}/minute"
 
 
-def _is_ws_authorized(websocket: WebSocket, api_key: str, skip_auth: bool) -> bool:
-    """Validate WebSocket API key from header or query parameter."""
-    if skip_auth or not api_key:
-        return True
-    presented = websocket.headers.get("x-api-key") or websocket.query_params.get(
-        "api_key"
-    )
-    return presented == api_key
+def _resolve_ws_auth_key(websocket: WebSocket) -> str | None:
+    """Resolve API key for WebSocket handshake.
+
+    WebSocket browser clients cannot set arbitrary headers in many environments,
+    so we support the ``api_key`` query parameter as a compatibility fallback.
+    """
+    return websocket.headers.get("x-api-key") or websocket.query_params.get("api_key")
 
 
 def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
@@ -464,10 +463,13 @@ async def reason_ws(websocket: WebSocket) -> None:
 
     api_settings = get_api_settings()
 
-    if not _is_ws_authorized(
-        websocket, api_settings.api_key, skip_auth=api_settings.skip_auth
-    ):
-        await websocket.close(code=1008, reason="Invalid or missing API key")
+    auth_decision = evaluate_auth_policy(
+        skip_auth=api_settings.skip_auth,
+        configured_api_key=api_settings.api_key,
+        presented_api_key=_resolve_ws_auth_key(websocket),
+    )
+    if not auth_decision.allowed:
+        await websocket.close(code=1008, reason=auth_decision.message)
         return
 
     if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute):

@@ -28,6 +28,7 @@ from fastapi.responses import Response
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+from po_core.app.rest.auth import evaluate_auth_policy
 from po_core.app.rest.config import APISettings, get_api_settings, set_api_settings
 from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.routers import (
@@ -91,8 +92,8 @@ to generate ethically responsible responses.
 
 ### Authentication
 Include your API key in the `X-API-Key` header for all requests.
-Set `PO_API_KEY` environment variable to enable authentication.
-Leave empty or set `PO_SKIP_AUTH=true` for development mode.
+Set `PO_API_KEY` and keep `PO_SKIP_AUTH=false` to enforce authentication.
+Set `PO_SKIP_AUTH=true` only for development mode.
 
 ### Pipeline
 ```
@@ -179,10 +180,19 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
                 "host": settings.host,
                 "port": settings.port,
                 "auth_enabled": bool(settings.api_key) and not settings.skip_auth,
+                "skip_auth": settings.skip_auth,
                 "cors_origins": settings.cors_origins,
                 "rate_limit_per_minute": settings.rate_limit_per_minute,
             },
         )
+
+        auth_state = evaluate_auth_policy(
+            skip_auth=settings.skip_auth,
+            configured_api_key=settings.api_key,
+            presented_api_key=settings.api_key,
+        )
+        if not auth_state.allowed and auth_state.is_misconfigured:
+            logger.error(auth_state.message)
 
     return application
 
