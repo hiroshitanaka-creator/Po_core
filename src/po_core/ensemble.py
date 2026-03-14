@@ -693,10 +693,46 @@ def _run_phase_post(
         ],
     )
 
+    def _to_rest_proposal(p: DomainProposal) -> Dict[str, Any]:
+        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
+        po_meta = extra.get(PO_CORE, {})
+        po_meta_dict = dict(po_meta) if isinstance(po_meta, Mapping) else {}
+
+        author_raw = po_meta_dict.get(AUTHOR) or extra.get("philosopher")
+        author = str(author_raw) if author_raw is not None else "unknown"
+
+        normalized_raw = extra.get("normalized_response")
+        normalized = dict(normalized_raw) if isinstance(normalized_raw, Mapping) else {}
+        metadata_raw = normalized.get("metadata")
+        metadata = dict(metadata_raw) if isinstance(metadata_raw, Mapping) else {}
+
+        return {
+            "philosopher_id": author,
+            "name": author,
+            "content": str(getattr(p, "content", "")),
+            "proposal": str(getattr(p, "content", "")),
+            "weight": float(getattr(p, "confidence", 0.0)),
+            "score": float(getattr(p, "confidence", 0.0)),
+            "normalized_response": normalized,
+            "metadata": metadata,
+        }
+
+    rest_proposals = [
+        _to_rest_proposal(p)
+        for p in sorted(
+            proposals,
+            key=lambda p: (
+                -float(getattr(p, "confidence", 0.0)),
+                str(getattr(p, "proposal_id", "")),
+            ),
+        )[:5]
+    ]
+
     result: Dict[str, Any] = {
         "request_id": ctx.request_id,
         "status": "ok",
         "proposal": final_main.compact(),
+        "proposals": rest_proposals,
     }
 
     if _structured_output_enabled() and synthesis_report:
