@@ -27,6 +27,22 @@ def fake_llm_generate(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, str]]:
                 "user": user,
             }
         )
+
+        # Backward-compatible env toggle for tests without touching production code.
+        import os
+
+        forced_provider = os.getenv("PO_TEST_FAKE_LLM_EMPTY_PROVIDER")
+        forced_user_contains = os.getenv("PO_TEST_FAKE_LLM_EMPTY_USER_CONTAINS")
+        forced_system_contains = os.getenv("PO_TEST_FAKE_LLM_EMPTY_SYSTEM_CONTAINS")
+
+        if (
+            forced_provider
+            and provider == forced_provider
+            and (not forced_user_contains or forced_user_contains in user)
+            and (not forced_system_contains or forced_system_contains in system)
+        ):
+            return ""
+
         return json.dumps(
             {
                 "reasoning": f"[DRYRUN provider={provider} model={model}] {user}",
@@ -81,6 +97,14 @@ def _disable_external_battalion_table(
     monkeypatch.setenv(
         "PO_CORE_BATTALION_TABLE", str(tmp_path / "missing_battalion.yaml")
     )
+
+
+def _enable_forced_llm_unavailable_for_openai(
+    monkeypatch: pytest.MonkeyPatch, marker: str
+) -> None:
+    monkeypatch.setenv("PO_TEST_FAKE_LLM_EMPTY_PROVIDER", "openai")
+    monkeypatch.setenv("PO_TEST_FAKE_LLM_EMPTY_USER_CONTAINS", marker)
+    monkeypatch.setenv("PO_TEST_FAKE_LLM_EMPTY_SYSTEM_CONTAINS", "You are")
 
 
 def _create_rest_client() -> TestClient:
@@ -324,6 +348,115 @@ def test_rest_ws_dry_run_exposes_llm_routing_observability(
     assert philosophers
     assert any(p.get("provider") for p in philosophers)
     assert any(p.get("model") for p in philosophers)
+
+    recorder_providers = {call["provider"] for call in fake_llm_generate}
+    assert "openai" in recorder_providers
+    assert "gemini" in recorder_providers
+
+
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_rest_stream_sse_dry_run_exposes_llm_fallback_observability(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    fake_llm_generate: list[dict[str, str]],
+) -> None:
+    _disable_external_battalion_table(monkeypatch, tmp_path)
+    monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", _write_map_file(tmp_path))
+    marker = "force stream fallback sse"
+    _enable_forced_llm_unavailable_for_openai(monkeypatch, marker)
+    client = _create_rest_client()
+
+    response = client.post("/v1/reason/stream", json={"input": marker})
+
+    assert response.status_code == 200
+    chunks = _parse_sse_chunks(response.text)
+
+    philosopher_events = [
+        chunk
+        for chunk in chunks
+        if chunk.get("chunk_type") == "event"
+        and isinstance(chunk.get("payload"), dict)
+        and chunk["payload"].get("event_type") == "PhilosopherResult"
+    ]
+    assert philosopher_events
+
+    philosopher_payloads = [
+        event["payload"].get("payload")
+        for event in philosopher_events
+        if isinstance(event["payload"].get("payload"), dict)
+    ]
+    assert any(payload.get("llm_fallback") is True for payload in philosopher_payloads)
+    assert any(
+        payload.get("llm_fallback") is True
+        and payload.get("fallback_reason") == "llm_unavailable"
+        for payload in philosopher_payloads
+    )
+
+    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    philosophers = result_chunk.get("payload", {}).get("philosophers", [])
+    assert philosophers
+    assert any(p.get("llm_fallback") is True for p in philosophers)
+    assert any(
+        p.get("llm_fallback") is True
+        and p.get("fallback_reason") == "llm_unavailable"
+        for p in philosophers
+    )
+
+    recorder_providers = {call["provider"] for call in fake_llm_generate}
+    assert "openai" in recorder_providers
+    assert "gemini" in recorder_providers
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_rest_ws_dry_run_exposes_llm_fallback_observability(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    fake_llm_generate: list[dict[str, str]],
+) -> None:
+    _disable_external_battalion_table(monkeypatch, tmp_path)
+    monkeypatch.setenv("PO_LLM_PHILOSOPHER_MAP_PATH", _write_map_file(tmp_path))
+    marker = "force stream fallback ws"
+    _enable_forced_llm_unavailable_for_openai(monkeypatch, marker)
+    client = _create_rest_client()
+
+    with client.websocket_connect("/v1/ws/reason") as ws:
+        ws.send_json({"input": marker})
+        chunks = _collect_ws_chunks(ws)
+
+    philosopher_events = [
+        chunk
+        for chunk in chunks
+        if chunk.get("chunk_type") == "event"
+        and isinstance(chunk.get("payload"), dict)
+        and chunk["payload"].get("event_type") == "PhilosopherResult"
+    ]
+    assert philosopher_events
+
+    philosopher_payloads = [
+        event["payload"].get("payload")
+        for event in philosopher_events
+        if isinstance(event["payload"].get("payload"), dict)
+    ]
+    assert any(payload.get("llm_fallback") is True for payload in philosopher_payloads)
+    assert any(
+        payload.get("llm_fallback") is True
+        and payload.get("fallback_reason") == "llm_unavailable"
+        for payload in philosopher_payloads
+    )
+
+    result_chunk = next(chunk for chunk in chunks if chunk.get("chunk_type") == "result")
+    philosophers = result_chunk.get("payload", {}).get("philosophers", [])
+    assert philosophers
+    assert any(p.get("llm_fallback") is True for p in philosophers)
+    assert any(
+        p.get("llm_fallback") is True
+        and p.get("fallback_reason") == "llm_unavailable"
+        for p in philosophers
+    )
 
     recorder_providers = {call["provider"] for call in fake_llm_generate}
     assert "openai" in recorder_providers
