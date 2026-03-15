@@ -113,7 +113,7 @@ v1.0.0 リリース定義の全条件が充足された:
   - Trace store は backend 切替式で、`memory` に加えて `sqlite` を実装済み。`trace_sessions` / `trace_events` テーブルでセッション履歴・イベント履歴を保持し、`get/history` で再取得できる。
   - `/v1/reason/stream`（SSE）と `/v1/ws/reason`（WebSocket）の両方でリアルタイム chunk 配信を実装済み。trace event を逐次配信し、終了時に trace 保存まで行う。
   - ESCALATE 判定時は `/v1/reason` から review queue へ投入され、`/v1/review/pending` と `/v1/review/{review_id}/decision` で human decision を処理できる。決定時は `HumanReviewDecided` が trace に追記される。
-  - viewer `standalone.html` は live mode で `/v1/ws/reason` に接続し、stream chunk（started/event/result/done）を表示できる。
+  - viewer `standalone.html` は live mode で transport を `auto/sse/websocket` から選択可能。`auto` は API key 入力時に SSE（header auth）を優先し、キー未入力時は WebSocket を使う。接続/認証/レート制限失敗を UI に表示し、session_id 表示も維持。
 
 - **Completed（この更新で反映）**
   - review queue を SQLite 永続バックエンド対応へ拡張。`PO_REVIEW_STORE_BACKEND=sqlite`（デフォルト）時は `review_queue` テーブルへ保存され、サーバ再起動後も pending/decided 状態を保持。
@@ -126,7 +126,7 @@ v1.0.0 リリース定義の全条件が充足された:
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
-- **Stage 3/4 follow-up（実装監査後）**: 未完了は「ESCALATE 向け専用UI」「WS/SSE の運用監視強化」に限定。SQLite trace 永続化・review queue 永続化・WS配信そのものは main 実装済み。
+- **Stage 3/4 follow-up（実装監査後）**: 未完了は「ESCALATE 向け専用UI」「WS/SSE の運用監視強化」に限定。viewer 側の auth 対応 transport（auto/sse/websocket）と失敗可視化は反映済み。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。

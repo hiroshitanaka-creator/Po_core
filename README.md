@@ -463,6 +463,11 @@ Auth defaults:
 - Production: `PO_SKIP_AUTH=false` and set non-empty `PO_API_KEY` (startup fails fast when misconfigured)
 - WebSocket query-string fallback (`?api_key=...`) is disabled by default; enable only when needed via `PO_WS_ALLOW_QUERY_API_KEY=true`
 
+Viewer (`src/po_core/viewer/standalone.html`) live mode guidance:
+- Prefer **SSE** for browser production use (supports `X-API-Key` header auth).
+- WebSocket in browsers cannot set custom auth headers; query-string auth (`?api_key=...`) is available only when `PO_WS_ALLOW_QUERY_API_KEY=true` (opt-in, less secure).
+- `auto` transport selects SSE when API key is present, otherwise WebSocket.
+
 ### Docker
 
 ```bash
