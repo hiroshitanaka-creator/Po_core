@@ -116,17 +116,17 @@ class LLMAdapter:
     # ── Provider implementations ────────────────────────────────────
 
     def _generate_gemini(self, system: str, user: str) -> str:
-        import google.generativeai as genai  # type: ignore[import-untyped]
+        import google.genai as genai  # type: ignore[import-untyped]
+        import google.genai.types as genai_types  # type: ignore[import-untyped]
 
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        m = genai.GenerativeModel(
-            model_name=self.model,
-            system_instruction=system,
-        )
-        response = m.generate_content(
-            user,
-            generation_config={"max_output_tokens": 1024},
-            request_options={"timeout": self.timeout},
+        client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        response = client.models.generate_content(
+            model=self.model,
+            contents=user,
+            config=genai_types.GenerateContentConfig(
+                system_instruction=system,
+                max_output_tokens=1024,
+            ),
         )
         self.actual_model = self.model
         return response.text or ""
