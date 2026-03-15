@@ -127,12 +127,12 @@ PyPI publish pending. Spec/acceptance-test scaffolding in progress (M0).
 - 53 new Phase 3 tests (2477 total, 0 failures)
 - Legacy `test_visualizer_with_po_self_session` skipped (Phase 3 scope)
 
-**Remaining Work:**
+**Remaining Work (main実装同期済み):**
 
-- Trace database (SQLite) for historical query support
 - Interaction heatmap (NxN philosopher tensor visualization)
-- WebSocket streaming for real-time event delivery
-- Human review interface for ESCALATE decisions
+- Human review queue persistence (current `review_store` is in-memory only)
+- ESCALATE UI: pending review list + approve/reject action flow in viewer
+- Streaming observability hardening (WS/SSE connection metrics, lag, disconnect telemetry)
 
 **Exit Criteria:**
 
