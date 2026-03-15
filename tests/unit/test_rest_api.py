@@ -588,7 +588,9 @@ def test_review_pending_persists_across_app_reinitialization(tmp_path):
         "verdict": {"decision": "escalate"},
     }
     with TestClient(app, raise_server_exceptions=True) as client:
-        with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+        with patch(
+            "po_core.app.rest.routers.reason.po_run", return_value=escalate_result
+        ):
             resp = client.post(
                 "/v1/reason",
                 json={"input": "Need review", "session_id": "persist-pending-session"},
@@ -645,7 +647,9 @@ def test_review_decision_persists_across_app_reinitialization(tmp_path):
         "verdict": {"decision": "escalate"},
     }
     with TestClient(app, raise_server_exceptions=True) as client:
-        with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+        with patch(
+            "po_core.app.rest.routers.reason.po_run", return_value=escalate_result
+        ):
             create_resp = client.post(
                 "/v1/reason",
                 json={"input": "Need review", "session_id": "persist-decided-session"},
@@ -941,7 +945,10 @@ def test_reason_stream_auth_matrix(client_with_auth):
         json={"input": "test"},
         headers={"X-API-Key": "wrong"},
     )
-    with patch("po_core.app.rest.routers.reason.po_async_run", new=AsyncMock(return_value=_MOCK_RESULT)):
+    with patch(
+        "po_core.app.rest.routers.reason.po_async_run",
+        new=AsyncMock(return_value=_MOCK_RESULT),
+    ):
         ok = client_with_auth.post(
             "/v1/reason/stream",
             json={"input": "test"},
@@ -1010,18 +1017,20 @@ def test_reason_ws_accepts_query_param_api_key_when_opted_in(tmp_path):
     )
 
     async def _fake_async_run(*, user_input, settings, tracer):
-        tracer.emit(TraceEvent.now("pipeline_step", "req-ws-query-auth", {"step": "start"}))
+        tracer.emit(
+            TraceEvent.now("pipeline_step", "req-ws-query-auth", {"step": "start"})
+        )
         return _MOCK_RESULT
 
     with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
         with TestClient(app, raise_server_exceptions=True) as client:
-            with client.websocket_connect("/v1/ws/reason?api_key=test-secret-key") as ws:
+            with client.websocket_connect(
+                "/v1/ws/reason?api_key=test-secret-key"
+            ) as ws:
                 ws.send_json({"input": "Is fairness objective?"})
                 first = ws.receive_json()
 
     assert first["chunk_type"] == "started"
-
-
 
 
 # ---------------------------------------------------------------------------

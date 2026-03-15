@@ -57,7 +57,9 @@ def _reason_limit() -> str:
     return f"{rpm}/minute"
 
 
-def _resolve_ws_auth_key(websocket: WebSocket, *, allow_query_api_key: bool) -> str | None:
+def _resolve_ws_auth_key(
+    websocket: WebSocket, *, allow_query_api_key: bool
+) -> str | None:
     """Resolve API key for WebSocket handshake.
 
     By default, only the ``X-API-Key`` header is accepted because query-string
@@ -67,11 +69,15 @@ def _resolve_ws_auth_key(websocket: WebSocket, *, allow_query_api_key: bool) -> 
     as a browser-compatibility fallback for environments that cannot set custom
     WebSocket headers.
     """
-    header_key = websocket.headers.get("x-api-key")
+    header_key: str | None = websocket.headers.get("x-api-key")
     if header_key:
         return header_key
     if allow_query_api_key:
-        return websocket.query_params.get("api_key")
+        return (
+            str(websocket.query_params["api_key"])
+            if "api_key" in websocket.query_params
+            else None
+        )
     return None
 
 
