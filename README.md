@@ -467,6 +467,9 @@ Viewer (`src/po_core/viewer/standalone.html`) live mode guidance:
 - Prefer **SSE** for browser production use (supports `X-API-Key` header auth).
 - WebSocket in browsers cannot set custom auth headers; query-string auth (`?api_key=...`) is available only when `PO_WS_ALLOW_QUERY_API_KEY=true` (opt-in, less secure).
 - `auto` transport selects SSE when API key is present, otherwise WebSocket.
+- Right panel includes a **Human Review** queue for ESCALATE operations (`GET /v1/review/pending`).
+- Selecting a review item shows `session_id / request_id / reason / source` and loads the latest trace event preview via `GET /v1/trace/{session_id}`.
+- Submit `approve/reject` with reviewer/comment from UI (`POST /v1/review/{review_id}/decision`), then the list and details are refreshed automatically.
 
 ### Docker
 

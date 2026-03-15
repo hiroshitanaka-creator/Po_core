@@ -320,6 +320,99 @@
     .phil-badge.active { background: rgba(88,166,255,.15); border-color: var(--blue); color: #fff; box-shadow: 0 0 8px rgba(88,166,255,.35); }
     .phil-badge.active .dot { background: var(--blue); box-shadow: 0 0 4px var(--blue); }
     .phil-badge.planned { opacity: .45; font-style: italic; }
+
+    /* ── Human Review Queue ─── */
+    .review-box {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .review-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+    }
+    .review-count { color: var(--muted); font-size: .75rem; }
+    .review-list {
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+    }
+    .review-item {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 8px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: .75rem;
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-item:hover { background: rgba(88,166,255,.08); }
+    .review-item.active { background: rgba(88,166,255,.17); border-left: 2px solid var(--blue); }
+    .review-meta {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: .74rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .review-meta b { color: var(--text); }
+    .trace-preview {
+      border: 1px solid var(--border);
+      background: #010409;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: .72rem;
+      line-height: 1.45;
+      max-height: 90px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+    .review-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .review-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-family: inherit;
+      font-size: .75rem;
+    }
+    .review-input:focus { outline: none; border-color: var(--blue); }
+    .review-actions { display: flex; gap: 6px; }
+    .review-btn {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px;
+      font-family: inherit;
+      font-size: .75rem;
+      cursor: pointer;
+      color: var(--text);
+      background: var(--badge);
+    }
+    .review-btn.approve { border-color: var(--green); color: var(--green); }
+    .review-btn.reject { border-color: var(--red); color: var(--red); }
+    .review-status { font-size: .74rem; min-height: 1em; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -412,6 +505,27 @@
       </div>
       <div class="panel-body">
         <div class="roster-grid" id="roster"></div>
+        <div class="review-box">
+          <div class="review-hdr">
+            <span>Human Review</span>
+            <div>
+              <span class="review-count" id="review-count">pending: —</span>
+              <button class="small-btn" onclick="loadPendingReviews()">Reload</button>
+            </div>
+          </div>
+          <div class="review-list" id="review-list"></div>
+          <div class="review-meta" id="review-detail">Select pending review item.</div>
+          <div class="trace-preview" id="trace-preview">Trace preview: —</div>
+          <div class="review-form">
+            <input id="reviewer-input" class="review-input" type="text" placeholder="reviewer name" />
+            <textarea id="review-comment-input" class="review-input" rows="2" placeholder="decision comment (optional)"></textarea>
+            <div class="review-actions">
+              <button class="review-btn approve" onclick="submitReviewDecision('approve')">Approve</button>
+              <button class="review-btn reject" onclick="submitReviewDecision('reject')">Reject</button>
+            </div>
+            <div class="review-status" id="review-status"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -488,6 +602,8 @@
     let isLive = localStorage.getItem('po_live') === '1';
     let sessionId = localStorage.getItem('po_session') || null;
     let lastTransport = '—';
+    let selectedReviewId = null;
+    let pendingReviews = [];
     const badgeMap = {}; // id → DOM element
 
     // ═══════════════════════════════════════════════════════════════
@@ -500,6 +616,7 @@
       updateSessionLabel();
       updateTransportNotice();
       document.getElementById('companion-count').innerText = `Companions: ${PHILOSOPHER_DATA.filter(p=>!p.planned).length}`;
+      loadPendingReviews();
     }
 
 
@@ -568,6 +685,137 @@
         el.innerText = hasApiKey
           ? 'SSE 選択中: API key は X-API-Key header で送信されます（推奨）。'
           : 'SSE 選択中: API key 未入力。auth 必須サーバでは 401 になります。';
+      }
+    }
+
+    function setReviewStatus(message, color = 'var(--muted)') {
+      const el = document.getElementById('review-status');
+      el.style.color = color;
+      el.innerText = message;
+    }
+
+    function renderReviewList() {
+      const listEl = document.getElementById('review-list');
+      const countEl = document.getElementById('review-count');
+      countEl.innerText = `pending: ${pendingReviews.length}`;
+
+      if (pendingReviews.length === 0) {
+        listEl.innerHTML = '<div style="padding:8px;color:var(--muted);font-size:.74rem;">No pending reviews.</div>';
+        selectedReviewId = null;
+        document.getElementById('review-detail').innerText = 'Select pending review item.';
+        document.getElementById('trace-preview').innerText = 'Trace preview: —';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      pendingReviews.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.className = 'review-item' + (item.id === selectedReviewId ? ' active' : '');
+        btn.innerText = `${item.id} | ${item.session_id}`;
+        btn.onclick = () => selectReviewItem(item.id);
+        listEl.appendChild(btn);
+      });
+    }
+
+    async function loadPendingReviews(keepSelection = true) {
+      if (!isLive) {
+        setReviewStatus('Review queue requires LIVE mode.', 'var(--yellow)');
+        return;
+      }
+      persistSettings();
+      const apiUrl = getApiBaseUrl();
+      setReviewStatus('Loading pending reviews…');
+      try {
+        const resp = await fetch(`${apiUrl}/v1/review/pending`, {
+          headers: getAuthHeaders(),
+        });
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        }
+        const data = await resp.json();
+        pendingReviews = Array.isArray(data.items) ? data.items : [];
+        if (!keepSelection || !pendingReviews.some((i) => i.id === selectedReviewId)) {
+          selectedReviewId = pendingReviews.length > 0 ? pendingReviews[0].id : null;
+        }
+        renderReviewList();
+        if (selectedReviewId) {
+          await selectReviewItem(selectedReviewId);
+        }
+        setReviewStatus('Pending reviews loaded.', 'var(--green)');
+      } catch (e) {
+        setReviewStatus(`Failed to load reviews: ${e.message}`, 'var(--red)');
+      }
+    }
+
+    function summarizeTraceEvent(evt) {
+      if (!evt || typeof evt !== 'object') return 'Trace preview: unavailable';
+      const payload = evt.payload && typeof evt.payload === 'object' ? evt.payload : {};
+      const payloadSnippet = JSON.stringify(payload, null, 2);
+      return `latest_event: ${evt.event_type || 'unknown'}\noccurred_at: ${evt.occurred_at || '—'}\ncorrelation_id: ${evt.correlation_id || '—'}\npayload:\n${payloadSnippet}`;
+    }
+
+    async function selectReviewItem(reviewId) {
+      selectedReviewId = reviewId;
+      renderReviewList();
+      const item = pendingReviews.find((i) => i.id === reviewId);
+      if (!item) return;
+
+      document.getElementById('review-detail').innerHTML =
+        `<b>review_id:</b> ${escHtml(item.id)}<br/>` +
+        `<b>session_id:</b> ${escHtml(item.session_id)}<br/>` +
+        `<b>request_id:</b> ${escHtml(item.request_id)}<br/>` +
+        `<b>reason:</b> ${escHtml(item.reason)}<br/>` +
+        `<b>source:</b> ${escHtml(item.source)}`;
+
+      const previewEl = document.getElementById('trace-preview');
+      previewEl.innerText = 'Trace preview: loading…';
+      try {
+        const apiUrl = getApiBaseUrl();
+        const traceResp = await fetch(`${apiUrl}/v1/trace/${encodeURIComponent(item.session_id)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (!traceResp.ok) {
+          throw new Error(`HTTP ${traceResp.status}`);
+        }
+        const trace = await traceResp.json();
+        const events = Array.isArray(trace.events) ? trace.events : [];
+        const latest = events.length > 0 ? events[events.length - 1] : null;
+        previewEl.innerText = summarizeTraceEvent(latest);
+      } catch (e) {
+        previewEl.innerText = `Trace preview failed: ${e.message}`;
+      }
+    }
+
+    async function submitReviewDecision(decision) {
+      if (!selectedReviewId) {
+        setReviewStatus('Select review item first.', 'var(--yellow)');
+        return;
+      }
+      const reviewer = document.getElementById('reviewer-input').value.trim();
+      const comment = document.getElementById('review-comment-input').value.trim();
+      if (!reviewer) {
+        setReviewStatus('Reviewer is required.', 'var(--yellow)');
+        return;
+      }
+      setReviewStatus(`Submitting ${decision}…`);
+      try {
+        const apiUrl = getApiBaseUrl();
+        const resp = await fetch(`${apiUrl}/v1/review/${encodeURIComponent(selectedReviewId)}/decision`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({ decision, reviewer, comment: comment || null }),
+        });
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        }
+        await resp.json();
+        setReviewStatus(`Decision submitted: ${decision}`, 'var(--green)');
+        await loadPendingReviews(false);
+      } catch (e) {
+        setReviewStatus(`Decision failed: ${e.message}`, 'var(--red)');
       }
     }
 
