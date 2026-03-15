@@ -30,6 +30,7 @@
 - **Phase13-PR-4**: deliberation scaling benchmark（`tests/benchmarks/test_pipeline_perf.py::test_bench_deliberation_scaling`）の計測手法を安定化。`stable-p50`（複数バッチのp50中央値）を導入し、判定しきい値 `max(r1 * 4.0, 0.95)` を維持したままCI jitter由来のフレークを抑制して回帰検知感度を保った。
 - **Phase9-PR-1**: pytest設定の単一真実化（pytest.ini）を完了。
 - **Phase9-PR-2**: policy_lab/coverageの定数参照を動的化し、テストを安定化。
+- **Phase9-PR-4**: `docs/release/testpypi_publish_log_v0.3.0.md` に TestPyPI publish evidence の実測記録を固定（Purpose / UTC時刻 / commit/tag / 実行コマンド / 観測結果 / 結果要約）。
 - **Phase8-PR-1**: publish playbook（`docs/operations/publish_playbook.md`）を追加し、publish.yml の TestPyPI→PyPI 手順と失敗時ロールバックを再現可能な運用手順として固定した。
 - **Phase6-PR-2**: acceptance must-pass（`pytest tests/acceptance/ -v -m acceptance`）のgreen実行証跡をrepo内に固定した（acceptance proof: `docs/release/acceptance_proof_v0.3.0.md`）。
 - **Phase6-PR-4**: OpenAPIライセンス表記をAGPL+Commercialに修正し、OpenAPI description にライセンスリンクを追加した。
