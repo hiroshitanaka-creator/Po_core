@@ -22,7 +22,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from po_core.app.rest.config import APISettings
-from po_core.app.rest.review_store import _review_store
+from po_core.app.rest.review_store import (
+    _review_store,
+    get_review_store,
+    reset_review_store,
+)
 from po_core.app.rest.server import create_app
 from po_core.app.rest.store import get_trace_store, reset_trace_store
 from po_core.domain.trace_event import TraceEvent
@@ -36,9 +40,11 @@ from po_core.domain.trace_event import TraceEvent
 def clear_trace_store():
     """Reset the trace store singleton and review queue before each test."""
     reset_trace_store()
+    reset_review_store()
     _review_store.clear()
     yield
     reset_trace_store()
+    reset_review_store()
     _review_store.clear()
 
 
@@ -514,6 +520,134 @@ def test_review_decision_updates_item_and_appends_trace(client_no_auth):
 
     trace = client_no_auth.get("/v1/trace/escalate-session-2").json()
     assert any(e["event_type"] == "HumanReviewDecided" for e in trace["events"])
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_review_pending_persists_across_app_reinitialization(tmp_path):
+    """SQLite review store keeps pending items across app recreation."""
+    db_path = tmp_path / "trace_store.sqlite3"
+
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+            review_store_backend="sqlite",
+            review_db_path=str(db_path),
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+
+    escalate_result = {
+        **_MOCK_RESULT,
+        "request_id": "req-escalate-persist-pending",
+        "verdict": {"decision": "escalate"},
+    }
+    with TestClient(app, raise_server_exceptions=True) as client:
+        with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+            resp = client.post(
+                "/v1/reason",
+                json={"input": "Need review", "session_id": "persist-pending-session"},
+            )
+        assert resp.status_code == 200
+
+    reset_trace_store()
+    reset_review_store()
+
+    app2 = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+            review_store_backend="sqlite",
+            review_db_path=str(db_path),
+        )
+    )
+    app2.dependency_overrides[auth.require_api_key] = lambda: None
+
+    with TestClient(app2, raise_server_exceptions=True) as client2:
+        pending = client2.get("/v1/review/pending")
+        assert pending.status_code == 200
+        body = pending.json()
+        assert body["total"] == 1
+        assert body["items"][0]["session_id"] == "persist-pending-session"
+        assert body["items"][0]["status"] == "pending"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_review_decision_persists_across_app_reinitialization(tmp_path):
+    """SQLite review store keeps decided items after app recreation."""
+    db_path = tmp_path / "trace_store.sqlite3"
+
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+            review_store_backend="sqlite",
+            review_db_path=str(db_path),
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+
+    escalate_result = {
+        **_MOCK_RESULT,
+        "request_id": "req-escalate-persist-decided",
+        "verdict": {"decision": "escalate"},
+    }
+    with TestClient(app, raise_server_exceptions=True) as client:
+        with patch("po_core.app.rest.routers.reason.po_run", return_value=escalate_result):
+            create_resp = client.post(
+                "/v1/reason",
+                json={"input": "Need review", "session_id": "persist-decided-session"},
+            )
+        assert create_resp.status_code == 200
+        pending = client.get("/v1/review/pending").json()["items"]
+        review_id = pending[0]["id"]
+        decide_resp = client.post(
+            f"/v1/review/{review_id}/decision",
+            json={"decision": "reject", "reviewer": "bob", "comment": "insufficient"},
+        )
+        assert decide_resp.status_code == 200
+
+    reset_trace_store()
+    reset_review_store()
+
+    app2 = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(db_path),
+            review_store_backend="sqlite",
+            review_db_path=str(db_path),
+        )
+    )
+    app2.dependency_overrides[auth.require_api_key] = lambda: None
+
+    with TestClient(app2, raise_server_exceptions=True) as client2:
+        pending_after = client2.get("/v1/review/pending").json()
+        assert pending_after["total"] == 0
+
+        store = get_review_store()
+        decided = store.apply_decision(
+            review_id,
+            decision="approve",
+            reviewer="charlie",
+            comment="override",
+        )
+        assert decided is not None
+        assert decided["status"] == "decided"
+        assert decided["reviewer"] == "charlie"
 
 
 # ---------------------------------------------------------------------------

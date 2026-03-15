@@ -80,6 +80,10 @@ class APISettings(BaseSettings):
     trace_store_backend: str = "sqlite"  # sqlite | memory
     trace_db_path: str = ".po_core/trace_store.sqlite3"
 
+    # Review queue storage
+    review_store_backend: str = "sqlite"  # sqlite | memory
+    review_db_path: str = ""
+
     class Config:
         env_prefix = "PO_"
         env_file = ".env"
