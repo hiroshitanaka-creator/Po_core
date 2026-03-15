@@ -89,6 +89,7 @@
     #settings-bar {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
       padding: 6px 14px;
       background: var(--panel);
@@ -101,6 +102,7 @@
     #settings-bar label { color: var(--muted); }
     #api-url-input {
       flex: 1;
+      min-width: 260px;
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
@@ -109,7 +111,34 @@
       font-family: inherit;
       font-size: .8rem;
     }
-    #api-url-input:focus { outline: none; border-color: var(--blue); }
+    #api-key-input {
+      min-width: 180px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: .8rem;
+    }
+    #api-url-input:focus, #api-key-input:focus, #transport-select:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+    #transport-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: .8rem;
+    }
+    #stream-notice {
+      width: 100%;
+      font-size: .78rem;
+      color: var(--muted);
+    }
     .small-btn {
       border: 1px solid var(--border);
       background: var(--badge);
@@ -310,9 +339,18 @@
   <div id="settings-bar">
     <label for="api-url-input">API:</label>
     <input id="api-url-input" type="text" value="http://localhost:8000" spellcheck="false" />
+    <label for="api-key-input">API Key:</label>
+    <input id="api-key-input" type="password" placeholder="(optional)" spellcheck="false" />
+    <label for="transport-select">Transport:</label>
+    <select id="transport-select" onchange="updateTransportNotice()">
+      <option value="auto">auto</option>
+      <option value="sse">sse</option>
+      <option value="websocket">websocket</option>
+    </select>
     <button class="small-btn" onclick="pingHealth()">Ping</button>
     <button class="small-btn" onclick="newSession()">New Session</button>
     <span id="ping-result" style="color:var(--muted);font-size:.78rem;"></span>
+    <div id="stream-notice">Transport auto: API key がある場合は SSE、ない場合は WebSocket を使います。</div>
   </div>
 
   <!-- Dashboard -->
@@ -449,6 +487,7 @@
     // ═══════════════════════════════════════════════════════════════
     let isLive = localStorage.getItem('po_live') === '1';
     let sessionId = localStorage.getItem('po_session') || null;
+    let lastTransport = '—';
     const badgeMap = {}; // id → DOM element
 
     // ═══════════════════════════════════════════════════════════════
@@ -456,9 +495,80 @@
     // ═══════════════════════════════════════════════════════════════
     function init() {
       buildRoster();
+      hydrateSettings();
       applyMode();
       updateSessionLabel();
+      updateTransportNotice();
       document.getElementById('companion-count').innerText = `Companions: ${PHILOSOPHER_DATA.filter(p=>!p.planned).length}`;
+    }
+
+
+    function hydrateSettings() {
+      const apiUrl = localStorage.getItem('po_api_url');
+      const apiKey = localStorage.getItem('po_api_key');
+      const transport = localStorage.getItem('po_transport');
+      if (apiUrl) document.getElementById('api-url-input').value = apiUrl;
+      if (apiKey) document.getElementById('api-key-input').value = apiKey;
+      if (transport && ['auto', 'sse', 'websocket'].includes(transport)) {
+        document.getElementById('transport-select').value = transport;
+      }
+    }
+
+    function persistSettings() {
+      localStorage.setItem('po_api_url', getApiBaseUrl());
+      localStorage.setItem('po_api_key', getApiKey());
+      localStorage.setItem('po_transport', getTransportPreference());
+    }
+
+    function getApiBaseUrl() {
+      return document.getElementById('api-url-input').value.trim().replace(/\/$/, '');
+    }
+
+    function getApiKey() {
+      return document.getElementById('api-key-input').value.trim();
+    }
+
+    function getTransportPreference() {
+      return document.getElementById('transport-select').value;
+    }
+
+    function resolveTransport() {
+      const pref = getTransportPreference();
+      if (pref === 'auto') {
+        return getApiKey() ? 'sse' : 'websocket';
+      }
+      return pref;
+    }
+
+    function getAuthHeaders() {
+      const apiKey = getApiKey();
+      return apiKey ? { 'X-API-Key': apiKey } : {};
+    }
+
+    function toWsBaseUrl(apiUrl) {
+      return apiUrl.replace(/^http/i, 'ws');
+    }
+
+    function updateTransportNotice() {
+      const transport = resolveTransport();
+      const pref = getTransportPreference();
+      const hasApiKey = !!getApiKey();
+      const el = document.getElementById('stream-notice');
+      if (pref === 'auto') {
+        const selected = hasApiKey ? 'SSE' : 'WebSocket';
+        el.style.color = 'var(--muted)';
+        el.innerText = `Transport auto: API key がある場合は SSE、ない場合は WebSocket を使います。（現在: ${selected}）`;
+      } else if (transport === 'websocket') {
+        el.style.color = hasApiKey ? 'var(--yellow)' : 'var(--muted)';
+        el.innerText = hasApiKey
+          ? 'WebSocket 選択中: ブラウザでは header 認証が使えないため、API key は送信されません。サーバで query auth opt-in が必要です。'
+          : 'WebSocket 選択中: API key なし接続。auth 必須サーバでは失敗します。';
+      } else {
+        el.style.color = hasApiKey ? 'var(--green)' : 'var(--yellow)';
+        el.innerText = hasApiKey
+          ? 'SSE 選択中: API key は X-API-Key header で送信されます（推奨）。'
+          : 'SSE 選択中: API key 未入力。auth 必須サーバでは 401 になります。';
+      }
     }
 
     function buildRoster() {
@@ -499,6 +609,7 @@
       isLive = !isLive;
       localStorage.setItem('po_live', isLive ? '1' : '0');
       applyMode();
+      updateTransportNotice();
       appendLog(`<div class="t-sys">Mode switched to: ${isLive ? 'LIVE (API)' : 'DEMO (simulation)'}</div>`);
     }
 
@@ -599,12 +710,16 @@
     //  Health ping
     // ═══════════════════════════════════════════════════════════════
     async function pingHealth() {
-      const url = document.getElementById('api-url-input').value.trim();
+      persistSettings();
+      const url = getApiBaseUrl();
       const el = document.getElementById('ping-result');
       el.style.color = 'var(--muted)';
       el.innerText = 'Pinging…';
       try {
-        const r = await fetch(`${url}/v1/health`, { signal: AbortSignal.timeout(3000) });
+        const r = await fetch(`${url}/v1/health`, {
+          headers: getAuthHeaders(),
+          signal: AbortSignal.timeout(3000),
+        });
         const data = await r.json();
         el.style.color = 'var(--green)';
         el.innerText = `✓ v${data.version} | ${data.philosophers_loaded} philosophers`;
@@ -641,23 +756,106 @@
     }
 
     // ─── Live mode ────────────────────────────────────────────────
-    async function runLive(input) {
-      const apiUrl = document.getElementById('api-url-input').value.trim();
-      const wsUrl = apiUrl.replace(/^http/i, 'ws').replace(/\/$/, '');
+    function applyResultPayload(payload) {
+      const t = payload.tensors || {};
+      setTensors(t.freedom_pressure, t.semantic_delta, t.blocked_tensor);
+      appendLog('<div class="t-step">Tensors computed</div>');
 
+      const blocked = payload.status === 'blocked';
+      setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+      setGate('gate-action',  blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
+
+      if (payload.philosophers && payload.philosophers.length > 0) {
+        appendLog('<div class="t-step">Philosopher deliberations</div>');
+        payload.philosophers.forEach(p => {
+          appendLog(`
+            <div class="t-talk">
+              <span class="t-name">[${p.name}]</span>
+              <span class="t-weight">w=${(p.weight*100).toFixed(0)}%</span><br/>
+              <span style="color:var(--text)">${escHtml(p.proposal || '…')}</span>
+            </div>`);
+        });
+        highlightPhilosophers(payload.philosophers);
+      }
+
+      setVerdict(payload.status || 'approved');
+      const ms = payload.processing_time_ms != null ? payload.processing_time_ms.toFixed(0) : '—';
+      document.getElementById('proc-time').innerText = `${ms} ms | SafetyMode: ${payload.safety_mode || '—'} | Transport: ${lastTransport}`;
+
+      appendLog('<div class="t-step">Final Response</div>');
+      appendLog(`<div class="t-final">${escHtml(payload.response || '')}</div>`);
+    }
+
+    function classifyStreamFailure(err) {
+      const msg = (err && err.message ? err.message : String(err)).toLowerCase();
+      if (msg.includes('401') || msg.includes('forbidden') || msg.includes('invalid api key') || msg.includes('policy')) {
+        return 'AUTH ERROR';
+      }
+      if (msg.includes('429') || msg.includes('rate limit')) {
+        return 'RATE LIMITED';
+      }
+      return 'CONNECTION ERROR';
+    }
+
+    async function runViaSse(apiUrl, body) {
+      appendLog('<div class="t-step">Connecting SSE stream…</div>');
+      const resp = await fetch(`${apiUrl}/v1/reason/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!resp.ok) {
+        throw new Error(`SSE HTTP ${resp.status}: ${await resp.text()}`);
+      }
+      if (!resp.body) {
+        throw new Error('SSE stream body is unavailable');
+      }
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const messages = buffer.split('\n\n');
+        buffer = messages.pop() || '';
+
+        for (const msg of messages) {
+          const line = msg.split('\n').find(l => l.startsWith('data: '));
+          if (!line) continue;
+          let chunk;
+          try {
+            chunk = JSON.parse(line.slice(6));
+          } catch {
+            continue;
+          }
+          const shouldStop = handleStreamChunk(chunk, 'SSE');
+          if (shouldStop) return;
+        }
+      }
+    }
+
+    async function runViaWebSocket(wsBaseUrl, body) {
       appendLog('<div class="t-step">Connecting WebSocket stream…</div>');
-      setGate('gate-intent', '', 'Intention Gate: Evaluating…');
-
-      const body = { input };
-      if (sessionId) body.session_id = sessionId;
+      if (getApiKey()) {
+        appendLog('<div class="t-warn">WebSocket + API key: ブラウザでは header 認証不可です。サーバで query auth opt-in が必要です（PO_WS_ALLOW_QUERY_API_KEY=true）。</div>');
+      }
 
       await new Promise((resolve, reject) => {
-        const ws = new WebSocket(`${wsUrl}/v1/ws/reason`);
-        let resolved = false;
+        const apiKey = getApiKey();
+        const wsPath = apiKey
+          ? `${wsBaseUrl}/v1/ws/reason?api_key=${encodeURIComponent(apiKey)}`
+          : `${wsBaseUrl}/v1/ws/reason`;
+        const ws = new WebSocket(wsPath);
+        let settled = false;
 
-        ws.onopen = () => {
-          ws.send(JSON.stringify(body));
-        };
+        ws.onopen = () => ws.send(JSON.stringify(body));
 
         ws.onmessage = (ev) => {
           let chunk;
@@ -666,88 +864,94 @@
           } catch {
             return;
           }
-
-          const type = chunk.chunk_type;
-          const payload = chunk.payload || {};
-
-          if (type === 'started') {
-            if (payload.session_id) {
-              sessionId = payload.session_id;
-              localStorage.setItem('po_session', sessionId);
-              updateSessionLabel();
-            }
-            appendLog('<div class="t-sys">WebSocket stream started.</div>');
-            return;
-          }
-
-          if (type === 'event') {
-            const eventType = payload.event_type || 'trace';
-            appendLog(`<div class="t-sys">event: ${escHtml(eventType)}</div>`);
-            return;
-          }
-
-          if (type === 'result') {
-            const t = payload.tensors || {};
-            setTensors(t.freedom_pressure, t.semantic_delta, t.blocked_tensor);
-            appendLog(`<div class="t-step">Tensors computed</div>`);
-
-            const blocked = payload.status === 'blocked';
-            setGate('gate-intent', blocked ? 'block' : 'pass', `Intention Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
-            setGate('gate-action',  blocked ? 'block' : 'pass', `Action Gate: ${blocked ? 'BLOCKED' : 'PASSED'}`);
-
-            if (payload.philosophers && payload.philosophers.length > 0) {
-              appendLog('<div class="t-step">Philosopher deliberations</div>');
-              payload.philosophers.forEach(p => {
-                appendLog(`
-                  <div class="t-talk">
-                    <span class="t-name">[${p.name}]</span>
-                    <span class="t-weight">w=${(p.weight*100).toFixed(0)}%</span><br/>
-                    <span style="color:var(--text)">${p.proposal || '…'}</span>
-                  </div>`);
-              });
-              highlightPhilosophers(payload.philosophers);
-            }
-
-            setVerdict(payload.status || 'approved');
-            const ms = payload.processing_time_ms != null ? payload.processing_time_ms.toFixed(0) : '—';
-            document.getElementById('proc-time').innerText = `${ms} ms | SafetyMode: ${payload.safety_mode || '—'}`;
-
-            appendLog('<div class="t-step">Final Response</div>');
-            appendLog(`<div class="t-final">${escHtml(payload.response || '')}</div>`);
-            return;
-          }
-
-          if (type === 'error') {
-            ws.close();
-            reject(new Error(payload.message || 'WebSocket stream error'));
-            return;
-          }
-
-          if (type === 'done') {
-            ws.close();
-            if (!resolved) {
-              resolved = true;
+          if (handleStreamChunk(chunk, 'WebSocket')) {
+            if (!settled) {
+              settled = true;
+              ws.close();
               resolve();
             }
           }
         };
 
         ws.onerror = () => {
-          if (!resolved) {
+          if (!settled) {
+            settled = true;
             reject(new Error('WebSocket connection failed'));
           }
         };
 
-        ws.onclose = () => {
-          if (!resolved) {
-            resolved = true;
-            resolve();
+        ws.onclose = (ev) => {
+          if (settled) return;
+          if (ev.code === 1008) {
+            const reason = ev.reason || 'WebSocket policy violation';
+            settled = true;
+            reject(new Error(`WebSocket closed (1008): ${reason}`));
+            return;
           }
+          settled = true;
+          resolve();
         };
-      }).catch((e) => {
-        setGate('gate-intent', 'block', 'Intention Gate: CONNECTION ERROR');
-        throw e;
       });
+    }
+
+    function handleStreamChunk(chunk, transportLabel) {
+      const type = chunk.chunk_type;
+      const payload = chunk.payload || {};
+
+      if (type === 'started') {
+        if (payload.session_id) {
+          sessionId = payload.session_id;
+          localStorage.setItem('po_session', sessionId);
+          updateSessionLabel();
+        }
+        appendLog(`<div class="t-sys">${transportLabel} stream started.</div>`);
+        return false;
+      }
+
+      if (type === 'event') {
+        appendLog(`<div class="t-sys">event: ${escHtml(payload.event_type || 'trace')}</div>`);
+        return false;
+      }
+
+      if (type === 'result') {
+        applyResultPayload(payload);
+        return false;
+      }
+
+      if (type === 'error') {
+        throw new Error(payload.message || `${transportLabel} stream error`);
+      }
+
+      return type === 'done';
+    }
+
+    async function runLive(input) {
+      persistSettings();
+      updateTransportNotice();
+
+      const apiUrl = getApiBaseUrl();
+      const wsBaseUrl = toWsBaseUrl(apiUrl);
+      const transport = resolveTransport();
+      lastTransport = transport.toUpperCase();
+
+      appendLog(`<div class="t-sys">Transport: ${transport.toUpperCase()}</div>`);
+      setGate('gate-intent', '', 'Intention Gate: Evaluating…');
+
+      const body = { input };
+      if (sessionId) body.session_id = sessionId;
+
+      try {
+        if (transport === 'sse') {
+          await runViaSse(apiUrl, body);
+        } else {
+          await runViaWebSocket(wsBaseUrl, body);
+        }
+      } catch (e) {
+        const cls = classifyStreamFailure(e);
+        setGate('gate-intent', 'block', `Intention Gate: ${cls}`);
+        setGate('gate-action', 'block', `Action Gate: ${cls}`);
+        throw e;
+      }
     }
 
     // ─── Demo mode ────────────────────────────────────────────────
@@ -857,6 +1061,9 @@
     // ═══════════════════════════════════════════════════════════════
     //  Boot
     // ═══════════════════════════════════════════════════════════════
+    document.getElementById('api-url-input').addEventListener('input', () => { persistSettings(); });
+    document.getElementById('api-key-input').addEventListener('input', () => { persistSettings(); updateTransportNotice(); });
+    document.getElementById('transport-select').addEventListener('change', () => { persistSettings(); updateTransportNotice(); });
     init();
   </script>
 </body>
