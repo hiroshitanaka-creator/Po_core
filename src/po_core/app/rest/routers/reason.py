@@ -57,7 +57,9 @@ def _reason_limit() -> str:
     return f"{rpm}/minute"
 
 
-def _resolve_ws_auth_key(websocket: WebSocket, *, allow_query_api_key: bool) -> str | None:
+def _resolve_ws_auth_key(
+    websocket: WebSocket, *, allow_query_api_key: bool
+) -> str | None:
     """Resolve API key for WebSocket handshake.
 
     By default, only the ``X-API-Key`` header is accepted because query-string

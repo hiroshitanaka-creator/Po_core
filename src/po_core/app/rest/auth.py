@@ -36,7 +36,9 @@ def evaluate_auth_policy(
       - otherwise allow
     """
     if skip_auth:
-        return AuthDecision(allowed=True, is_misconfigured=False, message="Auth bypassed")
+        return AuthDecision(
+            allowed=True, is_misconfigured=False, message="Auth bypassed"
+        )
 
     expected = configured_api_key.strip()
     if not expected:
