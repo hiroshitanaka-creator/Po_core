@@ -122,6 +122,7 @@ namespaces = false
 po_core = [
     "config/*.yaml",
     "config/philosophers/*.yaml",
+    "axis/specs/*.json",
     "py.typed",
 ]
 
