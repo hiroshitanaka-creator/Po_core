@@ -119,6 +119,9 @@ v1.0.0 リリース定義の全条件が充足された:
   - review queue を SQLite 永続バックエンド対応へ拡張。`PO_REVIEW_STORE_BACKEND=sqlite`（デフォルト）時は `review_queue` テーブルへ保存され、サーバ再起動後も pending/decided 状態を保持。
   - review store は `PO_REVIEW_DB_PATH` 未指定時に `PO_TRACE_DB_PATH` を再利用するため、既存 trace DB と共存可能。
   - `viewer/standalone.html` に ESCALATE Human Review UI を追加。`/v1/review/pending` の一覧表示、item 選択時の `session_id/request_id/reason/source` 表示、`/v1/trace/{session_id}` の最新イベント簡易プレビュー、`approve/reject` 送信（reviewer/comment 入力）と送信後の一覧・詳細更新を実装。
+  - observability/review の回帰検知ラインとして `tests/integration/test_observability_review_flow.py` を追加し、ESCALATE→pending→trace→decision→`HumanReviewDecided`→再初期化後の trace/history/review 永続化を一気通貫で固定。
+  - REST API の補強として `tests/unit/test_rest_api.py` に「human decision で trace event 数が 1 件増加する」検証を追加し、追記漏れを検知できるようにした。
+  - 運用 runbook `docs/operations/observability_review_playbook.md` を追加し、環境変数例・起動手順・確認コマンド・期待レスポンスを明文化した。
 
 - **未完了・制約（main 実装ベース）**
   - WS/SSE の observability はイベント配信機能までで、接続数/配信遅延/切断率など運用メトリクスの集計基盤は未整備。
@@ -127,6 +130,7 @@ v1.0.0 リリース定義の全条件が充足された:
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
 - **Stage 3/4 follow-up（実装監査後）**: 未完了は「WS/SSE の運用監視強化」に限定。viewer 側の auth 対応 transport（auto/sse/websocket）と ESCALATE Human Review UI は反映済み。
+- **Observability/review follow-up**: 現状の自動回帰は HTTP API（reason/review/trace/history）の整合性まで。運用メトリクス（接続数・遅延・失敗率）と UI 操作導線の保証は手動確認を継続。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。

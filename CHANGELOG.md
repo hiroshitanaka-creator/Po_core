@@ -16,10 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat(rest): add persistent SQLite review queue backend in `src/po_core/app/rest/review_store.py` with restart-safe storage for ESCALATE human-review items (`review_queue` table). Default backend is now sqlite, with optional in-memory backend for local/dev testing.
 - feat(config): add review queue settings `PO_REVIEW_STORE_BACKEND` and `PO_REVIEW_DB_PATH` (`APISettings.review_store_backend`, `APISettings.review_db_path`). When `PO_REVIEW_DB_PATH` is blank, review storage reuses `PO_TRACE_DB_PATH`.
+- docs(ops): add `docs/operations/observability_review_playbook.md` documenting deterministic ESCALATE→review→trace run operations with env examples, startup, verification commands, and expected responses.
 
 ### Tests
 
 - test(rest): add restart-safety tests for review queue pending/decided persistence and regression coverage that `HumanReviewDecided` trace append remains intact after decision flow.
+- test(integration): add `tests/integration/test_observability_review_flow.py` to lock observability/human-review loop regression (ESCALATE enqueue, pending visibility, trace retrieval, decision append, restart persistence for trace/history/review).
+- test(unit): strengthen `tests/unit/test_rest_api.py` with `test_review_decision_increments_trace_event_count` so human decisions are guaranteed to append exactly one `HumanReviewDecided` trace event.
 
 ## [1.0.0] - 2026-03-10
 
