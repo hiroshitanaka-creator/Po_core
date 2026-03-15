@@ -106,10 +106,24 @@ v1.0.0 リリース定義の全条件が充足された:
 
 - **v1.0.0 残タスク（Stage 2 完了後）**: PyPI v1.0.0 公開（workflow_dispatch）、arXiv 投稿（論文査読後）。
 
+
+## Stage 3/4 実装監査（observability / streaming / review）
+
+- **既にあるもの（main 実装と一致）**
+  - Trace store は backend 切替式で、`memory` に加えて `sqlite` を実装済み。`trace_sessions` / `trace_events` テーブルでセッション履歴・イベント履歴を保持し、`get/history` で再取得できる。
+  - `/v1/reason/stream`（SSE）と `/v1/ws/reason`（WebSocket）の両方でリアルタイム chunk 配信を実装済み。trace event を逐次配信し、終了時に trace 保存まで行う。
+  - ESCALATE 判定時は `/v1/reason` から review queue へ投入され、`/v1/review/pending` と `/v1/review/{review_id}/decision` で human decision を処理できる。決定時は `HumanReviewDecided` が trace に追記される。
+  - viewer `standalone.html` は live mode で `/v1/ws/reason` に接続し、stream chunk（started/event/result/done）を表示できる。
+
+- **未完了・制約（main 実装ベース）**
+  - review queue は `review_store.py` のプロセス内 OrderedDict 実装のみで、再起動耐性がない（SQLite などの永続バックエンド未実装）。
+  - `standalone.html` には ESCALATE の pending 一覧取得・approve/reject 送信UIがなく、human review 操作は API 直叩き前提。
+  - WS/SSE の observability はイベント配信機能までで、接続数/配信遅延/切断率など運用メトリクスの集計基盤は未整備。
+
 ## Next
 - **Snapshot sync policy**: `docs/status.md` は main の実態同期を優先し、完了済み項目を Next に残置しない。
 - **Open follow-up（運用上の未解消）**: TestPyPI 側の外部接続制限（HTTP 403）により evidence 本体は未作成のまま。PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。
-- **Stage 3 次ステップ**: SQLite 永続化・WebSocket ストリーミング・Human-in-the-Loop ESCALATE UI（v1.0.0 リリース後着手）。
+- **Stage 3/4 follow-up（実装監査後）**: 未完了は「review queue の永続化」「ESCALATE 向け専用UI」「WS/SSE の運用監視強化」に限定。SQLite trace 永続化とWS配信そのものは main 実装済み。
 
 ## Deliberation Protocol v1 (PR-4)
 - 新しい内部プロトコル `Propose -> Critique -> Synthesize` を `src/po_core/deliberation/protocol.py` に追加。
