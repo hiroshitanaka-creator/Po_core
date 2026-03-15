@@ -524,6 +524,46 @@ def test_review_decision_updates_item_and_appends_trace(client_no_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_review_decision_increments_trace_event_count(client_no_auth):
+    """Human review decision must append exactly one trace event."""
+
+    def _mock_run(*, user_input, settings, tracer):  # noqa: ARG001
+        tracer.emit(
+            TraceEvent.now(
+                "DecisionEmitted",
+                correlation_id="req-escalate-trace-count",
+                payload={"gate": {"decision": "escalate"}},
+            )
+        )
+        return {
+            **_MOCK_RESULT,
+            "request_id": "req-escalate-trace-count",
+            "verdict": {"decision": "escalate"},
+        }
+
+    with patch("po_core.app.rest.routers.reason.po_run", side_effect=_mock_run):
+        client_no_auth.post(
+            "/v1/reason",
+            json={"input": "Need review", "session_id": "escalate-session-trace-count"},
+        )
+
+    trace_before = client_no_auth.get("/v1/trace/escalate-session-trace-count").json()
+    count_before = trace_before["event_count"]
+
+    review_id = client_no_auth.get("/v1/review/pending").json()["items"][0]["id"]
+    decision = client_no_auth.post(
+        f"/v1/review/{review_id}/decision",
+        json={"decision": "approve", "reviewer": "alice", "comment": "safe"},
+    )
+    assert decision.status_code == 200
+
+    trace_after = client_no_auth.get("/v1/trace/escalate-session-trace-count").json()
+    assert trace_after["event_count"] == count_before + 1
+    assert trace_after["events"][-1]["event_type"] == "HumanReviewDecided"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_review_pending_persists_across_app_reinitialization(tmp_path):
     """SQLite review store keeps pending items across app recreation."""
     db_path = tmp_path / "trace_store.sqlite3"
