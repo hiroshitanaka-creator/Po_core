@@ -20,6 +20,8 @@ from pydantic import BaseModel, Field
 class ReasonRequest(BaseModel):
     """Request body for the reasoning endpoint."""
 
+    model_config = {"extra": "forbid"}
+
     input: str = Field(
         ...,
         min_length=1,
@@ -37,6 +39,15 @@ class ReasonRequest(BaseModel):
     metadata: Dict[str, Any] = Field(
         default_factory=dict,
         description="Arbitrary key-value metadata attached to this request.",
+    )
+    philosophers: Optional[List[str]] = Field(
+        default=None,
+        description=(
+            "Optional explicit philosopher allowlist. "
+            "When provided, only philosophers that overlap with safety-selected "
+            "members are executed."
+        ),
+        examples=[["kant"], ["aristotle", "confucius"]],
     )
 
 
@@ -95,6 +106,18 @@ class ReasonResponse(BaseModel):
         description="Wall-clock time for this request in milliseconds."
     )
     created_at: datetime = Field(description="UTC timestamp of the response.")
+    degraded: bool = Field(
+        default=False,
+        description="True when degraded/fallback behavior occurred.",
+    )
+    llm_fallback: bool = Field(
+        default=False,
+        description="True when any selected philosopher used LLM fallback.",
+    )
+    fallback_reasons: List[str] = Field(
+        default_factory=list,
+        description="Distinct fallback reasons observed across contributions.",
+    )
 
 
 # ---------------------------------------------------------------------------

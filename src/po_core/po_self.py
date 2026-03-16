@@ -23,6 +23,7 @@ import warnings
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.philosophers.manifest import SPECS
 
 
@@ -72,48 +73,8 @@ class PoSelfResponse:
         )
 
 
-class _AllowlistRegistry:
-    """Proxy for PhilosopherRegistry that filters select() output by an allowlist.
-
-    The allowlist is applied *after* the normal SafetyMode selection so that
-    all safety constraints (max_risk, cost_budget, require_tags) are
-    enforced by the underlying registry first.
-
-    Raises ValueError if the intersection of the allowlist and the
-    SafetyMode-selected set is empty (no silent pass-through).
-    """
-
-    def __init__(self, wrapped: Any, allowlist: List[str]) -> None:
-        self._wrapped = wrapped
-        self._allowlist: set = set(allowlist)
-
-    def select(self, mode: Any) -> Any:
-        from po_core.philosophers.registry import Selection
-
-        sel = self._wrapped.select(mode)
-        filtered_ids = [pid for pid in sel.selected_ids if pid in self._allowlist]
-        if not filtered_ids:
-            raise ValueError(
-                f"philosophers allowlist {sorted(self._allowlist)!r} has no overlap "
-                f"with SafetyMode-{mode.value!r} selection "
-                f"{sel.selected_ids!r}. "
-                "Expand the allowlist or remove the philosophers argument."
-            )
-        cost = sum(s.cost for s in SPECS if s.philosopher_id in set(filtered_ids))
-        return Selection(
-            mode=mode,
-            selected_ids=filtered_ids,
-            cost_total=cost,
-            covered_tags=sel.covered_tags,
-        )
-
-    def load(self, selected_ids: Any) -> Any:
-        return self._wrapped.load(selected_ids)
-
-    def select_and_load(self, mode: Any) -> Any:
-        sel = self.select(mode)
-        phs, _ = self.load(sel.selected_ids)
-        return phs
+# Backward-compatible symbol import for tests and external callsites.
+_AllowlistRegistry = AllowlistRegistry
 
 
 class PoSelf:
@@ -135,15 +96,19 @@ class PoSelf:
         philosophers: Optional[List[str]] = None,
         enable_trace: bool = True,
         trace_dir: Optional[str] = None,
+        settings: Optional[Any] = None,
     ) -> None:
         """
         Initialize PoSelf.
 
         Args:
-            philosophers: List of philosopher keys (informational;
-                          run_turn uses SafetyMode-based selection)
+            philosophers: List of philosopher keys used as default allowlist.
+                          generate(..., philosophers=[...]) overrides this
+                          constructor-level default.
             enable_trace: Whether to keep trace events (default True)
             trace_dir: Deprecated — traces are now in-memory
+            settings: Optional explicit Settings object. If omitted,
+                      generate() resolves settings from environment.
         """
         if philosophers is None:
             self.philosophers = [s.philosopher_id for s in SPECS if s.enabled]
@@ -151,6 +116,7 @@ class PoSelf:
             self.philosophers = list(philosophers)
         self.enable_trace = enable_trace
         self.trace_dir = trace_dir
+        self._settings = settings
         self._trace = None  # Legacy PoTrace compat
         self._last_tracer = None  # InMemoryTracer from last run
 
@@ -201,7 +167,7 @@ class PoSelf:
         from po_core.trace.event_log import JsonlEventLogger
         from po_core.trace.in_memory import InMemoryTracer
 
-        settings = Settings()
+        settings = self._settings or Settings.from_env()
         system = build_test_system(settings=settings)
 
         # Use InMemoryTracer for trace inspection
@@ -216,9 +182,10 @@ class PoSelf:
         # Apply philosopher allowlist filter when caller specifies IDs.
         # Safety selection (SafetyMode / max_risk / cost_budget) runs first
         # inside the underlying registry; the allowlist only narrows the result.
+        selected_allowlist = self.philosophers if philosophers is None else philosophers
         registry = (
-            _AllowlistRegistry(system.registry, philosophers)
-            if philosophers is not None
+            _AllowlistRegistry(system.registry, selected_allowlist)
+            if selected_allowlist is not None
             else system.registry
         )
 
@@ -348,6 +315,22 @@ class PoSelf:
             ],
         }
 
+        llm_fallback = any(
+            bool(e.payload.get("llm_fallback"))
+            for e in ph_events
+            if isinstance(e.payload, dict)
+        )
+        fallback_reasons = sorted(
+            {
+                str(e.payload.get("fallback_reason"))
+                for e in ph_events
+                if isinstance(e.payload, dict)
+                and e.payload.get("llm_fallback") is True
+                and e.payload.get("fallback_reason")
+            }
+        )
+        degraded = bool(result.get("degraded", False) or llm_fallback)
+
         return PoSelfResponse(
             prompt=prompt,
             text=text,
@@ -359,7 +342,9 @@ class PoSelf:
             metadata={
                 "context": context,
                 "status": result.get("status"),
-                "degraded": result.get("degraded", False),
+                "degraded": degraded,
+                "llm_fallback": llm_fallback,
+                "fallback_reasons": fallback_reasons,
                 "request_id": result.get("request_id"),
                 "synthesis_report": result.get("synthesis_report"),
             },

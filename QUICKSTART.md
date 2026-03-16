@@ -29,15 +29,15 @@ python -m build
 twine check dist/*
 ```
 
-> 0.2.0 stable リリース前は、上記2コマンドが成功することを必須条件にしてください。
+> stable リリース前は、上記2コマンドが成功することを必須条件にしてください。
 
 
-### ✅ 0.2.0 公開後の最短検証（maintainer向け）
+### ✅ 公開後の最短検証（maintainer向け）
 
 ```bash
 # 1) 公開済みstableをクリーン環境へ導入
 python -m pip install --upgrade pip
-pip install "po-core-flyingpig==0.2.0"
+pip install "po-core-flyingpig==1.0.0"
 
 # 2) import 成功確認
 python -c "import po_core; print(po_core.__name__)"
@@ -128,12 +128,16 @@ print(f"メトリクス: {response.metrics}")
 ### 2. カスタム哲学者を選択
 
 ```python
-# 実存主義者グループ
-philosophers = ["sartre", "heidegger", "kierkegaard"]
-po = PoSelf(philosophers=philosophers)
+# 実存主義者グループ（constructor はデフォルトallowlist）
+default_philosophers = ["sartre", "heidegger", "kierkegaard"]
+po = PoSelf(philosophers=default_philosophers)
 
 response = po.generate("実存とは何か？")
 print(response.text)
+
+# 呼び出し単位で上書きも可能
+override = po.generate("実存とは何か？", philosophers=["nietzsche"])
+print(override.text)
 ```
 
 ### 3. JSON形式で取得
@@ -212,6 +216,10 @@ result = run(user_input="美とは何か？")
 print(result['status'])       # "ok"
 print(result['request_id'])   # リクエストID
 print(result['proposal'])     # 提案内容
+
+# public API facade でも subset 指定可能
+subset = run(user_input="正義とは何か？", philosophers=["kant"])
+print(subset['status'])
 ```
 
 ### トレース機能の制御
@@ -347,13 +355,16 @@ python -m po_core.app.rest
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
+> 注意: LLM provider/model 設定は「どのバックエンドで各哲学者を実行するか」を決めます。
+> これは哲学者の人数を決める設定ではありません（人数は SafetyMode/allowlist で制御）。
+
 ### 使用例
 
 ```bash
 # 同期推論
 curl -X POST http://localhost:8000/v1/reason \
   -H "Content-Type: application/json" \
-  -d '{"input": "What is justice?"}'
+  -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # SSE ストリーミング（true async offload）
 curl -N -X POST http://localhost:8000/v1/reason/stream \

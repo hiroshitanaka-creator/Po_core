@@ -164,8 +164,27 @@ class TestPoSelfGeneratePhilosophersParam:
         mock_sys.registry.load.return_value = ([], [])
         return mock_sys
 
-    def test_philosophers_none_uses_system_registry(self):
-        """When philosophers=None, system.registry is used directly (no wrapping)."""
+    def test_philosophers_none_uses_constructor_default_allowlist(self):
+        """When philosophers=None, constructor-level allowlist is applied."""
+        fake_result = self._make_run_turn_result()
+        captured_deps = {}
+
+        def capture_run_turn(ctx, deps):
+            captured_deps["deps"] = deps
+            return fake_result
+
+        mock_sys = self._make_mock_sys()
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
+            PoSelf(philosophers=["aristotle"]).generate("test prompt", philosophers=None)
+
+        assert "deps" in captured_deps
+        assert isinstance(captured_deps["deps"].registry, _AllowlistRegistry)
+
+    def test_philosophers_none_with_default_constructor_uses_full_allowlist(self):
+        """Default constructor still wraps registry with full enabled list."""
         fake_result = self._make_run_turn_result()
         captured_deps = {}
 
@@ -180,9 +199,7 @@ class TestPoSelfGeneratePhilosophersParam:
         ):
             PoSelf().generate("test prompt", philosophers=None)
 
-        assert "deps" in captured_deps
-        # registry should be the raw mock_sys.registry, not an _AllowlistRegistry
-        assert not isinstance(captured_deps["deps"].registry, _AllowlistRegistry)
+        assert isinstance(captured_deps["deps"].registry, _AllowlistRegistry)
 
     def test_philosophers_list_activates_allowlist_registry(self):
         """When philosophers=[...] is given, _AllowlistRegistry is injected."""
@@ -205,6 +222,27 @@ class TestPoSelfGeneratePhilosophersParam:
         assert isinstance(
             registry, _AllowlistRegistry
         ), "Expected _AllowlistRegistry when philosophers list is provided"
+
+    def test_generate_philosophers_overrides_constructor_default(self):
+        """Per-call allowlist must override constructor default allowlist."""
+        fake_result = self._make_run_turn_result()
+        captured_deps = {}
+
+        def capture_run_turn(ctx, deps):
+            captured_deps["deps"] = deps
+            return fake_result
+
+        mock_sys = self._make_mock_sys(["aristotle", "kant"])
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
+            po = PoSelf(philosophers=["kant"])
+            po.generate("test prompt", philosophers=["aristotle"])
+
+        registry = captured_deps["deps"].registry
+        sel = registry.select(SafetyMode.NORMAL)
+        assert sel.selected_ids == ["aristotle"]
 
     def test_philosophers_empty_list_raises_value_error(self):
         """Empty allowlist produces no overlap → ValueError from _AllowlistRegistry.
@@ -242,3 +280,29 @@ class TestPoSelfGeneratePhilosophersParam:
         ):
             with pytest.raises(ValueError, match="allowlist"):
                 PoSelf().generate("test prompt", philosophers=["mill", "rawls"])
+
+    def test_generate_uses_env_backed_settings_by_default(self, monkeypatch):
+        """PoSelf.generate() resolves settings via Settings.from_env when not provided."""
+        fake_result = self._make_run_turn_result()
+        captured_settings = {}
+
+        def capture_run_turn(ctx, deps):
+            return fake_result
+
+        def fake_build(*, settings):
+            captured_settings["settings"] = settings
+            return self._make_mock_sys(["aristotle"])
+
+        monkeypatch.setenv("PO_LLM_ENABLED", "true")
+        monkeypatch.setenv("PO_LLM_PROVIDER", "openai")
+        monkeypatch.setenv("PO_LLM_TIMEOUT", "3.5")
+        with (
+            patch(self._BUILD_PATH, side_effect=fake_build),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
+            PoSelf().generate("test prompt", philosophers=["aristotle"])
+
+        settings = captured_settings["settings"]
+        assert settings.enable_llm_philosophers is True
+        assert settings.llm_provider == "openai"
+        assert settings.llm_timeout_s == pytest.approx(3.5)

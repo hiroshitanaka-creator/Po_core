@@ -47,7 +47,7 @@ def test_observability_review_flow_persists_across_reinitialization(tmp_path):
         app.dependency_overrides[auth.require_api_key] = lambda: None
         return TestClient(app, raise_server_exceptions=True)
 
-    def _mock_escalate_run(*, user_input, settings, tracer):  # noqa: ARG001
+    def _mock_escalate_run(*, user_input, settings, tracer, philosophers=None):  # noqa: ARG001
         tracer.emit(
             TraceEvent.now(
                 "DecisionEmitted",

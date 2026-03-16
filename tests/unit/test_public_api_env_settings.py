@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -17,7 +18,7 @@ def _stub_system():
         philosophers=[],
         aggregator=None,
         aggregator_shadow=None,
-        registry=None,
+        registry=MagicMock(),
         settings=None,
         shadow_guard=None,
         deliberation_engine=None,
@@ -53,6 +54,32 @@ def test_public_run_uses_settings_from_env_when_settings_is_none(
     assert result["status"] == "ok"
     assert result["philosophers_max_normal"] == 42
     assert result["philosopher_cost_budget_normal"] == 90
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_public_run_supports_philosopher_allowlist(monkeypatch, _stub_system):
+    from po_core.app import api
+    from po_core.philosophers.allowlist import AllowlistRegistry
+
+    def _fake_build_test_system(*, settings):
+        _stub_system.settings = settings
+        return _stub_system
+
+    def _fake_run_turn(ctx, deps):
+        return {
+            "status": "ok",
+            "registry_type": type(deps.registry).__name__,
+            "is_allowlist": isinstance(deps.registry, AllowlistRegistry),
+        }
+
+    monkeypatch.setattr(api, "build_test_system", _fake_build_test_system)
+    monkeypatch.setattr(api, "run_turn", _fake_run_turn)
+
+    result = api.run("allowlist check", philosophers=["kant"])
+
+    assert result["status"] == "ok"
+    assert result["is_allowlist"] is True
 
 
 @pytest.mark.unit

@@ -27,6 +27,15 @@ def _read_roles_from_env() -> tuple[Role, ...]:
     return tuple(sorted(parse_roles_csv(raw), key=lambda r: r.value))
 
 
+def _env_first(*keys: str, default: str = "") -> str:
+    """Return first non-empty env value from keys, else default."""
+    for key in keys:
+        value = os.getenv(key)
+        if value is not None and value.strip() != "":
+            return value
+    return default
+
+
 @dataclass(frozen=True)
 class Settings:
     """
@@ -122,7 +131,9 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         """Build settings with environment variable overrides."""
-        llm_enabled_raw = os.getenv("PO_LLM_ENABLED", "").strip().lower()
+        llm_enabled_raw = _env_first(
+            "PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default=""
+        ).strip().lower()
         return cls(
             philosopher_roles=_read_roles_from_env(),
             philosophers_max_normal=int(os.getenv("PO_PHILOSOPHERS_MAX_NORMAL", "39")),
@@ -142,7 +153,9 @@ class Settings:
             enable_llm_philosophers=llm_enabled_raw in {"1", "true", "yes"},
             llm_provider=os.getenv("PO_LLM_PROVIDER", "gemini").strip(),
             llm_model=os.getenv("PO_LLM_MODEL", "").strip(),
-            llm_timeout_s=float(os.getenv("PO_LLM_TIMEOUT", "10.0")),
+            llm_timeout_s=float(
+                _env_first("PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S", default="10.0")
+            ),
         )
 
     def to_dict(self) -> dict:

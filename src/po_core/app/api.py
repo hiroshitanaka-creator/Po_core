@@ -40,6 +40,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from po_core.domain.context import Context
+from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
@@ -52,8 +53,8 @@ def _parse_cors_origins(raw_origins: str) -> list[str]:
 
 
 def _get_configured_api_key() -> str:
-    """Secure mode is enabled only when PO_CORE_API_KEY is set and non-empty."""
-    return os.getenv("PO_CORE_API_KEY", "").strip()
+    """Secure mode uses PO_API_KEY; PO_CORE_API_KEY is legacy fallback alias."""
+    return os.getenv("PO_API_KEY", os.getenv("PO_CORE_API_KEY", "")).strip()
 
 
 def _extract_api_key(
@@ -89,6 +90,7 @@ class GenerateRequest(BaseModel):
 def run(
     user_input: str,
     *,
+    philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     settings: Settings | None = None,
     tracer: TracePort | None = None,
@@ -100,6 +102,7 @@ def run(
 
     Args:
         user_input: The user's input prompt
+        philosophers: Optional allowlist of philosopher IDs.
         memory_backend: Po_self or compatible memory backend (None for testing)
         settings: Application settings (None for defaults)
 
@@ -125,6 +128,12 @@ def run(
     )
 
     # Build dependencies for run_turn
+    registry = (
+        AllowlistRegistry(system.registry, philosophers)
+        if philosophers is not None
+        else system.registry
+    )
+
     deps = EnsembleDeps(
         memory_read=system.memory_read,
         memory_write=system.memory_write,
@@ -135,7 +144,7 @@ def run(
         philosophers=system.philosophers,  # Backward compat
         aggregator=system.aggregator,
         aggregator_shadow=system.aggregator_shadow,  # Shadow Pareto A/B
-        registry=system.registry,  # SafetyMode-based selection
+        registry=registry,  # SafetyMode-based selection (+ optional allowlist)
         settings=system.settings,  # Worker/timeout config
         shadow_guard=system.shadow_guard,  # ShadowGuard (自律ブレーキ)
         deliberation_engine=getattr(system, "deliberation_engine", None),
@@ -148,6 +157,7 @@ def run(
 async def async_run(
     user_input: str,
     *,
+    philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     settings: Settings | None = None,
     tracer: TracePort | None = None,
@@ -161,6 +171,7 @@ async def async_run(
 
     Args:
         user_input: The user's input prompt
+        philosophers: Optional allowlist of philosopher IDs.
         memory_backend: Po_self or compatible memory backend (None for testing)
         settings: Application settings (None for defaults)
         tracer: Optional tracer; a default in-memory tracer is used if omitted
@@ -181,6 +192,12 @@ async def async_run(
         meta={"entry": "app.api.async"},
     )
 
+    registry = (
+        AllowlistRegistry(system.registry, philosophers)
+        if philosophers is not None
+        else system.registry
+    )
+
     deps = EnsembleDeps(
         memory_read=system.memory_read,
         memory_write=system.memory_write,
@@ -191,7 +208,7 @@ async def async_run(
         philosophers=system.philosophers,
         aggregator=system.aggregator,
         aggregator_shadow=system.aggregator_shadow,
-        registry=system.registry,
+        registry=registry,
         settings=system.settings,
         shadow_guard=system.shadow_guard,
         deliberation_engine=getattr(system, "deliberation_engine", None),
@@ -203,8 +220,10 @@ async def async_run(
 app = FastAPI(title="Po_core API")
 
 # Defaults stay fully open for backwards compatibility.
-# Set PO_CORE_CORS_ORIGINS and/or PO_CORE_API_KEY to enable secure mode.
-_cors_origins = _parse_cors_origins(os.getenv("PO_CORE_CORS_ORIGINS", ""))
+# Prefer PO_CORS_ORIGINS / PO_API_KEY (PO_CORE_* retained as legacy aliases).
+_cors_origins = _parse_cors_origins(
+    os.getenv("PO_CORS_ORIGINS", os.getenv("PO_CORE_CORS_ORIGINS", ""))
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins or ["*"],
