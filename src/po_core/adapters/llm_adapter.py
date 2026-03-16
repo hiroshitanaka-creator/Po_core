@@ -21,9 +21,12 @@ Gemini / OpenAI(GPT) / Anthropic(Claude) / xAI(Grok) を
 
 from __future__ import annotations
 
+import logging
 import os
 from enum import Enum
 from typing import TYPE_CHECKING
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     pass
@@ -89,8 +92,14 @@ class LLMAdapter:
                 return self._generate_openai_compat(system, user)
             elif self.provider == LLMProvider.CLAUDE:
                 return self._generate_claude(system, user)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(
+                "LLMAdapter.generate failed (provider=%s, model=%s): %s: %s",
+                self.provider.value,
+                self.model,
+                type(exc).__name__,
+                exc,
+            )
         return ""
 
     # ── Factory ────────────────────────────────────────────────────
@@ -127,6 +136,7 @@ class LLMAdapter:
                 system_instruction=system,
                 max_output_tokens=1024,
             ),
+            request_options=genai_types.RequestOptions(timeout=self.timeout),
         )
         self.actual_model = self.model
         return response.text or ""
