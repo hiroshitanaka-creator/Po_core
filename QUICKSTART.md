@@ -37,7 +37,7 @@ twine check dist/*
 ```bash
 # 1) 公開済みstableをクリーン環境へ導入
 python -m pip install --upgrade pip
-pip install "po-core-flyingpig==1.0.0"
+pip install "po-core-flyingpig==1.0.2"
 
 # 2) import 成功確認
 python -c "import po_core; print(po_core.__name__)"
@@ -335,7 +335,7 @@ open http://localhost:8000/docs
 ### ローカルで起動する
 
 ```bash
-pip install -e ".[api]"
+pip install -e .
 
 # 環境変数を設定
 export PO_SKIP_AUTH=true   # 開発時はAPIキー不要

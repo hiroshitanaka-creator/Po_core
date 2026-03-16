@@ -281,6 +281,28 @@ class TestPoSelfGeneratePhilosophersParam:
             with pytest.raises(ValueError, match="allowlist"):
                 PoSelf().generate("test prompt", philosophers=["mill", "rawls"])
 
+
+    def test_generate_with_subset_forwards_subset_allowlist(self):
+        """Deprecated helper must still honor provided philosopher_keys."""
+        fake_result = self._make_run_turn_result()
+        captured_deps = {}
+
+        def capture_run_turn(ctx, deps):
+            captured_deps["deps"] = deps
+            return fake_result
+
+        mock_sys = self._make_mock_sys(["aristotle", "kant"])
+        with (
+            patch(self._BUILD_PATH, return_value=mock_sys),
+            patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
+        ):
+            po = PoSelf()
+            po.generate_with_subset("test prompt", philosopher_keys=["kant"])
+
+        registry = captured_deps["deps"].registry
+        sel = registry.select(SafetyMode.NORMAL)
+        assert sel.selected_ids == ["kant"]
+
     def test_generate_uses_env_backed_settings_by_default(self, monkeypatch):
         """PoSelf.generate() resolves settings via Settings.from_env when not provided."""
         fake_result = self._make_run_turn_result()

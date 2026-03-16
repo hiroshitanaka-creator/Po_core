@@ -37,7 +37,7 @@ import uuid
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from po_core.domain.context import Context
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -84,7 +84,10 @@ def _ensure_api_key(
 
 
 class GenerateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     user_input: str
+    philosophers: list[str] | None = None
 
 
 def run(
@@ -240,7 +243,7 @@ async def generate(
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> dict:
     _ensure_api_key(x_api_key=x_api_key, authorization=authorization)
-    return await async_run(payload.user_input)
+    return await async_run(payload.user_input, philosophers=payload.philosophers)
 
 
 __all__ = ["run", "async_run", "app"]

@@ -378,7 +378,7 @@ class PoSelf:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.generate(prompt, context=context)
+        return self.generate(prompt, philosophers=philosopher_keys, context=context)
 
     def get_available_philosophers(self) -> List[str]:
         """Get list of all available philosopher keys."""
