@@ -1,9 +1,9 @@
 """
 Tests for Po_self Module — aligned with run_turn pipeline.
 
-PoSelf.generate() delegates to run_turn, which uses SafetyMode-based selection.
-The `philosophers` parameter is informational only; all 39 philosophers
-participate in NORMAL mode.
+PoSelf.generate() delegates to run_turn with explicit allowlist semantics:
+- constructor philosophers=... sets default allowlist
+- generate(..., philosophers=...) overrides constructor default
 """
 
 import json
@@ -26,11 +26,10 @@ class TestPoSelfBasicFunctionality:
         assert "semantic_delta" in response.metrics
         assert "blocked_tensor" in response.metrics
 
-    def test_po_self_philosophers_is_informational(self, sample_prompt):
-        """PoSelf(philosophers=[...]) is informational; run_turn uses all 39."""
+    def test_po_self_constructor_philosophers_applies_default_allowlist(self, sample_prompt):
+        """PoSelf(philosophers=[...]) now sets default runtime allowlist."""
         response = PoSelf(philosophers=["wittgenstein"]).generate(sample_prompt)
 
-        # run_turn selects philosophers via SafetyMode, not PoSelf constructor
         assert response.text
         assert response.consensus_leader
 

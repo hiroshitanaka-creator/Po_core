@@ -38,7 +38,10 @@ class APISettings(BaseSettings):
     reload: bool = False
 
     # Authentication
-    api_key: str = ""
+    api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("PO_API_KEY", "PO_CORE_API_KEY"),
+    )
     api_key_header: str = "X-API-Key"
     skip_auth: bool = False  # Set True for local dev / testing
     ws_allow_query_api_key: bool = False
@@ -46,7 +49,10 @@ class APISettings(BaseSettings):
     # CORS — comma-separated list of allowed origins.
     # Use "*" (default) to allow all origins in development.
     # In production set to specific domains: "https://app.example.com,https://admin.example.com"
-    cors_origins: str = "*"
+    cors_origins: str = Field(
+        default="*",
+        validation_alias=AliasChoices("PO_CORS_ORIGINS", "PO_CORE_CORS_ORIGINS"),
+    )
 
     # Rate limiting — requests per minute per IP for the /v1/reason endpoints.
     # Set to 0 to disable rate limiting.

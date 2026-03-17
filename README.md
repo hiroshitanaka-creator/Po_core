@@ -444,7 +444,7 @@ python -m po_core.app.rest
 # Reason
 curl -X POST http://localhost:8000/v1/reason \
      -H "Content-Type: application/json" \
-     -d '{"input": "What is justice?"}'
+     -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # Streaming (SSE)
 curl -N http://localhost:8000/v1/reason/stream \
@@ -499,6 +499,8 @@ Key environment variables (see `.env.example`):
 | `PO_PHILOSOPHER_COST_BUDGET_WARN` | `12` | WARN mode selection cost budget |
 | `PO_PHILOSOPHER_COST_BUDGET_CRITICAL` | `3` | CRITICAL mode selection cost budget |
 | `PO_LLM_PHILOSOPHER_MAP_PATH` | `""` | Optional YAML path overriding `src/po_core/config/llm_philosopher_map.yaml` |
+
+LLM provider/model settings select backend routing for each philosopher. They do **not** decide philosopher count; count is controlled by SafetyMode and optional `philosophers` allowlist.
 
 ---
 
@@ -572,6 +574,10 @@ result = run(user_input="Should AI have rights?")
 print(result["status"])       # "ok" or "blocked"
 print(result["request_id"])   # Unique request ID
 print(result["proposal"])     # Winning philosopher's response
+
+# Optional explicit philosopher allowlist
+subset = run(user_input="Should AI have rights?", philosophers=["kant"])
+print(subset["status"])
 ```
 
 ### PoSelf API (Rich Response)
@@ -579,8 +585,14 @@ print(result["proposal"])     # Winning philosopher's response
 ```python
 from po_core import PoSelf, PoSelfResponse
 
-po_self = PoSelf()
+po_self = PoSelf(philosophers=["aristotle", "confucius"])  # default allowlist
 response: PoSelfResponse = po_self.generate("Should AI have rights?")
+
+# Per-call allowlist overrides constructor default
+override: PoSelfResponse = po_self.generate(
+    "Should AI have rights?",
+    philosophers=["kant"],
+)
 
 # Response fields
 print(response.text)              # Combined response text
@@ -588,6 +600,7 @@ print(response.consensus_leader)  # Winning philosopher name
 print(response.philosophers)      # Selected philosopher list
 print(response.metrics)           # {"freedom_pressure": ..., "semantic_delta": ..., "blocked_tensor": ...}
 print(response.metadata["status"])  # "ok" or "blocked"
+print(response.metadata["degraded"])  # True if fallback/degraded occurred
 
 # Trace inspection
 print(response.log["events"])     # Full trace event stream

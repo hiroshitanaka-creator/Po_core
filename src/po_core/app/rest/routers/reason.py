@@ -14,7 +14,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timezone
 from typing import Any, AsyncGenerator, Dict
 
-from fastapi import APIRouter, Depends, Request, WebSocket
+from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket
 from fastapi.exceptions import WebSocketException
 from fastapi.responses import StreamingResponse
 
@@ -270,10 +270,49 @@ def _run_reasoning(
     po_settings = _build_po_settings(api_settings)
     result = po_run(
         user_input=request.input,
+        philosophers=request.philosophers,
         settings=po_settings,
         tracer=tracer,
     )
     return session_id, result, tracer
+
+
+def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
+    proposals = result.get("proposals", [])
+    reasons: set[str] = set()
+    llm_fallback = False
+    if isinstance(proposals, list):
+        for p in proposals:
+            if not isinstance(p, dict):
+                continue
+            normalized = p.get("normalized_response")
+            normalized_dict = normalized if isinstance(normalized, dict) else {}
+            normalized_meta = normalized_dict.get("metadata")
+            normalized_meta_dict = (
+                normalized_meta if isinstance(normalized_meta, dict) else {}
+            )
+            proposal_meta = p.get("metadata")
+            proposal_meta_dict = proposal_meta if isinstance(proposal_meta, dict) else {}
+
+            fallback_val = (
+                p.get("llm_fallback")
+                if p.get("llm_fallback") is not None
+                else normalized_meta_dict.get("llm_fallback")
+            )
+            if fallback_val is None:
+                fallback_val = proposal_meta_dict.get("llm_fallback")
+            if bool(fallback_val):
+                llm_fallback = True
+
+            reason = (
+                p.get("fallback_reason")
+                or normalized_meta_dict.get("fallback_reason")
+                or proposal_meta_dict.get("fallback_reason")
+            )
+            if reason:
+                reasons.add(str(reason))
+
+    return llm_fallback, sorted(reasons)
 
 
 @router.post(
@@ -306,15 +345,21 @@ async def reason(
     t0 = time.perf_counter()
 
     loop = asyncio.get_running_loop()
-    session_id, result, tracer = await loop.run_in_executor(
-        None, functools.partial(_run_reasoning, body, api_settings)
-    )
+    try:
+        session_id, result, tracer = await loop.run_in_executor(
+            None, functools.partial(_run_reasoning, body, api_settings)
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
     # Persist trace
     save_trace(session_id, list(tracer.events))
     _enqueue_escalated_review(session_id, result, tracer)
+
+    llm_fallback, fallback_reasons = _fallback_summary(result)
+    degraded = bool(result.get("degraded", False) or llm_fallback)
 
     return ReasonResponse(
         request_id=result.get("request_id", str(uuid.uuid4())),
@@ -326,6 +371,9 @@ async def reason(
         safety_mode=str(result.get("safety_mode", "NORMAL")),
         processing_time_ms=round(elapsed_ms, 2),
         created_at=datetime.now(timezone.utc),
+        degraded=degraded,
+        llm_fallback=llm_fallback,
+        fallback_reasons=fallback_reasons,
     )
 
 
@@ -384,6 +432,7 @@ async def _stream_reasoning_chunks(
         try:
             res = await po_async_run(
                 user_input=body.input,
+                philosophers=body.philosophers,
                 settings=po_settings,
                 tracer=tracer,
             )
@@ -416,6 +465,8 @@ async def _stream_reasoning_chunks(
         return
 
     result = result_box[0]
+    llm_fallback, fallback_reasons = _fallback_summary(result)
+    degraded = bool(result.get("degraded", False) or llm_fallback)
     yield {
         "chunk_type": "result",
         "payload": {
@@ -427,6 +478,9 @@ async def _stream_reasoning_chunks(
             "processing_time_ms": round(elapsed_ms, 2),
             "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
             "tensors": _extract_tensors(result).model_dump(),
+            "degraded": degraded,
+            "llm_fallback": llm_fallback,
+            "fallback_reasons": fallback_reasons,
         },
     }
     yield {"chunk_type": "done", "payload": {}}

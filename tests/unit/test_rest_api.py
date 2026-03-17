@@ -224,6 +224,49 @@ def test_reason_exposes_llm_routing_metadata_in_philosophers(client_no_auth):
     assert philosophers[0]["model"] == "gpt-4o-mini"
     assert philosophers[0]["llm_fallback"] is True
     assert philosophers[0]["fallback_reason"] == "llm_unavailable"
+    assert resp.json()["degraded"] is True
+    assert resp.json()["llm_fallback"] is True
+    assert "llm_unavailable" in resp.json()["fallback_reasons"]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_supports_explicit_philosophers_allowlist(client_no_auth):
+    """Reason endpoint forwards official philosophers allowlist into po_run."""
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+        resp = client_no_auth.post(
+            "/v1/reason",
+            json={"input": "What is justice?", "philosophers": ["kant"]},
+        )
+    assert resp.status_code == 200
+    assert mock_run.call_args.kwargs["philosophers"] == ["kant"]
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_rejects_unknown_extra_fields(client_no_auth):
+    """ReasonRequest forbids unknown fields and fails loud with 422."""
+    resp = client_no_auth.post(
+        "/v1/reason",
+        json={"input": "What is justice?", "unknown_field": 1},
+    )
+    assert resp.status_code == 422
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_returns_422_for_allowlist_no_overlap(client_no_auth):
+    """No-overlap allowlist errors are surfaced as clear 422 responses."""
+    with patch(
+        "po_core.app.rest.routers.reason.po_run",
+        side_effect=ValueError("philosophers allowlist ['kant'] has no overlap"),
+    ):
+        resp = client_no_auth.post(
+            "/v1/reason",
+            json={"input": "What is justice?", "philosophers": ["kant"]},
+        )
+    assert resp.status_code == 422
+    assert "allowlist" in str(resp.json()["detail"])
 
 
 @pytest.mark.unit
@@ -527,7 +570,7 @@ def test_review_decision_updates_item_and_appends_trace(client_no_auth):
 def test_review_decision_increments_trace_event_count(client_no_auth):
     """Human review decision must append exactly one trace event."""
 
-    def _mock_run(*, user_input, settings, tracer):  # noqa: ARG001
+    def _mock_run(*, user_input, settings, tracer, philosophers=None):  # noqa: ARG001
         tracer.emit(
             TraceEvent.now(
                 "DecisionEmitted",
@@ -887,7 +930,7 @@ def test_reason_stream_result_has_response(client_no_auth):
 def test_reason_ws_stream_receives_realtime_events(client_no_auth):
     """WebSocket endpoint streams started/event/result/done chunks."""
 
-    async def _fake_async_run(*, user_input, settings, tracer):
+    async def _fake_async_run(*, user_input, settings, tracer, philosophers=None):
         tracer.emit(TraceEvent.now("pipeline_step", "req-ws", {"step": "start"}))
         return _MOCK_RESULT
 
@@ -921,7 +964,7 @@ def test_reason_ws_auth_required(client_with_auth):
 def test_reason_ws_accepts_valid_api_key(client_with_auth):
     """WebSocket reason endpoint accepts valid API key via header."""
 
-    async def _fake_async_run(*, user_input, settings, tracer):
+    async def _fake_async_run(*, user_input, settings, tracer, philosophers=None):
         tracer.emit(TraceEvent.now("pipeline_step", "req-ws-auth", {"step": "start"}))
         return _MOCK_RESULT
 
@@ -1016,7 +1059,7 @@ def test_reason_ws_accepts_query_param_api_key_when_opted_in(tmp_path):
         )
     )
 
-    async def _fake_async_run(*, user_input, settings, tracer):
+    async def _fake_async_run(*, user_input, settings, tracer, philosophers=None):
         tracer.emit(
             TraceEvent.now("pipeline_step", "req-ws-query-auth", {"step": "start"})
         )
