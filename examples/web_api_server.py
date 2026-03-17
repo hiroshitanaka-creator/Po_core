@@ -1,8 +1,33 @@
 """
-Po_core Web API Server
-======================
+Po_core Web API Server  *** LEGACY EXAMPLE — NOT THE OFFICIAL API ***
+=======================================================================
 
-FastAPIベースのRESTful APIサーバー
+⚠️  このファイルは教材・試作用の旧サンプルです。
+    公式 REST API は `src/po_core/app/rest/` に実装されており、
+    エンドポイント・リクエスト形式が異なります。
+
+    公式 API との主な差異:
+      - このファイル:  POST /api/v1/prompt  (body: { prompt, ... })
+      - 公式 REST API: POST /v1/reason      (body: { input, ... })
+
+    公式 API を使う場合は QUICKSTART.md または QUICKSTART_EN.md を参照してください。
+    このサーバーは `python -m po_core.app.rest` コマンドで起動する公式APIとは
+    互換性がありません。
+
+LEGACY EXAMPLE — DO NOT USE IN PRODUCTION
+==========================================
+
+This file is a legacy educational prototype.  The canonical REST API lives in
+``src/po_core/app/rest/`` and exposes a different contract:
+
+  - This file:      POST /api/v1/prompt  (body field: ``prompt``)
+  - Official API:   POST /v1/reason      (body field: ``input``)
+
+For the official API, see QUICKSTART_EN.md or run::
+
+    python -m po_core.app.rest
+
+FastAPIベースのRESTful APIサーバー（教材用）
 哲学的推論をWeb APIとして提供
 """
 

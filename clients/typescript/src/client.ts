@@ -22,8 +22,20 @@ export class PoCoreClient {
     this.fetchImpl = options.fetchImpl ?? fetch;
   }
 
-  async reason(input: string, metadata: Record<string, unknown> = {}): Promise<ReasonResponse> {
-    const body: ReasonRequest = { input, metadata };
+  async reason(
+    input: string,
+    options: {
+      philosophers?: string[];
+      session_id?: string;
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<ReasonResponse> {
+    const body: ReasonRequest = {
+      input,
+      ...(options.philosophers !== undefined && { philosophers: options.philosophers }),
+      ...(options.session_id !== undefined && { session_id: options.session_id }),
+      metadata: options.metadata ?? {},
+    };
     const headers: Record<string, string> = { "content-type": "application/json" };
 
     if (this.apiKey) {

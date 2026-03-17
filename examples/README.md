@@ -89,19 +89,30 @@ python examples/quick_test.py
 
 ### 中規模プロトタイプ（Medium-Scale Prototypes）
 
-#### 4. `web_api_server.py` - Web APIサーバー ⭐
+#### 4. `web_api_server.py` - Web APIサーバー（レガシー教材）
 
-FastAPIベースのRESTful APIサーバー。Webブラウザから哲学的推論を実行できます。
+> ⚠️ **LEGACY EXAMPLE**: このファイルは教材・試作用です。公式 REST API とは
+> エンドポイント・リクエスト形式が異なります。
+>
+> - このサンプル: `POST /api/v1/prompt`（body フィールド: `prompt`）
+> - **公式 API**: `POST /v1/reason`（body フィールド: `input`）
+>
+> 公式 REST API を使う場合は `python -m po_core.app.rest` を使用してください。
+
+FastAPIベースのRESTful APIサーバー（教材用）。Webブラウザから哲学的推論を実行できます。
 
 ```bash
 # 必要な依存関係をインストール
 pip install fastapi uvicorn pydantic
 
-# サーバーを起動
+# サーバーを起動（教材用 — 公式APIではありません）
 python examples/web_api_server.py
+
+# 公式 REST API を起動する場合:
+python -m po_core.app.rest
 ```
 
-**アクセス:**
+**アクセス（このレガシーサンプル）:**
 
 - Webインターフェース: <http://localhost:8000>
 - API ドキュメント: <http://localhost:8000/docs>
@@ -110,14 +121,14 @@ python examples/web_api_server.py
 **主要機能:**
 
 - 🌐 Webベースの対話インターフェース
-- 📡 RESTful API エンドポイント
+- 📡 RESTful API エンドポイント（教材用）
 - 💾 セッション履歴の管理
 - 📊 統計情報の取得
 - 🎨 美しいUIデザイン
 
-**API エンドポイント:**
+**このサンプルのエンドポイント（公式APIと異なります）:**
 
-- `POST /api/v1/prompt` - 哲学的推論を実行
+- `POST /api/v1/prompt` - 哲学的推論を実行（公式: `POST /v1/reason`）
 - `GET /api/v1/sessions` - セッション履歴を取得
 - `GET /api/v1/sessions/{id}` - 特定セッションの詳細
 - `GET /api/v1/philosophers` - 利用可能な哲学者リスト
@@ -241,7 +252,10 @@ print(f"提案: {result['proposal']}")
 
 ## 🧠 利用可能な哲学者
 
-Po_coreでは20人の哲学者を利用できます：
+Po_coreでは **42人**の哲学者が統合されています（39人が active、SafetyMode により動員数が変動）。
+
+完全な一覧は `GET /v1/philosophers`（公式 REST API）または
+`po-core philosophers` コマンドで確認できます。代表的な哲学者：
 
 ### 西洋哲学
 
@@ -268,6 +282,12 @@ Po_coreでは20人の哲学者を利用できます：
 - `wabi_sabi` - 侘び寂び（日本美学）
 - `confucius` - 孔子（儒教）
 - `zhuangzi` - 荘子（道教）
+
+### アフリカ・カナダ哲学（追加統合）
+
+- `appiah` - クワメ・アンソニー・アッピア（コスモポリタニズム）
+- `fanon` - フランツ・ファノン（脱植民地主義）
+- `charles_taylor` - チャールズ・テイラー（承認の政治）
 
 ## 📊 出力メトリクス
 

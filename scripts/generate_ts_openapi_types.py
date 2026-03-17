@@ -23,7 +23,26 @@ def _ensure_openapi_file() -> None:
     )
 
 
-def _schema_to_ts(schema: dict) -> str:
+def _resolve_ref(ref: str, openapi: dict) -> dict:
+    """Resolve a JSON $ref string like '#/components/schemas/Foo' to its schema."""
+    if not ref.startswith("#/"):
+        return {}
+    parts = ref.lstrip("#/").split("/")
+    node = openapi
+    for part in parts:
+        node = node.get(part, {})
+    return node
+
+
+def _schema_to_ts(schema: dict, openapi: dict, indent: int = 0) -> str:
+    """Recursively convert an OpenAPI JSON Schema to a TypeScript type string."""
+    pad = "  " * indent
+    inner_pad = "  " * (indent + 1)
+
+    # Resolve $ref first
+    if "$ref" in schema:
+        schema = _resolve_ref(schema["$ref"], openapi)
+
     t = schema.get("type")
     if "enum" in schema:
         return " | ".join(json.dumps(v) for v in schema["enum"])
@@ -36,17 +55,43 @@ def _schema_to_ts(schema: dict) -> str:
     if t == "boolean":
         return "boolean"
     if t == "array":
-        return f"{_schema_to_ts(schema.get('items', {}))}[]"
-    if t == "object":
+        items = schema.get("items", {})
+        if "$ref" in items:
+            items = _resolve_ref(items["$ref"], openapi)
+        return f"{_schema_to_ts(items, openapi, indent)}[]"
+    if t == "object" or "properties" in schema:
         props = schema.get("properties", {})
         required = set(schema.get("required", []))
+        additional = schema.get("additionalProperties")
+        if not props and additional is not None:
+            # additionalProperties: true / schema → Record<string, ...>
+            if isinstance(additional, dict):
+                return f"Record<string, {_schema_to_ts(additional, openapi, indent)}>"
+            return "Record<string, unknown>"
+        if not props:
+            return "Record<string, unknown>"
         fields = []
         for name, prop in props.items():
             opt = "" if name in required else "?"
-            fields.append(f"  {name}{opt}: {_schema_to_ts(prop)};")
-        if not fields:
-            return "Record<string, unknown>"
-        return "{\n" + "\n".join(fields) + "\n}"
+            ts_type = _schema_to_ts(prop, openapi, indent + 1)
+            if "\n" in ts_type:
+                fields.append(f"{inner_pad}{name}{opt}: {ts_type};")
+            else:
+                fields.append(f"{inner_pad}{name}{opt}: {ts_type};")
+        return "{\n" + "\n".join(fields) + "\n" + pad + "}"
+    # anyOf / oneOf / allOf — join with union for simplicity
+    for combiner in ("anyOf", "oneOf"):
+        if combiner in schema:
+            parts = [_schema_to_ts(s, openapi, indent) for s in schema[combiner]]
+            return " | ".join(parts)
+    if "allOf" in schema:
+        merged: dict = {}
+        for sub in schema["allOf"]:
+            sub = _resolve_ref(sub.get("$ref", ""), openapi) if "$ref" in sub else sub
+            merged.setdefault("properties", {}).update(sub.get("properties", {}))
+            merged.setdefault("required", []).extend(sub.get("required", []))
+        merged["type"] = "object"
+        return _schema_to_ts(merged, openapi, indent)
     return "unknown"
 
 
@@ -57,19 +102,22 @@ def main() -> None:
     req_schema = reason["requestBody"]["content"]["application/json"]["schema"]
     resp_schema = reason["responses"]["200"]["content"]["application/json"]["schema"]
 
+    req_ts = _schema_to_ts(req_schema, openapi, indent=3)
+    resp_ts = _schema_to_ts(resp_schema, openapi, indent=3)
+
     body = f"""// AUTO-GENERATED FROM docs/openapi/po_core.openapi.json - DO NOT EDIT.
 export interface paths {{
   \"/v1/reason\": {{
     post: {{
       requestBody: {{
         content: {{
-          \"application/json\": {_schema_to_ts(req_schema)};
+          \"application/json\": {req_ts};
         }};
       }};
       responses: {{
         200: {{
           content: {{
-            \"application/json\": {_schema_to_ts(resp_schema)};
+            \"application/json\": {resp_ts};
           }};
         }};
       }};
