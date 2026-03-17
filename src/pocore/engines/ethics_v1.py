@@ -20,7 +20,7 @@ def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
     return isinstance(features, dict) and features.get("scenario_profile") == profile
 
 
-def _append_unique(items: List[str], value: str) -> None:
+def _append_unique(items: List[Any], value: Any) -> None:
     if value not in items:
         items.append(value)
 
@@ -202,6 +202,7 @@ def apply(
     values_empty = ETH_VALUES_EMPTY_CLARIFICATION in fired_set
 
     for opt in options:
+        review: Dict[str, Any]
         if conflict:
             review = {
                 "principles_applied": [

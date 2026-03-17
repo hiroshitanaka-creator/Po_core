@@ -31,7 +31,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import yaml  # type: ignore[import-untyped]
+import yaml
 
 _VOICE_DIR = Path(__file__).parent.parent / "config" / "voices"
 

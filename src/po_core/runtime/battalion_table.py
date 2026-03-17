@@ -56,7 +56,7 @@ def load_battalion_table(path: str) -> Dict[SafetyMode, BattalionModePlan]:
     except Exception:
         # YAMLを使いたい場合だけPyYAMLを許可
         try:
-            import yaml  # type: ignore
+            import yaml
 
             data = yaml.safe_load(raw)
         except Exception as e:
