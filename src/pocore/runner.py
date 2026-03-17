@@ -23,6 +23,7 @@ Design stance:
 
 from __future__ import annotations
 
+import importlib.resources as _pkg_res
 import json
 from copy import deepcopy
 from pathlib import Path
@@ -33,11 +34,6 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from .orchestrator import run_case
 from .utils import to_json_compatible
-
-
-def _repo_root() -> Path:
-    # src/pocore/runner.py → src/pocore → src → repo root
-    return Path(__file__).resolve().parents[2]
 
 
 def _load_json(path: Path) -> Dict[str, Any]:
@@ -67,8 +63,12 @@ def _load_yaml_payload(path: Path, *, label: str) -> Dict[str, Any]:
 
 
 def _get_validator(schema_name: str) -> Draft202012Validator:
-    schema_path = _repo_root() / "docs" / "spec" / schema_name
-    schema = _load_json(schema_path)
+    text = (
+        _pkg_res.files("po_core")
+        .joinpath(f"schemas/{schema_name}")
+        .read_text(encoding="utf-8")
+    )
+    schema = dict(json.loads(text))
     return Draft202012Validator(schema, format_checker=FormatChecker())
 
 

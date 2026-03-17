@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import importlib.resources as _pkg_res
 import json
 from pathlib import Path
 from typing import Optional, Union
@@ -47,10 +48,6 @@ except ImportError as _e:  # pragma: no cover
     ) from _e
 
 # ── Paths ─────────────────────────────────────────────────────────────────
-
-_ROOT = Path(__file__).resolve().parents[2]  # src/po_core → src → repo root
-_INPUT_SCHEMA = _ROOT / "docs" / "spec" / "input_schema_v1.json"
-_OUTPUT_SCHEMA = _ROOT / "docs" / "spec" / "output_schema_v1.json"
 
 _DEFAULT_NOW = "2026-02-22T00:00:00Z"
 
@@ -80,13 +77,17 @@ def _digest(data: dict) -> str:
     return hashlib.sha256(_canonical_json(data).encode("utf-8")).hexdigest()
 
 
-def _load_schema(path: Path) -> dict:
-    with path.open("r", encoding="utf-8") as f:
-        return dict(json.load(f))
+def _load_schema(schema_name: str) -> dict:
+    text = (
+        _pkg_res.files("po_core")
+        .joinpath(f"schemas/{schema_name}")
+        .read_text(encoding="utf-8")
+    )
+    return dict(json.loads(text))
 
 
-def _validate(data: dict, schema_path: Path, label: str) -> None:
-    schema = _load_schema(schema_path)
+def _validate(data: dict, schema_name: str, label: str) -> None:
+    schema = _load_schema(schema_name)
     v = Draft202012Validator(schema, format_checker=FormatChecker())
     errors = sorted(v.iter_errors(data), key=lambda e: list(e.path))
     if errors:
@@ -399,7 +400,7 @@ def run_case_file(
     case: dict = _to_json_compat(raw)  # type: ignore[assignment]
 
     # 2. Validate input
-    _validate(case, _INPUT_SCHEMA, "Input")
+    _validate(case, "input_schema_v1.json", "Input")
 
     # 3. Compute input_digest
     digest = _digest(case)
@@ -426,7 +427,7 @@ def run_case_file(
     )
 
     # 6. Validate output
-    _validate(output, _OUTPUT_SCHEMA, "Output")
+    _validate(output, "output_schema_v1.json", "Output")
 
     # 7. Return
     return output

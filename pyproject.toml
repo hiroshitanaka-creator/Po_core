@@ -115,13 +115,16 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["po_core*"]
+include = ["po_core*", "pocore*"]
 namespaces = false
 
 [tool.setuptools.package-data]
 po_core = [
     "config/*.yaml",
+    "config/voices/*.yaml",
     "config/philosophers/*.yaml",
+    "philosophers/prompts/*.yaml",
+    "schemas/*.json",
     "axis/specs/*.json",
     "py.typed",
 ]

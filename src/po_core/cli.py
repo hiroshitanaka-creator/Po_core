@@ -441,12 +441,21 @@ def party(theme: str, mood: str, quick: bool) -> None:
     import sys
     from pathlib import Path
 
-    # Find the po_party_demo.py script
-    demo_script = Path(__file__).parent.parent.parent / "examples" / "po_party_demo.py"
+    # Find the po_party_demo.py script.
+    # Search order: (1) alongside this file's repo root (dev), (2) cwd/examples/ (user)
+    _pkg_root = Path(__file__).resolve().parent
+    _candidates = [
+        _pkg_root.parent.parent / "examples" / "po_party_demo.py",  # dev/editable
+        Path.cwd() / "examples" / "po_party_demo.py",  # user cwd
+    ]
+    demo_script = next((p for p in _candidates if p.exists()), None)
 
-    if not demo_script.exists():
+    if demo_script is None:
         console.print("[red]Error: po_party_demo.py not found[/red]")
-        console.print(f"[dim]Expected location: {demo_script}[/dim]")
+        console.print(
+            "[dim]Hint: run from the Po_core repository root, "
+            "or place po_party_demo.py in ./examples/[/dim]"
+        )
         return
 
     # Build command

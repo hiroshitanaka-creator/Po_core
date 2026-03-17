@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Sequence
 
 from po_core.deliberation.roles import parse_roles_csv
@@ -134,9 +135,10 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     )
 
     # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
+    _default_battalion = str(
+        Path(__file__).parent.parent / "config" / "battalion_table.yaml"
     )
+    table_path = os.getenv("PO_CORE_BATTALION_TABLE", _default_battalion)
     battalion_plans = None
     if os.path.exists(table_path):
         try:
@@ -145,9 +147,8 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             pass  # フォールバックで内蔵デフォルトを使う
 
     # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
+    _default_pareto = str(Path(__file__).parent.parent / "config" / "pareto_table.yaml")
+    pareto_path = os.getenv("PO_CORE_PARETO_TABLE", _default_pareto)
     pareto_cfg = ParetoConfig.defaults()
     if os.path.exists(pareto_path):
         try:
@@ -313,9 +314,10 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     )
 
     # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
+    _default_battalion = str(
+        Path(__file__).parent.parent / "config" / "battalion_table.yaml"
     )
+    table_path = os.getenv("PO_CORE_BATTALION_TABLE", _default_battalion)
     battalion_plans = None
     if os.path.exists(table_path):
         try:
@@ -324,9 +326,8 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
             pass  # フォールバックで内蔵デフォルトを使う
 
     # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
+    _default_pareto = str(Path(__file__).parent.parent / "config" / "pareto_table.yaml")
+    pareto_path = os.getenv("PO_CORE_PARETO_TABLE", _default_pareto)
     pareto_cfg = ParetoConfig.defaults()
     if os.path.exists(pareto_path):
         try:
