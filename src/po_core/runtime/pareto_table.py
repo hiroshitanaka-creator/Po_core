@@ -65,7 +65,7 @@ def load_pareto_table(path: str) -> ParetoConfig:
         data = json.loads(raw)
     except Exception:
         try:
-            import yaml  # type: ignore
+            import yaml
 
             data = yaml.safe_load(raw)
         except Exception as e:

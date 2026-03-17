@@ -26,7 +26,7 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-import yaml  # type: ignore[import-untyped]
+import yaml
 
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.llm_personas import get_persona

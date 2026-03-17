@@ -230,6 +230,13 @@ module = [
     "pydantic_settings.*",
     "slowapi.*",
     "uvicorn.*",
+    "jsonschema.*",
+    "yaml.*",
+    "numpy.*",
+    "rich.*",
+    "google.*",
+    "openai.*",
+    "anthropic.*",
 ]
 ignore_missing_imports = true
 
