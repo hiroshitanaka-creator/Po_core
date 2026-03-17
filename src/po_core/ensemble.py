@@ -454,7 +454,9 @@ def _run_phase_post(
             "n": run_result.n,
             "timed_out": run_result.timed_out,
             "error": "" if run_result.error is None else run_result.error[:200],
-            "latency_ms": (-1 if run_result.latency_ms is None else run_result.latency_ms),
+            "latency_ms": (
+                -1 if run_result.latency_ms is None else run_result.latency_ms
+            ),
         }
 
         matched_proposal = next(

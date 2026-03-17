@@ -111,7 +111,7 @@ class SemanticMemoryEntry:
         """Increment formation_count and merge new philosopher associations."""
         self.formation_count += 1
         self.last_activated = datetime.now(timezone.utc)
-        for ph in (additional_philosophers or []):
+        for ph in additional_philosophers or []:
             if ph and ph not in self.associated_philosophers:
                 self.associated_philosophers.append(ph)
         self.confidence = min(1.0, self.confidence + confidence_boost)

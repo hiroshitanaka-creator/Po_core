@@ -430,7 +430,13 @@ class AsyncPartyMachine:
             embedded = [
                 _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
             ]
-            result: Tuple[List, int, Optional[str], int, str] = embedded, len(proposals), None, dt, pid
+            result: Tuple[List, int, Optional[str], int, str] = (
+                embedded,
+                len(proposals),
+                None,
+                dt,
+                pid,
+            )
 
         except asyncio.TimeoutError:
             dt = int((perf_counter() - t0) * 1000)

@@ -29,7 +29,9 @@ from po_core.safety.wethics_gate.policies.intention_mode_001 import (
 def default_intention_policies() -> List[IntentionPolicy]:
     """Get default intention-stage policies (sorted by priority at runtime)."""
     return [
-        cast(IntentionPolicy, IntentModeDegradePolicy()),  # priority=5: safety mode first
+        cast(
+            IntentionPolicy, IntentModeDegradePolicy()
+        ),  # priority=5: safety mode first
         cast(IntentionPolicy, IntentGoalKeywordGuardPolicy()),  # priority=10
     ]
 

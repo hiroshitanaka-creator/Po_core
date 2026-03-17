@@ -367,7 +367,9 @@ def _get_author(proposal: Proposal) -> str:
     """Extract author name from proposal metadata."""
     extra = proposal.extra if isinstance(proposal.extra, dict) else {}
     pc = extra.get(PO_CORE, {})
-    return str(pc.get(AUTHOR, "") or extra.get("philosopher", "") or extra.get(AUTHOR, ""))
+    return str(
+        pc.get(AUTHOR, "") or extra.get("philosopher", "") or extra.get(AUTHOR, "")
+    )
 
 
 def _safety_score(verdict: SafetyVerdict) -> float:
