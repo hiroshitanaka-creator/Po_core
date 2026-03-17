@@ -161,12 +161,16 @@ class SemanticProfile(Tensor):
 
         # Novelty: Question marks and exploration terms
         novelty_indicators = ["?", "new", "novel", "innovative", "original", "unique"]
-        novelty: float = sum(1 for indicator in novelty_indicators if indicator in text_lower)
+        novelty: float = sum(
+            1 for indicator in novelty_indicators if indicator in text_lower
+        )
         novelty = min(novelty / len(novelty_indicators), 1.0)
 
         # Depth: Length and complexity indicators
         depth_indicators = ["because", "why", "how", "explain", "understand", "reason"]
-        depth: float = sum(1 for indicator in depth_indicators if indicator in text_lower)
+        depth: float = sum(
+            1 for indicator in depth_indicators if indicator in text_lower
+        )
         depth = min(depth / len(depth_indicators), 1.0)
 
         return np.array(

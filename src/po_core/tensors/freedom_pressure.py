@@ -114,7 +114,9 @@ class FreedomPressureTensor(Tensor):
 
         # Choice weight: Presence of decision-related keywords
         choice_indicators = ["should", "must", "ought", "decide", "choose", "what"]
-        choice_weight: float = sum(1 for word in choice_indicators if word in prompt_lower)
+        choice_weight: float = sum(
+            1 for word in choice_indicators if word in prompt_lower
+        )
         choice_weight = min(choice_weight / len(choice_indicators), 1.0)
 
         # Responsibility degree: Ethical/moral keywords
