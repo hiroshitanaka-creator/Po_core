@@ -429,9 +429,10 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v1.0.0
+po-core version   # v1.0.2
 po-core status
 po-core --help
+po-interactive --help
 ```
 
 ### REST API
@@ -510,6 +511,7 @@ Po_core includes a complete A/B testing framework for comparing different Pareto
 
 ```bash
 # List all experiments
+po-experiment --help
 po-experiment list
 
 # Analyze experiment results (statistical significance testing)

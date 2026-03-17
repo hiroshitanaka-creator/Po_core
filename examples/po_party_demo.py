@@ -18,11 +18,6 @@ Usage:
 Interactive mode with beautiful Rich UI.
 """
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 import random
 from typing import Dict, List
 
@@ -234,10 +229,7 @@ def run_party_simulation(config: PartyConfig, prompt: str):
 
         # Create Po_self instance with the party philosophers
         try:
-            po = PoSelf(
-                philosophers=config.philosophers,
-                enable_ethics_guardian=True,
-            )
+            po = PoSelf(philosophers=config.philosophers)
 
             # Run generation
             result = po.generate(prompt)
