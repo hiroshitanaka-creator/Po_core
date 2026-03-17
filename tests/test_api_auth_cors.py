@@ -91,6 +91,28 @@ def test_generate_rejects_unknown_fields(monkeypatch):
     assert response.status_code == 422
 
 
+
+
+def test_generate_allowlist_no_overlap_returns_422_with_detail(monkeypatch):
+    api = _load_api_module(monkeypatch)
+
+    async def _fake_async_run(user_input, *, philosophers=None):
+        raise ValueError(
+            "philosophers allowlist ['kant'] has no overlap with SafetyMode-'normal' selection ['aristotle']"
+        )
+
+    monkeypatch.setattr(api, "async_run", _fake_async_run)
+
+    client = TestClient(api.app)
+    response = client.post(
+        "/generate",
+        json={"user_input": "hello", "philosophers": ["kant"]},
+    )
+
+    assert response.status_code == 422
+    assert "allowlist" in str(response.json()["detail"])
+    assert "no overlap" in str(response.json()["detail"])
+
 def test_options_preflight_not_blocked_in_secure_mode(monkeypatch):
     api = _load_api_module(
         monkeypatch, api_key="secret", cors_origins="https://example.com"

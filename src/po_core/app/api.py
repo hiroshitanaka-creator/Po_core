@@ -243,7 +243,10 @@ async def generate(
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> dict:
     _ensure_api_key(x_api_key=x_api_key, authorization=authorization)
-    return await async_run(payload.user_input, philosophers=payload.philosophers)
+    try:
+        return await async_run(payload.user_input, philosophers=payload.philosophers)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 __all__ = ["run", "async_run", "app"]

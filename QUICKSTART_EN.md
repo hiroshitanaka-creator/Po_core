@@ -16,6 +16,13 @@ pip install click rich
 pip install -e .
 ```
 
+
+
+```bash
+# Install current stable release from PyPI
+pip install "po-core-flyingpig==1.0.2"
+```
+
 ## ⚡ Try it in 30 Seconds
 
 ### Minimal Code
@@ -91,12 +98,16 @@ print(f"Metrics: {response.metrics}")
 ### 2. Select Custom Philosophers
 
 ```python
-# Existentialist group
-philosophers = ["sartre", "heidegger", "kierkegaard"]
-po = PoSelf(philosophers=philosophers)
+# Existentialist group (constructor = default allowlist)
+default_philosophers = ["sartre", "heidegger", "kierkegaard"]
+po = PoSelf(philosophers=default_philosophers)
 
 response = po.generate("What is existence?")
 print(response.text)
+
+# Per-call philosophers=... overrides constructor default
+override = po.generate("What is existence?", philosophers=["nietzsche"])
+print(override.text)
 ```
 
 ### 3. Get Results in JSON Format
@@ -175,6 +186,10 @@ result = run(user_input="What is beauty?")
 print(result['status'])       # "ok"
 print(result['request_id'])   # Request ID
 print(result['proposal'])     # Proposal content
+
+# Public API facade also supports explicit subset selection
+subset = run(user_input="What is justice?", philosophers=["kant"])
+print(subset['status'])
 ```
 
 ### Controlling Trace Functionality
@@ -282,7 +297,7 @@ open http://localhost:8000/docs
 ### Start Locally
 
 ```bash
-pip install -e ".[api]"
+pip install -e .
 export PO_SKIP_AUTH=true   # skip auth in development
 
 python -m po_core.app.rest
@@ -299,13 +314,16 @@ python -m po_core.app.rest
 | `GET`  | `/v1/trace/{session_id}` | Per-session trace events |
 | `GET`  | `/v1/health` | Health check (version + uptime) |
 
+> Note: `PO_LLM_PROVIDER` / `PO_LLM_MODEL` choose backend routing for each philosopher.
+> They do **not** decide philosopher count (count is controlled by SafetyMode + allowlist).
+
 ### Examples
 
 ```bash
 # Synchronous reasoning
 curl -X POST http://localhost:8000/v1/reason \
   -H "Content-Type: application/json" \
-  -d '{"input": "What is justice?"}'
+  -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # SSE streaming (true async, non-blocking event loop)
 curl -N -X POST http://localhost:8000/v1/reason/stream \

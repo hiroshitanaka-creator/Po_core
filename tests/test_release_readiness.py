@@ -26,3 +26,16 @@ def test_quickstart_install_examples_are_valid_for_current_release() -> None:
     quickstart = (ROOT / "QUICKSTART.md").read_text(encoding="utf-8")
     assert 'pip install "po-core-flyingpig==1.0.2"' in quickstart
     assert 'pip install -e ".[api]"' not in quickstart
+
+
+def test_quickstart_en_install_examples_are_valid_for_current_release() -> None:
+    quickstart_en = (ROOT / "QUICKSTART_EN.md").read_text(encoding="utf-8")
+    assert 'pip install "po-core-flyingpig==1.0.2"' in quickstart_en
+    assert 'pip install -e ".[api]"' not in quickstart_en
+
+
+def test_quickstart_en_allowlist_semantics_are_documented() -> None:
+    quickstart_en = (ROOT / "QUICKSTART_EN.md").read_text(encoding="utf-8")
+    assert 'constructor = default allowlist' in quickstart_en
+    assert 'overrides constructor default' in quickstart_en
+    assert '"philosophers": ["kant"]' in quickstart_en
