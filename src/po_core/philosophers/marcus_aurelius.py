@@ -31,7 +31,7 @@ class MarcusAurelius(Philosopher):
     and the cultivation of inner tranquility through philosophical practice.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Marcus Aurelius",
             description="Roman Emperor and Stoic philosopher, author of Meditations",

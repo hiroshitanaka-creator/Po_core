@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 
@@ -70,7 +70,7 @@ _sbert_model = None
 _SBERT_MODEL_ID = "sbert:all-MiniLM-L6-v2"
 
 
-def _get_sbert_model():
+def _get_sbert_model() -> Any:
     """Lazy-load sentence-transformers model (cached singleton)."""
     global _sbert_model
     if _sbert_model is None:

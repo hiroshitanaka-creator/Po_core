@@ -167,7 +167,7 @@ class BlockedTensor(Tensor):
         """
         if blocked_entries:
             for entry in blocked_entries:
-                self.add_blocked_entry(entry)
+                self.add_blocked_entry(entry=entry)
 
         # Aggregate intensities by category
         category_intensities = np.zeros(self.dimensions, dtype=np.float64)
@@ -185,8 +185,8 @@ class BlockedTensor(Tensor):
 
     def add_blocked_entry(
         self,
-        content: str = None,
-        reason: str = None,
+        content: Optional[str] = None,
+        reason: Optional[str] = None,
         philosopher: Optional[str] = None,
         alternative: Optional[str] = None,
         intensity: float = 1.0,
@@ -291,7 +291,7 @@ class BlockedTensor(Tensor):
         Returns:
             Dictionary with blocking statistics
         """
-        summary = {
+        summary: Dict[str, Any] = {
             "total_blocked": self.get_blocked_count(),
             "by_category": {},
             "by_philosopher": {},

@@ -361,7 +361,7 @@ class PoTestRunner:
                 aggregate_scores[metric] = sum(values) / len(values)
 
         # Compare by constraint mode
-        mode_comparison = {}
+        mode_comparison: Dict[str, Dict[str, float]] = {}
         for mode in constraint_modes:
             mode_results = [r for r in results if r.constraint_mode == mode]
             mode_scores = {}
@@ -446,7 +446,7 @@ class PoTestRunner:
         print("=" * 60)
 
 
-def demo_test():
+def demo_test() -> None:
     """Run a demo test without an LLM client."""
     runner = PoTestRunner()
 

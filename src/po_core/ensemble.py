@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union
+from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
 
 from po_core import philosophers
 from po_core.axis.scoring import score_text_with_debug
@@ -448,13 +448,13 @@ def _run_phase_post(
         return route
 
     # Emit trace events for each philosopher execution result
-    for result in run_results:
+    for run_result in run_results:
         payload: Dict[str, Any] = {
-            "name": result.philosopher_id,
-            "n": result.n,
-            "timed_out": result.timed_out,
-            "error": "" if result.error is None else result.error[:200],
-            "latency_ms": (-1 if result.latency_ms is None else result.latency_ms),
+            "name": run_result.philosopher_id,
+            "n": run_result.n,
+            "timed_out": run_result.timed_out,
+            "error": "" if run_result.error is None else run_result.error[:200],
+            "latency_ms": (-1 if run_result.latency_ms is None else run_result.latency_ms),
         }
 
         matched_proposal = next(
@@ -463,7 +463,7 @@ def _run_phase_post(
                 for p in raw_proposals
                 if isinstance(p, DomainProposal)
                 and str((p.extra or {}).get("philosopher") or "")
-                == result.philosopher_id
+                == run_result.philosopher_id
             ),
             None,
         )
@@ -623,7 +623,8 @@ def _run_phase_post(
     if deps.aggregator_shadow is not None:
         try:
             if deps.shadow_guard is not None:
-                run_shadow, ev = deps.shadow_guard.should_run_shadow(ctx)
+                _sg = cast(Any, deps.shadow_guard)
+                run_shadow, ev = _sg.should_run_shadow(ctx)
                 if ev is not None:
                     tracer.emit(ev)
                 if run_shadow:
@@ -640,7 +641,7 @@ def _run_phase_post(
                         variant="shadow",
                         origin="pareto_shadow",
                     )
-                    ev2 = deps.shadow_guard.observe_comparison(
+                    ev2 = _sg.observe_comparison(
                         ctx,
                         main_candidate=candidate_main,
                         main_final=final_main,

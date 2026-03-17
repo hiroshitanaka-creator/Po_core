@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Any, Sequence
 
 from po_core.deliberation.roles import parse_roles_csv
 from po_core.philosophers.base import PhilosopherProtocol
@@ -449,7 +449,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     )
 
 
-def _build_deliberation_engine(settings: Settings):
+def _build_deliberation_engine(settings: Settings) -> Any:
     """Build deliberation engine if enabled in settings."""
     max_rounds = getattr(settings, "deliberation_max_rounds", 1)
     if max_rounds <= 1:

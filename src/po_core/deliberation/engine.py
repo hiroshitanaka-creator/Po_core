@@ -426,7 +426,7 @@ def _get_author(proposal: Proposal) -> str:
     """Extract author name from proposal.extra."""
     extra = proposal.extra if isinstance(proposal.extra, dict) else {}
     pc = extra.get(PO_CORE, {})
-    return pc.get(AUTHOR, "") or extra.get("philosopher", "")
+    return str(pc.get(AUTHOR, "") or extra.get("philosopher", ""))
 
 
 def _collect_counterargument(

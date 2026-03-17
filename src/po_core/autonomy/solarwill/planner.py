@@ -5,7 +5,7 @@ Solar Will Planner
 Functions for generating intents and goals from will state.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from po_core.autonomy.solarwill.model import (
     GoalCandidate,
@@ -229,9 +229,9 @@ def _generate_goal_for_dimension(
     )
 
     return GoalCandidate(
-        description=template["description"],
+        description=cast(str, template["description"]),
         intent_id=intent.intent_id,
-        success_criteria=template["criteria"],
+        success_criteria=cast(List[str], template["criteria"]),
         priority=dim_value,
         feasibility=0.7,  # Default feasibility
         ethical_risk=ethical_risk,

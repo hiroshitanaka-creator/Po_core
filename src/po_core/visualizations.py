@@ -11,7 +11,7 @@ Advanced visualization capabilities for Po_core including:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -202,7 +202,7 @@ class PoVisualizer:
             raise ValueError("At least one session ID required")
 
         # Collect metrics from all sessions
-        timeline_data = []
+        timeline_data: List[Dict[str, Any]] = []
         for session_id in session_ids:
             session = self.po_trace.get_session(session_id)
             if session is None:

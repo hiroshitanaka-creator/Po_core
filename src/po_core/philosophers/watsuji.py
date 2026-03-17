@@ -254,7 +254,7 @@ class Watsuji(Philosopher):
             "Desert": desert_count,
             "Meadow": meadow_count,
         }
-        dominant_type = max(scores, key=scores.get)
+        dominant_type = max(scores, key=lambda x: scores.get(x, 0))
 
         if scores[dominant_type] == 0:
             type_name = "Neutral"

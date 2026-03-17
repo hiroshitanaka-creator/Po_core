@@ -575,7 +575,7 @@ class PoTrace:
             prompt=response.prompt,
             philosophers=response.philosophers,
             consensus_leader=response.consensus_leader,
-            metrics=response.metrics,
+            metrics={k: v for k, v in response.metrics.items() if v is not None},
         )
 
         return TraceRecord(

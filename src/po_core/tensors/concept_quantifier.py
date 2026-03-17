@@ -38,7 +38,7 @@ class PhilosophicalConcept:
     confidence: float = 1.0
     metadata: Optional[Dict[str, Any]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate and normalize."""
         if self.confidence < 0.0 or self.confidence > 1.0:
             self.confidence = np.clip(self.confidence, 0.0, 1.0)
@@ -69,7 +69,7 @@ class PhilosophicalConcept:
 
         similarity = np.dot(self.vector, other.vector) / (norm_self * norm_other)
         # Normalize to [0, 1]
-        return (similarity + 1) / 2
+        return float((similarity + 1) / 2)
 
     def tension(self, other: "PhilosophicalConcept") -> float:
         """
@@ -502,7 +502,7 @@ class ConceptQuantifier(Tensor):
         Returns:
             Dictionary with all concepts and their relationships
         """
-        concepts_export = {}
+        concepts_export: Dict[str, Any] = {}
 
         for concept_name, philosophers in self.concept_library.items():
             concepts_export[concept_name] = {}

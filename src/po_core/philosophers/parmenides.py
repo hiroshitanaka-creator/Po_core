@@ -32,7 +32,7 @@ class Parmenides(Philosopher):
     and all subsequent ontology.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Parmenides",
             description="Pre-Socratic philosopher who established foundational questions of Western metaphysics",

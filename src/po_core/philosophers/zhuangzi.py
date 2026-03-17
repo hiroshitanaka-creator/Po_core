@@ -40,7 +40,7 @@ class Zhuangzi(Philosopher):
     acceptance of transformation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Zhuangzi (莊子)",
             description="Daoist philosophy emphasizing naturalness (ziran), non-action (wu wei), spiritual freedom (xiaoyaoyou), and the relativity of perspectives",

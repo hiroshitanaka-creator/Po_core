@@ -73,35 +73,28 @@ def check_proposal(
     gate = WethicsGate(config=config)
     result = gate.check(candidate)
 
-    # Convert to SafetyVerdict
-    violations = [
-        ViolationInfo(
-            code=v.code.value if hasattr(v.code, "value") else str(v.code),
-            severity=v.impact,
-            description=v.message,
-            repairable=v.code not in ("W0", "W1"),
-        )
+    # Convert to SafetyVerdict using domain fields
+    decision_map = {
+        GateDecision.ALLOW: Decision.ALLOW,
+        GateDecision.ALLOW_WITH_REPAIR: Decision.ALLOW,
+        GateDecision.REJECT: Decision.REJECT,
+        GateDecision.ESCALATE: Decision.REJECT,
+    }
+
+    rule_ids = [
+        (v.code.value if hasattr(v.code, "value") else str(v.code))
+        for v in result.violations
+    ]
+    reasons = [
+        (v.evidence[0].message if v.evidence else str(v.code))
         for v in result.violations
     ]
 
-    verdict_type_map = {
-        GateDecision.ALLOW: VerdictType.ALLOW,
-        GateDecision.ALLOW_WITH_REPAIR: VerdictType.ALLOW_WITH_REPAIR,
-        GateDecision.REJECT: VerdictType.REJECT,
-        GateDecision.ESCALATE: VerdictType.ESCALATE,
-    }
-
     return SafetyVerdict(
-        verdict_type=verdict_type_map[result.decision],
-        proposal_id=candidate.cid,
-        violations=violations,
-        repaired_text=result.repaired_text,
-        repair_log=result.repair_log,
-        drift_score=result.drift_score,
-        explanation=result.explanation,
-        metadata={
-            "gate_result": result.to_dict() if hasattr(result, "to_dict") else {}
-        },
+        decision=decision_map.get(result.decision, Decision.REJECT),
+        rule_ids=rule_ids,
+        reasons=reasons,
+        meta={"gate_result": "repaired" if result.repaired_text else ""},
     )
 
 
@@ -157,9 +150,9 @@ class ActionGate:
             self._gate.config,
         )
 
-        if verdict.verdict_type == VerdictType.REJECT:
+        if verdict.decision == Decision.REJECT:
             self._rejections += 1
-        elif verdict.verdict_type == VerdictType.ALLOW_WITH_REPAIR:
+        elif verdict.decision == Decision.REVISE:
             self._repairs += 1
 
         return verdict
@@ -215,7 +208,7 @@ class TwoStageGate:
         intent_description: str,
         goal_descriptions: Optional[List[str]] = None,
         will_vector: Optional[Dict[str, float]] = None,
-    ):
+    ) -> Any:
         """
         Stage 1: Check an intent.
 

@@ -70,7 +70,7 @@ def emit_decision_comparison(
         """2つの指紋で特定キーが異なるか"""
         return str(a.get(k, "")) != str(b.get(k, ""))
 
-    payload = {
+    payload: dict[str, Any] = {
         "main": {"candidate": mc, "final": mf},
         "shadow": {"candidate": sc, "final": sf},
         "diff": {

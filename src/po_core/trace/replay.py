@@ -4,13 +4,13 @@ import argparse
 import os
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, Iterator, Mapping, Optional
+from typing import Any, Dict, Iterator, Mapping, Optional, Sequence
 
 from po_core.po_self import PoSelf
 from po_core.trace.event_log import JsonlEventLogger
 
 
-def _extract_replay_inputs(events: list[Mapping[str, Any]]) -> Dict[str, Any]:
+def _extract_replay_inputs(events: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
     for ev in events:
         if ev.get("stage") != "propose":
             continue

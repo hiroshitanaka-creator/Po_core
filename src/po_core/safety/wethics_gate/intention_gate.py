@@ -30,7 +30,7 @@ from po_core.safety.wethics_gate.policies.base import IntentionPolicy
 
 def _dehyphenate(m: "re.Match") -> str:
     """Remove hyphens from letter-by-letter spelled words (e.g. d-e-p-e-n-d -> depend)."""
-    return m.group(0).replace("-", "")
+    return str(m.group(0).replace("-", ""))
 
 
 class IntentionDecision(str, Enum):

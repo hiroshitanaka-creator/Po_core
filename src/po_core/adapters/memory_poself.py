@@ -61,7 +61,7 @@ class PoSelfMemoryAdapter(MemoryReadPort, MemoryWritePort):
         """
         # 例：poself.read(ctx.request_id, ctx.user_input, ctx.meta) みたいなAPIを想定
         try:
-            raw = self._poself.read(  # type: ignore[attr-defined]
+            raw = self._poself.read(
                 ctx.request_id,
                 ctx.user_input,
                 dict(ctx.meta),
@@ -108,7 +108,7 @@ class PoSelfMemoryAdapter(MemoryReadPort, MemoryWritePort):
 
         # Po_self の write API を呼ぶ
         try:
-            self._poself.write(ctx.request_id, payload)  # type: ignore[attr-defined]
+            self._poself.write(ctx.request_id, payload)
         except AttributeError:
             # Po_self に write API がない場合は何もしない
             pass

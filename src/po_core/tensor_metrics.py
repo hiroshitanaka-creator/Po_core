@@ -8,7 +8,7 @@ Implements Freedom Pressure Tensor (F_P), Semantic Profile, and Blocked Tensor.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 import torch
@@ -259,7 +259,7 @@ def _compute_semantic_freedom(prompt: str, reasoning: str) -> float:
         # Normalize from [-1, 1] to [0, 1]
         freedom = (1 - similarity) / 2
 
-        return max(0.0, min(1.0, freedom))
+        return float(max(0.0, min(1.0, freedom)))
     except Exception:
         # Fallback to simple token-based metric
         prompt_tokens = set(prompt.lower().split())
@@ -294,7 +294,7 @@ def _compute_structural_freedom(reasoning: str) -> float:
     cv = std_length / mean_length
     freedom = min(1.0, cv)
 
-    return freedom
+    return float(freedom)
 
 
 def _compute_coherence(text: str, model: SentenceTransformer) -> float:
@@ -322,12 +322,12 @@ def _compute_coherence(text: str, model: SentenceTransformer) -> float:
     avg_similarity = np.mean(similarities)
     coherence = (avg_similarity + 1) / 2
 
-    return max(0.0, min(1.0, coherence))
+    return float(max(0.0, min(1.0, coherence)))
 
 
 def compute_all_metrics(
     prompt: str, reasoning: str, philosopher_name: str = "unknown"
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     Compute all tensor metrics for a philosopher's reasoning.
 

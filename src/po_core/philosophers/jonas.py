@@ -31,7 +31,7 @@ class Jonas(Philosopher):
     arguing that technological power requires a new ethics of responsibility.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Hans Jonas",
             description="Philosopher of responsibility ethics and technology critique",

@@ -123,7 +123,7 @@ class SemanticProfile(Tensor):
             "essence",
             "universal",
         ]
-        abstract = sum(1 for term in abstract_terms if term in text_lower)
+        abstract: float = sum(1 for term in abstract_terms if term in text_lower)
         abstract = min(abstract / len(abstract_terms), 1.0)
 
         # Concrete level: Presence of concrete terms
@@ -135,7 +135,7 @@ class SemanticProfile(Tensor):
             "case",
             "concrete",
         ]
-        concrete = sum(1 for term in concrete_terms if term in text_lower)
+        concrete: float = sum(1 for term in concrete_terms if term in text_lower)
         concrete = min(concrete / len(concrete_terms), 1.0)
 
         # Emotional valence: Emotional words
@@ -156,17 +156,17 @@ class SemanticProfile(Tensor):
             "although",
             "consequently",
         ]
-        coherence = sum(1 for term in logical_terms if term in text_lower)
+        coherence: float = sum(1 for term in logical_terms if term in text_lower)
         coherence = min(coherence / len(logical_terms), 1.0)
 
         # Novelty: Question marks and exploration terms
         novelty_indicators = ["?", "new", "novel", "innovative", "original", "unique"]
-        novelty = sum(1 for indicator in novelty_indicators if indicator in text_lower)
+        novelty: float = sum(1 for indicator in novelty_indicators if indicator in text_lower)
         novelty = min(novelty / len(novelty_indicators), 1.0)
 
         # Depth: Length and complexity indicators
         depth_indicators = ["because", "why", "how", "explain", "understand", "reason"]
-        depth = sum(1 for indicator in depth_indicators if indicator in text_lower)
+        depth: float = sum(1 for indicator in depth_indicators if indicator in text_lower)
         depth = min(depth / len(depth_indicators), 1.0)
 
         return np.array(

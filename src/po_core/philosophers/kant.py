@@ -506,7 +506,7 @@ class Kant(Philosopher):
             ),
         }
 
-        dominant_group = max(groups, key=groups.get) if any(groups.values()) else "None"
+        dominant_group = max(groups, key=lambda x: groups.get(x, 0)) if any(groups.values()) else "None"
 
         return {
             "categories_identified": categories_present,

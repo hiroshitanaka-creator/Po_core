@@ -92,7 +92,7 @@ class ShadowGuardStore(Protocol):
 class InMemoryShadowGuardStore(ShadowGuardStore):
     """In-memory store for testing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.data: Optional[dict] = None
 
     def load(self) -> Optional[Mapping[str, Any]]:
@@ -115,7 +115,7 @@ class FileShadowGuardStore(ShadowGuardStore):
             return None
         try:
             with open(self._path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                return dict(json.load(f))
         except Exception:
             return None
 
