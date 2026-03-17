@@ -91,8 +91,6 @@ def test_generate_rejects_unknown_fields(monkeypatch):
     assert response.status_code == 422
 
 
-
-
 def test_generate_allowlist_no_overlap_returns_422_with_detail(monkeypatch):
     api = _load_api_module(monkeypatch)
 
@@ -112,6 +110,7 @@ def test_generate_allowlist_no_overlap_returns_422_with_detail(monkeypatch):
     assert response.status_code == 422
     assert "allowlist" in str(response.json()["detail"])
     assert "no overlap" in str(response.json()["detail"])
+
 
 def test_options_preflight_not_blocked_in_secure_mode(monkeypatch):
     api = _load_api_module(

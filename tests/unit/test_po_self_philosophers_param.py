@@ -178,7 +178,9 @@ class TestPoSelfGeneratePhilosophersParam:
             patch(self._BUILD_PATH, return_value=mock_sys),
             patch(self._RUN_TURN_PATH, side_effect=capture_run_turn),
         ):
-            PoSelf(philosophers=["aristotle"]).generate("test prompt", philosophers=None)
+            PoSelf(philosophers=["aristotle"]).generate(
+                "test prompt", philosophers=None
+            )
 
         assert "deps" in captured_deps
         assert isinstance(captured_deps["deps"].registry, _AllowlistRegistry)
@@ -280,7 +282,6 @@ class TestPoSelfGeneratePhilosophersParam:
         ):
             with pytest.raises(ValueError, match="allowlist"):
                 PoSelf().generate("test prompt", philosophers=["mill", "rawls"])
-
 
     def test_generate_with_subset_forwards_subset_allowlist(self):
         """Deprecated helper must still honor provided philosopher_keys."""

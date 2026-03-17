@@ -131,9 +131,11 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         """Build settings with environment variable overrides."""
-        llm_enabled_raw = _env_first(
-            "PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default=""
-        ).strip().lower()
+        llm_enabled_raw = (
+            _env_first("PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default="")
+            .strip()
+            .lower()
+        )
         return cls(
             philosopher_roles=_read_roles_from_env(),
             philosophers_max_normal=int(os.getenv("PO_PHILOSOPHERS_MAX_NORMAL", "39")),

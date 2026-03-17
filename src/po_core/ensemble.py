@@ -29,6 +29,7 @@ from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig, infer_safet
 from po_core.domain.safety_verdict import Decision
 from po_core.domain.trace_event import TraceEvent
 from po_core.party_machine import RunResult, async_run_philosophers, run_philosophers
+from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.philosophers.base import Philosopher, PhilosopherProtocol
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.ports.aggregator import AggregatorPort
@@ -140,7 +141,9 @@ class EnsembleDeps:
     philosophers: Sequence[PhilosopherProtocol]  # Backward compat
     aggregator: AggregatorPort
     aggregator_shadow: Optional[AggregatorPort]  # Shadow Pareto A/B評価用
-    registry: PhilosopherRegistry  # SafetyMode-based selection
+    registry: Union[
+        PhilosopherRegistry, AllowlistRegistry
+    ]  # SafetyMode-based selection
     settings: Settings  # Worker/timeout settings
     shadow_guard: Optional[object]  # ShadowGuard (自律ブレーキ)
     deliberation_engine: Optional[object] = None  # DeliberationEngine (Phase 2)

@@ -40,8 +40,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 
 from po_core.domain.context import Context
-from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
+from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system

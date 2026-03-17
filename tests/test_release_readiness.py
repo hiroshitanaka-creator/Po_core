@@ -36,6 +36,6 @@ def test_quickstart_en_install_examples_are_valid_for_current_release() -> None:
 
 def test_quickstart_en_allowlist_semantics_are_documented() -> None:
     quickstart_en = (ROOT / "QUICKSTART_EN.md").read_text(encoding="utf-8")
-    assert 'constructor = default allowlist' in quickstart_en
-    assert 'overrides constructor default' in quickstart_en
+    assert "constructor = default allowlist" in quickstart_en
+    assert "overrides constructor default" in quickstart_en
     assert '"philosophers": ["kant"]' in quickstart_en
