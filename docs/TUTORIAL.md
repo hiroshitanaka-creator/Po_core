@@ -47,7 +47,7 @@ pip install -e .
 po-core version
 
 # You should see something like:
-# 🐷🎈 Po_core    v0.1.0-alpha
+# 🐷🎈 Po_core    v1.0.2
 ```
 
 **✅ Checkpoint:** If you see the version output, you're ready to proceed!

@@ -31,7 +31,7 @@ import { PoCoreClient } from "@po-core/sdk";
 
 const client = new PoCoreClient({
   baseUrl: "https://your-po-core-api.example.com",
-  apiKey: process.env.PO_CORE_API_KEY,
+  apiKey: process.env.PO_API_KEY,
 });
 
 const result = await client.reason("How should I decide under uncertainty?");

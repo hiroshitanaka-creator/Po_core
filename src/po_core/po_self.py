@@ -153,8 +153,10 @@ class PoSelf:
                           normal SafetyMode pipeline are used. Raises
                           ValueError if the intersection is empty (i.e., none
                           of the specified IDs passed safety selection). Pass
-                          None (default) to use all SafetyMode-selected
-                          philosophers.
+                          None (default) to use the constructor-level default
+                          allowlist (set via ``philosophers=`` at init time;
+                          when that was also None, all SafetyMode-selected
+                          philosophers participate).
             context: Optional context information
 
         Returns:
@@ -365,7 +367,9 @@ class PoSelf:
 
         Args:
             prompt: The input prompt
-            philosopher_keys: Ignored (kept for backward compat)
+            philosopher_keys: Forwarded to generate(philosophers=...) as the
+                              per-call allowlist override. Previously this
+                              argument was ignored; it is now passed through.
             context: Optional context
 
         Returns:
@@ -398,7 +402,7 @@ def cli() -> None:
     console.print("[bold magenta]Po_self - Philosophical Ensemble[/bold magenta]")
     console.print("Pipeline: run_turn (hexagonal architecture)")
     console.print("\nFeatures:")
-    console.print("  - 39 philosophers as dynamic tensors")
+    console.print("  - 42 philosophers integrated (39 active) as dynamic tensors")
     console.print(
         "  - Three-layer safety (IntentionGate -> PolicyPrecheck -> ActionGate)"
     )
