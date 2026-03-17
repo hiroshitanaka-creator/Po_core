@@ -17,6 +17,7 @@
 
 ## CI Fixes
 - **ci-fix-black**: `pyproject.toml` の `black==23.12.1` を `26.1.0` に統一し、CI lint ジョブと `.pre-commit-config.yaml` のバージョンを一致させた（コミット #379 のダウングレードを修正）。
+- **fix-main-ci-errors**: main CI の lint・型エラーを修正（NFR-GOV-001）。`src/po_core/app/api.py` / `app/rest/routers/reason.py` / `ensemble.py` / `philosophers/allowlist.py` / `runtime/settings.py` の black/isort フォーマット整形と mypy 型エラー解消。影響テスト（`test_api_auth_cors.py` / `test_release_readiness.py` / `test_po_self*.py` / `test_rest_api.py` / `test_observability_review_flow.py`）も同期更新。
 
 ## Meta (Docs Governance)
 - **Phase13-PR-2**: legacy `pocore` 契約メタデータのバージョン整合を実施。`src/pocore/orchestrator.py` の `POCORE_VERSION` を `0.3.0` 方針へ更新し、凍結契約（`case_001` / `case_009`）は `scenario_profile` ベースで `0.1.0` を維持。非凍結 golden の `meta.pocore_version` / `meta.generator.version` は `0.3.0` へ同期した。
