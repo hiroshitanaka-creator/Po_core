@@ -26,7 +26,9 @@ class TestPoSelfBasicFunctionality:
         assert "semantic_delta" in response.metrics
         assert "blocked_tensor" in response.metrics
 
-    def test_po_self_constructor_philosophers_applies_default_allowlist(self, sample_prompt):
+    def test_po_self_constructor_philosophers_applies_default_allowlist(
+        self, sample_prompt
+    ):
         """PoSelf(philosophers=[...]) now sets default runtime allowlist."""
         response = PoSelf(philosophers=["wittgenstein"]).generate(sample_prompt)
 

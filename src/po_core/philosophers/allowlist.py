@@ -46,4 +46,3 @@ class AllowlistRegistry:
         sel = self.select(mode)
         phs, _ = self.load(sel.selected_ids)
         return phs
-

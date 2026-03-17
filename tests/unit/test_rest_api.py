@@ -233,7 +233,9 @@ def test_reason_exposes_llm_routing_metadata_in_philosophers(client_no_auth):
 @pytest.mark.phase5
 def test_reason_supports_explicit_philosophers_allowlist(client_no_auth):
     """Reason endpoint forwards official philosophers allowlist into po_run."""
-    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT) as mock_run:
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
         resp = client_no_auth.post(
             "/v1/reason",
             json={"input": "What is justice?", "philosophers": ["kant"]},

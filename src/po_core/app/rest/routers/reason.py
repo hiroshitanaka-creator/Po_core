@@ -292,7 +292,9 @@ def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
                 normalized_meta if isinstance(normalized_meta, dict) else {}
             )
             proposal_meta = p.get("metadata")
-            proposal_meta_dict = proposal_meta if isinstance(proposal_meta, dict) else {}
+            proposal_meta_dict = (
+                proposal_meta if isinstance(proposal_meta, dict) else {}
+            )
 
             fallback_val = (
                 p.get("llm_fallback")
