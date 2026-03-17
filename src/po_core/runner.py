@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 try:
-    import yaml
+    import yaml  # type: ignore[import-untyped]
 except ImportError as _e:  # pragma: no cover
     raise ImportError(
         "PyYAML is required for po_core.runner. pip install pyyaml"
@@ -82,7 +82,7 @@ def _digest(data: dict) -> str:
 
 def _load_schema(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        return dict(json.load(f))
 
 
 def _validate(data: dict, schema_path: Path, label: str) -> None:

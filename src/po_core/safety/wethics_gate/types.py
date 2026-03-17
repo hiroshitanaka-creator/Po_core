@@ -108,7 +108,7 @@ class Evidence:
     span: Optional[Tuple[int, int]] = None
     tags: List[str] = field(default_factory=list)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.strength = max(0.0, min(1.0, float(self.strength)))
         self.confidence = max(0.0, min(1.0, float(self.confidence)))
 
@@ -190,7 +190,7 @@ class AxisScore:
     counterevidence: List[str] = field(default_factory=list)
     notes: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate score ranges."""
         self.value = max(0.0, min(1.0, self.value))
         self.confidence = max(0.0, min(1.0, self.confidence))

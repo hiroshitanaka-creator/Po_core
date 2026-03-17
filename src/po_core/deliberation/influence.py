@@ -40,11 +40,11 @@ try:
     from po_core.deliberation.emergence import _encode, _get_author
 except ImportError:
     # Fallback (shouldn't happen in production)
-    def _get_author(proposal: "Proposal") -> str:  # type: ignore[misc]
+    def _get_author(proposal: "Proposal") -> str:
         extra = proposal.extra if isinstance(proposal.extra, dict) else {}
-        return extra.get(AUTHOR, "") or extra.get("philosopher", "")
+        return str(extra.get(AUTHOR, "") or extra.get("philosopher", ""))
 
-    def _encode(texts: List[str]) -> np.ndarray:  # type: ignore[misc]
+    def _encode(texts: List[str]) -> np.ndarray:
         import re
 
         def tokenise(t: str) -> List[str]:

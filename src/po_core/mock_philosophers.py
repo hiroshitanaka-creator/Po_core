@@ -6,7 +6,7 @@ Useful for testing, development, and demonstrations.
 """
 
 import random
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class MockPhilosopher:
@@ -101,6 +101,7 @@ class MockPoSelf:
         # Create session
         session_id = None
         if self.enable_trace:
+            assert self.po_trace is not None
             session_id = self.po_trace.create_session(
                 prompt=prompt, philosophers=selected
             )
@@ -130,6 +131,8 @@ class MockPoSelf:
 
             # Log philosopher event
             if self.enable_trace:
+                assert self.po_trace is not None
+                assert session_id is not None
                 self.po_trace.log_event(
                     session_id=session_id,
                     event_type=EventType.EXECUTION,
@@ -152,6 +155,8 @@ class MockPoSelf:
 
         # Update session metrics
         if self.enable_trace:
+            assert self.po_trace is not None
+            assert session_id is not None
             self.po_trace.update_metrics(
                 session_id,
                 {
@@ -185,7 +190,7 @@ class MockPoSelf:
 # Convenience function
 def create_mock_sessions(
     prompts: List[str], philosophers_per_session: Optional[int] = None
-) -> List[str]:
+) -> Tuple[List[str], Any]:
     """Create multiple mock sessions for testing.
 
     Args:

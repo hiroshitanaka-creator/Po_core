@@ -31,7 +31,7 @@ class Epicurus(Philosopher):
     of friends devoted to philosophical living.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Epicurus",
             description="Greek philosopher who founded Epicureanism, teaching pleasure as the highest good",

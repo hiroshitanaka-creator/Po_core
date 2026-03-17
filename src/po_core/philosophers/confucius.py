@@ -39,7 +39,7 @@ class Confucius(Philosopher):
     and the development of moral character through learning and practice of rituals.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Confucius (孔子)",
             description="Confucian philosophy emphasizing ren (benevolence), li (ritual propriety), and the cultivation of virtue through learning and proper relationships",

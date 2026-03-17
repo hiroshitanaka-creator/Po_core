@@ -114,7 +114,7 @@ class FreedomPressureTensor(Tensor):
 
         # Choice weight: Presence of decision-related keywords
         choice_indicators = ["should", "must", "ought", "decide", "choose", "what"]
-        choice_weight = sum(1 for word in choice_indicators if word in prompt_lower)
+        choice_weight: float = sum(1 for word in choice_indicators if word in prompt_lower)
         choice_weight = min(choice_weight / len(choice_indicators), 1.0)
 
         # Responsibility degree: Ethical/moral keywords
@@ -124,14 +124,14 @@ class FreedomPressureTensor(Tensor):
             "obligation",
             "accountable",
         ]
-        responsibility = sum(
+        responsibility: float = sum(
             1 for word in responsibility_indicators if word in prompt_lower
         )
         responsibility = min(responsibility / len(responsibility_indicators), 1.0)
 
         # Temporal urgency: Time-related keywords
         urgency_indicators = ["now", "urgent", "immediate", "quickly", "soon"]
-        urgency = sum(1 for word in urgency_indicators if word in prompt_lower)
+        urgency: float = sum(1 for word in urgency_indicators if word in prompt_lower)
         urgency = min(urgency / len(urgency_indicators), 1.0)
 
         # Ethical stakes: Moral/ethical keywords
@@ -144,17 +144,17 @@ class FreedomPressureTensor(Tensor):
             "ethical",
             "virtue",
         ]
-        ethical = sum(1 for word in ethical_indicators if word in prompt_lower)
+        ethical: float = sum(1 for word in ethical_indicators if word in prompt_lower)
         ethical = min(ethical / len(ethical_indicators), 1.0)
 
         # Social impact: Social keywords
         social_indicators = ["we", "us", "society", "people", "community", "others"]
-        social = sum(1 for word in social_indicators if word in prompt_lower)
+        social: float = sum(1 for word in social_indicators if word in prompt_lower)
         social = min(social / len(social_indicators), 1.0)
 
         # Authenticity pressure: Self-related keywords
         authenticity_indicators = ["authentic", "genuine", "true", "self", "I"]
-        authenticity = sum(
+        authenticity: float = sum(
             1 for word in authenticity_indicators if word in prompt_lower
         )
         authenticity = min(authenticity / len(authenticity_indicators), 1.0)

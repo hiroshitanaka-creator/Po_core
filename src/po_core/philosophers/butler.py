@@ -33,7 +33,7 @@ class Butler(Philosopher):
     through critical engagement with these norms.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Judith Butler",
             description="Post-structuralist and feminist philosopher known for work on gender performativity",

@@ -8,7 +8,7 @@ This is the extension point for adding new policies.
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, cast
 
 from po_core.safety.wethics_gate.policies.action_acttype_001 import (
     ActionTypeAllowlistPolicy,
@@ -29,17 +29,17 @@ from po_core.safety.wethics_gate.policies.intention_mode_001 import (
 def default_intention_policies() -> List[IntentionPolicy]:
     """Get default intention-stage policies (sorted by priority at runtime)."""
     return [
-        IntentModeDegradePolicy(),  # priority=5: safety mode first
-        IntentGoalKeywordGuardPolicy(),  # priority=10
+        cast(IntentionPolicy, IntentModeDegradePolicy()),  # priority=5: safety mode first
+        cast(IntentionPolicy, IntentGoalKeywordGuardPolicy()),  # priority=10
     ]
 
 
 def default_action_policies() -> List[ActionPolicy]:
     """Get default action-stage policies (sorted by priority at runtime)."""
     return [
-        ActionTypeAllowlistPolicy(),  # priority=10
-        ActionModeDegradePolicy(),  # priority=15
-        DangerousOutputGuardPolicy(),  # priority=20
+        cast(ActionPolicy, ActionTypeAllowlistPolicy()),  # priority=10
+        cast(ActionPolicy, ActionModeDegradePolicy()),  # priority=15
+        cast(ActionPolicy, DangerousOutputGuardPolicy()),  # priority=20
     ]
 
 

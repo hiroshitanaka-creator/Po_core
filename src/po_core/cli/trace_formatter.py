@@ -63,7 +63,7 @@ class TraceFormatter:
         )
 
         # Group entries by level
-        by_level = {}
+        by_level: dict[str, list] = {}
         for entry in entries:
             level = entry.get("level", "unknown")
             if level not in by_level:

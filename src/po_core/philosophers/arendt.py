@@ -42,7 +42,7 @@ class Arendt(Philosopher):
     realms.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Hannah Arendt",
             description="Political philosopher analyzing action, natality, plurality, and the human condition in the public sphere",

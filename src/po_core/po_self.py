@@ -118,10 +118,10 @@ class PoSelf:
         self.trace_dir = trace_dir
         self._settings = settings
         self._trace = None  # Legacy PoTrace compat
-        self._last_tracer = None  # InMemoryTracer from last run
+        self._last_tracer: Optional[Any] = None  # InMemoryTracer from last run
 
     @property
-    def po_trace(self):
+    def po_trace(self) -> Any:
         """Legacy compatibility: access PoTrace instance (deprecated)."""
         return self._trace
 
@@ -384,7 +384,7 @@ class PoSelf:
         """Get list of all available philosopher keys."""
         return [s.philosopher_id for s in SPECS if s.enabled]
 
-    def get_trace(self):
+    def get_trace(self) -> Optional[Any]:
         """Get the InMemoryTracer from the last run."""
         return self._last_tracer
 

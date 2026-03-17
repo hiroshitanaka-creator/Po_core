@@ -54,7 +54,7 @@ class Dogen(Philosopher):
     direct manifestation of awakening.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Dogen Zenji (道元禅師)",
             description="Zen Buddhist philosophy emphasizing practice-enlightenment unity (修証一如), being-time (有時), Buddha-nature (仏性), and just-sitting (只管打坐)",

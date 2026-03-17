@@ -104,12 +104,14 @@ class SemanticMemoryEntry:
     # ── Mutation helpers ──────────────────────────────────────────────
 
     def reinforce(
-        self, additional_philosophers: List[str] = (), confidence_boost: float = 0.05
+        self,
+        additional_philosophers: Optional[List[str]] = None,
+        confidence_boost: float = 0.05,
     ) -> None:
         """Increment formation_count and merge new philosopher associations."""
         self.formation_count += 1
         self.last_activated = datetime.now(timezone.utc)
-        for ph in additional_philosophers:
+        for ph in (additional_philosophers or []):
             if ph and ph not in self.associated_philosophers:
                 self.associated_philosophers.append(ph)
         self.confidence = min(1.0, self.confidence + confidence_boost)

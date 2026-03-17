@@ -193,7 +193,7 @@ class Kierkegaard(Philosopher):
             "Ethical": has_ethical,
             "Religious": has_religious,
         }
-        dominant = max(scores, key=scores.get)
+        dominant = max(scores, key=lambda x: scores.get(x, 0))
 
         if scores[dominant] == 0:
             stage_type = "Unclear"

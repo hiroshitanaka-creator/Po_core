@@ -11,7 +11,7 @@ This prevents misuse while enabling legitimate research.
 """
 
 from enum import Enum
-from typing import Dict, List
+from typing import Any, Dict, List, cast
 
 
 class SafetyTier(str, Enum):
@@ -202,7 +202,7 @@ def is_safe_for_general_use(philosopher: str) -> bool:
     if not profile:
         return False  # Unknown philosopher → default to restricted
 
-    return profile["tier"] == SafetyTier.TRUSTED
+    return bool(profile["tier"] == SafetyTier.TRUSTED)
 
 
 def requires_dangerous_pattern_mode(philosophers: List[str]) -> bool:
@@ -216,7 +216,7 @@ def requires_dangerous_pattern_mode(philosophers: List[str]) -> bool:
 def get_risk_factors(philosopher: str) -> List[str]:
     """Get risk factors for a philosopher."""
     profile = PHILOSOPHER_SAFETY_PROFILES.get(philosopher, {})
-    return profile.get("risk_factors", [])
+    return cast(List[str], profile.get("risk_factors", []))
 
 
 def validate_philosopher_group(
@@ -235,7 +235,7 @@ def validate_philosopher_group(
     Returns:
         Validation result with warnings and restrictions
     """
-    result = {
+    result: Dict[str, Any] = {
         "valid": True,
         "warnings": [],
         "restrictions": [],

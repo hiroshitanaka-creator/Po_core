@@ -17,7 +17,7 @@ Key Concepts:
 - The Good (τὸ ἀγαθόν): The Form of the Good - highest reality, source of truth and being
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from po_core.philosophers.base import Philosopher
 
@@ -399,11 +399,11 @@ class Plato(Philosopher):
             highest_level = "Unclear"
             epistemic_status = "Indeterminate"
         else:
-            highest = max(levels, key=lambda x: x["rank"])
-            highest_level = highest["level"]
+            highest = max(levels, key=lambda x: cast(int, x["rank"]))
+            highest_level = str(highest["level"])
             if highest["rank"] == 4:
                 epistemic_status = "Knowledge (ἐπιστήμη)"
-            elif highest["rank"] >= 2:
+            elif cast(int, highest["rank"]) >= 2:
                 epistemic_status = "Opinion (δόξα)"
             else:
                 epistemic_status = "Illusion"
@@ -460,7 +460,7 @@ class Plato(Philosopher):
         }
 
         dominant_part = (
-            max(parts_scores, key=parts_scores.get)
+            max(parts_scores, key=lambda x: parts_scores.get(x, 0))
             if max(parts_scores.values()) > 0
             else "None clear"
         )

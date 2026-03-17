@@ -5,7 +5,7 @@ Client for running Po_core tests against Claude API.
 """
 
 import os
-from typing import Optional
+from typing import Optional, cast
 
 try:
     import anthropic
@@ -81,7 +81,7 @@ class PoClaudeClient:
             temperature=temperature,
         )
 
-        return message.content[0].text
+        return str(message.content[0].text)
 
 
 def run_po_test_with_claude(
@@ -102,10 +102,14 @@ def run_po_test_with_claude(
     Returns:
         Claude's response
     """
-    from po_core.po_system_prompt import PO_CORE_SYSTEM_PROMPT, build_user_prompt
+    from po_core.po_system_prompt import (
+        PO_CORE_SYSTEM_PROMPT,
+        ConstraintMode,
+        build_user_prompt,
+    )
 
     client = PoClaudeClient(api_key=api_key, model=model)
-    user_prompt = build_user_prompt(question, constraint_mode)
+    user_prompt = build_user_prompt(question, cast(ConstraintMode, constraint_mode))
 
     return client.generate(
         system=PO_CORE_SYSTEM_PROMPT,
@@ -143,7 +147,7 @@ def run_full_test_suite(
 
 
 # CLI entry point
-def main():
+def main() -> None:
     """Command-line interface for Po_core testing."""
     import argparse
     import json

@@ -32,7 +32,7 @@ class Weil(Philosopher):
     moral and spiritual faculty.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             name="Simone Weil",
             description="Philosopher and mystic known for her work on attention, affliction, and grace",

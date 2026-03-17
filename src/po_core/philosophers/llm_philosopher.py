@@ -24,9 +24,9 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from po_core.philosophers.base import Philosopher
 from po_core.philosophers.llm_personas import get_persona
@@ -306,9 +306,14 @@ def build_llm_philosopher_registry(
             except Exception:
                 philosopher_adapter = adapter
 
-        registry._instances[spec.philosopher_id] = LLMPhilosopher(
-            philosopher_id=spec.philosopher_id,
-            adapter=philosopher_adapter,
+        from po_core.philosophers.base import PhilosopherProtocol as _Proto
+
+        registry._instances[spec.philosopher_id] = cast(
+            _Proto,
+            LLMPhilosopher(
+                philosopher_id=spec.philosopher_id,
+                adapter=philosopher_adapter,
+            ),
         )
 
     return registry

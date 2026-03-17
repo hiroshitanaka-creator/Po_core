@@ -81,6 +81,7 @@ class PhilosopherResponse(PhilosopherResponseRequired, total=False):
     confidence: float
     action_type: str
     citations: List[str]
+    voiced_reasoning: str
 
 
 @dataclass
@@ -708,7 +709,7 @@ class PhilosopherProtocol(TypingProtocol):
             question = "反証可能な問いを1つ提示できますか？"
 
         return {
-            "critic": self.name,
+            "critic": self.info.name,
             "target": str(getattr(target, "philosopher", "")),
             "target_proposal_id": str(getattr(target, "proposal_id", "")),
             "weakness": weakness,

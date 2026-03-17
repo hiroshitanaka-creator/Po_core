@@ -125,8 +125,8 @@ class LLMAdapter:
     # ── Provider implementations ────────────────────────────────────
 
     def _generate_gemini(self, system: str, user: str) -> str:
-        import google.genai as genai  # type: ignore[import-untyped]
-        import google.genai.types as genai_types  # type: ignore[import-untyped]
+        import google.genai as genai
+        import google.genai.types as genai_types
 
         client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         response = client.models.generate_content(
@@ -142,7 +142,7 @@ class LLMAdapter:
         return response.text or ""
 
     def _generate_openai_compat(self, system: str, user: str) -> str:
-        from openai import OpenAI  # type: ignore[import-untyped]
+        from openai import OpenAI
 
         if self.provider == LLMProvider.GROK:
             client = OpenAI(
@@ -166,7 +166,7 @@ class LLMAdapter:
         return resp.choices[0].message.content or ""
 
     def _generate_claude(self, system: str, user: str) -> str:
-        from anthropic import Anthropic  # type: ignore[import-untyped]
+        from anthropic import Anthropic
 
         client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         msg = client.messages.create(

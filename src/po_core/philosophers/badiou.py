@@ -270,7 +270,7 @@ class Badiou(Philosopher):
             "Science": has_science,
             "Politics": has_politics,
         }
-        dominant = max(scores, key=scores.get)
+        dominant = max(scores, key=lambda x: scores.get(x, 0))
 
         if scores[dominant] == 0:
             procedure = "No Clear Procedure"

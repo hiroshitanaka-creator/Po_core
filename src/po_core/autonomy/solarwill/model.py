@@ -80,7 +80,7 @@ class WillVector:
     def magnitude(self) -> float:
         """Calculate the magnitude (L2 norm) of the will vector."""
         values = self.to_list()
-        return sum(v * v for v in values) ** 0.5
+        return float(sum(v * v for v in values) ** 0.5)
 
     @property
     def dominant_dimension(self) -> str:

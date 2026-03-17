@@ -239,7 +239,7 @@ class DatabaseManager:
             SessionModel instance or None if not found
         """
         with self.get_session() as db:
-            session = (
+            session: Optional[SessionModel] = (
                 db.query(SessionModel)
                 .filter(SessionModel.session_id == session_id)
                 .first()

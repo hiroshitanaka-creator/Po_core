@@ -97,8 +97,8 @@ class InteractionMatrix:
             )
 
         # Extract philosopher names and content
-        names = []
-        contents = []
+        names: List[str] = []
+        contents: List[str] = []
         for p in proposals:
             extra = p.extra if hasattr(p, "extra") else {}
             pc = extra.get(PO_CORE, {}) if isinstance(extra, dict) else {}
@@ -287,7 +287,7 @@ class PhilosopherInteraction:
     synthesis_potential: float
     metadata: Optional[Dict[str, Any]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate values."""
         self.harmony = np.clip(self.harmony, 0.0, 1.0)
         self.tension = np.clip(self.tension, 0.0, 1.0)
@@ -571,7 +571,7 @@ class InteractionTensor(Tensor):
 
         # Cosine similarity
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
-        return (similarity + 1) / 2  # Normalize to [0, 1]
+        return float((similarity + 1) / 2)  # Normalize to [0, 1]
 
     def _calculate_ethical_alignment(self, text_a: str, text_b: str) -> float:
         """
@@ -630,7 +630,7 @@ class InteractionTensor(Tensor):
 
         # Cosine similarity
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
-        return (similarity + 1) / 2
+        return float((similarity + 1) / 2)
 
     def _calculate_ontological_resonance(self, text_a: str, text_b: str) -> float:
         """
@@ -683,7 +683,7 @@ class InteractionTensor(Tensor):
 
         # Cosine similarity
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
-        return (similarity + 1) / 2
+        return float((similarity + 1) / 2)
 
     def _calculate_methodological_affinity(
         self, persp_a: Dict[str, Any], persp_b: Dict[str, Any]
@@ -728,7 +728,7 @@ class InteractionTensor(Tensor):
             return 0.5
 
         similarity = np.dot(vec_a, vec_b) / (norm_a * norm_b)
-        return (similarity + 1) / 2
+        return float((similarity + 1) / 2)
 
     def _create_interaction_object(
         self, phil_a: str, phil_b: str, interaction_vector: np.ndarray

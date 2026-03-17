@@ -282,7 +282,7 @@ class CandidateSelector:
         Returns:
             SelectionResult with selected candidate and audit info
         """
-        rejected = []
+        rejected: List[Dict[str, Any]] = []
         passed_candidates = []
 
         # Step 1: W_ethics Gate

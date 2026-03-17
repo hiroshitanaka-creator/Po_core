@@ -83,7 +83,7 @@ class InteractiveReasoningSession:
     - Trace export
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize interactive session."""
         self.console = Console()
         self.selected_philosophers: List[str] = []

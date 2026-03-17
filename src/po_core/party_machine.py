@@ -402,7 +402,7 @@ class AsyncPartyMachine:
             if self._has_native_async(ph):
                 # Native async — runs on event loop directly
                 ph_proposals = await asyncio.wait_for(
-                    ph.propose_async(ctx, intent, tensors, memory),  # type: ignore[attr-defined]
+                    ph.propose_async(ctx, intent, tensors, memory),
                     timeout=self._timeout_s,
                 )
             else:
@@ -430,7 +430,7 @@ class AsyncPartyMachine:
             embedded = [
                 _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
             ]
-            result = embedded, len(proposals), None, dt, pid
+            result: Tuple[List, int, Optional[str], int, str] = embedded, len(proposals), None, dt, pid
 
         except asyncio.TimeoutError:
             dt = int((perf_counter() - t0) * 1000)
@@ -511,7 +511,7 @@ class AsyncPartyMachine:
                     )
                 )
             else:
-                selected_proposals, n, err, dt, author_id = outcome
+                selected_proposals, n, err, dt, author_id = outcome  # type: ignore[misc]
                 results.append(
                     RunResult(
                         philosopher_id=author_id,

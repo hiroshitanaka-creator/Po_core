@@ -198,7 +198,7 @@ class Lacan(Philosopher):
             "Symbolic": has_symbolic,
             "Real": has_real,
         }
-        dominant = max(scores, key=scores.get)
+        dominant = max(scores, key=lambda x: scores.get(x, 0))
 
         if scores[dominant] == 0:
             register_type = "Unclear"
@@ -688,7 +688,7 @@ class Lacan(Philosopher):
             "Hysteric": has_hysteric,
             "Analyst": has_analyst,
         }
-        dominant = max(scores, key=scores.get)
+        dominant = max(scores, key=lambda x: scores.get(x, 0))
 
         if scores[dominant] == 0:
             discourse_type = "Unclear"
