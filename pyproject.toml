@@ -109,6 +109,7 @@ po-core = "po_core.cli:main"
 po-self = "po_core.po_self:cli"
 po-trace = "po_core.po_trace:cli"
 po-interactive = "po_core.cli.interactive:main"
+po-experiment = "po_core.cli.experiment:cli"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -121,7 +122,9 @@ namespaces = false
 [tool.setuptools.package-data]
 po_core = [
     "config/*.yaml",
+    "config/voices/*.yaml",
     "config/philosophers/*.yaml",
+    "viewer/*.html",
     "axis/specs/*.json",
     "py.typed",
 ]

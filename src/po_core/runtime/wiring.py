@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from importlib import resources
 from typing import Any, Sequence
 
 from po_core.deliberation.roles import parse_roles_csv
@@ -91,6 +92,42 @@ def _maybe_preload_models(settings: Settings) -> None:
             pass
 
 
+def _load_battalion_plans() -> object | None:
+    from po_core.runtime.battalion_table import load_battalion_table
+
+    env_path = os.getenv("PO_CORE_BATTALION_TABLE", "").strip()
+    if env_path and os.path.exists(env_path):
+        return load_battalion_table(env_path)
+
+    legacy_default = "02_architecture/philosophy/battalion_table.yaml"
+    if os.path.exists(legacy_default):
+        return load_battalion_table(legacy_default)
+
+    packaged = resources.files("po_core.config").joinpath("battalion_table.yaml")
+    with resources.as_file(packaged) as packaged_path:
+        if packaged_path.exists():
+            return load_battalion_table(str(packaged_path))
+    return None
+
+
+def _load_pareto_config(default_config: object) -> object:
+    from po_core.runtime.pareto_table import load_pareto_table
+
+    env_path = os.getenv("PO_CORE_PARETO_TABLE", "").strip()
+    if env_path and os.path.exists(env_path):
+        return load_pareto_table(env_path)
+
+    legacy_default = "02_architecture/philosophy/pareto_table.yaml"
+    if os.path.exists(legacy_default):
+        return load_pareto_table(legacy_default)
+
+    packaged = resources.files("po_core.config").joinpath("pareto_table.yaml")
+    with resources.as_file(packaged) as packaged_path:
+        if packaged_path.exists():
+            return load_pareto_table(str(packaged_path))
+    return default_config
+
+
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     """
     Build a wired system with all dependencies.
@@ -107,8 +144,6 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.domain.pareto_config import ParetoConfig
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
-    from po_core.runtime.battalion_table import load_battalion_table
-    from po_core.runtime.pareto_table import load_pareto_table
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.policies.presets import (
@@ -133,27 +168,10 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
-    )
-    battalion_plans = None
-    if os.path.exists(table_path):
-        try:
-            battalion_plans = load_battalion_table(table_path)
-        except Exception:
-            pass  # フォールバックで内蔵デフォルトを使う
-
-    # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
+    # Battalion Table / Pareto Table
+    battalion_plans = _load_battalion_plans()
     pareto_cfg = ParetoConfig.defaults()
-    if os.path.exists(pareto_path):
-        try:
-            pareto_cfg = load_pareto_table(pareto_path)
-        except Exception:
-            pass  # フォールバックでデフォルトを使う
+    pareto_cfg = _load_pareto_config(pareto_cfg)
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None
@@ -285,8 +303,6 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     from po_core.autonomy.solarwill.engine import SolarWillEngine
     from po_core.domain.pareto_config import ParetoConfig
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
-    from po_core.runtime.battalion_table import load_battalion_table
-    from po_core.runtime.pareto_table import load_pareto_table
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.policies.presets import (
@@ -312,27 +328,10 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
-    )
-    battalion_plans = None
-    if os.path.exists(table_path):
-        try:
-            battalion_plans = load_battalion_table(table_path)
-        except Exception:
-            pass  # フォールバックで内蔵デフォルトを使う
-
-    # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
+    # Battalion Table / Pareto Table
+    battalion_plans = _load_battalion_plans()
     pareto_cfg = ParetoConfig.defaults()
-    if os.path.exists(pareto_path):
-        try:
-            pareto_cfg = load_pareto_table(pareto_path)
-        except Exception:
-            pass  # フォールバックでデフォルトを使う
+    pareto_cfg = _load_pareto_config(pareto_cfg)
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None

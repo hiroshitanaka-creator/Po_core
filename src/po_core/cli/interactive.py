@@ -10,6 +10,7 @@ Allows users to:
 """
 
 import json
+import sys
 from typing import Any, Dict, List
 
 from rich.console import Console
@@ -372,6 +373,15 @@ You will:
 
 def main() -> None:
     """Main entry point for interactive CLI."""
+    if any(arg in {"-h", "--help"} for arg in sys.argv[1:]):
+        print(
+            "Usage: po-interactive [OPTIONS]\n\n"
+            "Interactive philosophical reasoning session.\n\n"
+            "Options:\n"
+            "  -h, --help  Show this help message and exit."
+        )
+        return
+
     session = InteractiveReasoningSession()
     try:
         session.run()
