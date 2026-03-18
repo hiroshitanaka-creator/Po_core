@@ -201,10 +201,12 @@ You will:
 
                 # Display result
                 self._display_result(result)
-
-                # Ask for visualizations
-                if Confirm.ask("\n[cyan]View visualizations?[/cyan]", default=True):
-                    self._show_visualizations(result)
+                self.console.print(
+                    "\n[dim]Visualization views are intentionally disabled in "
+                    "po-interactive because the current PoSelf response contract "
+                    "does not expose the structured tensor payloads required by "
+                    "the legacy visualizers.[/dim]"
+                )
 
                 # Ask to continue
                 if not Confirm.ask(
@@ -261,51 +263,17 @@ You will:
         metadata = result.get("metadata", {})
         status = metadata.get("status", "unknown")
         degraded = metadata.get("degraded", False)
-        self.console.print(
-            f"\n[bold]Status:[/bold] {status} (degraded={degraded})"
-        )
+        self.console.print(f"\n[bold]Status:[/bold] {status} (degraded={degraded})")
 
         events = result.get("log", {}).get("events", [])
         self.console.print(f"[bold]Trace events:[/bold] {len(events)}")
 
     def _show_visualizations(self, result: Dict[str, Any]) -> None:
-        """
-        Show visualizations menu.
-
-        Args:
-            result: Reasoning result
-        """
-        while True:
-            self.console.print("\n[bold]Available Visualizations:[/bold]")
-            self.console.print("  1. Tension Map - Philosopher interactions")
-            self.console.print("  2. Pressure Display - Freedom and ethical dimensions")
-            self.console.print("  3. Evolution Graph - Semantic transformation")
-            self.console.print("  4. All visualizations")
-            self.console.print("  5. Back to reasoning")
-
-            choice = Prompt.ask(
-                "[cyan]Select visualization[/cyan]",
-                choices=["1", "2", "3", "4", "5"],
-                default="5",
-            )
-
-            if choice == "1":
-                self.tension_visualizer.render(result)
-            elif choice == "2":
-                self.pressure_visualizer.render(result)
-            elif choice == "3":
-                self.evolution_visualizer.render(result)
-            elif choice == "4":
-                self.tension_visualizer.render(result)
-                self.pressure_visualizer.render(result)
-                self.evolution_visualizer.render(result)
-            elif choice == "5":
-                break
-
-            if choice != "5" and not Confirm.ask(
-                "\n[cyan]View another visualization?[/cyan]", default=False
-            ):
-                break
+        """Visualization entrypoint retained only for backward-compatible internals."""
+        self.console.print(
+            "[yellow]Visualization rendering is not supported by the current "
+            "PoSelfResponse contract in po-interactive.[/yellow]"
+        )
 
     def _session_summary(self) -> None:
         """Display session summary and offer export."""
@@ -357,7 +325,8 @@ def main() -> None:
             "Usage: po-interactive\n"
             "\n"
             "Interactive Po_core session with philosopher selection, prompt loop,\n"
-            "trace export, and Rich visualizations.\n"
+            "textual PoSelf summaries, and trace export. Rich tensor\n"
+            "visualizations are currently disabled in this CLI.\n"
             "\n"
             "Options:\n"
             "  -h, --help  Show this help message and exit."

@@ -438,7 +438,20 @@ po-self --help
 po-trace --help
 po-interactive --help
 po-experiment --help
+
+# po-interactive currently shows textual PoSelf summaries and trace counts.
+# Rich tensor visualizations are intentionally disabled until the interactive
+# contract exposes the structured payloads those views require.
 ```
+
+### Source checkout example
+
+```bash
+python examples/po_party_demo.py --help
+```
+
+`examples/po_party_demo.py` supports direct source-checkout execution by adding
+`src/` to `sys.path` before importing `po_core`.
 
 ### REST API
 

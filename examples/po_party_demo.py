@@ -15,10 +15,17 @@ Based on research data:
 Usage:
     python examples/po_party_demo.py
 
-Interactive mode with beautiful Rich UI.
+This example supports direct source-checkout execution by bootstrapping the
+repository `src/` directory onto `sys.path`.
 """
 
 import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
 import random
 from typing import Dict, List
@@ -337,7 +344,8 @@ def main_interactive():
         print(
             "Usage: python examples/po_party_demo.py\n"
             "\n"
-            "Interactive Po_Party demo based on current PoSelf API."
+            "Interactive Po_Party demo based on current PoSelf API. "
+            "Supports direct source-checkout execution."
         )
         return
 

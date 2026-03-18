@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from typing import Any, Sequence
 
 from po_core.deliberation.roles import parse_roles_csv
+from po_core.domain.safety_mode import SafetyMode
 from po_core.philosophers.base import PhilosopherProtocol
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.ports.aggregator import AggregatorPort
@@ -106,6 +107,42 @@ def _load_battalion_plans_from_env_or_package() -> Any:
     return load_packaged_battalion_table()
 
 
+def _overlay_battalion_plans_with_settings(
+    battalion_plans: Any, settings: Settings
+) -> Any:
+    """Overlay Settings/env-driven limit and budget values onto packaged battalion plans."""
+
+    overlays = {
+        SafetyMode.NORMAL: (
+            settings.philosophers_max_normal,
+            settings.philosopher_cost_budget_normal,
+        ),
+        SafetyMode.WARN: (
+            settings.philosophers_max_warn,
+            settings.philosopher_cost_budget_warn,
+        ),
+        SafetyMode.CRITICAL: (
+            settings.philosophers_max_critical,
+            settings.philosopher_cost_budget_critical,
+        ),
+        SafetyMode.UNKNOWN: (
+            settings.philosophers_max_warn,
+            settings.philosopher_cost_budget_warn,
+        ),
+    }
+
+    out = {}
+    for mode, plan in battalion_plans.items():
+        limit, cost_budget = overlays.get(mode, (plan.limit, plan.cost_budget))
+        out[mode] = type(plan)(
+            limit=limit,
+            max_risk=plan.max_risk,
+            cost_budget=cost_budget,
+            require_tags=plan.require_tags,
+        )
+    return out
+
+
 def _load_pareto_cfg_from_env_or_package() -> Any:
     """Load pareto table with explicit behavior (no silent drift)."""
 
@@ -176,7 +213,9 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     )
 
     # Battalion/Pareto Table (packaged defaults + explicit env override)
-    battalion_plans = _load_battalion_plans_from_env_or_package()
+    battalion_plans = _overlay_battalion_plans_with_settings(
+        _load_battalion_plans_from_env_or_package(), settings
+    )
     pareto_cfg = _load_pareto_cfg_from_env_or_package()
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
@@ -330,7 +369,9 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     )
 
     # Battalion/Pareto Table (packaged defaults + explicit env override)
-    battalion_plans = _load_battalion_plans_from_env_or_package()
+    battalion_plans = _overlay_battalion_plans_with_settings(
+        _load_battalion_plans_from_env_or_package(), settings
+    )
     pareto_cfg = _load_pareto_cfg_from_env_or_package()
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)

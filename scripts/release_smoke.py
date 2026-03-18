@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.metadata
 import inspect
 import pathlib
+from importlib import resources
 
 import po_core
 import po_core.viewer
@@ -18,11 +19,21 @@ def main() -> None:
     print(f"dist_version={dist_version}")
     print(f"pkg_version={pkg_version}")
     if dist_version != pkg_version:
-        raise SystemExit(
-            f"version mismatch: dist={dist_version} package={pkg_version}"
-        )
+        raise SystemExit(f"version mismatch: dist={dist_version} package={pkg_version}")
 
-    viewer_path = pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
+    config_root = resources.files("po_core.config")
+    battalion_resource = config_root.joinpath("runtime/battalion_table.yaml")
+    pareto_resource = config_root.joinpath("runtime/pareto_table.yaml")
+    print(f"battalion_resource={battalion_resource}")
+    print(f"pareto_resource={pareto_resource}")
+    if not battalion_resource.is_file():
+        raise SystemExit(f"missing battalion resource: {battalion_resource}")
+    if not pareto_resource.is_file():
+        raise SystemExit(f"missing pareto resource: {pareto_resource}")
+
+    viewer_path = (
+        pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
+    )
     print(f"viewer_html={viewer_path}")
     if not viewer_path.exists():
         raise SystemExit(f"viewer HTML missing: {viewer_path}")
