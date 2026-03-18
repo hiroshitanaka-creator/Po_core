@@ -230,4 +230,12 @@ else:
         main_simple()
 
 
-__all__ = ["cli", "main_simple"]
+def main() -> None:
+    """Console-script entrypoint for po-experiment."""
+    if HAS_CLICK:
+        cli()
+    else:
+        main_simple()
+
+
+__all__ = ["cli", "main", "main_simple"]

@@ -91,6 +91,51 @@ def _maybe_preload_models(settings: Settings) -> None:
             pass
 
 
+def _load_battalion_plans_from_env_or_package() -> Any:
+    """Load battalion table with explicit behavior (no silent drift)."""
+
+    from po_core.runtime.battalion_table import (
+        load_battalion_table,
+        load_packaged_battalion_table,
+    )
+
+    table_path = os.getenv("PO_CORE_BATTALION_TABLE", "").strip()
+    if table_path and os.path.exists(table_path):
+        return load_battalion_table(table_path)
+
+    return load_packaged_battalion_table()
+
+
+def _load_pareto_cfg_from_env_or_package() -> Any:
+    """Load pareto table with explicit behavior (no silent drift)."""
+
+    from po_core.runtime.pareto_table import (
+        load_packaged_pareto_table,
+        load_pareto_table,
+    )
+
+    pareto_path = os.getenv("PO_CORE_PARETO_TABLE", "").strip()
+    if pareto_path and os.path.exists(pareto_path):
+        return load_pareto_table(pareto_path)
+
+    return load_packaged_pareto_table()
+
+
+def _load_optional_shadow_pareto_cfg() -> Any:
+    """Load optional shadow pareto table from explicit env path only."""
+
+    from po_core.runtime.pareto_table import load_pareto_table
+
+    shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "").strip()
+    if not shadow_path:
+        return None
+    if not os.path.exists(shadow_path):
+        raise FileNotFoundError(
+            f"PO_CORE_PARETO_SHADOW_TABLE points to missing file: {shadow_path}"
+        )
+    return load_pareto_table(shadow_path)
+
+
 def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     """
     Build a wired system with all dependencies.
@@ -105,10 +150,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     from po_core.adapters.memory_poself import PoSelfMemoryAdapter
     from po_core.aggregator.pareto import ParetoAggregator
     from po_core.autonomy.solarwill.engine import SolarWillEngine
-    from po_core.domain.pareto_config import ParetoConfig
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
-    from po_core.runtime.battalion_table import load_battalion_table
-    from po_core.runtime.pareto_table import load_pareto_table
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.policies.presets import (
@@ -133,41 +175,19 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
-    )
-    battalion_plans = None
-    if os.path.exists(table_path):
-        try:
-            battalion_plans = load_battalion_table(table_path)
-        except Exception:
-            pass  # フォールバックで内蔵デフォルトを使う
-
-    # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
-    pareto_cfg = ParetoConfig.defaults()
-    if os.path.exists(pareto_path):
-        try:
-            pareto_cfg = load_pareto_table(pareto_path)
-        except Exception:
-            pass  # フォールバックでデフォルトを使う
+    # Battalion/Pareto Table (packaged defaults + explicit env override)
+    battalion_plans = _load_battalion_plans_from_env_or_package()
+    pareto_cfg = _load_pareto_cfg_from_env_or_package()
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None
     shadow_cfg = None
     if settings.enable_pareto_shadow:
-        shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
-        if shadow_path and os.path.exists(shadow_path):
-            try:
-                shadow_cfg = load_pareto_table(shadow_path)
-                aggregator_shadow = ParetoAggregator(
-                    mode_config=safety_config, config=shadow_cfg
-                )
-            except Exception:
-                pass  # Shadow失敗は無視（main だけで動く）
+        shadow_cfg = _load_optional_shadow_pareto_cfg()
+        if shadow_cfg is not None:
+            aggregator_shadow = ParetoAggregator(
+                mode_config=safety_config, config=shadow_cfg
+            )
 
     # Shadow Guard (自律ブレーキ)
     shadow_guard = None
@@ -283,10 +303,7 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
     from po_core.adapters.memory_poself import InMemoryAdapter
     from po_core.aggregator.pareto import ParetoAggregator
     from po_core.autonomy.solarwill.engine import SolarWillEngine
-    from po_core.domain.pareto_config import ParetoConfig
     from po_core.domain.safety_mode import SafetyMode, SafetyModeConfig
-    from po_core.runtime.battalion_table import load_battalion_table
-    from po_core.runtime.pareto_table import load_pareto_table
     from po_core.safety.wethics_gate.action_gate import PolicyActionGate
     from po_core.safety.wethics_gate.intention_gate import PolicyIntentionGate
     from po_core.safety.wethics_gate.policies.presets import (
@@ -312,41 +329,19 @@ def build_test_system(settings: Settings | None = None) -> WiredSystem:
         missing_mode=settings.freedom_pressure_missing_mode,
     )
 
-    # Battalion Table (外部設定 - 優先)
-    table_path = os.getenv(
-        "PO_CORE_BATTALION_TABLE", "02_architecture/philosophy/battalion_table.yaml"
-    )
-    battalion_plans = None
-    if os.path.exists(table_path):
-        try:
-            battalion_plans = load_battalion_table(table_path)
-        except Exception:
-            pass  # フォールバックで内蔵デフォルトを使う
-
-    # Pareto Table (外部設定 - 優先)
-    pareto_path = os.getenv(
-        "PO_CORE_PARETO_TABLE", "02_architecture/philosophy/pareto_table.yaml"
-    )
-    pareto_cfg = ParetoConfig.defaults()
-    if os.path.exists(pareto_path):
-        try:
-            pareto_cfg = load_pareto_table(pareto_path)
-        except Exception:
-            pass  # フォールバックでデフォルトを使う
+    # Battalion/Pareto Table (packaged defaults + explicit env override)
+    battalion_plans = _load_battalion_plans_from_env_or_package()
+    pareto_cfg = _load_pareto_cfg_from_env_or_package()
 
     # Shadow Pareto Table (A/B評価用 - オプショナル)
     aggregator_shadow = None
     shadow_cfg = None
     if settings.enable_pareto_shadow:
-        shadow_path = os.getenv("PO_CORE_PARETO_SHADOW_TABLE", "")
-        if shadow_path and os.path.exists(shadow_path):
-            try:
-                shadow_cfg = load_pareto_table(shadow_path)
-                aggregator_shadow = ParetoAggregator(
-                    mode_config=safety_config, config=shadow_cfg
-                )
-            except Exception:
-                pass  # Shadow失敗は無視（main だけで動く）
+        shadow_cfg = _load_optional_shadow_pareto_cfg()
+        if shadow_cfg is not None:
+            aggregator_shadow = ParetoAggregator(
+                mode_config=safety_config, config=shadow_cfg
+            )
 
     # Shadow Guard (自律ブレーキ) - テスト用はInMemoryStore
     shadow_guard = None

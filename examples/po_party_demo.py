@@ -19,9 +19,6 @@ Interactive mode with beautiful Rich UI.
 """
 
 import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import random
 from typing import Dict, List
@@ -234,10 +231,7 @@ def run_party_simulation(config: PartyConfig, prompt: str):
 
         # Create Po_self instance with the party philosophers
         try:
-            po = PoSelf(
-                philosophers=config.philosophers,
-                enable_ethics_guardian=True,
-            )
+            po = PoSelf(philosophers=config.philosophers)
 
             # Run generation
             result = po.generate(prompt)
@@ -339,6 +333,14 @@ def display_party_results(result, config: PartyConfig):
 
 def main_interactive():
     """Main interactive flow."""
+    if any(arg in {"-h", "--help"} for arg in sys.argv[1:]):
+        print(
+            "Usage: python examples/po_party_demo.py\n"
+            "\n"
+            "Interactive Po_Party demo based on current PoSelf API."
+        )
+        return
+
     show_welcome()
 
     input("\n[dim]Press Enter to start...[/dim]")

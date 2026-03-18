@@ -10,6 +10,7 @@ Allows users to:
 """
 
 import json
+import sys
 from typing import Any, Dict, List
 
 from rich.console import Console
@@ -17,28 +18,6 @@ from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
-from po_core.philosophers import (
-    Arendt,
-    Aristotle,
-    Badiou,
-    Confucius,
-    Deleuze,
-    Derrida,
-    Dewey,
-    Heidegger,
-    Jung,
-    Kierkegaard,
-    Lacan,
-    Levinas,
-    MerleauPonty,
-    Nietzsche,
-    Peirce,
-    Sartre,
-    WabiSabi,
-    Watsuji,
-    Wittgenstein,
-    Zhuangzi,
-)
 from po_core.po_self import PoSelf
 from po_core.viewer import (
     EvolutionGraphVisualizer,
@@ -48,26 +27,26 @@ from po_core.viewer import (
 
 # Available philosophers
 AVAILABLE_PHILOSOPHERS = {
-    "sartre": (Sartre, "Jean-Paul Sartre - Existentialism"),
-    "nietzsche": (Nietzsche, "Friedrich Nietzsche - Will to Power"),
-    "heidegger": (Heidegger, "Martin Heidegger - Being and Time"),
-    "derrida": (Derrida, "Jacques Derrida - Deconstruction"),
-    "wittgenstein": (Wittgenstein, "Ludwig Wittgenstein - Language Philosophy"),
-    "confucius": (Confucius, "Confucius - Virtue Ethics"),
-    "zhuangzi": (Zhuangzi, "Zhuangzi - Daoism"),
-    "aristotle": (Aristotle, "Aristotle - Virtue and Logic"),
-    "kierkegaard": (Kierkegaard, "Søren Kierkegaard - Existentialism"),
-    "levinas": (Levinas, "Emmanuel Levinas - Ethics of the Other"),
-    "arendt": (Arendt, "Hannah Arendt - Political Philosophy"),
-    "deleuze": (Deleuze, "Gilles Deleuze - Difference and Repetition"),
-    "badiou": (Badiou, "Alain Badiou - Event Philosophy"),
-    "dewey": (Dewey, "John Dewey - Pragmatism"),
-    "peirce": (Peirce, "Charles Sanders Peirce - Semiotics"),
-    "jung": (Jung, "Carl Jung - Analytical Psychology"),
-    "lacan": (Lacan, "Jacques Lacan - Psychoanalysis"),
-    "merleau_ponty": (MerleauPonty, "Maurice Merleau-Ponty - Phenomenology"),
-    "watsuji": (Watsuji, "Watsuji Tetsurō - Japanese Ethics"),
-    "wabi_sabi": (WabiSabi, "Wabi-Sabi - Japanese Aesthetics"),
+    "sartre": "Jean-Paul Sartre - Existentialism",
+    "nietzsche": "Friedrich Nietzsche - Will to Power",
+    "heidegger": "Martin Heidegger - Being and Time",
+    "derrida": "Jacques Derrida - Deconstruction",
+    "wittgenstein": "Ludwig Wittgenstein - Language Philosophy",
+    "confucius": "Confucius - Virtue Ethics",
+    "zhuangzi": "Zhuangzi - Daoism",
+    "aristotle": "Aristotle - Virtue and Logic",
+    "kierkegaard": "Søren Kierkegaard - Existentialism",
+    "levinas": "Emmanuel Levinas - Ethics of the Other",
+    "arendt": "Hannah Arendt - Political Philosophy",
+    "deleuze": "Gilles Deleuze - Difference and Repetition",
+    "badiou": "Alain Badiou - Event Philosophy",
+    "dewey": "John Dewey - Pragmatism",
+    "peirce": "Charles Sanders Peirce - Semiotics",
+    "jung": "Carl Jung - Analytical Psychology",
+    "lacan": "Jacques Lacan - Psychoanalysis",
+    "merleau_ponty": "Maurice Merleau-Ponty - Phenomenology",
+    "watsuji": "Watsuji Tetsurō - Japanese Ethics",
+    "wabi_sabi": "Wabi-Sabi - Japanese Aesthetics",
 }
 
 
@@ -144,8 +123,7 @@ You will:
         table.add_column("Philosopher", style="green")
 
         phil_list = sorted(AVAILABLE_PHILOSOPHERS.items())
-        for i, (key, (_, desc)) in enumerate(phil_list, 1):
-            table.add_column(f"{i}", style="dim")
+        for i, (key, desc) in enumerate(phil_list, 1):
             table.add_row(str(i), key, desc)
 
         self.console.print(table)
@@ -182,7 +160,7 @@ You will:
             f"\n[green]✓ Selected {len(self.selected_philosophers)} philosophers:[/green]"
         )
         for phil in self.selected_philosophers:
-            desc = AVAILABLE_PHILOSOPHERS[phil][1]
+            desc = AVAILABLE_PHILOSOPHERS[phil]
             self.console.print(f"  • {desc}")
 
         return True
@@ -191,17 +169,11 @@ You will:
         """Create philosophical ensemble with selected philosophers."""
         self.console.print("\n[yellow]Creating ensemble...[/yellow]")
 
-        # Instantiate philosophers
-        philosophers = []
-        for phil_key in self.selected_philosophers:
-            PhilClass, _ = AVAILABLE_PHILOSOPHERS[phil_key]
-            philosophers.append(PhilClass())
-
-        # Create PoSelf pipeline
-        self.po = PoSelf(enable_trace=True)
+        # Create PoSelf pipeline with the exact selected allowlist
+        self.po = PoSelf(philosophers=self.selected_philosophers, enable_trace=True)
 
         self.console.print(
-            f"[green]✓ Ensemble created with {len(philosophers)} philosophers[/green]"
+            f"[green]✓ Ensemble created with {len(self.selected_philosophers)} philosophers[/green]"
         )
 
     def _reasoning_loop(self) -> None:
@@ -257,36 +229,44 @@ You will:
         """
         self.console.rule("[bold green]Reasoning Result[/bold green]")
 
-        # Display synthesis
-        synthesis = result.get("synthesis", {})
-        self.console.print("\n[bold magenta]Synthesis:[/bold magenta]")
+        self.console.print("\n[bold magenta]Text:[/bold magenta]")
+        self.console.print(result.get("text", ""))
 
-        insights = synthesis.get("insights", [])
-        for insight in insights:
-            phil = insight.get("philosopher", "Unknown")
-            insight_text = insight.get("insight", "")
-            self.console.print(f"\n[bold cyan]{phil}:[/bold cyan]")
-            self.console.print(f"  {insight_text}")
+        leader = result.get("consensus_leader") or "unknown"
+        self.console.print(f"\n[bold cyan]Consensus leader:[/bold cyan] {leader}")
 
-        # Display tensions
-        tensions = synthesis.get("tensions", [])
-        if tensions:
-            self.console.print("\n[bold red]Philosophical Tensions:[/bold red]")
-            for tension in tensions:
-                desc = tension.get("description", "")
-                self.console.print(f"  • {desc}")
+        philosophers = result.get("philosophers", [])
+        if philosophers:
+            self.console.print("\n[bold]Selected philosophers:[/bold]")
+            for name in philosophers:
+                self.console.print(f"  • {name}")
 
-        # Display annotations
-        annotations = result.get("annotations", [])
-        if annotations:
-            self.console.print(
-                "\n[bold yellow]Key Philosophical Concepts:[/bold yellow]"
-            )
-            # Show top 5 concepts
-            for ann in annotations[:5]:
-                concept = ann.get("concept", "")
-                definition = ann.get("definition", "")
-                self.console.print(f"  • [cyan]{concept}[/cyan]: {definition[:80]}...")
+        metrics = result.get("metrics", {})
+        if metrics:
+            self.console.print("\n[bold yellow]Metrics:[/bold yellow]")
+            for key, value in metrics.items():
+                self.console.print(f"  • {key}: {value}")
+
+        responses = result.get("responses", [])
+        if responses:
+            self.console.print("\n[bold green]Per-philosopher responses:[/bold green]")
+            for item in responses:
+                name = item.get("name", "unknown")
+                latency_ms = item.get("latency_ms", 0)
+                proposals = item.get("proposals", 0)
+                self.console.print(
+                    f"  • {name}: proposals={proposals}, latency_ms={latency_ms}"
+                )
+
+        metadata = result.get("metadata", {})
+        status = metadata.get("status", "unknown")
+        degraded = metadata.get("degraded", False)
+        self.console.print(
+            f"\n[bold]Status:[/bold] {status} (degraded={degraded})"
+        )
+
+        events = result.get("log", {}).get("events", [])
+        self.console.print(f"[bold]Trace events:[/bold] {len(events)}")
 
     def _show_visualizations(self, result: Dict[str, Any]) -> None:
         """
@@ -372,6 +352,18 @@ You will:
 
 def main() -> None:
     """Main entry point for interactive CLI."""
+    if any(arg in {"-h", "--help"} for arg in sys.argv[1:]):
+        print(
+            "Usage: po-interactive\n"
+            "\n"
+            "Interactive Po_core session with philosopher selection, prompt loop,\n"
+            "trace export, and Rich visualizations.\n"
+            "\n"
+            "Options:\n"
+            "  -h, --help  Show this help message and exit."
+        )
+        return
+
     session = InteractiveReasoningSession()
     try:
         session.run()
