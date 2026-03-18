@@ -11,7 +11,7 @@ Public API:
     from po_core import PoSelf, PoSelfResponse  # High-level wrapper
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 __author__ = "Flying Pig Project"
 __email__ = "flyingpig0229+github@gmail.com"
 

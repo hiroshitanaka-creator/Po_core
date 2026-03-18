@@ -1,28 +1,42 @@
 """
-Battalion Table Loader - 編成表YAML/JSONのロード
-=================================================
+battalion_table.py - 編成表ローダー
+===================================
+
+外部ファイル（JSON-in-YAML）から SafetyModeごとの編成ポリシーを読み込む。
 
 目的:
-- 編成（mode別の limit/max_risk/budget/required tags）をコードから追放
 - 「思想＝設計方針」を 02_architecture に固定
+- ただしコードはその内容に依存しない（差し替え可能）
 
 DEPENDENCY RULES:
-- domain + stdlib のみ依存
-- PyYAML は optional（JSON形式なら依存ゼロ）
+- domain には依存しない（SafetyMode enumのみ）
+- JSON は標準ライブラリのみで読む（依存ゼロ）
+- YAML は optional（jsonとして読めなければ pyyaml を試す）
 """
 
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from importlib import resources
 from typing import Any, Dict, Mapping, Set, Tuple
 
 from po_core.domain.safety_mode import SafetyMode
 
+_DEFAULT_RESOURCE = "runtime/battalion_table.yaml"
+
 
 @dataclass(frozen=True)
 class BattalionModePlan:
-    """編成表（mode別の選抜計画）。"""
+    """
+    SafetyModeごとの編成方針。
+
+    Attributes:
+        limit: 採用する哲学者数の上限
+        max_risk: 許容する最大 risk_tier
+        cost_budget: 合計コスト上限
+        require_tags: 可能なら含めたいタグ（不足時はベストエフォート）
+    """
 
     limit: int
     max_risk: int
@@ -33,6 +47,14 @@ class BattalionModePlan:
 def _read_text(path: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
+
+
+def read_packaged_default_text() -> str:
+    """Read packaged default battalion table text from installed artifact."""
+
+    return resources.files("po_core.config").joinpath(_DEFAULT_RESOURCE).read_text(
+        encoding="utf-8"
+    )
 
 
 def load_battalion_table(path: str) -> Dict[SafetyMode, BattalionModePlan]:
@@ -49,7 +71,16 @@ def load_battalion_table(path: str) -> Dict[SafetyMode, BattalionModePlan]:
         JSON形式なら依存ゼロ。YAML形式の場合は PyYAML が必要。
     """
     raw = _read_text(path)
+    return _parse_battalion_table(raw)
 
+
+def load_packaged_battalion_table() -> Dict[SafetyMode, BattalionModePlan]:
+    """Load default battalion table from packaged resources."""
+
+    return _parse_battalion_table(read_packaged_default_text())
+
+
+def _parse_battalion_table(raw: str) -> Dict[SafetyMode, BattalionModePlan]:
     data: Any = None
     try:
         data = json.loads(raw)  # JSON形式なら依存ゼロ
@@ -116,4 +147,6 @@ def _to_mode(s: str) -> SafetyMode:
 __all__ = [
     "BattalionModePlan",
     "load_battalion_table",
+    "load_packaged_battalion_table",
+    "read_packaged_default_text",
 ]

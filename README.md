@@ -429,10 +429,29 @@ print(result["status"])     # "ok" or "blocked"
 ### CLI
 
 ```bash
-po-core version   # v1.0.0
+po-core version
 po-core status
 po-core --help
+
+# Additional shipped CLIs
+po-self --help
+po-trace --help
+po-interactive --help
+po-experiment --help
+
+# po-interactive currently shows textual PoSelf summaries and trace counts.
+# Rich tensor visualizations are intentionally disabled until the interactive
+# contract exposes the structured payloads those views require.
 ```
+
+### Source checkout example
+
+```bash
+python examples/po_party_demo.py --help
+```
+
+`examples/po_party_demo.py` supports direct source-checkout execution by adding
+`src/` to `sys.path` before importing `po_core`.
 
 ### REST API
 
@@ -598,7 +617,7 @@ override: PoSelfResponse = po_self.generate(
 print(response.text)              # Combined response text
 print(response.consensus_leader)  # Winning philosopher name
 print(response.philosophers)      # Selected philosopher list
-print(response.metrics)           # {"freedom_pressure": ..., "semantic_delta": ..., "blocked_tensor": ...}
+print(response.metrics)           # e.g. {"freedom_pressure": None, "semantic_delta": None, "blocked_tensor": None}
 print(response.metadata["status"])  # "ok" or "blocked"
 print(response.metadata["degraded"])  # True if fallback/degraded occurred
 

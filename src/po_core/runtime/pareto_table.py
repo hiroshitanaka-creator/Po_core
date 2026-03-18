@@ -14,16 +14,27 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import json
+from importlib import resources
 from typing import Any, Dict, Mapping, Set
 
 from po_core.domain.pareto_config import ParetoConfig, ParetoTuning, ParetoWeights
 from po_core.domain.safety_mode import SafetyMode
+
+_DEFAULT_RESOURCE = "runtime/pareto_table.yaml"
 
 
 def _read_text(path: str) -> str:
     """ファイルを読み込む"""
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
+
+
+def read_packaged_default_text() -> str:
+    """Read packaged default pareto table text from installed artifact."""
+
+    return resources.files("po_core.config").joinpath(_DEFAULT_RESOURCE).read_text(
+        encoding="utf-8"
+    )
 
 
 def _as_dict(x: Any) -> dict:
@@ -58,7 +69,18 @@ def load_pareto_table(path: str) -> ParetoConfig:
         ValueError: inherit 循環が検出された場合
     """
     raw = _read_text(path)
+    return _parse_pareto_table(raw, source=f"file:{path}")
 
+
+def load_packaged_pareto_table() -> ParetoConfig:
+    """Load default pareto table from packaged resources."""
+
+    return _parse_pareto_table(
+        read_packaged_default_text(), source=f"package:{_DEFAULT_RESOURCE}"
+    )
+
+
+def _parse_pareto_table(raw: str, *, source: str) -> ParetoConfig:
     data: Any = None
     try:
         # JSON-in-YAML ならここで終わる（依存ゼロ）
@@ -112,9 +134,11 @@ def load_pareto_table(path: str) -> ParetoConfig:
         front_limit=int(tuning.get("front_limit", 20)),
     )
 
-    return ParetoConfig(
-        weights_by_mode=w_by_mode, tuning=t, version=ver, source=f"file:{path}"
-    )
+    return ParetoConfig(weights_by_mode=w_by_mode, tuning=t, version=ver, source=source)
 
 
-__all__ = ["load_pareto_table"]
+__all__ = [
+    "load_pareto_table",
+    "load_packaged_pareto_table",
+    "read_packaged_default_text",
+]

@@ -15,13 +15,17 @@ Based on research data:
 Usage:
     python examples/po_party_demo.py
 
-Interactive mode with beautiful Rich UI.
+This example supports direct source-checkout execution by bootstrapping the
+repository `src/` directory onto `sys.path`.
 """
 
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
 import random
 from typing import Dict, List
@@ -234,10 +238,7 @@ def run_party_simulation(config: PartyConfig, prompt: str):
 
         # Create Po_self instance with the party philosophers
         try:
-            po = PoSelf(
-                philosophers=config.philosophers,
-                enable_ethics_guardian=True,
-            )
+            po = PoSelf(philosophers=config.philosophers)
 
             # Run generation
             result = po.generate(prompt)
@@ -339,6 +340,15 @@ def display_party_results(result, config: PartyConfig):
 
 def main_interactive():
     """Main interactive flow."""
+    if any(arg in {"-h", "--help"} for arg in sys.argv[1:]):
+        print(
+            "Usage: python examples/po_party_demo.py\n"
+            "\n"
+            "Interactive Po_Party demo based on current PoSelf API. "
+            "Supports direct source-checkout execution."
+        )
+        return
+
     show_welcome()
 
     input("\n[dim]Press Enter to start...[/dim]")
