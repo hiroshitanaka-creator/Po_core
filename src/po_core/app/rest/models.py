@@ -31,6 +31,8 @@ class ReasonRequest(BaseModel):
     )
     session_id: Optional[str] = Field(
         default=None,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9._:-]+$",
         description=(
             "Optional session identifier for memory continuity. "
             "A new UUID is generated if omitted."
