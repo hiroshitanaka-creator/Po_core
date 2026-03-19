@@ -15,9 +15,26 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from typing import Protocol
 
 from po_core.deliberation.roles import Role, parse_roles_csv
 from po_core.domain.safety_mode import SafetyMode
+
+
+class APISettingsLike(Protocol):
+    enable_solarwill: bool
+    enable_intention_gate: bool
+    enable_action_gate: bool
+    enable_llm_philosophers: bool
+    llm_provider: str
+    llm_model: str
+    llm_timeout_s: float
+    philosopher_cost_budget_normal: int
+    philosopher_cost_budget_warn: int
+    philosopher_cost_budget_critical: int
+    philosophers_max_normal: int
+    philosophers_max_warn: int
+    philosophers_max_critical: int
 
 
 def _read_roles_from_env() -> tuple[Role, ...]:
@@ -36,11 +53,19 @@ def _env_first(*keys: str, default: str = "") -> str:
     return default
 
 
-def _env_bool(name: str, default: bool) -> bool:
-    raw = os.getenv(name)
-    if raw is None:
+def _env_bool(*keys: str, default: bool) -> bool:
+    raw = _env_first(*keys, default="")
+    if raw == "":
         return default
     return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_int(*keys: str, default: int) -> int:
+    return int(_env_first(*keys, default=str(default)))
+
+
+def _env_float(*keys: str, default: float) -> float:
+    return float(_env_first(*keys, default=str(default)))
 
 
 @dataclass(frozen=True)
@@ -78,16 +103,11 @@ class Settings:
     shadow_guard_disable_on_override_increase: bool = True
 
     # SafetyMode（単一真実）- SolarWillとGateが同じ閾値を見る
-    # Calibrated for normalized FP range [0.0, ~0.44]:
-    #   NORMAL < 0.30 → up to 39 philosophers by default (env override可)
-    #   WARN 0.30-0.50 → 5 philosophers (ethically dense prompts)
-    #   CRITICAL > 0.50 → 1 philosopher (extreme + memory boost)
     freedom_pressure_warn: float = 0.30
     freedom_pressure_critical: float = 0.50
     freedom_pressure_missing_mode: SafetyMode = SafetyMode.WARN
 
     # Philosopher Swarm 制御（増殖の蛇口）
-    # 動員数: mode別の最大哲学者数
     philosophers_max_normal: int = 39
     philosophers_max_warn: int = 5
     philosophers_max_critical: int = 1
@@ -95,82 +115,81 @@ class Settings:
     # Role-based filtering (voice names are labels; role is the operational unit)
     philosopher_roles: tuple[Role, ...] = ()
 
-    # 並列数: mode別のworker数
     philosopher_workers_normal: int = 12
     philosopher_workers_warn: int = 6
     philosopher_workers_critical: int = 2
 
-    # タイムアウト: mode別の秒数
     philosopher_timeout_s_normal: float = 1.2
     philosopher_timeout_s_warn: float = 0.8
     philosopher_timeout_s_critical: float = 0.5
 
-    # コスト予算: mode別の総コスト上限（重い哲学者混入防止）
     philosopher_cost_budget_normal: int = 80
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
 
     # ---- LLM Philosopher Integration ----
-    # 環境変数: PO_LLM_ENABLED=true で全哲学者を LLM バックエンドに切り替え
     enable_llm_philosophers: bool = False
-    # gemini | openai | claude | grok
     llm_provider: str = "gemini"
-    # 空=provider別デフォルト (gemini-2.0-flash-lite / gpt-4o-mini / claude-haiku-4-5 / grok-3-mini)
     llm_model: str = ""
-    # LLM 呼び出しタイムアウト秒数
     llm_timeout_s: float = 10.0
 
     # ---- Deliberation Engine (Phase 2) ----
-    # 1 = no deliberation (backward compatible), 2+ = multi-round
     deliberation_max_rounds: int = 2
     deliberation_top_k_pairs: int = 5
-    # "basic" = legacy soft counterargument
-    # "debate" = structured rebuttal with steelman + flaw + defense (Phase 6-A)
     deliberation_prompt_mode: str = "debate"
-    # "standard" = current multi-round deliberation (rounds are homogeneous)
-    # "dialectic" = Hegelian 3-round: Thesis → Antithesis → Synthesis (Phase 6-B)
     deliberation_mode: str = "standard"
-    # Phase 6-C1: cluster philosophers by position after round 1
-    # False = off (default, backward compatible)
-    # True  = PositionClusterer runs; result in DeliberationResult.cluster_result
     deliberation_cluster_positions: bool = False
 
     @classmethod
     def from_env(cls) -> "Settings":
         """Build settings with environment variable overrides."""
-        llm_enabled_raw = (
-            _env_first("PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default="")
-            .strip()
-            .lower()
-        )
         return cls(
-            enable_solarwill=_env_bool("PO_ENABLE_SOLARWILL", True),
-            enable_intention_gate=_env_bool("PO_ENABLE_INTENTION_GATE", True),
-            enable_action_gate=_env_bool("PO_ENABLE_ACTION_GATE", True),
-            enable_pareto_shadow=_env_bool("PO_ENABLE_PARETO_SHADOW", False),
-            use_freedom_pressure_v2=_env_bool("PO_FREEDOM_PRESSURE_V2", False),
-            deliberation_max_rounds=int(os.getenv("PO_DELIBERATION_MAX_ROUNDS", "2")),
+            enable_solarwill=_env_bool("PO_ENABLE_SOLARWILL", default=True),
+            enable_intention_gate=_env_bool("PO_ENABLE_INTENTION_GATE", default=True),
+            enable_action_gate=_env_bool("PO_ENABLE_ACTION_GATE", default=True),
+            enable_pareto_shadow=_env_bool("PO_ENABLE_PARETO_SHADOW", default=False),
+            use_freedom_pressure_v2=_env_bool("PO_FREEDOM_PRESSURE_V2", default=False),
             philosopher_roles=_read_roles_from_env(),
-            philosophers_max_normal=int(os.getenv("PO_PHILOSOPHERS_MAX_NORMAL", "39")),
-            philosophers_max_warn=int(os.getenv("PO_PHILOSOPHERS_MAX_WARN", "5")),
-            philosophers_max_critical=int(
-                os.getenv("PO_PHILOSOPHERS_MAX_CRITICAL", "1")
+            philosophers_max_normal=_env_int("PO_PHILOSOPHERS_MAX_NORMAL", default=39),
+            philosophers_max_warn=_env_int("PO_PHILOSOPHERS_MAX_WARN", default=5),
+            philosophers_max_critical=_env_int("PO_PHILOSOPHERS_MAX_CRITICAL", default=1),
+            philosopher_cost_budget_normal=_env_int(
+                "PO_PHILOSOPHER_COST_BUDGET_NORMAL", default=80
             ),
-            philosopher_cost_budget_normal=int(
-                os.getenv("PO_PHILOSOPHER_COST_BUDGET_NORMAL", "80")
+            philosopher_cost_budget_warn=_env_int(
+                "PO_PHILOSOPHER_COST_BUDGET_WARN", default=12
             ),
-            philosopher_cost_budget_warn=int(
-                os.getenv("PO_PHILOSOPHER_COST_BUDGET_WARN", "12")
+            philosopher_cost_budget_critical=_env_int(
+                "PO_PHILOSOPHER_COST_BUDGET_CRITICAL", default=3
             ),
-            philosopher_cost_budget_critical=int(
-                os.getenv("PO_PHILOSOPHER_COST_BUDGET_CRITICAL", "3")
+            enable_llm_philosophers=_env_bool(
+                "PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default=False
             ),
-            enable_llm_philosophers=llm_enabled_raw in {"1", "true", "yes"},
-            llm_provider=os.getenv("PO_LLM_PROVIDER", "gemini").strip(),
-            llm_model=os.getenv("PO_LLM_MODEL", "").strip(),
-            llm_timeout_s=float(
-                _env_first("PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S", default="10.0")
+            llm_provider=_env_first("PO_LLM_PROVIDER", default="gemini").strip(),
+            llm_model=_env_first("PO_LLM_MODEL", default="").strip(),
+            llm_timeout_s=_env_float(
+                "PO_LLM_TIMEOUT", "PO_LLM_TIMEOUT_S", default=10.0
             ),
+            deliberation_max_rounds=_env_int("PO_DELIBERATION_MAX_ROUNDS", default=2),
+        )
+
+    @classmethod
+    def from_api_settings(cls, api_settings: APISettingsLike) -> "Settings":
+        """Build core settings from REST/API-facing settings."""
+        return cls(
+            enable_solarwill=api_settings.enable_solarwill,
+            enable_intention_gate=api_settings.enable_intention_gate,
+            enable_action_gate=api_settings.enable_action_gate,
+            philosophers_max_normal=api_settings.philosophers_max_normal,
+            philosophers_max_warn=api_settings.philosophers_max_warn,
+            philosophers_max_critical=api_settings.philosophers_max_critical,
+            philosopher_cost_budget_normal=api_settings.philosopher_cost_budget_normal,
+            philosopher_cost_budget_warn=api_settings.philosopher_cost_budget_warn,
+            philosopher_cost_budget_critical=api_settings.philosopher_cost_budget_critical,
+            enable_llm_philosophers=api_settings.enable_llm_philosophers,
+            llm_provider=api_settings.llm_provider,
+            llm_model=api_settings.llm_model,
+            llm_timeout_s=api_settings.llm_timeout_s,
         )
 
     def to_dict(self) -> dict:
@@ -210,4 +229,4 @@ class Settings:
         }
 
 
-__all__ = ["Settings"]
+__all__ = ["APISettingsLike", "Settings"]
