@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: '3.12'
         cache: 'pip'
@@ -56,10 +56,10 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -82,10 +82,10 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -124,7 +124,7 @@ jobs:
         pytest tests/ -v --cov=po_core --cov-report=xml --cov-report=term-missing || true
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@b9fd7b7d8f03f1aff725d7f98d6bc0edd9d9a96c  # v4
       with:
         file: ./coverage.xml
         flags: unittests
@@ -135,10 +135,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: '3.11'
 
@@ -185,10 +185,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: '3.11'
 
@@ -206,7 +206,7 @@ jobs:
         twine check dist/*
 
     - name: Upload dist artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808  # v4
       with:
         name: dist
         path: dist/
@@ -216,15 +216,15 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
       with:
         python-version: '3.11'
 
     - name: Download dist artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4
       with:
         name: dist
         path: dist/
