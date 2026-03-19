@@ -22,14 +22,14 @@ from fastapi.responses import StreamingResponse
 from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
 from po_core.app.rest.auth import evaluate_auth_policy, require_api_key
-from po_core.app.rest.config import get_api_settings, is_rate_limit_enabled
+from po_core.app.rest.config import APISettings, get_api_settings, is_rate_limit_enabled
 from po_core.app.rest.models import (
     PhilosopherContribution,
     ReasonRequest,
     ReasonResponse,
     TensorSnapshot,
 )
-from po_core.app.rest.rate_limit import limiter
+from po_core.app.rest.rate_limit import _extract_forwarded_ip, limiter
 from po_core.app.rest.review_store import enqueue_review
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import APISettingsLike, Settings
@@ -42,8 +42,43 @@ router = APIRouter(tags=["reason"])
 # Best-effort in-memory limiter for WebSocket handshake requests.
 # Uses monotonic timestamps to avoid wall-clock jumps.
 _WS_WINDOW_SECONDS = 60.0
+_WS_LOG_RETENTION_SECONDS = _WS_WINDOW_SECONDS * 2
 _ws_rate_log: dict[str, deque[float]] = defaultdict(deque)
 
+
+
+
+def _client_host(client: Any) -> str:
+    """Return a stable client host string for HTTP/WS connections."""
+    host = getattr(client, "host", None)
+    if isinstance(host, str) and host:
+        return host
+    return "unknown"
+
+
+def _client_ip_from_headers(headers: Any, settings: APISettings, client: Any) -> str:
+    """Resolve the effective client IP, trusting X-Forwarded-For only when enabled."""
+    if settings.trust_proxy_headers:
+        forwarded_ip = _extract_forwarded_ip(headers)
+        if forwarded_ip:
+            return forwarded_ip
+    return _client_host(client)
+
+
+def _prune_ws_rate_log(now: float) -> None:
+    """Drop stale or empty WS limiter buckets to cap memory growth."""
+    stale_keys = [
+        client_ip
+        for client_ip, timestamps in _ws_rate_log.items()
+        if not timestamps or now - timestamps[-1] > _WS_LOG_RETENTION_SECONDS
+    ]
+    for client_ip in stale_keys:
+        _ws_rate_log.pop(client_ip, None)
+
+
+def _sanitized_stream_error_payload() -> dict[str, str]:
+    """Return the stable client-facing streaming error payload."""
+    return {"code": "internal_error", "message": "internal server error"}
 
 def _reason_limit() -> str:
     """Return the SlowAPI limit string derived from the current APISettings.
@@ -88,15 +123,23 @@ def _resolve_ws_auth_key(
     return None
 
 
-def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
+def _is_ws_rate_limited(
+    websocket: WebSocket, rpm: int, settings: APISettings
+) -> bool:
     """Return True when the client exceeded the per-minute WS request budget."""
     if not is_rate_limit_enabled(rpm):
         return False
-    client_ip = websocket.client.host if websocket.client else "unknown"
+
     now = time.monotonic()
+    _prune_ws_rate_log(now)
+
+    client_ip = _client_ip_from_headers(websocket.headers, settings, websocket.client)
     timestamps = _ws_rate_log[client_ip]
     while timestamps and now - timestamps[0] > _WS_WINDOW_SECONDS:
         timestamps.popleft()
+    if not timestamps:
+        _ws_rate_log.pop(client_ip, None)
+        timestamps = _ws_rate_log[client_ip]
     if len(timestamps) >= rpm:
         return True
     timestamps.append(now)
@@ -460,8 +503,9 @@ async def _sse_generator(
         ):
             yield _fmt(str(chunk["chunk_type"]), dict(chunk.get("payload") or {}))
 
-    except Exception as exc:
-        yield _fmt("error", {"message": str(exc)})
+    except Exception:
+        logger.exception("Unhandled SSE streaming error")
+        yield _fmt("error", _sanitized_stream_error_payload())
 
 
 async def _stream_reasoning_chunks(
@@ -518,7 +562,10 @@ async def _stream_reasoning_chunks(
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         if exc_box:
-            yield {"chunk_type": "error", "payload": {"message": str(exc_box[0])}}
+            logger.exception(
+                "Unhandled streaming pipeline error", exc_info=exc_box[0]
+            )
+            yield {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}
             return
 
         result = result_box[0]
@@ -592,7 +639,9 @@ async def reason_ws(websocket: WebSocket) -> None:
         await websocket.close(code=1008, reason=auth_decision.message)
         return
 
-    if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute):
+    if _is_ws_rate_limited(
+        websocket, api_settings.rate_limit_per_minute, api_settings
+    ):
         await websocket.close(code=1008, reason="Rate limit exceeded")
         return
 
@@ -600,9 +649,10 @@ async def reason_ws(websocket: WebSocket) -> None:
     try:
         raw_body = await websocket.receive_json()
         body = ReasonRequest.model_validate(raw_body)
-    except Exception as exc:
+    except Exception:
+        logger.exception("Invalid WebSocket request payload")
         await websocket.send_json(
-            {"chunk_type": "error", "payload": {"message": str(exc)}}
+            {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}
         )
         await websocket.close(code=1003)
         return
@@ -616,9 +666,10 @@ async def reason_ws(websocket: WebSocket) -> None:
                 break
     except WebSocketException:
         return
-    except Exception as exc:
+    except Exception:
+        logger.exception("Unhandled WebSocket streaming error")
         await websocket.send_json(
-            {"chunk_type": "error", "payload": {"message": str(exc)}}
+            {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}
         )
     finally:
         await websocket.close()
