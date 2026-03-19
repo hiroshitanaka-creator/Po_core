@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
 
 from po_core.deliberation.roles import Role, parse_roles_csv
 from po_core.domain.safety_mode import SafetyMode
@@ -39,6 +39,7 @@ class APISettingsLike(Protocol):
     philosophers_max_normal: int
     philosophers_max_warn: int
     philosophers_max_critical: int
+    philosopher_execution_mode: str
 
 
 def _read_roles_from_env() -> tuple[Role, ...]:
@@ -70,6 +71,13 @@ def _env_int(*keys: str, default: int) -> int:
 
 def _env_float(*keys: str, default: float) -> float:
     return float(_env_first(*keys, default=str(default)))
+
+
+def _env_execution_mode(*keys: str, default: str) -> Literal["thread", "process"]:
+    raw = _env_first(*keys, default=default).strip().lower()
+    if raw not in {"thread", "process"}:
+        return default  # type: ignore[return-value]
+    return raw  # type: ignore[return-value]
 
 
 @dataclass(frozen=True)
@@ -131,6 +139,9 @@ class Settings:
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
 
+    # Philosopher execution backend: thread (compat) | process (hard timeout)
+    philosopher_execution_mode: Literal["thread", "process"] = "thread"
+
     # ---- LLM Philosopher Integration ----
     enable_llm_philosophers: bool = False
     llm_provider: str = "gemini"
@@ -166,6 +177,9 @@ class Settings:
             philosopher_cost_budget_critical=_env_int(
                 "PO_PHILOSOPHER_COST_BUDGET_CRITICAL", default=3
             ),
+            philosopher_execution_mode=_env_execution_mode(
+                "PO_PHILOSOPHER_EXECUTION_MODE", default="thread"
+            ),
             enable_llm_philosophers=_env_bool(
                 "PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default=False
             ),
@@ -197,6 +211,9 @@ class Settings:
             philosopher_cost_budget_normal=api_settings.philosopher_cost_budget_normal,
             philosopher_cost_budget_warn=api_settings.philosopher_cost_budget_warn,
             philosopher_cost_budget_critical=api_settings.philosopher_cost_budget_critical,
+            philosopher_execution_mode=_env_execution_mode(
+                default=getattr(api_settings, "philosopher_execution_mode", "thread")
+            ),
             enable_llm_philosophers=api_settings.enable_llm_philosophers,
             llm_provider=api_settings.llm_provider,
             llm_model=api_settings.llm_model,
@@ -228,6 +245,7 @@ class Settings:
             "philosopher_cost_budget_warn": self.philosopher_cost_budget_warn,
             "philosopher_cost_budget_critical": self.philosopher_cost_budget_critical,
             "philosopher_roles": [r.value for r in self.philosopher_roles],
+            "philosopher_execution_mode": self.philosopher_execution_mode,
             "enable_llm_philosophers": self.enable_llm_philosophers,
             "llm_provider": self.llm_provider,
             "llm_model": self.llm_model,

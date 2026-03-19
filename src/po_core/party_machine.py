@@ -35,13 +35,9 @@ from __future__ import annotations
 import asyncio
 import inspect
 import os
-import pickle
 import random
-import subprocess
-import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
 from time import perf_counter
@@ -61,13 +57,18 @@ from rich.panel import Panel
 
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
-from po_core.philosopher_process import (
-    ExecOutcome,
-    SerializedJob,
-    _supports_budget_kwarg,
-    run_one_philosopher,
-)
+from po_core.philosopher_process import SerializedJob, _supports_budget_kwarg
 from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
+from po_core.runtime.philosopher_executor import (
+    ExecutionResult as _ExecutionResult,
+    ExecutorConfig,
+    RunResult,
+    _build_execution_result,
+    _execution_result_from_outcome,
+    _run_one_in_thread,
+    build_executor,
+    run_in_process_async,
+)
 
 console = Console()
 
@@ -127,172 +128,10 @@ class PartyResults:
 # ============================================================================
 
 
-@dataclass(frozen=True)
-class RunResult:
-    """Result of a single philosopher execution."""
-
-    philosopher_id: str
-    ok: bool
-    n: int = 0  # Number of proposals generated
-    timed_out: bool = False
-    error: Optional[str] = None
-    latency_ms: Optional[int] = None  # Execution time in milliseconds
-
-
-@dataclass(frozen=True)
-class _ExecutionResult:
-    """Structured internal execution result with authoritative timeout state."""
-
-    philosopher_id: str
-    proposals: List["Proposal"]
-    ok: bool
-    n: int
-    timed_out: bool
-    error: Optional[str]
-    latency_ms: Optional[int]
-
-    def to_run_result(self) -> RunResult:
-        return RunResult(
-            philosopher_id=self.philosopher_id,
-            ok=self.ok,
-            n=self.n,
-            timed_out=self.timed_out,
-            error=self.error,
-            latency_ms=self.latency_ms,
-        )
-
-
-def _build_execution_result(
-    *,
-    philosopher_id: str,
-    proposals: Optional[List["Proposal"]] = None,
-    n: int,
-    timed_out: bool,
-    error: Optional[str],
-    latency_ms: Optional[int],
-) -> _ExecutionResult:
-    selected_proposals = list(proposals or [])
-    return _ExecutionResult(
-        philosopher_id=philosopher_id,
-        proposals=[] if timed_out else selected_proposals,
-        ok=(error is None and not timed_out),
-        n=(0 if timed_out else n),
-        timed_out=timed_out,
-        error=error,
-        latency_ms=latency_ms,
-    )
-
-
-def _execution_result_from_outcome(outcome: ExecOutcome) -> _ExecutionResult:
-    return _build_execution_result(
-        philosopher_id=outcome.philosopher_id,
-        proposals=outcome.proposals,
-        n=outcome.n,
-        timed_out=outcome.timed_out,
-        error=outcome.error,
-        latency_ms=outcome.latency_ms,
-    )
-
-
-_LATENCY_EMA_BY_PHILOSOPHER: Dict[str, float] = {}
-
-
-def _soft_timeout_error(timeout_s: float, mode: str) -> str:
-    return (
-        f"Soft timeout after {timeout_s}s ({mode} fallback=empty_proposals; "
-        "background work may still continue)"
-    )
-
 
 def _cooperative_timeout_error(timeout_s: float, mode: str) -> str:
     return f"Cooperative timeout after {timeout_s}s ({mode} fallback=empty_proposals)"
 
-
-def _hard_timeout_error(timeout_s: float) -> str:
-    return f"Hard timeout after {timeout_s}s"
-
-
-def _is_budget_stop_error(error: Optional[str]) -> bool:
-    return bool(error and error.startswith("Execution stopped cooperatively"))
-
-
-def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
-    """Execute one philosopher in a dedicated Python subprocess."""
-    pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
-    start = perf_counter()
-    env = dict(os.environ)
-    src_path = os.path.dirname(os.path.dirname(__file__))
-    repo_root = os.path.dirname(src_path)
-    test_paths = [src_path, repo_root, os.path.join(repo_root, "tests"), os.path.join(repo_root, "tests", "unit")]
-    existing_pythonpath = env.get("PYTHONPATH")
-    pythonpath_parts = [p for p in test_paths if os.path.isdir(p)]
-    if existing_pythonpath:
-        pythonpath_parts.append(existing_pythonpath)
-    env["PYTHONPATH"] = os.pathsep.join(pythonpath_parts)
-    try:
-        payload = pickle.dumps(job)
-    except Exception as e:
-        elapsed_ms = int((perf_counter() - start) * 1000)
-        return ExecOutcome([], 0, False, f"{type(e).__name__}: {e}", elapsed_ms, pid)
-    proc = subprocess.Popen(
-        [sys.executable, "-m", "po_core.philosopher_worker"],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=repo_root,
-        env=env,
-    )
-    bootstrap_grace_s = float(os.getenv("PO_PHILOSOPHER_PROCESS_BOOTSTRAP_GRACE_S", "0.05"))
-    try:
-        stdout, stderr = proc.communicate(payload, timeout=job.timeout_s + bootstrap_grace_s)
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        proc.communicate()
-        elapsed_ms = int((perf_counter() - start) * 1000)
-        return ExecOutcome([], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid)
-
-    elapsed_ms = int((perf_counter() - start) * 1000)
-    if proc.returncode != 0:
-        err = stderr.decode("utf-8", errors="replace").strip()
-        message = err or f"Worker exited without outcome (returncode={proc.returncode})"
-        return ExecOutcome([], 0, False, message, elapsed_ms, pid)
-
-    try:
-        outcome = pickle.loads(stdout)
-    except Exception as e:
-        err = stderr.decode("utf-8", errors="replace").strip()
-        message = err or f"Worker decode failed: {type(e).__name__}: {e}"
-        return ExecOutcome([], 0, False, message, elapsed_ms, pid)
-
-    if isinstance(outcome, ExecOutcome):
-        if outcome.latency_ms > job.timeout_s * 1000:
-            return ExecOutcome([], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid)
-        return outcome
-
-    return ExecOutcome([], 0, False, "Worker returned invalid outcome", elapsed_ms, pid)
-
-
-def _run_one_in_thread(
-    ph: "PhilosopherProtocol",
-    ctx: "Context",
-    intent: "Intent",
-    tensors: "TensorSnapshot",
-    memory: "MemorySnapshot",
-    limit_per_philosopher: int,
-    timeout_s: float,
-) -> ExecOutcome:
-    pid = getattr(ph, "name", ph.__class__.__name__)
-    start = perf_counter()
-    outcome = run_one_philosopher(
-        SerializedJob(ph, ctx, intent, tensors, memory, limit_per_philosopher, timeout_s)
-    )
-    elapsed_ms = int((perf_counter() - start) * 1000)
-    if elapsed_ms > timeout_s * 1000:
-        if _is_budget_stop_error(outcome.error):
-            return ExecOutcome([], 0, True, _cooperative_timeout_error(timeout_s, "thread"), elapsed_ms, pid)
-        if outcome.error is None:
-            return ExecOutcome([], 0, True, _soft_timeout_error(timeout_s, "thread"), elapsed_ms, pid)
-    return outcome
 
 
 def run_philosophers(
@@ -305,135 +144,19 @@ def run_philosophers(
     max_workers: int,
     timeout_s: float,
     limit_per_philosopher: int = 1,
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
-    """Execute philosophers with adaptive parallelism and deterministic ordering."""
-    from po_core.domain.proposal import Proposal
-
-    proposals: List[Proposal] = []
-    results: List[RunResult] = []
-
-    if not philosophers:
-        return proposals, results
-
+    """Execute philosophers with deterministic result ordering."""
     limit = max(0, min(limit_per_philosopher, 5))
-    hard_timeout_max_s = float(os.getenv("PO_PHILOSOPHER_HARD_TIMEOUT_MAX_S", "0.01"))
-    use_process_isolation = timeout_s <= hard_timeout_max_s
-
-    def _embed_author_and_index(
-        p: "Proposal", author: str, proposal_index: int
-    ) -> "Proposal":
-        extra = dict(p.extra) if isinstance(p.extra, Mapping) else {}
-        pc_src = extra.get(PO_CORE, {})
-        pc = dict(pc_src) if isinstance(pc_src, Mapping) else {}
-        pc[AUTHOR] = author
-        pc["proposal_index"] = proposal_index
-        extra[PO_CORE] = pc
-        return Proposal(
-            proposal_id=p.proposal_id,
-            action_type=p.action_type,
-            content=p.content,
-            confidence=p.confidence,
-            assumption_tags=list(p.assumption_tags),
-            risk_tags=list(p.risk_tags),
-            extra=extra,
+    executor = build_executor(
+        ExecutorConfig(
+            mode=execution_mode,
+            max_workers=max_workers,
+            timeout_s=timeout_s,
+            limit_per_philosopher=limit,
         )
-
-
-    ema_alpha = float(os.getenv("PO_PHILOSOPHER_LATENCY_EMA_ALPHA", "0.3"))
-    seq_threshold_ms = float(os.getenv("PO_PHILOSOPHER_SEQUENTIAL_THRESHOLD_MS", "0.0"))
-
-    def _update_ema(pid: str, dt: Optional[int]) -> None:
-        if dt is None:
-            return
-        prev = _LATENCY_EMA_BY_PHILOSOPHER.get(pid)
-        if prev is None:
-            _LATENCY_EMA_BY_PHILOSOPHER[pid] = float(dt)
-            return
-        _LATENCY_EMA_BY_PHILOSOPHER[pid] = (
-            ema_alpha * float(dt) + (1.0 - ema_alpha) * prev
-        )
-
-    result_by_index: Dict[int, RunResult] = {}
-    proposals_by_index: Dict[int, List[Proposal]] = {}
-
-    sequential_indices: list[int] = []
-    parallel_indices: list[int] = []
-
-    for idx, ph in enumerate(philosophers):
-        pid = getattr(ph, "name", ph.__class__.__name__)
-        ema = _LATENCY_EMA_BY_PHILOSOPHER.get(pid)
-        if seq_threshold_ms > 0.0 and ema is not None and ema <= seq_threshold_ms:
-            sequential_indices.append(idx)
-        else:
-            parallel_indices.append(idx)
-
-    for idx in sequential_indices:
-        ph = philosophers[idx]
-        outcome = (
-            _run_one_in_subprocess(
-                SerializedJob(ph, ctx, intent, tensors, memory, limit, timeout_s)
-            )
-            if use_process_isolation
-            else _run_one_in_thread(ph, ctx, intent, tensors, memory, limit, timeout_s)
-        )
-        _update_ema(outcome.philosopher_id, outcome.latency_ms)
-        execution_result = _execution_result_from_outcome(outcome)
-        result_by_index[idx] = execution_result.to_run_result()
-        if execution_result.proposals:
-            proposals_by_index[idx] = execution_result.proposals
-
-    if parallel_indices:
-        executor = ThreadPoolExecutor(max_workers=max_workers)
-        try:
-            futures = {
-                idx: executor.submit(
-                    _run_one_in_subprocess if use_process_isolation else _run_one_in_thread,
-                    SerializedJob(
-                        philosophers[idx],
-                        ctx,
-                        intent,
-                        tensors,
-                        memory,
-                        limit,
-                        timeout_s,
-                    ) if use_process_isolation else philosophers[idx],
-                    *( () if use_process_isolation else (ctx, intent, tensors, memory, limit, timeout_s) )
-                )
-                for idx in parallel_indices
-            }
-            for idx in parallel_indices:
-                future = futures[idx]
-                ph = philosophers[idx]
-                pid = getattr(ph, "name", ph.__class__.__name__)
-                try:
-                    outcome = future.result(timeout=None if use_process_isolation else timeout_s + 0.05)
-                    _update_ema(outcome.philosopher_id, outcome.latency_ms)
-                    execution_result = _execution_result_from_outcome(outcome)
-                    result_by_index[idx] = execution_result.to_run_result()
-                    if execution_result.proposals:
-                        proposals_by_index[idx] = execution_result.proposals
-                except FuturesTimeoutError:
-                    result_by_index[idx] = _build_execution_result(
-                        philosopher_id=pid,
-                        n=0,
-                        timed_out=True,
-                        error=_soft_timeout_error(timeout_s, "thread"),
-                        latency_ms=None,
-                    ).to_run_result()
-                except Exception as e:
-                    result_by_index[idx] = _build_execution_result(
-                        philosopher_id=pid,
-                        n=0,
-                        timed_out=False,
-                        error=f"{type(e).__name__}: {e}",
-                        latency_ms=None,
-                    ).to_run_result()
-        finally:
-            executor.shutdown(wait=False, cancel_futures=False)
-
-    for idx in range(len(philosophers)):
-        results.append(result_by_index[idx])
-        proposals.extend(proposals_by_index.get(idx, []))
+    )
+    proposals, results = executor.run(philosophers, ctx, intent, tensors, memory)
 
     if os.getenv("PO_DEBATE_V1", "").lower() in ("1", "true", "yes") and proposals:
         try:
@@ -475,10 +198,18 @@ class AsyncPartyMachine:
 
     _NATIVE_ASYNC_SENTINEL = "propose_async"
 
-    def __init__(self, *, max_workers: int = 8, timeout_s: float = 5.0) -> None:
+    def __init__(
+        self,
+        *,
+        max_workers: int = 8,
+        timeout_s: float = 5.0,
+        execution_mode: str = "thread",
+    ) -> None:
         self._max_workers = max_workers
         self._timeout_s = timeout_s
+        self._execution_mode = execution_mode
         self._executor: Optional[ThreadPoolExecutor] = None
+        self._process_semaphore = asyncio.Semaphore(max_workers)
 
     # ── Context-manager support ───────────────────────────────────────
 
@@ -565,10 +296,14 @@ class AsyncPartyMachine:
                     latency_ms=dt,
                 )
             else:
-                hard_timeout_max_s = float(os.getenv("PO_PHILOSOPHER_HARD_TIMEOUT_MAX_S", "0.01"))
-                if self._timeout_s <= hard_timeout_max_s:
-                    outcome = await asyncio.to_thread(
-                        _run_one_in_subprocess,
+                loop = asyncio.get_event_loop()
+                if self._executor is None:
+                    self._executor = ThreadPoolExecutor(
+                        max_workers=self._max_workers,
+                        thread_name_prefix="po_phil",
+                    )
+                if self._execution_mode == "process":
+                    outcome = await run_in_process_async(
                         SerializedJob(
                             ph,
                             ctx,
@@ -578,14 +313,10 @@ class AsyncPartyMachine:
                             limit_per_philosopher,
                             self._timeout_s,
                         ),
+                        executor=self._executor,
+                        semaphore=self._process_semaphore,
                     )
                 else:
-                    loop = asyncio.get_event_loop()
-                    if self._executor is None:
-                        self._executor = ThreadPoolExecutor(
-                            max_workers=self._max_workers,
-                            thread_name_prefix="po_phil",
-                        )
                     outcome = await loop.run_in_executor(
                         self._executor,
                         _run_one_in_thread,
@@ -743,6 +474,7 @@ async def async_run_philosophers(
     timeout_s: float,
     limit_per_philosopher: int = 1,
     tracer: Optional["TracePort"] = None,
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
 
@@ -769,7 +501,7 @@ async def async_run_philosophers(
         - List[RunResult]: Execution results for each philosopher.
     """
     async with AsyncPartyMachine(
-        max_workers=max_workers, timeout_s=timeout_s
+        max_workers=max_workers, timeout_s=timeout_s, execution_mode=execution_mode
     ) as machine:
         return await machine.run(
             philosophers,
