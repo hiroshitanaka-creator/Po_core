@@ -109,7 +109,6 @@ def get_api_settings() -> APISettings:
         _settings = APISettings()
     return _settings
 
-
 def set_api_settings(settings: APISettings) -> None:
     """Override the cached settings singleton.
 
@@ -120,3 +119,15 @@ def set_api_settings(settings: APISettings) -> None:
     """
     global _settings
     _settings = settings
+
+
+def parse_cors_origins(cors_origins: str) -> list[str]:
+    """Parse a comma-separated CORS origins string into a stable list."""
+    if cors_origins.strip() == "*":
+        return ["*"]
+    return [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+
+
+def is_rate_limit_enabled(rate_limit_per_minute: int) -> bool:
+    """Return True when request rate limiting should be enforced."""
+    return rate_limit_per_minute > 0

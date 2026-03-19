@@ -35,10 +35,12 @@ import os
 import time
 import uuid
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 
+from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_headers
+from po_core.app.rest.config import APISettings, parse_cors_origins
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -47,41 +49,31 @@ from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
 
-
-def _parse_cors_origins(raw_origins: str) -> list[str]:
-    """Return comma-split CORS origins with whitespace trimmed and empty entries removed."""
-    return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
-
-
-def _get_configured_api_key() -> str:
-    """Secure mode uses PO_API_KEY; PO_CORE_API_KEY is legacy fallback alias."""
-    return os.getenv("PO_API_KEY", os.getenv("PO_CORE_API_KEY", "")).strip()
-
-
-def _extract_api_key(
-    x_api_key: str | None,
-    authorization: str | None,
-) -> str | None:
-    if x_api_key:
-        return x_api_key.strip()
-    if not authorization:
-        return None
-    scheme, _, token = authorization.partition(" ")
-    if scheme.lower() != "bearer" or not token.strip():
-        return None
-    return token.strip()
-
-
 def _ensure_api_key(
+    settings: APISettings,
     x_api_key: str | None,
     authorization: str | None,
 ) -> None:
-    expected_key = _get_configured_api_key()
-    if not expected_key:
+    decision = evaluate_auth_policy(
+        skip_auth=settings.skip_auth,
+        configured_api_key=settings.api_key,
+        presented_api_key=extract_api_key_from_headers(
+            x_api_key=x_api_key,
+            authorization=authorization,
+        ),
+    )
+    if decision.allowed:
         return
-    presented_key = _extract_api_key(x_api_key=x_api_key, authorization=authorization)
-    if presented_key != expected_key:
-        raise HTTPException(status_code=403, detail="Invalid or missing API key")
+    if decision.is_misconfigured:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=decision.message,
+        )
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=decision.message,
+        headers={"WWW-Authenticate": "ApiKey"},
+    )
 
 
 class GenerateRequest(BaseModel):
@@ -221,17 +213,17 @@ async def async_run(
     return await async_run_turn(ctx, deps)
 
 
+_legacy_api_settings = APISettings()
+
 app = FastAPI(title="Po_core API")
 
 # Defaults stay fully open for backwards compatibility.
 # Prefer PO_CORS_ORIGINS / PO_API_KEY (PO_CORE_* retained as legacy aliases).
-_cors_origins = _parse_cors_origins(
-    os.getenv("PO_CORS_ORIGINS", os.getenv("PO_CORE_CORS_ORIGINS", ""))
-)
+_cors_origins = parse_cors_origins(_legacy_api_settings.cors_origins)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins or ["*"],
-    allow_credentials=bool(_cors_origins),
+    allow_origins=_cors_origins,
+    allow_credentials=_cors_origins != ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -243,7 +235,11 @@ async def generate(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> dict:
-    _ensure_api_key(x_api_key=x_api_key, authorization=authorization)
+    _ensure_api_key(
+        settings=_legacy_api_settings,
+        x_api_key=x_api_key,
+        authorization=authorization,
+    )
     try:
         return await async_run(payload.user_input, philosophers=payload.philosophers)
     except ValueError as exc:
