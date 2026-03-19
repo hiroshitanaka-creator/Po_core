@@ -36,6 +36,13 @@ def _env_first(*keys: str, default: str = "") -> str:
     return default
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Settings:
     """
@@ -137,6 +144,12 @@ class Settings:
             .lower()
         )
         return cls(
+            enable_solarwill=_env_bool("PO_ENABLE_SOLARWILL", True),
+            enable_intention_gate=_env_bool("PO_ENABLE_INTENTION_GATE", True),
+            enable_action_gate=_env_bool("PO_ENABLE_ACTION_GATE", True),
+            enable_pareto_shadow=_env_bool("PO_ENABLE_PARETO_SHADOW", False),
+            use_freedom_pressure_v2=_env_bool("PO_FREEDOM_PRESSURE_V2", False),
+            deliberation_max_rounds=int(os.getenv("PO_DELIBERATION_MAX_ROUNDS", "2")),
             philosopher_roles=_read_roles_from_env(),
             philosophers_max_normal=int(os.getenv("PO_PHILOSOPHERS_MAX_NORMAL", "39")),
             philosophers_max_warn=int(os.getenv("PO_PHILOSOPHERS_MAX_WARN", "5")),
