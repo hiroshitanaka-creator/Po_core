@@ -64,7 +64,6 @@ from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import (
     ExecOutcome,
     SerializedJob,
-    _budget_cancelled_error,
     _supports_budget_kwarg,
     run_one_philosopher,
 )
@@ -138,6 +137,61 @@ class RunResult:
     timed_out: bool = False
     error: Optional[str] = None
     latency_ms: Optional[int] = None  # Execution time in milliseconds
+
+
+@dataclass(frozen=True)
+class _ExecutionResult:
+    """Structured internal execution result with authoritative timeout state."""
+
+    philosopher_id: str
+    proposals: List["Proposal"]
+    ok: bool
+    n: int
+    timed_out: bool
+    error: Optional[str]
+    latency_ms: Optional[int]
+
+    def to_run_result(self) -> RunResult:
+        return RunResult(
+            philosopher_id=self.philosopher_id,
+            ok=self.ok,
+            n=self.n,
+            timed_out=self.timed_out,
+            error=self.error,
+            latency_ms=self.latency_ms,
+        )
+
+
+def _build_execution_result(
+    *,
+    philosopher_id: str,
+    proposals: Optional[List["Proposal"]] = None,
+    n: int,
+    timed_out: bool,
+    error: Optional[str],
+    latency_ms: Optional[int],
+) -> _ExecutionResult:
+    selected_proposals = list(proposals or [])
+    return _ExecutionResult(
+        philosopher_id=philosopher_id,
+        proposals=[] if timed_out else selected_proposals,
+        ok=(error is None and not timed_out),
+        n=(0 if timed_out else n),
+        timed_out=timed_out,
+        error=error,
+        latency_ms=latency_ms,
+    )
+
+
+def _execution_result_from_outcome(outcome: ExecOutcome) -> _ExecutionResult:
+    return _build_execution_result(
+        philosopher_id=outcome.philosopher_id,
+        proposals=outcome.proposals,
+        n=outcome.n,
+        timed_out=outcome.timed_out,
+        error=outcome.error,
+        latency_ms=outcome.latency_ms,
+    )
 
 
 _LATENCY_EMA_BY_PHILOSOPHER: Dict[str, float] = {}
@@ -323,16 +377,10 @@ def run_philosophers(
             else _run_one_in_thread(ph, ctx, intent, tensors, memory, limit, timeout_s)
         )
         _update_ema(outcome.philosopher_id, outcome.latency_ms)
-        result_by_index[idx] = RunResult(
-            philosopher_id=outcome.philosopher_id,
-            ok=(outcome.error is None and not outcome.timed_out),
-            n=(0 if outcome.timed_out else outcome.n),
-            timed_out=outcome.timed_out,
-            error=outcome.error,
-            latency_ms=outcome.latency_ms,
-        )
-        if outcome.proposals and not outcome.timed_out:
-            proposals_by_index[idx] = outcome.proposals
+        execution_result = _execution_result_from_outcome(outcome)
+        result_by_index[idx] = execution_result.to_run_result()
+        if execution_result.proposals:
+            proposals_by_index[idx] = execution_result.proposals
 
     if parallel_indices:
         executor = ThreadPoolExecutor(max_workers=max_workers)
@@ -360,34 +408,26 @@ def run_philosophers(
                 try:
                     outcome = future.result(timeout=None if use_process_isolation else timeout_s + 0.05)
                     _update_ema(outcome.philosopher_id, outcome.latency_ms)
-                    result_by_index[idx] = RunResult(
-                        philosopher_id=outcome.philosopher_id,
-                        ok=(outcome.error is None and not outcome.timed_out),
-                        n=(0 if outcome.timed_out else outcome.n),
-                        timed_out=outcome.timed_out,
-                        error=outcome.error,
-                        latency_ms=outcome.latency_ms,
-                    )
-                    if outcome.proposals and not outcome.timed_out:
-                        proposals_by_index[idx] = outcome.proposals
+                    execution_result = _execution_result_from_outcome(outcome)
+                    result_by_index[idx] = execution_result.to_run_result()
+                    if execution_result.proposals:
+                        proposals_by_index[idx] = execution_result.proposals
                 except FuturesTimeoutError:
-                    result_by_index[idx] = RunResult(
+                    result_by_index[idx] = _build_execution_result(
                         philosopher_id=pid,
-                        ok=False,
                         n=0,
                         timed_out=True,
                         error=_soft_timeout_error(timeout_s, "thread"),
                         latency_ms=None,
-                    )
+                    ).to_run_result()
                 except Exception as e:
-                    result_by_index[idx] = RunResult(
+                    result_by_index[idx] = _build_execution_result(
                         philosopher_id=pid,
-                        ok=False,
                         n=0,
                         timed_out=False,
                         error=f"{type(e).__name__}: {e}",
                         latency_ms=None,
-                    )
+                    ).to_run_result()
         finally:
             executor.shutdown(wait=False, cancel_futures=False)
 
@@ -481,8 +521,8 @@ class AsyncPartyMachine:
         memory: "MemorySnapshot",
         tracer: Optional["TracePort"] = None,
         limit_per_philosopher: int = 1,
-    ) -> Tuple[List["Proposal"], int, Optional[str], int, str]:
-        """Run a single philosopher; return (proposals, n, error, latency_ms, pid).
+    ) -> _ExecutionResult:
+        """Run a single philosopher and return structured execution metadata.
 
         If *tracer* is provided, a ``PhilosopherCompleted`` event is emitted
         immediately after the philosopher finishes (success or failure), enabling
@@ -516,12 +556,13 @@ class AsyncPartyMachine:
                 embedded = [
                     _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
                 ]
-                result: Tuple[List, int, Optional[str], int, str] = (
-                    embedded,
-                    len(proposals),
-                    None,
-                    dt,
-                    pid,
+                result = _build_execution_result(
+                    philosopher_id=pid,
+                    proposals=embedded,
+                    n=len(proposals),
+                    timed_out=False,
+                    error=None,
+                    latency_ms=dt,
                 )
             else:
                 hard_timeout_max_s = float(os.getenv("PO_PHILOSOPHER_HARD_TIMEOUT_MAX_S", "0.01"))
@@ -556,38 +597,46 @@ class AsyncPartyMachine:
                         limit_per_philosopher,
                         self._timeout_s,
                     )
-                result = (
-                    outcome.proposals,
-                    (0 if outcome.timed_out else outcome.n),
-                    outcome.error,
-                    outcome.latency_ms,
-                    outcome.philosopher_id,
-                )
+                result = _execution_result_from_outcome(outcome)
 
         except asyncio.TimeoutError:
             budget.cancel()
             dt = int((perf_counter() - t0) * 1000)
-            result = (
-                [],
-                0,
-                _cooperative_timeout_error(self._timeout_s, "async"),
-                dt,
-                pid,
+            result = _build_execution_result(
+                philosopher_id=pid,
+                n=0,
+                timed_out=True,
+                error=_cooperative_timeout_error(self._timeout_s, "async"),
+                latency_ms=dt,
             )
         except ExecutionBudgetExceeded:
             budget.cancel()
             dt = int((perf_counter() - t0) * 1000)
-            result = [], 0, _budget_cancelled_error("async budget signalled"), dt, pid
+            result = _build_execution_result(
+                philosopher_id=pid,
+                n=0,
+                timed_out=True,
+                error=_cooperative_timeout_error(self._timeout_s, "async"),
+                latency_ms=dt,
+            )
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
-            result = [], 0, f"{type(e).__name__}: {e}\n{tb}", dt, pid
+            result = _build_execution_result(
+                philosopher_id=pid,
+                n=0,
+                timed_out=False,
+                error=f"{type(e).__name__}: {e}\n{tb}",
+                latency_ms=dt,
+            )
 
         # Emit per-philosopher completion event for real-time SSE streaming.
         # This fires as soon as the philosopher finishes, before other philosophers
         # complete, so SSE clients see results progressively.
         if tracer is not None:
-            _proposals, n_out, err_out, dt_out, _pid = result
+            n_out = result.n
+            err_out = result.error
+            dt_out = result.latency_ms
             from po_core.domain.trace_event import TraceEvent
 
             tracer.emit(
@@ -598,7 +647,7 @@ class AsyncPartyMachine:
                         "name": pid,
                         "n": n_out,
                         "latency_ms": dt_out,
-                        "ok": err_out is None,
+                        "ok": result.ok,
                     },
                 )
             )
@@ -644,28 +693,18 @@ class AsyncPartyMachine:
             pid = getattr(ph, "name", ph.__class__.__name__)
             if isinstance(outcome, Exception):
                 results.append(
-                    RunResult(
+                    _build_execution_result(
                         philosopher_id=pid,
-                        ok=False,
                         n=0,
                         timed_out=isinstance(outcome, asyncio.TimeoutError),
                         error=f"{type(outcome).__name__}: {outcome}",
                         latency_ms=None,
-                    )
+                    ).to_run_result()
                 )
             else:
-                selected_proposals, n, err, dt, author_id = outcome  # type: ignore[misc]
-                results.append(
-                    RunResult(
-                        philosopher_id=author_id,
-                        ok=(err is None),
-                        n=n,
-                        timed_out=(err is not None and ("timeout" in err.lower())),
-                        error=err,
-                        latency_ms=dt,
-                    )
-                )
-                proposals.extend(selected_proposals)
+                execution_result = outcome
+                results.append(execution_result.to_run_result())
+                proposals.extend(execution_result.proposals)
 
         return proposals, results
 
