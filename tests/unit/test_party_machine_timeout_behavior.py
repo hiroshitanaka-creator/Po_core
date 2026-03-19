@@ -49,6 +49,8 @@ def test_run_philosophers_uses_global_timeout_window():
     by_id = {r.philosopher_id: r for r in results}
     assert by_id["slow-a"].timed_out is True
     assert by_id["slow-b"].timed_out is True
+    assert "Soft timeout after 0.1s" in (by_id["slow-a"].error or "")
+    assert "background work may still continue" in (by_id["slow-b"].error or "")
     assert by_id["fast"].ok is True
 
     assert len(proposals) == 1
@@ -88,4 +90,5 @@ def test_run_philosophers_adaptive_sequential_and_timeout_fallback(monkeypatch):
     )
 
     assert second_results[0].timed_out is True
-    assert "fallback=empty_proposals" in (second_results[0].error or "")
+    assert "Soft timeout after 0.01s" in (second_results[0].error or "")
+    assert "background work may still continue" in (second_results[0].error or "")

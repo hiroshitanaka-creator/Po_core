@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import inspect
 import os
 import random
 import traceback
@@ -59,6 +60,7 @@ from rich.panel import Panel
 
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
+from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
 
 console = Console()
 
@@ -133,6 +135,42 @@ class RunResult:
 _LATENCY_EMA_BY_PHILOSOPHER: Dict[str, float] = {}
 
 
+def _supports_budget_kwarg(method: object) -> bool:
+    """Return True when *method* accepts an optional ``budget=...`` kwarg."""
+    try:
+        signature = inspect.signature(method)
+    except (TypeError, ValueError):
+        return False
+
+    budget_param = signature.parameters.get("budget")
+    if budget_param is None:
+        return False
+
+    return budget_param.kind in {
+        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        inspect.Parameter.KEYWORD_ONLY,
+    }
+
+
+def _soft_timeout_error(timeout_s: float, mode: str) -> str:
+    return (
+        f"Soft timeout after {timeout_s}s ({mode} fallback=empty_proposals; "
+        "background work may still continue)"
+    )
+
+
+def _cooperative_timeout_error(timeout_s: float, mode: str) -> str:
+    return f"Cooperative timeout after {timeout_s}s ({mode} fallback=empty_proposals)"
+
+
+def _budget_cancelled_error(mode: str) -> str:
+    return f"Execution stopped cooperatively ({mode})"
+
+
+def _is_budget_stop_error(error: Optional[str]) -> bool:
+    return bool(error and error.startswith("Execution stopped cooperatively"))
+
+
 def run_philosophers(
     philosophers: Sequence["PhilosopherProtocol"],
     ctx: "Context",
@@ -176,11 +214,18 @@ def run_philosophers(
 
     def _run_single(
         ph: "PhilosopherProtocol",
+        budget: ExecutionBudget,
+        supports_budget: bool,
     ) -> Tuple[List[Proposal], int, Optional[str], int, str]:
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         try:
-            raw = ph.propose(ctx, intent, tensors, memory)
+            budget.raise_if_cancelled_or_expired()
+            if supports_budget:
+                raw = ph.propose(ctx, intent, tensors, memory, budget=budget)
+                budget.raise_if_cancelled_or_expired()
+            else:
+                raw = ph.propose(ctx, intent, tensors, memory)
             dt = int((perf_counter() - t0) * 1000)
             proposals_local = [p for p in raw if p is not None] if raw else []
             selected = proposals_local[:limit]
@@ -188,6 +233,9 @@ def run_philosophers(
                 _embed_author_and_index(p, pid, idx) for idx, p in enumerate(selected)
             ]
             return embedded, len(proposals_local), None, dt, pid
+        except ExecutionBudgetExceeded:
+            dt = int((perf_counter() - t0) * 1000)
+            return [], 0, _budget_cancelled_error("budget signalled"), dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
@@ -223,11 +271,19 @@ def run_philosophers(
 
     for idx in sequential_indices:
         ph = philosophers[idx]
-        selected_proposals, n, err, dt, pid = _run_single(ph)
+        budget = ExecutionBudget(timeout_s=timeout_s)
+        supports_budget = _supports_budget_kwarg(getattr(ph, "propose"))
+        selected_proposals, n, err, dt, pid = _run_single(ph, budget, supports_budget)
         _update_ema(pid, dt)
         timed_out = dt > timeout_s * 1000
-        if timed_out and err is None:
-            err = f"Timeout after {timeout_s}s (sequential fallback=empty_proposals)"
+        if timed_out:
+            budget.cancel()
+            if err is None:
+                err = (
+                    _cooperative_timeout_error(timeout_s, "sequential")
+                    if supports_budget
+                    else _soft_timeout_error(timeout_s, "sequential")
+                )
             selected_proposals = []
             n = 0
         result_by_index[idx] = RunResult(
@@ -244,8 +300,18 @@ def run_philosophers(
     if parallel_indices:
         executor = ThreadPoolExecutor(max_workers=max_workers)
         try:
+            budgets_by_index = {idx: ExecutionBudget(timeout_s=timeout_s) for idx in parallel_indices}
+            supports_budget_by_index = {
+                idx: _supports_budget_kwarg(getattr(philosophers[idx], "propose"))
+                for idx in parallel_indices
+            }
             futures = {
-                idx: executor.submit(_run_single, philosophers[idx])
+                idx: executor.submit(
+                    _run_single,
+                    philosophers[idx],
+                    budgets_by_index[idx],
+                    supports_budget_by_index[idx],
+                )
                 for idx in parallel_indices
             }
             done, not_done = wait(list(futures.values()), timeout=timeout_s)
@@ -254,36 +320,49 @@ def run_philosophers(
                 ph = philosophers[idx]
                 pid = getattr(ph, "name", ph.__class__.__name__)
                 if future in not_done:
+                    budgets_by_index[idx].cancel()
                     future.cancel()
                     result_by_index[idx] = RunResult(
                         philosopher_id=pid,
                         ok=False,
                         n=0,
                         timed_out=True,
-                        error=f"Timeout after {timeout_s}s (parallel fallback=empty_proposals)",
+                        error=(
+                            _cooperative_timeout_error(timeout_s, "parallel")
+                            if supports_budget_by_index[idx]
+                            else _soft_timeout_error(timeout_s, "parallel")
+                        ),
                         latency_ms=None,
                     )
                     continue
                 try:
                     selected_proposals, n, err, dt, author_id = future.result()
                     _update_ema(author_id, dt)
+                    timed_out = _is_budget_stop_error(err)
+                    if timed_out:
+                        err = _cooperative_timeout_error(timeout_s, "parallel")
                     result_by_index[idx] = RunResult(
                         philosopher_id=author_id,
-                        ok=(err is None),
-                        n=n,
-                        timed_out=False,
+                        ok=(err is None and not timed_out),
+                        n=(0 if timed_out else n),
+                        timed_out=timed_out,
                         error=err,
                         latency_ms=dt,
                     )
                     if selected_proposals:
                         proposals_by_index[idx] = selected_proposals
                 except FuturesTimeoutError:
+                    budgets_by_index[idx].cancel()
                     result_by_index[idx] = RunResult(
                         philosopher_id=pid,
                         ok=False,
                         n=0,
                         timed_out=True,
-                        error=f"Timeout after {timeout_s}s (parallel fallback=empty_proposals)",
+                        error=(
+                            _cooperative_timeout_error(timeout_s, "parallel")
+                            if supports_budget_by_index[idx]
+                            else _soft_timeout_error(timeout_s, "parallel")
+                        ),
                         latency_ms=None,
                     )
                 except Exception as e:
@@ -397,14 +476,23 @@ class AsyncPartyMachine:
         """
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
+        budget = ExecutionBudget(timeout_s=self._timeout_s)
+        supports_async_budget = _supports_budget_kwarg(getattr(ph, "propose_async"))
+        supports_sync_budget = _supports_budget_kwarg(getattr(ph, "propose"))
 
         try:
             if self._has_native_async(ph):
                 # Native async — runs on event loop directly
-                ph_proposals = await asyncio.wait_for(
-                    ph.propose_async(ctx, intent, tensors, memory),
-                    timeout=self._timeout_s,
-                )
+                if supports_async_budget:
+                    ph_proposals = await asyncio.wait_for(
+                        ph.propose_async(ctx, intent, tensors, memory, budget=budget),
+                        timeout=self._timeout_s,
+                    )
+                else:
+                    ph_proposals = await asyncio.wait_for(
+                        ph.propose_async(ctx, intent, tensors, memory),
+                        timeout=self._timeout_s,
+                    )
             else:
                 # Thread fallback — offload sync propose()
                 loop = asyncio.get_event_loop()
@@ -414,13 +502,18 @@ class AsyncPartyMachine:
                         max_workers=self._max_workers,
                         thread_name_prefix="po_phil",
                     )
+                if supports_sync_budget:
+                    call = functools.partial(
+                        ph.propose, ctx, intent, tensors, memory, budget=budget
+                    )
+                else:
+                    call = functools.partial(ph.propose, ctx, intent, tensors, memory)
                 ph_proposals = await asyncio.wait_for(
-                    loop.run_in_executor(
-                        self._executor,
-                        functools.partial(ph.propose, ctx, intent, tensors, memory),
-                    ),
+                    loop.run_in_executor(self._executor, call),
                     timeout=self._timeout_s,
                 )
+
+            budget.raise_if_cancelled_or_expired()
 
             dt = int((perf_counter() - t0) * 1000)
             proposals = (
@@ -439,8 +532,18 @@ class AsyncPartyMachine:
             )
 
         except asyncio.TimeoutError:
+            budget.cancel()
             dt = int((perf_counter() - t0) * 1000)
-            result = [], 0, f"TimeoutError after {self._timeout_s}s", dt, pid
+            supports_budget = supports_async_budget if self._has_native_async(ph) else supports_sync_budget
+            result = [], 0, (
+                _cooperative_timeout_error(self._timeout_s, "async")
+                if supports_budget
+                else _soft_timeout_error(self._timeout_s, "async")
+            ), dt, pid
+        except ExecutionBudgetExceeded:
+            budget.cancel()
+            dt = int((perf_counter() - t0) * 1000)
+            result = [], 0, _budget_cancelled_error("async budget signalled"), dt, pid
         except Exception as e:
             dt = int((perf_counter() - t0) * 1000)
             tb = traceback.format_exc()
