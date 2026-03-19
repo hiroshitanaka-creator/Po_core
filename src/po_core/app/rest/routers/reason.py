@@ -32,7 +32,7 @@ from po_core.app.rest.models import (
 from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.review_store import enqueue_review
 from po_core.app.rest.store import save_trace
-from po_core.runtime.settings import Settings
+from po_core.runtime.settings import APISettingsLike, Settings
 from po_core.trace.in_memory import InMemoryTracer
 
 logger = logging.getLogger(__name__)
@@ -139,23 +139,9 @@ def _normalize_status(raw: str) -> str:
     return "fallback"
 
 
-def _build_po_settings(api_settings: Any) -> Settings:
+def _build_po_settings(api_settings: APISettingsLike) -> Settings:
     """Map API settings to core Settings."""
-    return Settings(
-        enable_solarwill=api_settings.enable_solarwill,
-        enable_intention_gate=api_settings.enable_intention_gate,
-        enable_action_gate=api_settings.enable_action_gate,
-        philosophers_max_normal=api_settings.philosophers_max_normal,
-        philosophers_max_warn=api_settings.philosophers_max_warn,
-        philosophers_max_critical=api_settings.philosophers_max_critical,
-        philosopher_cost_budget_normal=api_settings.philosopher_cost_budget_normal,
-        philosopher_cost_budget_warn=api_settings.philosopher_cost_budget_warn,
-        philosopher_cost_budget_critical=api_settings.philosopher_cost_budget_critical,
-        enable_llm_philosophers=api_settings.enable_llm_philosophers,
-        llm_provider=api_settings.llm_provider,
-        llm_model=api_settings.llm_model,
-        llm_timeout_s=api_settings.llm_timeout_s,
-    )
+    return Settings.from_api_settings(api_settings)
 
 
 def _extract_response_text(result: dict) -> str:
