@@ -93,7 +93,7 @@ def _maybe_preload_models(settings: Settings) -> None:
 
 
 def _load_battalion_plans_from_env_or_package() -> Any:
-    """Load battalion table with explicit behavior (no silent drift)."""
+    """Load battalion table with explicit env override validation."""
 
     from po_core.runtime.battalion_table import (
         load_battalion_table,
@@ -101,10 +101,11 @@ def _load_battalion_plans_from_env_or_package() -> Any:
     )
 
     table_path = os.getenv("PO_CORE_BATTALION_TABLE", "").strip()
-    if table_path and os.path.exists(table_path):
-        return load_battalion_table(table_path)
-
-    return load_packaged_battalion_table()
+    if not table_path:
+        return load_packaged_battalion_table()
+    if not os.path.exists(table_path):
+        raise FileNotFoundError(f"PO_CORE_BATTALION_TABLE not found: {table_path}")
+    return load_battalion_table(table_path)
 
 
 def _overlay_battalion_plans_with_settings(
@@ -144,7 +145,7 @@ def _overlay_battalion_plans_with_settings(
 
 
 def _load_pareto_cfg_from_env_or_package() -> Any:
-    """Load pareto table with explicit behavior (no silent drift)."""
+    """Load pareto table with explicit env override validation."""
 
     from po_core.runtime.pareto_table import (
         load_packaged_pareto_table,
@@ -152,10 +153,11 @@ def _load_pareto_cfg_from_env_or_package() -> Any:
     )
 
     pareto_path = os.getenv("PO_CORE_PARETO_TABLE", "").strip()
-    if pareto_path and os.path.exists(pareto_path):
-        return load_pareto_table(pareto_path)
-
-    return load_packaged_pareto_table()
+    if not pareto_path:
+        return load_packaged_pareto_table()
+    if not os.path.exists(pareto_path):
+        raise FileNotFoundError(f"PO_CORE_PARETO_TABLE not found: {pareto_path}")
+    return load_pareto_table(pareto_path)
 
 
 def _load_optional_shadow_pareto_cfg() -> Any:
