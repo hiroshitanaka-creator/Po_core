@@ -979,6 +979,7 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         pre.memory,
         max_workers=pre.max_workers,
         timeout_s=pre.timeout_s,
+        execution_mode=deps.settings.philosopher_execution_mode,
     )
     return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
 
@@ -1015,6 +1016,7 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
         max_workers=pre.max_workers,
         timeout_s=pre.timeout_s,
         tracer=deps.tracer,
+        execution_mode=deps.settings.philosopher_execution_mode,
     )
     return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
 

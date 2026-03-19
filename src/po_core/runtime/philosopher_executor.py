@@ -311,5 +311,12 @@ def build_executor(config: ExecutorConfig) -> PhilosopherExecutor:
     return ThreadPhilosopherExecutor(config)
 
 
-async def run_in_process_async(job: SerializedJob) -> ExecOutcome:
-    return await asyncio.to_thread(_run_one_in_subprocess, job)
+async def run_in_process_async(
+    job: SerializedJob,
+    *,
+    executor: ThreadPoolExecutor,
+    semaphore: asyncio.Semaphore,
+) -> ExecOutcome:
+    async with semaphore:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(executor, _run_one_in_subprocess, job)

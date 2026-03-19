@@ -35,9 +35,7 @@ class _MultiProposalPhil:
         ]
 
 
-def test_process_executor_preserves_input_order(monkeypatch):
-    monkeypatch.setenv("PO_PHILOSOPHER_EXECUTION_MODE", "process")
-
+def test_process_executor_preserves_input_order():
     philosophers = [
         _MultiProposalPhil(name="alpha", prefix="a"),
         _MultiProposalPhil(name="beta", prefix="b"),
@@ -53,6 +51,7 @@ def test_process_executor_preserves_input_order(monkeypatch):
         max_workers=3,
         timeout_s=0.5,
         limit_per_philosopher=2,
+        execution_mode="process",
     )
 
     assert [result.philosopher_id for result in results] == ["alpha", "beta", "gamma"]

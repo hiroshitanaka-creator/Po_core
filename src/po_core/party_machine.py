@@ -69,7 +69,6 @@ from po_core.runtime.philosopher_executor import (
     build_executor,
     run_in_process_async,
 )
-from po_core.runtime.settings import Settings
 
 console = Console()
 
@@ -145,13 +144,13 @@ def run_philosophers(
     max_workers: int,
     timeout_s: float,
     limit_per_philosopher: int = 1,
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Execute philosophers with deterministic result ordering."""
     limit = max(0, min(limit_per_philosopher, 5))
-    settings = Settings.from_env()
     executor = build_executor(
         ExecutorConfig(
-            mode=settings.philosopher_execution_mode,
+            mode=execution_mode,
             max_workers=max_workers,
             timeout_s=timeout_s,
             limit_per_philosopher=limit,
@@ -199,10 +198,18 @@ class AsyncPartyMachine:
 
     _NATIVE_ASYNC_SENTINEL = "propose_async"
 
-    def __init__(self, *, max_workers: int = 8, timeout_s: float = 5.0) -> None:
+    def __init__(
+        self,
+        *,
+        max_workers: int = 8,
+        timeout_s: float = 5.0,
+        execution_mode: str = "thread",
+    ) -> None:
         self._max_workers = max_workers
         self._timeout_s = timeout_s
+        self._execution_mode = execution_mode
         self._executor: Optional[ThreadPoolExecutor] = None
+        self._process_semaphore = asyncio.Semaphore(max_workers)
 
     # ── Context-manager support ───────────────────────────────────────
 
@@ -289,8 +296,13 @@ class AsyncPartyMachine:
                     latency_ms=dt,
                 )
             else:
-                settings = Settings.from_env()
-                if settings.philosopher_execution_mode == "process":
+                loop = asyncio.get_event_loop()
+                if self._executor is None:
+                    self._executor = ThreadPoolExecutor(
+                        max_workers=self._max_workers,
+                        thread_name_prefix="po_phil",
+                    )
+                if self._execution_mode == "process":
                     outcome = await run_in_process_async(
                         SerializedJob(
                             ph,
@@ -300,15 +312,11 @@ class AsyncPartyMachine:
                             memory,
                             limit_per_philosopher,
                             self._timeout_s,
-                        )
+                        ),
+                        executor=self._executor,
+                        semaphore=self._process_semaphore,
                     )
                 else:
-                    loop = asyncio.get_event_loop()
-                    if self._executor is None:
-                        self._executor = ThreadPoolExecutor(
-                            max_workers=self._max_workers,
-                            thread_name_prefix="po_phil",
-                        )
                     outcome = await loop.run_in_executor(
                         self._executor,
                         _run_one_in_thread,
@@ -466,6 +474,7 @@ async def async_run_philosophers(
     timeout_s: float,
     limit_per_philosopher: int = 1,
     tracer: Optional["TracePort"] = None,
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
 
@@ -492,7 +501,7 @@ async def async_run_philosophers(
         - List[RunResult]: Execution results for each philosopher.
     """
     async with AsyncPartyMachine(
-        max_workers=max_workers, timeout_s=timeout_s
+        max_workers=max_workers, timeout_s=timeout_s, execution_mode=execution_mode
     ) as machine:
         return await machine.run(
             philosophers,

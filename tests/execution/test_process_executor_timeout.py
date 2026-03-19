@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import time
 from dataclasses import dataclass
 
@@ -46,9 +45,7 @@ class _FastPhil:
         ]
 
 
-def test_process_executor_timeout_is_authoritative(monkeypatch):
-    monkeypatch.setenv("PO_PHILOSOPHER_EXECUTION_MODE", "process")
-
+def test_process_executor_timeout_is_authoritative():
     proposals, results = run_philosophers(
         [_BlockingPhil(name="slow", sleep_s=0.6), _FastPhil(name="fast")],
         ctx=None,
@@ -57,6 +54,7 @@ def test_process_executor_timeout_is_authoritative(monkeypatch):
         memory=None,
         max_workers=2,
         timeout_s=0.2,
+        execution_mode="process",
     )
 
     assert [result.philosopher_id for result in results] == ["slow", "fast"]
@@ -70,4 +68,3 @@ def test_process_executor_timeout_is_authoritative(monkeypatch):
 
     time.sleep(0.7)
     assert [proposal.proposal_id for proposal in proposals] == ["fast-ok"]
-    assert os.getenv("PO_PHILOSOPHER_EXECUTION_MODE") == "process"
