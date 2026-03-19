@@ -109,6 +109,7 @@ def get_api_settings() -> APISettings:
         _settings = APISettings()
     return _settings
 
+
 def set_api_settings(settings: APISettings) -> None:
     """Override the cached settings singleton.
 

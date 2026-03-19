@@ -364,7 +364,11 @@ class Philosopher(ABC):
         """
         pass
 
-    def reason_with_context(self, ctx: Context) -> PhilosopherResponse:
+    def reason_with_context(
+        self,
+        ctx: Context,
+        budget: Optional["ExecutionBudget"] = None,
+    ) -> PhilosopherResponse:
         """
         Generate philosophical reasoning using the new Context format.
 
@@ -632,7 +636,9 @@ class Philosopher(ABC):
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             None,
-            functools.partial(self.propose, ctx, intent, tensors, memory, budget=budget),
+            functools.partial(
+                self.propose, ctx, intent, tensors, memory, budget=budget
+            ),
         )
         if budget is not None:
             budget.raise_if_cancelled_or_expired()

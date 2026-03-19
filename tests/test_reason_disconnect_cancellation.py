@@ -36,7 +36,9 @@ async def _assert_stream_disconnect_cancels_task(source: str) -> None:
             if chunk["chunk_type"] == "started":
                 saw_started.set()
 
-    with patch("po_core.app.rest.routers.reason.po_async_run", side_effect=_never_finishes):
+    with patch(
+        "po_core.app.rest.routers.reason.po_async_run", side_effect=_never_finishes
+    ):
         consumer = asyncio.create_task(_consume_until_cancelled())
         await asyncio.wait_for(saw_started.wait(), timeout=1.0)
         await asyncio.wait_for(started.wait(), timeout=1.0)

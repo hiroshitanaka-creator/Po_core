@@ -132,7 +132,10 @@ def _normalize_status(raw: str) -> str:
     if normalized is not None:
         return normalized
 
-    logger.warning("Unknown internal status received from reasoning engine", extra={"raw_status": raw})
+    logger.warning(
+        "Unknown internal status received from reasoning engine",
+        extra={"raw_status": raw},
+    )
     return "fallback"
 
 

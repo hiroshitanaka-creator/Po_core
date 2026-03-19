@@ -300,7 +300,9 @@ def run_philosophers(
     if parallel_indices:
         executor = ThreadPoolExecutor(max_workers=max_workers)
         try:
-            budgets_by_index = {idx: ExecutionBudget(timeout_s=timeout_s) for idx in parallel_indices}
+            budgets_by_index = {
+                idx: ExecutionBudget(timeout_s=timeout_s) for idx in parallel_indices
+            }
             supports_budget_by_index = {
                 idx: _supports_budget_kwarg(getattr(philosophers[idx], "propose"))
                 for idx in parallel_indices
@@ -534,12 +536,22 @@ class AsyncPartyMachine:
         except asyncio.TimeoutError:
             budget.cancel()
             dt = int((perf_counter() - t0) * 1000)
-            supports_budget = supports_async_budget if self._has_native_async(ph) else supports_sync_budget
-            result = [], 0, (
-                _cooperative_timeout_error(self._timeout_s, "async")
-                if supports_budget
-                else _soft_timeout_error(self._timeout_s, "async")
-            ), dt, pid
+            supports_budget = (
+                supports_async_budget
+                if self._has_native_async(ph)
+                else supports_sync_budget
+            )
+            result = (
+                [],
+                0,
+                (
+                    _cooperative_timeout_error(self._timeout_s, "async")
+                    if supports_budget
+                    else _soft_timeout_error(self._timeout_s, "async")
+                ),
+                dt,
+                pid,
+            )
         except ExecutionBudgetExceeded:
             budget.cancel()
             dt = int((perf_counter() - t0) * 1000)

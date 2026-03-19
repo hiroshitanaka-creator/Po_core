@@ -20,7 +20,9 @@ def _stub_result(request_id: str) -> dict[str, object]:
 
 
 def test_http_rate_limit_zero_disables_limiter(monkeypatch) -> None:
-    monkeypatch.setattr(reason_router, "po_run", lambda *args, **kwargs: _stub_result("req-1"))
+    monkeypatch.setattr(
+        reason_router, "po_run", lambda *args, **kwargs: _stub_result("req-1")
+    )
 
     app = create_app(
         APISettings(
@@ -38,7 +40,9 @@ def test_http_rate_limit_zero_disables_limiter(monkeypatch) -> None:
 
     def _never_limit(_item, *identifiers, cost=1):
         calls["count"] += 1
-        raise AssertionError("rate limiter storage should not be consulted when disabled")
+        raise AssertionError(
+            "rate limiter storage should not be consulted when disabled"
+        )
 
     monkeypatch.setattr(app.state.limiter._limiter, "hit", _never_limit)
 
@@ -51,7 +55,9 @@ def test_http_rate_limit_zero_disables_limiter(monkeypatch) -> None:
 
 
 def test_websocket_rate_limit_zero_disables_limiter(monkeypatch) -> None:
-    monkeypatch.setattr(reason_router, "po_run", lambda *args, **kwargs: _stub_result("req-ws"))
+    monkeypatch.setattr(
+        reason_router, "po_run", lambda *args, **kwargs: _stub_result("req-ws")
+    )
 
     async def _fake_async_run(*args, **kwargs):
         return _stub_result("req-ws")

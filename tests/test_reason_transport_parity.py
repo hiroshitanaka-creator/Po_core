@@ -59,7 +59,9 @@ def _parse_sse_chunks(raw_text: str) -> list[dict[str, Any]]:
     return chunks
 
 
-def _collect_ws_chunks(client: TestClient, payload: dict[str, Any]) -> list[dict[str, Any]]:
+def _collect_ws_chunks(
+    client: TestClient, payload: dict[str, Any]
+) -> list[dict[str, Any]]:
     with client.websocket_connect("/v1/ws/reason") as ws:
         ws.send_json(payload)
         chunks: list[dict[str, Any]] = []
@@ -123,8 +125,13 @@ def test_reason_transports_enqueue_escalations_exactly_once(
         return dict(ESCALATE_RESULT)
 
     with (
-        patch("po_core.app.rest.routers.reason.po_run", return_value=dict(ESCALATE_RESULT)),
-        patch("po_core.app.rest.routers.reason.po_async_run", new=AsyncMock(side_effect=_fake_async_run)),
+        patch(
+            "po_core.app.rest.routers.reason.po_run", return_value=dict(ESCALATE_RESULT)
+        ),
+        patch(
+            "po_core.app.rest.routers.reason.po_async_run",
+            new=AsyncMock(side_effect=_fake_async_run),
+        ),
         patch("po_core.app.rest.routers.reason.enqueue_review") as enqueue_mock,
     ):
         payload = invoke(client)
@@ -134,7 +141,10 @@ def test_reason_transports_enqueue_escalations_exactly_once(
     kwargs = enqueue_mock.call_args.kwargs
     assert kwargs["session_id"] == payload["session_id"]
     assert kwargs["request_id"] == ESCALATE_RESULT["request_id"]
-    assert kwargs["review_id"] == f"{payload['session_id']}:{ESCALATE_RESULT['request_id']}"
+    assert (
+        kwargs["review_id"]
+        == f"{payload['session_id']}:{ESCALATE_RESULT['request_id']}"
+    )
     expected_source = {
         "sync": "/v1/reason",
         "sse": "/v1/reason/stream",

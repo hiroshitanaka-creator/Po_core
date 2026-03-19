@@ -49,6 +49,7 @@ from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_system, build_test_system
 
+
 def _ensure_api_key(
     settings: APISettings,
     x_api_key: str | None,

@@ -40,9 +40,9 @@ class ExecutionBudget:
     def raise_if_cancelled_or_expired(self) -> None:
         """Raise ExecutionBudgetExceeded if cancellation or timeout was requested."""
         if self.is_cancelled():
-            raise ExecutionBudgetExceeded('Execution budget cancelled')
+            raise ExecutionBudgetExceeded("Execution budget cancelled")
         if self.time_remaining_s() <= 0.0:
-            raise ExecutionBudgetExceeded('Execution budget expired')
+            raise ExecutionBudgetExceeded("Execution budget expired")
 
 
-__all__ = ['ExecutionBudget', 'ExecutionBudgetExceeded']
+__all__ = ["ExecutionBudget", "ExecutionBudgetExceeded"]
