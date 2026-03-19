@@ -57,6 +57,7 @@ class APISettings(BaseSettings):
     # Rate limiting — requests per minute per IP for the /v1/reason endpoints.
     # Set to 0 to disable rate limiting.
     rate_limit_per_minute: int = 60
+    trust_proxy_headers: bool = False
 
     # Po_core engine
     enable_solarwill: bool = True
