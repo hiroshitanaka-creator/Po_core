@@ -25,6 +25,10 @@ class APISettingsLike(Protocol):
     enable_solarwill: bool
     enable_intention_gate: bool
     enable_action_gate: bool
+    enable_pareto_shadow: bool
+    use_freedom_pressure_v2: bool
+    deliberation_max_rounds: int
+    philosopher_roles: str
     enable_llm_philosophers: bool
     llm_provider: str
     llm_model: str
@@ -180,6 +184,13 @@ class Settings:
             enable_solarwill=api_settings.enable_solarwill,
             enable_intention_gate=api_settings.enable_intention_gate,
             enable_action_gate=api_settings.enable_action_gate,
+            enable_pareto_shadow=api_settings.enable_pareto_shadow,
+            use_freedom_pressure_v2=api_settings.use_freedom_pressure_v2,
+            philosopher_roles=tuple(
+                sorted(parse_roles_csv(api_settings.philosopher_roles), key=lambda r: r.value)
+            )
+            if api_settings.philosopher_roles.strip()
+            else (),
             philosophers_max_normal=api_settings.philosophers_max_normal,
             philosophers_max_warn=api_settings.philosophers_max_warn,
             philosophers_max_critical=api_settings.philosophers_max_critical,
@@ -190,6 +201,7 @@ class Settings:
             llm_provider=api_settings.llm_provider,
             llm_model=api_settings.llm_model,
             llm_timeout_s=api_settings.llm_timeout_s,
+            deliberation_max_rounds=api_settings.deliberation_max_rounds,
         )
 
     def to_dict(self) -> dict:

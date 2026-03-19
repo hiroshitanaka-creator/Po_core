@@ -6,6 +6,11 @@ from po_core.app.rest.config import APISettings
 from po_core.runtime.settings import Settings
 
 
+def _apply_env(monkeypatch: pytest.MonkeyPatch, env: dict[str, str]) -> None:
+    for key, value in env.items():
+        monkeypatch.setenv(key, value)
+
+
 @pytest.mark.unit
 def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) -> None:
     env = {
@@ -14,6 +19,8 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
         "PO_ENABLE_ACTION_GATE": "off",
         "PO_ENABLE_PARETO_SHADOW": "yes",
         "PO_FREEDOM_PRESSURE_V2": "on",
+        "PO_DELIBERATION_MAX_ROUNDS": "4",
+        "PO_ROLES": "systems,red_team",
         "PO_PHILOSOPHERS_MAX_NORMAL": "41",
         "PO_PHILOSOPHERS_MAX_WARN": "7",
         "PO_PHILOSOPHERS_MAX_CRITICAL": "2",
@@ -24,10 +31,8 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
         "PO_LLM_PROVIDER": "openai",
         "PO_LLM_MODEL": "gpt-4o-mini",
         "PO_LLM_TIMEOUT": "3.25",
-        "PO_DELIBERATION_MAX_ROUNDS": "4",
     }
-    for key, value in env.items():
-        monkeypatch.setenv(key, value)
+    _apply_env(monkeypatch, env)
 
     settings = Settings.from_env()
 
@@ -36,6 +41,7 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
     assert settings.enable_action_gate is False
     assert settings.enable_pareto_shadow is True
     assert settings.use_freedom_pressure_v2 is True
+    assert tuple(role.value for role in settings.philosopher_roles) == ("RED_TEAM", "SYSTEMS")
     assert settings.philosophers_max_normal == 41
     assert settings.philosophers_max_warn == 7
     assert settings.philosophers_max_critical == 2
@@ -99,6 +105,10 @@ def test_rest_and_direct_paths_build_same_effective_settings(
         "PO_ENABLE_SOLARWILL": "false",
         "PO_ENABLE_INTENTION_GATE": "true",
         "PO_ENABLE_ACTION_GATE": "false",
+        "PO_ENABLE_PARETO_SHADOW": "true",
+        "PO_FREEDOM_PRESSURE_V2": "true",
+        "PO_DELIBERATION_MAX_ROUNDS": "4",
+        "PO_ROLES": "systems,red_team",
         "PO_PHILOSOPHERS_MAX_NORMAL": "44",
         "PO_PHILOSOPHERS_MAX_WARN": "6",
         "PO_PHILOSOPHERS_MAX_CRITICAL": "2",
@@ -110,24 +120,24 @@ def test_rest_and_direct_paths_build_same_effective_settings(
         "PO_LLM_MODEL": "grok-3-mini",
         "PO_LLM_TIMEOUT": "5.5",
     }
-    for key, value in env.items():
-        monkeypatch.setenv(key, value)
+    _apply_env(monkeypatch, env)
 
-    direct = Settings.from_env()
-    via_rest = Settings.from_api_settings(APISettings())
+    assert Settings.from_env() == Settings.from_api_settings(APISettings())
 
-    assert via_rest == Settings(
-        enable_solarwill=direct.enable_solarwill,
-        enable_intention_gate=direct.enable_intention_gate,
-        enable_action_gate=direct.enable_action_gate,
-        philosophers_max_normal=direct.philosophers_max_normal,
-        philosophers_max_warn=direct.philosophers_max_warn,
-        philosophers_max_critical=direct.philosophers_max_critical,
-        philosopher_cost_budget_normal=direct.philosopher_cost_budget_normal,
-        philosopher_cost_budget_warn=direct.philosopher_cost_budget_warn,
-        philosopher_cost_budget_critical=direct.philosopher_cost_budget_critical,
-        enable_llm_philosophers=direct.enable_llm_philosophers,
-        llm_provider=direct.llm_provider,
-        llm_model=direct.llm_model,
-        llm_timeout_s=direct.llm_timeout_s,
-    )
+
+@pytest.mark.unit
+@pytest.mark.parametrize("raw", ["1", "true", "yes", "on", "0", "false", "no", "off"])
+def test_rest_and_direct_paths_match_boolean_semantics(
+    monkeypatch: pytest.MonkeyPatch, raw: str
+) -> None:
+    env = {
+        "PO_ENABLE_SOLARWILL": raw,
+        "PO_ENABLE_INTENTION_GATE": raw,
+        "PO_ENABLE_ACTION_GATE": raw,
+        "PO_ENABLE_PARETO_SHADOW": raw,
+        "PO_FREEDOM_PRESSURE_V2": raw,
+        "PO_LLM_ENABLED": raw,
+    }
+    _apply_env(monkeypatch, env)
+
+    assert Settings.from_env() == Settings.from_api_settings(APISettings())

@@ -62,6 +62,14 @@ class APISettings(BaseSettings):
     enable_solarwill: bool = True
     enable_intention_gate: bool = True
     enable_action_gate: bool = True
+    enable_pareto_shadow: bool = False
+    use_freedom_pressure_v2: bool = Field(
+        default=False, validation_alias=AliasChoices("PO_FREEDOM_PRESSURE_V2")
+    )
+    deliberation_max_rounds: int = Field(
+        default=2, validation_alias=AliasChoices("PO_DELIBERATION_MAX_ROUNDS")
+    )
+    philosopher_roles: str = Field(default="", validation_alias=AliasChoices("PO_ROLES"))
     enable_llm_philosophers: bool = Field(
         default=False,
         validation_alias=AliasChoices("PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS"),
