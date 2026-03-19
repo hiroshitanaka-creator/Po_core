@@ -52,7 +52,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/health')",
+          "import urllib.request; urllib.request.urlopen('http://localhost:${PO_PORT:-8000}/v1/health')",
         ]
       interval: 30s
       timeout: 10s
