@@ -8,11 +8,12 @@ from __future__ import annotations
 import asyncio
 import functools
 import json
+import logging
 import time
 import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
-from typing import Any, AsyncGenerator, Dict
+from typing import Any, AsyncGenerator, Dict, TypedDict
 
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket
 from fastapi.exceptions import WebSocketException
@@ -32,6 +33,8 @@ from po_core.app.rest.review_store import enqueue_review
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import Settings
 from po_core.trace.in_memory import InMemoryTracer
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["reason"])
 
@@ -97,14 +100,34 @@ def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
 # Internal run() returns "ok" on success; map to the published API contract.
 _STATUS_MAP: dict[str, str] = {
     "ok": "approved",
+    "approved": "approved",
     "blocked": "blocked",
     "fallback": "fallback",
 }
 
 
+class _FinalizedReasonPayload(TypedDict):
+    request_id: str
+    session_id: str
+    status: str
+    response: str
+    safety_mode: str
+    processing_time_ms: float
+    philosophers: list[dict[str, Any]]
+    tensors: dict[str, Any]
+    degraded: bool
+    llm_fallback: bool
+    fallback_reasons: list[str]
+
+
 def _normalize_status(raw: str) -> str:
     """Map internal run() status values to the documented API contract."""
-    return _STATUS_MAP.get(raw, "approved")
+    normalized = _STATUS_MAP.get(raw)
+    if normalized is not None:
+        return normalized
+
+    logger.warning("Unknown internal status received from reasoning engine", extra={"raw_status": raw})
+    return "fallback"
 
 
 def _build_po_settings(api_settings: Any) -> Settings:
@@ -242,25 +265,6 @@ def _detect_escalate(result: dict, tracer: InMemoryTracer) -> tuple[bool, str]:
     return False, ""
 
 
-def _enqueue_escalated_review(
-    session_id: str, result: dict, tracer: InMemoryTracer
-) -> None:
-    """Queue human review item when an ESCALATE decision is observed."""
-    escalated, reason = _detect_escalate(result, tracer)
-    if not escalated:
-        return
-
-    request_id = str(result.get("request_id") or session_id)
-    review_id = f"{session_id}:{request_id}"
-    enqueue_review(
-        review_id=review_id,
-        session_id=session_id,
-        request_id=request_id,
-        reason=reason,
-        source="/v1/reason",
-    )
-
-
 def _run_reasoning(
     request: ReasonRequest, api_settings: Any
 ) -> tuple[str, dict, InMemoryTracer]:
@@ -275,6 +279,58 @@ def _run_reasoning(
         tracer=tracer,
     )
     return session_id, result, tracer
+
+
+def _persist_and_finalize_result(
+    *,
+    session_id: str,
+    result: dict[str, Any],
+    tracer: InMemoryTracer,
+    elapsed_ms: float,
+    source: str,
+) -> _FinalizedReasonPayload:
+    """Persist trace/review side effects and build the transport-neutral result payload."""
+    save_trace(session_id, list(tracer.events))
+
+    escalated, reason = _detect_escalate(result, tracer)
+    request_id = str(result.get("request_id") or session_id)
+    if escalated:
+        enqueue_review(
+            review_id=f"{session_id}:{request_id}",
+            session_id=session_id,
+            request_id=request_id,
+            reason=reason,
+            source=source,
+        )
+
+    llm_fallback, fallback_reasons = _fallback_summary(result)
+    degraded = bool(result.get("degraded", False) or llm_fallback)
+
+    return {
+        "request_id": request_id,
+        "session_id": session_id,
+        "status": _normalize_status(str(result.get("status") or "")),
+        "response": _extract_response_text(result),
+        "safety_mode": str(result.get("safety_mode", "NORMAL")),
+        "processing_time_ms": round(elapsed_ms, 2),
+        "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
+        "tensors": _extract_tensors(result).model_dump(),
+        "degraded": degraded,
+        "llm_fallback": llm_fallback,
+        "fallback_reasons": fallback_reasons,
+    }
+
+
+async def _cancel_stream_task(task: asyncio.Task[Any] | None) -> None:
+    """Cancel and await a streaming worker task, suppressing expected cancellation only."""
+    if task is None:
+        return
+    if not task.done():
+        task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        return
 
 
 def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
@@ -356,26 +412,30 @@ async def reason(
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
-    # Persist trace
-    save_trace(session_id, list(tracer.events))
-    _enqueue_escalated_review(session_id, result, tracer)
-
-    llm_fallback, fallback_reasons = _fallback_summary(result)
-    degraded = bool(result.get("degraded", False) or llm_fallback)
+    response_payload = _persist_and_finalize_result(
+        session_id=session_id,
+        result=result,
+        tracer=tracer,
+        elapsed_ms=elapsed_ms,
+        source="/v1/reason",
+    )
 
     return ReasonResponse(
-        request_id=result.get("request_id", str(uuid.uuid4())),
-        session_id=session_id,
-        status=_normalize_status(str(result.get("status") or "")),
-        response=_extract_response_text(result),
-        philosophers=_extract_philosophers(result),
-        tensors=_extract_tensors(result),
-        safety_mode=str(result.get("safety_mode", "NORMAL")),
-        processing_time_ms=round(elapsed_ms, 2),
+        request_id=response_payload["request_id"],
+        session_id=response_payload["session_id"],
+        status=response_payload["status"],
+        response=response_payload["response"],
+        philosophers=[
+            PhilosopherContribution.model_validate(item)
+            for item in response_payload["philosophers"]
+        ],
+        tensors=TensorSnapshot.model_validate(response_payload["tensors"]),
+        safety_mode=response_payload["safety_mode"],
+        processing_time_ms=response_payload["processing_time_ms"],
         created_at=datetime.now(timezone.utc),
-        degraded=degraded,
-        llm_fallback=llm_fallback,
-        fallback_reasons=fallback_reasons,
+        degraded=response_payload["degraded"],
+        llm_fallback=response_payload["llm_fallback"],
+        fallback_reasons=response_payload["fallback_reasons"],
     )
 
 
@@ -402,7 +462,9 @@ async def _sse_generator(
         return f"data: {data}\n\n"
 
     try:
-        async for chunk in _stream_reasoning_chunks(body, api_settings):
+        async for chunk in _stream_reasoning_chunks(
+            body, api_settings, source="/v1/reason/stream"
+        ):
             yield _fmt(str(chunk["chunk_type"]), dict(chunk.get("payload") or {}))
 
     except Exception as exc:
@@ -410,7 +472,7 @@ async def _sse_generator(
 
 
 async def _stream_reasoning_chunks(
-    body: ReasonRequest, api_settings: Any
+    body: ReasonRequest, api_settings: Any, *, source: str
 ) -> AsyncGenerator[Dict[str, Any], None]:
     """Shared real-time chunk stream for SSE and WebSocket transports."""
     session_id = body.session_id or str(uuid.uuid4())
@@ -444,48 +506,40 @@ async def _stream_reasoning_chunks(
         finally:
             await queue.put(_DONE)
 
-    asyncio.create_task(_run_and_signal())
+    task: asyncio.Task[Any] | None = asyncio.create_task(_run_and_signal())
 
-    while True:
-        item = await queue.get()
-        if item is _DONE:
-            break
-        yield {
-            "chunk_type": "event",
-            "payload": {
-                "event_type": item.event_type,
-                "occurred_at": item.occurred_at.isoformat(),
-                "payload": dict(item.payload),
-            },
-        }
+    try:
+        while True:
+            item = await queue.get()
+            if item is _DONE:
+                break
+            yield {
+                "chunk_type": "event",
+                "payload": {
+                    "event_type": item.event_type,
+                    "occurred_at": item.occurred_at.isoformat(),
+                    "payload": dict(item.payload),
+                },
+            }
 
-    elapsed_ms = (time.perf_counter() - t0) * 1000.0
-    save_trace(session_id, list(tracer.events))
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
-    if exc_box:
-        yield {"chunk_type": "error", "payload": {"message": str(exc_box[0])}}
-        return
+        if exc_box:
+            yield {"chunk_type": "error", "payload": {"message": str(exc_box[0])}}
+            return
 
-    result = result_box[0]
-    llm_fallback, fallback_reasons = _fallback_summary(result)
-    degraded = bool(result.get("degraded", False) or llm_fallback)
-    yield {
-        "chunk_type": "result",
-        "payload": {
-            "request_id": result.get("request_id", str(uuid.uuid4())),
-            "session_id": session_id,
-            "status": _normalize_status(str(result.get("status") or "")),
-            "response": _extract_response_text(result),
-            "safety_mode": str(result.get("safety_mode", "NORMAL")),
-            "processing_time_ms": round(elapsed_ms, 2),
-            "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
-            "tensors": _extract_tensors(result).model_dump(),
-            "degraded": degraded,
-            "llm_fallback": llm_fallback,
-            "fallback_reasons": fallback_reasons,
-        },
-    }
-    yield {"chunk_type": "done", "payload": {}}
+        result = result_box[0]
+        response_payload = _persist_and_finalize_result(
+            session_id=session_id,
+            result=result,
+            tracer=tracer,
+            elapsed_ms=elapsed_ms,
+            source=source,
+        )
+        yield {"chunk_type": "result", "payload": response_payload}
+        yield {"chunk_type": "done", "payload": {}}
+    finally:
+        await _cancel_stream_task(task)
 
 
 @router.post(
@@ -561,7 +615,9 @@ async def reason_ws(websocket: WebSocket) -> None:
         return
 
     try:
-        async for chunk in _stream_reasoning_chunks(body, api_settings):
+        async for chunk in _stream_reasoning_chunks(
+            body, api_settings, source="/v1/ws/reason"
+        ):
             await websocket.send_json(chunk)
             if chunk.get("chunk_type") in {"done", "error"}:
                 break
