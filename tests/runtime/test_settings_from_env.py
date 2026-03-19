@@ -31,6 +31,7 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
         "PO_LLM_PROVIDER": "openai",
         "PO_LLM_MODEL": "gpt-4o-mini",
         "PO_LLM_TIMEOUT": "3.25",
+        "PO_PHILOSOPHER_EXECUTION_MODE": "process",
     }
     _apply_env(monkeypatch, env)
 
@@ -52,6 +53,7 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
     assert settings.llm_provider == "openai"
     assert settings.llm_model == "gpt-4o-mini"
     assert settings.llm_timeout_s == pytest.approx(3.25)
+    assert settings.philosopher_execution_mode == "process"
     assert settings.deliberation_max_rounds == 4
 
 
@@ -119,6 +121,7 @@ def test_rest_and_direct_paths_build_same_effective_settings(
         "PO_LLM_PROVIDER": "grok",
         "PO_LLM_MODEL": "grok-3-mini",
         "PO_LLM_TIMEOUT": "5.5",
+        "PO_PHILOSOPHER_EXECUTION_MODE": "process",
     }
     _apply_env(monkeypatch, env)
 
