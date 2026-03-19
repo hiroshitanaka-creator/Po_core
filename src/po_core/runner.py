@@ -21,7 +21,7 @@ Determinism contract (ADR-0002):
     Same path + same seed + same now + deterministic=True → identical JSON.
     (proposal content is deterministic given the same user_input)
 
-Dependencies: PyYAML, jsonschema (both in dev requirements)
+Dependencies: PyYAML, jsonschema (runtime requirements)
 """
 
 from __future__ import annotations
@@ -46,12 +46,10 @@ except ImportError as _e:  # pragma: no cover
         "jsonschema is required for po_core.runner. pip install jsonschema"
     ) from _e
 
-# ── Paths ─────────────────────────────────────────────────────────────────
+# ── Packaged resources ──────────────────────────────────────────────────────
 
-_ROOT = Path(__file__).resolve().parents[2]  # src/po_core → src → repo root
-_INPUT_SCHEMA = _ROOT / "docs" / "spec" / "input_schema_v1.json"
-_OUTPUT_SCHEMA = _ROOT / "docs" / "spec" / "output_schema_v1.json"
-
+_INPUT_SCHEMA_RESOURCE = "input_schema_v1.json"
+_OUTPUT_SCHEMA_RESOURCE = "output_schema_v1.json"
 _DEFAULT_NOW = "2026-02-22T00:00:00Z"
 
 # ── Helpers ───────────────────────────────────────────────────────────────
@@ -80,13 +78,17 @@ def _digest(data: dict) -> str:
     return hashlib.sha256(_canonical_json(data).encode("utf-8")).hexdigest()
 
 
-def _load_schema(path: Path) -> dict:
-    with path.open("r", encoding="utf-8") as f:
-        return dict(json.load(f))
+def _load_schema(resource_name: str) -> dict[str, object]:
+    from po_core.schemas import resource_path
+
+    schema_resource = resource_path(resource_name)
+    with schema_resource.open("r", encoding="utf-8") as schema_file:
+        loaded = json.load(schema_file)
+    return dict(loaded)
 
 
-def _validate(data: dict, schema_path: Path, label: str) -> None:
-    schema = _load_schema(schema_path)
+def _validate(data: dict, schema_resource: str, label: str) -> None:
+    schema = _load_schema(schema_resource)
     v = Draft202012Validator(schema, format_checker=FormatChecker())
     errors = sorted(v.iter_errors(data), key=lambda e: list(e.path))
     if errors:
@@ -399,7 +401,7 @@ def run_case_file(
     case: dict = _to_json_compat(raw)  # type: ignore[assignment]
 
     # 2. Validate input
-    _validate(case, _INPUT_SCHEMA, "Input")
+    _validate(case, _INPUT_SCHEMA_RESOURCE, "Input")
 
     # 3. Compute input_digest
     digest = _digest(case)
@@ -426,7 +428,7 @@ def run_case_file(
     )
 
     # 6. Validate output
-    _validate(output, _OUTPUT_SCHEMA, "Output")
+    _validate(output, _OUTPUT_SCHEMA_RESOURCE, "Output")
 
     # 7. Return
     return output

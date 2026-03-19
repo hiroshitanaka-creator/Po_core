@@ -47,7 +47,7 @@ FROM python:3.11-slim AS runtime
 LABEL org.opencontainers.image.title="Po_core REST API" \
       org.opencontainers.image.description="Philosophy-driven AI deliberation via 39 philosopher personas" \
       org.opencontainers.image.source="https://github.com/hiroshitanaka-creator/Po_core" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="AGPL-3.0-or-later"
 
 # Non-root user for security
 RUN groupadd --gid 1001 pocore \
@@ -58,12 +58,6 @@ WORKDIR /app
 # Copy venv from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy application source
-COPY --from=builder /build/src ./src
-
-# Config files
-COPY src/po_core/config/ ./src/po_core/config/
 
 # Runtime env vars (override via docker run -e or docker-compose)
 ENV PO_HOST=0.0.0.0 \
