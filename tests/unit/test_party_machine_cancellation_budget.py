@@ -15,7 +15,9 @@ class _BudgetAwarePhilosopher:
     stopped: threading.Event = field(default_factory=threading.Event)
     cancelled: threading.Event = field(default_factory=threading.Event)
 
-    def propose(self, ctx, intent, tensors, memory, budget: ExecutionBudget | None = None):
+    def propose(
+        self, ctx, intent, tensors, memory, budget: ExecutionBudget | None = None
+    ):
         assert budget is not None
         self.started.set()
         try:

@@ -18,7 +18,6 @@ EXPECTED_STARTUP_MESSAGE = (
 )
 
 
-
 def test_startup_fails_fast_when_multiple_workers_use_sqlite_backends(tmp_path) -> None:
     app = create_app(
         APISettings(
@@ -32,12 +31,13 @@ def test_startup_fails_fast_when_multiple_workers_use_sqlite_backends(tmp_path) 
         )
     )
 
-    with pytest.raises(RuntimeError, match="workers > 1 is not supported with sqlite") as excinfo:
+    with pytest.raises(
+        RuntimeError, match="workers > 1 is not supported with sqlite"
+    ) as excinfo:
         with TestClient(app, raise_server_exceptions=True):
             pass
 
     assert str(excinfo.value) == EXPECTED_STARTUP_MESSAGE
-
 
 
 def test_trace_store_applies_sqlite_pragmas(tmp_path) -> None:
@@ -58,7 +58,6 @@ def test_trace_store_applies_sqlite_pragmas(tmp_path) -> None:
         assert str(journal_mode).lower() == "wal"
     finally:
         raw_conn.close()
-
 
 
 def test_review_store_applies_sqlite_pragmas(tmp_path) -> None:

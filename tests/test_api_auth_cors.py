@@ -9,7 +9,9 @@ class _FakeResponse(dict):
     pass
 
 
-def _load_api_module(monkeypatch, api_key: str = "", cors_origins: str = "", skip_auth: bool = True):
+def _load_api_module(
+    monkeypatch, api_key: str = "", cors_origins: str = "", skip_auth: bool = True
+):
     monkeypatch.setenv("PO_SKIP_AUTH", "true" if skip_auth else "false")
     monkeypatch.setenv("PO_API_KEY", api_key)
     monkeypatch.setenv("PO_CORS_ORIGINS", cors_origins)

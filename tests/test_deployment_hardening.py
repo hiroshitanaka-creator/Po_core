@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Final
-import re
 
 import yaml
 
@@ -79,4 +79,7 @@ def test_compose_healthcheck_uses_configurable_port() -> None:
 
     python_snippet = test_command[3]
     assert isinstance(python_snippet, str)
-    assert "urllib.request.urlopen('http://localhost:${PO_PORT:-8000}/v1/health')" in python_snippet
+    assert (
+        "urllib.request.urlopen('http://localhost:${PO_PORT:-8000}/v1/health')"
+        in python_snippet
+    )

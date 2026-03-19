@@ -9,23 +9,23 @@ from pathlib import Path
 
 def test_runner_loads_packaged_schemas_from_installed_package(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
-    install_dir = tmp_path / 'installed-package'
-    case_copy = tmp_path / 'case_002.yaml'
+    install_dir = tmp_path / "installed-package"
+    case_copy = tmp_path / "case_002.yaml"
     case_copy.write_text(
-        (repo_root / 'scenarios' / 'case_002.yaml').read_text(encoding='utf-8'),
-        encoding='utf-8',
+        (repo_root / "scenarios" / "case_002.yaml").read_text(encoding="utf-8"),
+        encoding="utf-8",
     )
 
     subprocess.run(
         [
             sys.executable,
-            '-m',
-            'pip',
-            'install',
-            '--no-deps',
-            '--target',
+            "-m",
+            "pip",
+            "install",
+            "--no-deps",
+            "--target",
             str(install_dir),
-            '--no-build-isolation',
+            "--no-build-isolation",
             str(repo_root),
         ],
         check=True,
@@ -50,9 +50,9 @@ print(json.dumps({
 }))
 """
     env = os.environ.copy()
-    env['PYTHONPATH'] = str(install_dir)
+    env["PYTHONPATH"] = str(install_dir)
     completed = subprocess.run(
-        [sys.executable, '-c', runner_script],
+        [sys.executable, "-c", runner_script],
         check=True,
         cwd=tmp_path,
         env=env,
@@ -61,6 +61,6 @@ print(json.dumps({
     )
 
     payload = json.loads(completed.stdout.strip())
-    assert payload['case_id'] == 'case_002_headcount_reduction'
-    assert payload['schema_version'] == '1.0'
-    assert Path(payload['cwd']) == tmp_path
+    assert payload["case_id"] == "case_002_headcount_reduction"
+    assert payload["schema_version"] == "1.0"
+    assert Path(payload["cwd"]) == tmp_path

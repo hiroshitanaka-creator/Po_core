@@ -52,8 +52,10 @@ def _read_text(path: str) -> str:
 def read_packaged_default_text() -> str:
     """Read packaged default battalion table text from installed artifact."""
 
-    return resources.files("po_core.config").joinpath(_DEFAULT_RESOURCE).read_text(
-        encoding="utf-8"
+    return (
+        resources.files("po_core.config")
+        .joinpath(_DEFAULT_RESOURCE)
+        .read_text(encoding="utf-8")
     )
 
 
