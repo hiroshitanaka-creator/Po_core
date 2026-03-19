@@ -29,7 +29,12 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from po_core.app.rest.auth import evaluate_auth_policy
-from po_core.app.rest.config import APISettings, get_api_settings, set_api_settings
+from po_core.app.rest.config import (
+    APISettings,
+    get_api_settings,
+    parse_cors_origins,
+    set_api_settings,
+)
 from po_core.app.rest.rate_limit import limiter
 from po_core.app.rest.routers import (
     health,
@@ -52,14 +57,8 @@ def _rate_limit_handler(request: Request, exc: Exception) -> Response:
 
 
 def _parse_cors_origins(cors_origins: str) -> list[str]:
-    """
-    Parse a comma-separated CORS origins string into a list.
-
-    "*" is returned as-is (allow all).  Whitespace around each entry is stripped.
-    """
-    if cors_origins.strip() == "*":
-        return ["*"]
-    return [o.strip() for o in cors_origins.split(",") if o.strip()]
+    """Backward-compatible wrapper around shared CORS parsing settings."""
+    return parse_cors_origins(cors_origins)
 
 
 def _validate_startup_auth_configuration(settings: APISettings) -> None:
@@ -77,6 +76,26 @@ def _validate_startup_auth_configuration(settings: APISettings) -> None:
             "but PO_API_KEY is unset or blank. "
             "Set PO_API_KEY to a non-empty value, or set PO_SKIP_AUTH=true for development only."
         )
+
+
+def _validate_worker_storage_configuration(settings: APISettings) -> None:
+    """Fail fast when sqlite backends are configured for multi-worker deployment."""
+    sqlite_backends: list[str] = []
+    if settings.trace_store_backend.strip().lower() == "sqlite":
+        sqlite_backends.append("trace")
+    if settings.review_store_backend.strip().lower() == "sqlite":
+        sqlite_backends.append("review")
+
+    if settings.workers <= 1 or not sqlite_backends:
+        return
+
+    backend_list = ", ".join(sqlite_backends)
+    raise RuntimeError(
+        "Startup aborted: workers > 1 is not supported with sqlite storage backends. "
+        f"workers={settings.workers}, sqlite_backends={backend_list}. "
+        "Use PO_WORKERS=1, or switch PO_TRACE_STORE_BACKEND / PO_REVIEW_STORE_BACKEND to memory "
+        "or another multi-worker-safe backend."
+    )
 
 
 def create_app(settings: APISettings | None = None) -> FastAPI:
@@ -164,7 +183,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
     # CORS — restrict origins in production via PO_CORS_ORIGINS.
     # Default "*" allows all origins (convenient for local dev).
     # When specific origins are set, credentials are also allowed.
-    allowed_origins = _parse_cors_origins(settings.cors_origins)
+    allowed_origins = parse_cors_origins(settings.cors_origins)
     allow_credentials = allowed_origins != ["*"]
     application.add_middleware(
         CORSMiddleware,
@@ -205,6 +224,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
         )
 
         _validate_startup_auth_configuration(settings)
+        _validate_worker_storage_configuration(settings)
 
     return application
 

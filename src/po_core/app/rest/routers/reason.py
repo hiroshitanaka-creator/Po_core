@@ -22,6 +22,7 @@ from fastapi.responses import StreamingResponse
 from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
 from po_core.app.rest.auth import evaluate_auth_policy, require_api_key
+from po_core.app.rest.config import get_api_settings, is_rate_limit_enabled
 from po_core.app.rest.models import (
     PhilosopherContribution,
     ReasonRequest,
@@ -54,10 +55,13 @@ def _reason_limit() -> str:
     that .env configuration and test overrides are honoured instead of a value
     frozen in ``os.environ`` at import time.
     """
-    from po_core.app.rest.config import get_api_settings
-
     rpm: int = get_api_settings().rate_limit_per_minute
     return f"{rpm}/minute"
+
+
+def _http_rate_limit_exempt() -> bool:
+    """Return True when HTTP rate limiting is disabled by configuration."""
+    return not is_rate_limit_enabled(get_api_settings().rate_limit_per_minute)
 
 
 def _resolve_ws_auth_key(
@@ -86,12 +90,14 @@ def _resolve_ws_auth_key(
 
 def _is_ws_rate_limited(websocket: WebSocket, rpm: int) -> bool:
     """Return True when the client exceeded the per-minute WS request budget."""
+    if not is_rate_limit_enabled(rpm):
+        return False
     client_ip = websocket.client.host if websocket.client else "unknown"
     now = time.monotonic()
     timestamps = _ws_rate_log[client_ip]
     while timestamps and now - timestamps[0] > _WS_WINDOW_SECONDS:
         timestamps.popleft()
-    if len(timestamps) >= max(rpm, 1):
+    if len(timestamps) >= rpm:
         return True
     timestamps.append(now)
     return False
@@ -390,15 +396,13 @@ def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
         429: {"description": "Rate limit exceeded"},
     },
 )
-@limiter.limit(_reason_limit)
+@limiter.limit(_reason_limit, exempt_when=_http_rate_limit_exempt)
 async def reason(
     body: ReasonRequest,
     request: Request,
     _: None = Depends(require_api_key),
 ) -> ReasonResponse:
     """Synchronous reasoning endpoint (non-blocking: offloaded to thread pool)."""
-    from po_core.app.rest.config import get_api_settings
-
     api_settings = get_api_settings()
     t0 = time.perf_counter()
 
@@ -561,7 +565,7 @@ async def _stream_reasoning_chunks(
         429: {"description": "Rate limit exceeded"},
     },
 )
-@limiter.limit(_reason_limit)
+@limiter.limit(_reason_limit, exempt_when=_http_rate_limit_exempt)
 async def reason_stream(
     body: ReasonRequest,
     request: Request,

@@ -1,4 +1,4 @@
-"""Shared API-key authentication policy for REST and WebSocket transports."""
+"""Shared API-key authentication policy for REST, WebSocket, and legacy API transports."""
 
 from __future__ import annotations
 
@@ -83,3 +83,19 @@ async def require_api_key(
         detail=decision.message,
         headers={"WWW-Authenticate": "ApiKey"},
     )
+
+
+def extract_api_key_from_headers(
+    *,
+    x_api_key: str | None,
+    authorization: str | None,
+) -> str | None:
+    """Resolve an API key from shared HTTP header conventions."""
+    if x_api_key and x_api_key.strip():
+        return x_api_key.strip()
+    if not authorization:
+        return None
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token.strip():
+        return None
+    return token.strip()

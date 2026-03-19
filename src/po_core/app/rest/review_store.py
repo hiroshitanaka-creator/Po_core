@@ -12,6 +12,9 @@ from typing import Any, Dict, Optional
 
 from po_core.app.rest.config import get_api_settings
 
+_SQLITE_TIMEOUT_SECONDS = 5.0
+_SQLITE_BUSY_TIMEOUT_MS = 5000
+
 
 class ReviewStore(ABC):
     """Abstract backend for human-review queue records."""
@@ -139,8 +142,14 @@ class SQLiteReviewStore(ReviewStore):
         self._init_db()
 
     def _connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(str(self._db_path), detect_types=sqlite3.PARSE_DECLTYPES)
+        conn = sqlite3.connect(
+            str(self._db_path),
+            detect_types=sqlite3.PARSE_DECLTYPES,
+            timeout=_SQLITE_TIMEOUT_SECONDS,
+        )
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute(f"PRAGMA busy_timeout={_SQLITE_BUSY_TIMEOUT_MS}")
         return conn
 
     def _init_db(self) -> None:

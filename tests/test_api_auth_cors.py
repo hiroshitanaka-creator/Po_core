@@ -9,7 +9,8 @@ class _FakeResponse(dict):
     pass
 
 
-def _load_api_module(monkeypatch, api_key: str = "", cors_origins: str = ""):
+def _load_api_module(monkeypatch, api_key: str = "", cors_origins: str = "", skip_auth: bool = True):
+    monkeypatch.setenv("PO_SKIP_AUTH", "true" if skip_auth else "false")
     monkeypatch.setenv("PO_API_KEY", api_key)
     monkeypatch.setenv("PO_CORS_ORIGINS", cors_origins)
     # legacy aliases are still supported; canonical keys are preferred.
@@ -21,7 +22,7 @@ def _load_api_module(monkeypatch, api_key: str = "", cors_origins: str = ""):
 
 
 def test_generate_requires_api_key_when_secure_mode_enabled(monkeypatch):
-    api = _load_api_module(monkeypatch, api_key="secret")
+    api = _load_api_module(monkeypatch, api_key="secret", skip_auth=False)
 
     async def _fake_async_run(user_input, *, philosophers=None):
         return _FakeResponse(ok=True)
@@ -31,11 +32,11 @@ def test_generate_requires_api_key_when_secure_mode_enabled(monkeypatch):
     client = TestClient(api.app)
     response = client.post("/generate", json={"user_input": "hello"})
 
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 def test_generate_accepts_valid_bearer_api_key(monkeypatch):
-    api = _load_api_module(monkeypatch, api_key="secret")
+    api = _load_api_module(monkeypatch, api_key="secret", skip_auth=False)
 
     async def _fake_async_run(user_input, *, philosophers=None):
         return _FakeResponse(ok=True)
@@ -49,7 +50,7 @@ def test_generate_accepts_valid_bearer_api_key(monkeypatch):
         headers={"Authorization": "Bearer secret"},
     )
 
-    assert response.status_code != 403
+    assert response.status_code != 401
 
 
 def test_generate_forwards_philosophers_allowlist(monkeypatch):
@@ -131,4 +132,4 @@ def test_options_preflight_not_blocked_in_secure_mode(monkeypatch):
         },
     )
 
-    assert response.status_code != 403
+    assert response.status_code != 401
