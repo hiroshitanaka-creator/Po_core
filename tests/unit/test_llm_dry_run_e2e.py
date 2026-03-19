@@ -94,9 +94,8 @@ def _runtime_settings() -> Settings:
 def _disable_external_battalion_table(
     monkeypatch: pytest.MonkeyPatch, tmp_path
 ) -> None:
-    monkeypatch.setenv(
-        "PO_CORE_BATTALION_TABLE", str(tmp_path / "missing_battalion.yaml")
-    )
+    del tmp_path  # unused: explicit packaged fallback is selected by clearing the env.
+    monkeypatch.delenv("PO_CORE_BATTALION_TABLE", raising=False)
 
 
 def _enable_forced_llm_unavailable_for_openai(
