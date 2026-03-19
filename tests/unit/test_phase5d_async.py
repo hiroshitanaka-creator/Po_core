@@ -32,6 +32,13 @@ class _FakeProposal:
     extra: Mapping = field(default_factory=dict)
 
 
+
+
+@dataclass(frozen=True)
+class _StubArg:
+    value: str = "stub"
+
+
 class _OKPhilosopher:
     name = "ok_phil"
 
@@ -70,10 +77,10 @@ async def test_async_run_philosophers_success():
 
     proposals, results = await async_run_philosophers(
         [_OKPhilosopher()],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
         max_workers=2,
         timeout_s=2.0,
     )
@@ -94,10 +101,10 @@ async def test_async_run_philosophers_empty():
 
     proposals, results = await async_run_philosophers(
         [],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
         max_workers=2,
         timeout_s=1.0,
     )
@@ -115,10 +122,10 @@ async def test_async_run_philosophers_exception_isolated():
 
     proposals, results = await async_run_philosophers(
         [_OKPhilosopher(), _ErrorPhilosopher()],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
         max_workers=2,
         timeout_s=2.0,
     )
@@ -133,16 +140,17 @@ async def test_async_run_philosophers_exception_isolated():
 @pytest.mark.unit
 @pytest.mark.phase5
 @pytest.mark.asyncio
-async def test_async_run_philosophers_timeout():
+async def test_async_run_philosophers_timeout(monkeypatch):
     """Slow philosopher is marked timed_out; not counted in proposals."""
+    monkeypatch.setenv("PO_PHILOSOPHER_HARD_TIMEOUT_MAX_S", "1.0")
     from po_core.party_machine import async_run_philosophers
 
     proposals, results = await async_run_philosophers(
         [_SlowPhilosopher()],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
         max_workers=2,
         timeout_s=0.1,  # 100 ms timeout → _SlowPhilosopher (5 s) will time out
     )
@@ -150,6 +158,7 @@ async def test_async_run_philosophers_timeout():
     assert len(results) == 1
     assert results[0].timed_out is True
     assert results[0].ok is False
+    assert "Hard timeout after 0.1s" in (results[0].error or "")
     assert proposals == []
 
 
@@ -162,10 +171,10 @@ async def test_async_run_philosophers_mixed():
 
     proposals, results = await async_run_philosophers(
         [_OKPhilosopher(), _ErrorPhilosopher(), _SlowPhilosopher()],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
         max_workers=4,
         timeout_s=0.1,
     )
@@ -356,10 +365,10 @@ async def test_async_party_machine_aclose():
     machine = AsyncPartyMachine(max_workers=2, timeout_s=1.0)
     proposals, results = await machine.run(
         [_OKPhilosopher()],
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
+        _StubArg("ctx"),
+        _StubArg("intent"),
+        _StubArg("tensors"),
+        _StubArg("memory"),
     )
     await machine.aclose()
 
