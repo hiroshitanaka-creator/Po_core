@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/pocore/schemas/input_schema_v1.json",
+  "title": "Po_core Input (Case) Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "title",
+    "problem",
+    "constraints",
+    "values"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "任意のメタ情報。存在する場合はschema_versionを必須とする。",
+      "additionalProperties": false,
+      "required": [
+        "schema_version"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sensitivity": {
+          "type": "string",
+          "description": "ケースが含む情報のセンシティブ度（運用・公開判断用）",
+          "enum": [
+            "public",
+            "internal",
+            "confidential"
+          ]
+        }
+      }
+    },
+    "case_id": {
+      "type": "string",
+      "description": "ケースの一意ID（ファイル名や参照キーに使う）",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_\\-]{2,127}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "人間向けタイトル",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "locale": {
+      "type": "string",
+      "description": "言語/地域タグ（例：ja-JP）",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "problem": {
+      "type": "string",
+      "description": "何を決めたいか（主問題の記述）",
+      "minLength": 1
+    },
+    "context": {
+      "type": "object",
+      "description": "任意の文脈情報（自由形式）。モデル/ルールが参照する素材。",
+      "additionalProperties": true
+    },
+    "constraints": {
+      "type": "array",
+      "description": "守る制約（存在は必須、空配列は許容）",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "values": {
+      "type": "array",
+      "description": "重視する価値（存在は必須、空配列は許容：問いの層を発火させるため）",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "deadline": {
+      "description": "期限（date または date-time）",
+      "type": "string",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ]
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "関係者（任意。空配列も可）",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/$defs/stakeholder"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "description": "不明点（任意。空配列も可）",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "入力側が既に置いている仮定（任意）",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "根拠資料や参照（任意）",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/$defs/reference"
+      }
+    },
+    "desired_style": {
+      "type": "object",
+      "description": "出力のスタイル希望（任意。Po_coreのUI/整形用）",
+      "additionalProperties": false,
+      "properties": {
+        "output_language": {
+          "type": "string",
+          "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+        },
+        "max_questions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 5
+        },
+        "verbosity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "自由拡張用の名前空間（トップレベルの追加は禁止。追加はここに入れる）",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "stakeholder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "role",
+        "impact"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "ref"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "url",
+            "doc",
+            "paper",
+            "policy",
+            "log",
+            "other"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

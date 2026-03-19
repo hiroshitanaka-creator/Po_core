@@ -53,6 +53,7 @@ dependencies = [
     "scipy>=1.11.0",
     "structlog>=23.2.0",
     "pyyaml>=6.0",
+    "jsonschema>=4.26.0",
     "python-dotenv>=1.0.0",
     "matplotlib>=3.7.0",
     "plotly>=5.18.0",
@@ -126,6 +127,7 @@ po_core = [
     "config/*/*/*.yaml",
     "axis/specs/*.json",
     "philosophers/prompts/*.yaml",
+    "schemas/*.json",
     "viewer/*.html",
     "py.typed",
 ]
@@ -306,6 +308,5 @@ github = "https://github.com/hiroshitanaka-creator/Po_core"
 
 [dependency-groups]
 dev = [
-    "jsonschema>=4.26.0",
     "pytest>=9.0.2",
 ]
