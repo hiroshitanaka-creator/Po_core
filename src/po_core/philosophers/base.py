@@ -25,7 +25,7 @@ The normalize_response() function provides backward compatibility.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from typing import Protocol as TypingProtocol
 from typing import TypedDict
 
@@ -35,6 +35,9 @@ from po_core.domain.keys import CITATIONS, PO_CORE, RATIONALE
 from po_core.domain.memory_snapshot import MemorySnapshot
 from po_core.domain.proposal import Proposal
 from po_core.domain.tensor_snapshot import TensorSnapshot
+
+if TYPE_CHECKING:
+    from po_core.runtime.execution_budget import ExecutionBudget
 
 # Valid action types that philosophers may declare.
 # Values outside this set are silently normalised to "answer".
@@ -391,6 +394,8 @@ class Philosopher(ABC):
         module_id = self.__class__.__module__.split(".")[-1]
         voice = get_voice(module_id)
         if voice:
+            if budget is not None:
+                budget.raise_if_cancelled_or_expired()
             tension_level: Optional[str] = None
             tension = normalized.get("tension")
             if isinstance(tension, dict):
@@ -454,6 +459,7 @@ class Philosopher(ABC):
         intent: "Intent",
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
+        budget: Optional["ExecutionBudget"] = None,
     ) -> "List[Proposal]":
         """
         PhilosopherProtocol.propose(): generate proposals from this philosopher.
@@ -461,6 +467,9 @@ class Philosopher(ABC):
         Calls reason(), normalizes the result, and wraps it as a Proposal.
         """
         from po_core.runtime.voice_loader import get_voice
+
+        if budget is not None:
+            budget.raise_if_cancelled_or_expired()
 
         # Build lightweight context for legacy reason() interface.
         # Tensor values are now forwarded so philosophers can react to them.
@@ -474,6 +483,9 @@ class Philosopher(ABC):
 
         # Call legacy reason()
         raw = self.reason(ctx.user_input, legacy_context)
+
+        if budget is not None:
+            budget.raise_if_cancelled_or_expired()
 
         # Normalize response
         normalized = normalize_response(raw, self.name, self.description)
@@ -489,6 +501,8 @@ class Philosopher(ABC):
         module_id = self.__class__.__module__.split(".")[-1]
         voice = get_voice(module_id)
         if voice:
+            if budget is not None:
+                budget.raise_if_cancelled_or_expired()
             tension_level_v: Optional[str] = None
             tension_v = normalized.get("tension")
             if isinstance(tension_v, dict):
@@ -529,6 +543,9 @@ class Philosopher(ABC):
             RATIONALE: rationale,
             CITATIONS: citations,
         }
+
+        if budget is not None:
+            budget.raise_if_cancelled_or_expired()
 
         proposal = Proposal(
             proposal_id=f"{ctx.request_id}:{self.name}:0",
@@ -592,6 +609,7 @@ class Philosopher(ABC):
         intent: "Intent",
         tensors: "TensorSnapshot",
         memory: "MemorySnapshot",
+        budget: Optional["ExecutionBudget"] = None,
     ) -> "List[Proposal]":
         """Async interface for PhilosopherProtocol.propose().
 
@@ -608,11 +626,17 @@ class Philosopher(ABC):
         import asyncio
         import functools
 
+        if budget is not None:
+            budget.raise_if_cancelled_or_expired()
+
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
+        result = await loop.run_in_executor(
             None,
-            functools.partial(self.propose, ctx, intent, tensors, memory),
+            functools.partial(self.propose, ctx, intent, tensors, memory, budget=budget),
         )
+        if budget is not None:
+            budget.raise_if_cancelled_or_expired()
+        return result
 
 
 # ── New Protocol-based interface for hexagonal architecture ──────────
@@ -667,6 +691,7 @@ class PhilosopherProtocol(TypingProtocol):
         intent: Intent,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
+        budget: Optional["ExecutionBudget"] = None,
     ) -> List[Proposal]:
         """
         Generate proposals based on context, intent, tensors, and memory.
@@ -723,6 +748,7 @@ class PhilosopherProtocol(TypingProtocol):
         intent: Intent,
         tensors: TensorSnapshot,
         memory: MemorySnapshot,
+        budget: Optional["ExecutionBudget"] = None,
     ) -> List[Proposal]:
         """
         Async variant of propose().
