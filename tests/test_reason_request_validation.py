@@ -64,3 +64,58 @@ def test_omitted_session_id_still_generates_uuid(client: TestClient) -> None:
         r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
         payload["session_id"],
     )
+
+
+def test_metadata_rejects_too_many_properties(client: TestClient) -> None:
+    metadata = {f"k{i}": i for i in range(17)}
+
+    response = client.post(
+        "/v1/reason",
+        json={"input": "Validate metadata", "metadata": metadata},
+    )
+
+    assert response.status_code == 422
+    assert "metadata must contain at most 16 top-level properties" in str(response.json()["detail"])
+
+
+def test_metadata_rejects_oversized_json_payload(client: TestClient) -> None:
+    response = client.post(
+        "/v1/reason",
+        json={"input": "Validate metadata", "metadata": {"blob": "x" * 2050}},
+    )
+
+    assert response.status_code == 422
+    assert "metadata must serialize to at most 2048 UTF-8 bytes" in str(response.json()["detail"])
+
+
+def test_philosophers_rejects_too_many_items(client: TestClient) -> None:
+    response = client.post(
+        "/v1/reason",
+        json={
+            "input": "Validate philosophers",
+            "philosophers": [f"phil_{i}" for i in range(9)],
+        },
+    )
+
+    assert response.status_code == 422
+    assert "philosophers must contain at most 8 items" in str(response.json()["detail"])
+
+
+def test_philosophers_rejects_invalid_identifier_format(client: TestClient) -> None:
+    response = client.post(
+        "/v1/reason",
+        json={"input": "Validate philosophers", "philosophers": ["bad space"]},
+    )
+
+    assert response.status_code == 422
+    assert "each philosopher ID must match pattern" in str(response.json()["detail"])
+
+
+def test_philosophers_rejects_duplicate_identifiers(client: TestClient) -> None:
+    response = client.post(
+        "/v1/reason",
+        json={"input": "Validate philosophers", "philosophers": ["kant", "kant"]},
+    )
+
+    assert response.status_code == 422
+    assert "philosopher IDs must be unique" in str(response.json()["detail"])

@@ -21,7 +21,11 @@ from fastapi.responses import StreamingResponse
 
 from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
-from po_core.app.rest.auth import evaluate_auth_policy, require_api_key
+from po_core.app.rest.auth import (
+    evaluate_auth_policy,
+    extract_api_key_from_header_map,
+    require_api_key,
+)
 from po_core.app.rest.config import APISettings, get_api_settings, is_rate_limit_enabled
 from po_core.app.rest.models import (
     PhilosopherContribution,
@@ -103,14 +107,19 @@ def _resolve_ws_auth_key(
 ) -> str | None:
     """Resolve API key for WebSocket handshake.
 
-    By default, only the ``X-API-Key`` header is accepted because query-string
-    secrets are easier to leak via logs/history/referers.
+    By default, the configured API-key header is accepted, with ``X-API-Key``
+    retained as a backwards-compatible alias unless it is already configured.
+    Query-string secrets are still rejected by default because they are easier
+    to leak via logs/history/referers.
 
     If ``allow_query_api_key`` is explicitly enabled, ``?api_key=...`` is accepted
     as a browser-compatibility fallback for environments that cannot set custom
     WebSocket headers.
     """
-    header_key: str | None = websocket.headers.get("x-api-key")
+    header_key = extract_api_key_from_header_map(
+        websocket.headers,
+        configured_header_name=get_api_settings().api_key_header,
+    )
     if header_key:
         return header_key
     if allow_query_api_key:

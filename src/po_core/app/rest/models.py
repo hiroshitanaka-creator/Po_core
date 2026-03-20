@@ -8,9 +8,17 @@ Pydantic v2 models for all REST API endpoints.
 from __future__ import annotations
 
 from datetime import datetime
+import json
+import re
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+MAX_REASON_METADATA_PROPERTIES = 16
+MAX_REASON_METADATA_JSON_BYTES = 2048
+MAX_REASON_PHILOSOPHERS = 8
+MAX_REASON_PHILOSOPHER_ID_LENGTH = 64
+_REASON_PHILOSOPHER_ID_PATTERN = r"^[a-z0-9](?:[a-z0-9_:-]{0,62}[a-z0-9])?$|^[a-z0-9]$"
 
 # ---------------------------------------------------------------------------
 # POST /v1/reason
@@ -40,17 +48,83 @@ class ReasonRequest(BaseModel):
     )
     metadata: Dict[str, Any] = Field(
         default_factory=dict,
-        description="Arbitrary key-value metadata attached to this request.",
+        description=(
+            "Optional JSON metadata attached to this request. "
+            f"Limited to {MAX_REASON_METADATA_PROPERTIES} top-level properties and "
+            f"{MAX_REASON_METADATA_JSON_BYTES} UTF-8 bytes when JSON-serialized."
+        ),
     )
     philosophers: Optional[List[str]] = Field(
         default=None,
         description=(
             "Optional explicit philosopher allowlist. "
             "When provided, only philosophers that overlap with safety-selected "
-            "members are executed."
+            "members are executed. "
+            f"At most {MAX_REASON_PHILOSOPHERS} philosopher IDs are accepted; each ID must be "
+            f"1-{MAX_REASON_PHILOSOPHER_ID_LENGTH} chars and match {_REASON_PHILOSOPHER_ID_PATTERN!r}."
         ),
         examples=[["kant"], ["aristotle", "confucius"]],
     )
+
+    @field_validator("metadata")
+    @classmethod
+    def validate_metadata(cls, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        if len(metadata) > MAX_REASON_METADATA_PROPERTIES:
+            raise ValueError(
+                "metadata must contain at most "
+                f"{MAX_REASON_METADATA_PROPERTIES} top-level properties"
+            )
+
+        try:
+            serialized = json.dumps(
+                metadata,
+                ensure_ascii=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        except (TypeError, ValueError) as exc:
+            raise ValueError("metadata must be valid JSON-compatible data") from exc
+
+        if len(serialized.encode("utf-8")) > MAX_REASON_METADATA_JSON_BYTES:
+            raise ValueError(
+                "metadata must serialize to at most "
+                f"{MAX_REASON_METADATA_JSON_BYTES} UTF-8 bytes"
+            )
+        return metadata
+
+    @field_validator("philosophers")
+    @classmethod
+    def validate_philosophers(
+        cls, philosophers: Optional[List[str]]
+    ) -> Optional[List[str]]:
+        if philosophers is None:
+            return None
+        if len(philosophers) > MAX_REASON_PHILOSOPHERS:
+            raise ValueError(
+                "philosophers must contain at most "
+                f"{MAX_REASON_PHILOSOPHERS} items"
+            )
+
+        seen: set[str] = set()
+        for philosopher in philosophers:
+            if not isinstance(philosopher, str):
+                raise ValueError("each philosopher ID must be a string")
+            if len(philosopher) > MAX_REASON_PHILOSOPHER_ID_LENGTH:
+                raise ValueError(
+                    "each philosopher ID must be at most "
+                    f"{MAX_REASON_PHILOSOPHER_ID_LENGTH} characters"
+                )
+            if not philosopher:
+                raise ValueError("philosopher IDs must not be empty")
+            if re.fullmatch(_REASON_PHILOSOPHER_ID_PATTERN, philosopher) is None:
+                raise ValueError(
+                    "each philosopher ID must match pattern "
+                    f"{_REASON_PHILOSOPHER_ID_PATTERN}"
+                )
+            if philosopher in seen:
+                raise ValueError("philosopher IDs must be unique")
+            seen.add(philosopher)
+        return philosophers
 
 
 class PhilosopherContribution(BaseModel):
