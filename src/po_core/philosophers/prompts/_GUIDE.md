@@ -1,7 +1,16 @@
 # 哲学者プロンプト作成ガイド
 
-> **目的:** このディレクトリの YAML ファイルが、LLM（GPT-5.4 Pro 等）への哲学者プロンプトの唯一の真実源（SSOT）となる。
-> **担当:** 各 `{philosopher}.yaml` をここに記述し、`LLMPhilosopher` クラスが読み込んで LLM を呼び出す。
+> **⚠️ 作業状況 (WIP):** 42ファイル中、完成済みは `aristotle.yaml` と `appiah.yaml` の2件のみ。
+> 残り40ファイルには `FILL_IN` プレースホルダーが残っており、未完成。
+>
+> **現在の運用実態:**
+> `LLMPhilosopher` クラスは `llm_personas.py` の `get_persona()` を使って
+> システムプロンプトを取得しており、この YAML ファイルは**現時点では読み込まれていない**。
+> 将来的に `LLMPhilosopher` が YAML を読むように移行した時点で、このディレクトリが
+> 真の SSOT となる予定。それまでの実際の SSOT は `llm_personas.py`。
+>
+> **目的:** このディレクトリの YAML ファイルを、LLM への哲学者プロンプトの唯一の真実源（SSOT）にすることを目指す。
+> **担当:** 各 `{philosopher}.yaml` をここに記述し、`LLMPhilosopher` クラスが読み込んで LLM を呼び出す（将来移行後）。
 
 ---
 

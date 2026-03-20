@@ -15,8 +15,41 @@ on:
           - pypi
 
 jobs:
+  gate:
+    name: Pre-publish gate (must-pass tests + security)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1  # v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Must-pass pipeline tests
+        run: |
+          pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py \
+                 tests/test_smoke_pipeline.py -v
+
+      - name: Acceptance tests (M1 gate)
+        run: pytest tests/acceptance/ -v -m acceptance
+
+      - name: Output schema validation
+        run: pytest tests/test_output_schema.py -v
+
+      - name: Security check — no CVEs allowed
+        run: safety check --json
+
   build:
     name: Build distribution
+    needs: gate
     runs-on: ubuntu-latest
 
     steps:

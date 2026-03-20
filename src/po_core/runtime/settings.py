@@ -120,7 +120,7 @@ class Settings:
     freedom_pressure_missing_mode: SafetyMode = SafetyMode.WARN
 
     # Philosopher Swarm 制御（増殖の蛇口）
-    philosophers_max_normal: int = 39
+    philosophers_max_normal: int = 42
     philosophers_max_warn: int = 5
     philosophers_max_critical: int = 1
 
@@ -165,7 +165,7 @@ class Settings:
             enable_pareto_shadow=_env_bool("PO_ENABLE_PARETO_SHADOW", default=False),
             use_freedom_pressure_v2=_env_bool("PO_FREEDOM_PRESSURE_V2", default=False),
             philosopher_roles=_read_roles_from_env(),
-            philosophers_max_normal=_env_int("PO_PHILOSOPHERS_MAX_NORMAL", default=39),
+            philosophers_max_normal=_env_int("PO_PHILOSOPHERS_MAX_NORMAL", default=42),
             philosophers_max_warn=_env_int("PO_PHILOSOPHERS_MAX_WARN", default=5),
             philosophers_max_critical=_env_int(
                 "PO_PHILOSOPHERS_MAX_CRITICAL", default=1

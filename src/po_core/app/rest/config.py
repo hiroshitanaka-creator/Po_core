@@ -92,7 +92,7 @@ class APISettings(BaseSettings):
     philosopher_cost_budget_normal: int = 80
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
-    philosophers_max_normal: int = 39
+    philosophers_max_normal: int = 42
     philosophers_max_warn: int = 5
     philosophers_max_critical: int = 1
 
