@@ -54,16 +54,17 @@ STATUS_STALE_PHRASES = [
 ]
 
 
-
 def _read(relpath: str) -> str:
     return (ROOT / relpath).read_text(encoding="utf-8")
 
 
-
 def _canonical_dev_dependencies() -> list[str]:
     lines = _read("tools/dev-requirements.txt").splitlines()
-    return [line.strip() for line in lines if line.strip() and not line.lstrip().startswith("#")]
-
+    return [
+        line.strip()
+        for line in lines
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
 
 
 def _package_version() -> str:
@@ -73,12 +74,10 @@ def _package_version() -> str:
     return match.group(1)
 
 
-
 def _release_evidence_relpath(prefix: str, version: str) -> str:
     relpath = f"docs/release/{prefix}{version}.md"
     assert (ROOT / relpath).exists(), f"missing release evidence file: {relpath}"
     return relpath
-
 
 
 def test_release_version_ssot_is_package_version() -> None:
@@ -93,7 +92,6 @@ def test_release_version_ssot_is_package_version() -> None:
     assert re.fullmatch(r"\d+\.\d+\.\d+(?:[A-Za-z0-9.-]+)?", version)
 
 
-
 def test_release_docs_are_synced_to_current_version() -> None:
     version = _package_version()
     for relpath in DOCS_WITH_VERSION:
@@ -103,11 +101,9 @@ def test_release_docs_are_synced_to_current_version() -> None:
             assert "0.2.0b4" not in text, f"{relpath} still contains stale beta version"
 
 
-
 def test_openapi_version_matches_package_version() -> None:
     server_py = _read("src/po_core/app/rest/server.py")
     assert "version=__version__" in server_py
-
 
 
 def test_release_docs_use_consistent_philosopher_counts() -> None:
@@ -126,7 +122,6 @@ def test_release_docs_use_consistent_philosopher_counts() -> None:
         assert phrase not in quickstart_en
     assert "42 integrated runtime personas" in repo_structure
     assert "39 active personas" in repo_structure
-
 
 
 def test_release_docs_fail_closed_on_stale_wording() -> None:
@@ -172,7 +167,6 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "Not yet fixed as truth in this file" in smoke_evidence
 
 
-
 def test_repository_structure_is_fully_resynced() -> None:
     repo_structure = _read("REPOSITORY_STRUCTURE.md")
     required_phrases = [
@@ -190,7 +184,6 @@ def test_repository_structure_is_fully_resynced() -> None:
         ), f"stale phrase remains in REPOSITORY_STRUCTURE.md: {phrase}"
 
 
-
 def test_requirements_files_are_documented_as_repo_local_convenience_wrappers() -> None:
     requirements = _read("requirements.txt")
     requirements_dev = _read("requirements-dev.txt")
@@ -202,7 +195,6 @@ def test_requirements_files_are_documented_as_repo_local_convenience_wrappers() 
     assert "tools/dev-requirements.txt" in requirements_dev
     assert requirements_dev.strip().endswith("-e .[dev]")
     assert "repo-local convenience wrappers" in readme
-
 
 
 def test_dev_dependencies_are_single_sourced() -> None:
@@ -220,7 +212,6 @@ def test_dev_dependencies_are_single_sourced() -> None:
     assert "project.optional-dependencies.dev" in script
 
 
-
 def test_optional_all_extra_is_not_self_referential() -> None:
     pyproject = tomllib.loads(_read("pyproject.toml"))
     optional = pyproject["project"]["optional-dependencies"]
@@ -229,7 +220,6 @@ def test_optional_all_extra_is_not_self_referential() -> None:
     combined_deduped = list(dict.fromkeys(combined))
     assert all("po-core-flyingpig" not in dep for dep in all_extra)
     assert all_extra == combined_deduped
-
 
 
 def test_prompt_runtime_ssot_is_python_persona_registry() -> None:
@@ -242,7 +232,6 @@ def test_prompt_runtime_ssot_is_python_persona_registry() -> None:
     assert '"philosophers/prompts/*.yaml"' not in pyproject
     assert "PO_CORE_SYSTEM_PROMPT" not in init_py
     assert "PoTestRunner" not in init_py
-
 
 
 def test_experimental_prompt_assets_are_isolated_from_runtime_package() -> None:
@@ -265,7 +254,6 @@ def test_experimental_prompt_assets_are_isolated_from_runtime_package() -> None:
     )
 
 
-
 def test_prompt_yaml_placeholders_live_only_in_docs_drafts() -> None:
     runtime_prompt_dir = ROOT / "src" / "po_core" / "philosophers" / "prompts"
     draft_prompt_dir = ROOT / "docs" / "philosopher_prompt_drafts"
@@ -285,11 +273,9 @@ def test_prompt_yaml_placeholders_live_only_in_docs_drafts() -> None:
     assert '"docs/philosopher_prompt_drafts/*.yaml"' not in pyproject
 
 
-
 def test_env_example_fails_closed_for_auth() -> None:
     env_example = _read(".env.example")
     assert "PO_SKIP_AUTH=false" in env_example
-
 
 
 def test_ci_release_blockers_are_fail_closed() -> None:
@@ -314,10 +300,13 @@ def test_ci_release_blockers_are_fail_closed() -> None:
         in publish
     )
     assert "deployments: read" in publish
-    assert "PyPI publish requires a prior successful TestPyPI deployment for this exact commit SHA" in publish
+    assert (
+        "PyPI publish requires a prior successful TestPyPI deployment for this exact commit SHA"
+        in publish
+    )
     assert "Run workflow_dispatch with target=testpypi first" in publish
     assert "successful TestPyPI deployment status for this exact commit SHA" in publish
-    assert 'environment\": \"testpypi\"' in publish
+    assert 'environment": "testpypi"' in publish
     assert "git merge-base --is-ancestor" in publish
     assert "python tools/import_graph.py --check --print" in publish
     assert "pytest tests/ -v" in publish
@@ -331,7 +320,6 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     assert "po-core --help" not in publish
 
 
-
 def test_release_smoke_script_checks_all_console_scripts() -> None:
     smoke = _read("scripts/release_smoke.py")
     for entrypoint in ENTRYPOINTS:
@@ -342,7 +330,6 @@ def test_release_smoke_script_checks_all_console_scripts() -> None:
     assert 'status_cmd = ["po-core", "status"]' in smoke
     assert 'prompt_cmd = ["po-core", "prompt", "smoke", "--format", "json"]' in smoke
     assert 'experiment_cmd = ["po-experiment", "list"]' in smoke
-
 
 
 def test_publish_playbook_documents_fail_closed_release_path() -> None:
@@ -368,11 +355,9 @@ def test_publish_playbook_documents_fail_closed_release_path() -> None:
     assert "PO_PHILOSOPHER_EXECUTION_MODE" in playbook
 
 
-
 def test_tutorial_does_not_reference_old_alpha_version() -> None:
     tutorial = _read("docs/TUTORIAL.md")
     assert "v0.1.0-alpha" not in tutorial
-
 
 
 def test_typescript_sdk_readme_uses_canonical_env_var() -> None:
@@ -381,12 +366,10 @@ def test_typescript_sdk_readme_uses_canonical_env_var() -> None:
     assert "PO_API_KEY" in ts_readme
 
 
-
 def test_typescript_generated_types_are_not_all_unknown() -> None:
     openapi_ts = _read("clients/typescript/src/generated/openapi.ts")
     assert "input:" in openapi_ts
     assert "response:" in openapi_ts
-
 
 
 def test_examples_web_api_server_has_legacy_warning() -> None:

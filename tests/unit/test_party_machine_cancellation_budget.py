@@ -68,7 +68,9 @@ def test_budget_aware_philosopher_stops_promptly_when_cancelled():
     assert proposals == []
     assert elapsed < 0.2
     assert results[0].ok is False
-    assert results[0].timed_out is False  # cooperative cancellation: not a forced timeout
+    assert (
+        results[0].timed_out is False
+    )  # cooperative cancellation: not a forced timeout
     assert "Execution stopped cooperatively" in (results[0].error or "")
     assert philosopher.started.wait(0.05)
     assert philosopher.cancelled.wait(0.2)
