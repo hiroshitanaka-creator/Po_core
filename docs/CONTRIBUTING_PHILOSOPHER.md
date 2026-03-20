@@ -49,3 +49,8 @@ pytest -q
 - [ ] テスト追加/更新済み
 - [ ] `pytest -q` 全通
 - [ ] output schema を破壊していない
+
+## 8. Prompt-authoring boundary (runtime vs draft)
+- Runtime persona prompts are defined only in `src/po_core/philosophers/llm_personas.py`.
+- Any YAML prompt drafts belong in `docs/philosopher_prompt_drafts/` and are documentation artifacts only.
+- Do not treat draft YAML as a runtime contract unless you also update `llm_personas.py` and the release-readiness tests.

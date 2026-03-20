@@ -88,7 +88,7 @@ Release-relevant module facts:
 - Package version SSOT is `src/po_core/__init__.py`.
 - Release-facing docs must describe `1.0.2` as the repository target version and avoid claiming public publication unless matching evidence exists in-repo.
 - OpenAPI metadata is emitted from `src/po_core/app/rest/server.py`.
-- Installed package data is limited to config YAML, axis specs, JSON schemas, viewer assets, and `py.typed`; unfinished philosopher YAML prompt drafts are not packaged.
+- Installed package data is limited to config YAML, axis specs, JSON schemas, viewer assets, and `py.typed`; unfinished philosopher YAML prompt drafts live under `docs/philosopher_prompt_drafts/` and are not packaged.
 - Experimental Claude-testing modules are **not** under `src/po_core` and therefore are not part of the published runtime surface.
 
 ---
@@ -146,6 +146,7 @@ Release readiness additionally relies on top-level tests such as:
 - **Release workflow gates:** `.github/workflows/ci.yml`, `.github/workflows/publish.yml`
 - **Golden contract:** `scenarios/`, `tests/test_golden_e2e.py`
 - **Prompt runtime SSOT:** `src/po_core/philosophers/llm_personas.py`
+- **Non-runtime prompt drafts:** `docs/philosopher_prompt_drafts/`
 - **Experimental Claude-only assets:** `experiments/claude_testing/`
 
 ---

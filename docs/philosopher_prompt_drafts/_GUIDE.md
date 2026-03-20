@@ -1,14 +1,14 @@
 # 哲学者プロンプト作成ガイド
 
 > **目的:** このディレクトリは未完成のプロンプト設計メモ置き場です。
-> **運用方針:** 現行runtimeの唯一の真実源は `src/po_core/philosophers/llm_personas.py` です。ここの YAML は公開パッケージにも同梱されず、`LLMPhilosopher` も読み込みません。
+> **運用方針:** 現行runtimeの唯一の真実源は `src/po_core/philosophers/llm_personas.py` です。ここの YAML は docs 配下に隔離された**非runtimeドラフト資産**であり、公開パッケージにも同梱されず、`LLMPhilosopher` も読み込みません。
 
 ---
 
 ## ディレクトリ構造
 
 ```
-prompts/
+docs/philosopher_prompt_drafts/
 ├── _GUIDE.md              ← このファイル（読むべき最初のファイル）
 ├── _template.yaml         ← 全フィールドのリファレンス（コピー元）
 ├── aristotle.yaml         ← 記入済みサンプル（最初に読むこと）
@@ -107,3 +107,10 @@ llm_personas.py -> get_persona() -> LLMPhilosopher -> JSON parser
 ```
 
 `FILL_IN` や `_template.yaml` を含む未完成資産はパッケージ配布物から除外する。公開前に利用する場合は、まず `llm_personas.py` とテストを更新する。
+
+
+## SSOT summary
+
+- **Runtime contract authority:** `src/po_core/philosophers/llm_personas.py` の Python 定義のみ。
+- **Draft authority:** このディレクトリの YAML は執筆・レビュー用の下書きのみ。
+- **Promotion rule:** ここで内容を固めても runtime には反映されない。runtime JSON 契約を変える場合は `llm_personas.py` と対応テストを更新する。
