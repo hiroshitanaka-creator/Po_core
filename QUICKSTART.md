@@ -322,8 +322,8 @@ cd Po_core
 
 # .env を設定
 cp .env.example .env
-# 開発用途でのみ `PO_SKIP_AUTH=true` を使います
-# `PO_SKIP_AUTH=false` のまま起動する場合は、必ず非空の `PO_API_KEY` を設定してください
+# 推奨デフォルト: `PO_SKIP_AUTH=false` のまま、非空の `PO_API_KEY` を設定
+# `PO_SKIP_AUTH=true` は認証なしで試したいローカル開発時だけに限定してください
 
 # Docker Compose で起動
 docker compose up
@@ -337,8 +337,8 @@ open http://localhost:8000/docs
 ```bash
 pip install "po-core-flyingpig==1.0.2"
 
-# 環境変数を設定
-export PO_SKIP_AUTH=true   # 開発時のみ認証をバイパス
+# 推奨: 開発でも認証を有効化したまま試す
+export PO_API_KEY=dev-secret-key
 
 # サーバー起動
 python -m po_core.app.rest
@@ -361,26 +361,28 @@ python -m po_core.app.rest
 ### 使用例
 
 ```bash
-# 同期推論
+# 同期推論（推奨デフォルトの認証有効モード）
 curl -X POST http://localhost:8000/v1/reason \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # SSE ストリーミング（true async offload）
 curl -N -X POST http://localhost:8000/v1/reason/stream \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
 # 統合済み42人の哲学者一覧
-curl http://localhost:8000/v1/philosophers
+curl -H "X-API-Key: dev-secret-key" http://localhost:8000/v1/philosophers
 
 # ヘルスチェック
 curl http://localhost:8000/v1/health
 
 # API キー認証あり
 curl -X POST http://localhost:8000/v1/reason \
-  -H "X-API-Key: your-api-key" \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -d '{"input": "What is freedom?"}'
 ```
@@ -392,7 +394,8 @@ curl -X POST http://localhost:8000/v1/reason \
 | 変数 | デフォルト | 説明 |
 |------|-----------|------|
 | `PO_API_KEY` | `""` | `PO_SKIP_AUTH=false` のときに必要な API キー。空/blank のままでは起動失敗 |
-| `PO_SKIP_AUTH` | `false` | `true` のときのみ認証をバイパス（開発用） |
+| `PO_SKIP_AUTH` | `false` | 推奨デフォルトは `false`。`true` は認証なしで試すローカル開発時だけ |
+| `PO_API_KEY_HEADER` | `X-API-Key` | 必要な場合だけ使う上級者向け設定。主ヘッダー名を変更しても `X-API-Key` は後方互換で受理 |
 | `PO_CORS_ORIGINS` | `"*"` | 許可オリジン（本番: カンマ区切り） |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | IP ごとのレート制限（req/min） |
 | `PO_PORT` | `8000` | サーバーポート |
