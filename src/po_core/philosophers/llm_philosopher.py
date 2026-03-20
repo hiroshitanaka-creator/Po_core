@@ -32,7 +32,7 @@ from po_core.philosophers.base import Philosopher
 from po_core.philosophers.llm_personas import get_persona
 
 if TYPE_CHECKING:
-    from po_core.adapters.llm_adapter import LLMAdapter
+    from po_core.adapters.llm_adapter import LLMAdapter, LLMResult
 
 
 _LLM_PHILOSOPHER_MAP_PATH = (
@@ -137,9 +137,10 @@ class LLMPhilosopher(Philosopher):
         if not self._system_prompt:
             return self._fallback(reason="no_persona_defined")
 
-        raw = self._adapter.generate(self._system_prompt, prompt)
+        llm_result = self._adapter.generate(self._system_prompt, prompt)
+        raw = llm_result.text if hasattr(llm_result, "text") else str(llm_result)
         if not raw:
-            return self._fallback(reason="llm_unavailable")
+            return self._fallback(reason=self._fallback_reason_for_result(llm_result))
 
         result = self._parse_llm_response(raw)
         result.setdefault("metadata", {})
@@ -154,6 +155,29 @@ class LLMPhilosopher(Philosopher):
         return result
 
     # ── Internal helpers ────────────────────────────────────────────
+
+    def _fallback_reason_for_result(self, llm_result: Any) -> str:
+        error_kind = getattr(llm_result, "error_kind", None)
+        status_code = getattr(llm_result, "status_code", None)
+
+        if error_kind is None:
+            return "llm_unavailable"
+
+        error_value = getattr(error_kind, "value", str(error_kind))
+        if error_value == "timeout":
+            return "provider_timeout"
+        if error_value == "rate_limit":
+            return "provider_rate_limit"
+        if error_value == "auth":
+            return "provider_auth_error"
+        if error_value == "transient":
+            if isinstance(status_code, int) and status_code >= 500:
+                return "provider_5xx"
+            return "provider_transient_error"
+        if error_value == "unknown":
+            return "provider_unknown_error"
+        return "llm_unavailable"
+
 
     def _parse_llm_response(self, raw: str) -> Dict[str, Any]:
         """
@@ -217,6 +241,9 @@ class LLMPhilosopher(Philosopher):
             "tension": None,
             "metadata": {
                 "philosopher": self.name,
+                "philosopher_id": self.philosopher_id,
+                "llm_provider": self._adapter.provider.value,
+                "llm_model": self._adapter.actual_model,
                 "llm_fallback": True,
                 "fallback_reason": reason,
             },
