@@ -143,6 +143,7 @@ def test_repository_structure_is_fully_resynced() -> None:
         "actual repository layout and release-critical files only",
         "experiments/claude_testing/",
         "Prompt runtime SSOT:",
+        "Non-runtime prompt drafts:",
         "repo-local editable-install convenience wrappers",
     ]
     for phrase in required_phrases:
@@ -172,11 +173,12 @@ def test_optional_all_extra_is_not_self_referential() -> None:
 
 
 def test_prompt_runtime_ssot_is_python_persona_registry() -> None:
-    guide = _read("src/po_core/philosophers/prompts/_GUIDE.md")
+    guide = _read("docs/philosopher_prompt_drafts/_GUIDE.md")
     pyproject = _read("pyproject.toml")
     init_py = _read("src/po_core/__init__.py")
 
     assert "唯一の真実源は `src/po_core/philosophers/llm_personas.py`" in guide
+    assert "非runtimeドラフト資産" in guide
     assert '"philosophers/prompts/*.yaml"' not in pyproject
     assert "PO_CORE_SYSTEM_PROMPT" not in init_py
     assert "PoTestRunner" not in init_py
@@ -202,18 +204,23 @@ def test_experimental_prompt_assets_are_isolated_from_runtime_package() -> None:
     )
 
 
-def test_prompt_yaml_placeholders_are_not_shipped_in_public_artifacts() -> None:
-    prompt_dir = ROOT / "src" / "po_core" / "philosophers" / "prompts"
+def test_prompt_yaml_placeholders_live_only_in_docs_drafts() -> None:
+    runtime_prompt_dir = ROOT / "src" / "po_core" / "philosophers" / "prompts"
+    draft_prompt_dir = ROOT / "docs" / "philosopher_prompt_drafts"
+
+    assert not runtime_prompt_dir.exists()
+
     placeholder_files = [
         p.name
-        for p in prompt_dir.glob("*.yaml")
+        for p in draft_prompt_dir.glob("*.yaml")
         if "FILL_IN" in p.read_text(encoding="utf-8")
     ]
     assert (
         placeholder_files
-    ), "test assumption broken: expected unfinished prompt YAML fixtures"
+    ), "test assumption broken: expected unfinished prompt YAML draft fixtures"
     pyproject = _read("pyproject.toml")
     assert '"philosophers/prompts/*.yaml"' not in pyproject
+    assert '"docs/philosopher_prompt_drafts/*.yaml"' not in pyproject
 
 
 def test_env_example_fails_closed_for_auth() -> None:

@@ -1,17 +1,23 @@
 """
-LLM Philosopher Personas — 42人分のシステムプロンプト
-=======================================================
+LLM philosopher runtime personas.
 
-各哲学者のシステムプロンプトを定義する。
-LLMPhilosopher はこれを system prompt として LLM に送信する。
+`LLMPhilosopher` sends these Python-defined system prompts directly to the LLM.
+This file is the runtime single source of truth for the persona prompt contract;
+draft YAML assets under ``docs/philosopher_prompt_drafts/`` are documentation-only
+working notes and have no runtime authority.
 
-出力フォーマット（全哲学者共通）:
+Roster note:
+- 42 integrated runtime philosophers are part of the public deliberation roster.
+- This registry also includes one extra ``dummy`` compliance helper entry used for
+  fallback/compliance behavior, so the dictionary contains 43 prompt entries total.
+
+Runtime JSON output contract for every persona:
     {"reasoning": "...", "perspective": "...", "confidence": 0.0-1.0}
 
-設計方針:
-- 哲学者ごとに固有の分析レンズを明示
-- JSON 出力を必須指定（パース安定性）
-- 200トークン以内に収める（コスト最適化）
+Design goals:
+- Make each philosopher's analytical lens explicit.
+- Require JSON output for parser stability.
+- Keep prompts compact for predictable runtime cost.
 """
 
 from __future__ import annotations
