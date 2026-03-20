@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import multiprocessing
+import os
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass
 from time import perf_counter
-from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Protocol, Sequence, Tuple
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    List,
+    Mapping,
+    Optional,
+    Protocol,
+    Sequence,
+    Tuple,
+)
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import ExecOutcome, SerializedJob, run_one_philosopher
@@ -148,13 +157,17 @@ def _run_one_in_thread(
     pid = getattr(ph, "name", ph.__class__.__name__)
     start = perf_counter()
     outcome = run_one_philosopher(
-        SerializedJob(ph, ctx, intent, tensors, memory, limit_per_philosopher, timeout_s)
+        SerializedJob(
+            ph, ctx, intent, tensors, memory, limit_per_philosopher, timeout_s
+        )
     )
     elapsed_ms = int((perf_counter() - start) * 1000)
     if elapsed_ms > timeout_s * 1000 and outcome.error is None:
         # A thread future can time out while the underlying work keeps running,
         # so thread mode cannot guarantee production-safe cancellation.
-        return ExecOutcome([], 0, True, _soft_timeout_error(timeout_s, "thread"), elapsed_ms, pid)
+        return ExecOutcome(
+            [], 0, True, _soft_timeout_error(timeout_s, "thread"), elapsed_ms, pid
+        )
     return outcome
 
 
@@ -165,11 +178,15 @@ def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> 
 def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
     start = perf_counter()
-    ctx = multiprocessing.get_context("fork" if "fork" in multiprocessing.get_all_start_methods() else "spawn")
+    ctx = multiprocessing.get_context(
+        "fork" if "fork" in multiprocessing.get_all_start_methods() else "spawn"
+    )
     queue = ctx.Queue(maxsize=1)
     proc = ctx.Process(target=_process_worker, args=(job, queue))
     proc.start()
-    bootstrap_grace_s = float(os.getenv("PO_PHILOSOPHER_PROCESS_BOOTSTRAP_GRACE_S", "0.05"))
+    bootstrap_grace_s = float(
+        os.getenv("PO_PHILOSOPHER_PROCESS_BOOTSTRAP_GRACE_S", "0.05")
+    )
     try:
         outcome = queue.get(timeout=job.timeout_s + bootstrap_grace_s)
     except Exception:
@@ -180,7 +197,9 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
             proc.join(timeout=1.0)
         elapsed_ms = int((perf_counter() - start) * 1000)
         queue.close()
-        return ExecOutcome([], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid)
+        return ExecOutcome(
+            [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
+        )
 
     proc.join(timeout=1.0)
     if proc.is_alive():
@@ -190,7 +209,9 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     queue.close()
     if isinstance(outcome, ExecOutcome):
         if outcome.latency_ms > job.timeout_s * 1000:
-            return ExecOutcome([], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid)
+            return ExecOutcome(
+                [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
+            )
         return outcome
     return ExecOutcome([], 0, False, "Worker returned invalid outcome", elapsed_ms, pid)
 
@@ -253,7 +274,15 @@ def _run_sync_jobs(
         futures = {}
         for idx, ph in enumerate(philosophers):
             if runner == "process":
-                job = SerializedJob(ph, ctx, intent, tensors, memory, config.limit_per_philosopher, config.timeout_s)
+                job = SerializedJob(
+                    ph,
+                    ctx,
+                    intent,
+                    tensors,
+                    memory,
+                    config.limit_per_philosopher,
+                    config.timeout_s,
+                )
                 futures[idx] = executor.submit(_run_one_in_subprocess, job)
             else:
                 futures[idx] = executor.submit(
@@ -270,7 +299,9 @@ def _run_sync_jobs(
         for idx, ph in enumerate(philosophers):
             pid = getattr(ph, "name", ph.__class__.__name__)
             try:
-                outcome = futures[idx].result(timeout=None if runner == "process" else config.timeout_s + 0.05)
+                outcome = futures[idx].result(
+                    timeout=None if runner == "process" else config.timeout_s + 0.05
+                )
                 execution_result = _execution_result_from_outcome(outcome)
             except FuturesTimeoutError:
                 execution_result = _build_execution_result(
@@ -292,7 +323,9 @@ def _run_sync_jobs(
             result_by_index[idx] = execution_result.to_run_result()
             if execution_result.proposals:
                 stable = [
-                    _embed_author_proposal(p, execution_result.philosopher_id, proposal_index)
+                    _embed_author_proposal(
+                        p, execution_result.philosopher_id, proposal_index
+                    )
                     for proposal_index, p in enumerate(execution_result.proposals)
                 ]
                 proposals_by_index[idx] = stable

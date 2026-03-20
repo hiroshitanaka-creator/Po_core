@@ -59,8 +59,8 @@ from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import SerializedJob, _supports_budget_kwarg
 from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
+from po_core.runtime.philosopher_executor import ExecutionResult as _ExecutionResult
 from po_core.runtime.philosopher_executor import (
-    ExecutionResult as _ExecutionResult,
     ExecutorConfig,
     RunResult,
     _build_execution_result,
@@ -128,10 +128,8 @@ class PartyResults:
 # ============================================================================
 
 
-
 def _cooperative_timeout_error(timeout_s: float, mode: str) -> str:
     return f"Cooperative timeout after {timeout_s}s ({mode} fallback=empty_proposals)"
-
 
 
 def run_philosophers(
@@ -262,7 +260,9 @@ class AsyncPartyMachine:
         pid = getattr(ph, "name", ph.__class__.__name__)
         t0 = perf_counter()
         budget = ExecutionBudget(timeout_s=self._timeout_s)
-        supports_async_budget = _supports_budget_kwarg(getattr(ph, "propose_async", None))
+        supports_async_budget = _supports_budget_kwarg(
+            getattr(ph, "propose_async", None)
+        )
 
         try:
             if self._has_native_async(ph):
@@ -285,7 +285,8 @@ class AsyncPartyMachine:
                 )
                 selected = proposals[:limit_per_philosopher]
                 embedded = [
-                    _embed_author_proposal(p, pid, idx) for idx, p in enumerate(selected)
+                    _embed_author_proposal(p, pid, idx)
+                    for idx, p in enumerate(selected)
                 ]
                 result = _build_execution_result(
                     philosopher_id=pid,

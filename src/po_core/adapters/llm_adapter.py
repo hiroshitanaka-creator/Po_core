@@ -269,8 +269,7 @@ class LLMAdapter:
         if isinstance(exc, TimeoutError) or "timeout" in name or "timed out" in message:
             return LLMErrorKind.TIMEOUT
         if any(
-            token in name
-            for token in ("authentication", "permission", "unauthorized")
+            token in name for token in ("authentication", "permission", "unauthorized")
         ):
             return LLMErrorKind.AUTH
         if any(

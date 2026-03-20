@@ -54,7 +54,9 @@ def test_generate_retries_rate_limit_until_success(monkeypatch):
 
 
 def test_generate_classifies_timeout_as_retriable(monkeypatch):
-    adapter = LLMAdapter(provider="gemini", model="gemini-2.0-flash-lite", max_retries=1)
+    adapter = LLMAdapter(
+        provider="gemini", model="gemini-2.0-flash-lite", max_retries=1
+    )
     calls = {"count": 0}
 
     def _timeout(system: str, user: str) -> LLMResult:

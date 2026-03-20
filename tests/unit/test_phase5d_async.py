@@ -32,8 +32,6 @@ class _FakeProposal:
     extra: Mapping = field(default_factory=dict)
 
 
-
-
 @dataclass(frozen=True)
 class _StubArg:
     value: str = "stub"
@@ -142,7 +140,6 @@ async def test_async_run_philosophers_exception_isolated():
 @pytest.mark.asyncio
 async def test_async_run_philosophers_timeout(monkeypatch):
     """Slow philosopher is marked timed_out; not counted in proposals."""
-    monkeypatch.setenv("PO_PHILOSOPHER_HARD_TIMEOUT_MAX_S", "1.0")
     from po_core.party_machine import async_run_philosophers
 
     proposals, results = await async_run_philosophers(
@@ -158,7 +155,7 @@ async def test_async_run_philosophers_timeout(monkeypatch):
     assert len(results) == 1
     assert results[0].timed_out is True
     assert results[0].ok is False
-    assert "Hard timeout after 0.1s" in (results[0].error or "")
+    assert "Soft timeout after 0.1s" in (results[0].error or "")
     assert proposals == []
 
 

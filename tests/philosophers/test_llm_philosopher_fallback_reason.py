@@ -19,11 +19,38 @@ class StubAdapter:
 @pytest.mark.parametrize(
     ("result", "expected_reason"),
     [
-        (LLMResult(text="", error_kind=LLMErrorKind.TIMEOUT, retriable=True), "provider_timeout"),
-        (LLMResult(text="", error_kind=LLMErrorKind.RATE_LIMIT, retriable=True, status_code=429), "provider_rate_limit"),
-        (LLMResult(text="", error_kind=LLMErrorKind.AUTH, retriable=False, status_code=401), "provider_auth_error"),
-        (LLMResult(text="", error_kind=LLMErrorKind.TRANSIENT, retriable=True, status_code=503), "provider_5xx"),
-        (LLMResult(text="", error_kind=LLMErrorKind.UNKNOWN, retriable=False), "provider_unknown_error"),
+        (
+            LLMResult(text="", error_kind=LLMErrorKind.TIMEOUT, retriable=True),
+            "provider_timeout",
+        ),
+        (
+            LLMResult(
+                text="",
+                error_kind=LLMErrorKind.RATE_LIMIT,
+                retriable=True,
+                status_code=429,
+            ),
+            "provider_rate_limit",
+        ),
+        (
+            LLMResult(
+                text="", error_kind=LLMErrorKind.AUTH, retriable=False, status_code=401
+            ),
+            "provider_auth_error",
+        ),
+        (
+            LLMResult(
+                text="",
+                error_kind=LLMErrorKind.TRANSIENT,
+                retriable=True,
+                status_code=503,
+            ),
+            "provider_5xx",
+        ),
+        (
+            LLMResult(text="", error_kind=LLMErrorKind.UNKNOWN, retriable=False),
+            "provider_unknown_error",
+        ),
     ],
 )
 def test_reason_preserves_precise_fallback_reason(result, expected_reason):

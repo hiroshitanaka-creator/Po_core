@@ -14,7 +14,9 @@ class _Client:
         self.host = host
 
 
-def _build_request(*, trust_proxy_headers: bool, x_forwarded_for: str | None) -> Request:
+def _build_request(
+    *, trust_proxy_headers: bool, x_forwarded_for: str | None
+) -> Request:
     app = FastAPI()
     app.state.settings = APISettings(trust_proxy_headers=trust_proxy_headers)
     headers: list[tuple[bytes, bytes]] = []

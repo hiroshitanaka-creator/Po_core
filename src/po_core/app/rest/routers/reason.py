@@ -46,8 +46,6 @@ _WS_LOG_RETENTION_SECONDS = _WS_WINDOW_SECONDS * 2
 _ws_rate_log: dict[str, deque[float]] = defaultdict(deque)
 
 
-
-
 def _client_host(client: Any) -> str:
     """Return a stable client host string for HTTP/WS connections."""
     host = getattr(client, "host", None)
@@ -79,6 +77,7 @@ def _prune_ws_rate_log(now: float) -> None:
 def _sanitized_stream_error_payload() -> dict[str, str]:
     """Return the stable client-facing streaming error payload."""
     return {"code": "internal_error", "message": "internal server error"}
+
 
 def _reason_limit() -> str:
     """Return the SlowAPI limit string derived from the current APISettings.
@@ -123,9 +122,7 @@ def _resolve_ws_auth_key(
     return None
 
 
-def _is_ws_rate_limited(
-    websocket: WebSocket, rpm: int, settings: APISettings
-) -> bool:
+def _is_ws_rate_limited(websocket: WebSocket, rpm: int, settings: APISettings) -> bool:
     """Return True when the client exceeded the per-minute WS request budget."""
     if not is_rate_limit_enabled(rpm):
         return False
@@ -288,6 +285,7 @@ def _extract_fallback_reason(
         if reason not in (None, ""):
             return str(reason)
     return None
+
 
 def _extract_tensors(result: dict) -> TensorSnapshot:
     """Extract tensor metrics from result."""
@@ -580,9 +578,7 @@ async def _stream_reasoning_chunks(
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         if exc_box:
-            logger.exception(
-                "Unhandled streaming pipeline error", exc_info=exc_box[0]
-            )
+            logger.exception("Unhandled streaming pipeline error", exc_info=exc_box[0])
             yield {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}
             return
 
@@ -657,9 +653,7 @@ async def reason_ws(websocket: WebSocket) -> None:
         await websocket.close(code=1008, reason=auth_decision.message)
         return
 
-    if _is_ws_rate_limited(
-        websocket, api_settings.rate_limit_per_minute, api_settings
-    ):
+    if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute, api_settings):
         await websocket.close(code=1008, reason="Rate limit exceeded")
         return
 
