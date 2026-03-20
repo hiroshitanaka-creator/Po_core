@@ -44,9 +44,10 @@
 
 ## Completed
 
-- 2026-03-20: `src/po_core/app/rest/*`・`src/po_core/cli/experiment.py`・関連テストの整形を同期し、`black --check src tests` / `isort --check-only src tests` の gate failure を解消。
+- 2026-03-20: Phase 1 release blocker として `black --check src tests` の失敗を解消するため、black 準拠の最小整形を runtime REST/CLI と関連テストへ適用した。
+- 2026-03-20: release-facing SSOT として、本 snapshot に Phase 1 実施状況を追記した。
 
 ## Next
 
-- 1. 型検査 `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` の継続結果を確認し、必要なら Phase 2 の runtime / integration 変更に波及しない範囲で追補する。
-- 2. release evidence の未固定項目（TestPyPI・workflow URL・公開後 smoke transcript）は、operator artifact が揃い次第 repo 内へ固定する。
+- `isort --check-only src tests` / `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` / release gates の再実行結果を Phase 1 証跡として確認し、追加 blocker があれば切り出す。
+- TestPyPI publication state / workflow run URL / clean install-import-runtime smoke transcript は、引き続き evidence boundary 外として operator artifact 固定待ち。
