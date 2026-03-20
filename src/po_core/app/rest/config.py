@@ -70,7 +70,9 @@ class APISettings(BaseSettings):
     deliberation_max_rounds: int = Field(
         default=2, validation_alias=AliasChoices("PO_DELIBERATION_MAX_ROUNDS")
     )
-    philosopher_roles: str = Field(default="", validation_alias=AliasChoices("PO_ROLES"))
+    philosopher_roles: str = Field(
+        default="", validation_alias=AliasChoices("PO_ROLES")
+    )
     philosopher_execution_mode: str = Field(
         default="thread",
         validation_alias=AliasChoices("PO_PHILOSOPHER_EXECUTION_MODE"),

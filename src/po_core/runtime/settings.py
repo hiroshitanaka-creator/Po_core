@@ -167,7 +167,9 @@ class Settings:
             philosopher_roles=_read_roles_from_env(),
             philosophers_max_normal=_env_int("PO_PHILOSOPHERS_MAX_NORMAL", default=39),
             philosophers_max_warn=_env_int("PO_PHILOSOPHERS_MAX_WARN", default=5),
-            philosophers_max_critical=_env_int("PO_PHILOSOPHERS_MAX_CRITICAL", default=1),
+            philosophers_max_critical=_env_int(
+                "PO_PHILOSOPHERS_MAX_CRITICAL", default=1
+            ),
             philosopher_cost_budget_normal=_env_int(
                 "PO_PHILOSOPHER_COST_BUDGET_NORMAL", default=80
             ),
@@ -200,11 +202,16 @@ class Settings:
             enable_action_gate=api_settings.enable_action_gate,
             enable_pareto_shadow=api_settings.enable_pareto_shadow,
             use_freedom_pressure_v2=api_settings.use_freedom_pressure_v2,
-            philosopher_roles=tuple(
-                sorted(parse_roles_csv(api_settings.philosopher_roles), key=lambda r: r.value)
-            )
-            if api_settings.philosopher_roles.strip()
-            else (),
+            philosopher_roles=(
+                tuple(
+                    sorted(
+                        parse_roles_csv(api_settings.philosopher_roles),
+                        key=lambda r: r.value,
+                    )
+                )
+                if api_settings.philosopher_roles.strip()
+                else ()
+            ),
             philosophers_max_normal=api_settings.philosophers_max_normal,
             philosophers_max_warn=api_settings.philosophers_max_warn,
             philosophers_max_critical=api_settings.philosophers_max_critical,

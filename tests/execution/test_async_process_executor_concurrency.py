@@ -51,7 +51,9 @@ def test_async_process_executor_respects_max_workers(monkeypatch):
             with lock:
                 state["current"] -= 1
 
-    monkeypatch.setattr(executor_mod, "_run_one_in_subprocess", _fake_run_one_in_subprocess)
+    monkeypatch.setattr(
+        executor_mod, "_run_one_in_subprocess", _fake_run_one_in_subprocess
+    )
 
     async def _exercise():
         return await async_run_philosophers(

@@ -42,7 +42,10 @@ def test_settings_from_env_reads_runtime_flags(monkeypatch: pytest.MonkeyPatch) 
     assert settings.enable_action_gate is False
     assert settings.enable_pareto_shadow is True
     assert settings.use_freedom_pressure_v2 is True
-    assert tuple(role.value for role in settings.philosopher_roles) == ("RED_TEAM", "SYSTEMS")
+    assert tuple(role.value for role in settings.philosopher_roles) == (
+        "RED_TEAM",
+        "SYSTEMS",
+    )
     assert settings.philosophers_max_normal == 41
     assert settings.philosophers_max_warn == 7
     assert settings.philosophers_max_critical == 2
@@ -83,7 +86,9 @@ def test_settings_from_env_boolean_parsing_is_explicit(
 
 
 @pytest.mark.unit
-def test_settings_from_env_preserves_llm_aliases(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_settings_from_env_preserves_llm_aliases(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.delenv("PO_LLM_ENABLED", raising=False)
     monkeypatch.delenv("PO_LLM_TIMEOUT", raising=False)
     monkeypatch.setenv("PO_ENABLE_LLM_PHILOSOPHERS", "1")

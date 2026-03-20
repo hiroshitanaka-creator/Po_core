@@ -75,7 +75,9 @@ def test_async_run_turn_uses_injected_execution_mode_over_env(monkeypatch):
         captured["execution_mode"] = kwargs["execution_mode"]
         return [], []
 
-    monkeypatch.setattr(ensemble_mod, "async_run_philosophers", _fake_async_run_philosophers)
+    monkeypatch.setattr(
+        ensemble_mod, "async_run_philosophers", _fake_async_run_philosophers
+    )
     monkeypatch.setattr(
         ensemble_mod,
         "_run_phase_post",

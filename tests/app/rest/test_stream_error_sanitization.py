@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 from po_core.app.rest.config import APISettings
 from po_core.app.rest.server import create_app
 
-
 RAW_ERROR = "database password leaked"
 
 
@@ -45,7 +44,9 @@ def test_sse_stream_errors_are_sanitized(tmp_path) -> None:
 
     assert response.status_code == 200
     error_chunk = next(
-        chunk for chunk in _parse_sse_chunks(response.text) if chunk["chunk_type"] == "error"
+        chunk
+        for chunk in _parse_sse_chunks(response.text)
+        if chunk["chunk_type"] == "error"
     )
     assert error_chunk["payload"] == {
         "code": "internal_error",
