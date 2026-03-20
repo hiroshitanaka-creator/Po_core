@@ -13,7 +13,7 @@ pip install "po-core-flyingpig==1.0.2"
 
 ## 📦 Published package status
 
-Version `1.0.2` is evidenced as published on PyPI in `docs/release/pypi_publication_v1.0.2.md`. TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts are still tracked separately and should not be claimed unless their evidence files are filled with operator-supplied values.
+Version `1.0.2` should be described using the repository's evidence boundary. Today the repo evidences only **PyPI published** via `docs/release/pypi_publication_v1.0.2.md`; TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
 
 ## ⚡ Try it in 30 Seconds
 
@@ -119,7 +119,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core integrates **42 philosophers**. Runtime selection budgets keep the default NORMAL path at **39 active** philosophers maximum per request, and the number mobilized varies by SafetyMode:
+Po_core uses **42 integrated runtime personas**. That is the public roster count: one slot is reserved for compliance-sentinel behavior, so docs should not imply that all 42 slots are named human philosophers. Runtime selection budgets keep the default NORMAL path at **39 active** personas maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|

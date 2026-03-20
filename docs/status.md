@@ -12,7 +12,12 @@
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.2.md` fixes PyPI publication evidence for `1.0.2`; `docs/release/smoke_verification_v1.0.2.md` records that smoke transcript evidence is still missing
 - External publish status: **published on PyPI for `1.0.2`**
-- Maintainer rule: public docs may state only the release facts backed by in-repo evidence; do not claim TestPyPI publication, workflow-run success, or smoke verification until those exact URLs/transcripts are recorded
+- Canonical evidence boundary: public docs may say only what the in-repo evidence proves. Today that means **PyPI publication is evidenced**; TestPyPI publication, workflow-run success, and smoke verification remain unevidenced until their exact URLs/transcripts are recorded.
+
+## Canonical public wording
+
+- **Roster count:** “Po_core uses **42 integrated runtime personas**.” This is the public roster count because one slot is a compliance sentinel; avoid phrasing that implies 42 simultaneously active human philosophers.
+- **Evidence boundary:** “For `1.0.2`, the repository evidences **PyPI publication** only. TestPyPI state, workflow-run success, and clean install/import/smoke success remain outside the evidence boundary until operator artifacts are fixed in-repo.”
 
 ## Release Readiness Facts
 

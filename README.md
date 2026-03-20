@@ -25,7 +25,7 @@ pip install -e .
 
 ### TL;DR
 
-- **42 philosophers** as interacting **tensors** → accountable LLM reasoning
+- **42 integrated runtime personas** as interacting **tensors** → accountable LLM reasoning
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
@@ -44,7 +44,7 @@ pip install -e .
 
 - Repository target version: `1.0.2`
 - Public package metadata state: package classifiers currently declare `Development Status :: 5 - Production/Stable`
-- Philosopher inventory: **42 integrated** personas, with runtime selection budgets limiting the default NORMAL path to at most 39 active philosophers per request
+- Runtime roster: **42 integrated runtime personas**. Public docs use this persona count because the roster includes a compliance sentinel slot; treat it as a runtime roster count, not a literal claim that 42 human philosophers are always active. The default NORMAL path still caps participation at at most 39 active personas per request.
 - External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
 - Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
 
@@ -71,7 +71,7 @@ Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
-Po_core is a **philosophy-driven AI system** that integrates 42 philosophers to generate ethically responsible, contextually aware responses.
+Po_core is a **philosophy-driven AI system** that integrates **42 runtime personas** to generate ethically responsible, contextually aware responses. That public count refers to the runtime roster; one slot is reserved for compliance-sentinel behavior, so docs should avoid implying that all 42 slots are human philosophers.
 
 Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
 
@@ -113,7 +113,7 @@ Read our full story in the [**Manifesto**](./Po_core_Manifesto_When_Pigs_Fly.md)
 
 ### Philosophical Ensemble
 
-- **42 Philosophers Working Together**: Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil) · Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi) · African & Canadian (Appiah, Fanon, Charles Taylor)
+- **42 integrated runtime personas**: named philosopher personas span Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor); the roster count also includes one compliance sentinel slot.
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, decolonialism, communitarianism, Zen Buddhism, and Eastern wisdom traditions
 
@@ -357,14 +357,14 @@ Po_core is currently documented against package version `1.0.2`, and that exact 
 | OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
 | Public package metadata | ✅ Stable | Package classifiers declare `Development Status :: 5 - Production/Stable` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
-| Public release evidence | ✅ PyPI publication evidenced | `docs/release/pypi_publication_v1.0.2.md` records the public PyPI version page for `1.0.2`; TestPyPI/workflow/smoke evidence is still tracked separately |
-| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, 42 integrated philosophers, and max 39 active philosophers on the default NORMAL path |
+| Public release evidence | ✅ PyPI publication evidenced | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while TestPyPI/workflow/smoke claims remain out of bounds until separately evidenced |
+| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical “42 integrated runtime personas” roster wording, and max 39 active personas on the default NORMAL path |
 
 ### Implemented platform capabilities
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 42 integrated philosophers, risk levels, tags |
+| Philosophical Framework | ✅ Complete | 42 integrated runtime personas, risk levels, tags |
 | Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
 | TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
 | ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
@@ -402,7 +402,7 @@ cd Po_core
 pip install -e ".[dev]"
 ```
 
-PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Keep any stronger claims—such as TestPyPI publication, GitHub Actions run success, or clean-environment smoke verification—tied to the operator-backed evidence files in `docs/release/`.
+PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Canonical evidence boundary: we may say “published on PyPI for 1.0.2” once that file exists, but we do **not** say TestPyPI published, workflow run succeeded, or smoke verification passed until those exact artifacts are fixed in-repo.
 
 ---
 
