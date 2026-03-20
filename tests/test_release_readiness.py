@@ -116,16 +116,16 @@ def test_release_docs_use_consistent_philosopher_counts() -> None:
     quickstart_en = _read("QUICKSTART_EN.md")
     repo_structure = _read("REPOSITORY_STRUCTURE.md")
 
-    assert "42 philosophers" in readme
-    assert "42 integrated" in readme
-    assert "Po_coreでは **42人**の哲学者" in quickstart_ja
-    assert "最大39人" in quickstart_ja
-    assert "Po_core integrates **42 philosophers**" in quickstart_en
+    assert "42 integrated runtime personas" in readme
+    assert "compliance sentinel" in readme
+    assert "42の統合済みランタイム・ペルソナ" in quickstart_ja
+    assert "最大39" in quickstart_ja
+    assert "42 integrated runtime personas" in quickstart_en
     assert "39 active" in quickstart_en
     for phrase in ["39 philosophers", "39 phil", "Full 39-philosopher manifest"]:
         assert phrase not in quickstart_en
-    assert "42 integrated philosophers" in repo_structure
-    assert "39 active philosophers" in repo_structure
+    assert "42 integrated runtime personas" in repo_structure
+    assert "39 active personas" in repo_structure
 
 
 
@@ -163,6 +163,7 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert f"Repository target version: `{version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
     assert f"published on PyPI for `{version}`" in status_doc
+    assert "Canonical evidence boundary" in status_doc
     assert f"https://pypi.org/project/po-core-flyingpig/{version}/" in pypi_evidence
     assert "Publication result evidenced here: **PyPI published**" in pypi_evidence
     assert "operator-supplied transcript not yet recorded" in smoke_evidence

@@ -5,7 +5,7 @@
 - Package: `po-core-flyingpig`
 - Version: `1.0.2`
 - Publication result evidenced here: **PyPI published**
-- Publication result not evidenced here: TestPyPI publication state, GitHub Actions workflow run URL(s), and operator-run clean install/import/smoke transcript
+- Publication result not evidenced here: anything beyond public PyPI publication—specifically TestPyPI publication state, GitHub Actions workflow run URL(s), and operator-run clean install/import/smoke transcript
 
 ## Public package URL(s)
 
@@ -24,17 +24,19 @@ The PyPI version page for `po-core-flyingpig 1.0.2` shows all of the following o
 
 ## Scope of truth fixed by this evidence
 
-This file is sufficient to support the following public documentation claims:
+This file defines the positive side of the release evidence boundary. It is sufficient to support the following public documentation claims:
 
 - version `1.0.2` is published on **PyPI**
 - users may be shown the canonical PyPI install command for `1.0.2`
 - the repository must no longer describe `1.0.2` as globally `pending external publish`
 
-This file is **not** sufficient to support the following stronger claims:
+This file is **not** sufficient to support the negative side of that boundary. It does **not** support the following stronger claims:
 
 - that TestPyPI publication occurred
 - that a specific GitHub Actions publish run succeeded
 - that post-publish clean-environment install/import/runtime smoke was executed successfully
+
+For the canonical boundary statement, see `docs/status.md`.
 
 ## Follow-up evidence still expected from the human operator
 

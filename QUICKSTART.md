@@ -26,7 +26,7 @@ python -m build
 twine check dist/*
 ```
 
-> `1.0.2` は PyPI 版の公開事実が `docs/release/pypi_publication_v1.0.2.md` で固定されています。TestPyPI / workflow run / clean install/import/smoke のより強い証跡は、追加の operator evidence が入り次第 `docs/release/` に追記してください。
+> `1.0.2` の公開事実は evidence boundary に従って扱います。現時点で repo 内に固定できているのは `docs/release/pypi_publication_v1.0.2.md` による **PyPI published** の事実だけで、TestPyPI / workflow run / clean install/import/smoke は追加の operator evidence が入るまで未証跡です。
 
 
 ### ✅ 公開前の最短検証（maintainer向け）
@@ -156,7 +156,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは **42人**の哲学者を統合しています。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では最大39人です：
+Po_coreでは **42の統合済みランタイム・ペルソナ**を扱います。これは公開向けの roster count であり、compliance sentinel 用のスロットを含むため「42人の人間哲学者が常に動く」という意味ではありません。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では最大39です：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -349,9 +349,9 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論（42人統合・通常時は最大39人を動員して Pareto 集約） |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（42の統合済みランタイム・ペルソナ、通常時は最大39まで動員して Pareto 集約） |
 | `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
-| `GET`  | `/v1/philosophers` | 42人統合済み哲学者マニフェスト一覧 |
+| `GET`  | `/v1/philosophers` | 42の統合済みランタイム・ペルソナのマニフェスト一覧 |
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
@@ -374,7 +374,7 @@ curl -N -X POST http://localhost:8000/v1/reason/stream \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
-# 統合済み42人の哲学者一覧
+# 統合済み42ランタイム・ペルソナ一覧
 curl -H "X-API-Key: dev-secret-key" http://localhost:8000/v1/philosophers
 
 # ヘルスチェック
