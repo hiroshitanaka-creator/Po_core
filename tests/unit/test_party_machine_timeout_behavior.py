@@ -55,5 +55,3 @@ def test_run_philosophers_uses_global_timeout_window(monkeypatch):
 
     assert len(proposals) == 1
     assert proposals[0].extra["_po_core"]["author"] == "fast"
-
-

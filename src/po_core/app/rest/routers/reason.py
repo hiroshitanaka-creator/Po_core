@@ -472,7 +472,9 @@ async def reason(
             timeout=api_settings.request_timeout_s,
         )
     except asyncio.TimeoutError as exc:
-        raise HTTPException(status_code=504, detail="reasoning request timed out") from exc
+        raise HTTPException(
+            status_code=504, detail="reasoning request timed out"
+        ) from exc
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
@@ -596,7 +598,13 @@ async def _stream_reasoning_chunks(
 
         if exc_box:
             if isinstance(exc_box[0], asyncio.TimeoutError):
-                yield {"chunk_type": "error", "payload": {"code": "timeout", "message": "reasoning request timed out"}}
+                yield {
+                    "chunk_type": "error",
+                    "payload": {
+                        "code": "timeout",
+                        "message": "reasoning request timed out",
+                    },
+                }
                 return
             logger.exception("Unhandled streaming pipeline error", exc_info=exc_box[0])
             yield {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}

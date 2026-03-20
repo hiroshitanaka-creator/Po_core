@@ -109,13 +109,16 @@ class SQLiteTraceStore(TraceStore):
 
     def _init_db(self) -> None:
         with self._connect() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS trace_sessions (
                     session_id TEXT PRIMARY KEY,
                     updated_at TEXT NOT NULL
                 )
-                """)
-            conn.execute("""
+                """
+            )
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS trace_events (
                     session_id TEXT NOT NULL,
                     event_idx INTEGER NOT NULL,
@@ -125,7 +128,8 @@ class SQLiteTraceStore(TraceStore):
                     payload_json TEXT NOT NULL,
                     PRIMARY KEY (session_id, event_idx)
                 )
-                """)
+                """
+            )
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_trace_events_session ON trace_events(session_id)"
             )
@@ -205,11 +209,13 @@ class SQLiteTraceStore(TraceStore):
     def _evict_if_needed(self, conn: sqlite3.Connection, max_sessions: int) -> None:
         if max_sessions <= 0:
             return
-        rows = conn.execute("""
+        rows = conn.execute(
+            """
             SELECT session_id
             FROM trace_sessions
             ORDER BY updated_at DESC
-            """).fetchall()
+            """
+        ).fetchall()
         stale_session_ids = [row["session_id"] for row in rows[max_sessions:]]
         if stale_session_ids:
             conn.executemany(

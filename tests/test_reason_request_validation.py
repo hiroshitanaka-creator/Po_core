@@ -75,7 +75,9 @@ def test_metadata_rejects_too_many_properties(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
-    assert "metadata must contain at most 16 top-level properties" in str(response.json()["detail"])
+    assert "metadata must contain at most 16 top-level properties" in str(
+        response.json()["detail"]
+    )
 
 
 def test_metadata_rejects_oversized_json_payload(client: TestClient) -> None:
@@ -85,7 +87,9 @@ def test_metadata_rejects_oversized_json_payload(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
-    assert "metadata must serialize to at most 2048 UTF-8 bytes" in str(response.json()["detail"])
+    assert "metadata must serialize to at most 2048 UTF-8 bytes" in str(
+        response.json()["detail"]
+    )
 
 
 def test_philosophers_rejects_too_many_items(client: TestClient) -> None:

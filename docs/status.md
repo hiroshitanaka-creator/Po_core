@@ -40,3 +40,13 @@
 - このファイルは「公開済み」と「公開準備済み」を区別する。
 - 既存の publish playbook は運用手順として有効だが、それ自体は公開事実の証拠ではない。
 - conservative wording rule: publication state は available evidence の範囲だけを言う。今回の `1.0.2` では **PyPI published** までは言えるが、workflow/TestPyPI/smoke success まではまだ言わない。
+
+
+## Completed
+
+- 2026-03-20: `src/po_core/app/rest/*`・`src/po_core/cli/experiment.py`・関連テストの整形を同期し、`black --check src tests` / `isort --check-only src tests` の gate failure を解消。
+
+## Next
+
+- 1. 型検査 `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` の継続結果を確認し、必要なら Phase 2 の runtime / integration 変更に波及しない範囲で追補する。
+- 2. release evidence の未固定項目（TestPyPI・workflow URL・公開後 smoke transcript）は、operator artifact が揃い次第 repo 内へ固定する。
