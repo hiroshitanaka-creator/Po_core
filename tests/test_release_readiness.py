@@ -301,6 +301,9 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     assert "artifact-type: ['wheel', 'sdist']" in ci
     assert "python-version: ['3.10', '3.11', '3.12']" in ci
     assert "python scripts/release_smoke.py --check-entrypoints" in ci
+    assert "bandit -r src/ scripts/ -c pyproject.toml" in ci
+    for surface in ['base ""', 'llm "llm"', 'docs "docs"', 'viz "viz"']:
+        assert f"audit_surface {surface}" in ci
     assert "po-core --help" not in ci
 
     assert "Publish is allowed only from refs/heads/main or refs/tags/vX.Y.Z" in publish
@@ -317,8 +320,10 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     assert "git merge-base --is-ancestor" in publish
     assert "python tools/import_graph.py --check --print" in publish
     assert "pytest tests/ -v" in publish
-    assert "bandit -r src/ -c pyproject.toml" in publish
+    assert "bandit -r src/ scripts/ -c pyproject.toml" in publish
     assert "pip-audit" in publish
+    for surface in ['base ""', 'llm "llm"', 'docs "docs"', 'viz "viz"']:
+        assert f"audit_surface {surface}" in publish
     assert "python -m build" in publish
     assert "twine check dist/*" in publish
     assert "python scripts/release_smoke.py --check-entrypoints" in publish
@@ -344,8 +349,9 @@ def test_publish_playbook_documents_fail_closed_release_path() -> None:
     assert "python scripts/check_dev_dependencies.py" in playbook
     assert "tools/dev-requirements.txt" in playbook
     assert "pytest tests/ -v" in playbook
-    assert "bandit -r src/ -c pyproject.toml" in playbook
+    assert "bandit -r src/ scripts/ -c pyproject.toml" in playbook
     assert "pip-audit" in playbook
+    assert "base / `llm` / `docs` / `viz`" in playbook
     assert (
         "`refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない"
         in playbook

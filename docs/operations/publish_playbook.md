@@ -23,11 +23,12 @@
      - `pytest tests/test_output_schema.py -v`
      - `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v`
      - `pytest tests/ -v`
-     - `bandit -r src/ -c pyproject.toml`
-     - `pip-audit`
+     - `bandit -r src/ scripts/ -c pyproject.toml`
+     - `pip-audit` を base / `llm` / `docs` / `viz` の各 dependency surface ごとに clean virtualenv で実行
      - `python -m build`
      - `twine check dist/*`
    - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`python scripts/release_smoke.py --check-entrypoints` が通っている。smoke は各 console script の `--help` に加えて `po-core version` / `po-core status` / `po-core prompt smoke --format json` / `po-self` / `po-experiment list` を timeout 付きで検証する。
+   - ここでいう security gate の対象は、静的解析では `src/` と release/ops の `scripts/`、依存監査では base install と optional extras（`llm`, `docs`, `viz`）である。`dev` extra は CI 自身の実行用ツールとして install されるが、release artifact surface としての `pip-audit` 対象は base + optional extras を明示列挙する。
 3. **段階的リリース経路（machine-enforced）**
    - PyPI publish は **同一コミット SHA** に対する `testpypi` environment の successful deployment が GitHub API で確認できた場合にのみ進める。
    - successful TestPyPI deployment が無い、または success 状態でない場合、`publish-guard` が `Run workflow with target=testpypi first.` を含む明示エラーで停止する。
@@ -54,13 +55,25 @@ pytest tests/test_golden_e2e.py tests/test_input_schema.py -v
 pytest tests/ -v
 python -m pip install --upgrade pip
 python -m pip install --upgrade build twine bandit pip-audit
-bandit -r src/ -c pyproject.toml
-pip-audit
+bandit -r src/ scripts/ -c pyproject.toml
+for surface in base llm docs viz; do
+  python -m venv ".audit-${surface}"
+  . ".audit-${surface}/bin/activate"
+  python -m pip install --upgrade pip pip-audit
+  if [ "${surface}" = "base" ]; then
+    python -m pip install -e .
+  else
+    python -m pip install -e ".[${surface}]"
+  fi
+  pip-audit
+  deactivate
+  rm -rf ".audit-${surface}"
+done
 python -m build
 twine check dist/*
 ```
 
-必須コマンド（dependency-SSOT / release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。artifact smoke は `scripts/release_smoke.py` に集約し、wheel / sdist の両方で同じ deterministic smoke コマンド群を timeout 付きで再実行する。
+必須コマンド（dependency-SSOT / release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。artifact smoke は `scripts/release_smoke.py` に集約し、wheel / sdist の両方で同じ deterministic smoke コマンド群を timeout 付きで再実行する。security では `bandit -r src/ scripts/ -c pyproject.toml` を用いて release-critical scripts も fail-closed に静的解析し、`pip-audit` は base / `llm` / `docs` / `viz` の各 dependency surface を個別 virtualenv で監査する。
 
 ---
 
@@ -167,4 +180,3 @@ python -c "import po_core; print(po_core.__version__)"
 - PyPI smoke: pass/fail（ログURL）
 - Rollback action (if any): none / <details>
 ```
-

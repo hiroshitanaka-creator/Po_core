@@ -109,9 +109,33 @@ jobs:
           pip install -e .
           pip install bandit pip-audit
       - name: Security check with bandit
-        run: bandit -r src/ -c pyproject.toml
-      - name: Dependency vulnerability audit
-        run: pip-audit
+        run: bandit -r src/ scripts/ -c pyproject.toml
+      - name: Dependency vulnerability audit across base and optional extras
+        shell: bash
+        run: |
+          set -euo pipefail
+          audit_surface() {
+            surface_name="$1"
+            extras_spec="$2"
+            venv_dir=".audit-${surface_name}"
+            python -m venv "${venv_dir}"
+            . "${venv_dir}/bin/activate"
+            python -m pip install --upgrade pip
+            python -m pip install pip-audit
+            if [ -n "${extras_spec}" ]; then
+              python -m pip install -e ".[${extras_spec}]"
+            else
+              python -m pip install -e .
+            fi
+            pip-audit
+            deactivate
+            rm -rf "${venv_dir}"
+          }
+
+          audit_surface base ""
+          audit_surface llm "llm"
+          audit_surface docs "docs"
+          audit_surface viz "viz"
 
   build:
     runs-on: ubuntu-latest

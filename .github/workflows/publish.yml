@@ -201,15 +201,39 @@ jobs:
           pip install -e ".[dev]"
           pip install bandit pip-audit build twine
       - name: Run must-pass release blockers
+        shell: bash
         run: |
+          set -euo pipefail
+
+          audit_surface() {
+            surface_name="$1"
+            extras_spec="$2"
+            venv_dir=".audit-${surface_name}"
+            python -m venv "${venv_dir}"
+            . "${venv_dir}/bin/activate"
+            python -m pip install --upgrade pip
+            python -m pip install pip-audit
+            if [ -n "${extras_spec}" ]; then
+              python -m pip install -e ".[${extras_spec}]"
+            else
+              python -m pip install -e .
+            fi
+            pip-audit
+            deactivate
+            rm -rf "${venv_dir}"
+          }
+
           python tools/import_graph.py --check --print
           pytest tests/test_release_readiness.py -v
           pytest tests/acceptance/ -v -m acceptance
           pytest tests/test_output_schema.py -v
           pytest tests/test_golden_e2e.py tests/test_input_schema.py -v
           pytest tests/ -v
-          bandit -r src/ -c pyproject.toml
-          pip-audit
+          bandit -r src/ scripts/ -c pyproject.toml
+          audit_surface base ""
+          audit_surface llm "llm"
+          audit_surface docs "docs"
+          audit_surface viz "viz"
           python -m build
           twine check dist/*
       - name: Smoke built artifact in clean virtualenv
