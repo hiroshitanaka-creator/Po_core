@@ -12,7 +12,7 @@
 [![Status: Package%20metadata%20marks%20stable](https://img.shields.io/badge/Status-Package%20metadata%20marks%20stable-brightgreen.svg)]()
 
 ```bash
-pip install po-core-flyingpig
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 > `requirements.txt` / `requirements-dev.txt` are **repo-local convenience wrappers** for a cloned checkout. External consumers should install from package metadata (`pip install po-core-flyingpig` or extras), not from those editable wrappers.
@@ -388,7 +388,7 @@ Po_core is currently documented against package version `1.0.2`.
 
 ```bash
 # Install the published package
-pip install po-core-flyingpig
+pip install "po-core-flyingpig==1.0.2"
 
 # Or install from source in development mode
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
