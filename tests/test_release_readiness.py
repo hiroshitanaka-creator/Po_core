@@ -215,7 +215,11 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     for entrypoint in ENTRYPOINTS:
         assert f"{entrypoint} --help" in ci
 
-    assert "Publish is allowed only from main or version tags" in publish
+    assert "Publish is allowed only from refs/heads/main or refs/tags/vX.Y.Z" in publish
+    assert "Tagged commit $SHA is not reachable from origin/main" in publish
+    assert "Tag version $REF_NAME does not match package version $PACKAGE_VERSION" in publish
+    assert "git merge-base --is-ancestor" in publish
+    assert "python tools/import_graph.py --check --print" in publish
     assert "pytest tests/ -v" in publish
     assert "bandit -r src/ -c pyproject.toml" in publish
     assert "pip-audit" in publish
@@ -237,7 +241,10 @@ def test_publish_playbook_documents_fail_closed_release_path() -> None:
     assert "pytest tests/ -v" in playbook
     assert "bandit -r src/ -c pyproject.toml" in playbook
     assert "pip-audit" in playbook
-    assert "main または `vX.Y.Z` タグ以外から publish しない" in playbook
+    assert "`refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない" in playbook
+    assert "`origin/main` 到達可能" in playbook
+    assert "`__version__` と一致" in playbook
+    assert "python tools/import_graph.py --check --print" in playbook
 
 
 def test_tutorial_does_not_reference_old_alpha_version() -> None:

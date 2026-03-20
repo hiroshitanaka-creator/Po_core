@@ -20,24 +20,79 @@ jobs:
     outputs:
       publish_target: ${{ steps.guard.outputs.publish_target }}
       publish_allowed: ${{ steps.guard.outputs.publish_allowed }}
+      package_version: ${{ steps.guard.outputs.package_version }}
+      ref_kind: ${{ steps.guard.outputs.ref_kind }}
+      ref_name: ${{ steps.guard.outputs.ref_name }}
     steps:
-      - name: Guard publish source
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        with:
+          fetch-depth: 0
+      - name: Guard publish source provenance
         id: guard
+        shell: bash
         run: |
+          set -euo pipefail
+
           REF="${GITHUB_REF}"
+          SHA="${GITHUB_SHA}"
           EVENT="${GITHUB_EVENT_NAME}"
           TARGET="${{ github.event.inputs.target || '' }}"
+          PACKAGE_VERSION="$(python - <<'PY'
+          from pathlib import Path
+          import re
+
+          init_py = Path('src/po_core/__init__.py').read_text(encoding='utf-8')
+          match = re.search(r'__version__ = "([^"]+)"', init_py)
+          if match is None:
+              raise SystemExit('ERROR: Could not read package version from src/po_core/__init__.py')
+          print(match.group(1))
+          PY
+          )"
+
+          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+
           if [ "$EVENT" = "release" ]; then
             TARGET="pypi"
           fi
           echo "publish_target=$TARGET" >> "$GITHUB_OUTPUT"
-          if [[ "$REF" == "refs/heads/main" || "$REF" == refs/tags/v* ]]; then
-            echo "publish_allowed=true" >> "$GITHUB_OUTPUT"
-            exit 0
+
+          if [ "$REF" = "refs/heads/main" ]; then
+            REF_KIND="main"
+            REF_NAME="main"
+          elif [[ "$REF" =~ ^refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            REF_KIND="tag"
+            REF_NAME="${BASH_REMATCH[1]}"
+          else
+            echo "publish_allowed=false" >> "$GITHUB_OUTPUT"
+            echo "ERROR: Publish is allowed only from refs/heads/main or refs/tags/vX.Y.Z. Current ref: $REF" >&2
+            exit 1
           fi
-          echo "publish_allowed=false" >> "$GITHUB_OUTPUT"
-          echo "Publish is allowed only from main or version tags. Current ref: $REF" >&2
-          exit 1
+
+          echo "ref_kind=$REF_KIND" >> "$GITHUB_OUTPUT"
+          echo "ref_name=$REF_NAME" >> "$GITHUB_OUTPUT"
+
+          git fetch --no-tags --prune origin +refs/heads/main:refs/remotes/origin/main
+
+          if ! git merge-base --is-ancestor "$SHA" "origin/main"; then
+            echo "publish_allowed=false" >> "$GITHUB_OUTPUT"
+            if [ "$REF_KIND" = "tag" ]; then
+              echo "ERROR: Tagged commit $SHA is not reachable from origin/main. Ref: $REF_NAME" >&2
+            else
+              echo "ERROR: Commit $SHA is not reachable from origin/main. Ref: $REF_NAME" >&2
+            fi
+            exit 1
+          fi
+
+          if [ "$REF_KIND" = "tag" ]; then
+            TAG_VERSION="${REF_NAME#v}"
+            if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+              echo "publish_allowed=false" >> "$GITHUB_OUTPUT"
+              echo "ERROR: Tag version $REF_NAME does not match package version $PACKAGE_VERSION from src/po_core/__init__.py" >&2
+              exit 1
+            fi
+          fi
+
+          echo "publish_allowed=true" >> "$GITHUB_OUTPUT"
 
   verify-release-blockers:
     runs-on: ubuntu-latest
@@ -62,6 +117,7 @@ jobs:
           pip install bandit pip-audit build twine
       - name: Run must-pass release blockers
         run: |
+          python tools/import_graph.py --check --print
           pytest tests/test_release_readiness.py -v
           pytest tests/acceptance/ -v -m acceptance
           pytest tests/test_output_schema.py -v
