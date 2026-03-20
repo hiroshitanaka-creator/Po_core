@@ -306,7 +306,7 @@ max-attributes = 12
 # Bandit Configuration (Security)
 # ==================
 [tool.bandit]
-exclude_dirs = ["tests", "scripts"]
+exclude_dirs = ["tests"]
 skips = ["B101", "B601"]
 
 # ==================
