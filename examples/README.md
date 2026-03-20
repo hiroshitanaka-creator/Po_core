@@ -195,6 +195,8 @@ python examples/philosopher_comparison.py
 pip install -e .
 ```
 
+> `requirements.txt` / `requirements-dev.txt` は clone 済み checkout 用の repo-local convenience wrappers です。外部利用者向けの依存 truth source は `pyproject.toml` なので、配布物から使う場合は `pip install "po-core-flyingpig==1.0.2"` か extras を使ってください。
+
 ### 最小限のコード例
 
 ```python
@@ -252,10 +254,10 @@ print(f"提案: {result['proposal']}")
 
 ## 🧠 利用可能な哲学者
 
-Po_coreでは **42人**の哲学者が統合されています（39人が active、SafetyMode により動員数が変動）。
+Po_core の公開向け表現は **42の統合済みランタイム・ペルソナ** です。これは runtime roster count であり、compliance sentinel 用スロットを含むため「42人の人間哲学者が常時稼働する」という意味ではありません。既定の NORMAL path では **最大39 active personas** に制限され、実際の動員数は SafetyMode と予算設定に応じて変動します。
 
 完全な一覧は `GET /v1/philosophers`（公式 REST API）または
-`po-core philosophers` コマンドで確認できます。代表的な哲学者：
+`po-core philosophers` コマンドで確認できます。代表的なペルソナ：
 
 ### 西洋哲学
 
