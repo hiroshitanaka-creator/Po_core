@@ -29,7 +29,7 @@ python -m build
 twine check dist/*
 ```
 
-> stable リリース前は、上記2コマンドが成功することを必須条件にしてください。
+> `1.0.2` リリース候補では、上記2コマンドに加えて full test / security / artifact smoke を通すことを必須条件にしてください。
 
 
 ### ✅ 公開後の最短検証（maintainer向け）
@@ -157,7 +157,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは **39人**の哲学者が並列で推論に参加します（SafetyMode により動員数が変動）：
+Po_coreでは **42人**の哲学者を統合しています。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では最大39人です：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -349,9 +349,9 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論（39人 → Pareto集約） |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（42人統合・通常時は最大39人を動員して Pareto 集約） |
 | `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
-| `GET`  | `/v1/philosophers` | 39人の哲学者マニフェスト一覧 |
+| `GET`  | `/v1/philosophers` | 42人統合済み哲学者マニフェスト一覧 |
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
@@ -372,7 +372,7 @@ curl -N -X POST http://localhost:8000/v1/reason/stream \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
-# 39人の哲学者一覧
+# 統合済み42人の哲学者一覧
 curl http://localhost:8000/v1/philosophers
 
 # ヘルスチェック
@@ -403,7 +403,7 @@ curl -X POST http://localhost:8000/v1/reason \
 
 | モード | 哲学者数 | p50 レイテンシ | req/s |
 |--------|---------|--------------|-------|
-| NORMAL | 39人 | ~33 ms | ~30 |
+| NORMAL | 最大39人 | ~33 ms | ~30 |
 | WARN | 5人 | ~34 ms | ~30 |
 | CRITICAL | 1人 | ~35 ms | ~29 |
 

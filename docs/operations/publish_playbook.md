@@ -16,12 +16,19 @@
    - `CHANGELOG.md` の `Unreleased` が更新済みで、リリース内容が説明されている。
 2. **publish must-pass checks green**
    - ローカルで以下が成功している（release開始可否の判定条件）。
+     - `pytest tests/test_release_readiness.py -v`
      - `pytest tests/acceptance/ -v -m acceptance`
      - `pytest tests/test_output_schema.py -v`
      - `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v`
-   - `pytest -q` は **推奨（best-effort）** とし、既知fail（bench/coverage/policy_lab など）がある間は release blocker にしない（publish開始判定は must-pass の成否で固定）。
+     - `pytest tests/ -v`
+     - `bandit -r src/ -c pyproject.toml`
+     - `pip-audit`
+     - `python -m build`
+     - `twine check dist/*`
+   - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`po-core` / `po-self` / `po-trace` / `po-interactive` / `po-experiment` と `python scripts/release_smoke.py --check-entrypoints` が通っている。
 3. **タグ運用の整合**
-   - `vX.Y.Z` 形式のタグ方針に従う（例: `v0.3.1`）。
+   - `workflow_dispatch` / release の publish は main または `vX.Y.Z` タグ以外から publish しない。
+   - `vX.Y.Z` 形式のタグ方針に従う（例: `v1.0.2`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
 4. **Trusted Publishing前提**
    - GitHub Environments に `testpypi` / `pypi` が存在する。
@@ -32,24 +39,20 @@
 ## 2. リリース直前チェック（コピペ実行）
 
 ```bash
+pytest tests/test_release_readiness.py -v
 pytest tests/acceptance/ -v -m acceptance
 pytest tests/test_output_schema.py -v
 pytest tests/test_golden_e2e.py tests/test_input_schema.py -v
+pytest tests/ -v
 python -m pip install --upgrade pip
-python -m pip install --upgrade build twine "packaging>=24.1"
+python -m pip install --upgrade build twine bandit pip-audit
+bandit -r src/ -c pyproject.toml
+pip-audit
 python -m build
 twine check dist/*
 ```
 
-必須コマンド（上3つのpytest + build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。
-
-補助チェック（推奨・best-effort）:
-
-```bash
-pytest -q
-```
-
-`pytest -q` で失敗した場合は、失敗内容を release 記録に残し、既知fail（bench/coverage/policy_lab など）の解消後に再実行する（この結果単体は release blocker にしない）。
+必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。
 
 ---
 
@@ -59,7 +62,8 @@ pytest -q
 2. `Run workflow` を選択。
 3. `target` に `testpypi` を指定して実行。
 4. `publish-testpypi` ジョブ成功を確認。
-5. TestPyPI で公開結果を確認。
+5. workflow YAML の publish guard が main または `vX.Y.Z` タグ以外を拒否していることを確認する。
+6. TestPyPI で公開結果を確認。
 
 確認コマンド（クリーン環境推奨）:
 

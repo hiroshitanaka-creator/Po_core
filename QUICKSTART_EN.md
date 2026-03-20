@@ -127,7 +127,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core deploys **39 philosophers** in parallel (the number mobilized varies by SafetyMode):
+Po_core integrates **42 philosophers**. Runtime selection budgets keep the default NORMAL path at **39 active** philosophers maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -331,7 +331,7 @@ curl -N -X POST http://localhost:8000/v1/reason/stream \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
-# List all 39 philosophers
+# List the integrated philosopher manifest
 curl http://localhost:8000/v1/philosophers
 
 # Health check

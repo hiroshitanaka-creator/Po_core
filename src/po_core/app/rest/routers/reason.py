@@ -456,9 +456,14 @@ async def reason(
 
     loop = asyncio.get_running_loop()
     try:
-        session_id, result, tracer = await loop.run_in_executor(
-            None, functools.partial(_run_reasoning, body, api_settings)
+        session_id, result, tracer = await asyncio.wait_for(
+            loop.run_in_executor(
+                None, functools.partial(_run_reasoning, body, api_settings)
+            ),
+            timeout=api_settings.request_timeout_s,
         )
+    except asyncio.TimeoutError as exc:
+        raise HTTPException(status_code=504, detail="reasoning request timed out") from exc
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
@@ -547,11 +552,14 @@ async def _stream_reasoning_chunks(
 
     async def _run_and_signal() -> None:
         try:
-            res = await po_async_run(
-                user_input=body.input,
-                philosophers=body.philosophers,
-                settings=po_settings,
-                tracer=tracer,
+            res = await asyncio.wait_for(
+                po_async_run(
+                    user_input=body.input,
+                    philosophers=body.philosophers,
+                    settings=po_settings,
+                    tracer=tracer,
+                ),
+                timeout=api_settings.request_timeout_s,
             )
             result_box.append(res)
         except Exception as e:
@@ -578,6 +586,9 @@ async def _stream_reasoning_chunks(
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         if exc_box:
+            if isinstance(exc_box[0], asyncio.TimeoutError):
+                yield {"chunk_type": "error", "payload": {"code": "timeout", "message": "reasoning request timed out"}}
+                return
             logger.exception("Unhandled streaming pipeline error", exc_info=exc_box[0])
             yield {"chunk_type": "error", "payload": _sanitized_stream_error_payload()}
             return

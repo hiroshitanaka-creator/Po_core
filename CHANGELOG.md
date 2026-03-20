@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.2] - 2026-03-20
+
+### Changed
+- release: make `src/po_core/__init__.py` the version SSOT and switch `pyproject.toml` to dynamic version loading from that attribute.
+- release: remove the self-referential `all` extra and make `requirements.txt` / `requirements-dev.txt` delegate to the package metadata truth source.
+- release: harden CI/publish workflows so tests, security checks, build validation, and installed-artifact smoke are all publish blockers.
+- docs: sync release-facing documents and OpenAPI metadata to version `1.0.2`, and clarify that 42 philosophers are integrated while the default NORMAL runtime budget caps active participation at 39.
+- prompts: declare `src/po_core/philosophers/llm_personas.py` as the runtime prompt SSOT, keep YAML prompt files as non-packaged design drafts, and remove Claude-testing prompt utilities from the public package surface.
+
+
 最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
 最新進捗：[docs/status.md](/docs/status.md)
 

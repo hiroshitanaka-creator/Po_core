@@ -2,12 +2,12 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 
-**Document Status:** v2.0 — Reflects actual production state (Phase 5 complete)
-**Last Updated:** 2026-02-28
-**Package Version:** `po-core-flyingpig` v0.2.0b4
+**Document Status:** v2.1 — release-readiness update aligned to package version `1.0.2`
+**Last Updated:** 2026-03-20
+**Package Version:** `po-core-flyingpig` v1.0.2
 
-> This document describes the **actual** repository structure as of Phase 5 completion.
-> It replaces the earlier planning document (v1.0, 2025-11-02).
+> This document summarizes the repository structure used for release-readiness work.
+> It is maintained from repository contents and CI/package metadata, not from historical planning text.
 
 ---
 
@@ -127,7 +127,7 @@ Po_core/
 │   └── pocore/                      # Legacy namespace shim
 │       └── engines/
 │
-├── tests/                           # Full test suite (2400+ tests)
+├── tests/                           # Full test suite exercised by CI and release blockers
 │   ├── benchmarks/                  # Performance benchmarks
 │   ├── experiments/
 │   ├── fixtures/
@@ -174,7 +174,7 @@ Po_core/
 ├── .markdownlint.json
 ├── .markdownlintignore
 ├── .pre-commit-config.yaml
-├── pyproject.toml                   # PEP 517/518 packaging (po-core-flyingpig v0.2.0b4)
+├── pyproject.toml                   # PEP 621 packaging metadata (dynamic version from src/po_core/__init__.py)
 ├── pytest.ini                       # Pytest configuration + markers
 ├── regenerate_golden.py             # Golden file regeneration script
 ├── requirements.txt                 # Production dependencies
@@ -221,7 +221,7 @@ src/po_core/
 │           ├── trace.py             # GET /v1/trace/{session_id}
 │           └── health.py            # GET /v1/health
 │
-├── philosophers/                    # 39 philosopher modules
+├── philosophers/                    # 42 philosopher modules
 │   ├── manifest.py                  # Philosopher registry + risk levels (0/1/2)
 │   └── [39 philosopher .py files]  # aristotle, arendt, camus, confucius, …
 │
@@ -431,7 +431,7 @@ output = composer.compose(case_dict)  # Returns output_schema_v1-compliant dict
 
 | File | Purpose |
 |------|---------|
-| `pyproject.toml` | PEP 517/518 packaging; `po-core-flyingpig` v0.2.0b4; `AGPL-3.0-or-later` |
+| `pyproject.toml` | PEP 621 packaging; dynamic version from `src/po_core/__init__.py`; `AGPL-3.0-or-later` |
 | `pytest.ini` | Markers: `unit`, `integration`, `pipeline`, `slow`, `philosophical`, `redteam`, `phase4`, `phase5`, `acceptance` |
 | `config/pareto_table.yaml` | Pareto weights (config_version tracked — must increment on change) |
 | `config/battalion_table.yaml` | Philosopher battalions (config_version tracked) |
@@ -458,7 +458,7 @@ SPDX-License-Identifier: `AGPL-3.0-or-later`
 | Phase 2 | ML tensors + Deliberation Engine | ✅ COMPLETE (2396 tests) |
 | Phase 3 | Viewer WebUI + Explainable W_Ethics Gate | ✅ COMPLETE |
 | Phase 4 | Adversarial Hardening (85 new tests) | ✅ COMPLETE |
-| Phase 5 | REST API + Security + Docker + Async + Benchmarks | ✅ COMPLETE (v0.2.0b4) |
+| Phase 5 | REST API + Security + Docker + Async + Benchmarks | ✅ COMPLETE (release-readiness aligned to v1.0.2) |
 | M0 | Spec Scaffolding (PRD/SRS/Schema/Traceability) | ✅ COMPLETE |
 | M1 | Stub Composer + E2E Acceptance Runner | 🔄 IN PROGRESS |
 

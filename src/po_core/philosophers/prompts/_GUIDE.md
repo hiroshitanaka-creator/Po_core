@@ -1,7 +1,7 @@
 # 哲学者プロンプト作成ガイド
 
-> **目的:** このディレクトリの YAML ファイルが、LLM（GPT-5.4 Pro 等）への哲学者プロンプトの唯一の真実源（SSOT）となる。
-> **担当:** 各 `{philosopher}.yaml` をここに記述し、`LLMPhilosopher` クラスが読み込んで LLM を呼び出す。
+> **目的:** このディレクトリは未完成のプロンプト設計メモ置き場です。
+> **運用方針:** 現行runtimeの唯一の真実源は `src/po_core/philosophers/llm_personas.py` です。ここの YAML は公開パッケージにも同梱されず、`LLMPhilosopher` も読み込みません。
 
 ---
 
@@ -102,13 +102,8 @@ LLM は以下の JSON を返すよう指示する：
 新たに作る `LLMPhilosopher`（`llm_philosopher.py`）は：
 
 ```
-class LLMPhilosopher(Philosopher):
-    def reason(self, prompt, context=None):
-        # 1. prompts/{module_id}.yaml を読む
-        # 2. system_prompt + user_template を組み立てる
-        # 3. OpenAI API (GPT-5.4 Pro) に送る
-        # 4. JSON をパースして return する
-        # → base.py の normalize_response() が後続処理
+Current runtime path:
+llm_personas.py -> get_persona() -> LLMPhilosopher -> JSON parser
 ```
 
-既存の 42 の `.py` ファイルは、LLM 統合後も **段階的に置き換え可能**（1ファイルずつ差し替え、テストで確認）。
+`FILL_IN` や `_template.yaml` を含む未完成資産はパッケージ配布物から除外する。公開前に利用する場合は、まず `llm_personas.py` とテストを更新する。

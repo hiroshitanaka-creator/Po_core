@@ -9,7 +9,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/po-core-flyingpig)](https://pypi.org/project/po-core-flyingpig/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
-[![Status: Stable](https://img.shields.io/badge/Status-Stable-brightgreen.svg)]()
+[![Status: Package%20metadata%20marks%20stable](https://img.shields.io/badge/Status-Package%20metadata%20marks%20stable-brightgreen.svg)]()
 
 ```bash
 pip install po-core-flyingpig
@@ -26,7 +26,7 @@ pip install po-core-flyingpig
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
 - **A/B testing framework** for optimizing philosophy configurations with statistical rigor
-- 3100+ tests; REST API + Docker production-ready
+- release-gated CI covers tests, security, build, and artifact smoke across Python 3.10–3.12
 
 ### Quick links
 
@@ -34,6 +34,14 @@ pip install po-core-flyingpig
 [Research](./05_research) ·
 [Reason-log spec](./04_modules/reason_log) ·
 [Viewer spec](./04_modules/viewer)
+
+
+## Release Metadata
+
+- Package version: `1.0.2`
+- Public package state: package metadata currently declares `Development Status :: 5 - Production/Stable`
+- Philosopher inventory: **42 integrated** personas, with runtime selection budgets limiting the default NORMAL path to at most 39 active philosophers per request
+- Publish status: release workflows are configured, but an actual PyPI/TestPyPI publish still depends on repository secrets/trusted publisher settings and a successful tagged/manual run
 
 ## Development Loop (Po_core core)
 
