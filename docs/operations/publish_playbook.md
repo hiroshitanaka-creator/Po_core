@@ -13,9 +13,11 @@
 
 1. **version整合**
    - `pyproject.toml` の `version` がリリース予定版数になっている。
+   - 開発依存の単一真実源は `tools/dev-requirements.txt` とし、`project.optional-dependencies.dev` / `dependency-groups.dev` は `python scripts/check_dev_dependencies.py` で同期確認済みである。
    - `CHANGELOG.md` の `Unreleased` が更新済みで、リリース内容が説明されている。
 2. **publish must-pass checks green**
    - ローカルで以下が成功している（release開始可否の判定条件）。
+     - `python scripts/check_dev_dependencies.py`
      - `pytest tests/test_release_readiness.py -v`
      - `pytest tests/acceptance/ -v -m acceptance`
      - `pytest tests/test_output_schema.py -v`
@@ -40,6 +42,7 @@
 ## 2. リリース直前チェック（コピペ実行）
 
 ```bash
+python scripts/check_dev_dependencies.py
 pytest tests/test_release_readiness.py -v
 pytest tests/acceptance/ -v -m acceptance
 pytest tests/test_output_schema.py -v
@@ -53,7 +56,7 @@ python -m build
 twine check dist/*
 ```
 
-必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。artifact smoke は `scripts/release_smoke.py` に集約し、wheel / sdist の両方で同じ deterministic smoke コマンド群を timeout 付きで再実行する。
+必須コマンド（dependency-SSOT / release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。artifact smoke は `scripts/release_smoke.py` に集約し、wheel / sdist の両方で同じ deterministic smoke コマンド群を timeout 付きで再実行する。
 
 ---
 

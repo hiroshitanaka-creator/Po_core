@@ -50,6 +50,11 @@ def _read(relpath: str) -> str:
     return (ROOT / relpath).read_text(encoding="utf-8")
 
 
+def _canonical_dev_dependencies() -> list[str]:
+    lines = _read("tools/dev-requirements.txt").splitlines()
+    return [line.strip() for line in lines if line.strip() and not line.lstrip().startswith("#")]
+
+
 STATUS_STALE_PHRASES = [
     "PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し",
     "PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。",
@@ -162,14 +167,34 @@ def test_requirements_files_are_documented_as_repo_local_convenience_wrappers() 
     assert "Repo-local only" in requirements
     assert requirements.strip().endswith("-e .")
     assert "Repo-local only" in requirements_dev
+    assert "tools/dev-requirements.txt" in requirements_dev
     assert requirements_dev.strip().endswith("-e .[dev]")
     assert "repo-local convenience wrappers" in readme
 
 
+def test_dev_dependencies_are_single_sourced() -> None:
+    pyproject = tomllib.loads(_read("pyproject.toml"))
+    canonical_dev = _canonical_dev_dependencies()
+    optional_dev = pyproject["project"]["optional-dependencies"]["dev"]
+    dependency_group_dev = pyproject["dependency-groups"]["dev"]
+
+    assert canonical_dev
+    assert optional_dev == canonical_dev
+    assert dependency_group_dev == canonical_dev
+    script = _read("scripts/check_dev_dependencies.py")
+    assert "tools/dev-requirements.txt" in script
+    assert "dependency-groups.dev" in script
+    assert "project.optional-dependencies.dev" in script
+
+
 def test_optional_all_extra_is_not_self_referential() -> None:
     pyproject = tomllib.loads(_read("pyproject.toml"))
-    all_extra = pyproject["project"]["optional-dependencies"]["all"]
+    optional = pyproject["project"]["optional-dependencies"]
+    all_extra = optional["all"]
+    combined = optional["llm"] + optional["dev"] + optional["docs"] + optional["viz"]
+    combined_deduped = list(dict.fromkeys(combined))
     assert all("po-core-flyingpig" not in dep for dep in all_extra)
+    assert all_extra == combined_deduped
 
 
 def test_prompt_runtime_ssot_is_python_persona_registry() -> None:
@@ -271,6 +296,8 @@ def test_release_smoke_script_checks_all_console_scripts() -> None:
 
 def test_publish_playbook_documents_fail_closed_release_path() -> None:
     playbook = _read("docs/operations/publish_playbook.md")
+    assert "python scripts/check_dev_dependencies.py" in playbook
+    assert "tools/dev-requirements.txt" in playbook
     assert "pytest tests/ -v" in playbook
     assert "bandit -r src/ -c pyproject.toml" in playbook
     assert "pip-audit" in playbook
