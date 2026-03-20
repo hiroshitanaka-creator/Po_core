@@ -12,7 +12,9 @@
 [![Status: Package%20metadata%20marks%20stable](https://img.shields.io/badge/Status-Package%20metadata%20marks%20stable-brightgreen.svg)]()
 
 ```bash
-pip install "po-core-flyingpig==1.0.2"
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+pip install -e .
 ```
 
 > `requirements.txt` / `requirements-dev.txt` are **repo-local convenience wrappers** for a cloned checkout. External consumers should install from package metadata (`pip install po-core-flyingpig` or extras), not from those editable wrappers.
@@ -40,10 +42,10 @@ pip install "po-core-flyingpig==1.0.2"
 
 ## Release Metadata
 
-- Package version: `1.0.2`
-- Public package state: package metadata currently declares `Development Status :: 5 - Production/Stable`
+- Repository target version: `1.0.2`
+- Public package metadata state: package classifiers currently declare `Development Status :: 5 - Production/Stable`
 - Philosopher inventory: **42 integrated** personas, with runtime selection budgets limiting the default NORMAL path to at most 39 active philosophers per request
-- Publish status: release workflows are configured, but an actual PyPI/TestPyPI publish still depends on repository secrets/trusted publisher settings and a successful tagged/manual run
+- External publish status: pending external publish; this repository does not currently contain 1.0.2 TestPyPI/PyPI publication evidence
 
 ## Development Loop (Po_core core)
 
@@ -354,6 +356,7 @@ Po_core is currently documented against package version `1.0.2`.
 | OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
 | Public package metadata | ✅ Stable | Package classifiers declare `Development Status :: 5 - Production/Stable` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
+| Public release evidence | ⚠️ Pending external publish | No in-repo TestPyPI/PyPI publication evidence for `1.0.2` is recorded yet |
 | Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, 42 integrated philosophers, and max 39 active philosophers on the default NORMAL path |
 
 ### Implemented platform capabilities
@@ -387,16 +390,15 @@ Po_core is currently documented against package version `1.0.2`.
 ## Installation
 
 ```bash
-# Install the published package
-pip install "po-core-flyingpig==1.0.2"
-
-# Or install from source in development mode
+# Install from source while 1.0.2 is pending external publish
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e ".[dev]"
 ```
+
+If you need a package index install, first add explicit TestPyPI/PyPI publication evidence for `1.0.2` to this repository; until then, treat index publication as pending external publish.
 
 ---
 

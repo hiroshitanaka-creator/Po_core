@@ -9,8 +9,8 @@ A quick guide to get started with Po_core's philosophy-driven AI system.
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# Install the published package
-pip install "po-core-flyingpig==1.0.2"
+# Install the repository target version 1.0.2 from source
+pip install -e .
 ```
 
 
@@ -260,8 +260,8 @@ pip install -e ".[dev]"
 ### ImportError: No module named 'click' or 'rich'
 
 ```bash
-# Install package-managed dependencies
-pip install "po-core-flyingpig==1.0.2"
+# Reinstall package-managed dependencies from the source checkout
+pip install -e .
 ```
 
 ---
