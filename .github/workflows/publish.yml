@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@42375524ee3024772b51489007bcc066979e22c1
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
