@@ -154,7 +154,8 @@ class SQLiteReviewStore(ReviewStore):
 
     def _init_db(self) -> None:
         with self._connect() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS review_queue (
                     review_id TEXT PRIMARY KEY,
                     session_id TEXT NOT NULL,
@@ -169,7 +170,8 @@ class SQLiteReviewStore(ReviewStore):
                     updated_at TEXT NOT NULL,
                     decided_at TEXT
                 )
-                """)
+                """
+            )
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_review_queue_status_updated ON review_queue(status, updated_at DESC)"
             )
@@ -266,12 +268,14 @@ class SQLiteReviewStore(ReviewStore):
 
     def get_pending(self) -> list[Dict[str, Any]]:
         with self._connect() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT *
                 FROM review_queue
                 WHERE status = 'pending'
                 ORDER BY created_at ASC, review_id ASC
-                """).fetchall()
+                """
+            ).fetchall()
         return [_row_to_item(row) for row in rows]
 
     def apply_decision(

@@ -7,9 +7,9 @@ Pydantic v2 models for all REST API endpoints.
 
 from __future__ import annotations
 
-from datetime import datetime
 import json
 import re
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
@@ -101,8 +101,7 @@ class ReasonRequest(BaseModel):
             return None
         if len(philosophers) > MAX_REASON_PHILOSOPHERS:
             raise ValueError(
-                "philosophers must contain at most "
-                f"{MAX_REASON_PHILOSOPHERS} items"
+                "philosophers must contain at most " f"{MAX_REASON_PHILOSOPHERS} items"
             )
 
         seen: set[str] = set()

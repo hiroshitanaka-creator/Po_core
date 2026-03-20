@@ -38,3 +38,14 @@
 - このファイルは「公開済み」と「公開準備済み」を区別する。
 - 既存の publish playbook は運用手順として有効だが、それ自体は公開事実の証拠ではない。
 - conservative wording rule: publication state は available evidence の範囲だけを言う。今回の `1.0.2` では **PyPI published** までは言えるが、workflow/TestPyPI/smoke success まではまだ言わない。
+
+
+## Completed
+
+- 2026-03-20: Phase 1 release blocker として `black --check src tests` の失敗を解消するため、black 準拠の最小整形を runtime REST/CLI と関連テストへ適用した。
+- 2026-03-20: release-facing SSOT として、本 snapshot に Phase 1 実施状況を追記した。
+
+## Next
+
+- `isort --check-only src tests` / `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` / release gates の再実行結果を Phase 1 証跡として確認し、追加 blocker があれば切り出す。
+- TestPyPI publication state / workflow run URL / clean install-import-runtime smoke transcript は、引き続き evidence boundary 外として operator artifact 固定待ち。
