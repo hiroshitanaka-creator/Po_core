@@ -277,8 +277,8 @@ cd Po_core
 
 # Configure environment
 cp .env.example .env
-# Use `PO_SKIP_AUTH=true` only for development
-# If you keep `PO_SKIP_AUTH=false`, you must set a non-empty `PO_API_KEY`
+# Recommended default: keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY`
+# Use `PO_SKIP_AUTH=true` only for short-lived local development when you intentionally want no auth
 
 # Launch
 docker compose up
@@ -291,7 +291,7 @@ open http://localhost:8000/docs
 
 ```bash
 pip install "po-core-flyingpig==1.0.2"
-export PO_SKIP_AUTH=true   # skip auth only in development
+export PO_API_KEY=dev-secret-key
 
 python -m po_core.app.rest
 # → http://localhost:8000
@@ -313,26 +313,28 @@ python -m po_core.app.rest
 ### Examples
 
 ```bash
-# Synchronous reasoning
+# Synchronous reasoning (recommended default: auth enabled)
 curl -X POST http://localhost:8000/v1/reason \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # SSE streaming (true async, non-blocking event loop)
 curl -N -X POST http://localhost:8000/v1/reason/stream \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
 # List the integrated philosopher manifest
-curl http://localhost:8000/v1/philosophers
+curl -H "X-API-Key: dev-secret-key" http://localhost:8000/v1/philosophers
 
 # Health check
 curl http://localhost:8000/v1/health
 
 # With API key authentication
 curl -X POST http://localhost:8000/v1/reason \
-  -H "X-API-Key: your-api-key" \
+  -H "X-API-Key: dev-secret-key" \
   -H "Content-Type: application/json" \
   -d '{"input": "What is freedom?"}'
 ```
@@ -344,7 +346,8 @@ Copy `.env.example` to `.env` and configure as needed.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PO_API_KEY` | `""` | API key required when `PO_SKIP_AUTH=false`; blank values are a startup misconfiguration |
-| `PO_SKIP_AUTH` | `false` | `true` bypasses auth only in development |
+| `PO_SKIP_AUTH` | `false` | Recommended default is `false`; set `true` only for short-lived local development without auth |
+| `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` remains accepted for backwards compatibility |
 | `PO_CORS_ORIGINS` | `"*"` | Allowed CORS origins (prod: comma-separated) |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit (req/min) |
 | `PO_PORT` | `8000` | Server port |

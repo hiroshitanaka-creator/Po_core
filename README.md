@@ -448,34 +448,39 @@ python examples/po_party_demo.py --help
 ### REST API
 
 ```bash
-# Start the server
+# Start the server with the recommended default posture
+export PO_API_KEY=dev-secret-key
 python -m po_core.app.rest
 # → http://localhost:8000  (OpenAPI docs at /docs)
 
 # Reason
 curl -X POST http://localhost:8000/v1/reason \
+     -H "X-API-Key: dev-secret-key" \
      -H "Content-Type: application/json" \
      -d '{"input": "What is justice?", "philosophers": ["kant"]}'
 
 # Streaming (SSE)
 curl -N http://localhost:8000/v1/reason/stream \
-     -X POST -H "Content-Type: application/json" \
+     -X POST -H "X-API-Key: dev-secret-key" \
+     -H "Content-Type: application/json" \
      -d '{"input": "What is freedom?"}'
 
 # Philosopher manifest
-curl http://localhost:8000/v1/philosophers
+curl -H "X-API-Key: dev-secret-key" http://localhost:8000/v1/philosophers
 
 # Health
 curl http://localhost:8000/v1/health
 ```
 
 Auth defaults:
-- Development: `PO_SKIP_AUTH=true`
-- Production: `PO_SKIP_AUTH=false` and set non-empty `PO_API_KEY` (startup fails fast when misconfigured)
-- WebSocket query-string fallback (`?api_key=...`) is disabled by default; enable only when needed via `PO_WS_ALLOW_QUERY_API_KEY=true`
+- Recommended operator default in every environment: keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY`.
+- `PO_SKIP_AUTH=true` is acceptable only for short-lived local development on a trusted machine when you intentionally want no auth.
+- If `PO_SKIP_AUTH=false` and `PO_API_KEY` is blank, startup fails fast by design.
+- `X-API-Key` is the documented request header by default. `PO_API_KEY_HEADER` is an optional advanced override for deployments that need a different primary header name; `X-API-Key` remains accepted for backwards compatibility.
+- WebSocket query-string fallback (`?api_key=...`) is disabled by default; enable only when needed via `PO_WS_ALLOW_QUERY_API_KEY=true`.
 
 Viewer (`src/po_core/viewer/standalone.html`) live mode guidance:
-- Prefer **SSE** for browser production use (supports `X-API-Key` header auth).
+- Prefer **SSE** for browser production use (supports API-key header auth, default `X-API-Key`).
 - WebSocket in browsers cannot set custom auth headers; query-string auth (`?api_key=...`) is available only when `PO_WS_ALLOW_QUERY_API_KEY=true` (opt-in, less secure).
 - `auto` transport selects SSE when API key is present, otherwise WebSocket.
 - Right panel includes a **Human Review** queue for ESCALATE operations (`GET /v1/review/pending`).
@@ -497,8 +502,9 @@ Key environment variables (see `.env.example`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PO_API_KEY` | `""` | API key for `X-API-Key` auth (`PO_SKIP_AUTH=false` requires non-empty value; blank causes startup failure) |
-| `PO_SKIP_AUTH` | `false` | `true` only for local development (disables auth checks) |
+| `PO_API_KEY` | `""` | API key used when `PO_SKIP_AUTH=false`; blank causes startup failure |
+| `PO_SKIP_AUTH` | `false` | Keep `false` by default; set `true` only for short-lived local development without auth |
+| `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` is still accepted for backwards compatibility |
 | `PO_WS_ALLOW_QUERY_API_KEY` | `false` | Opt-in WebSocket `?api_key=` fallback for browser compatibility (less secure than headers) |
 | `PO_CORS_ORIGINS` | `"*"` | Comma-separated allowed CORS origins |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
