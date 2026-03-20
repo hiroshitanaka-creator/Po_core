@@ -247,10 +247,10 @@ def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
         if llm_fallback_val is None:
             llm_fallback_val = proposal_meta_dict.get("llm_fallback")
 
-        fallback_reason = (
-            p.get("fallback_reason")
-            or normalized_meta_dict.get("fallback_reason")
-            or proposal_meta_dict.get("fallback_reason")
+        fallback_reason = _extract_fallback_reason(
+            normalized_meta_dict,
+            proposal_meta_dict,
+            proposal=p,
         )
 
         contribs.append(
@@ -270,6 +270,24 @@ def _extract_philosophers(result: dict) -> list[PhilosopherContribution]:
         )
     return contribs
 
+
+def _extract_fallback_reason(
+    *metadata_dicts: dict[str, Any], proposal: dict[str, Any]
+) -> str | None:
+    direct_reason = proposal.get("fallback_reason")
+    if direct_reason not in (None, ""):
+        return str(direct_reason)
+
+    for metadata_dict in metadata_dicts:
+        nested = metadata_dict.get("fallback")
+        if isinstance(nested, dict):
+            nested_reason = nested.get("reason")
+            if nested_reason not in (None, ""):
+                return str(nested_reason)
+        reason = metadata_dict.get("fallback_reason")
+        if reason not in (None, ""):
+            return str(reason)
+    return None
 
 def _extract_tensors(result: dict) -> TensorSnapshot:
     """Extract tensor metrics from result."""
@@ -400,13 +418,13 @@ def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
             if bool(fallback_val):
                 llm_fallback = True
 
-            reason = (
-                p.get("fallback_reason")
-                or normalized_meta_dict.get("fallback_reason")
-                or proposal_meta_dict.get("fallback_reason")
+            reason = _extract_fallback_reason(
+                normalized_meta_dict,
+                proposal_meta_dict,
+                proposal=p,
             )
             if reason:
-                reasons.add(str(reason))
+                reasons.add(reason)
 
     return llm_fallback, sorted(reasons)
 
