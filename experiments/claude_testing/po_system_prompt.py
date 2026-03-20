@@ -1,8 +1,8 @@
 """
-Po_core System Prompt for Claude Testing
+Po_core Experimental System Prompt for Claude Testing
 
-This module contains the unified system prompt for philosophical integration
-testing with Claude, based on Po_core + Constraints framework.
+This module contains an experimental Claude testing prompt.
+It is not part of the public runtime API or the packaged prompt SSOT.
 """
 
 from typing import Literal

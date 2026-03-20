@@ -72,14 +72,16 @@ def _maybe_preload_models(settings: Settings) -> None:
         "YES",
     }:
         return
+
+    errors: list[str] = []
     try:
         from po_core.tensors.metrics.semantic_delta import (
             preload_models as preload_semantic,
         )
 
         preload_semantic()
-    except Exception:
-        pass
+    except Exception as exc:
+        errors.append(f"semantic_delta preload failed: {exc}")
 
     if settings.use_freedom_pressure_v2:
         try:
@@ -88,8 +90,11 @@ def _maybe_preload_models(settings: Settings) -> None:
             )
 
             preload_fpv2()
-        except Exception:
-            pass
+        except Exception as exc:
+            errors.append(f"freedom_pressure_v2 preload failed: {exc}")
+
+    if errors:
+        raise RuntimeError("; ".join(errors))
 
 
 def _load_battalion_plans_from_env_or_package() -> Any:

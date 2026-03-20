@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "po-core-flyingpig"
-version = "1.0.2"
+dynamic = ["version"]
 description = "AI system integrating philosophers as dynamic tensors for responsible meaning generation"
 readme = "README.md"
 license = {text = "AGPL-3.0-or-later"}
@@ -94,7 +94,23 @@ viz = [
     "bokeh>=3.3.0",
 ]
 all = [
-    "po-core-flyingpig[dev,docs,viz,llm]",
+    "google-genai>=1.0",
+    "openai>=1.0",
+    "anthropic>=0.40",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black==26.1.0",
+    "isort==5.13.2",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "sphinx>=7.2.0",
+    "jupyter>=1.0.0",
+    "pre-commit>=3.5.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "myst-parser>=2.0.0",
+    "seaborn>=0.13.0",
+    "bokeh>=3.3.0",
 ]
 
 [project.urls]
@@ -120,13 +136,16 @@ where = ["src"]
 include = ["po_core*"]
 namespaces = false
 
+
+[tool.setuptools.dynamic]
+version = {attr = "po_core.__version__"}
+
 [tool.setuptools.package-data]
 po_core = [
     "config/*.yaml",
     "config/*/*.yaml",
     "config/*/*/*.yaml",
     "axis/specs/*.json",
-    "philosophers/prompts/*.yaml",
     "schemas/*.json",
     "viewer/*.html",
     "py.typed",

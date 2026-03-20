@@ -28,6 +28,7 @@ from fastapi.responses import Response
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+from po_core import __version__
 from po_core.app.rest.auth import evaluate_auth_policy
 from po_core.app.rest.config import (
     APISettings,
@@ -142,7 +143,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
 - Open source: [AGPL-3.0-or-later](https://github.com/hiroshitanaka-creator/Po_core/blob/main/LICENSE)
 - Commercial: [Commercial License Terms](https://github.com/hiroshitanaka-creator/Po_core/blob/main/COMMERCIAL_LICENSE.md)
         """,
-        version="1.0.0",
+        version=__version__,
         contact={
             "name": "Flying Pig Project",
             "url": "https://github.com/hiroshitanaka-creator/Po_core",

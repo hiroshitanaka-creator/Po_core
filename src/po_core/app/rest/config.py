@@ -58,6 +58,7 @@ class APISettings(BaseSettings):
     # Set to 0 to disable rate limiting.
     rate_limit_per_minute: int = 60
     trust_proxy_headers: bool = False
+    request_timeout_s: float = 30.0
 
     # Po_core engine
     enable_solarwill: bool = True

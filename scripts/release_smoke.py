@@ -2,18 +2,43 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.metadata
 import inspect
 import pathlib
+import subprocess
+import sys
 from importlib import resources
 
 import po_core
 import po_core.viewer
 from po_core import run
+from po_core.cli.commands import main as cli_main
 from po_core.runtime.wiring import build_test_system
+
+ENTRYPOINTS = ("po-core", "po-self", "po-trace", "po-interactive", "po-experiment")
+
+
+def _assert_console_scripts() -> None:
+    for entrypoint in ENTRYPOINTS:
+        resolved = subprocess.run(
+            [entrypoint, "--help"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        print(f"entrypoint={entrypoint} rc={resolved.returncode}")
+        if resolved.returncode != 0:
+            raise SystemExit(
+                f"console script failed: {entrypoint}\nSTDOUT:\n{resolved.stdout}\nSTDERR:\n{resolved.stderr}"
+            )
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check-entrypoints", action="store_true")
+    args = parser.parse_args()
+
     dist_version = importlib.metadata.version("po-core-flyingpig")
     pkg_version = po_core.__version__
     print(f"dist_version={dist_version}")
@@ -31,9 +56,7 @@ def main() -> None:
     if not pareto_resource.is_file():
         raise SystemExit(f"missing pareto resource: {pareto_resource}")
 
-    viewer_path = (
-        pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
-    )
+    viewer_path = pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
     print(f"viewer_html={viewer_path}")
     if not viewer_path.exists():
         raise SystemExit(f"viewer HTML missing: {viewer_path}")
@@ -49,6 +72,14 @@ def main() -> None:
     print(f"run_status={status}")
     if status not in {"ok", "blocked"}:
         raise SystemExit(f"unexpected run status: {status}")
+
+    cli_name = getattr(cli_main, "name", None)
+    print(f"cli_name={cli_name}")
+    if cli_name != "main":
+        raise SystemExit(f"unexpected cli main name: {cli_name}")
+
+    if args.check_entrypoints:
+        _assert_console_scripts()
 
 
 if __name__ == "__main__":

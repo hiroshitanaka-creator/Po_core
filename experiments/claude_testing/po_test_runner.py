@@ -1,8 +1,8 @@
 """
-Po_core Test Runner
+Po_core Experimental Test Runner
 
 A test runner for evaluating Claude's philosophical integration
-using the Po_core + Constraints framework.
+using the Po_core Experimental + Constraints framework.
 """
 
 import json
@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from po_core.po_system_prompt import (
+from experiments.claude_testing.po_system_prompt import (
     EVALUATION_RUBRIC,
     PO_CORE_SYSTEM_PROMPT,
     STRESS_TEST_CONCEPTS,
@@ -71,10 +71,10 @@ class TestReport:
 
 class PoTestRunner:
     """
-    Test runner for Po_core philosophical integration.
+    Test runner for Po_core Experimental philosophical integration.
 
     This class provides methods to run tests against Claude
-    using the Po_core system prompt and evaluate responses.
+    using the Po_core Experimental system prompt and evaluate responses.
     """
 
     # Expected output sections
@@ -106,7 +106,7 @@ class PoTestRunner:
         self.results: List[TestResult] = []
 
     def get_system_prompt(self) -> str:
-        """Get the Po_core system prompt."""
+        """Get the Po_core Experimental system prompt."""
         return PO_CORE_SYSTEM_PROMPT
 
     def parse_response_sections(self, response: str) -> Dict[str, str]:
@@ -426,7 +426,7 @@ class PoTestRunner:
     def print_summary(self, report: TestReport) -> None:
         """Print a summary of the test report."""
         print("=" * 60)
-        print("Po_core Test Report Summary")
+        print("Po_core Experimental Test Report Summary")
         print("=" * 60)
         print()
 
@@ -451,7 +451,7 @@ def demo_test() -> None:
     runner = PoTestRunner()
 
     print("=" * 60)
-    print("Po_core Test Runner Demo")
+    print("Po_core Experimental Test Runner Demo")
     print("=" * 60)
     print()
 

@@ -9,19 +9,10 @@ A quick guide to get started with Po_core's philosophy-driven AI system.
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# Install required dependencies
-pip install click rich
-
-# Install in development mode (recommended)
-pip install -e .
-```
-
-
-
-```bash
-# Install current stable release from PyPI
+# Install the published package
 pip install "po-core-flyingpig==1.0.2"
 ```
+
 
 ## ⚡ Try it in 30 Seconds
 
@@ -127,7 +118,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core deploys **39 philosophers** in parallel (the number mobilized varies by SafetyMode):
+Po_core integrates **42 philosophers**. Runtime selection budgets keep the default NORMAL path at **39 active** philosophers maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -263,14 +254,14 @@ response = po.generate("What does this word mean?")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # Or install in development mode
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
 
 ```bash
-# Install required dependencies
-pip install click rich
+# Install package-managed dependencies
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ---
@@ -285,7 +276,8 @@ cd Po_core
 
 # Configure environment
 cp .env.example .env
-# Set PO_API_KEY if needed; for local dev leave PO_SKIP_AUTH=true
+# Use `PO_SKIP_AUTH=true` only for development
+# If you keep `PO_SKIP_AUTH=false`, you must set a non-empty `PO_API_KEY`
 
 # Launch
 docker compose up
@@ -297,8 +289,8 @@ open http://localhost:8000/docs
 ### Start Locally
 
 ```bash
-pip install -e .
-export PO_SKIP_AUTH=true   # skip auth in development
+pip install -e ".[dev]"
+export PO_SKIP_AUTH=true   # skip auth only in development
 
 python -m po_core.app.rest
 # → http://localhost:8000
@@ -308,9 +300,9 @@ python -m po_core.app.rest
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/v1/reason` | Synchronous philosophical reasoning (39 phil → Pareto) |
+| `POST` | `/v1/reason` | Synchronous philosophical reasoning (42 integrated philosophers, max 39 active on the default NORMAL path, then Pareto aggregation) |
 | `POST` | `/v1/reason/stream` | SSE streaming reasoning (true async offload) |
-| `GET`  | `/v1/philosophers` | Full 39-philosopher manifest |
+| `GET`  | `/v1/philosophers` | Full 42-philosopher integrated manifest |
 | `GET`  | `/v1/trace/{session_id}` | Per-session trace events |
 | `GET`  | `/v1/health` | Health check (version + uptime) |
 
@@ -331,7 +323,7 @@ curl -N -X POST http://localhost:8000/v1/reason/stream \
   -H "Accept: text/event-stream" \
   -d '{"input": "What is the good life?"}'
 
-# List all 39 philosophers
+# List the integrated philosopher manifest
 curl http://localhost:8000/v1/philosophers
 
 # Health check
@@ -350,8 +342,8 @@ Copy `.env.example` to `.env` and configure as needed.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PO_API_KEY` | `""` | API key (empty = no auth) |
-| `PO_SKIP_AUTH` | `false` | `true` bypasses auth (development) |
+| `PO_API_KEY` | `""` | API key required when `PO_SKIP_AUTH=false`; blank values are a startup misconfiguration |
+| `PO_SKIP_AUTH` | `false` | `true` bypasses auth only in development |
 | `PO_CORS_ORIGINS` | `"*"` | Allowed CORS origins (prod: comma-separated) |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit (req/min) |
 | `PO_PORT` | `8000` | Server port |
