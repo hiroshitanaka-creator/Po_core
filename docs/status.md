@@ -11,8 +11,10 @@
 - Repository target version: `1.0.2`
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.2.md` fixes PyPI publication evidence for `1.0.2`; `docs/release/smoke_verification_v1.0.2.md` records that smoke transcript evidence is still missing
+- Operator handoff bundle for the next release cycle: `docs/release/release_candidate_handoff_v1.0.2.md`
 - External publish status: **published on PyPI for `1.0.2`**
 - Canonical evidence boundary: public docs may say only what the in-repo evidence proves. Today that means **PyPI publication is evidenced**; TestPyPI publication, workflow-run success, and smoke verification remain unevidenced until their exact URLs/transcripts are recorded.
+- Next-cycle operator rule: use `docs/release/release_candidate_handoff_v1.0.2.md` as the compact pre-publish checklist, and use the playbook only for the full step-by-step procedure.
 
 ## Canonical public wording
 
