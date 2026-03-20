@@ -89,6 +89,7 @@ python -c "from po_core import run; out = run('smoke'); print(out.get('proposal'
 - Rule: remote evidence（run URL / install成功ログ / smoke実出力）を捏造しない。未取得なら pending として記録する。
 - successful TestPyPI run 確認後、`docs/release/templates/testpypi_publish_log_template_<VERSION>.md` を複製して `docs/release/testpypi_publish_log_<VERSION>.md` を作成する。
 - その evidence ファイルに run URL / install成功ログ / import/run smoke 実出力を実値で記入し、`docs/status.md` の該当行を template から evidence fixed 表現へ更新する。
+- もし public PyPI version page だけ先に確認できた場合は、まず `docs/release/pypi_publication_v1.0.2.md` のような publication-only evidence を追加し、workflow/TestPyPI/smoke の未取得部分は別 evidence file に未取得として分離する。
 
 ---
 

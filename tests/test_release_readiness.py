@@ -31,10 +31,9 @@ README_STALE_PHRASES = [
     "Current Phase: v1.0.0 Released",
     "Install from PyPI (beta)",
     "PyPI v1.0.0 publish pending",
-    "# Install the published package",
+    "pending external publish; this repository does not currently contain 1.0.2 TestPyPI/PyPI publication evidence",
 ]
 QUICKSTART_STALE_PHRASES = [
-    "published package",
     "公開済みstable",
     "pip install click rich",
     "39 philosophers",
@@ -59,6 +58,8 @@ STATUS_STALE_PHRASES = [
     "PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し",
     "PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。",
     "v1.0.0 リリース完了",
+    "Public release evidence in-repo: none yet for `1.0.2`",
+    "pending external publish",
 ]
 
 
@@ -117,6 +118,8 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     quickstart_ja = _read("QUICKSTART.md")
     quickstart_en = _read("QUICKSTART_EN.md")
     status_doc = _read("docs/status.md")
+    pypi_evidence = _read("docs/release/pypi_publication_v1.0.2.md")
+    smoke_evidence = _read("docs/release/smoke_verification_v1.0.2.md")
 
     for phrase in README_STALE_PHRASES:
         assert phrase not in readme, f"stale README phrase remains: {phrase}"
@@ -139,7 +142,11 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "非空の `PO_API_KEY`" in quickstart_ja
     assert "non-empty `PO_API_KEY`" in quickstart_en
     assert "Repository target version: `1.0.2`" in status_doc
-    assert "Public release evidence in-repo: none yet for `1.0.2`" in status_doc
+    assert "pypi_publication_v1.0.2.md" in status_doc
+    assert "published on PyPI for `1.0.2`" in status_doc
+    assert "https://pypi.org/project/po-core-flyingpig/1.0.2/" in pypi_evidence
+    assert "Publication result evidenced here: **PyPI published**" in pypi_evidence
+    assert "operator-supplied transcript not yet recorded" in smoke_evidence
 
 
 def test_repository_structure_is_fully_resynced() -> None:

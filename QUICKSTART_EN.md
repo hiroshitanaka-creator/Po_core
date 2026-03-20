@@ -5,14 +5,15 @@ A quick guide to get started with Po_core's philosophy-driven AI system.
 ## 📦 Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/hiroshitanaka-creator/Po_core.git
-cd Po_core
-
-# Install the repository target version 1.0.2 from source
-pip install -e .
+# Install the published PyPI package
+pip install "po-core-flyingpig==1.0.2"
 ```
 
+
+
+## 📦 Published package status
+
+Version `1.0.2` is evidenced as published on PyPI in `docs/release/pypi_publication_v1.0.2.md`. TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts are still tracked separately and should not be claimed unless their evidence files are filled with operator-supplied values.
 
 ## ⚡ Try it in 30 Seconds
 
@@ -254,7 +255,7 @@ response = po.generate("What does this word mean?")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # Or install in development mode
-pip install -e ".[dev]"
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
@@ -289,7 +290,7 @@ open http://localhost:8000/docs
 ### Start Locally
 
 ```bash
-pip install -e ".[dev]"
+pip install "po-core-flyingpig==1.0.2"
 export PO_SKIP_AUTH=true   # skip auth only in development
 
 python -m po_core.app.rest
