@@ -26,9 +26,10 @@
      - `python -m build`
      - `twine check dist/*`
    - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`po-core` / `po-self` / `po-trace` / `po-interactive` / `po-experiment` と `python scripts/release_smoke.py --check-entrypoints` が通っている。
-3. **タグ運用の整合**
-   - `workflow_dispatch` / release の publish は main または `vX.Y.Z` タグ以外から publish しない。
-   - `vX.Y.Z` 形式のタグ方針に従う（例: `v1.0.2`）。
+3. **タグ運用と provenance の整合**
+   - `workflow_dispatch` / release の publish は `refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない。
+   - publish guard は `git merge-base --is-ancestor <publish-sha> origin/main` で、公開対象コミットが `origin/main` 到達可能であることを必須条件として検証する。
+   - `vX.Y.Z` タグの `X.Y.Z` は `src/po_core/__init__.py` の `__version__` と一致していなければならない（例: `v1.0.2` ↔ `__version__ = "1.0.2"`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
 4. **Trusted Publishing前提**
    - GitHub Environments に `testpypi` / `pypi` が存在する。
@@ -52,7 +53,7 @@ python -m build
 twine check dist/*
 ```
 
-必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。
+必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。
 
 ---
 
@@ -62,7 +63,10 @@ twine check dist/*
 2. `Run workflow` を選択。
 3. `target` に `testpypi` を指定して実行。
 4. `publish-testpypi` ジョブ成功を確認。
-5. workflow YAML の publish guard が main または `vX.Y.Z` タグ以外を拒否していることを確認する。
+5. `publish-guard` ジョブが以下を通過していることを確認する。
+   - ref が `refs/heads/main` または `refs/tags/vX.Y.Z`
+   - publish 対象 SHA が `origin/main` 到達可能
+   - タグ実行時は `vX.Y.Z` と `src/po_core/__init__.py` の `__version__` が一致
 6. TestPyPI で公開結果を確認。
 
 確認コマンド（クリーン環境推奨）:
@@ -91,15 +95,20 @@ TestPyPI スモーク成功後にのみ実行する。
 
 ### 4-A. 推奨: Release publish トリガ
 
-1. `vX.Y.Z` タグを push して GitHub Release を `published` にする。
-2. `Publish to PyPI` ワークフローが `release` イベントで起動する。
-3. `publish-pypi` ジョブ成功を確認。
+1. `src/po_core/__init__.py` の `__version__` がリリース対象版数であることを確認する。
+2. `origin/main` 上のレビュー済みコミットに対して `vX.Y.Z` タグを付ける（`X.Y.Z == __version__`）。
+3. GitHub Release をそのタグで `published` にする。
+4. `Publish to PyPI` ワークフローが `release` イベントで起動する。
+5. `publish-guard` が「tagged commit is reachable from origin/main」「tag version matches package version」を通過したことを確認する。
+6. `publish-pypi` ジョブ成功を確認。
 
 ### 4-B. 手動: workflow_dispatch トリガ
 
 1. GitHub Actions で `Publish to PyPI` を `Run workflow`。
-2. `target` に `pypi` を指定して実行。
-3. `publish-pypi` ジョブ成功を確認。
+2. `main` ブランチ、または `vX.Y.Z` タグ（必要なら tag version = package version）を選択する。
+3. `target` に `pypi` を指定して実行。
+4. `publish-guard` が provenance 検証を通過したことを確認する。
+5. `publish-pypi` ジョブ成功を確認。
 
 公開後の最小検証:
 
