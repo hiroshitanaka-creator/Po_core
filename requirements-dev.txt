@@ -1,5 +1,6 @@
 # Po_core source-checkout development convenience requirements
 # Repo-local only: this file assumes you already cloned this repository.
+# Dev dependency truth is defined in tools/dev-requirements.txt and exposed via package metadata.
 # For third-party consumption, use package metadata / extras instead of this editable install wrapper.
 
 -e .[dev]
