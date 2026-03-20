@@ -2,6 +2,7 @@
 
 最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
 最新進捗：[docs/status.md](/docs/status.md)
+最終オペレータ引き継ぎ（次回リリース用・簡潔版）：[docs/release/release_candidate_handoff_v1.0.2.md](/docs/release/release_candidate_handoff_v1.0.2.md)
 
 このプレイブックは、`.github/workflows/publish.yml` を**人依存なく再現可能**に運用するための固定手順です。
 
