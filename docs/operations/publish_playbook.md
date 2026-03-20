@@ -25,7 +25,7 @@
      - `pip-audit`
      - `python -m build`
      - `twine check dist/*`
-   - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`po-core` / `po-self` / `po-trace` / `po-interactive` / `po-experiment` と `python scripts/release_smoke.py --check-entrypoints` が通っている。
+   - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`python scripts/release_smoke.py --check-entrypoints` が通っている。smoke は各 console script の `--help` に加えて `po-core version` / `po-core status` / `po-core prompt smoke --format json` / `po-self` / `po-experiment list` を timeout 付きで検証する。
 3. **タグ運用と provenance の整合**
    - `workflow_dispatch` / release の publish は `refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない。
    - publish guard は `git merge-base --is-ancestor <publish-sha> origin/main` で、公開対象コミットが `origin/main` 到達可能であることを必須条件として検証する。
@@ -53,7 +53,7 @@ python -m build
 twine check dist/*
 ```
 
-必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。
+必須コマンド（release-readiness / pytest / security / build/twine）がすべて成功してから GitHub Actions 側の publish を実行する。publish ワークフローでも同じ blocker 群に加えて `python tools/import_graph.py --check --print` を実行し、import-guard を release 前提条件として再検証する。artifact smoke は `scripts/release_smoke.py` に集約し、wheel / sdist の両方で同じ deterministic smoke コマンド群を timeout 付きで再実行する。
 
 ---
 
@@ -118,6 +118,12 @@ python -c "import po_core; print(po_core.__version__)"
 ```
 
 ---
+
+## 4-C. Philosopher execution mode の扱い
+
+- release smoke / publish 手順のために `PO_PHILOSOPHER_EXECUTION_MODE` を `process` へ強制変更しない。
+- 現行 smoke は package install, resource packaging, CLI wiring, and deterministic sample commands の健全性を確認するものであり、runtime execution mode の切り替えを昇格条件にはしない。
+- `process` mode を本番推奨として前面に出すのは、別途 end-to-end 運用実績と rollback 手順が揃ってからにする。この playbook では既存の安全な default を維持する。
 
 ## 5. 失敗時ロールバック手順
 

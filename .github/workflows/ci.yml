@@ -166,9 +166,4 @@ jobs:
             python -m pip install dist/*.tar.gz
           fi
           python -c "import po_core; print(po_core.__version__)"
-          po-core --help
-          po-self --help
-          po-trace --help
-          po-interactive --help
-          po-experiment --help
           python scripts/release_smoke.py --check-entrypoints
