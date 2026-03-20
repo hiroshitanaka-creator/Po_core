@@ -14,7 +14,7 @@ Usage:
 Security:
     CORS origins  — PO_CORS_ORIGINS (default: "*" for local dev)
     Rate limiting — PO_RATE_LIMIT_PER_MINUTE (default: 60/min per IP)
-    API key auth  — PO_API_KEY + X-API-Key header
+    API key auth  — PO_API_KEY + configurable header (default: X-API-Key)
 """
 
 from __future__ import annotations
@@ -128,7 +128,8 @@ A production REST API for the **Po_core** philosophical deliberation engine.
 to generate ethically responsible responses.
 
 ### Authentication
-Include your API key in the `X-API-Key` header for all requests.
+Include your API key in the header named by `PO_API_KEY_HEADER` (default: `X-API-Key`).
+For backwards compatibility, `X-API-Key` remains accepted even when a custom header is configured.
 Set `PO_API_KEY` and keep `PO_SKIP_AUTH=false` to enforce authentication.
 If `PO_SKIP_AUTH=false` and `PO_API_KEY` is empty/blank, startup fails fast by design.
 Set `PO_SKIP_AUTH=true` only for development mode.

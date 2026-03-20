@@ -42,7 +42,7 @@ class APISettings(BaseSettings):
         default="",
         validation_alias=AliasChoices("PO_API_KEY", "PO_CORE_API_KEY"),
     )
-    api_key_header: str = "X-API-Key"
+    api_key_header: str = Field(default="X-API-Key", min_length=1)
     skip_auth: bool = False  # Set True for local dev / testing
     ws_allow_query_api_key: bool = False
 

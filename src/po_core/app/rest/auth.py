@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Mapping
 
-from fastapi import Depends, HTTPException, Security, status
-from fastapi.security.api_key import APIKeyHeader
+from fastapi import Depends, HTTPException, Request, status
 
 from po_core.app.rest.config import APISettings, get_api_settings
 
-_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+DEFAULT_API_KEY_HEADER = "X-API-Key"
 
 
 @dataclass(frozen=True)
@@ -59,15 +59,36 @@ def evaluate_auth_policy(
     return AuthDecision(allowed=True, is_misconfigured=False, message="Authorized")
 
 
+def resolve_api_key_header_names(configured_header_name: str) -> tuple[str, ...]:
+    """Return accepted API-key header names in precedence order."""
+    configured = configured_header_name.strip() or DEFAULT_API_KEY_HEADER
+    if configured.lower() == DEFAULT_API_KEY_HEADER.lower():
+        return (DEFAULT_API_KEY_HEADER,)
+    return (configured, DEFAULT_API_KEY_HEADER)
+
+
+def extract_api_key_from_header_map(
+    headers: Mapping[str, str], *, configured_header_name: str
+) -> str | None:
+    """Resolve an API key from request headers without silently weakening auth."""
+    for header_name in resolve_api_key_header_names(configured_header_name):
+        value = headers.get(header_name) or headers.get(header_name.lower())
+        if value and value.strip():
+            return value.strip()
+    return None
+
+
 async def require_api_key(
-    api_key: str | None = Security(_api_key_header),
+    request: Request,
     settings: APISettings = Depends(get_api_settings),
 ) -> None:
     """FastAPI dependency that validates API-key auth with fail-closed defaults."""
     decision = evaluate_auth_policy(
         skip_auth=settings.skip_auth,
         configured_api_key=settings.api_key,
-        presented_api_key=api_key,
+        presented_api_key=extract_api_key_from_header_map(
+            request.headers, configured_header_name=settings.api_key_header
+        ),
     )
     if decision.allowed:
         return

@@ -323,6 +323,74 @@ def test_reason_auth_valid_key(client_with_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_reason_auth_accepts_configured_api_key_header(tmp_path):
+    """Reason endpoint honours APISettings.api_key_header without dropping X-API-Key support."""
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="test-secret-key",
+            api_key_header="X-Internal-Key",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with patch("po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT):
+        configured = client.post(
+            "/v1/reason",
+            json={"input": "What is truth?"},
+            headers={"X-Internal-Key": "test-secret-key"},
+        )
+        legacy = client.post(
+            "/v1/reason",
+            json={"input": "What is truth?"},
+            headers={"X-API-Key": "test-secret-key"},
+        )
+
+    assert configured.status_code == 200
+    assert legacy.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_ws_accepts_configured_api_key_header(tmp_path):
+    """WebSocket auth honours APISettings.api_key_header and keeps X-API-Key as a fallback alias."""
+
+    async def _fake_async_run(*, user_input, settings, tracer, philosophers=None):
+        tracer.emit(TraceEvent.now("pipeline_step", "req-ws-auth", {"step": "start"}))
+        return _MOCK_RESULT
+
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="test-secret-key",
+            api_key_header="X-Internal-Key",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with patch("po_core.app.rest.routers.reason.po_async_run", new=_fake_async_run):
+        with client.websocket_connect(
+            "/v1/ws/reason", headers={"X-Internal-Key": "test-secret-key"}
+        ) as ws:
+            ws.send_json({"input": "Is fairness objective?"})
+            first = ws.receive_json()
+
+        with client.websocket_connect(
+            "/v1/ws/reason", headers={"X-API-Key": "test-secret-key"}
+        ) as ws:
+            ws.send_json({"input": "Is fairness objective?"})
+            second = ws.receive_json()
+
+    assert first["chunk_type"] == "started"
+    assert second["chunk_type"] == "started"
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_reason_auth_wrong_key_returns_401(client_with_auth):
     """Reason endpoint rejects wrong API key with 401."""
     resp = client_with_auth.post(
