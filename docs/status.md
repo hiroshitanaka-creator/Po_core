@@ -46,8 +46,10 @@
 
 - 2026-03-20: Phase 1 release blocker として `black --check src tests` の失敗を解消するため、black 準拠の最小整形を runtime REST/CLI と関連テストへ適用した。
 - 2026-03-20: release-facing SSOT として、本 snapshot に Phase 1 実施状況を追記した。
+- 2026-03-20: Phase 3 truth-sync として `examples/README.md` の roster/install wording と `clients/typescript/README.md` の official REST/auth wording を、`1.0.2`・42/39・evidence boundary に合わせて同期した。
 
 ## Next
 
+- `examples/` と `clients/typescript/` の他ファイルに残る user-facing wording を監査し、official REST contract / auth defaults / 42 integrated runtime personas 表現から逸脱する説明があれば Phase 3 の残件として切り出す。
 - `isort --check-only src tests` / `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` / release gates の再実行結果を Phase 1 証跡として確認し、追加 blocker があれば切り出す。
 - TestPyPI publication state / workflow run URL / clean install-import-runtime smoke transcript は、引き続き evidence boundary 外として operator artifact 固定待ち。
