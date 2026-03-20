@@ -199,6 +199,20 @@ def build_graph(root: str, package: str) -> Dict[str, Set[str]]:
     return graph
 
 
+def _canonical_cycle(cycle: List[str]) -> Tuple[str, ...]:
+    """Return a canonical tuple for a cycle regardless of rotation."""
+    if len(cycle) < 2:
+        return tuple(cycle)
+
+    ring = cycle[:-1] if cycle[0] == cycle[-1] else cycle[:]
+    if not ring:
+        return tuple(cycle)
+
+    rotations = [tuple(ring[i:] + ring[:i]) for i in range(len(ring))]
+    canonical = min(rotations)
+    return canonical + (canonical[0],)
+
+
 def find_cycles(graph: Dict[str, Set[str]]) -> List[List[str]]:
     """Find cycles in the dependency graph using DFS."""
     cycles: List[List[str]] = []
@@ -229,11 +243,11 @@ def find_cycles(graph: Dict[str, Set[str]]) -> List[List[str]]:
     # Canonicalize cycles to reduce duplicates
     uniq: List[List[str]] = []
     seen: Set[Tuple[str, ...]] = set()
-    for c in cycles:
-        key = tuple(c)
+    for cycle in cycles:
+        key = _canonical_cycle(cycle)
         if key not in seen:
             seen.add(key)
-            uniq.append(c)
+            uniq.append(list(key))
     return uniq
 
 
