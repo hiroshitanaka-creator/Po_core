@@ -179,9 +179,10 @@ jobs:
 
     - name: Check dependencies with safety
       run: |
-        safety check --json || true
+        safety check --json
 
   build:
+    needs: [lint, schema-gate, test, security]
     runs-on: ubuntu-latest
 
     steps:

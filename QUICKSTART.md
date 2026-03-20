@@ -4,16 +4,21 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 
 ## 📦 インストール
 
+### PyPIからインストール（推奨）
+
+```bash
+pip install "po-core-flyingpig==1.0.2"
+```
+
+### 開発者向け（ソースからインストール）
+
 ```bash
 # リポジトリをクローン
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# 必要な依存関係をインストール
-pip install click rich
-
-# 開発モードでインストール（推奨）
-pip install -e .
+# 開発モードでインストール
+pip install -e ".[dev]"
 ```
 
 ## 🚀 リリース成果物の作成（maintainer向け）

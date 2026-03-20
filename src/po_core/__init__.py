@@ -18,19 +18,15 @@ __email__ = "flyingpig0229+github@gmail.com"
 # ── Modern API (recommended) ──
 from po_core.app.api import run
 
-# ── Legacy exports (backward compat) ──
+# ── Core exports ──
 from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_self import PoSelf, PoSelfResponse
-from po_core.po_system_prompt import (
-    EVALUATION_RUBRIC,
-    PO_CORE_SYSTEM_PROMPT,
-    STRESS_TEST_CONCEPTS,
-    TEST_QUESTIONS,
-    build_stress_test_prompt,
-    build_user_prompt,
-)
 from po_core.po_test_runner import PoTestRunner, TestReport, TestResult
 from po_core.po_trace import EventType, PoTrace
+
+# NOTE: po_system_prompt (20-philosopher test framework for Claude API evaluation)
+# is intentionally NOT exported here. Import directly from po_core.po_system_prompt
+# if needed for testing/evaluation purposes.
 
 __all__ = [
     "__version__",
@@ -44,13 +40,7 @@ __all__ = [
     # Self
     "PoSelf",
     "PoSelfResponse",
-    # Testing
-    "PO_CORE_SYSTEM_PROMPT",
-    "TEST_QUESTIONS",
-    "STRESS_TEST_CONCEPTS",
-    "EVALUATION_RUBRIC",
-    "build_user_prompt",
-    "build_stress_test_prompt",
+    # Testing utilities
     "PoTestRunner",
     "TestResult",
     "TestReport",
