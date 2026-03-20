@@ -63,10 +63,14 @@ def _package_version() -> str:
     assert match is not None
     return match.group(1)
 
+
 def test_release_version_ssot_is_package_version() -> None:
     pyproject = tomllib.loads(_read("pyproject.toml"))
     assert pyproject["project"]["dynamic"] == ["version"]
-    assert pyproject["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "po_core.__version__"
+    assert (
+        pyproject["tool"]["setuptools"]["dynamic"]["version"]["attr"]
+        == "po_core.__version__"
+    )
 
     assert _package_version() == "1.0.2"
 
@@ -113,11 +117,17 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
         assert phrase not in readme, f"stale README phrase remains: {phrase}"
 
     for phrase in QUICKSTART_STALE_PHRASES:
-        assert phrase not in quickstart_ja, f"stale QUICKSTART.md phrase remains: {phrase}"
-        assert phrase not in quickstart_en, f"stale QUICKSTART_EN.md phrase remains: {phrase}"
+        assert (
+            phrase not in quickstart_ja
+        ), f"stale QUICKSTART.md phrase remains: {phrase}"
+        assert (
+            phrase not in quickstart_en
+        ), f"stale QUICKSTART_EN.md phrase remains: {phrase}"
 
     for phrase in STATUS_STALE_PHRASES:
-        assert phrase not in status_doc, f"stale docs/status.md phrase remains: {phrase}"
+        assert (
+            phrase not in status_doc
+        ), f"stale docs/status.md phrase remains: {phrase}"
 
     assert "PO_SKIP_AUTH=true" in quickstart_ja
     assert "PO_SKIP_AUTH=true" in quickstart_en
@@ -138,7 +148,9 @@ def test_repository_structure_is_fully_resynced() -> None:
     for phrase in required_phrases:
         assert phrase in repo_structure
     for phrase in REPO_STRUCTURE_STALE_PHRASES:
-        assert phrase not in repo_structure, f"stale phrase remains in REPOSITORY_STRUCTURE.md: {phrase}"
+        assert (
+            phrase not in repo_structure
+        ), f"stale phrase remains in REPOSITORY_STRUCTURE.md: {phrase}"
 
 
 def test_requirements_files_are_documented_as_repo_local_convenience_wrappers() -> None:
@@ -185,15 +197,21 @@ def test_experimental_prompt_assets_are_isolated_from_runtime_package() -> None:
 
     assert all(not path.exists() for path in runtime_removed)
     assert all(path.exists() for path in experimental_present)
-    assert "not included in the published wheel/sdist" in _read("experiments/claude_testing/README.md")
+    assert "not included in the published wheel/sdist" in _read(
+        "experiments/claude_testing/README.md"
+    )
 
 
 def test_prompt_yaml_placeholders_are_not_shipped_in_public_artifacts() -> None:
     prompt_dir = ROOT / "src" / "po_core" / "philosophers" / "prompts"
     placeholder_files = [
-        p.name for p in prompt_dir.glob("*.yaml") if "FILL_IN" in p.read_text(encoding="utf-8")
+        p.name
+        for p in prompt_dir.glob("*.yaml")
+        if "FILL_IN" in p.read_text(encoding="utf-8")
     ]
-    assert placeholder_files, "test assumption broken: expected unfinished prompt YAML fixtures"
+    assert (
+        placeholder_files
+    ), "test assumption broken: expected unfinished prompt YAML fixtures"
     pyproject = _read("pyproject.toml")
     assert '"philosophers/prompts/*.yaml"' not in pyproject
 
@@ -212,12 +230,15 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     assert "pytest tests/ -v --cov=po_core" in ci
     assert "artifact-type: ['wheel', 'sdist']" in ci
     assert "python-version: ['3.10', '3.11', '3.12']" in ci
-    for entrypoint in ENTRYPOINTS:
-        assert f"{entrypoint} --help" in ci
+    assert "python scripts/release_smoke.py --check-entrypoints" in ci
+    assert "po-core --help" not in ci
 
     assert "Publish is allowed only from refs/heads/main or refs/tags/vX.Y.Z" in publish
     assert "Tagged commit $SHA is not reachable from origin/main" in publish
-    assert "Tag version $REF_NAME does not match package version $PACKAGE_VERSION" in publish
+    assert (
+        "Tag version $REF_NAME does not match package version $PACKAGE_VERSION"
+        in publish
+    )
     assert "git merge-base --is-ancestor" in publish
     assert "python tools/import_graph.py --check --print" in publish
     assert "pytest tests/ -v" in publish
@@ -225,8 +246,8 @@ def test_ci_release_blockers_are_fail_closed() -> None:
     assert "pip-audit" in publish
     assert "python -m build" in publish
     assert "twine check dist/*" in publish
-    for entrypoint in ENTRYPOINTS:
-        assert f"{entrypoint} --help" in publish
+    assert "python scripts/release_smoke.py --check-entrypoints" in publish
+    assert "po-core --help" not in publish
 
 
 def test_release_smoke_script_checks_all_console_scripts() -> None:
@@ -234,6 +255,11 @@ def test_release_smoke_script_checks_all_console_scripts() -> None:
     for entrypoint in ENTRYPOINTS:
         assert entrypoint in smoke
     assert "--check-entrypoints" in smoke
+    assert "ENTRYPOINT_TIMEOUT_SECONDS = 15" in smoke
+    assert 'version_cmd = ["po-core", "version"]' in smoke
+    assert 'status_cmd = ["po-core", "status"]' in smoke
+    assert 'prompt_cmd = ["po-core", "prompt", "smoke", "--format", "json"]' in smoke
+    assert 'experiment_cmd = ["po-experiment", "list"]' in smoke
 
 
 def test_publish_playbook_documents_fail_closed_release_path() -> None:
@@ -241,10 +267,16 @@ def test_publish_playbook_documents_fail_closed_release_path() -> None:
     assert "pytest tests/ -v" in playbook
     assert "bandit -r src/ -c pyproject.toml" in playbook
     assert "pip-audit" in playbook
-    assert "`refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない" in playbook
+    assert (
+        "`refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない"
+        in playbook
+    )
     assert "`origin/main` 到達可能" in playbook
     assert "`__version__` と一致" in playbook
     assert "python tools/import_graph.py --check --print" in playbook
+    assert "po-core version" in playbook
+    assert "timeout" in playbook
+    assert "PO_PHILOSOPHER_EXECUTION_MODE" in playbook
 
 
 def test_tutorial_does_not_reference_old_alpha_version() -> None:
