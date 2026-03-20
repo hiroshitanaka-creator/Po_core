@@ -58,6 +58,7 @@ def client_no_auth(tmp_path):
             api_key="",
             trace_store_backend="sqlite",
             trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+            enable_trace_history=True,
         )
     )
     from po_core.app.rest import auth
@@ -76,6 +77,7 @@ def client_with_auth(tmp_path):
             api_key="test-secret-key",
             trace_store_backend="sqlite",
             trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+            enable_trace_history=True,
         )
     )
     return TestClient(app, raise_server_exceptions=True)
@@ -862,6 +864,26 @@ def test_trace_history_lists_sessions(client_no_auth):
         "history-1",
     ]
 
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_trace_history_disabled_by_default(tmp_path):
+    """Trace history endpoint is disabled unless explicitly enabled."""
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            api_key="",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+    client = TestClient(app, raise_server_exceptions=True)
+
+    resp = client.get("/v1/trace/history?limit=10")
+    assert resp.status_code == 404
+
 
 @pytest.mark.unit
 @pytest.mark.phase5
@@ -875,6 +897,7 @@ def test_trace_persists_across_store_reinitialization(tmp_path):
             api_key="",
             trace_store_backend="sqlite",
             trace_db_path=str(db_path),
+            enable_trace_history=True,
         )
     )
     from po_core.app.rest import auth
@@ -897,6 +920,7 @@ def test_trace_persists_across_store_reinitialization(tmp_path):
             api_key="",
             trace_store_backend="sqlite",
             trace_db_path=str(db_path),
+            enable_trace_history=True,
         )
     )
     app2.dependency_overrides[auth.require_api_key] = lambda: None
