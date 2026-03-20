@@ -15,6 +15,8 @@
 pip install po-core-flyingpig
 ```
 
+> `requirements.txt` / `requirements-dev.txt` are **repo-local convenience wrappers** for a cloned checkout. External consumers should install from package metadata (`pip install po-core-flyingpig` or extras), not from those editable wrappers.
+
 ---
 > **Feedback welcome:** [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) ·
 > **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)

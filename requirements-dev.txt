@@ -1,5 +1,5 @@
-# Po_core development dependencies
-# Canonical dependency definitions live in pyproject.toml ([project.optional-dependencies]).
-# This file installs the package plus the dev extra for local tooling parity.
+# Po_core source-checkout development convenience requirements
+# Repo-local only: this file assumes you already cloned this repository.
+# For third-party consumption, use package metadata / extras instead of this editable install wrapper.
 
 -e .[dev]

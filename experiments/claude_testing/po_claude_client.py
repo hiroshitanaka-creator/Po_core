@@ -1,7 +1,7 @@
 """
-Po_core Claude Client
+Po_core Experimental Claude Client
 
-Client for running Po_core tests against Claude API.
+Client for running Po_core Experimental tests against Claude API.
 """
 
 import os
@@ -17,10 +17,10 @@ except ImportError:
 
 class PoClaudeClient:
     """
-    Claude API client for Po_core testing.
+    Claude API client for Po_core Experimental testing.
 
     This client wraps the Anthropic API to run philosophical
-    integration tests using the Po_core system prompt.
+    integration tests using the Po_core Experimental system prompt.
     """
 
     DEFAULT_MODEL = "claude-sonnet-4-20250514"
@@ -91,7 +91,7 @@ def run_po_test_with_claude(
     model: Optional[str] = None,
 ) -> str:
     """
-    Run a Po_core test with Claude.
+    Run a Po_core Experimental test with Claude.
 
     Args:
         question: The philosophical question
@@ -102,7 +102,7 @@ def run_po_test_with_claude(
     Returns:
         Claude's response
     """
-    from po_core.po_system_prompt import (
+    from experiments.claude_testing.po_system_prompt import (
         PO_CORE_SYSTEM_PROMPT,
         ConstraintMode,
         build_user_prompt,
@@ -123,7 +123,7 @@ def run_full_test_suite(
     output_file: Optional[str] = None,
 ) -> dict:
     """
-    Run the full Po_core test suite.
+    Run the full Po_core Experimental test suite.
 
     Args:
         api_key: Optional API key
@@ -133,7 +133,7 @@ def run_full_test_suite(
     Returns:
         Test report dictionary
     """
-    from po_core.po_test_runner import PoTestRunner
+    from experiments.claude_testing.po_test_runner import PoTestRunner
 
     client = PoClaudeClient(api_key=api_key, model=model)
     runner = PoTestRunner()
@@ -148,11 +148,11 @@ def run_full_test_suite(
 
 # CLI entry point
 def main() -> None:
-    """Command-line interface for Po_core testing."""
+    """Command-line interface for Po_core Experimental testing."""
     import argparse
     import json
 
-    parser = argparse.ArgumentParser(description="Run Po_core tests with Claude")
+    parser = argparse.ArgumentParser(description="Run Po_core Experimental tests with Claude")
     parser.add_argument(
         "--question",
         "-q",
@@ -193,7 +193,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.demo:
-        from po_core.po_test_runner import demo_test
+        from experiments.claude_testing.po_test_runner import demo_test
 
         demo_test()
         return
