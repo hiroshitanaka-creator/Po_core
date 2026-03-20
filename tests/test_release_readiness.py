@@ -278,6 +278,11 @@ def test_ci_release_blockers_are_fail_closed() -> None:
         "Tag version $REF_NAME does not match package version $PACKAGE_VERSION"
         in publish
     )
+    assert "deployments: read" in publish
+    assert "PyPI publish requires a prior successful TestPyPI deployment for this exact commit SHA" in publish
+    assert "Run workflow_dispatch with target=testpypi first" in publish
+    assert "successful TestPyPI deployment status for this exact commit SHA" in publish
+    assert 'environment\": \"testpypi\"' in publish
     assert "git merge-base --is-ancestor" in publish
     assert "python tools/import_graph.py --check --print" in publish
     assert "pytest tests/ -v" in publish
@@ -314,6 +319,9 @@ def test_publish_playbook_documents_fail_closed_release_path() -> None:
     )
     assert "`origin/main` 到達可能" in playbook
     assert "`__version__` と一致" in playbook
+    assert "same commit SHA" in playbook
+    assert "successful TestPyPI deployment" in playbook
+    assert "workflow_dispatch target=testpypi → release=<tag>" in playbook
     assert "python tools/import_graph.py --check --print" in playbook
     assert "po-core version" in playbook
     assert "timeout" in playbook

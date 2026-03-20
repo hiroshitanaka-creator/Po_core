@@ -12,7 +12,7 @@
 以下がすべて満たされるまで publish を開始しない。
 
 1. **version整合**
-   - `pyproject.toml` の `version` がリリース予定版数になっている。
+   - `src/po_core/__init__.py` の `__version__` がリリース予定版数になっている（`pyproject.toml` は `project.dynamic = ["version"]` でここから動的読込する）。
    - 開発依存の単一真実源は `tools/dev-requirements.txt` とし、`project.optional-dependencies.dev` / `dependency-groups.dev` は `python scripts/check_dev_dependencies.py` で同期確認済みである。
    - `CHANGELOG.md` の `Unreleased` が更新済みで、リリース内容が説明されている。
 2. **publish must-pass checks green**
@@ -28,12 +28,16 @@
      - `python -m build`
      - `twine check dist/*`
    - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`python scripts/release_smoke.py --check-entrypoints` が通っている。smoke は各 console script の `--help` に加えて `po-core version` / `po-core status` / `po-core prompt smoke --format json` / `po-self` / `po-experiment list` を timeout 付きで検証する。
-3. **タグ運用と provenance の整合**
+3. **段階的リリース経路（machine-enforced）**
+   - PyPI publish は **同一コミット SHA** に対する `testpypi` environment の successful deployment が GitHub API で確認できた場合にのみ進める。
+   - successful TestPyPI deployment が無い、または success 状態でない場合、`publish-guard` が `Run workflow with target=testpypi first.` を含む明示エラーで停止する。
+   - つまり PyPI は documentation 上のお願いではなく、GitHub Actions 上で **TestPyPI success が前提条件**になる。
+4. **タグ運用と provenance の整合**
    - `workflow_dispatch` / release の publish は `refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない。
    - publish guard は `git merge-base --is-ancestor <publish-sha> origin/main` で、公開対象コミットが `origin/main` 到達可能であることを必須条件として検証する。
    - `vX.Y.Z` タグの `X.Y.Z` は `src/po_core/__init__.py` の `__version__` と一致していなければならない（例: `v1.0.2` ↔ `__version__ = "1.0.2"`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
-4. **Trusted Publishing前提**
+5. **Trusted Publishing前提**
    - GitHub Environments に `testpypi` / `pypi` が存在する。
    - TestPyPI/PyPI 側 Trusted Publisher（GitHub Actions OIDC）が設定済み。
 
@@ -65,7 +69,7 @@ twine check dist/*
 1. GitHub Actions で `Publish to PyPI` ワークフローを開く。
 2. `Run workflow` を選択。
 3. `target` に `testpypi` を指定して実行。
-4. `publish-testpypi` ジョブ成功を確認。
+4. `publish-testpypi` ジョブ成功を確認する。これは後続の PyPI publish を開放する machine-enforced prerequisite でもある。
 5. `publish-guard` ジョブが以下を通過していることを確認する。
    - ref が `refs/heads/main` または `refs/tags/vX.Y.Z`
    - publish 対象 SHA が `origin/main` 到達可能
@@ -95,7 +99,7 @@ python -c "from po_core import run; out = run('smoke'); print(out.get('proposal'
 
 ## 4. PyPI 本番公開手順
 
-TestPyPI スモーク成功後にのみ実行する。
+TestPyPI スモーク成功後にのみ実行する。加えて workflow は GitHub API で **同一 SHA の successful `testpypi` deployment** を確認できない限り PyPI へ進まない。
 
 ### 4-A. 推奨: Release publish トリガ
 
@@ -103,7 +107,10 @@ TestPyPI スモーク成功後にのみ実行する。
 2. `origin/main` 上のレビュー済みコミットに対して `vX.Y.Z` タグを付ける（`X.Y.Z == __version__`）。
 3. GitHub Release をそのタグで `published` にする。
 4. `Publish to PyPI` ワークフローが `release` イベントで起動する。
-5. `publish-guard` が「tagged commit is reachable from origin/main」「tag version matches package version」を通過したことを確認する。
+5. `publish-guard` が以下 3 条件を通過したことを確認する。
+   - tagged commit is reachable from `origin/main`
+   - tag version matches package version (`src/po_core/__init__.py`)
+   - prior successful TestPyPI deployment exists for the same commit SHA
 6. `publish-pypi` ジョブ成功を確認。
 
 ### 4-B. 手動: workflow_dispatch トリガ
@@ -111,7 +118,7 @@ TestPyPI スモーク成功後にのみ実行する。
 1. GitHub Actions で `Publish to PyPI` を `Run workflow`。
 2. `main` ブランチ、または `vX.Y.Z` タグ（必要なら tag version = package version）を選択する。
 3. `target` に `pypi` を指定して実行。
-4. `publish-guard` が provenance 検証を通過したことを確認する。
+4. `publish-guard` が provenance 検証に加えて、同一 SHA の successful TestPyPI deployment prerequisite を通過したことを確認する。
 5. `publish-pypi` ジョブ成功を確認。
 
 公開後の最小検証:
@@ -155,7 +162,7 @@ python -c "import po_core; print(po_core.__version__)"
 - Version: <VERSION>
 - Local checks: `pytest tests/acceptance/ -v -m acceptance` / `pytest tests/test_output_schema.py -v` / `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v` / `python -m build` / `twine check dist/*` all green
 - Optional best-effort: `pytest -q` pass/fail（known failing tests を記録）
-- Publish route: workflow_dispatch target=<testpypi|pypi> or release=<tag>
+- Publish route: workflow_dispatch target=testpypi → release=<tag> or workflow_dispatch target=pypi（PyPI は same-SHA TestPyPI success が prerequisite）
 - TestPyPI smoke: pass/fail（ログURL）
 - PyPI smoke: pass/fail（ログURL）
 - Rollback action (if any): none / <details>

@@ -17,6 +17,10 @@ on:
 jobs:
   publish-guard:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      deployments: read
     outputs:
       publish_target: ${{ steps.guard.outputs.publish_target }}
       publish_allowed: ${{ steps.guard.outputs.publish_allowed }}
@@ -90,6 +94,87 @@ jobs:
               echo "ERROR: Tag version $REF_NAME does not match package version $PACKAGE_VERSION from src/po_core/__init__.py" >&2
               exit 1
             fi
+          fi
+
+          if [ "$TARGET" = "pypi" ]; then
+            python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          sha = os.environ["GITHUB_SHA"]
+          token = os.environ["GITHUB_TOKEN"]
+          api_base = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+
+          def api_json(url: str) -> object:
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as exc:  # pragma: no cover - executed in GitHub Actions
+                  detail = exc.read().decode("utf-8", errors="replace")
+                  raise SystemExit(
+                      "ERROR: Unable to verify TestPyPI deployment prerequisite via GitHub API. "
+                      f"HTTP {exc.code}: {detail}"
+                  ) from exc
+
+          deployments_url = (
+              f"{api_base}/repos/{repo}/deployments?"
+              + urllib.parse.urlencode(
+                  {
+                      "sha": sha,
+                      "environment": "testpypi",
+                      "per_page": 100,
+                  }
+              )
+          )
+          deployments = api_json(deployments_url)
+          if not isinstance(deployments, list):
+              raise SystemExit(
+                  "ERROR: Unable to verify TestPyPI deployment prerequisite; deployments API returned an unexpected payload."
+              )
+          if not deployments:
+              raise SystemExit(
+                  "ERROR: PyPI publish requires a prior successful TestPyPI deployment for this exact commit SHA. No testpypi deployment exists for "
+                  f"{sha}. Run workflow_dispatch with target=testpypi first."
+              )
+
+          successful_deployment = None
+          for deployment in deployments:
+              deployment_id = deployment.get("id")
+              if deployment_id is None:
+                  continue
+              statuses = api_json(
+                  f"{api_base}/repos/{repo}/deployments/{deployment_id}/statuses?per_page=100"
+              )
+              if not isinstance(statuses, list):
+                  continue
+              if any(status.get("state") == "success" for status in statuses):
+                  successful_deployment = deployment_id
+                  break
+
+          if successful_deployment is None:
+              raise SystemExit(
+                  "ERROR: PyPI publish requires a successful TestPyPI deployment status for this exact commit SHA. "
+                  f"Found testpypi deployment record(s) for {sha}, but none reached success."
+              )
+
+          print(
+              "Verified TestPyPI deployment prerequisite via deployment id "
+              f"{successful_deployment} for commit {sha}."
+          )
+          PY
           fi
 
           echo "publish_allowed=true" >> "$GITHUB_OUTPUT"
