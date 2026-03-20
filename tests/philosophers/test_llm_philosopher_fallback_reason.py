@@ -34,5 +34,10 @@ def test_reason_preserves_precise_fallback_reason(result, expected_reason):
     assert response["metadata"]["llm_fallback"] is True
     assert response["metadata"]["fallback_reason"] == expected_reason
     assert response["metadata"]["llm_provider"] == "openai"
+    assert response["metadata"]["fallback"]["reason"] == expected_reason
+    assert response["metadata"]["fallback"]["error_kind"] == result.error_kind.value
+    assert response["metadata"]["fallback"]["retriable"] is result.retriable
+    if result.status_code is not None:
+        assert response["metadata"]["fallback"]["status_code"] == result.status_code
     assert response["confidence"] == pytest.approx(0.1)
     assert expected_reason in response["reasoning"]

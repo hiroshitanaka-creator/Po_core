@@ -18,6 +18,14 @@ def test_fallback_summary_keeps_stable_sorted_list_with_rich_metadata():
                 "metadata": {
                     "llm_fallback": True,
                     "fallback_reason": "provider_auth_error",
+                    "fallback": {
+                        "reason": "provider_auth_error",
+                        "error_kind": "auth",
+                        "status_code": 401,
+                        "provider": "openai",
+                        "model": "gpt-4o-mini",
+                        "retriable": False,
+                    },
                 }
             },
             {

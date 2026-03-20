@@ -140,7 +140,10 @@ class LLMPhilosopher(Philosopher):
         llm_result = self._adapter.generate(self._system_prompt, prompt)
         raw = llm_result.text if hasattr(llm_result, "text") else str(llm_result)
         if not raw:
-            return self._fallback(reason=self._fallback_reason_for_result(llm_result))
+            return self._fallback(
+                reason=self._fallback_reason_for_result(llm_result),
+                llm_result=llm_result,
+            )
 
         result = self._parse_llm_response(raw)
         result.setdefault("metadata", {})
@@ -177,7 +180,6 @@ class LLMPhilosopher(Philosopher):
         if error_value == "unknown":
             return "provider_unknown_error"
         return "llm_unavailable"
-
 
     def _parse_llm_response(self, raw: str) -> Dict[str, Any]:
         """
@@ -232,8 +234,32 @@ class LLMPhilosopher(Philosopher):
             "action_type": data.get("action_type", "answer"),
         }
 
-    def _fallback(self, reason: str = "unknown") -> Dict[str, Any]:
+    def _fallback(
+        self, reason: str = "unknown", llm_result: "LLMResult | None" = None
+    ) -> Dict[str, Any]:
         """LLM が使えないときの最小応答。"""
+        fallback_metadata: Dict[str, Any] = {"reason": reason}
+        if llm_result is not None:
+            error_kind = getattr(llm_result, "error_kind", None)
+            if error_kind is not None:
+                fallback_metadata["error_kind"] = getattr(
+                    error_kind, "value", str(error_kind)
+                )
+            status_code = getattr(llm_result, "status_code", None)
+            if isinstance(status_code, int):
+                fallback_metadata["status_code"] = status_code
+            provider = getattr(llm_result, "provider", None)
+            if provider not in (None, ""):
+                fallback_metadata["provider"] = str(provider)
+            model = getattr(llm_result, "actual_model", None) or getattr(
+                llm_result, "model", None
+            )
+            if model not in (None, ""):
+                fallback_metadata["model"] = str(model)
+            retriable = getattr(llm_result, "retriable", None)
+            if retriable is not None:
+                fallback_metadata["retriable"] = bool(retriable)
+
         return {
             "reasoning": f"[LLM unavailable: {reason}]",
             "perspective": self.description,
@@ -246,6 +272,7 @@ class LLMPhilosopher(Philosopher):
                 "llm_model": self._adapter.actual_model,
                 "llm_fallback": True,
                 "fallback_reason": reason,
+                "fallback": fallback_metadata,
             },
         }
 
