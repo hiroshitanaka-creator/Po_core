@@ -45,7 +45,8 @@ pip install -e .
 - Repository target version: `1.0.2`
 - Public package metadata state: package classifiers currently declare `Development Status :: 5 - Production/Stable`
 - Philosopher inventory: **42 integrated** personas, with runtime selection budgets limiting the default NORMAL path to at most 39 active philosophers per request
-- External publish status: pending external publish; this repository does not currently contain 1.0.2 TestPyPI/PyPI publication evidence
+- External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
+- Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
 
 ## Development Loop (Po_core core)
 
@@ -346,7 +347,7 @@ experiments/
 
 ## Project Status
 
-Po_core is currently documented against package version `1.0.2`.
+Po_core is currently documented against package version `1.0.2`, and that exact version is publicly evidenced on PyPI.
 
 ### Current release state
 
@@ -356,7 +357,7 @@ Po_core is currently documented against package version `1.0.2`.
 | OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
 | Public package metadata | ✅ Stable | Package classifiers declare `Development Status :: 5 - Production/Stable` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
-| Public release evidence | ⚠️ Pending external publish | No in-repo TestPyPI/PyPI publication evidence for `1.0.2` is recorded yet |
+| Public release evidence | ✅ PyPI publication evidenced | `docs/release/pypi_publication_v1.0.2.md` records the public PyPI version page for `1.0.2`; TestPyPI/workflow/smoke evidence is still tracked separately |
 | Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, 42 integrated philosophers, and max 39 active philosophers on the default NORMAL path |
 
 ### Implemented platform capabilities
@@ -381,7 +382,7 @@ Po_core is currently documented against package version `1.0.2`.
 | EmergenceDetector | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
 | MetaEthicsMonitor | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
 | 3-Layer Memory | ✅ Complete | Semantic + procedural + philosophical memory stores |
-| Publish workflow | 🔄 Pending external execution | Workflow is ready; public package publication still depends on repository-side credentials/trusted publishing and a successful release run |
+| Publish workflow | ⚠️ Partially evidenced | PyPI publication is evidenced, but workflow-run/TestPyPI/smoke transcripts are not yet fixed in-repo |
 
 **Want to contribute?** We need philosophers, engineers, designers, and skeptics. The current focus is keeping the packaged surface, release docs, and verification pipeline synchronized.
 
@@ -390,15 +391,18 @@ Po_core is currently documented against package version `1.0.2`.
 ## Installation
 
 ```bash
-# Install from source while 1.0.2 is pending external publish
-git clone https://github.com/hiroshitanaka-creator/Po_core.git
-cd Po_core
+# Install from PyPI (publication evidenced)
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install "po-core-flyingpig==1.0.2"
+
+# Or install the cloned repository checkout for local development
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
 pip install -e ".[dev]"
 ```
 
-If you need a package index install, first add explicit TestPyPI/PyPI publication evidence for `1.0.2` to this repository; until then, treat index publication as pending external publish.
+PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Keep any stronger claims—such as TestPyPI publication, GitHub Actions run success, or clean-environment smoke verification—tied to the operator-backed evidence files in `docs/release/`.
 
 ---
 

@@ -9,8 +9,8 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# リポジトリ版 1.0.2 を editable install
-pip install -e .
+# PyPI 公開済み 1.0.2 を install
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ## 🚀 リリース成果物の作成（maintainer向け）
@@ -26,7 +26,7 @@ python -m build
 twine check dist/*
 ```
 
-> `1.0.2` リリース候補では、上記2コマンドに加えて full test / security / artifact smoke を通すことを必須条件にしてください。
+> `1.0.2` は PyPI 版の公開事実が `docs/release/pypi_publication_v1.0.2.md` で固定されています。TestPyPI / workflow run / clean install/import/smoke のより強い証跡は、追加の operator evidence が入り次第 `docs/release/` に追記してください。
 
 
 ### ✅ 公開前の最短検証（maintainer向け）
@@ -50,7 +50,7 @@ print(bool(res.text), res.consensus_leader)
 PY
 ```
 
-期待結果: source checkout から install/import が成功し、最後の行で `True` とリーダー名が出力されること。`1.0.2` の TestPyPI/PyPI 公開は、このリポジトリ内に証跡が追加されるまで **pending external publish** と扱います。
+期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。PyPI 公開そのものは `docs/release/pypi_publication_v1.0.2.md` で証跡化済みですが、この手順の clean-environment smoke transcript 自体はまだ `docs/release/smoke_verification_v1.0.2.md` に未固定です。
 
 ## ⚡ 30秒で試す
 
@@ -292,7 +292,7 @@ response = po.generate("この言葉の意味は何か？")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # または開発モードでインストール
-pip install -e ".[dev]"
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
@@ -335,7 +335,7 @@ open http://localhost:8000/docs
 ### ローカルで起動する
 
 ```bash
-pip install -e ".[dev]"
+pip install "po-core-flyingpig==1.0.2"
 
 # 環境変数を設定
 export PO_SKIP_AUTH=true   # 開発時のみ認証をバイパス
