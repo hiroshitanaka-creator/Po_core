@@ -27,6 +27,21 @@ REPO_STRUCTURE_STALE_PHRASES = [
     "v0.2.0b4",
     "39 philosopher modules",
 ]
+README_STALE_PHRASES = [
+    "Current Phase: v1.0.0 Released",
+    "Install from PyPI (beta)",
+    "PyPI v1.0.0 publish pending",
+]
+QUICKSTART_STALE_PHRASES = [
+    "pip install click rich",
+    'pip install -e .',
+    "39 philosophers",
+    "39 phil",
+    "Full 39-philosopher manifest",
+    "API key (empty = no auth)",
+    "APIキー（空の場合は認証スキップ）",
+    "APIキー不要",
+]
 
 
 def _read(relpath: str) -> str:
@@ -69,9 +84,28 @@ def test_release_docs_use_consistent_philosopher_counts() -> None:
     assert "最大39人" in quickstart_ja
     assert "Po_core integrates **42 philosophers**" in quickstart_en
     assert "39 active" in quickstart_en
-    assert "39 philosophers" not in quickstart_en
+    for phrase in ["39 philosophers", "39 phil", "Full 39-philosopher manifest"]:
+        assert phrase not in quickstart_en
     assert "42 integrated philosophers" in repo_structure
     assert "39 active philosophers" in repo_structure
+
+
+def test_release_docs_fail_closed_on_stale_wording() -> None:
+    readme = _read("README.md")
+    quickstart_ja = _read("QUICKSTART.md")
+    quickstart_en = _read("QUICKSTART_EN.md")
+
+    for phrase in README_STALE_PHRASES:
+        assert phrase not in readme, f"stale README phrase remains: {phrase}"
+
+    for phrase in QUICKSTART_STALE_PHRASES:
+        assert phrase not in quickstart_ja, f"stale QUICKSTART.md phrase remains: {phrase}"
+        assert phrase not in quickstart_en, f"stale QUICKSTART_EN.md phrase remains: {phrase}"
+
+    assert "PO_SKIP_AUTH=true" in quickstart_ja
+    assert "PO_SKIP_AUTH=true" in quickstart_en
+    assert "非空の `PO_API_KEY`" in quickstart_ja
+    assert "non-empty `PO_API_KEY`" in quickstart_en
 
 
 def test_repository_structure_is_fully_resynced() -> None:

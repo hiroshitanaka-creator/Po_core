@@ -9,11 +9,8 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# 必要な依存関係をインストール
-pip install click rich
-
-# 開発モードでインストール（推奨）
-pip install -e .
+# パッケージをインストール
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ## 🚀 リリース成果物の作成（maintainer向け）
@@ -293,14 +290,14 @@ response = po.generate("この言葉の意味は何か？")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # または開発モードでインストール
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
 
 ```bash
-# 必要な依存関係をインストール
-pip install click rich
+# パッケージ依存を含めてインストール
+pip install "po-core-flyingpig==1.0.2"
 ```
 
 ## 🤝 フィードバック
@@ -323,7 +320,8 @@ cd Po_core
 
 # .env を設定
 cp .env.example .env
-# 必要に応じて PO_API_KEY を設定 (ローカル開発は PO_SKIP_AUTH=true のまま)
+# 開発用途でのみ `PO_SKIP_AUTH=true` を使います
+# `PO_SKIP_AUTH=false` のまま起動する場合は、必ず非空の `PO_API_KEY` を設定してください
 
 # Docker Compose で起動
 docker compose up
@@ -335,10 +333,10 @@ open http://localhost:8000/docs
 ### ローカルで起動する
 
 ```bash
-pip install -e .
+pip install -e ".[dev]"
 
 # 環境変数を設定
-export PO_SKIP_AUTH=true   # 開発時はAPIキー不要
+export PO_SKIP_AUTH=true   # 開発時のみ認証をバイパス
 
 # サーバー起動
 python -m po_core.app.rest
@@ -391,8 +389,8 @@ curl -X POST http://localhost:8000/v1/reason \
 
 | 変数 | デフォルト | 説明 |
 |------|-----------|------|
-| `PO_API_KEY` | `""` | APIキー（空の場合は認証スキップ） |
-| `PO_SKIP_AUTH` | `false` | `true` で認証をバイパス（開発用） |
+| `PO_API_KEY` | `""` | `PO_SKIP_AUTH=false` のときに必要な API キー。空/blank のままでは起動失敗 |
+| `PO_SKIP_AUTH` | `false` | `true` のときのみ認証をバイパス（開発用） |
 | `PO_CORS_ORIGINS` | `"*"` | 許可オリジン（本番: カンマ区切り） |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | IP ごとのレート制限（req/min） |
 | `PO_PORT` | `8000` | サーバーポート |

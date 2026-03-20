@@ -344,13 +344,23 @@ experiments/
 
 ## Project Status
 
-**Current Phase: v1.0.0 Released — All Phases Complete (M1–M4 + v1.0.0 Criteria Fully Met)**
+Po_core is currently documented against package version `1.0.2`.
 
-### Completed Components
+### Current release state
+
+| Track | State | Current source of truth |
+|------|-------|-------------------------|
+| Package version | ✅ Current | `src/po_core/__init__.py` defines `1.0.2` |
+| OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
+| Public package metadata | ✅ Stable | Package classifiers declare `Development Status :: 5 - Production/Stable` |
+| Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
+| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, 42 integrated philosophers, and max 39 active philosophers on the default NORMAL path |
+
+### Implemented platform capabilities
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 42 philosophers, risk levels, tags |
+| Philosophical Framework | ✅ Complete | 42 integrated philosophers, risk levels, tags |
 | Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
 | TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
 | ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
@@ -358,60 +368,26 @@ experiments/
 | Safety System (3-layer W_Ethics) | ✅ Complete | IntentionGate → PolicyPrecheck → ActionGate |
 | Viewer WebUI | ✅ Complete | Dash 4-tab layout + Plotly charts |
 | Explainable AI (ExplanationChain) | ✅ Complete | Verdict → ExplanationChain bridge |
-| Adversarial Hardening | ✅ Complete | 100% injection detection, 85 new tests |
-| **REST API** | ✅ Complete | FastAPI, 5 endpoints, SSE streaming, auth |
-| **Docker** | ✅ Complete | Multi-stage build, docker-compose, health check |
-| **Security** | ✅ Complete | CORS env config, SlowAPI rate limiting |
-| **Async PartyMachine** | ✅ Complete | `asyncio.gather` + ThreadPoolExecutor, true async SSE |
-| **Benchmarks** | ✅ Complete | ~33ms p50 NORMAL, 7 formal benchmark tests |
-| **FreedomPressureV2** | ✅ Complete | ML-native 6D tensor with EMA + correlation matrix |
-| **EmergenceDetector** | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
-| **MetaEthicsMonitor** | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
-| **3-Layer Memory** | ✅ Complete | Semantic + procedural + philosophical memory stores |
-| **Philosopher Diversity (40–42)** | ✅ Complete | Appiah (Africa/cosmopolitanism), Fanon (decolonialism), Charles Taylor (communitarianism) |
-| PyPI Publish | 🔄 Pending | `publish.yml` OIDC workflow ready; PyPI v1.0.0 publish via `workflow_dispatch` (post-release) |
+| Adversarial Hardening | ✅ Complete | injection-defense tests and release gates |
+| REST API | ✅ Complete | FastAPI, 5 endpoints, SSE streaming, auth fail-closed on misconfiguration |
+| Docker | ✅ Complete | Multi-stage build, docker-compose, health check |
+| Security | ✅ Complete | CORS env config, SlowAPI rate limiting, fail-closed auth semantics |
+| Async PartyMachine | ✅ Complete | `asyncio.gather` + ThreadPoolExecutor, true async SSE |
+| Benchmarks | ✅ Complete | benchmark suite and release smoke checks are part of release readiness |
+| FreedomPressureV2 | ✅ Complete | ML-native 6D tensor with EMA + correlation matrix |
+| EmergenceDetector | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
+| MetaEthicsMonitor | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
+| 3-Layer Memory | ✅ Complete | Semantic + procedural + philosophical memory stores |
+| Publish workflow | 🔄 Pending external execution | Workflow is ready; public package publication still depends on repository-side credentials/trusted publishing and a successful release run |
 
-### Roadmap
-
-```
-Stage 1          Stage 2             Stage 3          Stage 4           Stage 5
-Spec-Honesty  →  Deliberation     →  Observability →  Production    →  Research
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-AT alignment     ML tensors          WebUI             REST API          Paper
-StubComposer     Deliberation        Explainable       Docker            PyPI v1.0
-acceptance/      InteractionMatrix   ExplanationChain  Security          AT-001~010
-scenarios/       multi-round         リアルタイム       Async SSE         full green
-```
-
-| Stage | Name | Focus | Status |
-|-------|------|-------|--------|
-| **1** | Spec-Honesty | AT-001–010 acceptance tests + StubComposer + scenario YAML | ✅ **COMPLETE** (M1–M4) |
-| **2** | Deliberation-Intelligence | ML tensors + multi-round DeliberationEngine | ✅ **COMPLETE** |
-| **3** | Observability | Viewer WebUI + Explainable W_Ethics Gate + real-time trace | ✅ **COMPLETE** |
-| **4** | Production | REST API, Docker, Security, Async SSE, Benchmarks | ✅ **COMPLETE** |
-| **5** | Research | Academic paper + PyPI stable v1.0 | ✅ **COMPLETE** (paper draft done; PyPI publish pending) |
-
-**Milestones:**
-
-| Milestone | Completed | Goal |
-|-----------|-----------|------|
-| **M1** | ✅ 2026-03-03 | All 10 AT pass · `pytest tests/acceptance/ -v` green |
-| **M2** | ✅ 2026-03-03 | ethics_v1 + responsibility_v1 + uncertainty labels |
-| **M3** | ✅ 2026-03-03 | question_layer v1 (question generation / suppression) |
-| **M4** | ✅ 2026-03-08 | Governance complete: CI auto + ADR + Traceability auto |
-| **v1.0.0** | ✅ 2026-03-10 | All AT green + paper draft (433 lines, arXiv-ready) + CI 100% green (3682 passed / 0 skipped) |
-| **5-F (PyPI)** | 🔄 Pending | PyPI v1.0.0 publish (`workflow_dispatch`) + arXiv submission |
-
-See [ROADMAP_FINAL_FORM.md](./ROADMAP_FINAL_FORM.md) for the full roadmap with rationale.
-
-**Want to contribute?** We need philosophers, engineers, designers, and skeptics. Next frontier: PyPI publish, v1.0 stabilization, and academic paper.
+**Want to contribute?** We need philosophers, engineers, designers, and skeptics. The current focus is keeping the packaged surface, release docs, and verification pipeline synchronized.
 
 ---
 
 ## Installation
 
 ```bash
-# Install from PyPI (beta)
+# Install the published package
 pip install po-core-flyingpig
 
 # Or install from source in development mode
