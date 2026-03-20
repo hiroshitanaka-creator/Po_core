@@ -2,7 +2,7 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 
-**Document Status:** release-readiness inventory aligned to package version `1.0.2`  
+**Document Status:** release-readiness inventory aligned to repository target version `1.0.2` (pending external publish evidence)  
 **Last Updated:** 2026-03-20
 **Scope:** actual repository layout and release-critical files only
 
@@ -30,7 +30,7 @@ Top-level directories currently present in the repository:
 Key root files used for release readiness:
 
 - `pyproject.toml` — packaging metadata and dependency truth source
-- `README.md`, `QUICKSTART.md`, `QUICKSTART_EN.md` — user-facing install/runtime docs
+- `README.md`, `QUICKSTART.md`, `QUICKSTART_EN.md`, `docs/status.md` — user-facing install/runtime/status docs
 - `CHANGELOG.md` — versioned release notes
 - `.env.example` — deployment environment defaults
 - `requirements.txt`, `requirements-dev.txt` — repo-local editable-install convenience wrappers for a cloned checkout
@@ -86,6 +86,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
 Release-relevant module facts:
 
 - Package version SSOT is `src/po_core/__init__.py`.
+- Release-facing docs must describe `1.0.2` as the repository target version and avoid claiming public publication unless matching evidence exists in-repo.
 - OpenAPI metadata is emitted from `src/po_core/app/rest/server.py`.
 - Installed package data is limited to config YAML, axis specs, JSON schemas, viewer assets, and `py.typed`; unfinished philosopher YAML prompt drafts are not packaged.
 - Experimental Claude-testing modules are **not** under `src/po_core` and therefore are not part of the published runtime surface.

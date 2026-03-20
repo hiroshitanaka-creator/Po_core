@@ -9,8 +9,8 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# パッケージをインストール
-pip install "po-core-flyingpig==1.0.2"
+# リポジトリ版 1.0.2 を editable install
+pip install -e .
 ```
 
 ## 🚀 リリース成果物の作成（maintainer向け）
@@ -29,12 +29,14 @@ twine check dist/*
 > `1.0.2` リリース候補では、上記2コマンドに加えて full test / security / artifact smoke を通すことを必須条件にしてください。
 
 
-### ✅ 公開後の最短検証（maintainer向け）
+### ✅ 公開前の最短検証（maintainer向け）
 
 ```bash
-# 1) 公開済みstableをクリーン環境へ導入
+# 1) クリーン環境へソース checkout を導入
 python -m pip install --upgrade pip
-pip install "po-core-flyingpig==1.0.2"
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+pip install -e .
 
 # 2) import 成功確認
 python -c "import po_core; print(po_core.__name__)"
@@ -48,7 +50,7 @@ print(bool(res.text), res.consensus_leader)
 PY
 ```
 
-期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。
+期待結果: source checkout から install/import が成功し、最後の行で `True` とリーダー名が出力されること。`1.0.2` の TestPyPI/PyPI 公開は、このリポジトリ内に証跡が追加されるまで **pending external publish** と扱います。
 
 ## ⚡ 30秒で試す
 
@@ -296,8 +298,8 @@ pip install -e ".[dev]"
 ### ImportError: No module named 'click' or 'rich'
 
 ```bash
-# パッケージ依存を含めてインストール
-pip install "po-core-flyingpig==1.0.2"
+# パッケージ依存を含めて source checkout から再インストール
+pip install -e .
 ```
 
 ## 🤝 フィードバック

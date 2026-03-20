@@ -9,7 +9,6 @@ except ModuleNotFoundError:  # pragma: no cover - py<3.11
     import tomli as tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.0.2"
 ENTRYPOINTS = ["po-core", "po-self", "po-trace", "po-interactive", "po-experiment"]
 DOCS_WITH_VERSION = [
     "README.md",
@@ -18,6 +17,7 @@ DOCS_WITH_VERSION = [
     "CHANGELOG.md",
     "REPOSITORY_STRUCTURE.md",
     "docs/operations/publish_playbook.md",
+    "docs/status.md",
 ]
 REPO_STRUCTURE_STALE_PHRASES = [
     "[39 philosopher .py files]",
@@ -31,10 +31,12 @@ README_STALE_PHRASES = [
     "Current Phase: v1.0.0 Released",
     "Install from PyPI (beta)",
     "PyPI v1.0.0 publish pending",
+    "# Install the published package",
 ]
 QUICKSTART_STALE_PHRASES = [
+    "published package",
+    "公開済みstable",
     "pip install click rich",
-    'pip install -e .',
     "39 philosophers",
     "39 phil",
     "Full 39-philosopher manifest",
@@ -48,21 +50,32 @@ def _read(relpath: str) -> str:
     return (ROOT / relpath).read_text(encoding="utf-8")
 
 
+STATUS_STALE_PHRASES = [
+    "PyPI公開とスモーク検証の証跡を固定。`docs/release/pypi_publish_log_v0.3.0.md` を追加し",
+    "PyPI `0.3.0` 公開証跡・acceptance proof・publish playbook は整備済み。",
+    "v1.0.0 リリース完了",
+]
+
+
+def _package_version() -> str:
+    package_init = _read("src/po_core/__init__.py")
+    match = re.search(r'__version__ = "([^"]+)"', package_init)
+    assert match is not None
+    return match.group(1)
+
 def test_release_version_ssot_is_package_version() -> None:
     pyproject = tomllib.loads(_read("pyproject.toml"))
     assert pyproject["project"]["dynamic"] == ["version"]
     assert pyproject["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "po_core.__version__"
 
-    package_init = _read("src/po_core/__init__.py")
-    match = re.search(r'__version__ = "([^"]+)"', package_init)
-    assert match is not None
-    assert match.group(1) == VERSION
+    assert _package_version() == "1.0.2"
 
 
 def test_release_docs_are_synced_to_current_version() -> None:
+    version = _package_version()
     for relpath in DOCS_WITH_VERSION:
         text = _read(relpath)
-        assert VERSION in text, f"{relpath} must mention {VERSION}"
+        assert version in text, f"{relpath} must mention {version}"
         if relpath != "CHANGELOG.md":
             assert "0.2.0b4" not in text, f"{relpath} still contains stale beta version"
 
@@ -94,6 +107,7 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     readme = _read("README.md")
     quickstart_ja = _read("QUICKSTART.md")
     quickstart_en = _read("QUICKSTART_EN.md")
+    status_doc = _read("docs/status.md")
 
     for phrase in README_STALE_PHRASES:
         assert phrase not in readme, f"stale README phrase remains: {phrase}"
@@ -102,10 +116,15 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
         assert phrase not in quickstart_ja, f"stale QUICKSTART.md phrase remains: {phrase}"
         assert phrase not in quickstart_en, f"stale QUICKSTART_EN.md phrase remains: {phrase}"
 
+    for phrase in STATUS_STALE_PHRASES:
+        assert phrase not in status_doc, f"stale docs/status.md phrase remains: {phrase}"
+
     assert "PO_SKIP_AUTH=true" in quickstart_ja
     assert "PO_SKIP_AUTH=true" in quickstart_en
     assert "非空の `PO_API_KEY`" in quickstart_ja
     assert "non-empty `PO_API_KEY`" in quickstart_en
+    assert "Repository target version: `1.0.2`" in status_doc
+    assert "Public release evidence in-repo: none yet for `1.0.2`" in status_doc
 
 
 def test_repository_structure_is_fully_resynced() -> None:
