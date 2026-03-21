@@ -141,8 +141,9 @@ def test_philosophers_list(client_no_auth):
     resp = client_no_auth.get("/v1/philosophers")
     assert resp.status_code == 200
     body = resp.json()
-    assert body["total"] > 0
+    assert body["total"] == 42
     assert len(body["philosophers"]) == body["total"]
+    assert all(item["philosopher_id"] != "dummy" for item in body["philosophers"])
     # Check first entry has required fields
     first = body["philosophers"][0]
     assert "philosopher_id" in first

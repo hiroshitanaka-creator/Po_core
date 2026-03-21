@@ -112,19 +112,17 @@ def test_release_docs_use_consistent_philosopher_counts() -> None:
     quickstart_en = _read("QUICKSTART_EN.md")
     repo_structure = _read("REPOSITORY_STRUCTURE.md")
 
-    assert "43 integrated runtime personas" in readme
+    assert "42 philosophers" in readme
     assert "compliance sentinel" in readme
-    assert "43の統合済みランタイム・ペルソナ" in quickstart_ja
+    assert "42人の哲学者" in quickstart_ja
     assert "最大39" in quickstart_ja
-    assert "43 integrated runtime personas" in quickstart_en
+    assert "42 philosophers" in quickstart_en
     assert "39 active" in quickstart_en
     for phrase in ["39 philosophers", "39 phil", "Full 39-philosopher manifest"]:
         assert phrase not in quickstart_en
-    assert "43 integrated runtime personas" in repo_structure
-    assert (
-        "42 named philosopher personas plus 1 compliance-sentinel `dummy` slot"
-        in repo_structure
-    )
+    assert "42 philosophers" in repo_structure
+    assert "dummy" in repo_structure
+    assert "must not be counted as one of the 42" in repo_structure
 
 
 def test_release_docs_fail_closed_on_stale_wording() -> None:
@@ -133,6 +131,7 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     quickstart_ja = _read("QUICKSTART.md")
     quickstart_en = _read("QUICKSTART_EN.md")
     status_doc = _read("docs/status.md")
+    repo_structure = _read("REPOSITORY_STRUCTURE.md")
     pypi_evidence_relpath = _release_evidence_relpath("pypi_publication_v", version)
     smoke_evidence_relpath = _release_evidence_relpath("smoke_verification_v", version)
     pypi_evidence = _read(pypi_evidence_relpath)
@@ -162,6 +161,11 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "PO_CORS_ORIGINS=*" in quickstart_en
     assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_ja
     assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_en
+    assert "43 integrated runtime personas" not in readme
+    assert "43 integrated runtime personas" not in quickstart_en
+    assert "43の統合済みランタイム・ペルソナ" not in quickstart_ja
+    assert "43 integrated runtime personas" not in repo_structure
+    assert "43 integrated runtime personas" not in status_doc
     assert f"Repository target version: `{version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
     assert f"published on PyPI for `{version}`" in status_doc
@@ -396,6 +400,7 @@ def test_release_metadata_status_is_consistent() -> None:
     readme = _read("README.md")
     changelog = _read("CHANGELOG.md")
     status_doc = _read("docs/status.md")
+    repo_structure = _read("REPOSITORY_STRUCTURE.md")
 
     assert "Development Status :: 4 - Beta" in pyproject["project"]["classifiers"]
     assert pyproject["tool"]["po_core"]["project"]["status"] == "beta"
@@ -415,13 +420,11 @@ def test_release_count_metadata_is_consistent() -> None:
     quickstart_ja = _read("QUICKSTART.md")
     quickstart_en = _read("QUICKSTART_EN.md")
 
-    assert pyproject["tool"]["po_core"]["project"]["philosophers_integrated"] == 43
-    assert (
-        "42 named philosopher personas plus 1 compliance-sentinel `dummy` slot"
-        in readme
-    )
-    assert "43の統合済みランタイム・ペルソナ" in quickstart_ja
-    assert "43 integrated runtime personas" in quickstart_en
+    assert pyproject["tool"]["po_core"]["project"]["philosophers_integrated"] == 42
+    assert "42 philosophers" in readme
+    assert "dummy" in readme
+    assert "42人の哲学者" in quickstart_ja
+    assert "42 philosophers" in quickstart_en
 
 
 def test_rest_default_docs_are_fully_synchronized() -> None:

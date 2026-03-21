@@ -96,9 +96,9 @@ Release-relevant module facts:
 ## Philosopher Inventory
 
 - `src/po_core/philosophers/manifest.py` defines the enabled runtime philosopher roster and related metadata.
-- Public docs and API metadata should describe the runtime roster as **43 integrated runtime personas**. This is a roster/persona count, not a narrower claim that all 42 slots are named human philosophers, because the roster consists of 42 named philosopher personas plus 1 compliance-sentinel `dummy` slot.
+- Public docs and API metadata should describe the formal philosopher roster as **42 philosophers**. The internal `dummy` slot is a compliance/sentinel helper and must not be counted as one of the 42 in public surfaces.
 - Runtime selection budgets in settings cap the default NORMAL path at **39 active personas maximum per request**.
-- The `src/po_core/philosophers/` directory also contains helper modules such as `dummy.py`, `template.py`, `tags.py`, `llm_personas.py`, and `llm_philosopher.py`; directory file count must not be confused with the 42-person runtime roster.
+- The `src/po_core/philosophers/` directory also contains helper modules such as `dummy.py`, `template.py`, `tags.py`, `llm_personas.py`, and `llm_philosopher.py`; directory file count and helper slots must not be confused with the formal 42-philosopher roster.
 
 ---
 

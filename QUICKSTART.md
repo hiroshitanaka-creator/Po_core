@@ -162,7 +162,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは **43の統合済みランタイム・ペルソナ**を扱います。これは実際の runtime roster count であり、**42人の名前付き哲学者ペルソナ + 1つの compliance sentinel (`dummy`)** で構成されます。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では名前付き哲学者の参加は最大39です：
+Po_coreでは **42人の哲学者** を正式 roster として扱います。内部には compliance helper として `dummy` スロットもありますが、これは哲学者数には含めません。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では哲学者の参加は最大39です：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -355,9 +355,9 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論（43の統合済みランタイム・ペルソナ（42名の名前付き + dummy）、通常時は最大39名の哲学者を動員して Pareto 集約） |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（42人の哲学者、通常時は最大39名を動員して Pareto 集約） |
 | `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
-| `GET`  | `/v1/philosophers` | 43の統合済みランタイム・ペルソナのマニフェスト一覧 |
+| `GET`  | `/v1/philosophers` | 正式な42人の哲学者マニフェスト一覧（`dummy` helper は除外） |
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 

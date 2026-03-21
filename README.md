@@ -25,7 +25,7 @@ pip install -e .
 
 ### TL;DR
 
-- **43 integrated runtime personas** as interacting **tensors** → accountable LLM reasoning
+- **42 philosophers** as interacting **tensors** → accountable decision support
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
@@ -44,7 +44,7 @@ pip install -e .
 
 - Repository target version: `1.0.2`
 - Public package metadata state: package classifiers currently declare `Development Status :: 4 - Beta`
-- Runtime roster: **43 integrated runtime personas**. That count is the actual runtime roster size: 42 named philosopher personas plus 1 compliance-sentinel `dummy` slot. The default NORMAL path still caps participation at at most 39 active philosopher personas per request, so the roster count is not a claim that all 43 participate in every run.
+- Runtime philosopher roster: **42 philosophers**. The internal `dummy` slot is a non-philosopher compliance helper / compliance sentinel and is excluded from public philosopher totals and manifests. The default NORMAL path still caps participation at at most 39 active philosopher personas per request.
 - External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
 - Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
 - Public REST default safety: auth remains fail-closed, default CORS is localhost-only, and the REST server defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` while refusing `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
@@ -72,7 +72,7 @@ Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
-Po_core is a **philosophy-driven AI system** that integrates **42 runtime personas** to generate ethically responsible, contextually aware responses. That public count refers to the runtime roster; one slot is reserved for compliance-sentinel behavior, so docs should avoid implying that all 42 slots are human philosophers.
+Po_core is a **philosophy-driven AI decision-support system** that integrates **42 philosophers** to generate ethically responsible, contextually aware decision support. The internal `dummy` slot is a compliance helper, not one of the 42 philosophers.
 
 Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
 
@@ -114,7 +114,7 @@ Read our full story in the [**Manifesto**](./Po_core_Manifesto_When_Pigs_Fly.md)
 
 ### Philosophical Ensemble
 
-- **43 integrated runtime personas**: the runtime roster consists of 42 named philosopher personas plus 1 compliance-sentinel `dummy` slot. The named personas span Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor); the roster count also includes one compliance sentinel slot.
+- **42 philosophers**: the named philosopher roster spans Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor). The internal `dummy` slot is a compliance helper and is not counted as one of the 42 philosophers.
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, decolonialism, communitarianism, Zen Buddhism, and Eastern wisdom traditions
 
@@ -359,13 +359,13 @@ Po_core is currently documented against package version `1.0.2`, and that exact 
 | Public package metadata | ⚠️ Beta | Package classifiers declare `Development Status :: 4 - Beta` and `tool.po_core.project.status = beta` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
 | Public release evidence | ✅ PyPI publication evidenced | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while TestPyPI/workflow/smoke claims remain out of bounds until separately evidenced |
-| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical “43 integrated runtime personas” roster wording (42 named + dummy), and max 39 active philosopher personas on the default NORMAL path |
+| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical 42-philosopher roster wording, explicit `dummy` helper semantics, and max 39 active philosopher personas on the default NORMAL path |
 
 ### Implemented platform capabilities
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 43 integrated runtime personas (42 named + dummy), risk levels, tags |
+| Philosophical Framework | ✅ Complete | 42 philosophers plus a non-philosopher `dummy` helper, with risk levels and tags |
 | Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
 | TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
 | ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |

@@ -2,7 +2,7 @@
 Philosopher Manifest (兵科表)
 =============================
 
-42人の哲学者の"名簿"→"兵科表"に昇格。
+42人の哲学者と、非公開の sentinel helper `dummy` を扱う内部兵科表。
 tags と cost で役割とコストを明示。
 
 risk_level:
@@ -68,7 +68,7 @@ class PhilosopherSpec:
     cost: int = 1
 
 
-# 42人の哲学者 兵科表
+# 内部 runtime 兵科表（42 philosophers + non-philosopher helper `dummy`）
 SPECS: List[PhilosopherSpec] = [
     # ══════════════════════════════════════════════════════════════════════
     # risk_level=0: 安全寄り（倫理重視、確認、整理）
@@ -476,14 +476,34 @@ SPECS: List[PhilosopherSpec] = [
 ]
 
 
+DUMMY_PHILOSOPHER_ID = "dummy"
+PUBLIC_PHILOSOPHER_COUNT = 42
+
+
 def get_enabled_specs() -> List[PhilosopherSpec]:
-    """Get all enabled philosopher specs."""
+    """Return all enabled internal runtime specs, including helper slots."""
     return [s for s in SPECS if s.enabled]
 
 
-__all__ = ["PhilosopherSpec", "SPECS", "get_enabled_specs", "get_role_for_philosopher"]
+def get_public_philosopher_specs() -> List[PhilosopherSpec]:
+    """Return only the canonical 42 philosopher specs for public surfaces."""
+    return [
+        s for s in SPECS if s.enabled and s.philosopher_id != DUMMY_PHILOSOPHER_ID
+    ]
 
 
 def get_role_for_philosopher(philosopher_id: str) -> Role | None:
     """Resolve philosopher_id to functional role."""
     return PHILOSOPHER_ROLE_MAP.get(philosopher_id)
+
+
+__all__ = [
+    "DUMMY_PHILOSOPHER_ID",
+    "PUBLIC_PHILOSOPHER_COUNT",
+    "PhilosopherSpec",
+    "SPECS",
+    "get_enabled_specs",
+    "get_public_philosopher_specs",
+    "get_role_for_philosopher",
+]
+

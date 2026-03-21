@@ -87,7 +87,7 @@ def test_runtime_roster_count_semantics_are_explicit() -> None:
     assert len(non_dummy_specs) == 42
     assert len(SPECS) == 43
     assert "dummy" in LLM_PERSONAS
-    assert len(LLM_PERSONAS) == len(SPECS)
+    assert len(LLM_PERSONAS) == 43
 
 
 def test_llm_philosopher_extracts_balanced_embedded_json() -> None:

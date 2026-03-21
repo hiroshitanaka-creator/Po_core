@@ -125,7 +125,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core uses **43 integrated runtime personas**. That is the actual runtime roster size: **42 named philosopher personas plus 1 compliance-sentinel `dummy` slot**. Runtime selection budgets keep the default NORMAL path at **39 active philosopher personas** maximum per request, and the number mobilized varies by SafetyMode:
+Po_core uses **42 philosophers** as its formal roster. The internal `dummy` slot is a compliance helper, not one of the 42 philosophers. Runtime selection budgets keep the default NORMAL path at **39 active philosopher personas** maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -309,7 +309,7 @@ python -m po_core.app.rest
 |--------|------|-------------|
 | `POST` | `/v1/reason` | Synchronous philosophical reasoning (42 integrated philosophers, max 39 active on the default NORMAL path, then Pareto aggregation) |
 | `POST` | `/v1/reason/stream` | SSE streaming reasoning (true async offload) |
-| `GET`  | `/v1/philosophers` | Full 42-philosopher integrated manifest |
+| `GET`  | `/v1/philosophers` | Public 42-philosopher manifest (`dummy` helper excluded) |
 | `GET`  | `/v1/trace/{session_id}` | Per-session trace events |
 | `GET`  | `/v1/health` | Health check (version + uptime) |
 

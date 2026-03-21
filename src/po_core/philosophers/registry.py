@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from po_core.runtime.battalion_table import BattalionModePlan
 
 from po_core.philosophers.base import PhilosopherProtocol
-from po_core.philosophers.manifest import SPECS, PhilosopherSpec
+from po_core.philosophers.manifest import DUMMY_PHILOSOPHER_ID, SPECS, PhilosopherSpec
 from po_core.philosophers.tags import (
     TAG_CLARIFY,
     TAG_COMPLIANCE,
@@ -78,7 +78,7 @@ class PhilosopherRegistry:
     SafetyModeに応じて哲学者を編成し、動的にロードする。
     - CRITICAL: 1人（最も安全な哲学者のみ）, コスト予算3
     - WARN: 5人（安全〜標準の哲学者）, コスト予算12
-    - NORMAL: 42人を上限に編成（runtimeのlimit/cost_budgetで制御）, コスト予算80
+    - NORMAL: 42人の哲学者を上限に編成（dummy helperは通常選抜しない）, コスト予算80
 
     battalion_plans が渡されるとそちらを優先する（外部設定）。
     """
@@ -172,8 +172,9 @@ class PhilosopherRegistry:
                 for s in candidates
                 if PHILOSOPHER_ROLE_MAP.get(s.philosopher_id) in role_values
             ]
-        if mode == SafetyMode.CRITICAL:
-            candidates = [s for s in candidates if s.philosopher_id != "dummy"]
+        candidates = [
+            s for s in candidates if s.philosopher_id != DUMMY_PHILOSOPHER_ID
+        ]
         # 安定順：安全→重み→id（決定論）
         candidates.sort(key=lambda s: (s.risk_level, -s.weight, s.philosopher_id))
 
