@@ -58,7 +58,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
 - `adapters/`
 - `aggregator/`
 - `app/`
-  - `app/api.py` — public programmatic entrypoint facade
+  - `app/api.py` — programmatic facade plus legacy compatibility FastAPI surface
   - `app/rest/` — FastAPI delivery layer
 - `autonomy/solarwill/`
 - `axis/specs/`
@@ -73,7 +73,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
   - `manifest.py` / `registry.py` / `allowlist.py`
   - rule-based philosopher modules
   - `llm_personas.py` / `llm_philosopher.py` for runtime LLM persona routing
-  - `prompts/` for non-packaged YAML draft assets only
+  - no packaged YAML prompt directory; draft prompt YAML lives only under `docs/philosopher_prompt_drafts/`
 - `ports/`
 - `runtime/`
 - `safety/`

@@ -14,6 +14,7 @@ LLM Philosopher — LLM API バックエンドを持つ哲学者基底クラス
 設計原則:
 - ``reason()`` のみオーバーライド — それ以外は Philosopher 基底に委譲
 - LLM 障害時は空の推論（confidence=0.1）を返してパイプラインを止めない
+- Runtime JSON 契約は `llm_personas.py` の明示スキーマに合わせて正規化する
 - JSON パースを 2 段階で試みる（構造化 → raw テキスト）
 - ``actual_model`` を ``metadata`` に記録（論文再現性）
 """
@@ -212,12 +213,14 @@ class LLMPhilosopher(Philosopher):
         return {
             "reasoning": raw.strip(),
             "perspective": self.description,
-            "confidence": 0.5,
             "tension": None,
+            "confidence": 0.5,
+            "action_type": "answer",
+            "citations": [],
         }
 
     def _normalize_parsed(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """パース済み dict を PhilosopherResponse 互換形式に正規化する。"""
+        """パース済み dict を runtime JSON 契約に合わせて正規化する。"""
         confidence = data.get("confidence", 0.5)
         try:
             confidence = float(confidence)
@@ -225,13 +228,35 @@ class LLMPhilosopher(Philosopher):
         except (TypeError, ValueError):
             confidence = 0.5
 
+        tension = data.get("tension")
+        if not isinstance(tension, dict):
+            tension = None
+        else:
+            elements = tension.get("elements", [])
+            tension = {
+                "level": str(tension.get("level", "medium")),
+                "description": str(tension.get("description", "")),
+                "elements": (
+                    [str(item) for item in elements]
+                    if isinstance(elements, list)
+                    else []
+                ),
+            }
+
+        citations = data.get("citations", [])
+        action_type = str(data.get("action_type", "answer"))
+        if action_type not in {"answer", "refuse", "ask_clarification", "defer"}:
+            action_type = "answer"
+
         return {
             "reasoning": str(data.get("reasoning", "")),
             "perspective": str(data.get("perspective", self.description)),
+            "tension": tension,
             "confidence": confidence,
-            "tension": data.get("tension"),
-            "citations": data.get("citations", []),
-            "action_type": data.get("action_type", "answer"),
+            "action_type": action_type,
+            "citations": (
+                [str(item) for item in citations] if isinstance(citations, list) else []
+            ),
         }
 
     def _fallback(

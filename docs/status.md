@@ -13,7 +13,7 @@
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.2.md` fixes PyPI publication evidence for `1.0.2`; `docs/release/smoke_verification_v1.0.2.md` records that smoke transcript evidence is still missing
 - Operator handoff bundle for the next release cycle: `docs/release/release_candidate_handoff_v1.0.2.md`
 - External publish status: **published on PyPI for `1.0.2`**
-- Canonical evidence boundary: public docs may say only what the in-repo evidence proves. Today that means **PyPI publication is evidenced**; TestPyPI publication, workflow-run success, and smoke verification remain unevidenced until their exact URLs/transcripts are recorded.
+- Canonical evidence boundary: public docs may say only what the in-repo evidence proves. Today that means **PyPI publication is evidenced**; TestPyPI publication, workflow-run success, and post-publish operator smoke verification remain unevidenced until their exact URLs/transcripts are recorded.
 - Next-cycle operator rule: use `docs/release/release_candidate_handoff_v1.0.2.md` as the compact pre-publish checklist, and use the playbook only for the full step-by-step procedure.
 
 ## Canonical public wording
@@ -27,6 +27,8 @@
 - README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.0.2` を repository target version として扱う。
 - Release workflow (`.github/workflows/publish.yml`) は存在し、PyPI version page evidence により `1.0.2` の PyPI publication fact は repo 内へ固定された。
 - `po-core-flyingpig==1.0.2` の PyPI install 手順は案内可能になった。
+- Public REST defaults are now fail-closed by design: localhost-only CORS, `process` execution mode by default, and explicit refusal of `thread` mode unless a development override is set.
+- Package metadata has been downgraded to `Development Status :: 4 - Beta` because repository evidence does not justify a stronger stability claim.
 - ただし TestPyPI state / workflow run URL / clean install-import-runtime smoke transcript は、現時点ではまだ repo 内に固定されていない。
 
 ## Remaining Evidence Gaps After PyPI Publication
@@ -44,6 +46,9 @@
 
 ## Completed
 
+- 2026-03-21: runtime safety hardening として、REST server の execution mode default を `process` に変更し、unsafe `thread` mode は `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を伴う開発時以外で拒否するようにした。
+- 2026-03-21: prompt SSOT hardening として、runtime persona prompt / parser / docs draft の JSON 契約を `reasoning` / `perspective` / `tension` / `confidence` / `action_type` / `citations` に統一した。
+- 2026-03-21: release smoke realism として、`scripts/release_smoke.py` を REST startup/auth/health/reason/stream path まで拡張し、`import po_core` が eager に legacy FastAPI app を引き込まないようにした。
 - 2026-03-20: Phase 1 release blocker として `black --check src tests` の失敗を解消するため、black 準拠の最小整形を runtime REST/CLI と関連テストへ適用した。
 - 2026-03-20: release-facing SSOT として、本 snapshot に Phase 1 実施状況を追記した。
 - 2026-03-20: Phase 3 truth-sync として `examples/README.md` の roster/install wording と `clients/typescript/README.md` の official REST/auth wording を、`1.0.2`・42/39・evidence boundary に合わせて同期した。

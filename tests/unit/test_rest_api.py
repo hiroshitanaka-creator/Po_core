@@ -464,6 +464,43 @@ def test_startup_allows_dev_mode_without_api_key(tmp_path):
 
 @pytest.mark.unit
 @pytest.mark.phase5
+def test_startup_refuses_thread_execution_mode_by_default(tmp_path):
+    """startup should refuse cooperative thread execution on the public REST path."""
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            philosopher_execution_mode="thread",
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+
+    with pytest.raises(RuntimeError, match="PO_PHILOSOPHER_EXECUTION_MODE=thread"):
+        with TestClient(app, raise_server_exceptions=True):
+            pass
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_startup_allows_thread_execution_mode_with_explicit_dev_override(tmp_path):
+    """startup may allow thread mode only when the explicit dev override is set."""
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            philosopher_execution_mode="thread",
+            allow_unsafe_thread_execution=True,
+            trace_store_backend="sqlite",
+            trace_db_path=str(tmp_path / "trace_store.sqlite3"),
+        )
+    )
+
+    with TestClient(app, raise_server_exceptions=True) as client:
+        resp = client.get("/v1/health")
+    assert resp.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
 def test_startup_allows_auth_enabled_with_api_key(tmp_path):
     """startup should succeed when PO_SKIP_AUTH=false and API key is configured."""
     app = create_app(
@@ -478,6 +515,34 @@ def test_startup_allows_auth_enabled_with_api_key(tmp_path):
     with TestClient(app, raise_server_exceptions=True) as client:
         resp = client.get("/v1/health")
     assert resp.status_code == 200
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_reason_passes_execution_mode_from_api_settings(client_no_auth):
+    """Reason endpoint forwards philosopher execution mode from API settings to core settings."""
+    from po_core.runtime.settings import Settings
+
+    app = create_app(
+        APISettings(
+            skip_auth=True,
+            philosopher_execution_mode="process",
+        )
+    )
+    from po_core.app.rest import auth
+
+    app.dependency_overrides[auth.require_api_key] = lambda: None
+    client = TestClient(app, raise_server_exceptions=True)
+
+    with patch(
+        "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_RESULT
+    ) as mock_run:
+        resp = client.post("/v1/reason", json={"input": "What is justice?"})
+
+    assert resp.status_code == 200
+    settings = mock_run.call_args.kwargs["settings"]
+    assert isinstance(settings, Settings)
+    assert settings.philosopher_execution_mode == "process"
 
 
 @pytest.mark.unit
@@ -1186,11 +1251,38 @@ def test_swagger_ui_accessible(client_no_auth):
 
 @pytest.mark.unit
 @pytest.mark.phase5
-def test_cors_default_allows_all_origins():
-    """Default CORS configuration allows any origin (dev-friendly)."""
-    from po_core.app.rest.config import APISettings
-    from po_core.app.rest.server import create_app
+def test_cors_default_is_localhost_only():
+    """Default CORS configuration should allow localhost but not arbitrary origins."""
+    app = create_app(settings=APISettings(skip_auth=True))
+    client = TestClient(app)
 
+    trusted = client.options(
+        "/v1/health",
+        headers={
+            "Origin": "http://localhost",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert trusted.status_code == 200
+    assert trusted.headers.get("access-control-allow-origin") == "http://localhost"
+
+    untrusted = client.options(
+        "/v1/health",
+        headers={
+            "Origin": "https://evil.example.com",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert (
+        untrusted.headers.get("access-control-allow-origin")
+        != "https://evil.example.com"
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.phase5
+def test_cors_explicit_wildcard_remains_available_for_dev():
+    """Explicit wildcard CORS remains available as a deliberate development override."""
     app = create_app(settings=APISettings(skip_auth=True, cors_origins="*"))
     client = TestClient(app)
     resp = client.get("/v1/health", headers={"Origin": "http://example.com"})

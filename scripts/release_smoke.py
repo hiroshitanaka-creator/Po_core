@@ -9,16 +9,125 @@ import json
 import pathlib
 import subprocess
 from importlib import resources
-from typing import Sequence
+from typing import Any, Sequence
+from unittest.mock import patch
+
+from fastapi.testclient import TestClient
 
 import po_core
 import po_core.viewer
 from po_core import run
+from po_core.app.rest.config import APISettings
+from po_core.app.rest.server import create_app
 from po_core.cli.commands import main as cli_main
+from po_core.domain.trace_event import TraceEvent
 from po_core.runtime.wiring import build_test_system
 
 ENTRYPOINTS = ("po-core", "po-self", "po-trace", "po-interactive", "po-experiment")
 ENTRYPOINT_TIMEOUT_SECONDS = 15
+
+
+_MOCK_REASON_RESULT: dict[str, Any] = {
+    "request_id": "smoke-req-001",
+    "status": "approved",
+    "proposal": {"content": "Smoke reasoning response."},
+    "proposals": [
+        {
+            "philosopher_id": "aristotle",
+            "content": "Smoke reasoning response.",
+            "weight": 0.9,
+        }
+    ],
+    "tensors": {
+        "freedom_pressure": 0.1,
+        "semantic_delta": 0.2,
+        "blocked_tensor": 0.0,
+    },
+    "safety_mode": "NORMAL",
+}
+
+
+def _assert_rest_server_path() -> None:
+    misconfigured_app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="   ",
+            trace_store_backend="memory",
+            review_store_backend="memory",
+        )
+    )
+    try:
+        with TestClient(misconfigured_app, raise_server_exceptions=True):
+            raise SystemExit("misconfigured auth startup unexpectedly succeeded")
+    except RuntimeError as exc:
+        if "Startup aborted" not in str(exc):
+            raise
+
+    app = create_app(
+        APISettings(
+            skip_auth=False,
+            api_key="smoke-secret",
+            philosopher_execution_mode="process",
+            trace_store_backend="memory",
+            review_store_backend="memory",
+        )
+    )
+
+    async def _fake_async_run(*, user_input, settings, tracer, philosophers=None):
+        tracer.emit(
+            TraceEvent.now("PhilosopherCompleted", "smoke-session", {"ok": True})
+        )
+        return _MOCK_REASON_RESULT
+
+    with (
+        patch(
+            "po_core.app.rest.routers.reason.po_run", return_value=_MOCK_REASON_RESULT
+        ),
+        patch(
+            "po_core.app.rest.routers.reason.po_async_run",
+            new=_fake_async_run,
+        ),
+    ):
+        with TestClient(app, raise_server_exceptions=True) as client:
+            health = client.get("/v1/health")
+            if health.status_code != 200:
+                raise SystemExit(
+                    f"/v1/health failed: {health.status_code} {health.text}"
+                )
+
+            unauthorized = client.post("/v1/reason", json={"input": "smoke"})
+            if unauthorized.status_code != 401:
+                raise SystemExit(
+                    f"expected 401 without API key, got {unauthorized.status_code}: {unauthorized.text}"
+                )
+
+            authorized = client.post(
+                "/v1/reason",
+                json={"input": "smoke"},
+                headers={"X-API-Key": "smoke-secret"},
+            )
+            if authorized.status_code != 200:
+                raise SystemExit(
+                    f"/v1/reason failed: {authorized.status_code} {authorized.text}"
+                )
+            payload = authorized.json()
+            if payload.get("status") != "approved":
+                raise SystemExit(f"unexpected reason payload: {payload}")
+
+            stream = client.post(
+                "/v1/reason/stream",
+                json={"input": "smoke"},
+                headers={"X-API-Key": "smoke-secret"},
+            )
+            if stream.status_code != 200:
+                raise SystemExit(
+                    f"/v1/reason/stream failed: {stream.status_code} {stream.text}"
+                )
+            if (
+                "event: done" not in stream.text
+                and '"chunk_type": "done"' not in stream.text
+            ):
+                raise SystemExit(f"unexpected stream payload: {stream.text}")
 
 
 def _run_command(
@@ -151,6 +260,8 @@ def main() -> None:
     print(f"cli_name={cli_name}")
     if cli_name != "main":
         raise SystemExit(f"unexpected cli main name: {cli_name}")
+
+    _assert_rest_server_path()
 
     if args.check_entrypoints:
         _assert_console_scripts()

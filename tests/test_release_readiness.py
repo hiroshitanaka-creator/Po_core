@@ -326,10 +326,15 @@ def test_release_smoke_script_checks_all_console_scripts() -> None:
         assert entrypoint in smoke
     assert "--check-entrypoints" in smoke
     assert "ENTRYPOINT_TIMEOUT_SECONDS = 15" in smoke
+    assert "create_app" in smoke
+    assert "TestClient" in smoke
     assert 'version_cmd = ["po-core", "version"]' in smoke
     assert 'status_cmd = ["po-core", "status"]' in smoke
     assert 'prompt_cmd = ["po-core", "prompt", "smoke", "--format", "json"]' in smoke
     assert 'experiment_cmd = ["po-experiment", "list"]' in smoke
+    assert "/v1/health" in smoke
+    assert "/v1/reason" in smoke
+    assert "/v1/reason/stream" in smoke
 
 
 def test_publish_playbook_documents_fail_closed_release_path() -> None:

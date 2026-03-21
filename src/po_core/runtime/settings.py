@@ -139,8 +139,8 @@ class Settings:
     philosopher_cost_budget_warn: int = 12
     philosopher_cost_budget_critical: int = 3
 
-    # Philosopher execution backend: thread (compat) | process (hard timeout)
-    philosopher_execution_mode: Literal["thread", "process"] = "thread"
+    # Philosopher execution backend: process (hard timeout default) | thread (explicit dev escape hatch)
+    philosopher_execution_mode: Literal["thread", "process"] = "process"
 
     # ---- LLM Philosopher Integration ----
     enable_llm_philosophers: bool = False
@@ -180,7 +180,7 @@ class Settings:
                 "PO_PHILOSOPHER_COST_BUDGET_CRITICAL", default=3
             ),
             philosopher_execution_mode=_env_execution_mode(
-                "PO_PHILOSOPHER_EXECUTION_MODE", default="thread"
+                "PO_PHILOSOPHER_EXECUTION_MODE", default="process"
             ),
             enable_llm_philosophers=_env_bool(
                 "PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS", default=False
@@ -219,7 +219,7 @@ class Settings:
             philosopher_cost_budget_warn=api_settings.philosopher_cost_budget_warn,
             philosopher_cost_budget_critical=api_settings.philosopher_cost_budget_critical,
             philosopher_execution_mode=_env_execution_mode(
-                default=getattr(api_settings, "philosopher_execution_mode", "thread")
+                default=getattr(api_settings, "philosopher_execution_mode", "process")
             ),
             enable_llm_philosophers=api_settings.enable_llm_philosophers,
             llm_provider=api_settings.llm_provider,

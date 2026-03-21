@@ -9,7 +9,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/po-core-flyingpig)](https://pypi.org/project/po-core-flyingpig/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
-[![Status: Package%20metadata%20marks%20stable](https://img.shields.io/badge/Status-Package%20metadata%20marks%20stable-brightgreen.svg)]()
+[![Status: Package%20metadata%20marks%20beta](https://img.shields.io/badge/Status-Package%20metadata%20marks%20beta-blue.svg)]()
 
 ```bash
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
@@ -43,10 +43,11 @@ pip install -e .
 ## Release Metadata
 
 - Repository target version: `1.0.2`
-- Public package metadata state: package classifiers currently declare `Development Status :: 5 - Production/Stable`
+- Public package metadata state: package classifiers currently declare `Development Status :: 4 - Beta`
 - Runtime roster: **42 integrated runtime personas**. Public docs use this persona count because the roster includes a compliance sentinel slot; treat it as a runtime roster count, not a literal claim that 42 human philosophers are always active. The default NORMAL path still caps participation at at most 39 active personas per request.
 - External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
 - Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
+- Public REST default safety: auth remains fail-closed, default CORS is localhost-only, and the REST server defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` while refusing `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
 
 ## Development Loop (Po_core core)
 

@@ -15,6 +15,12 @@ pip install "po-core-flyingpig==1.0.2"
 
 Version `1.0.2` should be described using the repository's evidence boundary. Today the repo evidences only **PyPI published** via `docs/release/pypi_publication_v1.0.2.md`; TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
 
+## 🔐 REST runtime defaults
+
+- Keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY` for any non-trivial deployment.
+- Default CORS is localhost-only; use `PO_CORS_ORIGINS=*` only as an explicit short-lived development override.
+- The REST server now defaults `PO_PHILOSOPHER_EXECUTION_MODE=process` and refuses `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
+
 ## ⚡ Try it in 30 Seconds
 
 ### Minimal Code

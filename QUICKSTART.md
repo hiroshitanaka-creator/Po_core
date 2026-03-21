@@ -28,6 +28,12 @@ twine check dist/*
 
 > `1.0.2` の公開事実は evidence boundary に従って扱います。現時点で repo 内に固定できているのは `docs/release/pypi_publication_v1.0.2.md` による **PyPI published** の事実だけで、TestPyPI / workflow run / clean install/import/smoke は追加の operator evidence が入るまで未証跡です。
 
+## 🔐 REST ランタイム既定値
+
+- 通常運用では `PO_SKIP_AUTH=false` のままにし、非空の `PO_API_KEY` を設定してください。
+- 既定の CORS は localhost のみ許可します。`PO_CORS_ORIGINS=*` は短命な開発時 override としてのみ使ってください。
+- REST server は `PO_PHILOSOPHER_EXECUTION_MODE=process` を既定にし、`thread` は `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を明示した開発時にだけ許可します。
+
 
 ### ✅ 公開前の最短検証（maintainer向け）
 
