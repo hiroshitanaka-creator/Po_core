@@ -58,7 +58,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
 - `adapters/`
 - `aggregator/`
 - `app/`
-  - `app/api.py` — public programmatic entrypoint facade
+  - `app/api.py` — programmatic facade plus legacy compatibility FastAPI surface
   - `app/rest/` — FastAPI delivery layer
 - `autonomy/solarwill/`
 - `axis/specs/`
@@ -73,7 +73,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
   - `manifest.py` / `registry.py` / `allowlist.py`
   - rule-based philosopher modules
   - `llm_personas.py` / `llm_philosopher.py` for runtime LLM persona routing
-  - `prompts/` for non-packaged YAML draft assets only
+  - no packaged YAML prompt directory; draft prompt YAML lives only under `docs/philosopher_prompt_drafts/`
 - `ports/`
 - `runtime/`
 - `safety/`
@@ -96,9 +96,9 @@ Release-relevant module facts:
 ## Philosopher Inventory
 
 - `src/po_core/philosophers/manifest.py` defines the enabled runtime philosopher roster and related metadata.
-- Public docs and API metadata should describe the runtime roster as **42 integrated runtime personas**. This is a roster/persona count, not a narrower claim that all 42 slots are named human philosophers, because one runtime slot is reserved for compliance-sentinel behavior.
+- Public docs and API metadata should describe the formal philosopher roster as **42 philosophers**. The internal `dummy` slot is a compliance/sentinel helper and must not be counted as one of the 42 in public surfaces.
 - Runtime selection budgets in settings cap the default NORMAL path at **39 active personas maximum per request**.
-- The `src/po_core/philosophers/` directory also contains helper modules such as `dummy.py`, `template.py`, `tags.py`, `llm_personas.py`, and `llm_philosopher.py`; directory file count must not be confused with the 42-person runtime roster.
+- The `src/po_core/philosophers/` directory also contains helper modules such as `dummy.py`, `template.py`, `tags.py`, `llm_personas.py`, and `llm_philosopher.py`; directory file count and helper slots must not be confused with the formal 42-philosopher roster.
 
 ---
 

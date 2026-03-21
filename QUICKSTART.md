@@ -28,6 +28,12 @@ twine check dist/*
 
 > `1.0.2` の公開事実は evidence boundary に従って扱います。現時点で repo 内に固定できているのは `docs/release/pypi_publication_v1.0.2.md` による **PyPI published** の事実だけで、TestPyPI / workflow run / clean install/import/smoke は追加の operator evidence が入るまで未証跡です。
 
+## 🔐 REST ランタイム既定値
+
+- 通常運用では `PO_SKIP_AUTH=false` のままにし、非空の `PO_API_KEY` を設定してください。
+- 既定の CORS は localhost のみ許可します。`PO_CORS_ORIGINS=*` は短命な開発時 override としてのみ使ってください。
+- REST server は `PO_PHILOSOPHER_EXECUTION_MODE=process` を既定にし、`thread` は `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を明示した開発時にだけ許可します。
+
 
 ### ✅ 公開前の最短検証（maintainer向け）
 
@@ -156,7 +162,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは **42の統合済みランタイム・ペルソナ**を扱います。これは公開向けの roster count であり、compliance sentinel 用のスロットを含むため「42人の人間哲学者が常に動く」という意味ではありません。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では最大39です：
+Po_coreでは **42人の哲学者** を正式 roster として扱います。内部には compliance helper として `dummy` スロットもありますが、これは哲学者数には含めません。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では哲学者の参加は最大39です：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -349,9 +355,9 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論（42の統合済みランタイム・ペルソナ、通常時は最大39まで動員して Pareto 集約） |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（42人の哲学者、通常時は最大39名を動員して Pareto 集約） |
 | `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
-| `GET`  | `/v1/philosophers` | 42の統合済みランタイム・ペルソナのマニフェスト一覧 |
+| `GET`  | `/v1/philosophers` | 正式な42人の哲学者マニフェスト一覧（`dummy` helper は除外） |
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
@@ -396,11 +402,13 @@ curl -X POST http://localhost:8000/v1/reason \
 | `PO_API_KEY` | `""` | `PO_SKIP_AUTH=false` のときに必要な API キー。空/blank のままでは起動失敗 |
 | `PO_SKIP_AUTH` | `false` | 推奨デフォルトは `false`。`true` は認証なしで試すローカル開発時だけ |
 | `PO_API_KEY_HEADER` | `X-API-Key` | 必要な場合だけ使う上級者向け設定。主ヘッダー名を変更しても `X-API-Key` は後方互換で受理 |
-| `PO_CORS_ORIGINS` | `"*"` | 許可オリジン（本番: カンマ区切り） |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | 許可オリジン。既定は localhost 限定、`*` は短命な開発時 override のみ |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | IP ごとのレート制限（req/min） |
 | `PO_PORT` | `8000` | サーバーポート |
 | `PO_WORKERS` | `1` | uvicorn ワーカー数 |
 | `PO_LOG_LEVEL` | `info` | ログレベル |
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | 哲学者実行バックエンド。REST の安全既定値は `process` |
+| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server は `thread` を拒否し、この値を `true` にした短命な開発時だけ例外的に許可 |
 
 ### ⚡ パフォーマンス（Phase 5-E 実測値）
 

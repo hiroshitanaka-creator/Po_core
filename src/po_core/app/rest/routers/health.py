@@ -9,7 +9,7 @@ import time
 from fastapi import APIRouter
 
 from po_core.app.rest.models import HealthResponse
-from po_core.philosophers.manifest import SPECS
+from po_core.philosophers.manifest import PUBLIC_PHILOSOPHER_COUNT
 
 router = APIRouter(tags=["health"])
 
@@ -35,6 +35,6 @@ async def health() -> HealthResponse:
     return HealthResponse(
         status="ok",
         version=version,
-        philosophers_loaded=len(SPECS),
+        philosophers_loaded=PUBLIC_PHILOSOPHER_COUNT,
         uptime_seconds=round(time.monotonic() - _start_time, 2),
     )

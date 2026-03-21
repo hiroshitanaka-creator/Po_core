@@ -28,7 +28,7 @@
      - `pip-audit` を base / `llm` / `docs` / `viz` の各 dependency surface ごとに clean virtualenv で実行
      - `python -m build`
      - `twine check dist/*`
-   - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`python scripts/release_smoke.py --check-entrypoints` が通っている。smoke は各 console script の `--help` に加えて `po-core version` / `po-core status` / `po-core prompt smoke --format json` / `po-self` / `po-experiment list` を timeout 付きで検証する。
+   - built wheel / sdist を Python 3.10 / 3.11 / 3.12 の clean env で smoke し、`python scripts/release_smoke.py --check-entrypoints` が通っている。smoke は package import/version/resource checks に加えて、REST startup refusal when auth is misconfigured, authenticated startup success, `/v1/health`, `/v1/reason`, deterministic `/v1/reason/stream`, and each console script `--help` plus `po-core version` / `po-core status` / `po-core prompt smoke --format json` / `po-self` / `po-experiment list` を timeout 付きで検証する。
    - ここでいう security gate の対象は、静的解析では `src/` と release/ops の `scripts/`、依存監査では base install と optional extras（`llm`, `docs`, `viz`）である。`dev` extra は CI 自身の実行用ツールとして install されるが、release artifact surface としての `pip-audit` 対象は base + optional extras を明示列挙する。
 3. **段階的リリース経路（machine-enforced）**
    - PyPI publish は **同一コミット SHA** に対する `testpypi` environment の successful deployment が GitHub API で確認できた場合にのみ進める。
@@ -146,9 +146,9 @@ python -c "import po_core; print(po_core.__version__)"
 
 ## 4-C. Philosopher execution mode の扱い
 
-- release smoke / publish 手順のために `PO_PHILOSOPHER_EXECUTION_MODE` を `process` へ強制変更しない。
-- 現行 smoke は package install, resource packaging, CLI wiring, and deterministic sample commands の健全性を確認するものであり、runtime execution mode の切り替えを昇格条件にはしない。
-- `process` mode を本番推奨として前面に出すのは、別途 end-to-end 運用実績と rollback 手順が揃ってからにする。この playbook では既存の安全な default を維持する。
+- release smoke / publish 手順のために `PO_PHILOSOPHER_EXECUTION_MODE` を `thread` へ戻さない。
+- 現行の安全な REST default は `process` であり、public server path は `thread` mode を `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を伴う開発時以外で拒否する。
+- release smoke は package install, resource packaging, CLI wiring, REST startup/auth behavior, and deterministic API commands の健全性を確認するものであり、unsafe execution mode を昇格条件の都合で許可しない。
 
 ## 5. 失敗時ロールバック手順
 

@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 # Valid action types that philosophers may declare.
 # Values outside this set are silently normalised to "answer".
 VALID_ACTION_TYPES: frozenset = frozenset(
-    {"answer", "refuse", "ask_clarification", "tool_call", "defer"}
+    {"answer", "refuse", "ask_clarification", "tool_call"}
 )
 
 

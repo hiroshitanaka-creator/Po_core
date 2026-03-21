@@ -7,7 +7,7 @@ for responsible meaning generation.
 Philosophy: Flying Pig - When Pigs Fly
 
 Public API:
-    from po_core.app.api import run          # Recommended entry point
+    from po_core import run                     # Recommended entry point (lazy import)
     from po_core import PoSelf, PoSelfResponse  # High-level wrapper
 """
 
@@ -15,8 +15,13 @@ __version__ = "1.0.2"
 __author__ = "Flying Pig Project"
 __email__ = "flyingpig0229+github@gmail.com"
 
-# ── Modern API (recommended) ──
-from po_core.app.api import run
+
+# ── Modern API (recommended, lazy wrapper to avoid heavy import-time side effects) ──
+def run(*args, **kwargs):
+    from po_core.app.api import run as _run
+
+    return _run(*args, **kwargs)
+
 
 # ── Legacy exports (backward compat) ──
 from po_core.ensemble import PHILOSOPHER_REGISTRY

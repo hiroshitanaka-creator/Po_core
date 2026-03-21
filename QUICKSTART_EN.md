@@ -15,6 +15,12 @@ pip install "po-core-flyingpig==1.0.2"
 
 Version `1.0.2` should be described using the repository's evidence boundary. Today the repo evidences only **PyPI published** via `docs/release/pypi_publication_v1.0.2.md`; TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
 
+## 🔐 REST runtime defaults
+
+- Keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY` for any non-trivial deployment.
+- Default CORS is localhost-only; use `PO_CORS_ORIGINS=*` only as an explicit short-lived development override.
+- The REST server now defaults `PO_PHILOSOPHER_EXECUTION_MODE=process` and refuses `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
+
 ## ⚡ Try it in 30 Seconds
 
 ### Minimal Code
@@ -119,7 +125,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core uses **42 integrated runtime personas**. That is the public roster count: one slot is reserved for compliance-sentinel behavior, so docs should not imply that all 42 slots are named human philosophers. Runtime selection budgets keep the default NORMAL path at **39 active** personas maximum per request, and the number mobilized varies by SafetyMode:
+Po_core uses **42 philosophers** as its formal roster. The internal `dummy` slot is a compliance helper, not one of the 42 philosophers. Runtime selection budgets keep the default NORMAL path at **39 active philosopher personas** maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -303,7 +309,7 @@ python -m po_core.app.rest
 |--------|------|-------------|
 | `POST` | `/v1/reason` | Synchronous philosophical reasoning (42 integrated philosophers, max 39 active on the default NORMAL path, then Pareto aggregation) |
 | `POST` | `/v1/reason/stream` | SSE streaming reasoning (true async offload) |
-| `GET`  | `/v1/philosophers` | Full 42-philosopher integrated manifest |
+| `GET`  | `/v1/philosophers` | Public 42-philosopher manifest (`dummy` helper excluded) |
 | `GET`  | `/v1/trace/{session_id}` | Per-session trace events |
 | `GET`  | `/v1/health` | Health check (version + uptime) |
 
@@ -348,11 +354,13 @@ Copy `.env.example` to `.env` and configure as needed.
 | `PO_API_KEY` | `""` | API key required when `PO_SKIP_AUTH=false`; blank values are a startup misconfiguration |
 | `PO_SKIP_AUTH` | `false` | Recommended default is `false`; set `true` only for short-lived local development without auth |
 | `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` remains accepted for backwards compatibility |
-| `PO_CORS_ORIGINS` | `"*"` | Allowed CORS origins (prod: comma-separated) |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | Allowed CORS origins; localhost-only by default, `*` only as an explicit short-lived dev override |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit (req/min) |
 | `PO_PORT` | `8000` | Server port |
 | `PO_WORKERS` | `1` | uvicorn worker count |
 | `PO_LOG_LEVEL` | `info` | Log level |
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Philosopher execution backend; safe REST default is `process` |
+| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server refuses `thread` unless this is explicitly set to `true` for short-lived development |
 
 ### ⚡ Performance (Phase 5-E Measured)
 

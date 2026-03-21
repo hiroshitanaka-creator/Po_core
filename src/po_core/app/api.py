@@ -2,10 +2,11 @@
 Po_core Public API
 ==================
 
-This is the ONLY public entry point for the Po_core system.
-All external consumers (03_api/*, examples/*, tests) should import from here.
+This module exposes the programmatic facade used by public callers.
+It also carries a legacy FastAPI compatibility surface (`app`) that remains for
+backward compatibility, but the canonical HTTP surface is `po_core.app.rest`.
 
-入口はここに統一。03_api/* と examples/* はこの関数を呼ぶだけにする。
+Programmatic callers should use `run()` / `async_run()`. New HTTP integrations should use `po_core.app.rest.server:create_app`.
 
 Usage:
     from po_core.app.api import run
@@ -95,7 +96,7 @@ def run(
     """
     Main entry point for Po_core.
 
-    入口はここに統一。03_api/* と examples/* はこの関数を呼ぶだけにする。
+    Programmatic callers should use `run()` / `async_run()`. New HTTP integrations should use `po_core.app.rest.server:create_app`.
 
     Args:
         user_input: The user's input prompt
@@ -216,10 +217,11 @@ async def async_run(
 
 _legacy_api_settings = APISettings()
 
-app = FastAPI(title="Po_core API")
+app = FastAPI(title="Po_core Legacy Compatibility API")
 
-# Defaults stay fully open for backwards compatibility.
-# Prefer PO_CORS_ORIGINS / PO_API_KEY (PO_CORE_* retained as legacy aliases).
+# LEGACY COMPATIBILITY SURFACE ONLY.
+# New deployments should use `po_core.app.rest.server:create_app` instead.
+# This module keeps env-driven auth/CORS parity, but is not the primary documented REST surface.
 _cors_origins = parse_cors_origins(_legacy_api_settings.cors_origins)
 app.add_middleware(
     CORSMiddleware,

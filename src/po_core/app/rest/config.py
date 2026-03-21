@@ -19,7 +19,7 @@ Example .env:
 
 from __future__ import annotations
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -47,10 +47,10 @@ class APISettings(BaseSettings):
     ws_allow_query_api_key: bool = False
 
     # CORS — comma-separated list of allowed origins.
-    # Use "*" (default) to allow all origins in development.
-    # In production set to specific domains: "https://app.example.com,https://admin.example.com"
+    # Default is local-only for safer public-package behavior.
+    # Use "*" only for short-lived local development when you intentionally want permissive CORS.
     cors_origins: str = Field(
-        default="*",
+        default="http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000",
         validation_alias=AliasChoices("PO_CORS_ORIGINS", "PO_CORE_CORS_ORIGINS"),
     )
 
@@ -75,9 +75,11 @@ class APISettings(BaseSettings):
         default="", validation_alias=AliasChoices("PO_ROLES")
     )
     philosopher_execution_mode: str = Field(
-        default="thread",
+        default="process",
         validation_alias=AliasChoices("PO_PHILOSOPHER_EXECUTION_MODE"),
     )
+    allow_unsafe_thread_execution: bool = False
+
     enable_llm_philosophers: bool = Field(
         default=False,
         validation_alias=AliasChoices("PO_LLM_ENABLED", "PO_ENABLE_LLM_PHILOSOPHERS"),
@@ -105,6 +107,17 @@ class APISettings(BaseSettings):
     # Review queue storage
     review_store_backend: str = "sqlite"  # sqlite | memory
     review_db_path: str = ""
+
+
+    @field_validator("philosopher_execution_mode", mode="before")
+    @classmethod
+    def _validate_philosopher_execution_mode(cls, value: object) -> str:
+        normalized = str(value).strip().lower()
+        if normalized not in {"thread", "process"}:
+            raise ValueError(
+                "philosopher_execution_mode must be 'thread' or 'process'"
+            )
+        return normalized
 
     class Config:
         env_prefix = "PO_"

@@ -26,7 +26,7 @@ keywords = [
     "existentialism",
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -323,7 +323,7 @@ motto = "井の中の蛙、大海は知らずとも、大空を知る"
 # A frog in a well may not know the ocean, but it can know the sky
 
 [tool.po_core.project]
-status = "stable"
+status = "beta"
 implementation_progress = 1.0
 philosophers_integrated = 42
 design_documents = 120

@@ -28,6 +28,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(config): add review queue settings `PO_REVIEW_STORE_BACKEND` and `PO_REVIEW_DB_PATH` (`APISettings.review_store_backend`, `APISettings.review_db_path`). When `PO_REVIEW_DB_PATH` is blank, review storage reuses `PO_TRACE_DB_PATH`.
 - docs(ops): add `docs/operations/observability_review_playbook.md` documenting deterministic ESCALATE→review→trace run operations with env examples, startup, verification commands, and expected responses.
 
+### Changed
+
+- hardening(rest): default the public REST path to `PO_PHILOSOPHER_EXECUTION_MODE=process`, refuse `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set, and tighten default CORS to localhost-only.
+- prompts: align runtime LLM persona prompts, parser normalization, and draft documentation to one explicit JSON contract (`reasoning`, `perspective`, `tension`, `confidence`, `action_type`, `citations`) while keeping draft YAML isolated from runtime packaging.
+- release: expand `scripts/release_smoke.py` from import/CLI checks to deterministic REST startup/auth/health/reason/stream smoke and make `po_core` top-level import lazier by avoiding eager FastAPI compatibility imports.
+- metadata: downgrade package classifier from the previous stable classifier to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
+
+### Tests
+
+- test(rest): add startup guard coverage for unsafe thread execution mode, execution-mode propagation from REST settings to core settings, and localhost-only default CORS with explicit wildcard override coverage.
+- test(prompts): add runtime prompt SSOT tests that lock the LLM JSON contract, dummy/roster count semantics, and raw-text fallback normalization.
 ### Tests
 
 - test(rest): add restart-safety tests for review queue pending/decided persistence and regression coverage that `HumanReviewDecided` trace append remains intact after decision flow.

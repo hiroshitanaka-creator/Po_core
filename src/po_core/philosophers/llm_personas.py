@@ -7,12 +7,18 @@ draft YAML assets under ``docs/philosopher_prompt_drafts/`` are documentation-on
 working notes and have no runtime authority.
 
 Roster note:
-- 42 integrated runtime philosophers are part of the public deliberation roster.
-- This registry also includes one extra ``dummy`` compliance helper entry used for
-  fallback/compliance behavior, so the dictionary contains 43 prompt entries total.
+- The canonical philosopher count is **42 philosophers**.
+- This runtime prompt registry intentionally includes those 42 philosophers plus the non-philosopher compliance helper `dummy`, so the registry has 43 entries while public philosopher totals remain 42.
 
 Runtime JSON output contract for every persona:
-    {"reasoning": "...", "perspective": "...", "confidence": 0.0-1.0}
+    {
+      "reasoning": "...",
+      "perspective": "...",
+      "tension": {"level": "low|medium|high", "description": "...", "elements": ["..."]} | null,
+      "confidence": 0.0-1.0,
+      "action_type": "answer|refuse|ask_clarification",
+      "citations": ["..."]
+    }
 
 Design goals:
 - Make each philosopher's analytical lens explicit.
@@ -23,10 +29,13 @@ Design goals:
 from __future__ import annotations
 
 _JSON_INSTRUCTION = (
-    "Respond ONLY with valid JSON: "
+    "Respond ONLY with valid JSON using exactly this schema: "
     '{"reasoning": "your philosophical analysis in 2-4 sentences", '
     '"perspective": "your philosophical school/tradition", '
-    '"confidence": 0.0-1.0}'
+    '"tension": {"level": "low|medium|high", "description": "identified tension", "elements": ["concept 1"]} or null, '
+    '"confidence": 0.0-1.0, '
+    '"action_type": "answer|refuse|ask_clarification", '
+    '"citations": ["work or concept names"]}'
 )
 
 LLM_PERSONAS: dict[str, dict[str, str]] = {

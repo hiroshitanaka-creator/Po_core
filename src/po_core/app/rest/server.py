@@ -12,7 +12,7 @@ Usage:
     uvicorn po_core.app.rest.server:app --host 0.0.0.0 --port 8000
 
 Security:
-    CORS origins  — PO_CORS_ORIGINS (default: "*" for local dev)
+    CORS origins  — PO_CORS_ORIGINS (default: localhost-only allowlist)
     Rate limiting — PO_RATE_LIMIT_PER_MINUTE (default: 60/min per IP)
     API key auth  — PO_API_KEY with fail-closed defaults; primary header defaults to X-API-Key
 """
@@ -60,6 +60,25 @@ def _rate_limit_handler(request: Request, exc: Exception) -> Response:
 def _parse_cors_origins(cors_origins: str) -> list[str]:
     """Backward-compatible wrapper around shared CORS parsing settings."""
     return parse_cors_origins(cors_origins)
+
+
+def _validate_execution_mode_configuration(settings: APISettings) -> None:
+    """Reject unsafe cooperative timeout mode on the REST server unless explicitly allowed."""
+    mode = settings.philosopher_execution_mode.strip().lower()
+    if mode != "thread":
+        return
+    if settings.allow_unsafe_thread_execution:
+        logger.warning(
+            "Po_core REST API running with unsafe thread execution mode override",
+            extra={"execution_mode": mode},
+        )
+        return
+    raise RuntimeError(
+        "Startup aborted: PO_PHILOSOPHER_EXECUTION_MODE=thread is refused by the REST server "
+        "because cooperative timeouts are not fail-closed. "
+        "Use PO_PHILOSOPHER_EXECUTION_MODE=process, or set "
+        "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true for short-lived development only."
+    )
 
 
 def _validate_startup_auth_configuration(settings: APISettings) -> None:
@@ -132,6 +151,7 @@ Recommended default in every environment: keep `PO_SKIP_AUTH=false` and set a no
 If `PO_SKIP_AUTH=false` and `PO_API_KEY` is empty/blank, startup fails fast by design.
 Use `PO_SKIP_AUTH=true` only for short-lived local development when you intentionally want no auth.
 Clients should send the API key in `X-API-Key` by default.
+The public REST path also defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` and refuses `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
 `PO_API_KEY_HEADER` is an optional advanced override for deployments that need a different primary header name, and `X-API-Key` remains accepted for backwards compatibility.
 
 ### Pipeline
@@ -182,8 +202,8 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
         ],
     )
 
-    # CORS — restrict origins in production via PO_CORS_ORIGINS.
-    # Default "*" allows all origins (convenient for local dev).
+    # CORS — default to localhost-only origins for safer package defaults.
+    # Use PO_CORS_ORIGINS="*" only when you intentionally want permissive dev CORS.
     # When specific origins are set, credentials are also allowed.
     allowed_origins = parse_cors_origins(settings.cors_origins)
     allow_credentials = allowed_origins != ["*"]
@@ -226,6 +246,7 @@ MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSele
         )
 
         _validate_startup_auth_configuration(settings)
+        _validate_execution_mode_configuration(settings)
         _validate_worker_storage_configuration(settings)
 
     return application

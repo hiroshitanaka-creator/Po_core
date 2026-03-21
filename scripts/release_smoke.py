@@ -7,7 +7,13 @@ import importlib.metadata
 import inspect
 import json
 import pathlib
+import socket
 import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from contextlib import closing
 from importlib import resources
 from typing import Sequence
 
@@ -19,10 +25,18 @@ from po_core.runtime.wiring import build_test_system
 
 ENTRYPOINTS = ("po-core", "po-self", "po-trace", "po-interactive", "po-experiment")
 ENTRYPOINT_TIMEOUT_SECONDS = 15
+_SERVER_START_TIMEOUT_SECONDS = 15
+
+
+def _find_free_port() -> int:
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.bind(("127.0.0.1", 0))
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return int(sock.getsockname()[1])
 
 
 def _run_command(
-    command: Sequence[str], *, timeout: int = ENTRYPOINT_TIMEOUT_SECONDS
+    command: Sequence[str], *, timeout: int = ENTRYPOINT_TIMEOUT_SECONDS, env: dict[str, str] | None = None
 ) -> subprocess.CompletedProcess[str]:
     try:
         resolved = subprocess.run(
@@ -31,6 +45,7 @@ def _run_command(
             capture_output=True,
             text=True,
             timeout=timeout,
+            env=env,
         )
     except subprocess.TimeoutExpired as exc:
         raise SystemExit(
@@ -57,6 +72,127 @@ def _assert_contains(output: str, expected: str, command: Sequence[str]) -> None
         )
 
 
+def _http_request(
+    url: str, *, method: str = "GET", payload: dict | None = None, headers: dict[str, str] | None = None
+) -> tuple[int, str]:
+    body = None
+    merged_headers = dict(headers or {})
+    if payload is not None:
+        body = json.dumps(payload).encode("utf-8")
+        merged_headers.setdefault("Content-Type", "application/json")
+    req = urllib.request.Request(url, data=body, headers=merged_headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=ENTRYPOINT_TIMEOUT_SECONDS) as resp:
+            return resp.getcode(), resp.read().decode("utf-8")
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read().decode("utf-8")
+
+
+def _wait_for_http_ready(url: str, *, timeout: int) -> None:
+    deadline = time.time() + timeout
+    last_error: Exception | None = None
+    while time.time() < deadline:
+        try:
+            status, _ = _http_request(url)
+            if status == 200:
+                return
+        except Exception as exc:  # pragma: no cover - startup race only
+            last_error = exc
+        time.sleep(0.2)
+    raise SystemExit(f"server did not become ready: {url}; last_error={last_error}")
+
+
+def _start_rest_server(*, port: int, api_key: str, skip_auth: bool) -> subprocess.Popen[str]:
+    env = dict(**__import__('os').environ)
+    env.update(
+        {
+            "PO_HOST": "127.0.0.1",
+            "PO_PORT": str(port),
+            "PO_SKIP_AUTH": "true" if skip_auth else "false",
+            "PO_API_KEY": api_key,
+            "PO_TRACE_STORE_BACKEND": "memory",
+            "PO_REVIEW_STORE_BACKEND": "memory",
+            "PO_PHILOSOPHER_EXECUTION_MODE": "process",
+        }
+    )
+    return subprocess.Popen(
+        [sys.executable, "-m", "uvicorn", "po_core.app.rest.server:app", "--host", "127.0.0.1", "--port", str(port)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=env,
+    )
+
+
+def _stop_process(process: subprocess.Popen[str]) -> tuple[str, str]:
+    try:
+        process.terminate()
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=5)
+    stdout, stderr = process.communicate()
+    return stdout, stderr
+
+
+def _assert_rest_server_path() -> None:
+    bad_port = _find_free_port()
+    bad_process = _start_rest_server(port=bad_port, api_key="   ", skip_auth=False)
+    bad_stdout, bad_stderr = _stop_process(bad_process) if bad_process.poll() is not None else ("", "")
+    if bad_process.poll() is None:
+        time.sleep(1.0)
+        if bad_process.poll() is None:
+            bad_stdout, bad_stderr = _stop_process(bad_process)
+            raise SystemExit("misconfigured auth startup unexpectedly succeeded")
+    else:
+        bad_stdout, bad_stderr = _stop_process(bad_process)
+    if "Startup aborted" not in f"{bad_stdout}\n{bad_stderr}":
+        raise SystemExit(
+            "misconfigured auth startup did not fail closed with expected message\n"
+            f"STDOUT:\n{bad_stdout}\nSTDERR:\n{bad_stderr}"
+        )
+
+    port = _find_free_port()
+    process = _start_rest_server(port=port, api_key="smoke-secret", skip_auth=False)
+    try:
+        _wait_for_http_ready(f"http://127.0.0.1:{port}/v1/health", timeout=_SERVER_START_TIMEOUT_SECONDS)
+
+        unauthorized_status, unauthorized_body = _http_request(
+            f"http://127.0.0.1:{port}/v1/reason", method="POST", payload={"input": "smoke"}
+        )
+        if unauthorized_status != 401:
+            raise SystemExit(
+                f"expected 401 without API key, got {unauthorized_status}: {unauthorized_body}"
+            )
+
+        authorized_status, authorized_body = _http_request(
+            f"http://127.0.0.1:{port}/v1/reason",
+            method="POST",
+            payload={"input": "smoke"},
+            headers={"X-API-Key": "smoke-secret"},
+        )
+        if authorized_status != 200:
+            raise SystemExit(f"/v1/reason failed: {authorized_status} {authorized_body}")
+        payload = json.loads(authorized_body)
+        if payload.get("status") not in {"approved", "blocked", "ok"}:
+            raise SystemExit(f"unexpected reason payload: {payload}")
+
+        stream_status, stream_body = _http_request(
+            f"http://127.0.0.1:{port}/v1/reason/stream",
+            method="POST",
+            payload={"input": "smoke"},
+            headers={"X-API-Key": "smoke-secret"},
+        )
+        if stream_status != 200:
+            raise SystemExit(f"/v1/reason/stream failed: {stream_status} {stream_body}")
+        if "event: done" not in stream_body and '"chunk_type": "done"' not in stream_body:
+            raise SystemExit(f"unexpected stream payload: {stream_body}")
+    finally:
+        stdout, stderr = _stop_process(process)
+        print(f"rest_server_stdout:\n{stdout}")
+        print(f"rest_server_stderr:\n{stderr}")
+
+
 def _assert_console_scripts() -> None:
     for entrypoint in ENTRYPOINTS:
         _run_command([entrypoint, "--help"])
@@ -71,9 +207,7 @@ def _assert_console_scripts() -> None:
     status_cmd = ["po-core", "status"]
     status = _run_command(status_cmd)
     _assert_contains(status.stdout, "Project Status", status_cmd)
-    _assert_contains(
-        status.stdout, f"Version        : {po_core.__version__}", status_cmd
-    )
+    _assert_contains(status.stdout, f"Version        : {po_core.__version__}", status_cmd)
     _assert_contains(status.stdout, "Philosophers   : 42", status_cmd)
 
     prompt_cmd = ["po-core", "prompt", "smoke", "--format", "json"]
@@ -97,10 +231,7 @@ def _assert_console_scripts() -> None:
 
     experiment_cmd = ["po-experiment", "list"]
     experiment = _run_command(experiment_cmd)
-    if not (
-        "Experiments:" in experiment.stdout
-        or "No experiments found." in experiment.stdout
-    ):
+    if not ("Experiments:" in experiment.stdout or "No experiments found." in experiment.stdout):
         raise SystemExit(
             f"unexpected po-experiment list output:\nSTDOUT:\n{experiment.stdout}\nSTDERR:\n{experiment.stderr}"
         )
@@ -128,9 +259,7 @@ def main() -> None:
     if not pareto_resource.is_file():
         raise SystemExit(f"missing pareto resource: {pareto_resource}")
 
-    viewer_path = (
-        pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
-    )
+    viewer_path = pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
     print(f"viewer_html={viewer_path}")
     if not viewer_path.exists():
         raise SystemExit(f"viewer HTML missing: {viewer_path}")
@@ -151,6 +280,8 @@ def main() -> None:
     print(f"cli_name={cli_name}")
     if cli_name != "main":
         raise SystemExit(f"unexpected cli main name: {cli_name}")
+
+    _assert_rest_server_path()
 
     if args.check_entrypoints:
         _assert_console_scripts()
