@@ -26,7 +26,6 @@ from po_core.runtime.wiring import build_test_system
 ENTRYPOINTS = ("po-core", "po-self", "po-trace", "po-interactive", "po-experiment")
 ENTRYPOINT_TIMEOUT_SECONDS = 15
 _SERVER_START_TIMEOUT_SECONDS = 15
-_REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _find_free_port() -> int:
@@ -262,6 +261,14 @@ def _dist_matches_imported_package(dist_name: str) -> tuple[bool, str]:
     )
 
 
+def _resolve_checked_distribution_version(dist_name: str) -> tuple[str | None, str]:
+    """Return the installed version only when metadata matches the imported checkout."""
+    dist_matches_checkout, dist_note = _dist_matches_imported_package(dist_name)
+    if not dist_matches_checkout:
+        return None, dist_note
+    return importlib.metadata.version(dist_name), dist_note
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check-entrypoints", action="store_true")
@@ -270,10 +277,9 @@ def main() -> None:
     pkg_version = po_core.__version__
     print(f"pkg_version={pkg_version}")
 
-    dist_matches_checkout, dist_note = _dist_matches_imported_package("po-core-flyingpig")
+    dist_version, dist_note = _resolve_checked_distribution_version("po-core-flyingpig")
     print(f"dist_metadata={dist_note}")
-    if dist_matches_checkout:
-        dist_version = importlib.metadata.version("po-core-flyingpig")
+    if dist_version is not None:
         print(f"dist_version={dist_version}")
         if dist_version != pkg_version:
             raise SystemExit(
