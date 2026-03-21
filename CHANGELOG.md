@@ -9,6 +9,9 @@
 - release: bump `src/po_core/__init__.py` to `1.0.3` while keeping `pyproject.toml` on dynamic version loading and package metadata at Beta.
 - release: split release-readiness truth into repository target version `1.0.3` vs latest published public version `1.0.2`, and sync README / quickstarts / repository structure / status / publish playbook to that boundary.
 - tests(release): refactor `tests/test_release_readiness.py` so pre-publish candidate readiness does not require fake `1.0.3` PyPI or smoke evidence, while post-publish claims still require real evidence files.
+- hardening(rest): default the public REST path to `PO_PHILOSOPHER_EXECUTION_MODE=process`, refuse `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set, and tighten default CORS to localhost-only.
+- release: harden `scripts/release_smoke.py` so checkout validation ignores unrelated stale distribution metadata when it points to a different imported `po_core/__init__.py`, while still enforcing version equality when the installed metadata matches the imported checkout; the auth-misconfiguration startup wait/check path was also tightened.
+- metadata: downgrade package classifier from the previous stable classifier to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
 - prompts: remove `defer` from draft prompt docs/templates and keep the runtime parser aligned to the single `answer|refuse|ask_clarification` contract.
 - docs(prd): neutralize outdated release-state/package-state claims so `docs/spec/prd.md` no longer contradicts release SSOT.
 
@@ -42,10 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- hardening(rest): default the public REST path to `PO_PHILOSOPHER_EXECUTION_MODE=process`, refuse `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set, and tighten default CORS to localhost-only.
 - prompts: align runtime LLM persona prompts, parser normalization, and draft documentation to one explicit JSON contract (`reasoning`, `perspective`, `tension`, `confidence`, `action_type`, `citations`) while keeping draft YAML isolated from runtime packaging.
-- release: expand `scripts/release_smoke.py` from import/CLI checks to deterministic REST startup/auth/health/reason/stream smoke and make `po_core` top-level import lazier by avoiding eager FastAPI compatibility imports.
-- metadata: downgrade package classifier from the previous stable classifier to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
 
 ### Tests
 

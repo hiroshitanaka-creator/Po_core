@@ -138,14 +138,15 @@ def _stop_process(process: subprocess.Popen[str]) -> tuple[str, str]:
 def _assert_rest_server_path() -> None:
     bad_port = _find_free_port()
     bad_process = _start_rest_server(port=bad_port, api_key="   ", skip_auth=False)
-    bad_stdout, bad_stderr = _stop_process(bad_process) if bad_process.poll() is not None else ("", "")
-    if bad_process.poll() is None:
-        time.sleep(1.0)
-        if bad_process.poll() is None:
-            bad_stdout, bad_stderr = _stop_process(bad_process)
-            raise SystemExit("misconfigured auth startup unexpectedly succeeded")
-    else:
+    try:
+        bad_process.wait(timeout=_SERVER_START_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
         bad_stdout, bad_stderr = _stop_process(bad_process)
+        raise SystemExit(
+            "misconfigured auth startup unexpectedly succeeded\n"
+            f"STDOUT:\n{bad_stdout}\nSTDERR:\n{bad_stderr}"
+        )
+    bad_stdout, bad_stderr = _stop_process(bad_process)
     if "Startup aborted" not in f"{bad_stdout}\n{bad_stderr}":
         raise SystemExit(
             "misconfigured auth startup did not fail closed with expected message\n"
@@ -237,17 +238,55 @@ def _assert_console_scripts() -> None:
         )
 
 
+def _dist_matches_imported_package(dist_name: str) -> tuple[bool, str]:
+    """Return whether installed metadata belongs to the imported checkout."""
+    try:
+        distribution = importlib.metadata.distribution(dist_name)
+    except importlib.metadata.PackageNotFoundError:
+        return False, "distribution metadata not installed"
+
+    try:
+        imported_init = pathlib.Path(po_core.__file__).resolve()
+        dist_init = pathlib.Path(distribution.locate_file("po_core/__init__.py")).resolve()
+    except FileNotFoundError:
+        return False, "distribution metadata exists but po_core/__init__.py is missing"
+
+    if dist_init == imported_init:
+        return True, f"matched import path {dist_init}"
+
+    return (
+        False,
+        "ignoring unrelated installed distribution metadata at "
+        f"{dist_init} (imported checkout uses {imported_init})",
+    )
+
+
+def _resolve_checked_distribution_version(dist_name: str) -> tuple[str | None, str]:
+    """Return the installed version only when metadata matches the imported checkout."""
+    dist_matches_checkout, dist_note = _dist_matches_imported_package(dist_name)
+    if not dist_matches_checkout:
+        return None, dist_note
+    return importlib.metadata.version(dist_name), dist_note
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check-entrypoints", action="store_true")
     args = parser.parse_args()
 
-    dist_version = importlib.metadata.version("po-core-flyingpig")
     pkg_version = po_core.__version__
-    print(f"dist_version={dist_version}")
     print(f"pkg_version={pkg_version}")
-    if dist_version != pkg_version:
-        raise SystemExit(f"version mismatch: dist={dist_version} package={pkg_version}")
+
+    dist_version, dist_note = _resolve_checked_distribution_version("po-core-flyingpig")
+    print(f"dist_metadata={dist_note}")
+    if dist_version is not None:
+        print(f"dist_version={dist_version}")
+        if dist_version != pkg_version:
+            raise SystemExit(
+                f"version mismatch: dist={dist_version} package={pkg_version}"
+            )
+    else:
+        print("dist_version=skipped")
 
     config_root = resources.files("po_core.config")
     battalion_resource = config_root.joinpath("runtime/battalion_table.yaml")
