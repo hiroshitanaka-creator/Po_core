@@ -91,7 +91,7 @@ user_template: |
       "description": "<tensions or contradictions you identify, framed in Aristotelian terms>"
     }},
     "confidence": <0.0-1.0>,
-    "action_type": "<answer|refuse|ask_clarification|defer>",
+    "action_type": "<answer|refuse|ask_clarification>",
     "citations": ["<Nicomachean Ethics, Politics, De Anima, or other works>"]
   }}
   ```

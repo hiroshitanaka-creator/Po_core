@@ -276,8 +276,8 @@ class LLMPhilosopher(Philosopher):
         action_type = str(data.get("action_type", "answer")).strip()
         if action_type == "defer":
             action_type = "ask_clarification"
-        if action_type not in {"answer", "refuse", "ask_clarification"}:
-            action_type = "answer"
+        elif action_type not in {"answer", "refuse", "ask_clarification"}:
+            action_type = "ask_clarification"
 
         return {
             "reasoning": str(data.get("reasoning", "")),

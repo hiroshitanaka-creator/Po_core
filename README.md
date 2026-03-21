@@ -42,11 +42,11 @@ pip install -e .
 
 ## Release Metadata
 
-- Repository target version: `1.0.2`
+- Repository target version: `1.0.3`
 - Public package metadata state: package classifiers currently declare `Development Status :: 4 - Beta`
 - Runtime philosopher roster: **42 philosophers**. The internal `dummy` slot is a non-philosopher compliance helper / compliance sentinel and is excluded from public philosopher totals and manifests. The default NORMAL path still caps participation at at most 39 active philosopher personas per request.
-- External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
-- Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
+- External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`; `1.0.3` is the current repository target version, not yet a published claim
+- Remaining evidence gaps for `1.0.3`: TestPyPI publication state, GitHub Actions workflow run URL(s), PyPI publication evidence, and clean install/import/smoke transcript are not yet fixed in-repo
 - Public REST default safety: auth remains fail-closed, default CORS is localhost-only, and the REST server defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` while refusing `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
 
 ## Development Loop (Po_core core)
@@ -348,18 +348,18 @@ experiments/
 
 ## Project Status
 
-Po_core is currently documented against package version `1.0.2`, and that exact version is publicly evidenced on PyPI.
+Po_core is currently targeting package version `1.0.3`, while the latest publicly evidenced PyPI version remains `1.0.2`.
 
 ### Current release state
 
 | Track | State | Current source of truth |
 |------|-------|-------------------------|
-| Package version | ✅ Current | `src/po_core/__init__.py` defines `1.0.2` |
+| Package version | ✅ Current | `src/po_core/__init__.py` defines `1.0.3` |
 | OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
 | Public package metadata | ⚠️ Beta | Package classifiers declare `Development Status :: 4 - Beta` and `tool.po_core.project.status = beta` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
-| Public release evidence | ✅ PyPI publication evidenced | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while TestPyPI/workflow/smoke claims remain out of bounds until separately evidenced |
-| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical 42-philosopher roster wording, explicit `dummy` helper semantics, and max 39 active philosopher personas on the default NORMAL path |
+| Public release evidence | ✅ Split truth fixed | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while `1.0.3` remains in pre-publish candidate state until separately evidenced |
+| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.3`, the canonical 42-philosopher roster wording, explicit `dummy` helper semantics, and max 39 active philosopher personas on the default NORMAL path |
 
 ### Implemented platform capabilities
 
@@ -403,7 +403,7 @@ cd Po_core
 pip install -e ".[dev]"
 ```
 
-PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Canonical evidence boundary: we may say “published on PyPI for 1.0.2” once that file exists, but we do **not** say TestPyPI published, workflow run succeeded, or smoke verification passed until those exact artifacts are fixed in-repo.
+PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Canonical evidence boundary: for `1.0.3`, we may currently say only that it is the repository target version and pre-publish candidate; we do **not** say TestPyPI published, workflow run succeeded, or smoke verification passed until those exact artifacts are fixed in-repo.
 
 ---
 

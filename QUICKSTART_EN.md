@@ -13,7 +13,7 @@ pip install "po-core-flyingpig==1.0.2"
 
 ## 📦 Published package status
 
-Version `1.0.2` should be described using the repository's evidence boundary. Today the repo evidences only **PyPI published** via `docs/release/pypi_publication_v1.0.2.md`; TestPyPI publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
+Repository target version is `1.0.3`, while the latest published public version remains `1.0.2`. Today the repo evidences public PyPI publication only for `1.0.2` via `docs/release/pypi_publication_v1.0.2.md`; `1.0.3` publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
 
 ## 🔐 REST runtime defaults
 

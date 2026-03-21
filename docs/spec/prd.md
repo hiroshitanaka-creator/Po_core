@@ -1,9 +1,9 @@
 # Po_core Product Requirements Document (PRD)
 
 **Version:** 1.0
-**Date:** 2026-03-10
-**Status:** Released — Phases 1–7 Complete · M0〜M4 Complete · v1.0.0 · 全AT通過 · CI 100% green
-**Package:** `po-core-flyingpig v1.0.0`（v0.3.0 公開済み・v1.0.0 PyPI 公開対象）
+**Date:** 2026-03-21
+**Status:** Current product/design baseline. This PRD remains a high-priority product/design source; mutable release/publication truth is governed by `docs/status.md` and exact evidence files under `docs/release/`.
+**Package / release note:** Repository target version is currently `1.0.3`. Latest published public version remains the version explicitly evidenced in `docs/status.md` / `docs/release/` and must not be inferred from this PRD alone.
 
 ---
 
@@ -17,6 +17,8 @@ Po_core は正解を断言する装置ではなく、選択肢・理由・反証
 
 内部では 42 人（クラシック 39 + African 2 + Canadian 1; ADR-0006）の哲学者 AI ペルソナが **テンソル演算** と **多ラウンド合意形成**
 を通じて協議し、3 層の倫理ゲート（W_Ethics Gate）が出力を審査する。
+
+> Canonical public truth: formal philosopher count = 42。内部の `dummy` slot は helper / sentinel / compliance slot であり、この42人には含めない。
 
 ---
 
@@ -55,6 +57,8 @@ Po_core は正解を断言する装置ではなく、選択肢・理由・反証
 ---
 
 ## 4. 成功指標 (Success Metrics)
+
+> Note: release/publication evidence is tracked in `docs/status.md`. The “現在値” below is a design/program status snapshot, not a live publication SSOT.
 
 | 指標 | 測定方法 | 目標値 | 現在値 |
 |------|---------|--------|--------|
@@ -144,7 +148,7 @@ Structured Output (output_schema_v1.json)
 
 | タスク | 状態 |
 |--------|------|
-| **PyPI 公開履歴**（5-F）| ✅ v0.2.0b4 は公開済み（次回公開版は現行リポジトリ版 v0.3.0 を基準に運用） |
+| **公開状態の単一真実管理** | `docs/status.md` / `docs/release/*` を authoritative source として運用 |
 | v1.0 安定化 | 🔲 Pending |
 | 学術論文 | 🔲 Draft in preparation |
 
@@ -157,6 +161,7 @@ Structured Output (output_schema_v1.json)
 - 外部 LLM の重みへの直接依存は避ける（AI スロットは任意プラグイン）
 - 変更統制：仕様変更は SRS とテストの更新を伴う（NFR-GOV-001）
 - `pareto_table.yaml` / `battalion_table.yaml` 変更時は `config_version` を更新
+- release/publication の事実主張は `docs/status.md` と `docs/release/` の証跡に従う
 
 ---
 
@@ -183,3 +188,4 @@ Structured Output (output_schema_v1.json)
 |----------|------|---------|
 | 0.1 | 2026-02-22 | 初版作成 |
 | 0.2 | 2026-02-22 | Phase 6-7 完了を反映；アーキテクチャ概要・用語追加；仕様化マイルストーン追記 |
+| 0.3 | 2026-03-21 | release/publication の mutable truth は `docs/status.md` / `docs/release/*` を authoritative source とする旨を明記し、PRD 本文から可変な公開状態の断定を除去 |

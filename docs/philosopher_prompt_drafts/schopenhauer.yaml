@@ -59,7 +59,7 @@ user_template: |
       "description": "<tensions or contradictions you identify>"
     }},
     "confidence": <0.0-1.0>,
-    "action_type": "<answer|refuse|ask_clarification|defer>",
+    "action_type": "<answer|refuse|ask_clarification>",
     "citations": ["<your works or philosophers you reference>"]
   }}
   ```
