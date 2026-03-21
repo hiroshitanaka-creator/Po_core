@@ -111,7 +111,7 @@ def test_llm_philosopher_extracts_balanced_embedded_json() -> None:
     }
 
 
-def test_llm_philosopher_maps_defer_to_ask_clarification() -> None:
+def test_llm_philosopher_rejects_defer_contract_value() -> None:
     philosopher = LLMPhilosopher("kant", _StubAdapter())
 
     parsed = philosopher._normalize_parsed(
@@ -122,4 +122,4 @@ def test_llm_philosopher_maps_defer_to_ask_clarification() -> None:
         }
     )
 
-    assert parsed["action_type"] == "ask_clarification"
+    assert parsed["action_type"] == "answer"

@@ -2,7 +2,7 @@
 
 最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
 最新進捗：[docs/status.md](/docs/status.md)
-最終オペレータ引き継ぎ（次回リリース用・簡潔版）：[docs/release/release_candidate_handoff_v1.0.2.md](/docs/release/release_candidate_handoff_v1.0.2.md)
+最終オペレータ引き継ぎ（次回リリース用・簡潔版）：[docs/release/release_candidate_handoff_v1.0.3.md](/docs/release/release_candidate_handoff_v1.0.3.md)
 
 このプレイブックは、`.github/workflows/publish.yml` を**人依存なく再現可能**に運用するための固定手順です。
 
@@ -37,7 +37,7 @@
 4. **タグ運用と provenance の整合**
    - `workflow_dispatch` / release の publish は `refs/heads/main` または `refs/tags/vX.Y.Z` 以外から publish しない。
    - publish guard は `git merge-base --is-ancestor <publish-sha> origin/main` で、公開対象コミットが `origin/main` 到達可能であることを必須条件として検証する。
-   - `vX.Y.Z` タグの `X.Y.Z` は `src/po_core/__init__.py` の `__version__` と一致していなければならない（例: `v1.0.2` ↔ `__version__ = "1.0.2"`）。
+   - `vX.Y.Z` タグの `X.Y.Z` は `src/po_core/__init__.py` の `__version__` と一致していなければならない（例: `v1.0.3` ↔ `__version__ = "1.0.3"`）。
    - 同一版数の再公開はしない（PyPIは同一versionの再upload不可）。
 5. **Trusted Publishing前提**
    - GitHub Environments に `testpypi` / `pypi` が存在する。
@@ -107,7 +107,7 @@ python -c "from po_core import run; out = run('smoke'); print(out.get('proposal'
 - Rule: remote evidence（run URL / install成功ログ / smoke実出力）を捏造しない。未取得なら pending として記録する。
 - successful TestPyPI run 確認後、`docs/release/templates/testpypi_publish_log_template_<VERSION>.md` を複製して `docs/release/testpypi_publish_log_<VERSION>.md` を作成する。
 - その evidence ファイルに run URL / install成功ログ / import/run smoke 実出力を実値で記入し、`docs/status.md` の該当行を template から evidence fixed 表現へ更新する。
-- もし public PyPI version page だけ先に確認できた場合は、まず `docs/release/pypi_publication_v1.0.2.md` のような publication-only evidence を追加し、workflow/TestPyPI/smoke の未取得部分は別 evidence file に未取得として分離する。
+- もし public PyPI version page だけ先に確認できた場合は、まず公開済み版に対する real publication-only evidence（例: `docs/release/pypi_publication_v1.0.2.md`）を追加し、workflow/TestPyPI/smoke の未取得部分は別 evidence file に未取得として分離する。未公開 target version に対しては publication evidence file を捏造せず、candidate-state docs に pending と記録する。
 
 ---
 

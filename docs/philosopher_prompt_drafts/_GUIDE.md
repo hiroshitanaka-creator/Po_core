@@ -62,7 +62,7 @@ LLM は以下の JSON を返すよう指示する：
     "elements": ["緊張を構成する概念"]
   },
   "confidence": 0.75,
-  "action_type": "answer|refuse|ask_clarification|defer",
+  "action_type": "answer|refuse|ask_clarification",
   "citations": ["著作名1", "著作名2"]
 }
 ```

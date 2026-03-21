@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.3] - 2026-03-21
+
+### Added
+- docs(release): add `docs/release/release_candidate_handoff_v1.0.3.md` and `docs/release/smoke_verification_v1.0.3.md` so `1.0.3` has explicit pre-publish candidate-state handoff docs without fabricating post-publish evidence.
+
+### Changed
+- release: bump `src/po_core/__init__.py` to `1.0.3` while keeping `pyproject.toml` on dynamic version loading and package metadata at Beta.
+- release: split release-readiness truth into repository target version `1.0.3` vs latest published public version `1.0.2`, and sync README / quickstarts / repository structure / status / publish playbook to that boundary.
+- tests(release): refactor `tests/test_release_readiness.py` so pre-publish candidate readiness does not require fake `1.0.3` PyPI or smoke evidence, while post-publish claims still require real evidence files.
+- prompts: remove `defer` from draft prompt docs/templates and keep the runtime parser aligned to the single `answer|refuse|ask_clarification` contract.
+- docs(prd): neutralize outdated release-state/package-state claims so `docs/spec/prd.md` no longer contradicts release SSOT.
+
 ## [1.0.2] - 2026-03-20
 
 ### Changed

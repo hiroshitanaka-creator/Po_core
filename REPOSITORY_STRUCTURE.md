@@ -2,7 +2,7 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 
-**Document Status:** release-readiness inventory aligned to repository target version `1.0.2` with PyPI publication evidence fixed in-repo  
+**Document Status:** release-readiness inventory aligned to repository target version `1.0.3` with latest published public evidence still fixed at `1.0.2`  
 **Last Updated:** 2026-03-20
 **Scope:** actual repository layout and release-critical files only
 
@@ -86,7 +86,7 @@ The published runtime package lives under `src/po_core/` and currently contains 
 Release-relevant module facts:
 
 - Package version SSOT is `src/po_core/__init__.py`.
-- Release-facing docs must describe `1.0.2` as the repository target version and may claim only the specific publication facts backed by evidence files under `docs/release/`.
+- Release-facing docs must describe `1.0.3` as the repository target version, keep `1.0.2` as the latest published public version until new evidence exists, and may claim only the specific publication facts backed by evidence files under `docs/release/`.
 - OpenAPI metadata is emitted from `src/po_core/app/rest/server.py`.
 - Installed package data is limited to config YAML, axis specs, JSON schemas, viewer assets, and `py.typed`; unfinished philosopher YAML prompt drafts live under `docs/philosopher_prompt_drafts/` and are not packaged.
 - Experimental Claude-testing modules are **not** under `src/po_core` and therefore are not part of the published runtime surface.

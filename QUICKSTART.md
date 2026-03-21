@@ -9,7 +9,7 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# PyPI 公開済み 1.0.2 を install
+# 最新の公開済み public version 1.0.2 を install
 pip install "po-core-flyingpig==1.0.2"
 ```
 
@@ -26,7 +26,7 @@ python -m build
 twine check dist/*
 ```
 
-> `1.0.2` の公開事実は evidence boundary に従って扱います。現時点で repo 内に固定できているのは `docs/release/pypi_publication_v1.0.2.md` による **PyPI published** の事実だけで、TestPyPI / workflow run / clean install/import/smoke は追加の operator evidence が入るまで未証跡です。
+> Repository target version は `1.0.3` ですが、latest published public version は引き続き `1.0.2` です。現時点で repo 内に固定できている public PyPI evidence は `docs/release/pypi_publication_v1.0.2.md` のみで、`1.0.3` の publication / workflow / clean install/import/smoke は pending です。
 
 ## 🔐 REST ランタイム既定値
 
@@ -56,7 +56,7 @@ print(bool(res.text), res.consensus_leader)
 PY
 ```
 
-期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。PyPI 公開そのものは `docs/release/pypi_publication_v1.0.2.md` で証跡化済みですが、この手順の clean-environment smoke transcript 自体はまだ `docs/release/smoke_verification_v1.0.2.md` に未固定です。
+期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。なおこの install 例は latest published public version `1.0.2` 向けです。`1.0.3` は repository target version ですが、post-publish smoke transcript はまだ `docs/release/smoke_verification_v1.0.3.md` に未固定です。
 
 ## ⚡ 30秒で試す
 
