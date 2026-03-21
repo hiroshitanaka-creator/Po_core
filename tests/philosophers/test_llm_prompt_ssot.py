@@ -111,7 +111,7 @@ def test_llm_philosopher_extracts_balanced_embedded_json() -> None:
     }
 
 
-def test_llm_philosopher_rejects_defer_contract_value() -> None:
+def test_llm_philosopher_maps_defer_to_ask_clarification() -> None:
     philosopher = LLMPhilosopher("kant", _StubAdapter())
 
     parsed = philosopher._normalize_parsed(
@@ -122,4 +122,18 @@ def test_llm_philosopher_rejects_defer_contract_value() -> None:
         }
     )
 
-    assert parsed["action_type"] == "answer"
+    assert parsed["action_type"] == "ask_clarification"
+
+
+def test_llm_philosopher_invalid_action_type_fails_closed_to_ask_clarification() -> None:
+    philosopher = LLMPhilosopher("kant", _StubAdapter())
+
+    parsed = philosopher._normalize_parsed(
+        {
+            "reasoning": "Unsafe open-ended command.",
+            "perspective": "Deontology",
+            "action_type": "tool_call",
+        }
+    )
+
+    assert parsed["action_type"] == "ask_clarification"
