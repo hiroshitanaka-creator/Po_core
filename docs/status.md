@@ -47,6 +47,14 @@
 - 既存の publish playbook は運用手順として有効だが、それ自体は公開事実の証拠ではない。
 - `1.0.3` の pre-publish readiness tests は、未公開版に対して fake な PyPI/smoke evidence を要求してはならない。一方で、公開済みと主張するなら対応する証跡が必須である。
 
+## Next
+
+- Record the real TestPyPI publication state and exact URL(s) for `1.0.3` once a maintainer-run publish actually exists.
+- Record the real PyPI publication evidence for `1.0.3` once the public version page exists.
+- Record the actual GitHub Actions workflow run URL(s) used for the successful publish path.
+- Record the clean install / import / smoke transcript for `po-core-flyingpig==1.0.3` after publication, with exact commands and exact stdout/stderr.
+- Re-run build / twine / security gates in an operator environment if any of those checks remain unverified in the current local environment.
+
 ## Completed
 
 - 2026-03-21: release SSOT を `1.0.3` target / `1.0.2` latest published public version に分離し、pre-publish candidate state と post-publish evidence state を明示的に分けた。

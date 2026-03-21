@@ -1,6 +1,6 @@
 # Release Candidate Operator Handoff for v1.0.3
 
-Purpose: give the maintainer a compact, non-public pre-publish handoff bundle for release candidate `1.0.3` without overstating publication status.
+Purpose: give the maintainer a compact, maintainer-focused pre-publish handoff bundle for release candidate `1.0.3` without overstating publication status.
 
 ## 1. Machine-verified facts already fixed in-repo
 
