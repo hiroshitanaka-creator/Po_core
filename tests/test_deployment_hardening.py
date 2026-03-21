@@ -52,7 +52,7 @@ def test_external_workflow_uses_entries_are_sha_pinned() -> None:
                 pinned_entries += 1
 
     assert not violations, "Unpinned external GitHub Actions:\n" + "\n".join(violations)
-    assert pinned_entries == 35
+    assert pinned_entries == 36
 
 
 def test_compose_healthcheck_uses_configurable_port() -> None:

@@ -88,6 +88,7 @@ def _runtime_settings() -> Settings:
         philosopher_timeout_s_normal=30.0,
         philosopher_workers_normal=1,
         deliberation_max_rounds=1,
+        philosopher_execution_mode="thread",
     )
 
 
@@ -114,6 +115,8 @@ def _create_rest_client() -> TestClient:
             llm_provider="gemini",
             philosophers_max_normal=5,
             philosopher_cost_budget_normal=10,
+            philosopher_execution_mode="thread",
+            allow_unsafe_thread_execution=True,
         )
     )
     from po_core.app.rest import auth
