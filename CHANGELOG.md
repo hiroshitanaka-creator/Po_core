@@ -51,7 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - test(rest): add startup guard coverage for unsafe thread execution mode, execution-mode propagation from REST settings to core settings, and localhost-only default CORS with explicit wildcard override coverage.
 - test(prompts): add runtime prompt SSOT tests that lock the LLM JSON contract, dummy/roster count semantics, and raw-text fallback normalization.
-- test(acceptance): partial deterministic golden resync work for `StubComposer(seed=42)` remains in progress for the `1.0.3` release attempt; exact remaining failures are tracked in `docs/status.md`.
 ### Tests
 
 - test(rest): add restart-safety tests for review queue pending/decided persistence and regression coverage that `HumanReviewDecided` trace append remains intact after decision flow.
