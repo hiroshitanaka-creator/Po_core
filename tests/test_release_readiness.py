@@ -208,6 +208,13 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "Not yet fixed as truth in this file" in candidate_smoke
     assert f"Repository target version is `{version}`" in candidate_handoff
     assert f"Latest public PyPI evidence still points to `{published_version}`" in candidate_handoff
+    assert "## Next" in status_doc
+    assert "## Completed" in status_doc
+    next_section = status_doc.split("## Next", 1)[1].split("## Completed", 1)[0]
+    assert "- Record the real TestPyPI publication state" in next_section
+    assert "- Record the real PyPI publication evidence" in next_section
+    assert "- Record the actual GitHub Actions workflow run URL(s)" in next_section
+    assert "- Record the clean install / import / smoke transcript" in next_section
 
 
 def test_repository_structure_is_fully_resynced() -> None:
