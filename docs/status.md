@@ -53,7 +53,8 @@
 - Record the real PyPI publication evidence for `1.0.3` once the public version page exists.
 - Record the actual GitHub Actions workflow run URL(s) used for the successful publish path.
 - Record the clean install / import / smoke transcript for `po-core-flyingpig==1.0.3` after publication, with exact commands and exact stdout/stderr.
-- Re-run build / twine / security gates in an operator environment if any of those checks remain unverified in the current local environment.
+- Resolve the remaining acceptance golden drift in `tests/acceptance/` (observed in `AT-001`, `AT-007`, and `AT-012` during the current local release attempt) before any TestPyPI push; the current repo state does not yet justify a release attempt while those deterministic contract tests fail.
+- Run `twine check dist/*` and security scanners (`bandit`, `pip-audit`) in an operator environment where those tools are installed or installable; the current local environment could not fetch missing packages from the package index.
 
 ## Completed
 
@@ -62,3 +63,4 @@
 - 2026-03-21: prompt SSOT を再整合し、draft prompt docs/template から `defer` を除去して runtime action contract と一致させた。
 - 2026-03-21: public truth realignment として、42-philosopher canonical count / dummy helper semantics / `/v1/philosophers` public manifest filtering を docs・metadata・tests・REST router へ同期した.
 - 2026-03-21: runtime safety hardening として、REST server の execution mode default を `process` に変更し、unsafe `thread` mode は `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を伴う開発時以外で拒否するようにした。
+- 2026-03-21: `scripts/release_smoke.py --check-entrypoints` が、checkout 外の stale site-packages metadata (`po-core-flyingpig==1.0.2`) を release blocker と誤判定しないよう修正した。
