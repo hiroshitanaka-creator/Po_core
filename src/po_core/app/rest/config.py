@@ -19,7 +19,7 @@ Example .env:
 
 from __future__ import annotations
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -107,6 +107,17 @@ class APISettings(BaseSettings):
     # Review queue storage
     review_store_backend: str = "sqlite"  # sqlite | memory
     review_db_path: str = ""
+
+
+    @field_validator("philosopher_execution_mode", mode="before")
+    @classmethod
+    def _validate_philosopher_execution_mode(cls, value: object) -> str:
+        normalized = str(value).strip().lower()
+        if normalized not in {"thread", "process"}:
+            raise ValueError(
+                "philosopher_execution_mode must be 'thread' or 'process'"
+            )
+        return normalized
 
     class Config:
         env_prefix = "PO_"

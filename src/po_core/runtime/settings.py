@@ -76,7 +76,10 @@ def _env_float(*keys: str, default: float) -> float:
 def _env_execution_mode(*keys: str, default: str) -> Literal["thread", "process"]:
     raw = _env_first(*keys, default=default).strip().lower()
     if raw not in {"thread", "process"}:
-        return default  # type: ignore[return-value]
+        raise ValueError(
+            f"Invalid philosopher execution mode: {raw or default!r}. "
+            "Expected one of: thread, process."
+        )
     return raw  # type: ignore[return-value]
 
 

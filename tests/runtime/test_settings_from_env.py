@@ -149,3 +149,17 @@ def test_rest_and_direct_paths_match_boolean_semantics(
     _apply_env(monkeypatch, env)
 
     assert Settings.from_env() == Settings.from_api_settings(APISettings())
+
+
+@pytest.mark.unit
+def test_settings_from_env_rejects_invalid_execution_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PO_PHILOSOPHER_EXECUTION_MODE", "bogus")
+
+    with pytest.raises(ValueError, match="Invalid philosopher execution mode"):
+        Settings.from_env()
+
+
+@pytest.mark.unit
+def test_api_settings_reject_invalid_execution_mode() -> None:
+    with pytest.raises(ValueError, match="philosopher_execution_mode"):
+        APISettings(philosopher_execution_mode="bogus")

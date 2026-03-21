@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
@@ -182,13 +181,43 @@ class LLMPhilosopher(Philosopher):
             return "provider_unknown_error"
         return "llm_unavailable"
 
+    def _extract_first_json_object(self, raw: str) -> str | None:
+        """Return the first balanced JSON object embedded in text, if any."""
+        start = raw.find("{")
+        while start != -1:
+            depth = 0
+            in_string = False
+            escaped = False
+            for index in range(start, len(raw)):
+                char = raw[index]
+                if in_string:
+                    if escaped:
+                        escaped = False
+                    elif char == "\\":
+                        escaped = True
+                    elif char == '"':
+                        in_string = False
+                    continue
+
+                if char == '"':
+                    in_string = True
+                elif char == "{":
+                    depth += 1
+                elif char == "}":
+                    depth -= 1
+                    if depth == 0:
+                        return raw[start : index + 1]
+
+            start = raw.find("{", start + 1)
+        return None
+
     def _parse_llm_response(self, raw: str) -> Dict[str, Any]:
         """
         LLM の出力から reasoning/perspective/confidence を抽出する。
 
         試行順序:
         1. 全体が JSON オブジェクト
-        2. テキスト中の最初の {...} ブロック
+        2. テキスト中の最初の balanced JSON オブジェクト
         3. raw テキストをそのまま reasoning に使用
         """
         # 1) 全体 JSON
@@ -200,10 +229,10 @@ class LLMPhilosopher(Philosopher):
             pass
 
         # 2) テキスト中の JSON ブロック（```json ... ``` も対応）
-        json_match = re.search(r"\{[\s\S]*?\}", raw)
-        if json_match:
+        embedded_json = self._extract_first_json_object(raw)
+        if embedded_json is not None:
             try:
-                data = json.loads(json_match.group())
+                data = json.loads(embedded_json)
                 if isinstance(data, dict) and "reasoning" in data:
                     return self._normalize_parsed(data)
             except (json.JSONDecodeError, ValueError):
@@ -244,8 +273,10 @@ class LLMPhilosopher(Philosopher):
             }
 
         citations = data.get("citations", [])
-        action_type = str(data.get("action_type", "answer"))
-        if action_type not in {"answer", "refuse", "ask_clarification", "defer"}:
+        action_type = str(data.get("action_type", "answer")).strip()
+        if action_type == "defer":
+            action_type = "ask_clarification"
+        if action_type not in {"answer", "refuse", "ask_clarification"}:
             action_type = "answer"
 
         return {

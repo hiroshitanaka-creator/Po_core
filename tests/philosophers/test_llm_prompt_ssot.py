@@ -47,7 +47,7 @@ def test_llm_philosopher_normalizes_to_runtime_json_contract() -> None:
                 "elements": ["duty", "desire"],
             },
             "confidence": "0.7",
-            "action_type": "defer",
+            "action_type": "ask_clarification",
             "citations": ["Groundwork"],
         }
     )
@@ -61,7 +61,7 @@ def test_llm_philosopher_normalizes_to_runtime_json_contract() -> None:
             "elements": ["duty", "desire"],
         },
         "confidence": 0.7,
-        "action_type": "defer",
+        "action_type": "ask_clarification",
         "citations": ["Groundwork"],
     }
 
@@ -88,3 +88,38 @@ def test_runtime_roster_count_semantics_are_explicit() -> None:
     assert len(SPECS) == 43
     assert "dummy" in LLM_PERSONAS
     assert len(LLM_PERSONAS) == len(SPECS)
+
+
+def test_llm_philosopher_extracts_balanced_embedded_json() -> None:
+    philosopher = LLMPhilosopher("kant", _StubAdapter())
+
+    raw = (
+        "Prelude\n```json\n"
+        '{"reasoning": "Duty first.", "perspective": "Deontology", ' 
+        '"tension": {"level": "medium", "description": "nested", "elements": ["duty"]}, ' 
+        '"confidence": 0.6, "action_type": "answer", "citations": ["Groundwork"]}'
+        "\n```\nAfterword"
+    )
+
+    parsed = philosopher._parse_llm_response(raw)
+
+    assert parsed["reasoning"] == "Duty first."
+    assert parsed["tension"] == {
+        "level": "medium",
+        "description": "nested",
+        "elements": ["duty"],
+    }
+
+
+def test_llm_philosopher_maps_defer_to_ask_clarification() -> None:
+    philosopher = LLMPhilosopher("kant", _StubAdapter())
+
+    parsed = philosopher._normalize_parsed(
+        {
+            "reasoning": "Need more context.",
+            "perspective": "Deontology",
+            "action_type": "defer",
+        }
+    )
+
+    assert parsed["action_type"] == "ask_clarification"

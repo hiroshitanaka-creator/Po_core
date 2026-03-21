@@ -96,3 +96,20 @@ def test_action_rejects_shell_action_type():
     )
     assert v.decision == Decision.REJECT
     assert "WG.ACT.ACTTYPE.001" in v.rule_ids
+
+
+def test_action_rejects_defer_action_type():
+    """'defer' is not part of the action gate allowlist and must be rejected."""
+    gate = PolicyActionGate([ActionTypeAllowlistPolicy()])
+    ctx = Context("r1", datetime.now(timezone.utc), "x")
+    prop = Proposal(
+        proposal_id="p1",
+        action_type="defer",
+        content="Need more time",
+        confidence=0.9,
+    )
+    v = gate.judge(
+        ctx, Intent.neutral(), prop, TensorSnapshot.empty(), MemorySnapshot()
+    )
+    assert v.decision == Decision.REJECT
+    assert "WG.ACT.ACTTYPE.001" in v.rule_ids

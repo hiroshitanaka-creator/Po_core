@@ -16,7 +16,7 @@ Runtime JSON output contract for every persona:
       "perspective": "...",
       "tension": {"level": "low|medium|high", "description": "...", "elements": ["..."]} | null,
       "confidence": 0.0-1.0,
-      "action_type": "answer|refuse|ask_clarification|defer",
+      "action_type": "answer|refuse|ask_clarification",
       "citations": ["..."]
     }
 
@@ -34,7 +34,7 @@ _JSON_INSTRUCTION = (
     '"perspective": "your philosophical school/tradition", '
     '"tension": {"level": "low|medium|high", "description": "identified tension", "elements": ["concept 1"]} or null, '
     '"confidence": 0.0-1.0, '
-    '"action_type": "answer|refuse|ask_clarification|defer", '
+    '"action_type": "answer|refuse|ask_clarification", '
     '"citations": ["work or concept names"]}'
 )
 
