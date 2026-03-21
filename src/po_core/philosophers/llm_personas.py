@@ -7,8 +7,8 @@ draft YAML assets under ``docs/philosopher_prompt_drafts/`` are documentation-on
 working notes and have no runtime authority.
 
 Roster note:
-- The public runtime roster is **42 integrated runtime personas**.
-- One of those 42 slots is the compliance-sentinel `dummy` persona, so this prompt registry intentionally contains 43 entries total: 42 named philosopher personas plus the `dummy` compliance helper.
+- The public/runtime roster is **43 integrated runtime personas**.
+- That roster is exactly 42 named philosopher personas plus the compliance-sentinel `dummy` persona. This prompt registry should therefore have the same 43 entries as the runtime manifest.
 
 Runtime JSON output contract for every persona:
     {

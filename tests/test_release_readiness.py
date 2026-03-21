@@ -112,16 +112,19 @@ def test_release_docs_use_consistent_philosopher_counts() -> None:
     quickstart_en = _read("QUICKSTART_EN.md")
     repo_structure = _read("REPOSITORY_STRUCTURE.md")
 
-    assert "42 integrated runtime personas" in readme
+    assert "43 integrated runtime personas" in readme
     assert "compliance sentinel" in readme
-    assert "42の統合済みランタイム・ペルソナ" in quickstart_ja
+    assert "43の統合済みランタイム・ペルソナ" in quickstart_ja
     assert "最大39" in quickstart_ja
-    assert "42 integrated runtime personas" in quickstart_en
+    assert "43 integrated runtime personas" in quickstart_en
     assert "39 active" in quickstart_en
     for phrase in ["39 philosophers", "39 phil", "Full 39-philosopher manifest"]:
         assert phrase not in quickstart_en
-    assert "42 integrated runtime personas" in repo_structure
-    assert "39 active personas" in repo_structure
+    assert "43 integrated runtime personas" in repo_structure
+    assert (
+        "42 named philosopher personas plus 1 compliance-sentinel `dummy` slot"
+        in repo_structure
+    )
 
 
 def test_release_docs_fail_closed_on_stale_wording() -> None:
@@ -155,6 +158,10 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "PO_SKIP_AUTH=true" in quickstart_en
     assert "非空の `PO_API_KEY`" in quickstart_ja
     assert "non-empty `PO_API_KEY`" in quickstart_en
+    assert "PO_CORS_ORIGINS=*" in quickstart_ja
+    assert "PO_CORS_ORIGINS=*" in quickstart_en
+    assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_ja
+    assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_en
     assert f"Repository target version: `{version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
     assert f"published on PyPI for `{version}`" in status_doc
@@ -380,3 +387,54 @@ def test_typescript_generated_types_are_not_all_unknown() -> None:
 def test_examples_web_api_server_has_legacy_warning() -> None:
     server_py = _read("examples/web_api_server.py")
     assert "LEGACY" in server_py
+
+
+def test_release_metadata_status_is_consistent() -> None:
+    pyproject = tomllib.loads(_read("pyproject.toml"))
+    readme = _read("README.md")
+    changelog = _read("CHANGELOG.md")
+    status_doc = _read("docs/status.md")
+
+    assert "Development Status :: 4 - Beta" in pyproject["project"]["classifiers"]
+    assert pyproject["tool"]["po_core"]["project"]["status"] == "beta"
+    for text in (readme, changelog, status_doc):
+        assert "Development Status :: 5 - Production/Stable" not in text
+        assert "✅ Stable" not in text
+        assert (
+            "Development Status :: 4 - Beta" in text
+            or "status = `beta`" in text
+            or 'status = "beta"' in text
+        )
+
+
+def test_release_count_metadata_is_consistent() -> None:
+    pyproject = tomllib.loads(_read("pyproject.toml"))
+    readme = _read("README.md")
+    quickstart_ja = _read("QUICKSTART.md")
+    quickstart_en = _read("QUICKSTART_EN.md")
+
+    assert pyproject["tool"]["po_core"]["project"]["philosophers_integrated"] == 43
+    assert (
+        "42 named philosopher personas plus 1 compliance-sentinel `dummy` slot"
+        in readme
+    )
+    assert "43の統合済みランタイム・ペルソナ" in quickstart_ja
+    assert "43 integrated runtime personas" in quickstart_en
+
+
+def test_rest_default_docs_are_fully_synchronized() -> None:
+    readme = _read("README.md")
+    quickstart_ja = _read("QUICKSTART.md")
+    quickstart_en = _read("QUICKSTART_EN.md")
+    env_example = _read(".env.example")
+
+    localhost_default = (
+        "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000"
+    )
+    for text in (readme, quickstart_ja, quickstart_en, env_example):
+        assert localhost_default in text
+        assert (
+            "PO_PHILOSOPHER_EXECUTION_MODE=process" in text
+            or "| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` |" in text
+        )
+        assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION" in text

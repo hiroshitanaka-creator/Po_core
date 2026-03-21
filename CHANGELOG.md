@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - hardening(rest): default the public REST path to `PO_PHILOSOPHER_EXECUTION_MODE=process`, refuse `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set, and tighten default CORS to localhost-only.
 - prompts: align runtime LLM persona prompts, parser normalization, and draft documentation to one explicit JSON contract (`reasoning`, `perspective`, `tension`, `confidence`, `action_type`, `citations`) while keeping draft YAML isolated from runtime packaging.
 - release: expand `scripts/release_smoke.py` from import/CLI checks to deterministic REST startup/auth/health/reason/stream smoke and make `po_core` top-level import lazier by avoiding eager FastAPI compatibility imports.
-- metadata: downgrade package classifier from `Development Status :: 5 - Production/Stable` to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
+- metadata: downgrade package classifier from the previous stable classifier to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
 
 ### Tests
 

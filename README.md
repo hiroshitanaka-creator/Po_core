@@ -25,7 +25,7 @@ pip install -e .
 
 ### TL;DR
 
-- **42 integrated runtime personas** as interacting **tensors** → accountable LLM reasoning
+- **43 integrated runtime personas** as interacting **tensors** → accountable LLM reasoning
 - **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
 - **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
 - **Reason logs** + ethical/freedom **pressure** as measurable signals
@@ -44,7 +44,7 @@ pip install -e .
 
 - Repository target version: `1.0.2`
 - Public package metadata state: package classifiers currently declare `Development Status :: 4 - Beta`
-- Runtime roster: **42 integrated runtime personas**. Public docs use this persona count because the roster includes a compliance sentinel slot; treat it as a runtime roster count, not a literal claim that 42 human philosophers are always active. The default NORMAL path still caps participation at at most 39 active personas per request.
+- Runtime roster: **43 integrated runtime personas**. That count is the actual runtime roster size: 42 named philosopher personas plus 1 compliance-sentinel `dummy` slot. The default NORMAL path still caps participation at at most 39 active philosopher personas per request, so the roster count is not a claim that all 43 participate in every run.
 - External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`
 - Remaining evidence gaps: TestPyPI publication state, GitHub Actions workflow run URL(s), and clean install/import/smoke transcript are not yet fixed in-repo for `1.0.2`
 - Public REST default safety: auth remains fail-closed, default CORS is localhost-only, and the REST server defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` while refusing `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
@@ -114,7 +114,7 @@ Read our full story in the [**Manifesto**](./Po_core_Manifesto_When_Pigs_Fly.md)
 
 ### Philosophical Ensemble
 
-- **42 integrated runtime personas**: named philosopher personas span Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor); the roster count also includes one compliance sentinel slot.
+- **43 integrated runtime personas**: the runtime roster consists of 42 named philosopher personas plus 1 compliance-sentinel `dummy` slot. The named personas span Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor); the roster count also includes one compliance sentinel slot.
 - Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
 - Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, decolonialism, communitarianism, Zen Buddhism, and Eastern wisdom traditions
 
@@ -356,16 +356,16 @@ Po_core is currently documented against package version `1.0.2`, and that exact 
 |------|-------|-------------------------|
 | Package version | ✅ Current | `src/po_core/__init__.py` defines `1.0.2` |
 | OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
-| Public package metadata | ✅ Stable | Package classifiers declare `Development Status :: 5 - Production/Stable` |
+| Public package metadata | ⚠️ Beta | Package classifiers declare `Development Status :: 4 - Beta` and `tool.po_core.project.status = beta` |
 | Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
 | Public release evidence | ✅ PyPI publication evidenced | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while TestPyPI/workflow/smoke claims remain out of bounds until separately evidenced |
-| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical “42 integrated runtime personas” roster wording, and max 39 active personas on the default NORMAL path |
+| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.2`, the canonical “43 integrated runtime personas” roster wording (42 named + dummy), and max 39 active philosopher personas on the default NORMAL path |
 
 ### Implemented platform capabilities
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 42 integrated runtime personas, risk levels, tags |
+| Philosophical Framework | ✅ Complete | 43 integrated runtime personas (42 named + dummy), risk levels, tags |
 | Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
 | TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
 | ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
@@ -507,13 +507,15 @@ Key environment variables (see `.env.example`):
 | `PO_SKIP_AUTH` | `false` | Keep `false` by default; set `true` only for short-lived local development without auth |
 | `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` is still accepted for backwards compatibility |
 | `PO_WS_ALLOW_QUERY_API_KEY` | `false` | Opt-in WebSocket `?api_key=` fallback for browser compatibility (less secure than headers) |
-| `PO_CORS_ORIGINS` | `"*"` | Comma-separated allowed CORS origins |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | Comma-separated allowed CORS origins; localhost-only by default, `*` only as an explicit short-lived dev override |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
 | `PO_PORT` | `8000` | Server port |
-| `PO_PHILOSOPHERS_MAX_NORMAL` | `39` | NORMAL mode philosopher limit (configurable; up to `42` for full roster) |
+| `PO_PHILOSOPHERS_MAX_NORMAL` | `39` | NORMAL mode philosopher limit (configurable upper bound) |
 | `PO_PHILOSOPHERS_MAX_WARN` | `5` | WARN mode philosopher limit |
 | `PO_PHILOSOPHERS_MAX_CRITICAL` | `1` | CRITICAL mode philosopher limit |
 | `PO_PHILOSOPHER_COST_BUDGET_NORMAL` | `80` | NORMAL mode selection cost budget |
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Philosopher execution backend; safe REST default is `process` |
+| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server refuses `thread` unless this is explicitly set to `true` for short-lived development |
 | `PO_PHILOSOPHER_COST_BUDGET_WARN` | `12` | WARN mode selection cost budget |
 | `PO_PHILOSOPHER_COST_BUDGET_CRITICAL` | `3` | CRITICAL mode selection cost budget |
 | `PO_LLM_PHILOSOPHER_MAP_PATH` | `""` | Optional YAML path overriding `src/po_core/config/llm_philosopher_map.yaml` |

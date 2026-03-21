@@ -125,7 +125,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 Available Philosophers
 
-Po_core uses **42 integrated runtime personas**. That is the public roster count: one slot is reserved for compliance-sentinel behavior, so docs should not imply that all 42 slots are named human philosophers. Runtime selection budgets keep the default NORMAL path at **39 active** personas maximum per request, and the number mobilized varies by SafetyMode:
+Po_core uses **43 integrated runtime personas**. That is the actual runtime roster size: **42 named philosopher personas plus 1 compliance-sentinel `dummy` slot**. Runtime selection budgets keep the default NORMAL path at **39 active philosopher personas** maximum per request, and the number mobilized varies by SafetyMode:
 
 | Philosopher | Key | Specialty |
 |------------|-----|-----------|
@@ -354,11 +354,13 @@ Copy `.env.example` to `.env` and configure as needed.
 | `PO_API_KEY` | `""` | API key required when `PO_SKIP_AUTH=false`; blank values are a startup misconfiguration |
 | `PO_SKIP_AUTH` | `false` | Recommended default is `false`; set `true` only for short-lived local development without auth |
 | `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` remains accepted for backwards compatibility |
-| `PO_CORS_ORIGINS` | `"*"` | Allowed CORS origins (prod: comma-separated) |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | Allowed CORS origins; localhost-only by default, `*` only as an explicit short-lived dev override |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit (req/min) |
 | `PO_PORT` | `8000` | Server port |
 | `PO_WORKERS` | `1` | uvicorn worker count |
 | `PO_LOG_LEVEL` | `info` | Log level |
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Philosopher execution backend; safe REST default is `process` |
+| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server refuses `thread` unless this is explicitly set to `true` for short-lived development |
 
 ### ⚡ Performance (Phase 5-E Measured)
 

@@ -18,7 +18,7 @@
 
 ## Canonical public wording
 
-- **Roster count:** “Po_core uses **42 integrated runtime personas**.” This is the public roster count because one slot is a compliance sentinel; avoid phrasing that implies 42 simultaneously active human philosophers.
+- **Roster count:** “Po_core uses **43 integrated runtime personas**.” This is the public roster count because one slot is a compliance sentinel; avoid phrasing that implies all 43 roster slots are simultaneously active human philosophers.
 - **Evidence boundary:** “For `1.0.2`, the repository evidences **PyPI publication** only. TestPyPI state, workflow-run success, and clean install/import/smoke success remain outside the evidence boundary until operator artifacts are fixed in-repo.”
 
 ## Release Readiness Facts
@@ -57,7 +57,7 @@
 
 ## Next
 
-- `examples/` と `clients/typescript/` の他ファイルに残る user-facing wording を監査し、official REST contract / auth defaults / 42 integrated runtime personas 表現から逸脱する説明があれば Phase 3 の残件として切り出す。
+- `examples/` と `clients/typescript/` の他ファイルに残る user-facing wording を監査し、official REST contract / auth defaults / 43 integrated runtime personas 表現から逸脱する説明があれば Phase 3 の残件として切り出す。
 - import-guard を CI release gate として維持しつつ、`tools/import_graph.py` の forbidden-rule coverage（特に ports/domain 境界の異常系 fixture）を必要に応じて追加する。
 - `isort --check-only src tests` / `mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/` / release gates の再実行結果を Phase 1 証跡として確認し、追加 blocker があれば切り出す。
 - build / twine / bandit / editable install / mypy の release gate は、この環境では build backend・security tooling・外部依存解決の制約により完全再実行できなかったため、再現可能な operator 環境で再確認する。

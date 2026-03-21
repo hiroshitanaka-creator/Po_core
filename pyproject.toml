@@ -323,9 +323,9 @@ motto = "井の中の蛙、大海は知らずとも、大空を知る"
 # A frog in a well may not know the ocean, but it can know the sky
 
 [tool.po_core.project]
-status = "stable"
+status = "beta"
 implementation_progress = 1.0
-philosophers_integrated = 42
+philosophers_integrated = 43
 design_documents = 120
 started = "2024"
 

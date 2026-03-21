@@ -162,7 +162,7 @@ print(json.dumps(data, indent=2, ensure_ascii=False))
 
 ## 🎯 利用可能な哲学者
 
-Po_coreでは **42の統合済みランタイム・ペルソナ**を扱います。これは公開向けの roster count であり、compliance sentinel 用のスロットを含むため「42人の人間哲学者が常に動く」という意味ではありません。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では最大39です：
+Po_coreでは **43の統合済みランタイム・ペルソナ**を扱います。これは実際の runtime roster count であり、**42人の名前付き哲学者ペルソナ + 1つの compliance sentinel (`dummy`)** で構成されます。1リクエストで動員される人数は SafetyMode と予算設定により変動し、NORMAL 既定では名前付き哲学者の参加は最大39です：
 
 | 哲学者 | キー名 | 専門分野 |
 |--------|--------|----------|
@@ -355,9 +355,9 @@ python -m po_core.app.rest
 
 | Method | Path | 説明 |
 |--------|------|------|
-| `POST` | `/v1/reason` | 同期的な哲学的推論（42の統合済みランタイム・ペルソナ、通常時は最大39まで動員して Pareto 集約） |
+| `POST` | `/v1/reason` | 同期的な哲学的推論（43の統合済みランタイム・ペルソナ（42名の名前付き + dummy）、通常時は最大39名の哲学者を動員して Pareto 集約） |
 | `POST` | `/v1/reason/stream` | SSE ストリーミング推論（asyncio非同期） |
-| `GET`  | `/v1/philosophers` | 42の統合済みランタイム・ペルソナのマニフェスト一覧 |
+| `GET`  | `/v1/philosophers` | 43の統合済みランタイム・ペルソナのマニフェスト一覧 |
 | `GET`  | `/v1/trace/{session_id}` | セッション別トレースイベント取得 |
 | `GET`  | `/v1/health` | ヘルスチェック（バージョン・稼働時間） |
 
@@ -402,11 +402,13 @@ curl -X POST http://localhost:8000/v1/reason \
 | `PO_API_KEY` | `""` | `PO_SKIP_AUTH=false` のときに必要な API キー。空/blank のままでは起動失敗 |
 | `PO_SKIP_AUTH` | `false` | 推奨デフォルトは `false`。`true` は認証なしで試すローカル開発時だけ |
 | `PO_API_KEY_HEADER` | `X-API-Key` | 必要な場合だけ使う上級者向け設定。主ヘッダー名を変更しても `X-API-Key` は後方互換で受理 |
-| `PO_CORS_ORIGINS` | `"*"` | 許可オリジン（本番: カンマ区切り） |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | 許可オリジン。既定は localhost 限定、`*` は短命な開発時 override のみ |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | IP ごとのレート制限（req/min） |
 | `PO_PORT` | `8000` | サーバーポート |
 | `PO_WORKERS` | `1` | uvicorn ワーカー数 |
 | `PO_LOG_LEVEL` | `info` | ログレベル |
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | 哲学者実行バックエンド。REST の安全既定値は `process` |
+| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server は `thread` を拒否し、この値を `true` にした短命な開発時だけ例外的に許可 |
 
 ### ⚡ パフォーマンス（Phase 5-E 実測値）
 
