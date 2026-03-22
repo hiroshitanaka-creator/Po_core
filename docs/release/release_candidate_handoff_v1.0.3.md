@@ -1,11 +1,16 @@
 # Release Candidate Operator Handoff for v1.0.3
 
+> **Historical context:** This document was written as a pre-publish handoff before `1.0.3` was
+> published. As of 2026-03-22, `po-core-flyingpig==1.0.3` has been published to both TestPyPI and
+> PyPI. See `docs/release/pypi_publication_v1.0.3.md` for publication evidence.
+> This file is retained for historical/audit purposes.
+
 Purpose: give the maintainer a compact, maintainer-focused pre-publish handoff bundle for release candidate `1.0.3` without overstating publication status.
 
 ## 1. Machine-verified facts already fixed in-repo
 
 - Repository target version is `1.0.3`.
-- Latest public PyPI evidence still points to `1.0.2` via `docs/release/pypi_publication_v1.0.2.md`.
+- Latest public PyPI evidence points to `1.0.3` via `docs/release/pypi_publication_v1.0.3.md` (published 2026-03-22).
 - `pyproject.toml` reads package version dynamically from `src/po_core/__init__.py`.
 - Release readiness guardrails exist in `tests/test_release_readiness.py`.
 - `docs/status.md` explicitly separates pre-publish candidate truth from post-publish evidence truth.
