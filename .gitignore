@@ -255,6 +255,9 @@ data/processed/
 
 # Keep acceptance golden fixtures
 !tests/acceptance/scenarios/*.json
+
+# Keep package schema files
+!src/po_core/schemas/*.json
 # Keep TypeScript SDK config
 !clients/typescript/package.json
 !clients/typescript/tsconfig.json
