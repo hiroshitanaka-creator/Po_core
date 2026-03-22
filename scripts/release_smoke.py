@@ -36,7 +36,10 @@ def _find_free_port() -> int:
 
 
 def _run_command(
-    command: Sequence[str], *, timeout: int = ENTRYPOINT_TIMEOUT_SECONDS, env: dict[str, str] | None = None
+    command: Sequence[str],
+    *,
+    timeout: int = ENTRYPOINT_TIMEOUT_SECONDS,
+    env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     try:
         resolved = subprocess.run(
@@ -73,7 +76,11 @@ def _assert_contains(output: str, expected: str, command: Sequence[str]) -> None
 
 
 def _http_request(
-    url: str, *, method: str = "GET", payload: dict | None = None, headers: dict[str, str] | None = None
+    url: str,
+    *,
+    method: str = "GET",
+    payload: dict | None = None,
+    headers: dict[str, str] | None = None,
 ) -> tuple[int, str]:
     body = None
     merged_headers = dict(headers or {})
@@ -82,7 +89,9 @@ def _http_request(
         merged_headers.setdefault("Content-Type", "application/json")
     req = urllib.request.Request(url, data=body, headers=merged_headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=ENTRYPOINT_TIMEOUT_SECONDS) as resp:
+        with urllib.request.urlopen(
+            req, timeout=ENTRYPOINT_TIMEOUT_SECONDS
+        ) as resp:  # nosec B310 — smoke script only; URL is always http://127.0.0.1:<port> constructed above
             return resp.getcode(), resp.read().decode("utf-8")
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode("utf-8")
@@ -102,8 +111,10 @@ def _wait_for_http_ready(url: str, *, timeout: int) -> None:
     raise SystemExit(f"server did not become ready: {url}; last_error={last_error}")
 
 
-def _start_rest_server(*, port: int, api_key: str, skip_auth: bool) -> subprocess.Popen[str]:
-    env = dict(**__import__('os').environ)
+def _start_rest_server(
+    *, port: int, api_key: str, skip_auth: bool
+) -> subprocess.Popen[str]:
+    env = dict(**__import__("os").environ)
     env.update(
         {
             "PO_HOST": "127.0.0.1",
@@ -116,7 +127,16 @@ def _start_rest_server(*, port: int, api_key: str, skip_auth: bool) -> subproces
         }
     )
     return subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "po_core.app.rest.server:app", "--host", "127.0.0.1", "--port", str(port)],
+        [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "po_core.app.rest.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+        ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -156,10 +176,14 @@ def _assert_rest_server_path() -> None:
     port = _find_free_port()
     process = _start_rest_server(port=port, api_key="smoke-secret", skip_auth=False)
     try:
-        _wait_for_http_ready(f"http://127.0.0.1:{port}/v1/health", timeout=_SERVER_START_TIMEOUT_SECONDS)
+        _wait_for_http_ready(
+            f"http://127.0.0.1:{port}/v1/health", timeout=_SERVER_START_TIMEOUT_SECONDS
+        )
 
         unauthorized_status, unauthorized_body = _http_request(
-            f"http://127.0.0.1:{port}/v1/reason", method="POST", payload={"input": "smoke"}
+            f"http://127.0.0.1:{port}/v1/reason",
+            method="POST",
+            payload={"input": "smoke"},
         )
         if unauthorized_status != 401:
             raise SystemExit(
@@ -173,7 +197,9 @@ def _assert_rest_server_path() -> None:
             headers={"X-API-Key": "smoke-secret"},
         )
         if authorized_status != 200:
-            raise SystemExit(f"/v1/reason failed: {authorized_status} {authorized_body}")
+            raise SystemExit(
+                f"/v1/reason failed: {authorized_status} {authorized_body}"
+            )
         payload = json.loads(authorized_body)
         if payload.get("status") not in {"approved", "blocked", "ok"}:
             raise SystemExit(f"unexpected reason payload: {payload}")
@@ -186,7 +212,10 @@ def _assert_rest_server_path() -> None:
         )
         if stream_status != 200:
             raise SystemExit(f"/v1/reason/stream failed: {stream_status} {stream_body}")
-        if "event: done" not in stream_body and '"chunk_type": "done"' not in stream_body:
+        if (
+            "event: done" not in stream_body
+            and '"chunk_type": "done"' not in stream_body
+        ):
             raise SystemExit(f"unexpected stream payload: {stream_body}")
     finally:
         stdout, stderr = _stop_process(process)
@@ -208,7 +237,9 @@ def _assert_console_scripts() -> None:
     status_cmd = ["po-core", "status"]
     status = _run_command(status_cmd)
     _assert_contains(status.stdout, "Project Status", status_cmd)
-    _assert_contains(status.stdout, f"Version        : {po_core.__version__}", status_cmd)
+    _assert_contains(
+        status.stdout, f"Version        : {po_core.__version__}", status_cmd
+    )
     _assert_contains(status.stdout, "Philosophers   : 42", status_cmd)
 
     prompt_cmd = ["po-core", "prompt", "smoke", "--format", "json"]
@@ -232,7 +263,10 @@ def _assert_console_scripts() -> None:
 
     experiment_cmd = ["po-experiment", "list"]
     experiment = _run_command(experiment_cmd)
-    if not ("Experiments:" in experiment.stdout or "No experiments found." in experiment.stdout):
+    if not (
+        "Experiments:" in experiment.stdout
+        or "No experiments found." in experiment.stdout
+    ):
         raise SystemExit(
             f"unexpected po-experiment list output:\nSTDOUT:\n{experiment.stdout}\nSTDERR:\n{experiment.stderr}"
         )
@@ -247,7 +281,9 @@ def _dist_matches_imported_package(dist_name: str) -> tuple[bool, str]:
 
     try:
         imported_init = pathlib.Path(po_core.__file__).resolve()
-        dist_init = pathlib.Path(distribution.locate_file("po_core/__init__.py")).resolve()
+        dist_init = pathlib.Path(
+            distribution.locate_file("po_core/__init__.py")
+        ).resolve()
     except FileNotFoundError:
         return False, "distribution metadata exists but po_core/__init__.py is missing"
 
@@ -298,7 +334,9 @@ def main() -> None:
     if not pareto_resource.is_file():
         raise SystemExit(f"missing pareto resource: {pareto_resource}")
 
-    viewer_path = pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
+    viewer_path = (
+        pathlib.Path(inspect.getfile(po_core.viewer)).parent / "standalone.html"
+    )
     print(f"viewer_html={viewer_path}")
     if not viewer_path.exists():
         raise SystemExit(f"viewer HTML missing: {viewer_path}")

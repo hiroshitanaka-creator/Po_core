@@ -229,7 +229,7 @@ jobs:
           pytest tests/test_output_schema.py -v
           pytest tests/test_golden_e2e.py tests/test_input_schema.py -v
           pytest tests/ -v -m "not slow"
-          bandit -r src/ scripts/ -c pyproject.toml
+          bandit -r src/ scripts/ -c pyproject.toml -ll
           audit_surface base ""
           audit_surface llm "llm"
           audit_surface docs "docs"

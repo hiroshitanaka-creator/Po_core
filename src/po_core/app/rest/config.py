@@ -31,7 +31,9 @@ class APISettings(BaseSettings):
     """
 
     # Server
-    host: str = "0.0.0.0"
+    host: str = (
+        "0.0.0.0"  # nosec B104 — intentional default for container deployments; override via PO_HOST
+    )
     port: int = 8000
     workers: int = 1
     log_level: str = "info"
