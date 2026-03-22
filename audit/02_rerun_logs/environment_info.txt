@@ -1,0 +1,17 @@
+Audit Environment Information
+==============================
+Date: 2026-03-22
+Python: 3.11.14
+pip: 26.0.1
+pytest: 9.0.2
+bandit: 1.9.4
+twine: 6.2.0
+build: 1.4.0
+OS: Linux 6.18.5
+Working directory: /home/user/Po_core
+po_core installed: editable (-e) from ./src/
+po_core.__version__: 1.0.3
+
+Note: This is NOT a clean venv. po_core is installed editable into the system Python.
+Dependencies were installed with --ignore-installed due to Debian-managed packages.
+Heavy ML packages (torch, transformers, sentence-transformers) may or may not be installed.

@@ -1,0 +1,35 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/user/Po_core
+configfile: pytest.ini
+plugins: dash-4.0.0, anyio-4.12.1, asyncio-1.3.0, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 24 items
+
+tests/test_release_readiness.py::test_release_version_ssot_is_package_version PASSED [  4%]
+tests/test_release_readiness.py::test_release_docs_are_synced_to_current_version PASSED [  8%]
+tests/test_release_readiness.py::test_release_state_split_is_explicit_and_honest PASSED [ 12%]
+tests/test_release_readiness.py::test_openapi_version_matches_package_version PASSED [ 16%]
+tests/test_release_readiness.py::test_release_docs_use_consistent_philosopher_counts PASSED [ 20%]
+tests/test_release_readiness.py::test_release_docs_fail_closed_on_stale_wording PASSED [ 25%]
+tests/test_release_readiness.py::test_repository_structure_is_fully_resynced PASSED [ 29%]
+tests/test_release_readiness.py::test_requirements_files_are_documented_as_repo_local_convenience_wrappers PASSED [ 33%]
+tests/test_release_readiness.py::test_dev_dependencies_are_single_sourced PASSED [ 37%]
+tests/test_release_readiness.py::test_optional_all_extra_is_not_self_referential PASSED [ 41%]
+tests/test_release_readiness.py::test_prompt_runtime_ssot_is_python_persona_registry PASSED [ 45%]
+tests/test_release_readiness.py::test_experimental_prompt_assets_are_isolated_from_runtime_package PASSED [ 50%]
+tests/test_release_readiness.py::test_prompt_yaml_placeholders_live_only_in_docs_drafts PASSED [ 54%]
+tests/test_release_readiness.py::test_env_example_fails_closed_for_auth PASSED [ 58%]
+tests/test_release_readiness.py::test_ci_release_blockers_are_fail_closed PASSED [ 62%]
+tests/test_release_readiness.py::test_release_smoke_script_checks_all_console_scripts PASSED [ 66%]
+tests/test_release_readiness.py::test_publish_playbook_documents_fail_closed_release_path PASSED [ 70%]
+tests/test_release_readiness.py::test_tutorial_does_not_reference_old_alpha_version PASSED [ 75%]
+tests/test_release_readiness.py::test_typescript_sdk_readme_uses_canonical_env_var PASSED [ 79%]
+tests/test_release_readiness.py::test_typescript_generated_types_are_not_all_unknown PASSED [ 83%]
+tests/test_release_readiness.py::test_examples_web_api_server_has_legacy_warning PASSED [ 87%]
+tests/test_release_readiness.py::test_release_metadata_status_is_consistent PASSED [ 91%]
+tests/test_release_readiness.py::test_release_count_metadata_is_consistent PASSED [ 95%]
+tests/test_release_readiness.py::test_rest_default_docs_are_fully_synchronized PASSED [100%]
+
+============================== 24 passed in 0.16s ==============================
