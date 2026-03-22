@@ -133,7 +133,12 @@ def _print_rich_row(label: str, st: dict, target: float) -> None:
 @pytest.mark.benchmark
 @pytest.mark.phase5
 def test_bench_smoke_critical():
-    """CI smoke: single CRITICAL-mode run must complete in < 2 s."""
+    """CI smoke: single CRITICAL-mode run must complete in < 2 s (warm path).
+
+    A throwaway warmup call is made first so that sentence-transformers model
+    initialisation (cold-start, up to ~10 s) does not inflate the measurement.
+    """
+    run(_BENCH_PROMPT, settings=_settings(SafetyMode.CRITICAL))  # warmup
     t0 = time.perf_counter()
     run(_BENCH_PROMPT, settings=_settings(SafetyMode.CRITICAL))
     elapsed = time.perf_counter() - t0
