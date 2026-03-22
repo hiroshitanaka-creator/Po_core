@@ -35,11 +35,6 @@ from .orchestrator import run_case
 from .utils import to_json_compatible
 
 
-def _repo_root() -> Path:
-    # src/pocore/runner.py → src/pocore → src → repo root
-    return Path(__file__).resolve().parents[2]
-
-
 def _load_json(path: Path) -> Dict[str, Any]:
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
@@ -67,9 +62,13 @@ def _load_yaml_payload(path: Path, *, label: str) -> Dict[str, Any]:
 
 
 def _get_validator(schema_name: str) -> Draft202012Validator:
-    schema_path = _repo_root() / "docs" / "spec" / schema_name
-    schema = _load_json(schema_path)
-    return Draft202012Validator(schema, format_checker=FormatChecker())
+    from po_core.schemas import resource_path
+
+    traversable = resource_path(schema_name)
+    data = json.loads(traversable.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise TypeError(f"Schema must be an object at top-level: {schema_name}")
+    return Draft202012Validator(data, format_checker=FormatChecker())
 
 
 def _validate_or_raise(

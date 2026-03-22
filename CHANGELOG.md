@@ -1,5 +1,14 @@
 # Changelog
 
+All notable changes to Po_core will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [Unreleased]
+
 ## [1.0.3] - 2026-03-22
 
 ### Added
@@ -34,19 +43,6 @@
 - release: harden CI/publish workflows so tests, security checks, build validation, and installed-artifact smoke are all publish blockers.
 - docs: replace the old pre-release wording with evidence-backed truth for `1.0.2`: PyPI publication is now recorded in `docs/release/pypi_publication_v1.0.2.md`, while missing TestPyPI/workflow/smoke transcripts remain explicitly marked as still unrecorded.
 - prompts: declare `src/po_core/philosophers/llm_personas.py` as the runtime prompt SSOT, keep YAML prompt files as non-packaged design drafts, and remove Claude-testing prompt utilities from the public package surface.
-
-
-最優先ルール（単一真実）：[docs/厳格固定ルール.md](/docs/厳格固定ルール.md)
-最新進捗：[docs/status.md](/docs/status.md)
-
-All notable changes to Po_core will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
----
-
-## [Unreleased]
 
 ## [1.0.0] - 2026-03-10
 

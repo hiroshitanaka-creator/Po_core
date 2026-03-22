@@ -60,7 +60,7 @@ src/po_core/
 - Config-driven philosophy: `pareto_table.yaml`, `battalion_table.yaml`
 - TraceEvents use frozen schema with `config_version` tracking
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
-- Version: `0.2.0rc1` (release candidate, M1 complete) → `0.2.0` after M4 → `1.0.0` after all AT pass + paper draft
+- Version: `1.0.3` (pre-publish release candidate; 1.0.2 is latest published to PyPI)
 
 ## Current Status (2026-03-03)
 
@@ -192,10 +192,9 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 ### バージョン戦略
 
 ```
-現在: 0.2.0rc1 (release candidate, M1 COMPLETE)
-~~M1:   0.2.0rc1~~ → 完了
-M4:   0.2.0    (stable, PyPI)
-v1.0: 1.0.0    (全AT通過 + 論文ドラフト完成)
+現在: 1.0.3 (pre-publish; PyPI最新公開版は 1.0.2)
+5-F:  1.0.3   (PyPI publish)
+v1.0: 1.0.0 → 完了 (2026-03-10)
 ```
 
 See `ROADMAP_FINAL_FORM.md` for full rationale.

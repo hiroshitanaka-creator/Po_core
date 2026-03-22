@@ -18,6 +18,8 @@ DOCS_WITH_VERSION = [
     "REPOSITORY_STRUCTURE.md",
     "docs/operations/publish_playbook.md",
     "docs/status.md",
+    "clients/typescript/README.md",
+    "examples/README.md",
 ]
 TARGET_PUBLIC_VERSION = "1.0.2"
 REPO_STRUCTURE_STALE_PHRASES = [
