@@ -1,0 +1,71 @@
+started_at=2026-03-22T12:32:00Z
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: B403,B101,B603,B112,B404,B311,B110,B105,B607,B601
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	using config: pyproject.toml
+[main]	INFO	running on Python 3.11.14
+[manager]	WARNING	Test in comment: smoke is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: script is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: only is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: URL is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: is is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: always is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: http is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: 127 is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: 0 is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: 0 is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: 1 is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: port is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: constructed is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: above is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: intentional is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: default is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: for is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: container is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: deployments is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: override is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: via is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: PO_HOST is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: internal is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: IPC is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: only is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: parent is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: process is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: controls is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: stdin is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: pipe is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: internal is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: IPC is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: only is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: written is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: to is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: parent is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: controlled is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: stdout is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: pipe is not a test name or id, ignoring
+Working... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:04
+Run started:2026-03-22 12:32:05.568627+00:00
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 75845
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 3
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+exit_code=0
+ended_at=2026-03-22T12:32:05Z
