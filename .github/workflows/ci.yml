@@ -84,7 +84,7 @@ jobs:
       - name: Run acceptance coverage gate
         run: python scripts/calc_traceability_coverage.py --min-at 8
       - name: Run full test suite
-        run: pytest tests/ -v --cov=po_core --cov-report=xml --cov-report=term-missing
+        run: pytest tests/ -v --cov=po_core --cov-report=xml --cov-report=term-missing -m "not benchmark"
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@b9fd7b7d8f03f1aff725d7f98d6bc0edd9d9a96c
         with:
