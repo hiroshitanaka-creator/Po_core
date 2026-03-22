@@ -1,0 +1,5 @@
+started_at=2026-03-22T12:38:29Z
+Checking dist/po_core_flyingpig-1.0.3-py3-none-any.whl: [32mPASSED[0m
+Checking dist/po_core_flyingpig-1.0.3.tar.gz: [32mPASSED[0m
+exit_code=0
+ended_at=2026-03-22T12:38:29Z

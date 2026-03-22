@@ -1,0 +1,55 @@
+started_at=2026-03-22T12:32:11Z
+============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/Po_core
+configfile: pytest.ini
+plugins: dash-4.0.0, anyio-4.12.1, asyncio-1.3.0, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 41 items
+
+tests/test_output_schema.py::test_output_schema_file_exists PASSED       [  2%]
+tests/test_output_schema.py::test_output_schema_is_valid_json_schema PASSED [  4%]
+tests/test_output_schema.py::test_smoke_output_conforms_to_output_schema PASSED [  7%]
+tests/test_output_schema.py::test_smoke_output_has_all_five_ethics_principles PASSED [  9%]
+tests/test_output_schema.py::test_smoke_output_recommendation_has_counter_and_alternatives PASSED [ 12%]
+tests/test_output_schema.py::test_smoke_output_uncertainty_exists PASSED [ 14%]
+tests/test_output_schema.py::test_smoke_output_trace_has_required_steps PASSED [ 17%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_001_expected.json] PASSED [ 19%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_002_expected.json] PASSED [ 21%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_003_expected.json] PASSED [ 24%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_006_expected.json] PASSED [ 26%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_009_expected.json] PASSED [ 29%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_010_expected.json] PASSED [ 31%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_011_expected.json] PASSED [ 34%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_012_expected.json] PASSED [ 36%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_013_expected.json] PASSED [ 39%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_014_expected.json] PASSED [ 41%]
+tests/test_output_schema.py::test_output_json_samples_conform_to_output_schema[case_015_expected.json] PASSED [ 43%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_001_expected.json] PASSED [ 46%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_002_expected.json] PASSED [ 48%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_003_expected.json] PASSED [ 51%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_006_expected.json] PASSED [ 53%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_009_expected.json] PASSED [ 56%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_010_expected.json] PASSED [ 58%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_011_expected.json] PASSED [ 60%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_012_expected.json] PASSED [ 63%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_013_expected.json] PASSED [ 65%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_014_expected.json] PASSED [ 68%]
+tests/test_output_schema.py::test_golden_output_responsibility_decision_owner[case_015_expected.json] PASSED [ 70%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_001_expected.json] PASSED [ 73%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_002_expected.json] PASSED [ 75%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_003_expected.json] PASSED [ 78%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_006_expected.json] PASSED [ 80%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_009_expected.json] PASSED [ 82%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_010_expected.json] PASSED [ 85%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_011_expected.json] PASSED [ 87%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_012_expected.json] PASSED [ 90%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_013_expected.json] PASSED [ 92%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_014_expected.json] PASSED [ 95%]
+tests/test_output_schema.py::test_golden_output_ethics_principles_at_least_two[case_015_expected.json] PASSED [ 97%]
+tests/test_output_schema.py::test_note_on_output_samples_presence PASSED [100%]
+
+============================== 41 passed in 1.35s ==============================
+exit_code=0
+ended_at=2026-03-22T12:32:14Z

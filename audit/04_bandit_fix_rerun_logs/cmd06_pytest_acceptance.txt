@@ -1,0 +1,57 @@
+started_at=2026-03-22T12:32:21Z
+============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/Po_core
+configfile: pytest.ini
+plugins: dash-4.0.0, anyio-4.12.1, asyncio-1.3.0, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 52 items / 9 deselected / 43 selected
+
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_001_expected] PASSED [  2%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_002_expected] PASSED [  4%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_003_expected] PASSED [  6%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_004_expected] PASSED [  9%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_005_expected] PASSED [ 11%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_006_expected] PASSED [ 13%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_007_expected] PASSED [ 16%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_008_expected] PASSED [ 18%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_009_expected] PASSED [ 20%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_010_expected] PASSED [ 23%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_011_expected] PASSED [ 25%]
+tests/acceptance/test_acceptance_golden.py::test_acceptance_golden_diff[at_012_expected] PASSED [ 27%]
+tests/acceptance/test_acceptance_suite.py::test_at_001_job_change PASSED [ 30%]
+tests/acceptance/test_acceptance_suite.py::test_at_002_headcount_reduction PASSED [ 32%]
+tests/acceptance/test_acceptance_suite.py::test_at_003_caregiving PASSED [ 34%]
+tests/acceptance/test_acceptance_suite.py::test_at_004_ethical_tradeoffs PASSED [ 37%]
+tests/acceptance/test_acceptance_suite.py::test_at_005_responsibility_owner PASSED [ 39%]
+tests/acceptance/test_acceptance_suite.py::test_at_006_trace_responsibility PASSED [ 41%]
+tests/acceptance/test_acceptance_suite.py::test_at_007_recommendation_with_counter PASSED [ 44%]
+tests/acceptance/test_acceptance_suite.py::test_at_008_combined_ethics_uncertainty_responsibility PASSED [ 46%]
+tests/acceptance/test_acceptance_suite.py::test_at_009_values_clarification_questions_generated PASSED [ 48%]
+tests/acceptance/test_acceptance_suite.py::test_at_010_conflicting_constraints_question_generated PASSED [ 51%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_values_empty_triggers_vc PASSED [ 53%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_questions_non_empty PASSED [ 55%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_questions_max_5 PASSED [ 58%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_questions_have_why_needed PASSED [ 60%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_questions_have_priority PASSED [ 62%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_at_least_one_non_optional_question PASSED [ 65%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_vc_questions_have_q_vc_prefix PASSED [ 67%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_action_plan_is_vc_pack PASSED [ 69%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_ethics_guardrail_present PASSED [ 72%]
+tests/acceptance/test_m3_acceptance.py::TestValuesClArification::test_schema_valid PASSED [ 74%]
+tests/acceptance/test_m3_acceptance.py::TestTwoTrackPlan::test_needs_two_track_when_urgent PASSED [ 76%]
+tests/acceptance/test_m3_acceptance.py::TestTwoTrackPlan::test_action_plan_has_track_labels PASSED [ 79%]
+tests/acceptance/test_m3_acceptance.py::TestTwoTrackPlan::test_action_plan_max_5_steps PASSED [ 81%]
+tests/acceptance/test_m3_acceptance.py::TestTwoTrackPlan::test_schema_valid PASSED [ 83%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_patch_applies_values PASSED [ 86%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_patch_applies_constraints PASSED [ 88%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_patched_output_has_recommendation PASSED [ 90%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_base_output_no_recommendation PASSED [ 93%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_session_replay_determinism PASSED [ 95%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_session_golden_match PASSED [ 97%]
+tests/acceptance/test_m3_acceptance.py::TestSessionReplay::test_schema_valid_after_patch PASSED [100%]
+
+====================== 43 passed, 9 deselected in 43.71s =======================
+exit_code=0
+ended_at=2026-03-22T12:33:11Z

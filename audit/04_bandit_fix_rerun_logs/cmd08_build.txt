@@ -1,0 +1,1590 @@
+started_at=2026-03-22T12:38:22Z
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=69.0.0
+  - wheel>=0.42.0
+* Getting build dependencies for sdist...
+running egg_info
+writing src/po_core_flyingpig.egg-info/PKG-INFO
+writing dependency_links to src/po_core_flyingpig.egg-info/dependency_links.txt
+writing entry points to src/po_core_flyingpig.egg-info/entry_points.txt
+writing requirements to src/po_core_flyingpig.egg-info/requires.txt
+writing top-level names to src/po_core_flyingpig.egg-info/top_level.txt
+reading manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+* Building sdist...
+running sdist
+running egg_info
+writing src/po_core_flyingpig.egg-info/PKG-INFO
+writing dependency_links to src/po_core_flyingpig.egg-info/dependency_links.txt
+writing entry points to src/po_core_flyingpig.egg-info/entry_points.txt
+writing requirements to src/po_core_flyingpig.egg-info/requires.txt
+writing top-level names to src/po_core_flyingpig.egg-info/top_level.txt
+reading manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+running check
+creating po_core_flyingpig-1.0.3
+creating po_core_flyingpig-1.0.3/src/po_core
+creating po_core_flyingpig-1.0.3/src/po_core/adapters
+creating po_core_flyingpig-1.0.3/src/po_core/aggregator
+creating po_core_flyingpig-1.0.3/src/po_core/app
+creating po_core_flyingpig-1.0.3/src/po_core/app/rest
+creating po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+creating po_core_flyingpig-1.0.3/src/po_core/autonomy
+creating po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+creating po_core_flyingpig-1.0.3/src/po_core/axis
+creating po_core_flyingpig-1.0.3/src/po_core/axis/specs
+creating po_core_flyingpig-1.0.3/src/po_core/cli
+creating po_core_flyingpig-1.0.3/src/po_core/config
+creating po_core_flyingpig-1.0.3/src/po_core/config/runtime
+creating po_core_flyingpig-1.0.3/src/po_core/config/voices
+creating po_core_flyingpig-1.0.3/src/po_core/deliberation
+creating po_core_flyingpig-1.0.3/src/po_core/domain
+creating po_core_flyingpig-1.0.3/src/po_core/experiments
+creating po_core_flyingpig-1.0.3/src/po_core/memory
+creating po_core_flyingpig-1.0.3/src/po_core/meta
+creating po_core_flyingpig-1.0.3/src/po_core/philosophers
+creating po_core_flyingpig-1.0.3/src/po_core/ports
+creating po_core_flyingpig-1.0.3/src/po_core/runtime
+creating po_core_flyingpig-1.0.3/src/po_core/safety
+creating po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+creating po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+creating po_core_flyingpig-1.0.3/src/po_core/schemas
+creating po_core_flyingpig-1.0.3/src/po_core/tensors
+creating po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+creating po_core_flyingpig-1.0.3/src/po_core/text
+creating po_core_flyingpig-1.0.3/src/po_core/trace
+creating po_core_flyingpig-1.0.3/src/po_core/viewer
+creating po_core_flyingpig-1.0.3/src/po_core/viewer/web
+creating po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+creating po_core_flyingpig-1.0.3/tests
+copying files to po_core_flyingpig-1.0.3...
+copying LICENSE -> po_core_flyingpig-1.0.3
+copying README.md -> po_core_flyingpig-1.0.3
+copying pyproject.toml -> po_core_flyingpig-1.0.3
+copying src/po_core/__init__.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/database.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/ensemble.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/migrate_to_db.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/mock_philosophers.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/party_machine.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/philosopher_process.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/philosopher_worker.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/po_self.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/po_trace.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/po_trace_db.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/po_viewer.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/py.typed -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/runner.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/tensor_metrics.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/visualizations.py -> po_core_flyingpig-1.0.3/src/po_core
+copying src/po_core/adapters/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/adapters
+copying src/po_core/adapters/llm_adapter.py -> po_core_flyingpig-1.0.3/src/po_core/adapters
+copying src/po_core/adapters/memory_poself.py -> po_core_flyingpig-1.0.3/src/po_core/adapters
+copying src/po_core/aggregator/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/aggregator
+copying src/po_core/aggregator/conflict_resolver.py -> po_core_flyingpig-1.0.3/src/po_core/aggregator
+copying src/po_core/aggregator/pareto.py -> po_core_flyingpig-1.0.3/src/po_core/aggregator
+copying src/po_core/aggregator/policy_aware.py -> po_core_flyingpig-1.0.3/src/po_core/aggregator
+copying src/po_core/aggregator/weighted_vote.py -> po_core_flyingpig-1.0.3/src/po_core/aggregator
+copying src/po_core/app/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/api.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/composer.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/ethics_engine.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/output_adapter.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/plan_builder.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/policy_engine.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/question_layer.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/responsibility_engine.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/session_engine.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/values_clarifier.py -> po_core_flyingpig-1.0.3/src/po_core/app
+copying src/po_core/app/rest/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/__main__.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/auth.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/config.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/models.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/rate_limit.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/review_store.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/server.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/store.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest
+copying src/po_core/app/rest/routers/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/health.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/philosophers.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/reason.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/review.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/trace.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/tradeoff_map.py -> po_core_flyingpig-1.0.3/src/po_core/app/rest/routers
+copying src/po_core/autonomy/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy
+copying src/po_core/autonomy/solarwill/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/engine.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/model.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/planner.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/update.py -> po_core_flyingpig-1.0.3/src/po_core/autonomy/solarwill
+copying src/po_core/axis/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/axis
+copying src/po_core/axis/preferences.py -> po_core_flyingpig-1.0.3/src/po_core/axis
+copying src/po_core/axis/scoring.py -> po_core_flyingpig-1.0.3/src/po_core/axis
+copying src/po_core/axis/spec.py -> po_core_flyingpig-1.0.3/src/po_core/axis
+copying src/po_core/axis/specs/v1.json -> po_core_flyingpig-1.0.3/src/po_core/axis/specs
+copying src/po_core/cli/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/cli
+copying src/po_core/cli/commands.py -> po_core_flyingpig-1.0.3/src/po_core/cli
+copying src/po_core/cli/experiment.py -> po_core_flyingpig-1.0.3/src/po_core/cli
+copying src/po_core/cli/interactive.py -> po_core_flyingpig-1.0.3/src/po_core/cli
+copying src/po_core/cli/trace_formatter.py -> po_core_flyingpig-1.0.3/src/po_core/cli
+copying src/po_core/config/llm_philosopher_map.yaml -> po_core_flyingpig-1.0.3/src/po_core/config
+copying src/po_core/config/runtime/battalion_table.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/runtime
+copying src/po_core/config/runtime/pareto_table.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/runtime
+copying src/po_core/config/voices/arendt.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/aristotle.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/badiou.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/beauvoir.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/butler.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/confucius.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/deleuze.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/derrida.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/descartes.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/dewey.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/dogen.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/epicurus.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/foucault.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/hegel.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/heidegger.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/husserl.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/jonas.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/jung.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/kant.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/kierkegaard.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/lacan.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/laozi.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/levinas.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/marcus_aurelius.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/merleau_ponty.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/nagarjuna.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/nietzsche.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/nishida.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/parmenides.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/peirce.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/plato.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/sartre.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/schopenhauer.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/spinoza.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/wabi_sabi.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/watsuji.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/weil.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/wittgenstein.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/config/voices/zhuangzi.yaml -> po_core_flyingpig-1.0.3/src/po_core/config/voices
+copying src/po_core/deliberation/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/cards.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/clustering.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/emergence.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/engine.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/influence.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/protocol.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/roles.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/deliberation/synthesis.py -> po_core_flyingpig-1.0.3/src/po_core/deliberation
+copying src/po_core/domain/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/context.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/experiment.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/intent.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/keys.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/memory_snapshot.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/pareto_config.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/proposal.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/safety_mode.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/safety_verdict.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/tensor_snapshot.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/domain/trace_event.py -> po_core_flyingpig-1.0.3/src/po_core/domain
+copying src/po_core/experiments/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/experiments
+copying src/po_core/experiments/analyzer.py -> po_core_flyingpig-1.0.3/src/po_core/experiments
+copying src/po_core/experiments/promoter.py -> po_core_flyingpig-1.0.3/src/po_core/experiments
+copying src/po_core/experiments/runner.py -> po_core_flyingpig-1.0.3/src/po_core/experiments
+copying src/po_core/experiments/storage.py -> po_core_flyingpig-1.0.3/src/po_core/experiments
+copying src/po_core/memory/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/memory
+copying src/po_core/memory/philosophical_memory.py -> po_core_flyingpig-1.0.3/src/po_core/memory
+copying src/po_core/memory/procedural_store.py -> po_core_flyingpig-1.0.3/src/po_core/memory
+copying src/po_core/memory/semantic_store.py -> po_core_flyingpig-1.0.3/src/po_core/memory
+copying src/po_core/meta/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/meta
+copying src/po_core/meta/ethics_monitor.py -> po_core_flyingpig-1.0.3/src/po_core/meta
+copying src/po_core/meta/philosopher_ledger.py -> po_core_flyingpig-1.0.3/src/po_core/meta
+copying src/po_core/philosophers/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/allowlist.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/appiah.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/arendt.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/aristotle.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/badiou.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/base.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/beauvoir.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/butler.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/charles_taylor.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/confucius.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/deleuze.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/derrida.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/descartes.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/dewey.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/dogen.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/dummy.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/epicurus.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/fanon.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/foucault.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/hegel.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/heidegger.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/husserl.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/jonas.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/jung.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/kant.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/kierkegaard.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/lacan.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/laozi.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/levinas.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/llm_personas.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/llm_philosopher.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/manifest.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/marcus_aurelius.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/merleau_ponty.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/nagarjuna.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/nietzsche.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/nishida.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/parmenides.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/peirce.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/plato.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/registry.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/sartre.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/schopenhauer.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/spinoza.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/tags.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/template.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/wabi_sabi.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/watsuji.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/weil.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/wittgenstein.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/philosophers/zhuangzi.py -> po_core_flyingpig-1.0.3/src/po_core/philosophers
+copying src/po_core/ports/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/aggregator.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/memory.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/memory_read.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/memory_write.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/solarwill.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/tensor_engine.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/trace.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/ports/wethics_gate.py -> po_core_flyingpig-1.0.3/src/po_core/ports
+copying src/po_core/runtime/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/battalion_table.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/execution_budget.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/pareto_table.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/philosopher_executor.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/settings.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/shadow_guard.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/voice_loader.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/runtime/wiring.py -> po_core_flyingpig-1.0.3/src/po_core/runtime
+copying src/po_core/safety/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/safety
+copying src/po_core/safety/fallback.py -> po_core_flyingpig-1.0.3/src/po_core/safety
+copying src/po_core/safety/philosopher_profiles.py -> po_core_flyingpig-1.0.3/src/po_core/safety
+copying src/po_core/safety/policy_scoring.py -> po_core_flyingpig-1.0.3/src/po_core/safety
+copying src/po_core/safety/w_ethics.py -> po_core_flyingpig-1.0.3/src/po_core/safety
+copying src/po_core/safety/wethics_gate/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/action_gate.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/detectors.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/explanation.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/gate.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/intention_gate.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/metrics.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/policy_gate.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/select.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/semantic_drift.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/types.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/policies/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_acttype_001.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_mode_001.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_outguard_001.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/base.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/intention_goalkey_001.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/intention_mode_001.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/presets.py -> po_core_flyingpig-1.0.3/src/po_core/safety/wethics_gate/policies
+copying src/po_core/schemas/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/schemas
+copying src/po_core/schemas/input_schema_v1.json -> po_core_flyingpig-1.0.3/src/po_core/schemas
+copying src/po_core/schemas/output_schema_v1.json -> po_core_flyingpig-1.0.3/src/po_core/schemas
+copying src/po_core/schemas/session_answers_schema_v1.json -> po_core_flyingpig-1.0.3/src/po_core/schemas
+copying src/po_core/tensors/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/axis_calibration.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/base.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/blocked_tensor.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/concept_quantifier.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/engine.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/freedom_pressure.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/freedom_pressure_v2.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/interaction_tensor.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/semantic_profile.py -> po_core_flyingpig-1.0.3/src/po_core/tensors
+copying src/po_core/tensors/metrics/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/blocked_tensor.py -> po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/freedom_pressure.py -> po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/interaction_tensor.py -> po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/semantic_delta.py -> po_core_flyingpig-1.0.3/src/po_core/tensors/metrics
+copying src/po_core/text/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/text
+copying src/po_core/text/embedding_cache.py -> po_core_flyingpig-1.0.3/src/po_core/text
+copying src/po_core/text/normalize.py -> po_core_flyingpig-1.0.3/src/po_core/text
+copying src/po_core/trace/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/annotator.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/decision_compare.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/decision_events.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/event_log.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/in_memory.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/noop.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/pareto_events.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/replay.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/schema.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/synthesis_report_events.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/trace/tracer.py -> po_core_flyingpig-1.0.3/src/po_core/trace
+copying src/po_core/viewer/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/decision_report_md.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/evolution_graph.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/philosopher_view.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/pipeline_view.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/preference_view.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/pressure_display.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/standalone.html -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/tension_map.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/tensor_view.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/tradeoff_map.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/visualizer.py -> po_core_flyingpig-1.0.3/src/po_core/viewer
+copying src/po_core/viewer/web/__init__.py -> po_core_flyingpig-1.0.3/src/po_core/viewer/web
+copying src/po_core/viewer/web/app.py -> po_core_flyingpig-1.0.3/src/po_core/viewer/web
+copying src/po_core/viewer/web/figures.py -> po_core_flyingpig-1.0.3/src/po_core/viewer/web
+copying src/po_core_flyingpig.egg-info/PKG-INFO -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying src/po_core_flyingpig.egg-info/SOURCES.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying src/po_core_flyingpig.egg-info/dependency_links.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying src/po_core_flyingpig.egg-info/entry_points.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying src/po_core_flyingpig.egg-info/requires.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying src/po_core_flyingpig.egg-info/top_level.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+copying tests/test_all_39_philosophers.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_api_auth_cors.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_api_surface_security_parity.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_arbitration_trace.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_axis_scoring_v1.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_axis_spec.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_calibration_params_load.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_cards_schema.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_comparative_benchmark.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_conflict_resolver.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_decision_comparison_event.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_decision_events.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_deliberation_engine.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_deliberation_protocol_v1.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_dependency_rules.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_deployment_hardening.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_emit_pareto_debug_events.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_ethics_engine.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_ethics_guardrails.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_ethics_non_interference.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_ethics_ruleset.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_execution_coverage.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_features.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_freedom_pressure_japanese.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_golden_coverage.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_golden_e2e.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_golden_regression.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_import_graph_tool.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_input_schema.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_interaction_matrix.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_interaction_tensor_japanese.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_invariants.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_no_short_id_special_cases.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_observe_device_smoke.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_output_adapter_question_suppression.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_output_schema.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_packaged_battalion_overlay.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_paper_pipeline.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_pareto_aggregator.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_pareto_debug_payload.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_pareto_table_loader.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_phase25_reproduce.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_bridge.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_cards.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_concurrency.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_contract.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_plugin_template.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_registry_scaling.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosopher_uniqueness.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosophers_pipeline.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_philosophers_pytest.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_plan_non_interference.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_po_self_v2.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_policy_aware_aggregator.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_policy_invariants.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_policy_lab.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_questions_v2.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_rate_limit_disable_semantics.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_reason_disconnect_cancellation.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_reason_request_validation.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_reason_transport_parity.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_recommendation_policy.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_registry_composition_tags.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_registry_import_strictness.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_release_readiness.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_release_smoke_regression.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_responsibility_stakeholders.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_role_coverage.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_run_turn_e2e.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_runner_packaged_schemas.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_runtime_settings_philosopher_limits.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_safety_integration.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_safety_mode_thresholds.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_semantic_delta.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_session_answers_schema.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_session_replay_e2e.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_session_replay_unit.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_shadow_guard.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_smoke_pipeline.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_storage_worker_guard.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_synthesis_engine.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_synthesis_report_scoreboard.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_tensor_metrics.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_trace_event_log.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_trace_metrics.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_trace_pareto_events.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_trace_pareto_includes_config_version.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_trace_schema_contract.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_traceability.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_traceability_config_lock.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_two_track_plan.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_values_clarification.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_vertical_slice.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_viewer_candidate_final_diff.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_viewer_pipeline.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_wethics_acttype_001.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_wethics_fail_closed.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_wethics_goalkey_001.py -> po_core_flyingpig-1.0.3/tests
+copying tests/test_wethics_mode_001.py -> po_core_flyingpig-1.0.3/tests
+copying src/po_core_flyingpig.egg-info/SOURCES.txt -> po_core_flyingpig-1.0.3/src/po_core_flyingpig.egg-info
+Writing po_core_flyingpig-1.0.3/setup.cfg
+Creating tar archive
+removing 'po_core_flyingpig-1.0.3' (and everything under it)
+* Building wheel from sdist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=69.0.0
+  - wheel>=0.42.0
+* Getting build dependencies for wheel...
+running egg_info
+writing src/po_core_flyingpig.egg-info/PKG-INFO
+writing dependency_links to src/po_core_flyingpig.egg-info/dependency_links.txt
+writing entry points to src/po_core_flyingpig.egg-info/entry_points.txt
+writing requirements to src/po_core_flyingpig.egg-info/requires.txt
+writing top-level names to src/po_core_flyingpig.egg-info/top_level.txt
+reading manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build/lib/po_core
+copying src/po_core/po_viewer.py -> build/lib/po_core
+copying src/po_core/po_self.py -> build/lib/po_core
+copying src/po_core/po_trace_db.py -> build/lib/po_core
+copying src/po_core/ensemble.py -> build/lib/po_core
+copying src/po_core/__init__.py -> build/lib/po_core
+copying src/po_core/party_machine.py -> build/lib/po_core
+copying src/po_core/visualizations.py -> build/lib/po_core
+copying src/po_core/migrate_to_db.py -> build/lib/po_core
+copying src/po_core/runner.py -> build/lib/po_core
+copying src/po_core/po_trace.py -> build/lib/po_core
+copying src/po_core/philosopher_worker.py -> build/lib/po_core
+copying src/po_core/database.py -> build/lib/po_core
+copying src/po_core/tensor_metrics.py -> build/lib/po_core
+copying src/po_core/mock_philosophers.py -> build/lib/po_core
+copying src/po_core/philosopher_process.py -> build/lib/po_core
+creating build/lib/po_core/axis
+copying src/po_core/axis/__init__.py -> build/lib/po_core/axis
+copying src/po_core/axis/preferences.py -> build/lib/po_core/axis
+copying src/po_core/axis/spec.py -> build/lib/po_core/axis
+copying src/po_core/axis/scoring.py -> build/lib/po_core/axis
+creating build/lib/po_core/trace
+copying src/po_core/trace/event_log.py -> build/lib/po_core/trace
+copying src/po_core/trace/tracer.py -> build/lib/po_core/trace
+copying src/po_core/trace/replay.py -> build/lib/po_core/trace
+copying src/po_core/trace/decision_events.py -> build/lib/po_core/trace
+copying src/po_core/trace/synthesis_report_events.py -> build/lib/po_core/trace
+copying src/po_core/trace/__init__.py -> build/lib/po_core/trace
+copying src/po_core/trace/annotator.py -> build/lib/po_core/trace
+copying src/po_core/trace/in_memory.py -> build/lib/po_core/trace
+copying src/po_core/trace/decision_compare.py -> build/lib/po_core/trace
+copying src/po_core/trace/schema.py -> build/lib/po_core/trace
+copying src/po_core/trace/pareto_events.py -> build/lib/po_core/trace
+copying src/po_core/trace/noop.py -> build/lib/po_core/trace
+creating build/lib/po_core/runtime
+copying src/po_core/runtime/pareto_table.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/wiring.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/shadow_guard.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/__init__.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/settings.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/battalion_table.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/execution_budget.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/voice_loader.py -> build/lib/po_core/runtime
+copying src/po_core/runtime/philosopher_executor.py -> build/lib/po_core/runtime
+creating build/lib/po_core/autonomy
+copying src/po_core/autonomy/__init__.py -> build/lib/po_core/autonomy
+creating build/lib/po_core/text
+copying src/po_core/text/normalize.py -> build/lib/po_core/text
+copying src/po_core/text/__init__.py -> build/lib/po_core/text
+copying src/po_core/text/embedding_cache.py -> build/lib/po_core/text
+creating build/lib/po_core/schemas
+copying src/po_core/schemas/__init__.py -> build/lib/po_core/schemas
+creating build/lib/po_core/app
+copying src/po_core/app/session_engine.py -> build/lib/po_core/app
+copying src/po_core/app/composer.py -> build/lib/po_core/app
+copying src/po_core/app/ethics_engine.py -> build/lib/po_core/app
+copying src/po_core/app/question_layer.py -> build/lib/po_core/app
+copying src/po_core/app/responsibility_engine.py -> build/lib/po_core/app
+copying src/po_core/app/__init__.py -> build/lib/po_core/app
+copying src/po_core/app/values_clarifier.py -> build/lib/po_core/app
+copying src/po_core/app/api.py -> build/lib/po_core/app
+copying src/po_core/app/output_adapter.py -> build/lib/po_core/app
+copying src/po_core/app/policy_engine.py -> build/lib/po_core/app
+copying src/po_core/app/plan_builder.py -> build/lib/po_core/app
+creating build/lib/po_core/viewer
+copying src/po_core/viewer/pipeline_view.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/visualizer.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/pressure_display.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/__init__.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/decision_report_md.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/evolution_graph.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/tension_map.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/tensor_view.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/preference_view.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/tradeoff_map.py -> build/lib/po_core/viewer
+copying src/po_core/viewer/philosopher_view.py -> build/lib/po_core/viewer
+creating build/lib/po_core/safety
+copying src/po_core/safety/fallback.py -> build/lib/po_core/safety
+copying src/po_core/safety/__init__.py -> build/lib/po_core/safety
+copying src/po_core/safety/philosopher_profiles.py -> build/lib/po_core/safety
+copying src/po_core/safety/w_ethics.py -> build/lib/po_core/safety
+copying src/po_core/safety/policy_scoring.py -> build/lib/po_core/safety
+creating build/lib/po_core/tensors
+copying src/po_core/tensors/freedom_pressure.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/blocked_tensor.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/base.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/__init__.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/concept_quantifier.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/interaction_tensor.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/engine.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/semantic_profile.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/axis_calibration.py -> build/lib/po_core/tensors
+copying src/po_core/tensors/freedom_pressure_v2.py -> build/lib/po_core/tensors
+creating build/lib/po_core/meta
+copying src/po_core/meta/philosopher_ledger.py -> build/lib/po_core/meta
+copying src/po_core/meta/__init__.py -> build/lib/po_core/meta
+copying src/po_core/meta/ethics_monitor.py -> build/lib/po_core/meta
+creating build/lib/po_core/cli
+copying src/po_core/cli/interactive.py -> build/lib/po_core/cli
+copying src/po_core/cli/__init__.py -> build/lib/po_core/cli
+copying src/po_core/cli/commands.py -> build/lib/po_core/cli
+copying src/po_core/cli/experiment.py -> build/lib/po_core/cli
+copying src/po_core/cli/trace_formatter.py -> build/lib/po_core/cli
+creating build/lib/po_core/experiments
+copying src/po_core/experiments/storage.py -> build/lib/po_core/experiments
+copying src/po_core/experiments/analyzer.py -> build/lib/po_core/experiments
+copying src/po_core/experiments/__init__.py -> build/lib/po_core/experiments
+copying src/po_core/experiments/runner.py -> build/lib/po_core/experiments
+copying src/po_core/experiments/promoter.py -> build/lib/po_core/experiments
+creating build/lib/po_core/aggregator
+copying src/po_core/aggregator/__init__.py -> build/lib/po_core/aggregator
+copying src/po_core/aggregator/policy_aware.py -> build/lib/po_core/aggregator
+copying src/po_core/aggregator/pareto.py -> build/lib/po_core/aggregator
+copying src/po_core/aggregator/conflict_resolver.py -> build/lib/po_core/aggregator
+copying src/po_core/aggregator/weighted_vote.py -> build/lib/po_core/aggregator
+creating build/lib/po_core/philosophers
+copying src/po_core/philosophers/aristotle.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/dummy.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/levinas.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/wittgenstein.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/spinoza.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/badiou.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/peirce.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/heidegger.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/base.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/confucius.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/deleuze.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/husserl.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/__init__.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/laozi.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/epicurus.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/nagarjuna.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/hegel.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/jung.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/beauvoir.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/butler.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/sartre.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/jonas.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/nietzsche.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/schopenhauer.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/allowlist.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/weil.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/watsuji.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/zhuangzi.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/kierkegaard.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/tags.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/registry.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/arendt.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/llm_philosopher.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/appiah.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/kant.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/nishida.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/marcus_aurelius.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/derrida.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/charles_taylor.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/wabi_sabi.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/parmenides.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/lacan.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/merleau_ponty.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/dogen.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/template.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/dewey.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/plato.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/llm_personas.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/manifest.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/fanon.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/foucault.py -> build/lib/po_core/philosophers
+copying src/po_core/philosophers/descartes.py -> build/lib/po_core/philosophers
+creating build/lib/po_core/deliberation
+copying src/po_core/deliberation/protocol.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/cards.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/__init__.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/engine.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/clustering.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/emergence.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/influence.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/synthesis.py -> build/lib/po_core/deliberation
+copying src/po_core/deliberation/roles.py -> build/lib/po_core/deliberation
+creating build/lib/po_core/ports
+copying src/po_core/ports/memory_read.py -> build/lib/po_core/ports
+copying src/po_core/ports/trace.py -> build/lib/po_core/ports
+copying src/po_core/ports/__init__.py -> build/lib/po_core/ports
+copying src/po_core/ports/memory_write.py -> build/lib/po_core/ports
+copying src/po_core/ports/aggregator.py -> build/lib/po_core/ports
+copying src/po_core/ports/tensor_engine.py -> build/lib/po_core/ports
+copying src/po_core/ports/memory.py -> build/lib/po_core/ports
+copying src/po_core/ports/wethics_gate.py -> build/lib/po_core/ports
+copying src/po_core/ports/solarwill.py -> build/lib/po_core/ports
+creating build/lib/po_core/domain
+copying src/po_core/domain/pareto_config.py -> build/lib/po_core/domain
+copying src/po_core/domain/__init__.py -> build/lib/po_core/domain
+copying src/po_core/domain/experiment.py -> build/lib/po_core/domain
+copying src/po_core/domain/tensor_snapshot.py -> build/lib/po_core/domain
+copying src/po_core/domain/safety_mode.py -> build/lib/po_core/domain
+copying src/po_core/domain/intent.py -> build/lib/po_core/domain
+copying src/po_core/domain/context.py -> build/lib/po_core/domain
+copying src/po_core/domain/memory_snapshot.py -> build/lib/po_core/domain
+copying src/po_core/domain/safety_verdict.py -> build/lib/po_core/domain
+copying src/po_core/domain/proposal.py -> build/lib/po_core/domain
+copying src/po_core/domain/trace_event.py -> build/lib/po_core/domain
+copying src/po_core/domain/keys.py -> build/lib/po_core/domain
+creating build/lib/po_core/adapters
+copying src/po_core/adapters/llm_adapter.py -> build/lib/po_core/adapters
+copying src/po_core/adapters/__init__.py -> build/lib/po_core/adapters
+copying src/po_core/adapters/memory_poself.py -> build/lib/po_core/adapters
+creating build/lib/po_core/memory
+copying src/po_core/memory/semantic_store.py -> build/lib/po_core/memory
+copying src/po_core/memory/philosophical_memory.py -> build/lib/po_core/memory
+copying src/po_core/memory/__init__.py -> build/lib/po_core/memory
+copying src/po_core/memory/procedural_store.py -> build/lib/po_core/memory
+creating build/lib/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/model.py -> build/lib/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/__init__.py -> build/lib/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/engine.py -> build/lib/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/update.py -> build/lib/po_core/autonomy/solarwill
+copying src/po_core/autonomy/solarwill/planner.py -> build/lib/po_core/autonomy/solarwill
+creating build/lib/po_core/app/rest
+copying src/po_core/app/rest/auth.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/config.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/__init__.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/review_store.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/__main__.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/models.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/store.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/server.py -> build/lib/po_core/app/rest
+copying src/po_core/app/rest/rate_limit.py -> build/lib/po_core/app/rest
+creating build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/philosophers.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/trace.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/review.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/__init__.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/reason.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/tradeoff_map.py -> build/lib/po_core/app/rest/routers
+copying src/po_core/app/rest/routers/health.py -> build/lib/po_core/app/rest/routers
+creating build/lib/po_core/viewer/web
+copying src/po_core/viewer/web/__init__.py -> build/lib/po_core/viewer/web
+copying src/po_core/viewer/web/figures.py -> build/lib/po_core/viewer/web
+copying src/po_core/viewer/web/app.py -> build/lib/po_core/viewer/web
+creating build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/semantic_drift.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/policy_gate.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/explanation.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/__init__.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/metrics.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/detectors.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/gate.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/select.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/types.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/intention_gate.py -> build/lib/po_core/safety/wethics_gate
+copying src/po_core/safety/wethics_gate/action_gate.py -> build/lib/po_core/safety/wethics_gate
+creating build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/intention_goalkey_001.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_mode_001.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/base.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/__init__.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/presets.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/intention_mode_001.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_acttype_001.py -> build/lib/po_core/safety/wethics_gate/policies
+copying src/po_core/safety/wethics_gate/policies/action_outguard_001.py -> build/lib/po_core/safety/wethics_gate/policies
+creating build/lib/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/freedom_pressure.py -> build/lib/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/blocked_tensor.py -> build/lib/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/__init__.py -> build/lib/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/interaction_tensor.py -> build/lib/po_core/tensors/metrics
+copying src/po_core/tensors/metrics/semantic_delta.py -> build/lib/po_core/tensors/metrics
+running egg_info
+writing src/po_core_flyingpig.egg-info/PKG-INFO
+writing dependency_links to src/po_core_flyingpig.egg-info/dependency_links.txt
+writing entry points to src/po_core_flyingpig.egg-info/entry_points.txt
+writing requirements to src/po_core_flyingpig.egg-info/requires.txt
+writing top-level names to src/po_core_flyingpig.egg-info/top_level.txt
+reading manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/po_core_flyingpig.egg-info/SOURCES.txt'
+/tmp/build-env-boo90gaz/lib/python3.11/site-packages/setuptools/command/build_py.py:215: _Warning: Package 'po_core.axis.specs' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'po_core.axis.specs' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'po_core.axis.specs' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'po_core.axis.specs' to be distributed and are
+        already explicitly excluding 'po_core.axis.specs' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/tmp/build-env-boo90gaz/lib/python3.11/site-packages/setuptools/command/build_py.py:215: _Warning: Package 'po_core.config' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'po_core.config' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'po_core.config' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'po_core.config' to be distributed and are
+        already explicitly excluding 'po_core.config' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/tmp/build-env-boo90gaz/lib/python3.11/site-packages/setuptools/command/build_py.py:215: _Warning: Package 'po_core.config.runtime' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'po_core.config.runtime' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'po_core.config.runtime' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'po_core.config.runtime' to be distributed and are
+        already explicitly excluding 'po_core.config.runtime' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/tmp/build-env-boo90gaz/lib/python3.11/site-packages/setuptools/command/build_py.py:215: _Warning: Package 'po_core.config.voices' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'po_core.config.voices' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'po_core.config.voices' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'po_core.config.voices' to be distributed and are
+        already explicitly excluding 'po_core.config.voices' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+copying src/po_core/py.typed -> build/lib/po_core
+creating build/lib/po_core/config
+copying src/po_core/config/llm_philosopher_map.yaml -> build/lib/po_core/config
+creating build/lib/po_core/config/runtime
+copying src/po_core/config/runtime/battalion_table.yaml -> build/lib/po_core/config/runtime
+copying src/po_core/config/runtime/pareto_table.yaml -> build/lib/po_core/config/runtime
+creating build/lib/po_core/config/voices
+copying src/po_core/config/voices/arendt.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/aristotle.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/badiou.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/beauvoir.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/butler.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/confucius.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/deleuze.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/derrida.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/descartes.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/dewey.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/dogen.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/epicurus.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/foucault.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/hegel.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/heidegger.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/husserl.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/jonas.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/jung.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/kant.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/kierkegaard.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/lacan.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/laozi.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/levinas.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/marcus_aurelius.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/merleau_ponty.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/nagarjuna.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/nietzsche.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/nishida.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/parmenides.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/peirce.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/plato.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/sartre.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/schopenhauer.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/spinoza.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/wabi_sabi.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/watsuji.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/weil.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/wittgenstein.yaml -> build/lib/po_core/config/voices
+copying src/po_core/config/voices/zhuangzi.yaml -> build/lib/po_core/config/voices
+creating build/lib/po_core/axis/specs
+copying src/po_core/axis/specs/v1.json -> build/lib/po_core/axis/specs
+copying src/po_core/schemas/input_schema_v1.json -> build/lib/po_core/schemas
+copying src/po_core/schemas/session_answers_schema_v1.json -> build/lib/po_core/schemas
+copying src/po_core/schemas/output_schema_v1.json -> build/lib/po_core/schemas
+copying src/po_core/viewer/standalone.html -> build/lib/po_core/viewer
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/po_core
+copying build/lib/po_core/po_viewer.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/axis
+creating build/bdist.linux-x86_64/wheel/po_core/axis/specs
+copying build/lib/po_core/axis/specs/v1.json -> build/bdist.linux-x86_64/wheel/./po_core/axis/specs
+copying build/lib/po_core/axis/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/axis
+copying build/lib/po_core/axis/preferences.py -> build/bdist.linux-x86_64/wheel/./po_core/axis
+copying build/lib/po_core/axis/spec.py -> build/bdist.linux-x86_64/wheel/./po_core/axis
+copying build/lib/po_core/axis/scoring.py -> build/bdist.linux-x86_64/wheel/./po_core/axis
+creating build/bdist.linux-x86_64/wheel/po_core/trace
+copying build/lib/po_core/trace/event_log.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/tracer.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/replay.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/decision_events.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/synthesis_report_events.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/annotator.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/in_memory.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/decision_compare.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/schema.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/pareto_events.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+copying build/lib/po_core/trace/noop.py -> build/bdist.linux-x86_64/wheel/./po_core/trace
+creating build/bdist.linux-x86_64/wheel/po_core/runtime
+copying build/lib/po_core/runtime/pareto_table.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/wiring.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/shadow_guard.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/settings.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/battalion_table.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/execution_budget.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/voice_loader.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/runtime/philosopher_executor.py -> build/bdist.linux-x86_64/wheel/./po_core/runtime
+copying build/lib/po_core/po_self.py -> build/bdist.linux-x86_64/wheel/./po_core
+copying build/lib/po_core/po_trace_db.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/autonomy
+creating build/bdist.linux-x86_64/wheel/po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/solarwill/model.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/solarwill/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/solarwill/engine.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/solarwill/update.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/solarwill/planner.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy/solarwill
+copying build/lib/po_core/autonomy/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/autonomy
+creating build/bdist.linux-x86_64/wheel/po_core/text
+copying build/lib/po_core/text/normalize.py -> build/bdist.linux-x86_64/wheel/./po_core/text
+copying build/lib/po_core/text/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/text
+copying build/lib/po_core/text/embedding_cache.py -> build/bdist.linux-x86_64/wheel/./po_core/text
+creating build/bdist.linux-x86_64/wheel/po_core/config
+creating build/bdist.linux-x86_64/wheel/po_core/config/runtime
+copying build/lib/po_core/config/runtime/battalion_table.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/runtime
+copying build/lib/po_core/config/runtime/pareto_table.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/runtime
+copying build/lib/po_core/config/llm_philosopher_map.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config
+creating build/bdist.linux-x86_64/wheel/po_core/config/voices
+copying build/lib/po_core/config/voices/wabi_sabi.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/dogen.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/badiou.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/descartes.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/derrida.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/confucius.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/plato.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/peirce.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/levinas.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/nietzsche.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/dewey.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/butler.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/heidegger.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/schopenhauer.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/parmenides.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/epicurus.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/nagarjuna.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/aristotle.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/zhuangzi.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/weil.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/kant.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/watsuji.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/jonas.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/lacan.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/nishida.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/foucault.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/sartre.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/kierkegaard.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/jung.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/laozi.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/merleau_ponty.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/hegel.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/beauvoir.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/arendt.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/deleuze.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/spinoza.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/marcus_aurelius.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/wittgenstein.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+copying build/lib/po_core/config/voices/husserl.yaml -> build/bdist.linux-x86_64/wheel/./po_core/config/voices
+creating build/bdist.linux-x86_64/wheel/po_core/schemas
+copying build/lib/po_core/schemas/input_schema_v1.json -> build/bdist.linux-x86_64/wheel/./po_core/schemas
+copying build/lib/po_core/schemas/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/schemas
+copying build/lib/po_core/schemas/session_answers_schema_v1.json -> build/bdist.linux-x86_64/wheel/./po_core/schemas
+copying build/lib/po_core/schemas/output_schema_v1.json -> build/bdist.linux-x86_64/wheel/./po_core/schemas
+copying build/lib/po_core/ensemble.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/app
+copying build/lib/po_core/app/session_engine.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+creating build/bdist.linux-x86_64/wheel/po_core/app/rest
+copying build/lib/po_core/app/rest/auth.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/config.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+creating build/bdist.linux-x86_64/wheel/po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/philosophers.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/trace.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/review.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/reason.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/tradeoff_map.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/routers/health.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest/routers
+copying build/lib/po_core/app/rest/review_store.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/__main__.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/models.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/store.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/server.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/rest/rate_limit.py -> build/bdist.linux-x86_64/wheel/./po_core/app/rest
+copying build/lib/po_core/app/composer.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/ethics_engine.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/question_layer.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/responsibility_engine.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/values_clarifier.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/api.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/output_adapter.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/policy_engine.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/app/plan_builder.py -> build/bdist.linux-x86_64/wheel/./po_core/app
+copying build/lib/po_core/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/viewer
+copying build/lib/po_core/viewer/pipeline_view.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/visualizer.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/pressure_display.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+creating build/bdist.linux-x86_64/wheel/po_core/viewer/web
+copying build/lib/po_core/viewer/web/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer/web
+copying build/lib/po_core/viewer/web/figures.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer/web
+copying build/lib/po_core/viewer/web/app.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer/web
+copying build/lib/po_core/viewer/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/decision_report_md.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/evolution_graph.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/tension_map.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/tensor_view.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/standalone.html -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/preference_view.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/tradeoff_map.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/viewer/philosopher_view.py -> build/bdist.linux-x86_64/wheel/./po_core/viewer
+copying build/lib/po_core/party_machine.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/safety
+copying build/lib/po_core/safety/fallback.py -> build/bdist.linux-x86_64/wheel/./po_core/safety
+copying build/lib/po_core/safety/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/safety
+copying build/lib/po_core/safety/philosopher_profiles.py -> build/bdist.linux-x86_64/wheel/./po_core/safety
+creating build/bdist.linux-x86_64/wheel/po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/semantic_drift.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/policy_gate.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/explanation.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/metrics.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+creating build/bdist.linux-x86_64/wheel/po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/intention_goalkey_001.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/action_mode_001.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/base.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/presets.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/intention_mode_001.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/action_acttype_001.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/policies/action_outguard_001.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate/policies
+copying build/lib/po_core/safety/wethics_gate/detectors.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/gate.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/select.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/types.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/intention_gate.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/wethics_gate/action_gate.py -> build/bdist.linux-x86_64/wheel/./po_core/safety/wethics_gate
+copying build/lib/po_core/safety/w_ethics.py -> build/bdist.linux-x86_64/wheel/./po_core/safety
+copying build/lib/po_core/safety/policy_scoring.py -> build/bdist.linux-x86_64/wheel/./po_core/safety
+copying build/lib/po_core/visualizations.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/tensors
+copying build/lib/po_core/tensors/freedom_pressure.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/blocked_tensor.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+creating build/bdist.linux-x86_64/wheel/po_core/tensors/metrics
+copying build/lib/po_core/tensors/metrics/freedom_pressure.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors/metrics
+copying build/lib/po_core/tensors/metrics/blocked_tensor.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors/metrics
+copying build/lib/po_core/tensors/metrics/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors/metrics
+copying build/lib/po_core/tensors/metrics/interaction_tensor.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors/metrics
+copying build/lib/po_core/tensors/metrics/semantic_delta.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors/metrics
+copying build/lib/po_core/tensors/base.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/concept_quantifier.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/interaction_tensor.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/engine.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/semantic_profile.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/axis_calibration.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/tensors/freedom_pressure_v2.py -> build/bdist.linux-x86_64/wheel/./po_core/tensors
+copying build/lib/po_core/migrate_to_db.py -> build/bdist.linux-x86_64/wheel/./po_core
+copying build/lib/po_core/runner.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/meta
+copying build/lib/po_core/meta/philosopher_ledger.py -> build/bdist.linux-x86_64/wheel/./po_core/meta
+copying build/lib/po_core/meta/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/meta
+copying build/lib/po_core/meta/ethics_monitor.py -> build/bdist.linux-x86_64/wheel/./po_core/meta
+creating build/bdist.linux-x86_64/wheel/po_core/cli
+copying build/lib/po_core/cli/interactive.py -> build/bdist.linux-x86_64/wheel/./po_core/cli
+copying build/lib/po_core/cli/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/cli
+copying build/lib/po_core/cli/commands.py -> build/bdist.linux-x86_64/wheel/./po_core/cli
+copying build/lib/po_core/cli/experiment.py -> build/bdist.linux-x86_64/wheel/./po_core/cli
+copying build/lib/po_core/cli/trace_formatter.py -> build/bdist.linux-x86_64/wheel/./po_core/cli
+copying build/lib/po_core/po_trace.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/experiments
+copying build/lib/po_core/experiments/storage.py -> build/bdist.linux-x86_64/wheel/./po_core/experiments
+copying build/lib/po_core/experiments/analyzer.py -> build/bdist.linux-x86_64/wheel/./po_core/experiments
+copying build/lib/po_core/experiments/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/experiments
+copying build/lib/po_core/experiments/runner.py -> build/bdist.linux-x86_64/wheel/./po_core/experiments
+copying build/lib/po_core/experiments/promoter.py -> build/bdist.linux-x86_64/wheel/./po_core/experiments
+copying build/lib/po_core/philosopher_worker.py -> build/bdist.linux-x86_64/wheel/./po_core
+copying build/lib/po_core/database.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/aggregator
+copying build/lib/po_core/aggregator/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/aggregator
+copying build/lib/po_core/aggregator/policy_aware.py -> build/bdist.linux-x86_64/wheel/./po_core/aggregator
+copying build/lib/po_core/aggregator/pareto.py -> build/bdist.linux-x86_64/wheel/./po_core/aggregator
+copying build/lib/po_core/aggregator/conflict_resolver.py -> build/bdist.linux-x86_64/wheel/./po_core/aggregator
+copying build/lib/po_core/aggregator/weighted_vote.py -> build/bdist.linux-x86_64/wheel/./po_core/aggregator
+copying build/lib/po_core/tensor_metrics.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/philosophers
+copying build/lib/po_core/philosophers/aristotle.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/dummy.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/levinas.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/wittgenstein.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/spinoza.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/badiou.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/peirce.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/heidegger.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/base.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/confucius.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/deleuze.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/husserl.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/laozi.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/epicurus.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/nagarjuna.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/hegel.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/jung.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/beauvoir.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/butler.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/sartre.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/jonas.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/nietzsche.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/schopenhauer.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/allowlist.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/weil.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/watsuji.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/zhuangzi.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/kierkegaard.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/tags.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/registry.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/arendt.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/llm_philosopher.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/appiah.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/kant.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/nishida.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/marcus_aurelius.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/derrida.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/charles_taylor.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/wabi_sabi.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/parmenides.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/lacan.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/merleau_ponty.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/dogen.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/template.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/dewey.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/plato.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/llm_personas.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/manifest.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/fanon.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/foucault.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/philosophers/descartes.py -> build/bdist.linux-x86_64/wheel/./po_core/philosophers
+copying build/lib/po_core/mock_philosophers.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/deliberation
+copying build/lib/po_core/deliberation/protocol.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/cards.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/engine.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/clustering.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/emergence.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/influence.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/synthesis.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+copying build/lib/po_core/deliberation/roles.py -> build/bdist.linux-x86_64/wheel/./po_core/deliberation
+creating build/bdist.linux-x86_64/wheel/po_core/ports
+copying build/lib/po_core/ports/memory_read.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/trace.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/memory_write.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/aggregator.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/tensor_engine.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/memory.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/wethics_gate.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+copying build/lib/po_core/ports/solarwill.py -> build/bdist.linux-x86_64/wheel/./po_core/ports
+creating build/bdist.linux-x86_64/wheel/po_core/domain
+copying build/lib/po_core/domain/pareto_config.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/experiment.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/tensor_snapshot.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/safety_mode.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/intent.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/context.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/memory_snapshot.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/safety_verdict.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/proposal.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/trace_event.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+copying build/lib/po_core/domain/keys.py -> build/bdist.linux-x86_64/wheel/./po_core/domain
+creating build/bdist.linux-x86_64/wheel/po_core/adapters
+copying build/lib/po_core/adapters/llm_adapter.py -> build/bdist.linux-x86_64/wheel/./po_core/adapters
+copying build/lib/po_core/adapters/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/adapters
+copying build/lib/po_core/adapters/memory_poself.py -> build/bdist.linux-x86_64/wheel/./po_core/adapters
+copying build/lib/po_core/py.typed -> build/bdist.linux-x86_64/wheel/./po_core
+copying build/lib/po_core/philosopher_process.py -> build/bdist.linux-x86_64/wheel/./po_core
+creating build/bdist.linux-x86_64/wheel/po_core/memory
+copying build/lib/po_core/memory/semantic_store.py -> build/bdist.linux-x86_64/wheel/./po_core/memory
+copying build/lib/po_core/memory/philosophical_memory.py -> build/bdist.linux-x86_64/wheel/./po_core/memory
+copying build/lib/po_core/memory/__init__.py -> build/bdist.linux-x86_64/wheel/./po_core/memory
+copying build/lib/po_core/memory/procedural_store.py -> build/bdist.linux-x86_64/wheel/./po_core/memory
+running install_egg_info
+Copying src/po_core_flyingpig.egg-info to build/bdist.linux-x86_64/wheel/./po_core_flyingpig-1.0.3-py3.11.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/po_core_flyingpig-1.0.3.dist-info/WHEEL
+creating '/home/user/Po_core/dist/.tmp-jng5sxgn/po_core_flyingpig-1.0.3-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'po_core/__init__.py'
+adding 'po_core/database.py'
+adding 'po_core/ensemble.py'
+adding 'po_core/migrate_to_db.py'
+adding 'po_core/mock_philosophers.py'
+adding 'po_core/party_machine.py'
+adding 'po_core/philosopher_process.py'
+adding 'po_core/philosopher_worker.py'
+adding 'po_core/po_self.py'
+adding 'po_core/po_trace.py'
+adding 'po_core/po_trace_db.py'
+adding 'po_core/po_viewer.py'
+adding 'po_core/py.typed'
+adding 'po_core/runner.py'
+adding 'po_core/tensor_metrics.py'
+adding 'po_core/visualizations.py'
+adding 'po_core/adapters/__init__.py'
+adding 'po_core/adapters/llm_adapter.py'
+adding 'po_core/adapters/memory_poself.py'
+adding 'po_core/aggregator/__init__.py'
+adding 'po_core/aggregator/conflict_resolver.py'
+adding 'po_core/aggregator/pareto.py'
+adding 'po_core/aggregator/policy_aware.py'
+adding 'po_core/aggregator/weighted_vote.py'
+adding 'po_core/app/__init__.py'
+adding 'po_core/app/api.py'
+adding 'po_core/app/composer.py'
+adding 'po_core/app/ethics_engine.py'
+adding 'po_core/app/output_adapter.py'
+adding 'po_core/app/plan_builder.py'
+adding 'po_core/app/policy_engine.py'
+adding 'po_core/app/question_layer.py'
+adding 'po_core/app/responsibility_engine.py'
+adding 'po_core/app/session_engine.py'
+adding 'po_core/app/values_clarifier.py'
+adding 'po_core/app/rest/__init__.py'
+adding 'po_core/app/rest/__main__.py'
+adding 'po_core/app/rest/auth.py'
+adding 'po_core/app/rest/config.py'
+adding 'po_core/app/rest/models.py'
+adding 'po_core/app/rest/rate_limit.py'
+adding 'po_core/app/rest/review_store.py'
+adding 'po_core/app/rest/server.py'
+adding 'po_core/app/rest/store.py'
+adding 'po_core/app/rest/routers/__init__.py'
+adding 'po_core/app/rest/routers/health.py'
+adding 'po_core/app/rest/routers/philosophers.py'
+adding 'po_core/app/rest/routers/reason.py'
+adding 'po_core/app/rest/routers/review.py'
+adding 'po_core/app/rest/routers/trace.py'
+adding 'po_core/app/rest/routers/tradeoff_map.py'
+adding 'po_core/autonomy/__init__.py'
+adding 'po_core/autonomy/solarwill/__init__.py'
+adding 'po_core/autonomy/solarwill/engine.py'
+adding 'po_core/autonomy/solarwill/model.py'
+adding 'po_core/autonomy/solarwill/planner.py'
+adding 'po_core/autonomy/solarwill/update.py'
+adding 'po_core/axis/__init__.py'
+adding 'po_core/axis/preferences.py'
+adding 'po_core/axis/scoring.py'
+adding 'po_core/axis/spec.py'
+adding 'po_core/axis/specs/v1.json'
+adding 'po_core/cli/__init__.py'
+adding 'po_core/cli/commands.py'
+adding 'po_core/cli/experiment.py'
+adding 'po_core/cli/interactive.py'
+adding 'po_core/cli/trace_formatter.py'
+adding 'po_core/config/llm_philosopher_map.yaml'
+adding 'po_core/config/runtime/battalion_table.yaml'
+adding 'po_core/config/runtime/pareto_table.yaml'
+adding 'po_core/config/voices/arendt.yaml'
+adding 'po_core/config/voices/aristotle.yaml'
+adding 'po_core/config/voices/badiou.yaml'
+adding 'po_core/config/voices/beauvoir.yaml'
+adding 'po_core/config/voices/butler.yaml'
+adding 'po_core/config/voices/confucius.yaml'
+adding 'po_core/config/voices/deleuze.yaml'
+adding 'po_core/config/voices/derrida.yaml'
+adding 'po_core/config/voices/descartes.yaml'
+adding 'po_core/config/voices/dewey.yaml'
+adding 'po_core/config/voices/dogen.yaml'
+adding 'po_core/config/voices/epicurus.yaml'
+adding 'po_core/config/voices/foucault.yaml'
+adding 'po_core/config/voices/hegel.yaml'
+adding 'po_core/config/voices/heidegger.yaml'
+adding 'po_core/config/voices/husserl.yaml'
+adding 'po_core/config/voices/jonas.yaml'
+adding 'po_core/config/voices/jung.yaml'
+adding 'po_core/config/voices/kant.yaml'
+adding 'po_core/config/voices/kierkegaard.yaml'
+adding 'po_core/config/voices/lacan.yaml'
+adding 'po_core/config/voices/laozi.yaml'
+adding 'po_core/config/voices/levinas.yaml'
+adding 'po_core/config/voices/marcus_aurelius.yaml'
+adding 'po_core/config/voices/merleau_ponty.yaml'
+adding 'po_core/config/voices/nagarjuna.yaml'
+adding 'po_core/config/voices/nietzsche.yaml'
+adding 'po_core/config/voices/nishida.yaml'
+adding 'po_core/config/voices/parmenides.yaml'
+adding 'po_core/config/voices/peirce.yaml'
+adding 'po_core/config/voices/plato.yaml'
+adding 'po_core/config/voices/sartre.yaml'
+adding 'po_core/config/voices/schopenhauer.yaml'
+adding 'po_core/config/voices/spinoza.yaml'
+adding 'po_core/config/voices/wabi_sabi.yaml'
+adding 'po_core/config/voices/watsuji.yaml'
+adding 'po_core/config/voices/weil.yaml'
+adding 'po_core/config/voices/wittgenstein.yaml'
+adding 'po_core/config/voices/zhuangzi.yaml'
+adding 'po_core/deliberation/__init__.py'
+adding 'po_core/deliberation/cards.py'
+adding 'po_core/deliberation/clustering.py'
+adding 'po_core/deliberation/emergence.py'
+adding 'po_core/deliberation/engine.py'
+adding 'po_core/deliberation/influence.py'
+adding 'po_core/deliberation/protocol.py'
+adding 'po_core/deliberation/roles.py'
+adding 'po_core/deliberation/synthesis.py'
+adding 'po_core/domain/__init__.py'
+adding 'po_core/domain/context.py'
+adding 'po_core/domain/experiment.py'
+adding 'po_core/domain/intent.py'
+adding 'po_core/domain/keys.py'
+adding 'po_core/domain/memory_snapshot.py'
+adding 'po_core/domain/pareto_config.py'
+adding 'po_core/domain/proposal.py'
+adding 'po_core/domain/safety_mode.py'
+adding 'po_core/domain/safety_verdict.py'
+adding 'po_core/domain/tensor_snapshot.py'
+adding 'po_core/domain/trace_event.py'
+adding 'po_core/experiments/__init__.py'
+adding 'po_core/experiments/analyzer.py'
+adding 'po_core/experiments/promoter.py'
+adding 'po_core/experiments/runner.py'
+adding 'po_core/experiments/storage.py'
+adding 'po_core/memory/__init__.py'
+adding 'po_core/memory/philosophical_memory.py'
+adding 'po_core/memory/procedural_store.py'
+adding 'po_core/memory/semantic_store.py'
+adding 'po_core/meta/__init__.py'
+adding 'po_core/meta/ethics_monitor.py'
+adding 'po_core/meta/philosopher_ledger.py'
+adding 'po_core/philosophers/__init__.py'
+adding 'po_core/philosophers/allowlist.py'
+adding 'po_core/philosophers/appiah.py'
+adding 'po_core/philosophers/arendt.py'
+adding 'po_core/philosophers/aristotle.py'
+adding 'po_core/philosophers/badiou.py'
+adding 'po_core/philosophers/base.py'
+adding 'po_core/philosophers/beauvoir.py'
+adding 'po_core/philosophers/butler.py'
+adding 'po_core/philosophers/charles_taylor.py'
+adding 'po_core/philosophers/confucius.py'
+adding 'po_core/philosophers/deleuze.py'
+adding 'po_core/philosophers/derrida.py'
+adding 'po_core/philosophers/descartes.py'
+adding 'po_core/philosophers/dewey.py'
+adding 'po_core/philosophers/dogen.py'
+adding 'po_core/philosophers/dummy.py'
+adding 'po_core/philosophers/epicurus.py'
+adding 'po_core/philosophers/fanon.py'
+adding 'po_core/philosophers/foucault.py'
+adding 'po_core/philosophers/hegel.py'
+adding 'po_core/philosophers/heidegger.py'
+adding 'po_core/philosophers/husserl.py'
+adding 'po_core/philosophers/jonas.py'
+adding 'po_core/philosophers/jung.py'
+adding 'po_core/philosophers/kant.py'
+adding 'po_core/philosophers/kierkegaard.py'
+adding 'po_core/philosophers/lacan.py'
+adding 'po_core/philosophers/laozi.py'
+adding 'po_core/philosophers/levinas.py'
+adding 'po_core/philosophers/llm_personas.py'
+adding 'po_core/philosophers/llm_philosopher.py'
+adding 'po_core/philosophers/manifest.py'
+adding 'po_core/philosophers/marcus_aurelius.py'
+adding 'po_core/philosophers/merleau_ponty.py'
+adding 'po_core/philosophers/nagarjuna.py'
+adding 'po_core/philosophers/nietzsche.py'
+adding 'po_core/philosophers/nishida.py'
+adding 'po_core/philosophers/parmenides.py'
+adding 'po_core/philosophers/peirce.py'
+adding 'po_core/philosophers/plato.py'
+adding 'po_core/philosophers/registry.py'
+adding 'po_core/philosophers/sartre.py'
+adding 'po_core/philosophers/schopenhauer.py'
+adding 'po_core/philosophers/spinoza.py'
+adding 'po_core/philosophers/tags.py'
+adding 'po_core/philosophers/template.py'
+adding 'po_core/philosophers/wabi_sabi.py'
+adding 'po_core/philosophers/watsuji.py'
+adding 'po_core/philosophers/weil.py'
+adding 'po_core/philosophers/wittgenstein.py'
+adding 'po_core/philosophers/zhuangzi.py'
+adding 'po_core/ports/__init__.py'
+adding 'po_core/ports/aggregator.py'
+adding 'po_core/ports/memory.py'
+adding 'po_core/ports/memory_read.py'
+adding 'po_core/ports/memory_write.py'
+adding 'po_core/ports/solarwill.py'
+adding 'po_core/ports/tensor_engine.py'
+adding 'po_core/ports/trace.py'
+adding 'po_core/ports/wethics_gate.py'
+adding 'po_core/runtime/__init__.py'
+adding 'po_core/runtime/battalion_table.py'
+adding 'po_core/runtime/execution_budget.py'
+adding 'po_core/runtime/pareto_table.py'
+adding 'po_core/runtime/philosopher_executor.py'
+adding 'po_core/runtime/settings.py'
+adding 'po_core/runtime/shadow_guard.py'
+adding 'po_core/runtime/voice_loader.py'
+adding 'po_core/runtime/wiring.py'
+adding 'po_core/safety/__init__.py'
+adding 'po_core/safety/fallback.py'
+adding 'po_core/safety/philosopher_profiles.py'
+adding 'po_core/safety/policy_scoring.py'
+adding 'po_core/safety/w_ethics.py'
+adding 'po_core/safety/wethics_gate/__init__.py'
+adding 'po_core/safety/wethics_gate/action_gate.py'
+adding 'po_core/safety/wethics_gate/detectors.py'
+adding 'po_core/safety/wethics_gate/explanation.py'
+adding 'po_core/safety/wethics_gate/gate.py'
+adding 'po_core/safety/wethics_gate/intention_gate.py'
+adding 'po_core/safety/wethics_gate/metrics.py'
+adding 'po_core/safety/wethics_gate/policy_gate.py'
+adding 'po_core/safety/wethics_gate/select.py'
+adding 'po_core/safety/wethics_gate/semantic_drift.py'
+adding 'po_core/safety/wethics_gate/types.py'
+adding 'po_core/safety/wethics_gate/policies/__init__.py'
+adding 'po_core/safety/wethics_gate/policies/action_acttype_001.py'
+adding 'po_core/safety/wethics_gate/policies/action_mode_001.py'
+adding 'po_core/safety/wethics_gate/policies/action_outguard_001.py'
+adding 'po_core/safety/wethics_gate/policies/base.py'
+adding 'po_core/safety/wethics_gate/policies/intention_goalkey_001.py'
+adding 'po_core/safety/wethics_gate/policies/intention_mode_001.py'
+adding 'po_core/safety/wethics_gate/policies/presets.py'
+adding 'po_core/schemas/__init__.py'
+adding 'po_core/schemas/input_schema_v1.json'
+adding 'po_core/schemas/output_schema_v1.json'
+adding 'po_core/schemas/session_answers_schema_v1.json'
+adding 'po_core/tensors/__init__.py'
+adding 'po_core/tensors/axis_calibration.py'
+adding 'po_core/tensors/base.py'
+adding 'po_core/tensors/blocked_tensor.py'
+adding 'po_core/tensors/concept_quantifier.py'
+adding 'po_core/tensors/engine.py'
+adding 'po_core/tensors/freedom_pressure.py'
+adding 'po_core/tensors/freedom_pressure_v2.py'
+adding 'po_core/tensors/interaction_tensor.py'
+adding 'po_core/tensors/semantic_profile.py'
+adding 'po_core/tensors/metrics/__init__.py'
+adding 'po_core/tensors/metrics/blocked_tensor.py'
+adding 'po_core/tensors/metrics/freedom_pressure.py'
+adding 'po_core/tensors/metrics/interaction_tensor.py'
+adding 'po_core/tensors/metrics/semantic_delta.py'
+adding 'po_core/text/__init__.py'
+adding 'po_core/text/embedding_cache.py'
+adding 'po_core/text/normalize.py'
+adding 'po_core/trace/__init__.py'
+adding 'po_core/trace/annotator.py'
+adding 'po_core/trace/decision_compare.py'
+adding 'po_core/trace/decision_events.py'
+adding 'po_core/trace/event_log.py'
+adding 'po_core/trace/in_memory.py'
+adding 'po_core/trace/noop.py'
+adding 'po_core/trace/pareto_events.py'
+adding 'po_core/trace/replay.py'
+adding 'po_core/trace/schema.py'
+adding 'po_core/trace/synthesis_report_events.py'
+adding 'po_core/trace/tracer.py'
+adding 'po_core/viewer/__init__.py'
+adding 'po_core/viewer/decision_report_md.py'
+adding 'po_core/viewer/evolution_graph.py'
+adding 'po_core/viewer/philosopher_view.py'
+adding 'po_core/viewer/pipeline_view.py'
+adding 'po_core/viewer/preference_view.py'
+adding 'po_core/viewer/pressure_display.py'
+adding 'po_core/viewer/standalone.html'
+adding 'po_core/viewer/tension_map.py'
+adding 'po_core/viewer/tensor_view.py'
+adding 'po_core/viewer/tradeoff_map.py'
+adding 'po_core/viewer/visualizer.py'
+adding 'po_core/viewer/web/__init__.py'
+adding 'po_core/viewer/web/app.py'
+adding 'po_core/viewer/web/figures.py'
+adding 'po_core_flyingpig-1.0.3.dist-info/licenses/LICENSE'
+adding 'po_core_flyingpig-1.0.3.dist-info/METADATA'
+adding 'po_core_flyingpig-1.0.3.dist-info/WHEEL'
+adding 'po_core_flyingpig-1.0.3.dist-info/entry_points.txt'
+adding 'po_core_flyingpig-1.0.3.dist-info/top_level.txt'
+adding 'po_core_flyingpig-1.0.3.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+Successfully built po_core_flyingpig-1.0.3.tar.gz and po_core_flyingpig-1.0.3-py3-none-any.whl
+exit_code=0
+ended_at=2026-03-22T12:38:26Z
