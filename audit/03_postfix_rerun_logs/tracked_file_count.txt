@@ -1,0 +1,4 @@
+1087
+Previous Phase-F count: 1070 files
+Current count: 1087 files (+17 since Phase-F baseline)
+Explanation: 17 new files added to repo since Phase-F audit (HEAD 39803f8 → 7306e60).

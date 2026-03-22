@@ -62,7 +62,7 @@ src/po_core/
 - REST API config via env vars with `PO_` prefix (see `.env.example`)
 - Version: `1.0.3` (pre-publish release candidate; 1.0.2 is latest published to PyPI)
 
-## Current Status (2026-03-03)
+## Current Status (2026-03-22)
 
 ### 完了済みフェーズ (Phases 1–7 + Spec M0: ALL COMPLETE)
 
@@ -164,7 +164,7 @@ Key files:
 
 **結果:** PR マージ時に自動で Traceability チェックが走る → 充足
 
-### 次のマイルストーン → 5-F (PyPI公開) / 論文ドラフト着手
+### 次のマイルストーン → 5-F (PyPI公開)
 
 ---
 
@@ -186,8 +186,8 @@ Stage 5: 最終系 [2027〜]           ← 哲学的AI推論の参照実装
 | **M2** | 2026-04-05 | ethics_v1 + responsibility_v1 + 不確実性ラベル | ✅ **COMPLETE** (2026-03-03) |
 | **M3** | 2026-04-26 | question_layer v1 (問い生成・問い抑制) | ✅ **COMPLETE** (2026-03-03) |
 | **M4** | 2026-05-10 | ガバナンス完成: CI全自動 + ADR運用 + Traceability auto | ✅ **COMPLETE** (2026-03-08) |
-| **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 0.2.0`) | 🔲 未着手 |
-| **v1.0.0** | 2026-06 | 全AT通過 + 論文ドラフト完成 + CI 100% green | 🔲 未着手 |
+| **5-F** | 2026-06 | PyPI公開 (`po-core-flyingpig 1.0.3`) | 🔲 未着手 |
+| **v1.0.0** | 2026-03-10 | 全AT通過 + 論文ドラフト完成 + CI 100% green | ✅ **COMPLETE** (2026-03-10) |
 
 ### バージョン戦略
 
@@ -207,7 +207,10 @@ See `ROADMAP_FINAL_FORM.md` for full rationale.
 # Pipeline tests (must-pass, fast)
 pytest tests/test_run_turn_e2e.py tests/test_philosopher_bridge.py tests/test_smoke_pipeline.py -v
 
-# Full suite
+# Full suite (CI-equivalent: excludes slow/benchmark)
+pytest tests/ -v -m "not slow"
+
+# Full suite including benchmarks (informational only; benchmarks may fail on slow machines)
 pytest tests/ -v --tb=short
 
 # Acceptance tests (M1 target: all 10 green)

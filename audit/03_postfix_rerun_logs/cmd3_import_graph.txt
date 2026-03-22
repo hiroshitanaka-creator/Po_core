@@ -1,0 +1,141 @@
+[import-graph] modules: 237
+[import-graph] rule violations: 0
+[import-graph] cycles detected: 0
+
+Modules per category:
+  __init__: 1
+  adapters: 3
+  aggregator: 5
+  app: 27
+  autonomy: 6
+  axis: 4
+  cli: 5
+  database: 1
+  deliberation: 9
+  domain: 12
+  ensemble: 1
+  experiments: 5
+  memory: 4
+  meta: 3
+  migrate_to_db: 1
+  mock_philosophers: 1
+  party_machine: 1
+  philosopher_process: 1
+  philosopher_worker: 1
+  philosophers: 52
+  po_self: 1
+  po_trace: 1
+  po_trace_db: 1
+  po_viewer: 1
+  ports: 9
+  runner: 1
+  runtime: 9
+  safety: 24
+  schemas: 1
+  tensor_metrics: 1
+  tensors: 15
+  text: 3
+  trace: 12
+  viewer: 14
+  visualizations: 1
+
+Cross-category dependencies:
+  __init__ -> app: 1
+  __init__ -> ensemble: 1
+  __init__ -> po_self: 1
+  __init__ -> po_trace: 1
+  adapters -> domain: 2
+  adapters -> ports: 2
+  aggregator -> domain: 17
+  aggregator -> ports: 3
+  app -> axis: 1
+  app -> domain: 3
+  app -> ensemble: 1
+  app -> philosophers: 4
+  app -> ports: 1
+  app -> root: 2
+  app -> runtime: 3
+  app -> trace: 1
+  app -> viewer: 2
+  autonomy -> domain: 5
+  axis -> scoring: 1
+  axis -> spec: 1
+  axis -> tensors: 1
+  axis -> text: 1
+  cli -> app: 1
+  cli -> experiments: 3
+  cli -> po_self: 1
+  cli -> root: 1
+  cli -> viewer: 1
+  deliberation -> domain: 12
+  deliberation -> tensors: 2
+  ensemble -> axis: 2
+  ensemble -> deliberation: 2
+  ensemble -> domain: 6
+  ensemble -> party_machine: 1
+  ensemble -> philosophers: 3
+  ensemble -> ports: 7
+  ensemble -> root: 1
+  ensemble -> runtime: 1
+  ensemble -> safety: 3
+  ensemble -> trace: 4
+  experiments -> domain: 5
+  memory -> tensors: 1
+  meta -> domain: 5
+  meta -> ports: 1
+  meta -> runtime: 1
+  migrate_to_db -> po_trace: 1
+  migrate_to_db -> po_trace_db: 1
+  mock_philosophers -> po_trace: 1
+  party_machine -> deliberation: 1
+  party_machine -> domain: 3
+  party_machine -> philosopher_process: 1
+  party_machine -> philosophers: 1
+  party_machine -> runtime: 2
+  philosopher_process -> domain: 2
+  philosopher_process -> runtime: 1
+  philosopher_worker -> philosopher_process: 1
+  philosophers -> adapters: 1
+  philosophers -> deliberation: 2
+  philosophers -> domain: 12
+  philosophers -> runtime: 1
+  po_self -> domain: 1
+  po_self -> ensemble: 1
+  po_self -> philosophers: 2
+  po_self -> runtime: 2
+  po_self -> trace: 2
+  po_trace -> po_self: 1
+  po_trace_db -> database: 1
+  po_trace_db -> po_trace: 1
+  po_viewer -> domain: 2
+  po_viewer -> ensemble: 1
+  po_viewer -> runtime: 2
+  po_viewer -> safety: 1
+  po_viewer -> trace: 1
+  po_viewer -> viewer: 5
+  ports -> domain: 21
+  runner -> app: 2
+  runner -> schemas: 1
+  runtime -> adapters: 2
+  runtime -> aggregator: 1
+  runtime -> autonomy: 1
+  runtime -> deliberation: 3
+  runtime -> domain: 10
+  runtime -> philosopher_process: 1
+  runtime -> philosophers: 3
+  runtime -> ports: 7
+  runtime -> safety: 4
+  runtime -> tensors: 6
+  runtime -> trace: 2
+  safety -> domain: 58
+  tensors -> domain: 12
+  tensors -> text: 5
+  trace -> domain: 17
+  trace -> po_self: 1
+  trace -> po_trace: 1
+  trace -> ports: 2
+  viewer -> axis: 1
+  viewer -> domain: 7
+  viewer -> safety: 1
+  visualizations -> po_trace: 1
+EXIT:0
