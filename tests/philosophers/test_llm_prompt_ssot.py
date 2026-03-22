@@ -95,8 +95,8 @@ def test_llm_philosopher_extracts_balanced_embedded_json() -> None:
 
     raw = (
         "Prelude\n```json\n"
-        '{"reasoning": "Duty first.", "perspective": "Deontology", ' 
-        '"tension": {"level": "medium", "description": "nested", "elements": ["duty"]}, ' 
+        '{"reasoning": "Duty first.", "perspective": "Deontology", '
+        '"tension": {"level": "medium", "description": "nested", "elements": ["duty"]}, '
         '"confidence": 0.6, "action_type": "answer", "citations": ["Groundwork"]}'
         "\n```\nAfterword"
     )
@@ -125,7 +125,9 @@ def test_llm_philosopher_maps_defer_to_ask_clarification() -> None:
     assert parsed["action_type"] == "ask_clarification"
 
 
-def test_llm_philosopher_invalid_action_type_fails_closed_to_ask_clarification() -> None:
+def test_llm_philosopher_invalid_action_type_fails_closed_to_ask_clarification() -> (
+    None
+):
     philosopher = LLMPhilosopher("kant", _StubAdapter())
 
     parsed = philosopher._normalize_parsed(
