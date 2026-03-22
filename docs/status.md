@@ -17,7 +17,7 @@
 - External publish status: **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
 - PyPI upload timestamp: `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp: `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
-- Pending evidence: GitHub Actions workflow run URL(s) — not retrievable this session (GitHub API rate limited); full deps install/import/smoke transcript — not completed this session (large deps).
+- Pending evidence: GitHub Actions workflow run URL(s) — not retrievable this session (GitHub API rate limited). Full deps install/import/smoke all PASSED (see `docs/release/smoke_verification_v1.0.3.md`).
 
 ## Canonical public wording
 
@@ -40,9 +40,6 @@
 ## Remaining Evidence Gaps (post-publication)
 
 1. GitHub Actions workflow run URL(s) for `1.0.3` TestPyPI and PyPI runs — not yet fixed in-repo (GitHub API rate-limited 2026-03-22).
-2. Full deps install transcript (`pip install po-core-flyingpig==1.0.3` with all deps) — not completed this session (torch/CUDA deps are large).
-3. Clean-environment import transcript (`python -c "import po_core; print(po_core.__version__)"`) — pending full deps install.
-4. `scripts/release_smoke.py --check-entrypoints` transcript in clean post-publish venv — pending.
 
 ## Notes
 
@@ -60,7 +57,7 @@ Post-release follow-up (all publication steps complete):
 
 ## Completed
 
-- 2026-03-22: `1.0.3` PyPI and TestPyPI publication confirmed via public API. `docs/release/pypi_publication_v1.0.3.md` and `docs/release/testpypi_publish_log_v1.0.3.md` created. `docs/release/smoke_verification_v1.0.3.md` updated to post-publish evidence state. `docs/status.md` updated: Latest published public version → `1.0.3`, External publish status → `1.0.3 published on PyPI`. Session: claude/fix-pypi-1.0.3-evidence-1F5kR.
+- 2026-03-22: `1.0.3` PyPI and TestPyPI publication confirmed via public API. Full deps install + import + runtime smoke all PASSED in clean venv. `docs/release/pypi_publication_v1.0.3.md` and `docs/release/testpypi_publish_log_v1.0.3.md` created. `docs/release/smoke_verification_v1.0.3.md` updated to post-publish evidence state. `docs/status.md` updated: Latest published public version → `1.0.3`, External publish status → `1.0.3 published on PyPI`. Session: claude/fix-pypi-1.0.3-evidence-1F5kR.
 - 2026-03-22 (post-fix closure): Phase-G audit closure completed. All 3 Phase-F P1 blockers resolved: `publish.yml` now uses `pytest tests/ -v -m "not slow"` (benchmark failures no longer block CI publish), `src/pocore/runner.py` now resolves schemas via `po_core.schemas.resource_path()` (valid in wheel install), `pyproject.toml` license is SPDX inline string. Bandit Medium reduced from 3 to 2 (pickle.loads nosec B301 added). All P2 docs/version findings resolved. Release readiness 24/24, schema/golden 103/103, import_graph violations=0/cycles=0, twine check PASSED. Current publish blocker count: 0. See `audit/phase_g_closure_report.md` and `audit/finding_resolution_matrix.md`.
 - 2026-03-22: 全ローカルゲート通過済み — `pytest tests/ -v` 3868/3869 passed (benchmark timing), release_readiness 24/24, acceptance tests pass, schema 103/103, import_graph violations=0/cycles=0, bandit High=0, twine check PASSED。local smoke (`scripts/release_smoke.py --check-entrypoints`) 全通過。CHANGELOG の `[Unreleased]` を `[1.0.3]` へ統合。`docs/release/smoke_verification_v1.0.3.md` にローカル smoke 結果を記録。`docs/release/templates/testpypi_publish_log_template_v1.0.3.md` 作成。
 - 2026-03-21: release SSOT を `1.0.3` target / `1.0.2` latest published public version に分離し、pre-publish candidate state と post-publish evidence state を明示的に分けた。

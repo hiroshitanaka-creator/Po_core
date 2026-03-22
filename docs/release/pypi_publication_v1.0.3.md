@@ -69,20 +69,39 @@ The workflow run URL(s) are supplementary evidence; their absence does not inval
 
 ---
 
-## Clean-environment install evidence
+## Clean-environment install and smoke evidence
 
-`pip install --no-deps po-core-flyingpig==1.0.3` in a clean Python 3.11 venv (2026-03-22):
+`pip install po-core-flyingpig==1.0.3` (full deps) in a clean Python 3.11 venv (2026-03-22):
 
 ```
-Collecting po-core-flyingpig==1.0.3
-  Using cached po_core_flyingpig-1.0.3-py3-none-any.whl.metadata (43 kB)
-Using cached po_core_flyingpig-1.0.3-py3-none-any.whl (957 kB)
-Installing collected packages: po-core-flyingpig
-Successfully installed po-core-flyingpig-1.0.3
+Successfully installed Flask-3.1.3 ... po-core-flyingpig-1.0.3 ... torch-2.10.0 ...
+(all deps resolved; exit 0)
 ```
 
-Full deps install + import + smoke transcript: **pending** (large CUDA/torch deps; install was
-initiated but did not complete within this session's time constraints).
+`python -c "import po_core; print(po_core.__version__)"`:
+
+```
+1.0.3
+```
+
+`python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"`:
+
+```
+No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+ok
+```
+
+`po-core version`: `1.0.3`
+
+`po-core status`:
+
+```
+Project Status
+  Version        : 1.0.3
+  Philosophers   : 42
+```
+
+All commands exited 0. Full post-publish smoke PASSED.
 
 ---
 

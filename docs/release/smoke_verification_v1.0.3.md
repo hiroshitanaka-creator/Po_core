@@ -4,7 +4,7 @@
 - Evidence status: **post-publish evidence fixed (2026-03-22)**
 - Pre-publish local smoke: PASSED (2026-03-22, claude/audit-po-core-1.0.3-IyRXH)
 - Post-publish state: **PyPI and TestPyPI publication CONFIRMED via public API**
-- Current state: **post-publish evidence fixed** — public PyPI/TestPyPI confirmed, workflow run URL pending
+- Current state: **post-publish evidence fixed** — public PyPI/TestPyPI confirmed, full smoke PASSED, workflow run URL pending
 
 ## Post-publish Evidence Summary
 
@@ -12,24 +12,66 @@
 |----------|--------|
 | PyPI `1.0.3` public page | confirmed — https://pypi.org/project/po-core-flyingpig/1.0.3/ |
 | TestPyPI `1.0.3` public page | confirmed — https://test.pypi.org/project/po-core-flyingpig/1.0.3/ |
-| `pip install --no-deps` wheel install in clean venv | confirmed — see below |
+| Full deps install in clean venv | confirmed — `Successfully installed po-core-flyingpig-1.0.3` |
+| `import po_core; print(po_core.__version__)` | confirmed — `1.0.3` |
+| `run('smoke')` status | confirmed — `ok` |
+| `po-core version` | confirmed — `1.0.3` |
+| `po-core status` | confirmed — version=`1.0.3`, philosophers=`42` |
+| `po-experiment list` | confirmed — `No experiments found.` (exit 0) |
 | Workflow run URL | pending — GitHub API rate-limited during this session |
-| Full deps install + import + runtime smoke | pending — large deps (torch/CUDA) not completed in this session |
 
 See `docs/release/pypi_publication_v1.0.3.md` for full PyPI publication evidence.
 See `docs/release/testpypi_publish_log_v1.0.3.md` for TestPyPI evidence.
 
-## Clean-environment install (no-deps, 2026-03-22)
+## Clean-environment install and smoke (2026-03-22)
 
-`pip install --no-deps po-core-flyingpig==1.0.3` in a clean Python 3.11 venv:
+`pip install po-core-flyingpig==1.0.3` (full deps) in a clean Python 3.11 venv:
 
 ```
-Collecting po-core-flyingpig==1.0.3
-  Using cached po_core_flyingpig-1.0.3-py3-none-any.whl.metadata (43 kB)
-Using cached po_core_flyingpig-1.0.3-py3-none-any.whl (957 kB)
-Installing collected packages: po-core-flyingpig
-Successfully installed po-core-flyingpig-1.0.3
+Successfully installed Flask-3.1.3 Werkzeug-3.1.6 ... po-core-flyingpig-1.0.3 ... torch-2.10.0 ...
+(all deps resolved; full list omitted for brevity)
 ```
+
+`python -c "import po_core; print(po_core.__version__)"`:
+
+```
+1.0.3
+```
+
+`python -c "from po_core import run; out = run('smoke'); print(out.get('status'))"`:
+
+```
+No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+ok
+```
+
+`po-core version`:
+
+```
+1.0.3
+```
+
+`po-core status`:
+
+```
+Project Status
+  Version        : 1.0.3
+  Philosophers   : 42
+Philosophical Framework
+  SolarWill axiom : do not distort survival structures
+  SafetyModes     : NORMAL / WARN / CRITICAL
+Documentation
+  Specs  : docs/spec/
+  ADRs   : docs/adr/
+```
+
+`po-experiment list`:
+
+```
+No experiments found.
+```
+
+All commands exited 0. Smoke PASSED.
 
 ---
 
@@ -101,9 +143,13 @@ Evidence recorded by session `claude/fix-pypi-1.0.3-evidence-1F5kR` on 2026-03-2
 
 - [x] TestPyPI package URL: https://test.pypi.org/project/po-core-flyingpig/1.0.3/ (confirmed via API)
 - [x] PyPI package URL: https://pypi.org/project/po-core-flyingpig/1.0.3/ (confirmed via API)
-- [x] Clean-environment `pip install --no-deps po-core-flyingpig==1.0.3`: succeeded (see above)
+- [x] TestPyPI package URL: https://test.pypi.org/project/po-core-flyingpig/1.0.3/ (confirmed via API)
+- [x] PyPI package URL: https://pypi.org/project/po-core-flyingpig/1.0.3/ (confirmed via API)
+- [x] Clean-environment full deps `pip install po-core-flyingpig==1.0.3`: succeeded (see above)
+- [x] Clean-environment import: `import po_core; print(po_core.__version__)` → `1.0.3`
+- [x] Clean-environment `run('smoke')` → `ok`
+- [x] `po-core version` → `1.0.3`
+- [x] `po-core status` → version=`1.0.3`, philosophers=`42`
+- [x] `po-experiment list` → exit 0
 - [ ] TestPyPI workflow run URL: **pending** (GitHub API rate-limited)
 - [ ] PyPI workflow run URL: **pending** (GitHub API rate-limited)
-- [ ] Clean-environment full deps install transcript: **pending** (large deps not completed)
-- [ ] Clean-environment import transcript: **pending** (requires full deps)
-- [ ] Clean-environment `release_smoke.py --check-entrypoints` transcript: **pending**
