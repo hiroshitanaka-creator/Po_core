@@ -172,9 +172,7 @@ class PhilosopherRegistry:
                 for s in candidates
                 if PHILOSOPHER_ROLE_MAP.get(s.philosopher_id) in role_values
             ]
-        candidates = [
-            s for s in candidates if s.philosopher_id != DUMMY_PHILOSOPHER_ID
-        ]
+        candidates = [s for s in candidates if s.philosopher_id != DUMMY_PHILOSOPHER_ID]
         # 安定順：安全→重み→id（決定論）
         candidates.sort(key=lambda s: (s.risk_level, -s.weight, s.philosopher_id))
 

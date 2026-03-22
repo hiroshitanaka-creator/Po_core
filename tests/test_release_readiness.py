@@ -75,7 +75,9 @@ def _package_version() -> str:
     return match.group(1)
 
 
-def _release_evidence_relpath(prefix: str, version: str, *, must_exist: bool = True) -> str:
+def _release_evidence_relpath(
+    prefix: str, version: str, *, must_exist: bool = True
+) -> str:
     relpath = f"docs/release/{prefix}{version}.md"
     if must_exist:
         assert (ROOT / relpath).exists(), f"missing release evidence file: {relpath}"
@@ -112,7 +114,10 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     assert published_version == "1.0.2"
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
-    assert f"latest published public version can remain `{published_version}` until `{version}` is actually published" in status_doc
+    assert (
+        f"latest published public version can remain `{published_version}` until `{version}` is actually published"
+        in status_doc
+    )
     assert f"do not claim `{version}` is already published" in status_doc
 
 
@@ -156,9 +161,7 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
         "release_candidate_handoff_v", version
     )
     candidate_handoff = _read(candidate_handoff_relpath)
-    candidate_smoke_relpath = _release_evidence_relpath(
-        "smoke_verification_v", version
-    )
+    candidate_smoke_relpath = _release_evidence_relpath("smoke_verification_v", version)
     candidate_smoke = _read(candidate_smoke_relpath)
 
     for phrase in README_STALE_PHRASES:
@@ -197,7 +200,10 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert f"published on PyPI for `{published_version}`" in status_doc
     assert f"published on PyPI for `{version}`" not in status_doc
     assert "Canonical evidence boundary" in status_doc
-    assert f"https://pypi.org/project/po-core-flyingpig/{published_version}/" in pypi_evidence
+    assert (
+        f"https://pypi.org/project/po-core-flyingpig/{published_version}/"
+        in pypi_evidence
+    )
     assert "Publication result evidenced here: **PyPI published**" in pypi_evidence
     assert f"Version: `{published_version}`" in pypi_evidence
     assert "TestPyPI publication state" in pypi_evidence
@@ -207,7 +213,10 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "pre-publish candidate state" in candidate_smoke
     assert "Not yet fixed as truth in this file" in candidate_smoke
     assert f"Repository target version is `{version}`" in candidate_handoff
-    assert f"Latest public PyPI evidence still points to `{published_version}`" in candidate_handoff
+    assert (
+        f"Latest public PyPI evidence still points to `{published_version}`"
+        in candidate_handoff
+    )
     assert "## Next" in status_doc
     assert "## Completed" in status_doc
     next_section = status_doc.split("## Next", 1)[1].split("## Completed", 1)[0]

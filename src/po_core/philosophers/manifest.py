@@ -487,9 +487,7 @@ def get_enabled_specs() -> List[PhilosopherSpec]:
 
 def get_public_philosopher_specs() -> List[PhilosopherSpec]:
     """Return only the canonical 42 philosopher specs for public surfaces."""
-    return [
-        s for s in SPECS if s.enabled and s.philosopher_id != DUMMY_PHILOSOPHER_ID
-    ]
+    return [s for s in SPECS if s.enabled and s.philosopher_id != DUMMY_PHILOSOPHER_ID]
 
 
 def get_role_for_philosopher(philosopher_id: str) -> Role | None:
@@ -506,4 +504,3 @@ __all__ = [
     "get_public_philosopher_specs",
     "get_role_for_philosopher",
 ]
-
