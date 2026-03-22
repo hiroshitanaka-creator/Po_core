@@ -108,15 +108,12 @@ class APISettings(BaseSettings):
     review_store_backend: str = "sqlite"  # sqlite | memory
     review_db_path: str = ""
 
-
     @field_validator("philosopher_execution_mode", mode="before")
     @classmethod
     def _validate_philosopher_execution_mode(cls, value: object) -> str:
         normalized = str(value).strip().lower()
         if normalized not in {"thread", "process"}:
-            raise ValueError(
-                "philosopher_execution_mode must be 'thread' or 'process'"
-            )
+            raise ValueError("philosopher_execution_mode must be 'thread' or 'process'")
         return normalized
 
     class Config:
