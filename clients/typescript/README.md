@@ -2,7 +2,7 @@
 
 Minimal TypeScript client for the official `POST /v1/reason` contract generated from the repository OpenAPI schema.
 
-- Python package release SSOT remains `src/po_core/__init__.py` (`1.0.2` in this repo snapshot).
+- Python package release SSOT remains `src/po_core/__init__.py` (`1.0.3` in this repo snapshot).
 - This SDK README describes the same official REST contract used in `QUICKSTART.md` / `QUICKSTART_EN.md`; it does **not** claim separate npm publication evidence.
 - If the server keeps the recommended default `PO_SKIP_AUTH=false`, pass a non-empty API key so the client sends `x-api-key`.
 

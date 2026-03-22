@@ -195,7 +195,7 @@ python examples/philosopher_comparison.py
 pip install -e .
 ```
 
-> `requirements.txt` / `requirements-dev.txt` は clone 済み checkout 用の repo-local convenience wrappers です。外部利用者向けの依存 truth source は `pyproject.toml` なので、配布物から使う場合は `pip install "po-core-flyingpig==1.0.2"` か extras を使ってください。
+> `requirements.txt` / `requirements-dev.txt` は clone 済み checkout 用の repo-local convenience wrappers です。外部利用者向けの依存 truth source は `pyproject.toml` なので、配布物から使う場合は `pip install "po-core-flyingpig==1.0.3"` か extras を使ってください。
 
 ### 最小限のコード例
 

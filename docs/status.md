@@ -31,7 +31,7 @@
 - Release workflow (`.github/workflows/publish.yml`) は same-SHA TestPyPI prerequisite を含む strict gate を維持している。
 - `docs/release/pypi_publication_v1.0.2.md` により `1.0.2` の public PyPI publication fact は repo 内へ固定されている。
 - `docs/release/release_candidate_handoff_v1.0.3.md` と `docs/release/smoke_verification_v1.0.3.md` は `1.0.3` の pre-publish candidate state を示すが、publish success の証跡ではない。
-- Public REST defaults remain fail-closed by design: localhost-only CORS, `process` execution mode by default, and explicit refusal of `thread` mode unless a development override is set.
+- Public REST defaults remain fail-closed by design: localhost-only CORS (browser restriction only; direct HTTP clients bypass CORS), server binds `0.0.0.0` by default (restrict with firewall or set `PO_HOST=127.0.0.1`), `process` execution mode by default, and explicit refusal of `thread` mode unless a development override is set.
 - Package metadata remains `Development Status :: 4 - Beta`; repository evidence does not justify a stronger stability claim.
 
 ## Remaining Evidence Gaps Before Stronger 1.0.3 Release Claims
