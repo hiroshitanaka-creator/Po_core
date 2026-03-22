@@ -44,7 +44,7 @@ def get_rate_limit_key(request: Request) -> str:
 
     client = request.client
     if client is not None and client.host:
-        return client.host
+        return str(client.host)
     return "unknown"
 
 
