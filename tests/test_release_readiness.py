@@ -345,7 +345,7 @@ def test_ci_release_blockers_are_fail_closed() -> None:
 
     assert "pip-audit" in ci
     assert "|| true" not in ci
-    assert "pytest tests/ -v --cov=po_core" in ci
+    assert 'pytest tests/ -v -m "not slow" --cov=po_core' in ci
     assert "artifact-type: ['wheel', 'sdist']" in ci
     assert "python-version: ['3.10', '3.11', '3.12']" in ci
     assert "python scripts/release_smoke.py --check-entrypoints" in ci
