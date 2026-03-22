@@ -9,37 +9,40 @@
 ## Current Release State
 
 - Repository target version: `1.0.3`
-- Latest published public version: `1.0.2`
+- Latest published public version: `1.0.3`
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
-- Public release evidence in-repo: `docs/release/pypi_publication_v1.0.2.md` fixes PyPI publication evidence for `1.0.2`
-- Current release-candidate handoff: `docs/release/release_candidate_handoff_v1.0.3.md`
-- Current release-candidate placeholder: `docs/release/smoke_verification_v1.0.3.md` (local smoke PASSED 2026-03-22)
-- External publish status: **published on PyPI for `1.0.2`**
-- Canonical evidence boundary: the latest published public version can remain `1.0.2` until `1.0.3` is actually published. For `1.0.3` pre-publish candidate state, public docs may say only that the repository is prepared for release and that publication/smoke evidence is still pending.
-- Conservative wording rule: do not claim `1.0.3` is already published, do not claim TestPyPI publication, workflow-run success, or post-publish smoke success for `1.0.3` until exact operator evidence is fixed in-repo.
+- Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
+- TestPyPI evidence in-repo: `docs/release/testpypi_publish_log_v1.0.3.md`
+- Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22)
+- External publish status: **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
+- PyPI upload timestamp: `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
+- TestPyPI upload timestamp: `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
+- Pending evidence: GitHub Actions workflow run URL(s) — not retrievable this session (GitHub API rate limited); full deps install/import/smoke transcript — not completed this session (large deps).
 
 ## Canonical public wording
 
 - **Mission truth:** Po_core is a **philosophy-driven AI decision-support system**. It provides structured options, reasons, counterarguments, uncertainty, and additional questions. It is controlled by SolarWill and W_Ethics Gate. It prioritizes ethics, accountability, auditability, and structured reasoning. It is **not** a truth oracle, **not** an emotional-care chatbot, and **not** a final-decision replacement for medical/legal/financial judgment.
 - **Roster count:** “Po_core uses **42 philosophers**.” The internal `dummy` slot is a compliance/sentinel helper and must not be counted as one of the 42 in public docs, metadata, tests, or API totals.
-- **Evidence boundary:** “For `1.0.2`, the repository evidences **PyPI publication**. For `1.0.3`, the repository currently evidences only a pre-publish candidate state.”
+- **Evidence boundary:** “For `1.0.3`, the repository evidences **PyPI and TestPyPI publication** (confirmed via public API 2026-03-22). Workflow run URL(s) and full install/smoke transcript remain pending.”
 
 ## Release Readiness Facts
 
 - `pyproject.toml` は version を `po_core.__version__` から動的読込する。
 - README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.0.3` を repository target version として扱う。
 - Release workflow (`.github/workflows/publish.yml`) は same-SHA TestPyPI prerequisite を含む strict gate を維持している。
-- `docs/release/pypi_publication_v1.0.2.md` により `1.0.2` の public PyPI publication fact は repo 内へ固定されている。
-- `docs/release/release_candidate_handoff_v1.0.3.md` と `docs/release/smoke_verification_v1.0.3.md` は `1.0.3` の pre-publish candidate state を示すが、publish success の証跡ではない。
+- `docs/release/pypi_publication_v1.0.3.md` により `1.0.3` の public PyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
+- `docs/release/testpypi_publish_log_v1.0.3.md` により `1.0.3` の TestPyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
+- `docs/release/smoke_verification_v1.0.3.md` は post-publish evidence state へ更新済み（2026-03-22）。
+- `docs/release/release_candidate_handoff_v1.0.3.md` は historical pre-publish context として保持。
 - Public REST defaults remain fail-closed by design: localhost-only CORS (browser restriction only; direct HTTP clients bypass CORS), server binds `0.0.0.0` by default (restrict with firewall or set `PO_HOST=127.0.0.1`), `process` execution mode by default, and explicit refusal of `thread` mode unless a development override is set.
 - Package metadata remains `Development Status :: 4 - Beta`; repository evidence does not justify a stronger stability claim.
 
-## Remaining Evidence Gaps Before Stronger 1.0.3 Release Claims
+## Remaining Evidence Gaps (post-publication)
 
-1. TestPyPI publication の有無と URL が `1.0.3` では未固定。
-2. PyPI publication page evidence が `1.0.3` では未固定。
-3. 公開後 smoke（index install / import / minimum runtime path）の operator transcript が `1.0.3` では未固定。
-4. trusted publishing / release run の具体的 workflow URL が `1.0.3` では未記録。
+1. GitHub Actions workflow run URL(s) for `1.0.3` TestPyPI and PyPI runs — not yet fixed in-repo (GitHub API rate-limited 2026-03-22).
+2. Full deps install transcript (`pip install po-core-flyingpig==1.0.3` with all deps) — not completed this session (torch/CUDA deps are large).
+3. Clean-environment import transcript (`python -c "import po_core; print(po_core.__version__)"`) — pending full deps install.
+4. `scripts/release_smoke.py --check-entrypoints` transcript in clean post-publish venv — pending.
 
 ## Notes
 
@@ -49,14 +52,15 @@
 
 ## Next
 
-- **Operator action:** Create GitHub Release for `v1.0.3` tag (or `workflow_dispatch` with `target=testpypi`) to trigger publish workflow on main branch.
-- Record the real TestPyPI publication state and exact URL(s) for `1.0.3` once a maintainer-run publish actually exists — use `docs/release/templates/testpypi_publish_log_template_v1.0.3.md` as the template.
-- Record the real PyPI publication evidence for `1.0.3` once the public version page exists — create `docs/release/pypi_publication_v1.0.3.md`.
-- Record the actual GitHub Actions workflow run URL(s) used for the successful publish path.
-- Record the clean install / import / smoke transcript for `po-core-flyingpig==1.0.3` after publication in `docs/release/smoke_verification_v1.0.3.md` (post-publish section).
+Post-release follow-up (all publication steps complete):
+
+- Record GitHub Actions workflow run URL(s) for the successful `publish-testpypi` and `publish-pypi` runs once GitHub API rate limit resets or a token is available — update `docs/release/testpypi_publish_log_v1.0.3.md` and `docs/release/pypi_publication_v1.0.3.md`.
+- Complete full deps install (`pip install po-core-flyingpig==1.0.3`) and record clean import + runtime smoke transcript — update `docs/release/smoke_verification_v1.0.3.md` post-publish section.
+- Stage 2 planning: v1.1.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
 
 ## Completed
 
+- 2026-03-22: `1.0.3` PyPI and TestPyPI publication confirmed via public API. `docs/release/pypi_publication_v1.0.3.md` and `docs/release/testpypi_publish_log_v1.0.3.md` created. `docs/release/smoke_verification_v1.0.3.md` updated to post-publish evidence state. `docs/status.md` updated: Latest published public version → `1.0.3`, External publish status → `1.0.3 published on PyPI`. Session: claude/fix-pypi-1.0.3-evidence-1F5kR.
 - 2026-03-22 (post-fix closure): Phase-G audit closure completed. All 3 Phase-F P1 blockers resolved: `publish.yml` now uses `pytest tests/ -v -m "not slow"` (benchmark failures no longer block CI publish), `src/pocore/runner.py` now resolves schemas via `po_core.schemas.resource_path()` (valid in wheel install), `pyproject.toml` license is SPDX inline string. Bandit Medium reduced from 3 to 2 (pickle.loads nosec B301 added). All P2 docs/version findings resolved. Release readiness 24/24, schema/golden 103/103, import_graph violations=0/cycles=0, twine check PASSED. Current publish blocker count: 0. See `audit/phase_g_closure_report.md` and `audit/finding_resolution_matrix.md`.
 - 2026-03-22: 全ローカルゲート通過済み — `pytest tests/ -v` 3868/3869 passed (benchmark timing), release_readiness 24/24, acceptance tests pass, schema 103/103, import_graph violations=0/cycles=0, bandit High=0, twine check PASSED。local smoke (`scripts/release_smoke.py --check-entrypoints`) 全通過。CHANGELOG の `[Unreleased]` を `[1.0.3]` へ統合。`docs/release/smoke_verification_v1.0.3.md` にローカル smoke 結果を記録。`docs/release/templates/testpypi_publish_log_template_v1.0.3.md` 作成。
 - 2026-03-21: release SSOT を `1.0.3` target / `1.0.2` latest published public version に分離し、pre-publish candidate state と post-publish evidence state を明示的に分けた。
