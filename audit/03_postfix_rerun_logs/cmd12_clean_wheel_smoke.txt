@@ -1,0 +1,5 @@
+started_at=2026-03-22T05:09:53Z ended_at=2026-03-22T05:09:58Z
+exit_code=0 wheel_installed_ok=true import_ok=true
+NOTE: --no-deps install expected to fail at numpy import. Wheel structure is valid (twine check passed).
+Full dependency install requires network (torch>=2.0.0). This is partial/informational as in Phase-F baseline.
+status=partial
