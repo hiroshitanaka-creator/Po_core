@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pocore.local/spec/session_answers_schema_v1.json",
+  "title": "Decision Session Answers v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "case_ref", "answers", "patch"],
+  "properties": {
+    "version": {"type": "string", "const": "1.0"},
+    "case_ref": {"type": "string", "minLength": 1},
+    "answers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "answer_text", "applied_patch_paths"],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 1},
+          "answer_text": {"type": "string", "minLength": 1},
+          "applied_patch_paths": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^/"},
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "patch": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["op", "path", "value"],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": ["add", "remove", "replace", "move", "copy", "test"]
+          },
+          "path": {"type": "string", "pattern": "^/"},
+          "value": {}
+        }
+      }
+    }
+  }
+}
