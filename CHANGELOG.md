@@ -1,9 +1,12 @@
 # Changelog
 
-## [1.0.3] - 2026-03-21
+## [1.0.3] - 2026-03-22
 
 ### Added
 - docs(release): add `docs/release/release_candidate_handoff_v1.0.3.md` and `docs/release/smoke_verification_v1.0.3.md` so `1.0.3` has explicit pre-publish candidate-state handoff docs without fabricating post-publish evidence.
+- feat(rest): add persistent SQLite review queue backend in `src/po_core/app/rest/review_store.py` with restart-safe storage for ESCALATE human-review items (`review_queue` table). Default backend is now sqlite, with optional in-memory backend for local/dev testing.
+- feat(config): add review queue settings `PO_REVIEW_STORE_BACKEND` and `PO_REVIEW_DB_PATH` (`APISettings.review_store_backend`, `APISettings.review_db_path`). When `PO_REVIEW_DB_PATH` is blank, review storage reuses `PO_TRACE_DB_PATH`.
+- docs(ops): add `docs/operations/observability_review_playbook.md` documenting deterministic ESCALATE→review→trace run operations with env examples, startup, verification commands, and expected responses.
 
 ### Changed
 - release: bump `src/po_core/__init__.py` to `1.0.3` while keeping `pyproject.toml` on dynamic version loading and package metadata at Beta.
@@ -14,6 +17,14 @@
 - metadata: downgrade package classifier from the previous stable classifier to `Development Status :: 4 - Beta` so package metadata does not overclaim beyond repository evidence.
 - prompts: remove `defer` from draft prompt docs/templates and keep the runtime parser aligned to the single `answer|refuse|ask_clarification` contract.
 - docs(prd): neutralize outdated release-state/package-state claims so `docs/spec/prd.md` no longer contradicts release SSOT.
+- prompts: align runtime LLM persona prompts, parser normalization, and draft documentation to one explicit JSON contract (`reasoning`, `perspective`, `tension`, `confidence`, `action_type`, `citations`) while keeping draft YAML isolated from runtime packaging.
+
+### Tests
+- test(rest): add startup guard coverage for unsafe thread execution mode, execution-mode propagation from REST settings to core settings, and localhost-only default CORS with explicit wildcard override coverage.
+- test(prompts): add runtime prompt SSOT tests that lock the LLM JSON contract, dummy/roster count semantics, and raw-text fallback normalization.
+- test(rest): add restart-safety tests for review queue pending/decided persistence and regression coverage that `HumanReviewDecided` trace append remains intact after decision flow.
+- test(integration): add `tests/integration/test_observability_review_flow.py` to lock observability/human-review loop regression (ESCALATE enqueue, pending visibility, trace retrieval, decision append, restart persistence for trace/history/review).
+- test(unit): strengthen `tests/unit/test_rest_api.py` with `test_review_decision_increments_trace_event_count` so human decisions are guaranteed to append exactly one `HumanReviewDecided` trace event.
 
 ## [1.0.2] - 2026-03-20
 
@@ -36,26 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
-
-### Added
-
-- feat(rest): add persistent SQLite review queue backend in `src/po_core/app/rest/review_store.py` with restart-safe storage for ESCALATE human-review items (`review_queue` table). Default backend is now sqlite, with optional in-memory backend for local/dev testing.
-- feat(config): add review queue settings `PO_REVIEW_STORE_BACKEND` and `PO_REVIEW_DB_PATH` (`APISettings.review_store_backend`, `APISettings.review_db_path`). When `PO_REVIEW_DB_PATH` is blank, review storage reuses `PO_TRACE_DB_PATH`.
-- docs(ops): add `docs/operations/observability_review_playbook.md` documenting deterministic ESCALATE→review→trace run operations with env examples, startup, verification commands, and expected responses.
-
-### Changed
-
-- prompts: align runtime LLM persona prompts, parser normalization, and draft documentation to one explicit JSON contract (`reasoning`, `perspective`, `tension`, `confidence`, `action_type`, `citations`) while keeping draft YAML isolated from runtime packaging.
-
-### Tests
-
-- test(rest): add startup guard coverage for unsafe thread execution mode, execution-mode propagation from REST settings to core settings, and localhost-only default CORS with explicit wildcard override coverage.
-- test(prompts): add runtime prompt SSOT tests that lock the LLM JSON contract, dummy/roster count semantics, and raw-text fallback normalization.
-### Tests
-
-- test(rest): add restart-safety tests for review queue pending/decided persistence and regression coverage that `HumanReviewDecided` trace append remains intact after decision flow.
-- test(integration): add `tests/integration/test_observability_review_flow.py` to lock observability/human-review loop regression (ESCALATE enqueue, pending visibility, trace retrieval, decision append, restart persistence for trace/history/review).
-- test(unit): strengthen `tests/unit/test_rest_api.py` with `test_review_decision_increments_trace_event_count` so human decisions are guaranteed to append exactly one `HumanReviewDecided` trace event.
 
 ## [1.0.0] - 2026-03-10
 
