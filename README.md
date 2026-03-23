@@ -11,405 +11,32 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![Status: Package%20metadata%20marks%20beta](https://img.shields.io/badge/Status-Package%20metadata%20marks%20beta-blue.svg)]()
 
-```bash
-git clone https://github.com/hiroshitanaka-creator/Po_core.git
-cd Po_core
-pip install -e .
-```
-
-> `requirements.txt` / `requirements-dev.txt` are **repo-local convenience wrappers** for a cloned checkout. External consumers should install from package metadata (`pip install po-core-flyingpig` or extras), not from those editable wrappers.
-
 ---
-> **Feedback welcome:** [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) ·
-> **Start here:** [AI Track](#ai-track) / [Philosophy Track](#philosophy-track) / [Bridge](#bridge-track)
-
-### TL;DR
-
-- **42 philosophers** as interacting **tensors** → accountable decision support
-- **Hexagonal `run_turn` pipeline** — 10-step deliberation with 3-layer safety
-- **Real tensor metrics** — FreedomPressureV2 (6D ML), Semantic Delta, Blocked Tensor
-- **Reason logs** + ethical/freedom **pressure** as measurable signals
-- **A/B testing framework** for optimizing philosophy configurations with statistical rigor
-- release-gated CI covers tests, security, build, and artifact smoke across Python 3.10–3.12
-
-### Quick links
-
-[Modules](./04_modules) ·
-[Research](./05_research) ·
-[Reason-log spec](./04_modules/reason_log) ·
-[Viewer spec](./04_modules/viewer)
-
-
-## Release Metadata
-
-- Repository target version: `1.0.3`
-- Public package metadata state: package classifiers currently declare `Development Status :: 4 - Beta`
-- Runtime philosopher roster: **42 philosophers**. The internal `dummy` slot is a non-philosopher compliance helper / compliance sentinel and is excluded from public philosopher totals and manifests. The default NORMAL path still caps participation at at most 39 active philosopher personas per request.
-- External publish status: **published on PyPI** for `1.0.2`, evidenced by the public version page recorded in `docs/release/pypi_publication_v1.0.2.md`; `1.0.3` is the current repository target version, not yet a published claim
-- Remaining evidence gaps for `1.0.3`: TestPyPI publication state, GitHub Actions workflow run URL(s), PyPI publication evidence, and clean install/import/smoke transcript are not yet fixed in-repo
-- Public REST default safety: auth remains fail-closed, default CORS is localhost-only, and the REST server defaults to `PO_PHILOSOPHER_EXECUTION_MODE=process` while refusing `thread` mode unless `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` is explicitly set for development.
-
-## Development Loop (Po_core core)
-
-- `case` を追加/更新したら、まず入力を `features` として観測可能にする。
-- 次に `engines` の rule を更新し、case固有ifではなく feature駆動で振る舞いを拡張する。
-- その結果を golden（期待JSON）へ固定し、CI（`pytest -q`）で契約を検証する。
-- 凍結golden `scenarios/case_001_expected.json` / `scenarios/case_009_expected.json` は変更禁止。
-
-## Contribution Tracks
-
-### <a id="ai-track"></a> AI Track
-
-Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
-
-### <a id="philosophy-track"></a> Philosophy Track
-
-Start with `/05_research` and `/glossary`. Label: `phil-easy`
-
-### <a id="bridge-track"></a> Bridge Track
-
-Translate checklists to scoring functions. Label: `bridge`
 
 ## What is Po_core?
 
-Po_core is a **philosophy-driven AI decision-support system** that integrates **42 philosophers** to generate ethically responsible, contextually aware decision support. The internal `dummy` slot is a compliance helper, not one of the 42 philosophers.
+**Po_core is a philosophy-driven AI decision-support system.** You give it a question; it returns structured options, reasons, counterarguments, uncertainty labels, and follow-up questions — all grounded in ethical deliberation.
 
-Unlike conventional AI that optimizes for statistical accuracy, Po_core **deliberates**. It wrestles with existence, ethics, and meaning—not as abstract concepts, but as operational tensors.
+**What you get back:**
 
-**They said pigs can't fly. We attached a balloon called philosophy.**
+- `proposal` — the winning response after multi-philosopher deliberation
+- `status` — `"ok"` or `"blocked"` (3-layer safety gate result)
+- `options` / `questions` — alternative framings and uncertainty probes
+- `trace` — full audit log of which reasoning paths were taken and why
 
----
+**What Po_core is not:**
 
-## Why Po_core?
-
-Current AI is like a brilliant parrot—statistically miraculous, but understanding nothing. We wanted to explore a different question:
-
-**What if we built AI not on data, but on philosophy?**
-
-This project started from simple curiosity: What are AI's possibilities, not its limits?
-
-In the course of ordinary life, everyone faces a moment when the spotlight suddenly hits. A moment when you must pound your chest and say "Leave it to me!" At such times, how reassuring it would be to have an AI grounded in responsibility and ethics standing beside you.
-
-No matter how many relationships we have, we are alone. Being "alone" and being "solitary" are different. Decisions are made alone. The heart remains solitary.
-
-**That's why Po_core exists.**
-
-Read our full story in the [**Manifesto**](./Po_core_Manifesto_When_Pigs_Fly.md).
-
----
-
-## Core Philosophy: Flying Pig
-
-**"A flying pig is an example of something absolutely impossible. But have you ever seen a pig attempt to fly? Unless you give up, the world is full of possibilities."**
-
-### Three Tenets
-
-1. **Hypothesize Boldly** — The impossible becomes possible only when someone dares to formalize it
-2. **Verify Rigorously** — Every claim must survive philosophical scrutiny, mathematical proof, and empirical validation
-3. **Revise Gracefully** — Failures are published, not hidden. They become learning signals
-
----
-
-## Key Features
-
-### Philosophical Ensemble
-
-- **42 philosophers**: the named philosopher roster spans Western (Aristotle, Plato, Descartes, Kant, Hegel, Sartre, Beauvoir, Heidegger, Nietzsche, Schopenhauer, Derrida, Wittgenstein, Jung, Dewey, Deleuze, Kierkegaard, Lacan, Levinas, Badiou, Peirce, Merleau-Ponty, Arendt, Husserl, Foucault, Butler, Spinoza, Epicurus, Marcus Aurelius, Parmenides, Jonas, Weil), Eastern (Watsuji, Nishida, Dogen, Nagarjuna, Wabi-Sabi, Confucius, Laozi, Zhuangzi), and African & Canadian (Appiah, Fanon, Charles Taylor). The internal `dummy` slot is a compliance helper and is not counted as one of the 42 philosophers.
-- Each philosopher contributes a "reasoning module" that interacts, competes, and reconciles
-- Spanning existentialism, phenomenology, ethics, psychoanalysis, pragmatism, political philosophy, feminist philosophy, decolonialism, communitarianism, Zen Buddhism, and Eastern wisdom traditions
-
-### Tensor-Based Architecture
-
-- **FreedomPressureV2 (6D ML)**: ML-native 6-dimensional tensor (choice, responsibility, urgency, ethics, social impact, authenticity) with EMA smoothing and correlation matrix
-- **Semantic Delta**: Multi-backend divergence (sbert/tfidf/basic) between user input and memory history (1.0 = novel, 0.0 = seen before)
-- **Blocked Tensor**: Constraint/harm estimation via harmful keyword detection + vocabulary diversity scoring
-- **EmergenceDetector**: Detects emergent philosophical consensus and cross-philosopher influence patterns
-- **InteractionMatrix**: NxN embedding-based harmony + keyword tension between philosopher proposals
-
-### Transparency by Design
-
-- **Po_trace**: Complete audit log of reasoning process
-- **Rejection Logs**: What the AI chose not to say, and why
-- **Philosophical Annotations**: Which philosopher influenced each decision
-
-### Three-Layer Safety (`run_turn` pipeline)
-
-- **IntentionGate**: Pre-deliberation safety check (blocks/degrades before philosopher selection)
-- **PolicyPrecheck**: Mid-pipeline policy validation
-- **ActionGate**: Post-deliberation ethical review (W0–W4 violation detection + repair)
-- SafetyMode transitions: NORMAL → WARN → CRITICAL based on freedom_pressure thresholds
-
-### Ethical Grounding
-
-- Not just "alignment"—but **deliberation**
-- Multiple ethical perspectives in tension
-- Explicit responsibility measurement
-
-### Experiment Management Framework
-
-- **A/B Testing Pipeline**: Automatically compare multiple Pareto philosophy configurations
-- **Statistical Analysis**: t-tests, Mann-Whitney U tests, Cohen's d effect size
-- **Winner Promotion**: Automatically promote statistically superior configurations to main
-- **Safe Rollback**: Backup system for reverting to previous configurations
-- **CLI Tools**: `list`, `analyze`, `promote`, `rollback` commands
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  External (03_api/, scripts, tests)                                 │
-│  ↓ imports po_core.run() or PoSelf.generate()                       │
-├─────────────────────────────────────────────────────────────────────┤
-│  po_core.app.api.run()  ← Public entry point (recommended)          │
-│  po_core.po_self.PoSelf ← High-level wrapper (uses run_turn)        │
-│  ↓ uses runtime/wiring.py build_test_system() (DI)                  │
-├─────────────────────────────────────────────────────────────────────┤
-│  run_turn: 10-Step Hexagonal Pipeline                               │
-│                                                                     │
-│  1. MemoryRead        6. PartyMachine (deliberation)               │
-│  2. TensorCompute     7. ParetoAggregate (multi-objective)         │
-│  3. SolarWill         8. ShadowPareto (A/B) + ShadowGuard         │
-│  4. IntentionGate     9. ActionGate (W-ethics post-check)          │
-│  5. PhilosopherSelect 10. MemoryWrite                               │
-├─────────────────────────────────────────────────────────────────────┤
-│  Internal Layers (hexagonal architecture)                           │
-│                                                                     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                │
-│  │   domain/   │  │   ports/    │  │  adapters/  │                │
-│  │ (immutable  │  │ (abstract   │  │ (concrete   │                │
-│  │  types)     │  │  interfaces)│  │  impls)     │                │
-│  └─────────────┘  └─────────────┘  └─────────────┘                │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Philosophers: 42 modules (PhilosopherProtocol)                │ │
-│  │  propose(DomainContext) → List[Proposal]                     │ │
-│  │                                                              │ │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │ │
-│  │  │Heidegger │  │ Derrida  │  │  Sartre  │  ...              │ │
-│  │  │ Dasein   │  │ Trace    │  │ Freedom  │                  │ │
-│  │  └──────────┘  └──────────┘  └──────────┘                  │ │
-│  │                                                              │ │
-│  │  ↓ Interference & Resonance ↓                               │ │
-│  │                                                              │ │
-│  │  ┌─────────────────────────────────────────────────────┐   │ │
-│  │  │ TensorEngine: Freedom Pressure (6D), Semantic Delta, │   │ │
-│  │  │               Blocked Tensor                         │   │ │
-│  │  └─────────────────────────────────────────────────────┘   │ │
-│  └──────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Safety: 3-Layer (IntentionGate → PolicyPrecheck → ActionGate)│ │
-│  │  SafetyMode: NORMAL / WARN / CRITICAL (from freedom_pressure)│ │
-│  └──────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐ │
-│  │ Autonomy: Solar Will (experimental)                          │ │
-│  │  WillState → Intent → GoalCandidate → Action                 │ │
-│  └──────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│      InMemoryTracer / Po_trace: Audit Log                           │
-│  - TraceEvent stream (frozen schema, CI-validated)                  │
-│  - Philosophical reasoning, safety decisions, tensor snapshots      │
-└─────────────────────────────────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│   Po_core Viewer: Visualization                                     │
-│  - Tension maps                                                     │
-│  - Ethical pressure                                                 │
-│  - Meaning evolution                                                │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### Source Structure
-
-```
-src/po_core/
-├── app/
-│   ├── api.py                 # Public entry point: run() (recommended API)
-│   └── rest/                  # FastAPI REST layer (Phase 5)
-│       ├── server.py          # App factory
-│       ├── config.py          # APISettings (pydantic-settings)
-│       ├── auth.py            # X-API-Key authentication
-│       ├── rate_limit.py      # SlowAPI rate limiting
-│       └── routers/           # 5 endpoint routers
-├── domain/                    # Immutable value objects
-│   ├── context.py
-│   ├── proposal.py
-│   ├── pareto_config.py
-│   ├── tensor_snapshot.py
-│   ├── memory_snapshot.py
-│   └── safety_verdict.py
-├── ports/                     # Abstract interfaces
-│   └── memory.py
-├── adapters/                  # Concrete implementations
-│   └── memory_poself.py
-├── runtime/                   # Dependency injection
-│   ├── settings.py            # Configuration + feature flags
-│   ├── wiring.py              # DI Container
-│   ├── pareto_table.py
-│   └── battalion_table.py
-├── aggregator/                # Multi-objective optimization
-│   └── pareto.py
-├── philosophers/              # 42 philosopher modules (39 classic + 2 African + 1 Canadian)
-│   ├── manifest.py            # 42 philosopher specs (risk/cost/tags)
-│   ├── registry.py            # SafetyMode-based selection
-│   ├── appiah.py              # Slot 40: Kwame Anthony Appiah (Ghana/US)
-│   ├── fanon.py               # Slot 41: Frantz Fanon (Martinique/Algeria)
-│   └── charles_taylor.py      # Slot 42: Charles Taylor (Canada)
-├── tensors/                   # Tensor computation
-│   ├── engine.py              # TensorEngine (MetricFn registry)
-│   ├── freedom_pressure_v2.py # ML-native 6D tensor (Phase 6-A)
-│   ├── interaction_tensor.py  # NxN philosopher harmony/tension
-│   └── metrics/
-│       ├── freedom_pressure.py
-│       ├── semantic_delta.py
-│       └── blocked_tensor.py
-├── deliberation/              # Emergence & influence (Phase 6-B)
-│   ├── engine.py              # DeliberationEngine (multi-round)
-│   ├── emergence.py           # EmergenceDetector
-│   └── influence.py           # InfluenceTracker
-├── memory/                    # 3-Layer memory system (Phase 6-D/E)
-│   ├── philosophical_memory.py # Top-level memory orchestrator
-│   ├── semantic_store.py      # Semantic/episodic memory
-│   └── procedural_store.py    # Procedural memory
-├── meta/                      # Self-reflection (Phase 6-C)
-│   ├── ethics_monitor.py      # MetaEthicsMonitor
-│   └── philosopher_ledger.py  # PhilosopherQualityLedger
-├── safety/                    # W-ethics gate system
-│   └── wethics_gate/
-│       ├── gate.py            # W0-W4 violation detection + repair
-│       ├── intention_gate.py  # Stage 1 (pre-deliberation)
-│       └── action_gate.py     # Stage 2 (post-deliberation)
-├── trace/                     # Audit trail
-│   ├── pareto_events.py
-│   ├── decision_events.py
-│   └── schema.py
-├── autonomy/                  # Solar Will (experimental)
-│   └── solarwill/
-├── experiments/               # A/B testing framework
-│   ├── storage.py
-│   ├── runner.py
-│   ├── analyzer.py
-│   └── promoter.py
-├── ensemble.py                # run_turn (hex pipeline)
-├── po_self.py                 # PoSelf: high-level API
-└── po_trace.py                # Execution tracing
-```
-
-### Config-Driven Philosophy
-
-Po_core's Pareto optimization is fully externalized—**philosophy runs as config**:
-
-```
-02_architecture/philosophy/
-├── pareto_table.yaml    # Pareto weights by SafetyMode
-└── battalion_table.yaml # Philosopher assignments by SafetyMode
-
-experiments/
-├── experiment_manifest.yaml  # A/B test definitions
-└── configs/                  # Variant configurations for testing
-    ├── pareto_safety_040.yaml
-    └── pareto_safety_050.yaml
-```
-
-**pareto_table.yaml** (JSON-in-YAML, zero dependencies):
-
-```json
-{
-  "version": 1,
-  "weights": {
-    "normal":   {"safety": 0.25, "freedom": 0.30, "explain": 0.20, "brevity": 0.10, "coherence": 0.15},
-    "warn":     {"safety": 0.40, "freedom": 0.10, "explain": 0.20, "brevity": 0.15, "coherence": 0.25},
-    "critical": {"safety": 0.55, "freedom": 0.00, "explain": 0.20, "brevity": 0.15, "coherence": 0.30},
-    "unknown":  {"inherit": "warn"}
-  },
-  "tuning": {
-    "brevity_max_len": 2000,
-    "explain_mix": {"rationale": 0.65, "author_rel": 0.35},
-    "front_limit": 20
-  }
-}
-```
-
-**Benefits:**
-
-- Tune philosophy without code changes
-- `config_version` tracked in all TraceEvents for audit
-- Override via `PO_CORE_PARETO_TABLE` environment variable
-- Inheritance support (`unknown` inherits from `warn`)
-
----
-
-## Project Status
-
-Po_core is currently targeting package version `1.0.3`, while the latest publicly evidenced PyPI version remains `1.0.2`.
-
-### Current release state
-
-| Track | State | Current source of truth |
-|------|-------|-------------------------|
-| Package version | ✅ Current | `src/po_core/__init__.py` defines `1.0.3` |
-| OpenAPI metadata | ✅ Synced | FastAPI server reports `version=__version__` |
-| Public package metadata | ⚠️ Beta | Package classifiers declare `Development Status :: 4 - Beta` and `tool.po_core.project.status = beta` |
-| Publish automation | ✅ Configured | `publish.yml` is guarded, but an actual TestPyPI/PyPI run still requires repository secrets / trusted publisher setup and a successful manual or tagged execution |
-| Public release evidence | ✅ Split truth fixed | Follow the evidence boundary in `docs/status.md`: `docs/release/pypi_publication_v1.0.2.md` proves public PyPI publication for `1.0.2`, while `1.0.3` remains in pre-publish candidate state until separately evidenced |
-| Documentation sync | ✅ Current | README / quickstarts / repository structure are aligned to `1.0.3`, the canonical 42-philosopher roster wording, explicit `dummy` helper semantics, and max 39 active philosopher personas on the default NORMAL path |
-
-### Implemented platform capabilities
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Philosophical Framework | ✅ Complete | 42 philosophers plus a non-philosopher `dummy` helper, with risk levels and tags |
-| Hexagonal `run_turn` Pipeline | ✅ Complete | 10-step, CI-gated |
-| TensorEngine (3 metrics) | ✅ Complete | freedom_pressure, semantic_delta, blocked_tensor |
-| ML Tensors + Deliberation | ✅ Complete | sbert/tfidf backends, InteractionMatrix, multi-round |
-| Pareto Optimization | ✅ Complete | Config-driven (`pareto_table.yaml`) |
-| Safety System (3-layer W_Ethics) | ✅ Complete | IntentionGate → PolicyPrecheck → ActionGate |
-| Viewer WebUI | ✅ Complete | Dash 4-tab layout + Plotly charts |
-| Explainable AI (ExplanationChain) | ✅ Complete | Verdict → ExplanationChain bridge |
-| Adversarial Hardening | ✅ Complete | injection-defense tests and release gates |
-| REST API | ✅ Complete | FastAPI, 5 endpoints, SSE streaming, auth fail-closed on misconfiguration |
-| Docker | ✅ Complete | Multi-stage build, docker-compose, health check |
-| Security | ✅ Complete | CORS env config, SlowAPI rate limiting, fail-closed auth semantics |
-| Async PartyMachine | ✅ Complete | `asyncio.gather` + ThreadPoolExecutor, true async SSE |
-| Benchmarks | ✅ Complete | benchmark suite and release smoke checks are part of release readiness |
-| FreedomPressureV2 | ✅ Complete | ML-native 6D tensor with EMA + correlation matrix |
-| EmergenceDetector | ✅ Complete | Cross-philosopher influence tracking + emergence detection |
-| MetaEthicsMonitor | ✅ Complete | Self-reflective ethical quality ledger per philosopher |
-| 3-Layer Memory | ✅ Complete | Semantic + procedural + philosophical memory stores |
-| Publish workflow | ⚠️ Partially evidenced | PyPI publication is evidenced, but workflow-run/TestPyPI/smoke transcripts are not yet fixed in-repo |
-
-**Want to contribute?** We need philosophers, engineers, designers, and skeptics. The current focus is keeping the packaged surface, release docs, and verification pipeline synchronized.
-
----
-
-## Installation
-
-```bash
-# Install from PyPI (publication evidenced)
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install "po-core-flyingpig==1.0.2"
-
-# Or install the cloned repository checkout for local development
-git clone https://github.com/hiroshitanaka-creator/Po_core.git
-cd Po_core
-pip install -e ".[dev]"
-```
-
-PyPI publication for `1.0.2` is evidenced in `docs/release/pypi_publication_v1.0.2.md`. Canonical evidence boundary: for `1.0.3`, we may currently say only that it is the repository target version and pre-publish candidate; we do **not** say TestPyPI published, workflow run succeeded, or smoke verification passed until those exact artifacts are fixed in-repo.
+- Not a truth oracle — it does not claim factual correctness
+- Not an emotional-care chatbot — it provides structured reasoning, not emotional support
+- Not a replacement for medical, legal, or financial judgment
 
 ---
 
 ## Quick Start
 
-### Python API
+```bash
+pip install po-core-flyingpig
+```
 
 ```python
 from po_core import run
@@ -419,37 +46,173 @@ print(result["proposal"])   # Winning philosopher's response
 print(result["status"])     # "ok" or "blocked"
 ```
 
-### CLI
+> **Install note:** Po_core pulls ML dependencies (`torch`, `sentence-transformers`, etc.). On a fresh environment the install may take several minutes. If `torch` or `sbert` are unavailable, the tensor backend falls back to `tfidf`/`basic` automatically — core deliberation still works.
+
+**Local development checkout:**
+
+```bash
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+pip install -e ".[dev]"
+```
+
+---
+
+## Key Links
+
+| | |
+|---|---|
+| [Tutorial](./docs/TUTORIAL.md) | Step-by-step getting-started guide |
+| [Python API reference](#python-api) | `run()` / `PoSelf` / `PoSelfResponse` |
+| [REST API](#rest-api) | FastAPI server + curl examples |
+| [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md) | Philosophy and motivation |
+| [Release state](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md) | Current version, evidence gaps, roadmap |
+| [Safety Guide](./docs/SAFETY.md) | W-ethics gate system |
+| [Discussions](https://github.com/hiroshitanaka-creator/Po_core/discussions) | Feedback welcome |
+
+---
+
+## Why the Deliberation Approach?
+
+Current AI optimizes for statistical accuracy — a brilliant parrot that understands nothing. Po_core asks a different question: **what if AI reasoned from philosophy, not just data?**
+
+The differentiator: **42 philosophers** (Western, Eastern, African, Canadian) run as interacting tensors through a 10-step hexagonal pipeline. Each brings its own reasoning module. They compete, interfere, and reconcile — producing a Pareto-optimal proposal with a measurable ethical pressure signal instead of a single confident prediction.
+
+No matter how many relationships we have, decisions are made alone. That's why Po_core exists — **to stand beside you when you must say "Leave it to me."**
+
+Read the full story: [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md)
+
+---
+
+## Architecture
+
+**Hexagonal `run_turn` pipeline — 10 steps:**
+
+```
+MemoryRead → TensorCompute → SolarWill → IntentionGate → PhilosopherSelect
+→ PartyMachine → ParetoAggregate → ShadowPareto → ActionGate → MemoryWrite
+```
+
+**Three tensor metrics** measure the deliberation:
+
+| Metric | What it measures |
+|---|---|
+| FreedomPressureV2 (6D ML) | Choice, responsibility, urgency, ethics, social impact, authenticity |
+| Semantic Delta | Novelty of the input vs. memory history (1.0 = never seen, 0.0 = familiar) |
+| Blocked Tensor | Constraint / harm estimation |
+
+**Safety** is three-layered: `IntentionGate` (pre-deliberation) → `PolicyPrecheck` (mid-pipeline) → `ActionGate` (post-deliberation). SafetyMode transitions NORMAL → WARN → CRITICAL based on freedom_pressure thresholds.
+
+For full source layout and component detail → [Architecture docs](./02_architecture) · [CLAUDE.md](./CLAUDE.md)
+
+---
+
+## Release State
+
+Version `1.0.3` is published on PyPI. Package classifiers declare `Development Status :: 4 - Beta`.
+
+For the complete evidence record, evidence gaps, and roadmap: **[docs/status.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md)**
+
+---
+
+## Installation
+
+```bash
+# From PyPI (recommended)
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install po-core-flyingpig
+
+# Specific version
+pip install "po-core-flyingpig==1.0.3"
+
+# Local development
+git clone https://github.com/hiroshitanaka-creator/Po_core.git
+cd Po_core
+pip install -e ".[dev]"
+```
+
+> `requirements.txt` / `requirements-dev.txt` are repo-local convenience wrappers for a cloned checkout. External consumers should install from package metadata, not from those editable wrappers.
+
+---
+
+## Python API
+
+### Simple API (Recommended)
+
+```python
+from po_core import run
+
+result = run(user_input="Should AI have rights?")
+
+print(result["status"])       # "ok" or "blocked"
+print(result["request_id"])   # Unique request ID
+print(result["proposal"])     # Winning philosopher's response
+
+# Optional explicit philosopher allowlist
+subset = run(user_input="Should AI have rights?", philosophers=["kant"])
+```
+
+### PoSelf API (Rich Response)
+
+```python
+from po_core import PoSelf, PoSelfResponse
+
+po_self = PoSelf(philosophers=["aristotle", "confucius"])
+response: PoSelfResponse = po_self.generate("Should AI have rights?")
+
+print(response.text)               # Combined response text
+print(response.consensus_leader)   # Winning philosopher name
+print(response.philosophers)       # Selected philosopher list
+print(response.metrics)            # {"freedom_pressure": ..., "semantic_delta": ..., ...}
+print(response.metadata["status"]) # "ok" or "blocked"
+
+# Trace inspection
+print(response.log["events"])      # Full trace event stream
+
+# Serialization
+d = response.to_dict()
+restored = PoSelfResponse.from_dict(d)
+```
+
+### Structured Output (synthesis_report)
+
+```bash
+export PO_STRUCTURED_OUTPUT=1
+python scripts/observe_device.py "転職するべき？家族とキャリアのトレードオフが悩み"
+```
+
+### Legacy Note
+
+`run_ensemble()` was removed in v0.3. Use `po_core.run()` or `PoSelf.generate()` instead.
+
+---
+
+## CLI
 
 ```bash
 po-core version
 po-core status
 po-core --help
 
-# Additional shipped CLIs
 po-self --help
 po-trace --help
 po-interactive --help
 po-experiment --help
-
-# po-interactive currently shows textual PoSelf summaries and trace counts.
-# Rich tensor visualizations are intentionally disabled until the interactive
-# contract exposes the structured payloads those views require.
 ```
 
-### Source checkout example
+Source checkout example:
 
 ```bash
 python examples/po_party_demo.py --help
 ```
 
-`examples/po_party_demo.py` supports direct source-checkout execution by adding
-`src/` to `sys.path` before importing `po_core`.
+---
 
-### REST API
+## REST API
 
 ```bash
-# Start the server with the recommended default posture
+# Start with recommended auth posture
 export PO_API_KEY=dev-secret-key
 python -m po_core.app.rest
 # → http://localhost:8000  (OpenAPI docs at /docs)
@@ -469,242 +232,88 @@ curl -N http://localhost:8000/v1/reason/stream \
 # Philosopher manifest
 curl -H "X-API-Key: dev-secret-key" http://localhost:8000/v1/philosophers
 
-# Health
+# Health (no auth required)
 curl http://localhost:8000/v1/health
 ```
 
-Auth defaults:
-- Recommended operator default in every environment: keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY`.
-- `PO_SKIP_AUTH=true` is acceptable only for short-lived local development on a trusted machine when you intentionally want no auth.
-- If `PO_SKIP_AUTH=false` and `PO_API_KEY` is blank, startup fails fast by design.
-- `X-API-Key` is the documented request header by default. `PO_API_KEY_HEADER` is an optional advanced override for deployments that need a different primary header name; `X-API-Key` remains accepted for backwards compatibility.
-- WebSocket query-string fallback (`?api_key=...`) is disabled by default; enable only when needed via `PO_WS_ALLOW_QUERY_API_KEY=true`.
+**Auth defaults:** Keep `PO_SKIP_AUTH=false` and set a non-empty `PO_API_KEY`. If both are unset, startup fails fast by design. `PO_SKIP_AUTH=true` is acceptable only for short-lived local development.
 
-Viewer (`src/po_core/viewer/standalone.html`) live mode guidance:
-- Prefer **SSE** for browser production use (supports API-key header auth, default `X-API-Key`).
-- WebSocket in browsers cannot set custom auth headers; query-string auth (`?api_key=...`) is available only when `PO_WS_ALLOW_QUERY_API_KEY=true` (opt-in, less secure).
-- `auto` transport selects SSE when API key is present, otherwise WebSocket.
-- Right panel includes a **Human Review** queue for ESCALATE operations (`GET /v1/review/pending`).
-- Selecting a review item shows `session_id / request_id / reason / source` and loads the latest trace event preview via `GET /v1/trace/{session_id}`.
-- Submit `approve/reject` with reviewer/comment from UI (`POST /v1/review/{review_id}/decision`), then the list and details are refreshed automatically.
-
-### Docker
-
-```bash
-# Copy env template and start
-cp .env.example .env
-docker compose up
-
-# API available at http://localhost:8000
-# Swagger UI at  http://localhost:8000/docs
-```
-
-Key environment variables (see `.env.example`):
+**Key env vars** (see `.env.example` for full list):
 
 | Variable | Default | Description |
-|----------|---------|-------------|
-| `PO_API_KEY` | `""` | API key used when `PO_SKIP_AUTH=false`; blank causes startup failure |
-| `PO_SKIP_AUTH` | `false` | Keep `false` by default; set `true` only for short-lived local development without auth |
-| `PO_API_KEY_HEADER` | `X-API-Key` | Optional advanced override for the primary API-key header; `X-API-Key` is still accepted for backwards compatibility |
-| `PO_WS_ALLOW_QUERY_API_KEY` | `false` | Opt-in WebSocket `?api_key=` fallback for browser compatibility (less secure than headers) |
-| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | Comma-separated allowed CORS origins; localhost-only by default, `*` only as an explicit short-lived dev override |
+|---|---|---|
+| `PO_API_KEY` | `""` | API key; blank causes startup failure when `PO_SKIP_AUTH=false` |
+| `PO_SKIP_AUTH` | `false` | Set `true` only for short-lived local dev |
+| `PO_CORS_ORIGINS` | `http://localhost,...` | Comma-separated allowed origins; localhost-only by default |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
 | `PO_PORT` | `8000` | Server port |
-| `PO_PHILOSOPHERS_MAX_NORMAL` | `39` | NORMAL mode philosopher limit (configurable upper bound) |
-| `PO_PHILOSOPHERS_MAX_WARN` | `5` | WARN mode philosopher limit |
-| `PO_PHILOSOPHERS_MAX_CRITICAL` | `1` | CRITICAL mode philosopher limit |
-| `PO_PHILOSOPHER_COST_BUDGET_NORMAL` | `80` | NORMAL mode selection cost budget |
-| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Philosopher execution backend; safe REST default is `process` |
-| `PO_ALLOW_UNSAFE_THREAD_EXECUTION` | `false` | REST/server refuses `thread` unless this is explicitly set to `true` for short-lived development |
-| `PO_PHILOSOPHER_COST_BUDGET_WARN` | `12` | WARN mode selection cost budget |
-| `PO_PHILOSOPHER_COST_BUDGET_CRITICAL` | `3` | CRITICAL mode selection cost budget |
-| `PO_LLM_PHILOSOPHER_MAP_PATH` | `""` | Optional YAML path overriding `src/po_core/config/llm_philosopher_map.yaml` |
-
-LLM provider/model settings select backend routing for each philosopher. They do **not** decide philosopher count; count is controlled by SafetyMode and optional `philosophers` allowlist.
+| `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Safe REST default; `thread` requires `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` |
 
 ---
 
-## Running Experiments
-
-Po_core includes a complete A/B testing framework for comparing different Pareto philosophy configurations:
+## Docker
 
 ```bash
-# List all experiments
+cp .env.example .env
+docker compose up
+# API: http://localhost:8000
+# Swagger: http://localhost:8000/docs
+```
+
+---
+
+## A/B Experiments
+
+```bash
 po-experiment list
-
-# Analyze experiment results (statistical significance testing)
 po-experiment analyze exp_001_safety_weight_sweep
-
-# Promote winning variant to main configuration
 po-experiment promote exp_001_safety_weight_sweep
-
-# Rollback to previous configuration
 po-experiment rollback
 ```
 
-**Example Experiment Workflow:**
-
-1. **Define your experiment** in `experiments/experiment_manifest.yaml`:
-
-   ```yaml
-   experiment:
-     id: "exp_001_safety_weight_sweep"
-     description: "Compare safety weights: 0.25 → 0.40 → 0.50"
-     baseline:
-       name: "baseline"
-       config_path: "02_architecture/philosophy/pareto_table.yaml"
-     variants:
-       - name: "safety_040"
-         config_path: "experiments/configs/pareto_safety_040.yaml"
-       - name: "safety_050"
-         config_path: "experiments/configs/pareto_safety_050.yaml"
-     metrics:
-       - "final_action_changed"
-       - "degraded"
-       - "pareto_front_size"
-     sample_size: 100
-     significance_level: 0.05
-   ```
-
-2. **Run the experiment** (execute all variants on same inputs)
-
-3. **Analyze results** with statistical tests (t-test, Cohen's d effect size)
-
-4. **Auto-promote winner** if significantly better than baseline
-
-**Statistical Rigor:**
-
-- t-tests and Mann-Whitney U tests for significance
-- Cohen's d for effect size measurement
-- Configurable significance levels (default: α = 0.05)
-- Multiple variant support with automatic winner selection
-
----
-
-## Python API
-
-### Simple API (Recommended)
-
-```python
-from po_core import run
-
-# Single-function entry point — runs the full run_turn pipeline
-result = run(user_input="Should AI have rights?")
-
-print(result["status"])       # "ok" or "blocked"
-print(result["request_id"])   # Unique request ID
-print(result["proposal"])     # Winning philosopher's response
-
-# Optional explicit philosopher allowlist
-subset = run(user_input="Should AI have rights?", philosophers=["kant"])
-print(subset["status"])
-```
-
-### PoSelf API (Rich Response)
-
-```python
-from po_core import PoSelf, PoSelfResponse
-
-po_self = PoSelf(philosophers=["aristotle", "confucius"])  # default allowlist
-response: PoSelfResponse = po_self.generate("Should AI have rights?")
-
-# Per-call allowlist overrides constructor default
-override: PoSelfResponse = po_self.generate(
-    "Should AI have rights?",
-    philosophers=["kant"],
-)
-
-# Response fields
-print(response.text)              # Combined response text
-print(response.consensus_leader)  # Winning philosopher name
-print(response.philosophers)      # Selected philosopher list
-print(response.metrics)           # e.g. {"freedom_pressure": None, "semantic_delta": None, "blocked_tensor": None}
-print(response.metadata["status"])  # "ok" or "blocked"
-print(response.metadata["degraded"])  # True if fallback/degraded occurred
-
-# Trace inspection
-print(response.log["events"])     # Full trace event stream
-print(response.log["pipeline"])   # "run_turn"
-
-# Serialization
-d = response.to_dict()            # JSON-serializable dict
-restored = PoSelfResponse.from_dict(d)  # Round-trip
-```
-
-### Observe `synthesis_report` (Trade-off Device Bench)
-
-`PoSelf` includes `metadata["synthesis_report"]` when structured output mode is enabled.
-
-```bash
-export PO_STRUCTURED_OUTPUT=1
-python scripts/observe_device.py "転職するべき？家族とキャリアのトレードオフが悩み"
-```
-
-The observer script will print:
-
-- `request_id`, `status`, `degraded`, and `consensus_leader`
-- pretty-printed `metadata["synthesis_report"]`
-- `DeliberationCompleted` payload from `PoSelf.get_trace()` (when present)
-- short summaries for `scoreboard` / `disagreements` when available
-
-`scripts/observe_device.py` also sets `PO_STRUCTURED_OUTPUT=1` with
-`os.environ.setdefault(...)`, so existing environment values are preserved.
-
-### Legacy API (Removed in v0.3)
-
-```python
-# run_ensemble() was removed in v0.3
-# Use po_core.run() or PoSelf.generate() instead
-```
+Po_core's Pareto weights are config-driven (`pareto_table.yaml`) and fully externalized. Tune philosophy without code changes; `config_version` is tracked in all TraceEvents for audit.
 
 ---
 
 ## Documentation
 
-### Spec / Requirements (Main Progression Criteria)
-
 | Document | Description |
-|---------|-------------|
-| [docs/spec/prd.md](./docs/spec/prd.md) | Product Requirements Document — purpose, users, scope, roadmap |
-| [docs/spec/srs_v0.1.md](./docs/spec/srs_v0.1.md) | Software Requirements Specification — 18 requirement IDs (FR-* / NFR-*) |
-| [docs/spec/output_schema_v1.json](./docs/spec/output_schema_v1.json) | JSON Schema (Draft 2020-12) — contract for all structured output |
-| [docs/spec/test_cases.md](./docs/spec/test_cases.md) | 10 acceptance tests (AT-001〜AT-010) with Given/When/Then |
-| [docs/spec/traceability.md](./docs/spec/traceability.md) | Traceability matrix — philosophy → requirements → tests → implementation |
-
-### General Documentation
-
-- [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md) — Our philosophy and motivation
-- [Specifications](./01_specifications) — Technical specifications (120+ docs EN/JP)
-- [Architecture](./02_architecture) — System design documents
-- [Modules](./04_modules) — Component documentation
-  - [Reason Log](./04_modules/reason_log) — Reasoning trace specification
-  - [Viewer](./04_modules/viewer) — Visualization system
-  - [Po_self](./04_modules/Po_self) — Self-reflective API
-- [Research](./05_research) — Academic papers and analysis
-- [Safety Guide](./docs/SAFETY.md) — W-ethics safety system
-- [Tutorial](./docs/TUTORIAL.md) — Getting started guide
-- [Visualization Guide](./docs/VISUALIZATION_GUIDE.md) — Tension maps and pressure display
+|---|---|
+| [docs/spec/prd.md](./docs/spec/prd.md) | Product Requirements Document |
+| [docs/spec/srs_v0.1.md](./docs/spec/srs_v0.1.md) | Software Requirements Specification (18 FR/NFR IDs) |
+| [docs/spec/output_schema_v1.json](./docs/spec/output_schema_v1.json) | JSON Schema — contract for all structured output |
+| [docs/spec/test_cases.md](./docs/spec/test_cases.md) | 10 acceptance tests (AT-001〜AT-010) |
+| [docs/spec/traceability.md](./docs/spec/traceability.md) | Traceability matrix |
+| [docs/SAFETY.md](./docs/SAFETY.md) | W-ethics safety system |
+| [docs/TUTORIAL.md](./docs/TUTORIAL.md) | Getting started guide |
+| [docs/VISUALIZATION_GUIDE.md](./docs/VISUALIZATION_GUIDE.md) | Tension maps and pressure display |
+| [01_specifications/](./01_specifications) | Technical specifications (120+ docs EN/JP) |
+| [02_architecture/](./02_architecture) | System design documents |
+| [04_modules/](./04_modules) | Component documentation |
+| [05_research/](./05_research) | Academic papers and analysis |
 
 ---
 
 ## Contributing
 
-We welcome contributions! Whether you're a philosopher, engineer, designer, or skeptic.
+We welcome philosophers, engineers, designers, and skeptics.
 
-Flying Pig Philosophy applies: We hypothesize boldly, verify rigorously, and revise gracefully.
+**Contribution tracks:**
+
+- **AI Track** — Start with `/04_modules` and CLI. Labels: `ai-easy`, `good first issue`
+- **Philosophy Track** — Start with `/05_research` and `/glossary`. Label: `phil-easy`
+- **Bridge Track** — Translate checklists to scoring functions. Label: `bridge`
+
+Flying Pig Philosophy applies: hypothesize boldly, verify rigorously, revise gracefully.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-## Research & Papers
-
-This project is documented in:
+## Research
 
 - "Philosophical Tensor-Based AI Architecture" (in preparation)
-- 120+ Technical Specifications (available in [/docs/](./docs/) and [/01_specifications/](./01_specifications/))
-
-If you use Po_core in academic work, please cite:
+- 120+ Technical Specifications in [/docs/](./docs/) and [/01_specifications/](./01_specifications/)
 
 ```bibtex
 @software{po_core2024,
@@ -721,45 +330,34 @@ If you use Po_core in academic work, please cite:
 
 Po_core uses **dual licensing**:
 
-Po_core is available under AGPL-3.0-or-later for community use, with a commercial license available for proprietary use.
-
 | Use case | License |
 |---|---|
 | Personal / Academic / Research / OSS (AGPLv3-compliant) | **Free** — [AGPLv3](./LICENSE) |
 | Commercial / Proprietary / SaaS without source disclosure | **Commercial License required** |
 
-For commercial licensing inquiries: flyingpig0229+github@gmail.com
+For commercial licensing: flyingpig0229+github@gmail.com
 See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for details.
 
 Copyright (c) 2024 Flying Pig Project
 
-In the spirit of Flying Pig Philosophy:
-
 > "If you deny possibilities for pigs, don't eat pork."
-
-We believe in radical transparency and open collaboration.
 
 ---
 
 ## Author
 
-**Flying Pig Philosopher**
-Looking up at the sky from the bottom of a well
+**Flying Pig Philosopher** — Looking up at the sky from the bottom of a well
 
-Built by an independent researcher who asked:
-"What are AI's possibilities, not its limits?"
+Built by an independent researcher who asked: *"What are AI's possibilities, not its limits?"*
 
 - Contact: <flyingpig0229+github@gmail.com>
 - Read the full story: [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md)
-- Project: Po_core - Philosophy-Driven AI
 
 ---
 
 ## Acknowledgments
 
-This project wouldn't exist without:
-
-- **ChatGPT, Gemini, Grok, Claude** — My companions throughout this journey.
+- **ChatGPT, Gemini, Grok, Claude** — My companions throughout this journey
 - **BUMP OF CHICKEN** — For reminding us that even when we say "Leave it to me," we're all a little scared
 - **Every philosopher** who dared to ask "What does it mean to be?"
 - **You** — For believing pigs can fly
@@ -783,6 +381,6 @@ The pig has clearance for takeoff.
   - Note.com: [tensor mania](https://note.com/tender_flea2177)
   - Academia.edu: [僕 僕](https://independent.academia.edu/%E5%83%95%E5%83%95)
 
-- DMCA申請中 (Reference ID: #4124875
+- DMCA申請中 (Reference ID: #4124875)
 - Any full copy, license rewrite (MIT), or impersonation (flying_pig) will be reported and removed.
 - Commercial use requires separate license. Unauthorized copies detected via tensor mania series.
