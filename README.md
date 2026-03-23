@@ -76,7 +76,7 @@ pip install -e ".[dev]"
 
 Current AI optimizes for statistical accuracy — a brilliant parrot that understands nothing. Po_core asks a different question: **what if AI reasoned from philosophy, not just data?**
 
-The differentiator: **42 philosophers** (Western, Eastern, African, Canadian) run as interacting tensors through a 10-step hexagonal pipeline. Each brings its own reasoning module. They compete, interfere, and reconcile — producing a Pareto-optimal proposal with a measurable ethical pressure signal instead of a single confident prediction.
+The differentiator: **42 philosophers** (Western, Eastern, African, Canadian) run as interacting tensors through a 10-step hexagonal pipeline. Each brings its own reasoning module. They compete, interfere, and reconcile — producing a Pareto-optimal proposal with a measurable ethical pressure signal instead of a single confident prediction. The internal `dummy` slot is a compliance helper / compliance sentinel and is excluded from the 42-philosopher public total.
 
 No matter how many relationships we have, decisions are made alone. That's why Po_core exists — **to stand beside you when you must say "Leave it to me."**
 
@@ -244,7 +244,7 @@ curl http://localhost:8000/v1/health
 |---|---|---|
 | `PO_API_KEY` | `""` | API key; blank causes startup failure when `PO_SKIP_AUTH=false` |
 | `PO_SKIP_AUTH` | `false` | Set `true` only for short-lived local dev |
-| `PO_CORS_ORIGINS` | `http://localhost,...` | Comma-separated allowed origins; localhost-only by default |
+| `PO_CORS_ORIGINS` | `http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000` | Comma-separated allowed origins; localhost-only by default (`*` only as explicit short-lived dev override) |
 | `PO_RATE_LIMIT_PER_MINUTE` | `60` | Per-IP rate limit |
 | `PO_PORT` | `8000` | Server port |
 | `PO_PHILOSOPHER_EXECUTION_MODE` | `process` | Safe REST default; `thread` requires `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` |
