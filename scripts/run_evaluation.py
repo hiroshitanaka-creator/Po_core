@@ -4,7 +4,7 @@
 
 Runs all four metric scripts across all three conditions (C-FULL, C-NOETH,
 C-SINGLE) and produces a Markdown summary report at:
-    docs/research_reset/results/summary.md
+    docs/research_reset/drafts/summary.md
 
 For each metric, the script applies the falsification criteria from
 evaluation_plan.md and notes whether H1 or H2 are supported.
@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent
-RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "results"
+RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "drafts"
 SCRIPTS_DIR = REPO_ROOT / "scripts"
 
 

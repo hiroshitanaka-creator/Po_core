@@ -18,7 +18,7 @@ Options
     --prompts       RANGE    Prompt range to test, e.g. P01-P20 or P01,P03,P07
                              (default: P01-P20)
     --output        PATH     Write JSON results to this path
-                             (default: docs/research_reset/results/m2_reproducibility.json)
+                             (default: docs/research_reset/drafts/m2_reproducibility.json)
     --scenarios-dir PATH     Override scenarios directory
                              (default: scenarios/)
 
@@ -48,7 +48,7 @@ import yaml
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 SCENARIOS_DIR = REPO_ROOT / "scenarios"
-RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "results"
+RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "drafts"
 M2_THRESHOLD = 0.90  # 90% reproducibility required
 
 # Map from prompt IDs (P01–P20) to case file prefixes

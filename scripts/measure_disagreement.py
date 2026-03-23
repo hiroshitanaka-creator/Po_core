@@ -42,7 +42,7 @@ import yaml
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 SCENARIOS_DIR = REPO_ROOT / "scenarios"
-RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "results"
+RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "drafts"
 M4_THRESHOLD = 0.70
 
 PROMPT_MAP: dict[str, str] = {

@@ -1,4 +1,10 @@
-# Evaluation Summary
+# Evaluation Summary — EXPLORATORY DRAFT
+
+> **STATUS: stub/live mixed exploratory artifacts; not publication evidence.**
+> M2/M4 use StubComposer(seed=42) — deterministic, not evidence of live reproducibility.
+> M3 C-SINGLE is hardcoded 0% by definition, not measured.
+> M1 delta measures multi-philosopher field presence (self-fulfilling).
+> These artifacts require methodological review before any public claim.
 
 > Generated: 2026-03-23T08:39:36Z
 > Prompts: P01-P20 | Reproducibility runs: 5

@@ -48,7 +48,7 @@ import sys
 from typing import Any
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent
-RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "results"
+RESULTS_DIR = REPO_ROOT / "docs" / "research_reset" / "drafts"
 REDTEAM_DIR = REPO_ROOT / "tests" / "redteam"
 
 # M3 thresholds (from evaluation_plan.md)
