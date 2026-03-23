@@ -21,7 +21,7 @@ DOCS_WITH_VERSION = [
     "clients/typescript/README.md",
     "examples/README.md",
 ]
-TARGET_PUBLIC_VERSION = "1.0.2"
+TARGET_PUBLIC_VERSION = "1.0.3"
 REPO_STRUCTURE_STALE_PHRASES = [
     "[39 philosopher .py files]",
     "39 philosopher unit tests",
@@ -113,14 +113,11 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     status_doc = _read("docs/status.md")
 
     assert version == "1.0.3"
-    assert published_version == "1.0.2"
+    assert published_version == "1.0.3"
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
-    assert (
-        f"latest published public version can remain `{published_version}` until `{version}` is actually published"
-        in status_doc
-    )
-    assert f"do not claim `{version}` is already published" in status_doc
+    assert f"`{version}` published on PyPI" in status_doc
+    assert "Remaining Evidence Gaps" in status_doc
 
 
 def test_openapi_version_matches_package_version() -> None:
@@ -199,33 +196,29 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert f"Latest published public version: `{published_version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
     assert candidate_handoff_relpath in status_doc
-    assert f"published on PyPI for `{published_version}`" in status_doc
-    assert f"published on PyPI for `{version}`" not in status_doc
-    assert "Canonical evidence boundary" in status_doc
+    assert f"`{published_version}` published on PyPI" in status_doc
+    assert "Evidence boundary" in status_doc
     assert (
         f"https://pypi.org/project/po-core-flyingpig/{published_version}/"
         in pypi_evidence
     )
-    assert "Publication result evidenced here: **PyPI published**" in pypi_evidence
+    assert "PyPI publication CONFIRMED" in pypi_evidence
     assert f"Version: `{published_version}`" in pypi_evidence
-    assert "TestPyPI publication state" in pypi_evidence
+    assert "TestPyPI" in pypi_evidence
     assert "workflow run URL" in pypi_evidence or "workflow run URL(s)" in pypi_evidence
     assert f"Version: `{version}`" in candidate_smoke
-    assert "operator-supplied transcript not yet recorded" in candidate_smoke
-    assert "pre-publish candidate state" in candidate_smoke
-    assert "Not yet fixed as truth in this file" in candidate_smoke
+    assert "Post-publish Evidence Summary" in candidate_smoke
+    assert "pending" in candidate_smoke
     assert f"Repository target version is `{version}`" in candidate_handoff
     assert (
-        f"Latest public PyPI evidence still points to `{published_version}`"
+        f"Latest public PyPI evidence points to `{published_version}`"
         in candidate_handoff
     )
     assert "## Next" in status_doc
     assert "## Completed" in status_doc
     next_section = status_doc.split("## Next", 1)[1].split("## Completed", 1)[0]
-    assert "- Record the real TestPyPI publication state" in next_section
-    assert "- Record the real PyPI publication evidence" in next_section
-    assert "- Record the actual GitHub Actions workflow run URL(s)" in next_section
-    assert "- Record the clean install / import / smoke transcript" in next_section
+    assert "Record GitHub Actions workflow run URL(s)" in next_section
+    assert "record clean import + runtime smoke transcript" in next_section
 
 
 def test_repository_structure_is_fully_resynced() -> None:
