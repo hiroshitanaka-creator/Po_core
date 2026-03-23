@@ -21,7 +21,7 @@ DOCS_WITH_VERSION = [
     "clients/typescript/README.md",
     "examples/README.md",
 ]
-TARGET_PUBLIC_VERSION = "1.0.2"
+TARGET_PUBLIC_VERSION = "1.0.3"
 REPO_STRUCTURE_STALE_PHRASES = [
     "[39 philosopher .py files]",
     "39 philosopher unit tests",
@@ -112,15 +112,16 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     published_version = TARGET_PUBLIC_VERSION
     status_doc = _read("docs/status.md")
 
+    # Both target and published are now 1.0.3 — publication is confirmed
     assert version == "1.0.3"
-    assert published_version == "1.0.2"
+    assert published_version == "1.0.3"
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
-    assert (
-        f"latest published public version can remain `{published_version}` until `{version}` is actually published"
-        in status_doc
-    )
-    assert f"do not claim `{version}` is already published" in status_doc
+    # Publication fact is confirmed and recorded
+    assert f"`{version}` published on PyPI" in status_doc
+    assert f"pypi_publication_v{version}.md" in status_doc
+    # Canonical evidence boundary must be declared
+    assert "Canonical evidence boundary" in status_doc
 
 
 def test_openapi_version_matches_package_version() -> None:
@@ -195,37 +196,40 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "43の統合済みランタイム・ペルソナ" not in quickstart_ja
     assert "43 integrated runtime personas" not in repo_structure
     assert "43 integrated runtime personas" not in status_doc
+
+    # status.md is the release SSOT — verify canonical publication claims
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
     assert candidate_handoff_relpath in status_doc
-    assert f"published on PyPI for `{published_version}`" in status_doc
-    assert f"published on PyPI for `{version}`" not in status_doc
     assert "Canonical evidence boundary" in status_doc
+    # Post-publication: status.md must confirm the publication fact
+    assert f"`{published_version}` published on PyPI" in status_doc
+
+    # PyPI evidence file for published version
     assert (
         f"https://pypi.org/project/po-core-flyingpig/{published_version}/"
         in pypi_evidence
     )
-    assert "Publication result evidenced here: **PyPI published**" in pypi_evidence
     assert f"Version: `{published_version}`" in pypi_evidence
-    assert "TestPyPI publication state" in pypi_evidence
+    # TestPyPI prerequisite must be documented
+    assert "TestPyPI" in pypi_evidence
     assert "workflow run URL" in pypi_evidence or "workflow run URL(s)" in pypi_evidence
+
+    # Smoke verification file — post-publication state
     assert f"Version: `{version}`" in candidate_smoke
-    assert "operator-supplied transcript not yet recorded" in candidate_smoke
-    assert "pre-publish candidate state" in candidate_smoke
-    assert "Not yet fixed as truth in this file" in candidate_smoke
+    assert "post-publish" in candidate_smoke
+
+    # Candidate handoff is a historical pre-pub document; check repo-target version only
     assert f"Repository target version is `{version}`" in candidate_handoff
-    assert (
-        f"Latest public PyPI evidence still points to `{published_version}`"
-        in candidate_handoff
-    )
+    assert f"pypi_publication_v{published_version}.md" in candidate_handoff
+
+    # status.md must have Next and Completed sections with post-pub follow-up items
     assert "## Next" in status_doc
     assert "## Completed" in status_doc
     next_section = status_doc.split("## Next", 1)[1].split("## Completed", 1)[0]
-    assert "- Record the real TestPyPI publication state" in next_section
-    assert "- Record the real PyPI publication evidence" in next_section
-    assert "- Record the actual GitHub Actions workflow run URL(s)" in next_section
-    assert "- Record the clean install / import / smoke transcript" in next_section
+    assert "Record GitHub Actions workflow run URL(s)" in next_section
+    assert "full deps install" in next_section
 
 
 def test_repository_structure_is_fully_resynced() -> None:

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.3] - 2026-03-22
 
 ### Added
+- docs(release): confirm `1.0.3` published on PyPI and TestPyPI (2026-03-22). Publication evidence fixed in `docs/release/pypi_publication_v1.0.3.md`; TestPyPI evidence in `docs/release/testpypi_publish_log_v1.0.3.md`; post-publish smoke state in `docs/release/smoke_verification_v1.0.3.md`. See `docs/status.md` for evidence boundary.
 - docs(release): add `docs/release/release_candidate_handoff_v1.0.3.md` and `docs/release/smoke_verification_v1.0.3.md` so `1.0.3` has explicit pre-publish candidate-state handoff docs without fabricating post-publish evidence.
 - feat(rest): add persistent SQLite review queue backend in `src/po_core/app/rest/review_store.py` with restart-safe storage for ESCALATE human-review items (`review_queue` table). Default backend is now sqlite, with optional in-memory backend for local/dev testing.
 - feat(config): add review queue settings `PO_REVIEW_STORE_BACKEND` and `PO_REVIEW_DB_PATH` (`APISettings.review_store_backend`, `APISettings.review_db_path`). When `PO_REVIEW_DB_PATH` is blank, review storage reuses `PO_TRACE_DB_PATH`.

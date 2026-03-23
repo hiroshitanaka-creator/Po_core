@@ -6,6 +6,8 @@
 
 この文書は release-facing SSOT を固定するためのスナップショットです。release state に関する主張は、このファイル・`src/po_core/__init__.py`・`docs/release/` 配下の証跡ファイルが示す範囲に限定します。
 
+**Canonical evidence boundary:** The authoritative source for any version/publication/beta claim is this file (`docs/status.md`). README and other docs must not make independent publication assertions beyond what this file states.
+
 ## Current Release State
 
 - Repository target version: `1.0.3`
@@ -43,6 +45,20 @@
 2. Full deps install transcript (`pip install po-core-flyingpig==1.0.3` with all deps) — not completed this session (torch/CUDA deps are large).
 3. Clean-environment import transcript (`python -c "import po_core; print(po_core.__version__)"`) — pending full deps install.
 4. `scripts/release_smoke.py --check-entrypoints` transcript in clean post-publish venv — pending.
+
+## Version Consistency Contract (CI-checkable)
+
+The following invariants must hold at all times and are verified by `tests/test_release_readiness.py`:
+
+| Anchor | Location | Rule |
+|---|---|---|
+| Package version SSOT | `src/po_core/__init__.py` `__version__` | Single source of truth — all other version references derive from this |
+| Build version | `pyproject.toml` | Must use `dynamic = ["version"]` with `attr = "po_core.__version__"` — no hardcoded top-level `version =` |
+| CHANGELOG entry | `CHANGELOG.md` | Must contain `## [X.Y.Z]` where X.Y.Z equals `__version__` |
+| Docs sync | README, QUICKSTART, QUICKSTART_EN, CHANGELOG, REPOSITORY_STRUCTURE, this file, publish_playbook | All must mention `__version__` value |
+| Beta status | `pyproject.toml` classifiers + `[tool.po_core.project] status` | Must be `Development Status :: 4 - Beta` / `"beta"` until evidence justifies reclassification |
+| Publication claim | This file only | Only `docs/status.md` makes the canonical publication claim; README and docs link here for details |
+| Philosopher count | All public docs | "42 philosophers"; `dummy` slot is a compliance helper / compliance sentinel excluded from the 42 total |
 
 ## Notes
 

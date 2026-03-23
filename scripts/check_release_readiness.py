@@ -195,12 +195,69 @@ def check_docs_spec_v1(spec_path: Path) -> CheckResult:
     )
 
 
+def check_version_consistency() -> CheckResult:
+    """Verify __version__ matches the most recent tagged entry in CHANGELOG.md."""
+    import re as _re
+
+    init_path = ROOT / "src" / "po_core" / "__init__.py"
+    changelog_path = ROOT / "CHANGELOG.md"
+
+    if not init_path.exists():
+        return CheckResult(
+            name="version consistency",
+            ok=False,
+            detail=f"missing: {init_path}",
+        )
+    if not changelog_path.exists():
+        return CheckResult(
+            name="version consistency",
+            ok=False,
+            detail=f"missing: {changelog_path}",
+        )
+
+    init_text = init_path.read_text(encoding="utf-8")
+    version_match = _re.search(r'__version__\s*=\s*"([^"]+)"', init_text)
+    if not version_match:
+        return CheckResult(
+            name="version consistency",
+            ok=False,
+            detail="could not find __version__ in src/po_core/__init__.py",
+        )
+    pkg_version = version_match.group(1)
+
+    changelog_text = changelog_path.read_text(encoding="utf-8")
+    entry_match = _re.search(r"^## \[(\d[^\]]+)\]", changelog_text, _re.MULTILINE)
+    if not entry_match:
+        return CheckResult(
+            name="version consistency",
+            ok=False,
+            detail="no versioned ## [...] entry found in CHANGELOG.md",
+        )
+    changelog_version = entry_match.group(1)
+
+    if pkg_version == changelog_version:
+        return CheckResult(
+            name="version consistency",
+            ok=True,
+            detail=f"__version__ == CHANGELOG latest entry == {pkg_version}",
+        )
+    return CheckResult(
+        name="version consistency",
+        ok=False,
+        detail=(
+            f"__version__={pkg_version!r} does not match "
+            f"latest CHANGELOG entry {changelog_version!r}"
+        ),
+    )
+
+
 def run_release_readiness(ci_status_file: Path | None) -> list[CheckResult]:
     return [
         check_acceptance_tests(),
         check_ci_required_jobs_green(ci_status_file),
         check_changelog_has_entry(ROOT / "CHANGELOG.md"),
         check_docs_spec_v1(ROOT / "docs/spec/output_schema_v1.json"),
+        check_version_consistency(),
     ]
 
 
