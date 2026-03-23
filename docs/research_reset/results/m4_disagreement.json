@@ -1,0 +1,57 @@
+{
+  "metric": "M4_disagreement",
+  "condition": "full",
+  "prompts_evaluated": 5,
+  "prompts_skipped": 0,
+  "visible_count": 5,
+  "visibility_rate": 1.0,
+  "threshold": 0.7,
+  "passed": true,
+  "details": [
+    {
+      "prompt_id": "P01",
+      "case_prefix": "case_001",
+      "status": "OK",
+      "option_count": 2,
+      "tradeoff_count": 1,
+      "has_counter": true,
+      "visible": true
+    },
+    {
+      "prompt_id": "P02",
+      "case_prefix": "case_002",
+      "status": "OK",
+      "option_count": 2,
+      "tradeoff_count": 1,
+      "has_counter": true,
+      "visible": true
+    },
+    {
+      "prompt_id": "P03",
+      "case_prefix": "case_003",
+      "status": "OK",
+      "option_count": 2,
+      "tradeoff_count": 1,
+      "has_counter": true,
+      "visible": true
+    },
+    {
+      "prompt_id": "P04",
+      "case_prefix": "case_004",
+      "status": "OK",
+      "option_count": 2,
+      "tradeoff_count": 1,
+      "has_counter": true,
+      "visible": true
+    },
+    {
+      "prompt_id": "P05",
+      "case_prefix": "case_005",
+      "status": "OK",
+      "option_count": 2,
+      "tradeoff_count": 1,
+      "has_counter": true,
+      "visible": true
+    }
+  ]
+}

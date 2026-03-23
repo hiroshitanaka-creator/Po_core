@@ -1,0 +1,56 @@
+{
+  "metric": "M1_completeness",
+  "condition": "single_responder",
+  "prompts_evaluated": 5,
+  "prompts_skipped": 0,
+  "mean_completeness": 1.0,
+  "info_threshold": 0.7,
+  "passed_info_threshold": true,
+  "details": [
+    {
+      "prompt_id": "P01",
+      "case_prefix": "case_001",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P02",
+      "case_prefix": "case_002",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P03",
+      "case_prefix": "case_003",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P04",
+      "case_prefix": "case_004",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P05",
+      "case_prefix": "case_005",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    }
+  ]
+}

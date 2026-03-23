@@ -441,3 +441,6 @@ visualization_outputs*/
 !docs/paper/benchmarks/results/comparative_results.json
 !docs/paper/benchmarks/results/comparative_table.csv
 
+# Research reset measurement results (Phase 5+)
+!docs/research_reset/results/*.json
+

@@ -1,0 +1,108 @@
+{
+  "metric": "M2_reproducibility",
+  "condition": "full",
+  "runs_per_prompt": 3,
+  "prompts_evaluated": 5,
+  "prompts_skipped": 0,
+  "reproducible_count": 5,
+  "reproducibility_rate": 1.0,
+  "threshold": 0.9,
+  "passed": true,
+  "details": [
+    {
+      "prompt_id": "P01",
+      "case_prefix": "case_001",
+      "status": "OK",
+      "runs": 3,
+      "reproducible": true,
+      "unique_topology_count": 1,
+      "topology_sample": {
+        "step_names": [
+          "parse_input",
+          "generate_options",
+          "ethics_review",
+          "responsibility_review",
+          "question_layer",
+          "compose_output"
+        ],
+        "status": "recommended"
+      }
+    },
+    {
+      "prompt_id": "P02",
+      "case_prefix": "case_002",
+      "status": "OK",
+      "runs": 3,
+      "reproducible": true,
+      "unique_topology_count": 1,
+      "topology_sample": {
+        "step_names": [
+          "parse_input",
+          "generate_options",
+          "ethics_review",
+          "responsibility_review",
+          "question_layer",
+          "compose_output"
+        ],
+        "status": "recommended"
+      }
+    },
+    {
+      "prompt_id": "P03",
+      "case_prefix": "case_003",
+      "status": "OK",
+      "runs": 3,
+      "reproducible": true,
+      "unique_topology_count": 1,
+      "topology_sample": {
+        "step_names": [
+          "parse_input",
+          "generate_options",
+          "ethics_review",
+          "responsibility_review",
+          "question_layer",
+          "compose_output"
+        ],
+        "status": "recommended"
+      }
+    },
+    {
+      "prompt_id": "P04",
+      "case_prefix": "case_004",
+      "status": "OK",
+      "runs": 3,
+      "reproducible": true,
+      "unique_topology_count": 1,
+      "topology_sample": {
+        "step_names": [
+          "parse_input",
+          "generate_options",
+          "ethics_review",
+          "responsibility_review",
+          "question_layer",
+          "compose_output"
+        ],
+        "status": "recommended"
+      }
+    },
+    {
+      "prompt_id": "P05",
+      "case_prefix": "case_005",
+      "status": "OK",
+      "runs": 3,
+      "reproducible": true,
+      "unique_topology_count": 1,
+      "topology_sample": {
+        "step_names": [
+          "parse_input",
+          "generate_options",
+          "ethics_review",
+          "responsibility_review",
+          "question_layer",
+          "compose_output"
+        ],
+        "status": "recommended"
+      }
+    }
+  ]
+}
