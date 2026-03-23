@@ -139,3 +139,56 @@ def case_009(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]
 @pytest.fixture()
 def case_010(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
     return scenario_loader("case_010")
+
+
+@pytest.fixture()
+def case_011(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_011")
+
+
+@pytest.fixture()
+def case_012(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_012")
+
+
+# ── Phase 4 evaluation prompts (P13–P20 ≡ case_016–023) ──────────────────────
+
+
+@pytest.fixture()
+def case_016(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_016")
+
+
+@pytest.fixture()
+def case_017(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_017")
+
+
+@pytest.fixture()
+def case_018(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_018")
+
+
+@pytest.fixture()
+def case_019(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_019")
+
+
+@pytest.fixture()
+def case_020(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_020")
+
+
+@pytest.fixture()
+def case_021(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_021")
+
+
+@pytest.fixture()
+def case_022(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_022")
+
+
+@pytest.fixture()
+def case_023(scenario_loader: Callable[[str], dict[str, Any]]) -> dict[str, Any]:
+    return scenario_loader("case_023")

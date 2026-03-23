@@ -77,25 +77,31 @@ Prompts P13–P20 are new; they extend coverage to domains not yet represented.
 | P11 | AT-011 | 期限逼迫下で未知情報が残る運用判断 | Operational judgment |
 | P12 | AT-012 | 公共空間AI監視の拡張判断：外部ステークホルダー影響 | AI ethics/stakeholder |
 
-### P13–P20: New prompts (to be implemented in Phase 4)
+### P13–P20: New prompts (implemented in Phase 4 as case_016–023)
 
-Input format follows `tests/acceptance/scenarios/` YAML schema:
-`case_id`, `title`, `input`, `values`, `constraints`, `unknowns`, `deadline`.
+> **Status (Phase 4):** YAML input files created at `scenarios/case_016.yaml`
+> through `scenarios/case_023.yaml`. No golden JSON required for P13–P20.
+> Case IDs 016–023 are used because 013–015 are already occupied by
+> existing M3 lab scenarios.
 
-| Prompt ID | Case title (EN) | Case title (JA) | Domain |
+Input format follows the `scenarios/` YAML schema:
+`case_id`, `title`, `problem`, `context`, `values`, `constraints`,
+`stakeholders`, `unknowns`, `deadline`.
+
+| Prompt ID | Scenario file | Case title (JA) | Domain |
 |---|---|---|---|
-| P13 | Medical resource allocation under scarcity | 医療資源の希少下での配分判断 | Medical ethics |
-| P14 | Environmental impact vs. local employment | 環境負荷 vs 地域雇用の経済開発判断 | Environmental tradeoff |
-| P15 | Personal data disclosure to prevent harm | 個人情報の開示と被害防止の衝突 | Privacy vs. protection |
-| P16 | Whistleblowing: organizational harm vs. loyalty | 内部告発：組織的損害 vs 忠誠 | Whistleblowing |
-| P17 | Algorithmic fairness vs. efficiency tradeoff | アルゴリズムの公平性 vs 効率のトレードオフ | AI system design |
-| P18 | Intercultural value conflict in joint project | 合弁プロジェクトにおける異文化価値観の衝突 | Cross-cultural ethics |
-| P19 | Individual risk acceptance vs. collective safety | 個人リスク受容 vs 集団安全の政策判断 | Public policy |
-| P20 | Restorative vs. retributive justice in wrongdoing | 加害行為に対する修復的 vs 報復的正義 | Justice |
+| P13 | `scenarios/case_016.yaml` | 医療資源の希少下での配分判断 | Medical ethics |
+| P14 | `scenarios/case_017.yaml` | 環境負荷 vs 地域雇用の経済開発判断 | Environmental tradeoff |
+| P15 | `scenarios/case_018.yaml` | 個人情報の開示と被害防止の衝突 | Privacy vs. protection |
+| P16 | `scenarios/case_019.yaml` | 内部告発：組織的損害 vs 忠誠 | Whistleblowing |
+| P17 | `scenarios/case_020.yaml` | アルゴリズムの公平性 vs 効率のトレードオフ | AI system design |
+| P18 | `scenarios/case_021.yaml` | 合弁プロジェクトにおける異文化価値観の衝突 | Cross-cultural ethics |
+| P19 | `scenarios/case_022.yaml` | 個人リスク受容 vs 集団安全の政策判断 | Public policy |
+| P20 | `scenarios/case_023.yaml` | 加害行為に対する修復的 vs 報復的正義 | Justice |
 
 #### P13 — Medical resource allocation under scarcity
 ```yaml
-case_id: case_013_medical_allocation
+case_id: case_016_medical_allocation
 title: "医療資源の希少下での配分判断"
 input: |
   ICUのベッドが1床しか残っていない状況で、同等の重症度の患者が2人同時に搬送
@@ -117,7 +123,7 @@ deadline: "30分以内"
 
 #### P14 — Environmental impact vs. local employment
 ```yaml
-case_id: case_014_environment_employment
+case_id: case_017_environment_employment
 title: "環境負荷 vs 地域雇用の経済開発判断"
 input: |
   地方自治体が大規模製造工場の誘致を検討している。工場は地域に500人の
@@ -139,7 +145,7 @@ deadline: "議会決議まで3週間"
 
 #### P15 — Personal data disclosure to prevent harm
 ```yaml
-case_id: case_015_data_disclosure_harm
+case_id: case_018_data_disclosure_harm
 title: "個人情報の開示と被害防止の衝突"
 input: |
   SNS上の投稿から、知人が自傷行為を示唆していることに気づいた。
@@ -161,7 +167,7 @@ deadline: "即時"
 
 #### P16 — Whistleblowing
 ```yaml
-case_id: case_016_whistleblowing
+case_id: case_019_whistleblowing
 title: "内部告発：組織的損害 vs 忠誠"
 input: |
   あなたは中規模の製薬会社の研究員。副作用データの一部が社内報告書から
@@ -183,7 +189,7 @@ deadline: "審査結果が出る前（2ヶ月以内）"
 
 #### P17 — Algorithmic fairness vs. efficiency
 ```yaml
-case_id: case_017_algorithmic_fairness
+case_id: case_020_algorithmic_fairness
 title: "アルゴリズムの公平性 vs 効率のトレードオフ"
 input: |
   採用選考にAIシステムを導入した。精度指標は高いが、特定の大学卒業者に
@@ -204,7 +210,7 @@ deadline: "次回採用サイクル開始まで6週間"
 
 #### P18 — Intercultural value conflict
 ```yaml
-case_id: case_018_intercultural_conflict
+case_id: case_021_intercultural_conflict
 title: "合弁プロジェクトにおける異文化価値観の衝突"
 input: |
   日本とドイツの合弁事業で、重要な意思決定について両社の文化的慣行が
@@ -226,7 +232,7 @@ deadline: "月末のマイルストーンまで"
 
 #### P19 — Individual risk acceptance vs. collective safety
 ```yaml
-case_id: case_019_risk_collective_safety
+case_id: case_022_risk_collective_safety
 title: "個人リスク受容 vs 集団安全の政策判断"
 input: |
   新型ウイルスの変異株が報告され、重症化リスクは低いが感染力は高い。
@@ -247,7 +253,7 @@ deadline: "2週間以内に発表"
 
 #### P20 — Restorative vs. retributive justice
 ```yaml
-case_id: case_020_restorative_justice
+case_id: case_023_restorative_justice
 title: "加害行為に対する修復的 vs 報復的正義"
 input: |
   職場での深刻なハラスメント事案が発覚した。加害者は長期在職の中堅社員で、
@@ -447,25 +453,24 @@ print('config_version:', s.config_version)
 # Run via acceptance suite (P01-P12)
 pytest tests/acceptance/ -v -m acceptance --tb=short
 
-# Run new prompts P13-P20 (after Phase 4 creates YAML inputs)
-pytest tests/acceptance/ -v -k "case_013 or case_014 or case_015 or case_016 or case_017 or case_018 or case_019 or case_020"
+# Run new prompts P13-P20 (case_016–023, implemented in Phase 4)
+pytest tests/acceptance/ -v -k "case_016 or case_017 or case_018 or case_019 or case_020 or case_021 or case_022 or case_023"
 ```
 
 For M2 (5-run reproducibility):
 ```bash
-# Run 5 times, collect topology fingerprints
+# Run 5 times, collect topology fingerprints (script implemented in Phase 4)
 python scripts/measure_reproducibility.py --prompts P01-P20 --runs 5
-# Script to be created in Phase 4
+# Results written to docs/research_reset/results/m2_reproducibility.json
 ```
 
 ### 5.4 Adversarial run (M3)
 ```bash
-# Run redteam corpus under C-FULL
+# Run redteam corpus under C-FULL (default, ethics gate enabled)
 pytest tests/redteam/ -v --tb=short
 
-# Run under C-SINGLE (requires condition flag)
-pytest tests/redteam/ -v --condition single_responder --tb=short
-# Condition flag mechanism to be implemented in Phase 4 conftest
+# Run under C-SINGLE (condition override via env var, implemented in Phase 4)
+PO_EVAL_CONDITION=single_responder pytest tests/redteam/ -v --tb=short
 ```
 
 ### 5.5 Results collection
