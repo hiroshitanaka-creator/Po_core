@@ -1,7 +1,8 @@
 {
   "metric": "M1_completeness",
+  "mode": "live",
   "condition": "full",
-  "prompts_evaluated": 5,
+  "prompts_evaluated": 20,
   "prompts_skipped": 0,
   "mean_completeness": 1.0,
   "info_threshold": 0.7,
@@ -46,6 +47,141 @@
     {
       "prompt_id": "P05",
       "case_prefix": "case_005",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P06",
+      "case_prefix": "case_006",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P07",
+      "case_prefix": "case_007",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P08",
+      "case_prefix": "case_008",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P09",
+      "case_prefix": "case_009",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P10",
+      "case_prefix": "case_010",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P11",
+      "case_prefix": "case_011",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P12",
+      "case_prefix": "case_012",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P13",
+      "case_prefix": "case_016",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P14",
+      "case_prefix": "case_017",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P15",
+      "case_prefix": "case_018",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P16",
+      "case_prefix": "case_019",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P17",
+      "case_prefix": "case_020",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P18",
+      "case_prefix": "case_021",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P19",
+      "case_prefix": "case_022",
+      "status": "OK",
+      "completeness": 1.0,
+      "fields_present": 19,
+      "fields_total": 19,
+      "missing_fields": []
+    },
+    {
+      "prompt_id": "P20",
+      "case_prefix": "case_023",
       "status": "OK",
       "completeness": 1.0,
       "fields_present": 19,

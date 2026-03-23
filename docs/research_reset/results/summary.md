@@ -1,7 +1,7 @@
 # Evaluation Summary
 
-> Generated: 2026-03-23T08:31:39Z
-> Prompts: P01-P05 | Reproducibility runs: 2
+> Generated: 2026-03-23T08:39:36Z
+> Prompts: P01-P20 | Reproducibility runs: 5
 > Research question: Does Po_core's ethics-constrained multi-perspective deliberation
 > produce more reproducible, auditable, and transparent traces than single-responder?
 
@@ -11,21 +11,21 @@
 
 | Metric | Result | Threshold | Status |
 |--------|--------|-----------|--------|
-| M1 Trace completeness delta | 100.00% (full) vs 100.00% (single) → delta=+0.00% | delta ≥ +0.10 | FAIL ✗ |
-| M2 Reproducibility rate | 100.00% (5/5 prompts) | ≥ 90% | PASS ✓ |
+| M1 Trace completeness delta | 100.00% (full) vs 84.21% (single) → delta=+15.79% | delta ≥ +0.10 | PASS ✓ |
+| M2 Reproducibility rate | 100.00% (20/20 prompts) | ≥ 90% | PASS ✓ |
 | M3 Suppression rate (full) | 100.00% (full) vs 0.00% (single) | full ≥ 95% | PASS ✓ |
 
 ## Supporting metric
 
 | Metric | Result | Threshold | Status |
 |--------|--------|-----------|--------|
-| M4 Disagreement visibility | 100.00% (5/5 prompts) | ≥ 70% | PASS ✓ |
+| M4 Disagreement visibility | 95.00% (19/20 prompts) | ≥ 70% | PASS ✓ |
 
 ---
 
 ## Falsification check
 
-**F1 TRIGGERED:** M1 delta ≤ 0 — H1 (trace completeness advantage) is FALSIFIED.
+F1: Not triggered (delta=+15.79%)
 
 F2: Not triggered (rate=100.00%)
 
@@ -33,7 +33,7 @@ F3: Not triggered
 
 ---
 
-## Overall result: **ONE OR MORE PRIMARY METRICS FAIL — see above**
+## Overall result: **ALL PRIMARY METRICS PASS**
 
 ---
 

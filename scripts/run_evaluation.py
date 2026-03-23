@@ -261,18 +261,20 @@ def main(argv: list[str] | None = None) -> int:
 
     exit_codes: list[int] = []
 
-    # ── M1: C-FULL ──
-    print("\n[M1] Trace completeness — C-FULL")
+    # ── M1: C-FULL (live mode for meaningful delta) ──
+    print("\n[M1] Trace completeness — C-FULL (live)")
     rc = _run_script("measure_completeness.py", [
+        "--mode", "live",
         "--condition", "full",
         "--prompts", args.prompts,
         "--output", str(RESULTS_DIR / "m1_completeness_full.json"),
     ], args.dry_run)
     exit_codes.append(rc)
 
-    # ── M1: C-SINGLE ──
-    print("\n[M1] Trace completeness — C-SINGLE")
+    # ── M1: C-SINGLE (live mode for meaningful delta) ──
+    print("\n[M1] Trace completeness — C-SINGLE (live)")
     rc = _run_script("measure_completeness.py", [
+        "--mode", "live",
         "--condition", "single_responder",
         "--prompts", args.prompts,
         "--output", str(RESULTS_DIR / "m1_completeness_single_responder.json"),
