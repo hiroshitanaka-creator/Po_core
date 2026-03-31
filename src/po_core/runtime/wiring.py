@@ -336,9 +336,13 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
     )
 
 
-def build_test_system(settings: Settings | None = None) -> WiredSystem:
+def build_default_system(settings: Settings | None = None) -> WiredSystem:
     """
-    Build a wired system for testing (uses in-memory adapters).
+    Build the default in-process wired system (in-memory adapters).
+
+    This is the public default for entrypoints that do not receive an external
+    memory backend. Historically this function was exposed as
+    ``build_test_system``; that alias remains for backward compatibility.
 
     Args:
         settings: Optional settings override
@@ -506,8 +510,14 @@ def _build_deliberation_engine(settings: Settings) -> Any:
     )
 
 
+def build_test_system(settings: Settings | None = None) -> WiredSystem:
+    """Backward-compatible alias for :func:`build_default_system`."""
+    return build_default_system(settings=settings)
+
+
 __all__ = [
     "WiredSystem",
     "build_system",
+    "build_default_system",
     "build_test_system",
 ]

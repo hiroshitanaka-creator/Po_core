@@ -48,7 +48,7 @@ from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.philosophers.registry import PhilosopherRegistry
 from po_core.ports.trace import TracePort
 from po_core.runtime.settings import Settings
-from po_core.runtime.wiring import build_system, build_test_system
+from po_core.runtime.wiring import build_default_system, build_system
 
 
 def _ensure_api_key(
@@ -116,7 +116,7 @@ def run(
     if memory_backend is not None:
         system = build_system(memory=memory_backend, settings=settings)
     else:
-        system = build_test_system(settings=settings)
+        system = build_default_system(settings=settings)
 
     # Create context
     ctx = Context.now(
@@ -182,7 +182,7 @@ async def async_run(
     if memory_backend is not None:
         system = build_system(memory=memory_backend, settings=settings)
     else:
-        system = build_test_system(settings=settings)
+        system = build_default_system(settings=settings)
 
     ctx = Context.now(
         request_id=str(uuid.uuid4()),
