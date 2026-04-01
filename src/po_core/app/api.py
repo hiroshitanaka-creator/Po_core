@@ -101,7 +101,7 @@ def run(
     Args:
         user_input: The user's input prompt
         philosophers: Optional allowlist of philosopher IDs.
-        memory_backend: Po_self or compatible memory backend (None for testing)
+        memory_backend: Optional external memory backend (None uses default in-process wiring)
         settings: Application settings (None for defaults)
 
     Returns:
@@ -170,7 +170,7 @@ async def async_run(
     Args:
         user_input: The user's input prompt
         philosophers: Optional allowlist of philosopher IDs.
-        memory_backend: Po_self or compatible memory backend (None for testing)
+        memory_backend: Optional external memory backend (None uses default in-process wiring)
         settings: Application settings (None for defaults)
         tracer: Optional tracer; a default in-memory tracer is used if omitted
 
