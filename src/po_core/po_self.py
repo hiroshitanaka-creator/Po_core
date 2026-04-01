@@ -165,12 +165,12 @@ class PoSelf:
         from po_core.domain.context import Context
         from po_core.ensemble import EnsembleDeps, run_turn
         from po_core.runtime.settings import Settings
-        from po_core.runtime.wiring import build_test_system
+        from po_core.runtime.wiring import build_default_system
         from po_core.trace.event_log import JsonlEventLogger
         from po_core.trace.in_memory import InMemoryTracer
 
         settings = self._settings or Settings.from_env()
-        system = build_test_system(settings=settings)
+        system = build_default_system(settings=settings)
 
         # Use InMemoryTracer for trace inspection
         tracer = InMemoryTracer()

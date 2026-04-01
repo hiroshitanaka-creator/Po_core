@@ -128,12 +128,12 @@ class TestPoSelfGeneratePhilosophersParam:
     Verify that generate(philosophers=...) injects _AllowlistRegistry into
     EnsembleDeps without running the full pipeline (mocked run_turn).
 
-    Note: build_test_system and run_turn are imported locally inside generate(),
+    Note: build_default_system and run_turn are imported locally inside generate(),
     so we must patch them at their *source* module paths.
     """
 
     # Patch targets: local imports inside generate() must be patched at source
-    _BUILD_PATH = "po_core.runtime.wiring.build_test_system"
+    _BUILD_PATH = "po_core.runtime.wiring.build_default_system"
     _RUN_TURN_PATH = "po_core.ensemble.run_turn"
 
     @staticmethod
