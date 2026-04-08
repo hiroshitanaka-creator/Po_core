@@ -390,6 +390,16 @@ class DeliberationEngine:
             if self._influence_tracker is not None and revised_proposals:
                 self._influence_tracker.update(revised_proposals, sender_map)
 
+            # Convergence check: if proposals changed less than threshold, stop early.
+            # convergence_threshold=0.0 disables this check (always continue).
+            convergence_delta = _compute_convergence_delta(
+                baseline_proposals, revised_proposals
+            )
+            converged = (
+                self.convergence_threshold > 0.0
+                and convergence_delta < self.convergence_threshold
+            )
+
             rounds.append(
                 RoundTrace(
                     round_number=round_num,
@@ -399,6 +409,15 @@ class DeliberationEngine:
                     role=round_role.value,
                 )
             )
+
+            if converged:
+                logger.debug(
+                    "Deliberation converged at round %d: delta=%.4f < threshold=%.4f",
+                    round_num,
+                    convergence_delta,
+                    self.convergence_threshold,
+                )
+                break
 
         influence_weights = (
             self._influence_tracker.weights()
@@ -653,3 +672,45 @@ def _merge_proposals(
     merged = [p for p in original if _get_author(p) not in revised_authors]
     merged.extend(revised)
     return merged
+
+
+def _compute_convergence_delta(
+    baseline: List[Proposal],
+    revised: List[Proposal],
+) -> float:
+    """Compute mean fractional content change between baseline and revised proposals.
+
+    Uses word-level Jaccard distance as a lightweight, NaN-safe proxy for
+    semantic change. Returns a float in [0.0, 1.0]:
+      - 0.0 → proposals unchanged (fully converged)
+      - 1.0 → proposals completely different (maximum divergence)
+
+    Safe against:
+    - Empty proposal lists (returns 0.0)
+    - Proposals with no matching author in baseline (skipped)
+    - Empty content strings (ZeroDivision avoided via max(..., 1))
+    - NaN (only arithmetic on ints, no float division by zero)
+    """
+    if not baseline or not revised:
+        return 0.0
+
+    baseline_by_author = {_get_author(p): p.content for p in baseline}
+    deltas: List[float] = []
+
+    for p in revised:
+        author = _get_author(p)
+        orig_content = baseline_by_author.get(author)
+        if orig_content is None:
+            # No baseline for this author — new philosopher, skip
+            continue
+
+        orig_words = set(orig_content.split())
+        new_words = set(p.content.split())
+        union_size = max(len(orig_words | new_words), 1)
+        intersection_size = len(orig_words & new_words)
+        # Jaccard distance: 1 - (intersection / union)
+        deltas.append(1.0 - intersection_size / union_size)
+
+    if not deltas:
+        return 0.0
+    return sum(deltas) / len(deltas)
