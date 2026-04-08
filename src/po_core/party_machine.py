@@ -549,11 +549,13 @@ async def async_run_philosophers(
 # Research-Based Knowledge Base
 # ============================================================================
 
-# Best 4-philosopher combinations (from RQ1)
+# Best 4-philosopher combinations (from RQ1).
+# All IDs must be present in manifest.py (canonical source of truth).
+# Removed: rawls (not in manifest) → arendt/beauvoir; mill (not in manifest) → epicurus.
 OPTIMAL_4_COMBOS: Dict[PhilosophicalTheme, List[List[str]]] = {
     PhilosophicalTheme.ETHICS: [
-        ["kant", "mill", "levinas", "confucius"],
-        ["aristotle", "kant", "rawls", "levinas"],
+        ["kant", "epicurus", "levinas", "confucius"],
+        ["aristotle", "kant", "beauvoir", "levinas"],
         ["confucius", "dewey", "levinas", "arendt"],
     ],
     PhilosophicalTheme.EXISTENCE: [
@@ -567,14 +569,14 @@ OPTIMAL_4_COMBOS: Dict[PhilosophicalTheme, List[List[str]]] = {
         ["confucius", "dewey", "wittgenstein", "derrida"],
     ],
     PhilosophicalTheme.POLITICS: [
-        ["aristotle", "rawls", "arendt", "confucius"],
-        ["mill", "rawls", "arendt", "dewey"],
-        ["aristotle", "mill", "arendt", "levinas"],
+        ["aristotle", "beauvoir", "arendt", "confucius"],
+        ["epicurus", "beauvoir", "arendt", "dewey"],
+        ["aristotle", "epicurus", "arendt", "levinas"],
     ],
     PhilosophicalTheme.FREEDOM: [
-        ["sartre", "mill", "dewey", "nietzsche"],
-        ["kierkegaard", "mill", "arendt", "dewey"],
-        ["sartre", "rawls", "dewey", "levinas"],
+        ["sartre", "epicurus", "dewey", "nietzsche"],
+        ["kierkegaard", "epicurus", "arendt", "dewey"],
+        ["sartre", "beauvoir", "dewey", "levinas"],
     ],
     PhilosophicalTheme.CONSCIOUSNESS: [
         ["heidegger", "merleau_ponty", "jung", "lacan"],
@@ -583,26 +585,61 @@ OPTIMAL_4_COMBOS: Dict[PhilosophicalTheme, List[List[str]]] = {
     ],
 }
 
-# Philosopher tension pairs (high dialectical tension)
+# Philosopher tension pairs (high dialectical tension).
+# All IDs must be present in manifest.py.
+# Removed: mill → epicurus; rawls → arendt.
 HIGH_TENSION_PAIRS: List[Tuple[str, str]] = [
     ("kant", "nietzsche"),  # Duty vs. Will-to-Power
     ("aristotle", "derrida"),  # Essentialism vs. Deconstruction
     ("confucius", "sartre"),  # Harmony vs. Radical Freedom
     ("heidegger", "dewey"),  # Being vs. Pragmatism
-    ("mill", "kierkegaard"),  # Utilitarianism vs. Existentialism
-    ("rawls", "deleuze"),  # Justice vs. Difference
+    ("epicurus", "kierkegaard"),  # Hedonism/utility vs. Existentialism
+    ("arendt", "deleuze"),  # Political order vs. Difference
     ("levinas", "nietzsche"),  # Ethics of Other vs. Self-Overcoming
 ]
 
-# Philosopher compatibility clusters
+# Philosopher compatibility clusters.
+# All IDs must be present in manifest.py.
+# Removed: mill → spinoza (rationalist analytic-adjacent); rawls → removed (arendt already present).
 HARMONIOUS_CLUSTERS: Dict[str, List[str]] = {
     "continental": ["heidegger", "sartre", "kierkegaard", "merleau_ponty", "levinas"],
-    "analytic": ["wittgenstein", "dewey", "peirce", "mill"],
+    "analytic": ["wittgenstein", "dewey", "peirce", "spinoza"],
     "eastern": ["confucius", "zhuangzi", "watsuji", "wabi_sabi"],
-    "political": ["aristotle", "rawls", "arendt", "mill", "dewey"],
+    "political": ["aristotle", "arendt", "dewey", "beauvoir", "fanon"],
     "psychoanalytic": ["jung", "lacan", "nietzsche"],
     "postmodern": ["derrida", "deleuze", "badiou", "lacan"],
 }
+
+
+def validate_philosopher_ids(ids: Sequence[str]) -> None:
+    """Raise ValueError listing any IDs absent from the canonical manifest.
+
+    Call this during module init or tests to guard against roster drift.
+    """
+    from po_core.philosophers.manifest import DUMMY_PHILOSOPHER_ID, SPECS
+
+    canonical = frozenset(
+        s.philosopher_id for s in SPECS if s.philosopher_id != DUMMY_PHILOSOPHER_ID
+    )
+    invalid = sorted(set(ids) - canonical)
+    if invalid:
+        raise ValueError(
+            f"philosopher IDs not in manifest: {invalid}. "
+            "Update the constants to use only manifest-registered IDs."
+        )
+
+
+# Guard: validate all research constants at import time so drift is caught early.
+_all_research_ids: List[str] = []
+for _combos in OPTIMAL_4_COMBOS.values():
+    for _combo in _combos:
+        _all_research_ids.extend(_combo)
+for _a, _b in HIGH_TENSION_PAIRS:
+    _all_research_ids.extend([_a, _b])
+for _cluster in HARMONIOUS_CLUSTERS.values():
+    _all_research_ids.extend(_cluster)
+validate_philosopher_ids(_all_research_ids)
+del _all_research_ids, _combos, _combo, _a, _b, _cluster
 
 
 # ============================================================================
@@ -617,31 +654,19 @@ class PhilosopherPartyMachine:
     """
 
     def __init__(self, verbose: bool = True):
-        """Initialize the party machine."""
+        """Initialize the party machine.
+
+        ``available_philosophers`` is derived from the canonical manifest so it
+        can never drift from the registered philosopher roster.
+        """
+        from po_core.philosophers.manifest import DUMMY_PHILOSOPHER_ID, SPECS
+
         self.verbose = verbose
-        self.available_philosophers = [
-            "aristotle",
-            "kant",
-            "mill",
-            "confucius",
-            "dewey",
-            "heidegger",
-            "sartre",
-            "kierkegaard",
-            "merleau_ponty",
-            "levinas",
-            "rawls",
-            "arendt",
-            "peirce",
-            "wittgenstein",
-            "derrida",
-            "deleuze",
-            "badiou",
-            "jung",
-            "watsuji",
-            "zhuangzi",
-            "wabi_sabi",
-            "lacan",
+        # Single source of truth: manifest.  Excludes the internal dummy helper.
+        self.available_philosophers: List[str] = [
+            s.philosopher_id
+            for s in SPECS
+            if s.philosopher_id != DUMMY_PHILOSOPHER_ID
         ]
 
     def suggest_party(

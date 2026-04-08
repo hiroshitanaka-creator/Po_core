@@ -374,7 +374,7 @@ def _persist_and_finalize_result(
         "session_id": session_id,
         "status": _normalize_status(str(result.get("status") or "")),
         "response": _extract_response_text(result),
-        "safety_mode": str(result.get("safety_mode", "NORMAL")),
+        "safety_mode": str(result.get("safety_mode") or "UNKNOWN"),
         "processing_time_ms": round(elapsed_ms, 2),
         "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
         "tensors": _extract_tensors(result).model_dump(),

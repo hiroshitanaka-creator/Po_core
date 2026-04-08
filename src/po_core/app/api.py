@@ -41,7 +41,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 
 from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_headers
-from po_core.app.rest.config import APISettings, parse_cors_origins
+from po_core.app.rest.config import (
+    APISettings,
+    get_api_settings,
+    parse_cors_origins,
+    set_api_settings,
+)
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -212,8 +217,6 @@ async def async_run(
     return await async_run_turn(ctx, deps)
 
 
-_legacy_api_settings = APISettings()
-
 # ---------------------------------------------------------------------------
 # DEPRECATED legacy FastAPI surface.
 #
@@ -223,7 +226,14 @@ _legacy_api_settings = APISettings()
 #
 # The legacy surface will be removed in a future release (planned: v2.0.0).
 # See docs/legacy/api_migration.md for migration instructions.
+#
+# Config: reset the canonical singleton with fresh env-var-based settings on
+# every import/reload of this module.  This ensures:
+# 1. Both surfaces share the same configuration source of truth (get_api_settings).
+# 2. Test code that reloads this module with monkeypatched env vars gets fresh
+#    settings rather than the cached singleton from a prior run.
 # ---------------------------------------------------------------------------
+set_api_settings(APISettings())
 warnings.warn(
     "po_core.app.api.app (the legacy FastAPI surface with /generate) is deprecated. "
     "Use po_core.app.rest.server:create_app instead. "
@@ -241,7 +251,9 @@ app = FastAPI(
     deprecated=True,
 )
 
-_cors_origins = parse_cors_origins(_legacy_api_settings.cors_origins)
+# Build CORS from the canonical settings (evaluated once at module load, but
+# sourced from get_api_settings() to stay in sync with the REST server's config).
+_cors_origins = parse_cors_origins(get_api_settings().cors_origins)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
@@ -269,8 +281,9 @@ async def generate(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> Response:
+    # Read from the canonical singleton so auth settings are always current.
     _ensure_api_key(
-        settings=_legacy_api_settings,
+        settings=get_api_settings(),
         x_api_key=x_api_key,
         authorization=authorization,
     )

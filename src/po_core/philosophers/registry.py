@@ -20,8 +20,11 @@ DEPENDENCY RULES:
 from __future__ import annotations
 
 import importlib
-from dataclasses import dataclass
+import logging
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Sequence, Tuple
+
+logger = logging.getLogger(__name__)
 
 from po_core.deliberation.roles import PHILOSOPHER_ROLE_MAP, Role
 from po_core.domain.safety_mode import SafetyMode
@@ -59,6 +62,35 @@ class LoadError:
     module: str
     symbol: str
     error: str
+
+
+@dataclass(frozen=True)
+class LoadReport:
+    """Structured result of a load() call.
+
+    Provides a single object callers can inspect to understand exactly which
+    philosophers loaded successfully and which failed, so failures are never
+    silently discarded.
+    """
+
+    loaded: List[str]    # philosopher_ids that loaded successfully
+    errors: List[LoadError]  # philosophers that failed to load
+
+    @property
+    def ok(self) -> bool:
+        """True when no load errors occurred."""
+        return len(self.errors) == 0
+
+    def raise_if_errors(self) -> None:
+        """Raise RuntimeError listing all load errors (strict startup policy)."""
+        if self.errors:
+            details = ", ".join(
+                f"{e.philosopher_id}({e.error})" for e in self.errors
+            )
+            raise RuntimeError(
+                f"Philosopher load failed for: {details}. "
+                "Fix the module/symbol in the manifest or disable the spec."
+            )
 
 
 @dataclass(frozen=True)
@@ -226,8 +258,13 @@ class PhilosopherRegistry:
         """
         選抜された哲学者をロード（エラー回収付き）。
 
-        39人になるとimportミスが必ず出る。
-        なのでloadは落とさず"エラー回収"する。
+        Contract:
+        - enabled=True の哲学者がロード失敗 → RuntimeError を raise（fail-fast）。
+        - enabled=False の哲学者がロード失敗 → LoadError を収集して返す。
+        - spec が見つからない → LoadError("spec_not_found") を収集して返す。
+
+        42人体制では import ミスが起きることがある。
+        そのため load は enabled=False のみ"エラー回収"する。
 
         Args:
             selected_ids: 選抜されたphilosopher_idのリスト
@@ -235,7 +272,7 @@ class PhilosopherRegistry:
         Returns:
             Tuple of:
             - ロードされた哲学者インスタンスのリスト
-            - ロードエラーのリスト
+            - ロードエラーのリスト（enabled=False のみ）
         """
         by_id = {s.philosopher_id: s for s in self._specs}
         out: List[PhilosopherProtocol] = []
@@ -277,10 +314,37 @@ class PhilosopherRegistry:
         return out, errors
 
     def select_and_load(self, mode: SafetyMode) -> List[PhilosopherProtocol]:
-        """選抜とロードを一度に行う（エラーは無視）。"""
-        sel = self.select(mode)
-        phs, _ = self.load(sel.selected_ids)
+        """選抜とロードを一度に行う。
+
+        LoadErrors（enabled=False philosophers の失敗）は warning ログに記録される。
+        enabled=True philosopher の失敗は RuntimeError として伝播する（fail-fast）。
+
+        Callers that need the full LoadReport should use select_and_load_with_report().
+        """
+        phs, errors = self.select_and_load_with_report(mode)
         return phs
+
+    def select_and_load_with_report(
+        self, mode: SafetyMode
+    ) -> Tuple[List[PhilosopherProtocol], List[LoadError]]:
+        """選抜とロードを一度に行い、ロード結果を明示的に返す。
+
+        Returns:
+            Tuple of:
+            - ロードされた哲学者インスタンスのリスト
+            - ロードエラーのリスト（enabled=False philosopher の失敗）
+        """
+        sel = self.select(mode)
+        phs, errors = self.load(sel.selected_ids)
+        if errors:
+            for e in errors:
+                logger.warning(
+                    "Philosopher load error (disabled spec): id=%s module=%s error=%s",
+                    e.philosopher_id,
+                    e.module,
+                    e.error,
+                )
+        return phs, errors
 
 
 # Backward compat: 固定リストを返す（wiring.pyが依存）
@@ -299,6 +363,7 @@ __all__ = [
     "PhilosopherRegistry",
     "Selection",
     "LoadError",
+    "LoadReport",
     "SelectionPlan",
     "build_philosophers",
 ]

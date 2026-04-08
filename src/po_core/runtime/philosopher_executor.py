@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import multiprocessing
 import os
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass
+from queue import Empty as QueueEmpty
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -17,6 +19,8 @@ from typing import (
     Sequence,
     Tuple,
 )
+
+logger = logging.getLogger(__name__)
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import ExecOutcome, SerializedJob, run_one_philosopher
@@ -89,6 +93,20 @@ def _soft_timeout_error(timeout_s: float, mode: str) -> str:
 
 def _hard_timeout_error(timeout_s: float) -> str:
     return f"Hard timeout after {timeout_s}s"
+
+
+def _child_crash_error(exit_code: int, timeout_s: float) -> str:
+    return (
+        f"Child process crashed (exit_code={exit_code}) before completing "
+        f"within {timeout_s}s budget"
+    )
+
+
+def _bootstrap_failure_error(exit_code: int) -> str:
+    return (
+        f"Child process exited during bootstrap (exit_code={exit_code}); "
+        "possible import error or OOM in worker"
+    )
 
 
 def _build_execution_result(
@@ -199,6 +217,14 @@ def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> 
 
 
 def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
+    """Execute a philosopher in a child process with explicit failure classification.
+
+    Failure taxonomy:
+    - timeout:           queue.Empty after (timeout_s + bootstrap_grace_s)
+    - crash:             queue.Empty AND process exited with non-zero exit code
+    - bootstrap failure: process exits with non-zero before bootstrap_grace_s elapses
+    - IPC/serialize:     handled in _process_worker; returned as error ExecOutcome
+    """
     pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
     start = perf_counter()
     ctx = multiprocessing.get_context(
@@ -210,32 +236,54 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     bootstrap_grace_s = float(
         os.getenv("PO_PHILOSOPHER_PROCESS_BOOTSTRAP_GRACE_S", "0.05")
     )
-    try:
-        outcome = queue.get(timeout=job.timeout_s + bootstrap_grace_s)
-    except Exception:
-        proc.terminate()
-        proc.join(timeout=1.0)
-        if proc.is_alive():
-            proc.kill()
-            proc.join(timeout=1.0)
-        elapsed_ms = int((perf_counter() - start) * 1000)
-        queue.close()
-        return ExecOutcome(
-            [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
-        )
+    total_timeout = job.timeout_s + bootstrap_grace_s
+    outcome: ExecOutcome | None = None
+    error_str: str | None = None
 
-    proc.join(timeout=1.0)
+    try:
+        outcome = queue.get(timeout=total_timeout)
+    except QueueEmpty:
+        # Distinguish: did the process crash (non-zero exit) or just time out?
+        proc.join(timeout=0.1)
+        exit_code = proc.exitcode
+        elapsed_s = perf_counter() - start
+        if exit_code is not None and exit_code != 0:
+            if elapsed_s < bootstrap_grace_s * 3:
+                error_str = _bootstrap_failure_error(exit_code)
+            else:
+                error_str = _child_crash_error(exit_code, job.timeout_s)
+            logger.warning(
+                "Philosopher process for %s exited with code %d (%s)",
+                pid, exit_code, error_str,
+            )
+        else:
+            error_str = _hard_timeout_error(job.timeout_s)
+    except Exception as exc:
+        # Unexpected error reading from queue (e.g. broken pipe)
+        error_str = f"IPC queue error for {pid}: {type(exc).__name__}: {exc}"
+        logger.warning("Unexpected queue error for philosopher %s: %s", pid, exc)
+
+    # Terminate process if still alive
     if proc.is_alive():
         proc.terminate()
         proc.join(timeout=1.0)
+    if proc.is_alive():
+        proc.kill()
+        proc.join(timeout=1.0)
+
     elapsed_ms = int((perf_counter() - start) * 1000)
     queue.close()
+
+    if error_str is not None:
+        return ExecOutcome([], 0, True, error_str, elapsed_ms, pid)
+
     if isinstance(outcome, ExecOutcome):
         if outcome.latency_ms > job.timeout_s * 1000:
             return ExecOutcome(
                 [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
             )
         return outcome
+
     return ExecOutcome([], 0, False, "Worker returned invalid outcome", elapsed_ms, pid)
 
 

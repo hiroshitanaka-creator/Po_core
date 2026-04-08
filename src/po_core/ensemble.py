@@ -7,9 +7,12 @@ Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
+
+logger = logging.getLogger(__name__)
 
 from po_core import philosophers
 from po_core.axis.scoring import score_text_with_debug
@@ -302,8 +305,11 @@ def _run_phase_pre(
                     intent_explanation.to_dict(),
                 )
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            # ExplanationChain is best-effort enrichment; must not block the safety gate.
+            logger.warning(
+                "IntentionGate ExplanationChain failed (non-fatal): %s", exc, exc_info=True
+            )
 
     if v1.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v1, stage="intention")
@@ -327,6 +333,7 @@ def _run_phase_pre(
             return {
                 "request_id": ctx.request_id,
                 "status": "ok",
+                "safety_mode": mode.value,
                 "degraded": True,
                 "proposal": fallback.compact(),
                 "verdict": v1.to_dict(),
@@ -344,6 +351,7 @@ def _run_phase_pre(
         return {
             "request_id": ctx.request_id,
             "status": "blocked",
+            "safety_mode": mode.value,
             "stage": "intention",
             "verdict": v1.to_dict(),
         }
@@ -684,8 +692,14 @@ def _run_phase_post(
                     shadow_candidate=candidate_shadow,
                     shadow_final=final_shadow,
                 )
-        except Exception:
-            pass
+        except Exception as exc:
+            # Shadow Pareto is non-critical A/B evaluation; failures must not crash
+            # the main pipeline, but they must be observable for debugging.
+            logger.warning(
+                "Shadow Pareto evaluation failed (non-fatal, main pipeline unaffected): %s",
+                exc,
+                exc_info=True,
+            )
 
     # 10. Persist decision summary (main only)
     deps.memory_write.append(
@@ -738,6 +752,7 @@ def _run_phase_post(
     result: Dict[str, Any] = {
         "request_id": ctx.request_id,
         "status": "ok",
+        "safety_mode": pre.mode.value,  # Truthful — derived from tensor metrics
         "proposal": final_main.compact(),
         "proposals": rest_proposals,
     }

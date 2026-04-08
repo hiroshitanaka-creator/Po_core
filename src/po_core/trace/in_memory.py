@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Callable, List, Sequence
 
 from po_core.domain.trace_event import TraceEvent
 from po_core.ports.trace import TracePort
+
+logger = logging.getLogger(__name__)
 
 # Listener callback type: receives a TraceEvent, returns nothing.
 TraceListener = Callable[[TraceEvent], None]
@@ -39,8 +42,14 @@ class InMemoryTracer(TracePort):
         for listener in self._listeners:
             try:
                 listener(event)
-            except Exception:
-                pass  # Listener failure must not break tracing
+            except Exception as exc:
+                # Listener failure must not break tracing, but must be observable.
+                logger.warning(
+                    "TraceListener raised an exception (event_type=%s): %s",
+                    event.event_type,
+                    exc,
+                    exc_info=True,
+                )
 
     def emit_many(self, events: Sequence[TraceEvent]) -> None:
         for e in events:

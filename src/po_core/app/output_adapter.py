@@ -37,10 +37,54 @@ from po_core.app.values_clarifier import (
     needs_values_clarification,
 )
 
-_POCORE_VERSION = "1.0.0"
+# Version metadata: derive from the package source of truth so these never drift.
+# import here is deferred to avoid circular imports at module load time.
+def _pkg_version() -> str:
+    from po_core import __version__
+
+    return __version__
+
+
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
-_GENERATOR_VERSION = "1.0.0"
+
+# Lazily resolved at first call.  Use _get_pocore_version() / _get_generator_version()
+# internally instead of the old string constants.
+def _get_pocore_version() -> str:
+    return _pkg_version()
+
+
+def _get_generator_version() -> str:
+    return _pkg_version()
+
+
+# Backward-compat aliases (read from package at access time).
+class _VersionProxy:
+    """Descriptor that reads po_core.__version__ on every attribute access."""
+
+    def __set_name__(self, owner: type, name: str) -> None:
+        self._name = name
+
+    def __get__(self, obj: object, objtype: type | None = None) -> str:
+        return _pkg_version()
+
+
+class _VersionConstants:
+    _POCORE_VERSION = _VersionProxy()
+    _GENERATOR_VERSION = _VersionProxy()
+
+
+_version_constants = _VersionConstants()
+
+# Module-level attribute access kept for backward compat via __getattr__
+_POCORE_VERSION: str  # type: ignore[assignment]
+_GENERATOR_VERSION: str  # type: ignore[assignment]
+
+
+def __getattr__(name: str) -> str:
+    if name in ("_POCORE_VERSION", "_GENERATOR_VERSION"):
+        return _pkg_version()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def _map_values_to_principles(values: List[str]) -> List[str]:
@@ -518,14 +562,14 @@ def adapt_to_schema(
     return {
         "meta": {
             "schema_version": _SCHEMA_VERSION,
-            "pocore_version": _POCORE_VERSION,
+            "pocore_version": _get_pocore_version(),
             "run_id": run_id,
             "created_at": now,
             "seed": seed,
             "deterministic": deterministic,
             "generator": {
                 "name": _GENERATOR_NAME,
-                "version": _GENERATOR_VERSION,
+                "version": _get_generator_version(),
                 "mode": "rule_based",
             },
         },
