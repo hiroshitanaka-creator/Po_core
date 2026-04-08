@@ -221,6 +221,18 @@ class DeliberationEngine:
         Returns:
             DeliberationResult with final proposals and round traces
         """
+        # Guard: dialectic mode requires Thesis→Antithesis→Synthesis (≥3 rounds).
+        # __init__ enforces this at construction time, but if dialectic_mode is
+        # mutated after construction (e.g. PartyMachine dynamic config), enforce
+        # it here too so Hegelian dialogue is never silently truncated.
+        if self.dialectic_mode == "dialectic" and self.max_rounds < 3:
+            logger.warning(
+                "dialectic_mode='dialectic' requires max_rounds >= 3 "
+                "(current: %d). Forcing max_rounds=3.",
+                self.max_rounds,
+            )
+            self.max_rounds = 3
+
         is_dialectic = self.dialectic_mode == "dialectic"
         rounds: List[RoundTrace] = []
         all_emergence: List[EmergenceSignal] = []
