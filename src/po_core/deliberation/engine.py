@@ -55,6 +55,8 @@ class RoundTrace:
     n_revised: int
     interaction_summary: Optional[Dict] = None
     role: str = DebateRole.STANDARD.value  # Phase 6-B: dialectic role for this round
+    converged: bool = False  # True if convergence_threshold was reached this round
+    convergence_delta: float = 0.0  # Jaccard change delta (0.0=no change, 1.0=full)
 
 
 @dataclass
@@ -124,6 +126,8 @@ class DeliberationResult:
                     "n_proposals": r.n_proposals,
                     "n_revised": r.n_revised,
                     "role": r.role,
+                    "converged": r.converged,
+                    "convergence_delta": r.convergence_delta,
                 }
                 for r in self.rounds
             ],
@@ -396,6 +400,8 @@ class DeliberationEngine:
                     n_revised=n_revised,
                     interaction_summary=interaction_matrix.summary(),
                     role=round_role.value,
+                    converged=converged,
+                    convergence_delta=round(convergence_delta, 6),
                 )
             )
 
