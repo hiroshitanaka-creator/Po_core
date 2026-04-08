@@ -21,8 +21,11 @@ Phase 6-B additions:
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence
+
+logger = logging.getLogger(__name__)
 
 from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
@@ -599,8 +602,25 @@ def _re_propose(
                         extra=extra,
                     )
                 )
-        except Exception:
-            # Philosopher failed in re-proposal round → keep original
+        except (TypeError, AttributeError) as e:
+            # Implementation mismatch — keep original proposal for this philosopher
+            logger.warning(
+                "Philosopher %s failed in deliberation re-propose round %d"
+                " (implementation error): %s",
+                name,
+                round_num,
+                e,
+            )
+            continue
+        except Exception as e:
+            logger.warning(
+                "Philosopher %s failed in deliberation re-propose round %d"
+                " (unexpected): %s",
+                name,
+                round_num,
+                e,
+                exc_info=True,
+            )
             continue
 
     return revised
