@@ -233,16 +233,37 @@ class AsyncPartyMachine:
     # ── Execution ─────────────────────────────────────────────────────
 
     def _has_native_async(self, ph: "PhilosopherProtocol") -> bool:
-        """Return True if the philosopher overrides propose_async() natively."""
+        """Return True if the philosopher overrides propose_async() natively.
+
+        Uses MRO-based detection instead of ``__func__`` identity comparison.
+        The ``__func__`` approach breaks silently when decorators, functools.wraps,
+        or dynamic class generation are involved.
+
+        Detection order:
+        1. Explicit opt-in flag ``__propose_async_override__ = True`` on the method
+           (works for wrapped/decorated methods).
+        2. MRO walk: if ``propose_async`` appears in any class before ``Philosopher``
+           in the MRO, it is a native override.
+        """
         method = getattr(ph, self._NATIVE_ASYNC_SENTINEL, None)
         if method is None:
             return False
-        # If the method's underlying function differs from Philosopher.propose_async,
-        # it is a native override.
+
+        # 1. Explicit opt-in: decorator or dynamic class sets the flag
+        if getattr(method, "__propose_async_override__", False):
+            return True
+
+        # 2. MRO walk: find whether any subclass before Philosopher defines the method
         from po_core.philosophers.base import Philosopher
 
-        base_fn = Philosopher.propose_async
-        return getattr(method, "__func__", None) is not base_fn
+        for cls in type(ph).__mro__:
+            if cls is Philosopher:
+                # Reached the base — no override found above it
+                return False
+            if self._NATIVE_ASYNC_SENTINEL in cls.__dict__:
+                return True
+
+        return False
 
     async def _dispatch_one(
         self,
