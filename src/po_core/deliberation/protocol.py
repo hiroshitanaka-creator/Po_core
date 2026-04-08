@@ -167,6 +167,11 @@ def _best_effort_propose(ph: Any, input: Mapping[str, Any]) -> Optional[Proposal
     return proposal if isinstance(proposal, Proposal) else None
 
 
+def proposal_to_argument_card(proposal: Proposal, fallback_name: str) -> ArgumentCard:
+    """Convert a Proposal to an ArgumentCard (public interface for engine integration)."""
+    return _proposal_to_card(proposal, fallback_name)
+
+
 def _proposal_to_card(proposal: Proposal, fallback_name: str) -> ArgumentCard:
     extra = proposal.extra if isinstance(proposal.extra, Mapping) else {}
     po_core_meta = extra.get(PO_CORE, {}) if isinstance(extra, Mapping) else {}

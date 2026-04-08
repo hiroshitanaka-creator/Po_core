@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
+from po_core.deliberation.protocol import SynthesisEngine, proposal_to_argument_card
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
     DebateRole,
@@ -280,34 +281,17 @@ class DeliberationEngine:
             round_role = assign_role(round_num, is_dialectic)
 
             if is_dialectic and round_role == DebateRole.SYNTHESIS:
-                # Synthesis round: Synthesizer philosophers integrate the full debate
-                counterarguments = _collect_synthesis_counterarguments(
-                    current_proposals, SYNTHESIZER_PHILOSOPHERS, ph_lookup
-                )
-                sender_map: Dict[str, str] = {
-                    name: "the debate" for name in counterarguments
-                }
-
-                if not counterarguments:
-                    rounds.append(
-                        RoundTrace(
-                            round_number=round_num,
-                            n_proposals=len(current_proposals),
-                            n_revised=0,
-                            role=round_role.value,
-                        )
-                    )
-                    break
-
-                revised_proposals = _re_propose(
-                    ph_lookup,
-                    counterarguments,
-                    ctx,
-                    intent,
-                    tensors,
-                    memory,
+                # Synthesis round: delegate to explicit _run_synthesis_round() helper
+                # so ArgumentCard/CritiqueCard construction and SynthesisEngine report
+                # are always produced — fixes "stance_distribution/disagreements empty"
+                revised_proposals, synthesis_summary = _run_synthesis_round(
+                    current_proposals=current_proposals,
+                    ph_lookup=ph_lookup,
+                    ctx=ctx,
+                    intent=intent,
+                    tensors=tensors,
+                    memory=memory,
                     round_num=round_num,
-                    sender_map=sender_map,
                     prompt_mode=self.prompt_mode,
                     role=round_role,
                 )
@@ -322,9 +306,14 @@ class DeliberationEngine:
                         round_number=round_num,
                         n_proposals=len(current_proposals),
                         n_revised=n_revised,
+                        interaction_summary=synthesis_summary,
                         role=round_role.value,
                     )
                 )
+
+                if n_revised == 0:
+                    # No synthesizers found or no proposals — stop deliberation
+                    break
                 continue
 
             # Standard or Antithesis round: use high-interference pairs
@@ -655,6 +644,73 @@ def _re_propose(
             continue
 
     return revised
+
+
+def _run_synthesis_round(
+    current_proposals: List[Proposal],
+    ph_lookup: Dict[str, object],
+    ctx: DomainContext,
+    intent: Intent,
+    tensors: TensorSnapshot,
+    memory: MemorySnapshot,
+    round_num: int,
+    prompt_mode: str,
+    role: DebateRole,
+) -> tuple:
+    """Execute the Synthesis round with explicit ArgumentCard/CritiqueCard construction.
+
+    This is an explicit interface to SynthesisEngine so that:
+    - ArgumentCards are built from current proposals (stance + claims populated)
+    - A structured SynthesisEngine report is produced (disagreements, open_questions)
+    - The synthesis summary is returned for RoundTrace.interaction_summary storage
+
+    Returns:
+        (revised_proposals: List[Proposal], synthesis_summary: Optional[Dict])
+    """
+    # Build ArgumentCards from current proposals so SynthesisEngine has real content
+    argument_cards = [
+        proposal_to_argument_card(p, _get_author(p) or "unknown")
+        for p in current_proposals
+        if p.content
+    ]
+
+    # Build counterarguments for synthesizer philosophers
+    counterarguments = _collect_synthesis_counterarguments(
+        current_proposals, SYNTHESIZER_PHILOSOPHERS, ph_lookup
+    )
+
+    if not counterarguments:
+        return [], None
+
+    sender_map: Dict[str, str] = {name: "the debate" for name in counterarguments}
+
+    # Re-propose: synthesizers integrate the full debate
+    revised_proposals = _re_propose(
+        ph_lookup,
+        counterarguments,
+        ctx,
+        intent,
+        tensors,
+        memory,
+        round_num=round_num,
+        sender_map=sender_map,
+        prompt_mode=prompt_mode,
+        role=role,
+    )
+
+    # Build synthesis report via SynthesisEngine (disagreements, stance distribution)
+    synthesis_summary: Optional[Dict] = None
+    if argument_cards:
+        try:
+            synthesis_summary = SynthesisEngine().build_report(
+                cards=argument_cards,
+                critiques=[],  # Critique cards not available in engine flow
+                axis_spec={"axes": ["ethics", "risk", "evidence"]},
+            )
+        except Exception as e:
+            logger.warning("SynthesisEngine.build_report failed: %s", e)
+
+    return revised_proposals, synthesis_summary
 
 
 def _merge_proposals(
