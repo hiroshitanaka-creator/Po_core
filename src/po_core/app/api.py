@@ -35,8 +35,9 @@ from __future__ import annotations
 import os
 import time
 import uuid
+import warnings
 
-from fastapi import FastAPI, Header, HTTPException, status
+from fastapi import FastAPI, Header, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 
@@ -217,11 +218,33 @@ async def async_run(
 
 _legacy_api_settings = APISettings()
 
-app = FastAPI(title="Po_core Legacy Compatibility API")
+# ---------------------------------------------------------------------------
+# DEPRECATED legacy FastAPI surface.
+#
+# This ``app`` object and the ``/generate`` endpoint are retained ONLY for
+# backward-compatibility.  New deployments MUST use:
+#   po_core.app.rest.server:create_app
+#
+# The legacy surface will be removed in a future release (planned: v2.0.0).
+# See docs/legacy/api_migration.md for migration instructions.
+# ---------------------------------------------------------------------------
+warnings.warn(
+    "po_core.app.api.app (the legacy FastAPI surface with /generate) is deprecated. "
+    "Use po_core.app.rest.server:create_app instead. "
+    "This surface will be removed in v2.0.0.",
+    DeprecationWarning,
+    stacklevel=1,
+)
 
-# LEGACY COMPATIBILITY SURFACE ONLY.
-# New deployments should use `po_core.app.rest.server:create_app` instead.
-# This module keeps env-driven auth/CORS parity, but is not the primary documented REST surface.
+app = FastAPI(
+    title="Po_core Legacy Compatibility API [DEPRECATED]",
+    description=(
+        "**DEPRECATED** — Use `po_core.app.rest.server:create_app` for new deployments. "
+        "This surface will be removed in v2.0.0."
+    ),
+    deprecated=True,
+)
+
 _cors_origins = parse_cors_origins(_legacy_api_settings.cors_origins)
 app.add_middleware(
     CORSMiddleware,
@@ -231,22 +254,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+_DEPRECATION_HEADER = (
+    "POST /generate is deprecated. Use POST /v1/reason via po_core.app.rest."
+)
 
-@app.post("/generate")
+
+@app.post(
+    "/generate",
+    deprecated=True,
+    summary="[DEPRECATED] Generate philosophical response",
+    description=(
+        "**DEPRECATED** — Use `POST /v1/reason` on the canonical REST server instead. "
+        "This endpoint will be removed in v2.0.0."
+    ),
+)
 async def generate(
     payload: GenerateRequest,
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
-) -> dict:
+) -> Response:
     _ensure_api_key(
         settings=_legacy_api_settings,
         x_api_key=x_api_key,
         authorization=authorization,
     )
     try:
-        return await async_run(payload.user_input, philosophers=payload.philosophers)
+        result = await async_run(payload.user_input, philosophers=payload.philosophers)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    import json
+
+    return Response(
+        content=json.dumps(result),
+        media_type="application/json",
+        headers={"Deprecation": "true", "Sunset": "v2.0.0", "Link": _DEPRECATION_HEADER},
+    )
 
 
 __all__ = ["run", "async_run", "app"]
