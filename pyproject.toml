@@ -143,6 +143,11 @@ package-dir = {"" = "src"}
 where = ["src"]
 include = ["po_core*"]
 namespaces = false
+# Distribution scope notes:
+# - po_core.experiments  — INCLUDED: required by po-experiment CLI entry point
+# - po_core.database     — INCLUDED: used by po_trace_db.py; future: move to optional dep
+# - Top-level folders (01_specifications/, 02_architecture/, experiments/) are
+#   outside src/ and therefore NOT included in the wheel (correct behavior, no action needed)
 
 
 [tool.setuptools.dynamic]
