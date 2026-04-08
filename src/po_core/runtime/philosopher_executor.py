@@ -172,7 +172,30 @@ def _run_one_in_thread(
 
 
 def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> None:
-    queue.put(run_one_philosopher(job))
+    """Execute philosopher in a subprocess and put ExecOutcome into the queue.
+
+    Wraps run_one_philosopher() to catch PicklingError from queue.put() — which
+    can occur when a philosopher produces a Proposal with a non-picklable attribute
+    (e.g. circular reference, custom TensorSnapshot).  In that case, an error
+    ExecOutcome is queued instead of silently crashing the child process.
+    """
+    import pickle
+
+    pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
+    outcome = run_one_philosopher(job)
+    try:
+        queue.put(outcome)
+    except (pickle.PicklingError, TypeError, AttributeError) as exc:
+        # Outcome is not serializable — queue a stripped-down error outcome instead
+        error_outcome = ExecOutcome(
+            proposals=[],
+            n=0,
+            timed_out=False,
+            error=f"IPC serialize error (PicklingError) for {pid}: {type(exc).__name__}: {exc}",
+            latency_ms=outcome.latency_ms,
+            philosopher_id=pid,
+        )
+        queue.put(error_outcome)
 
 
 def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:

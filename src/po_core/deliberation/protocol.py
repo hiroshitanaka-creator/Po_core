@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.domain.proposal import Proposal
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -137,16 +140,36 @@ def _run_critique(
 
 
 def _best_effort_propose(ph: Any, input: Mapping[str, Any]) -> Optional[Proposal]:
+    ph_name = _ph_name(ph)
     try:
         raw = ph.propose(input, None, None, None)
     except TypeError:
+        # Signature mismatch — philosopher does not support the legacy 4-arg call.
         return None
-    except Exception:
+    except (AttributeError, NotImplementedError) as e:
+        logger.warning(
+            "Philosopher %s failed in deliberation propose (implementation error): %s",
+            ph_name,
+            e,
+        )
+        return None
+    except Exception as e:
+        logger.warning(
+            "Philosopher %s failed in deliberation propose (unexpected): %s",
+            ph_name,
+            e,
+            exc_info=True,
+        )
         return None
     if not raw:
         return None
     proposal = raw[0]
     return proposal if isinstance(proposal, Proposal) else None
+
+
+def proposal_to_argument_card(proposal: Proposal, fallback_name: str) -> ArgumentCard:
+    """Convert a Proposal to an ArgumentCard (public interface for engine integration)."""
+    return _proposal_to_card(proposal, fallback_name)
 
 
 def _proposal_to_card(proposal: Proposal, fallback_name: str) -> ArgumentCard:

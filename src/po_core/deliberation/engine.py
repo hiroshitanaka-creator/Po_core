@@ -21,12 +21,16 @@ Phase 6-B additions:
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence
+
+logger = logging.getLogger(__name__)
 
 from po_core.deliberation.clustering import ClusterResult, PositionClusterer
 from po_core.deliberation.emergence import EmergenceDetector, EmergenceSignal
 from po_core.deliberation.influence import InfluenceTracker, InfluenceWeight
+from po_core.deliberation.protocol import SynthesisEngine, proposal_to_argument_card
 from po_core.deliberation.roles import (
     SYNTHESIZER_PHILOSOPHERS,
     DebateRole,
@@ -51,6 +55,8 @@ class RoundTrace:
     n_revised: int
     interaction_summary: Optional[Dict] = None
     role: str = DebateRole.STANDARD.value  # Phase 6-B: dialectic role for this round
+    converged: bool = False  # True if convergence_threshold was reached this round
+    convergence_delta: float = 0.0  # Jaccard change delta (0.0=no change, 1.0=full)
 
 
 @dataclass
@@ -63,6 +69,7 @@ class DeliberationResult:
     emergence_signals: List[EmergenceSignal] = field(default_factory=list)
     influence_weights: Dict[str, InfluenceWeight] = field(default_factory=dict)
     cluster_result: Optional[ClusterResult] = None  # Phase 6-C1
+    errors: List[str] = field(default_factory=list)  # Non-fatal errors during deliberation
 
     @property
     def n_rounds(self) -> int:
@@ -119,6 +126,8 @@ class DeliberationResult:
                     "n_proposals": r.n_proposals,
                     "n_revised": r.n_revised,
                     "role": r.role,
+                    "converged": r.converged,
+                    "convergence_delta": r.convergence_delta,
                 }
                 for r in self.rounds
             ],
@@ -217,6 +226,18 @@ class DeliberationEngine:
         Returns:
             DeliberationResult with final proposals and round traces
         """
+        # Guard: dialectic mode requires Thesis→Antithesis→Synthesis (≥3 rounds).
+        # __init__ enforces this at construction time, but if dialectic_mode is
+        # mutated after construction (e.g. PartyMachine dynamic config), enforce
+        # it here too so Hegelian dialogue is never silently truncated.
+        if self.dialectic_mode == "dialectic" and self.max_rounds < 3:
+            logger.warning(
+                "dialectic_mode='dialectic' requires max_rounds >= 3 "
+                "(current: %d). Forcing max_rounds=3.",
+                self.max_rounds,
+            )
+            self.max_rounds = 3
+
         is_dialectic = self.dialectic_mode == "dialectic"
         rounds: List[RoundTrace] = []
         all_emergence: List[EmergenceSignal] = []
@@ -264,34 +285,17 @@ class DeliberationEngine:
             round_role = assign_role(round_num, is_dialectic)
 
             if is_dialectic and round_role == DebateRole.SYNTHESIS:
-                # Synthesis round: Synthesizer philosophers integrate the full debate
-                counterarguments = _collect_synthesis_counterarguments(
-                    current_proposals, SYNTHESIZER_PHILOSOPHERS, ph_lookup
-                )
-                sender_map: Dict[str, str] = {
-                    name: "the debate" for name in counterarguments
-                }
-
-                if not counterarguments:
-                    rounds.append(
-                        RoundTrace(
-                            round_number=round_num,
-                            n_proposals=len(current_proposals),
-                            n_revised=0,
-                            role=round_role.value,
-                        )
-                    )
-                    break
-
-                revised_proposals = _re_propose(
-                    ph_lookup,
-                    counterarguments,
-                    ctx,
-                    intent,
-                    tensors,
-                    memory,
+                # Synthesis round: delegate to explicit _run_synthesis_round() helper
+                # so ArgumentCard/CritiqueCard construction and SynthesisEngine report
+                # are always produced — fixes "stance_distribution/disagreements empty"
+                revised_proposals, synthesis_summary = _run_synthesis_round(
+                    current_proposals=current_proposals,
+                    ph_lookup=ph_lookup,
+                    ctx=ctx,
+                    intent=intent,
+                    tensors=tensors,
+                    memory=memory,
                     round_num=round_num,
-                    sender_map=sender_map,
                     prompt_mode=self.prompt_mode,
                     role=round_role,
                 )
@@ -306,9 +310,14 @@ class DeliberationEngine:
                         round_number=round_num,
                         n_proposals=len(current_proposals),
                         n_revised=n_revised,
+                        interaction_summary=synthesis_summary,
                         role=round_role.value,
                     )
                 )
+
+                if n_revised == 0:
+                    # No synthesizers found or no proposals — stop deliberation
+                    break
                 continue
 
             # Standard or Antithesis round: use high-interference pairs
@@ -374,6 +383,16 @@ class DeliberationEngine:
             if self._influence_tracker is not None and revised_proposals:
                 self._influence_tracker.update(revised_proposals, sender_map)
 
+            # Convergence check: if proposals changed less than threshold, stop early.
+            # convergence_threshold=0.0 disables this check (always continue).
+            convergence_delta = _compute_convergence_delta(
+                baseline_proposals, revised_proposals
+            )
+            converged = (
+                self.convergence_threshold > 0.0
+                and convergence_delta < self.convergence_threshold
+            )
+
             rounds.append(
                 RoundTrace(
                     round_number=round_num,
@@ -381,8 +400,19 @@ class DeliberationEngine:
                     n_revised=n_revised,
                     interaction_summary=interaction_matrix.summary(),
                     role=round_role.value,
+                    converged=converged,
+                    convergence_delta=round(convergence_delta, 6),
                 )
             )
+
+            if converged:
+                logger.debug(
+                    "Deliberation converged at round %d: delta=%.4f < threshold=%.4f",
+                    round_num,
+                    convergence_delta,
+                    self.convergence_threshold,
+                )
+                break
 
         influence_weights = (
             self._influence_tracker.weights()
@@ -598,11 +628,95 @@ def _re_propose(
                         extra=extra,
                     )
                 )
-        except Exception:
-            # Philosopher failed in re-proposal round → keep original
+        except (TypeError, AttributeError) as e:
+            # Implementation mismatch — keep original proposal for this philosopher
+            logger.warning(
+                "Philosopher %s failed in deliberation re-propose round %d"
+                " (implementation error): %s",
+                name,
+                round_num,
+                e,
+            )
+            continue
+        except Exception as e:
+            logger.warning(
+                "Philosopher %s failed in deliberation re-propose round %d"
+                " (unexpected): %s",
+                name,
+                round_num,
+                e,
+                exc_info=True,
+            )
             continue
 
     return revised
+
+
+def _run_synthesis_round(
+    current_proposals: List[Proposal],
+    ph_lookup: Dict[str, object],
+    ctx: DomainContext,
+    intent: Intent,
+    tensors: TensorSnapshot,
+    memory: MemorySnapshot,
+    round_num: int,
+    prompt_mode: str,
+    role: DebateRole,
+) -> tuple:
+    """Execute the Synthesis round with explicit ArgumentCard/CritiqueCard construction.
+
+    This is an explicit interface to SynthesisEngine so that:
+    - ArgumentCards are built from current proposals (stance + claims populated)
+    - A structured SynthesisEngine report is produced (disagreements, open_questions)
+    - The synthesis summary is returned for RoundTrace.interaction_summary storage
+
+    Returns:
+        (revised_proposals: List[Proposal], synthesis_summary: Optional[Dict])
+    """
+    # Build ArgumentCards from current proposals so SynthesisEngine has real content
+    argument_cards = [
+        proposal_to_argument_card(p, _get_author(p) or "unknown")
+        for p in current_proposals
+        if p.content
+    ]
+
+    # Build counterarguments for synthesizer philosophers
+    counterarguments = _collect_synthesis_counterarguments(
+        current_proposals, SYNTHESIZER_PHILOSOPHERS, ph_lookup
+    )
+
+    if not counterarguments:
+        return [], None
+
+    sender_map: Dict[str, str] = {name: "the debate" for name in counterarguments}
+
+    # Re-propose: synthesizers integrate the full debate
+    revised_proposals = _re_propose(
+        ph_lookup,
+        counterarguments,
+        ctx,
+        intent,
+        tensors,
+        memory,
+        round_num=round_num,
+        sender_map=sender_map,
+        prompt_mode=prompt_mode,
+        role=role,
+    )
+
+    # Build synthesis report via SynthesisEngine (disagreements, stance distribution)
+    synthesis_summary: Optional[Dict] = None
+    if argument_cards:
+        try:
+            synthesis_summary = SynthesisEngine().build_report(
+                cards=argument_cards,
+                critiques=[],  # Critique cards not available in engine flow
+                axis_spec={"axes": ["ethics", "risk", "evidence"]},
+            )
+        except Exception as e:
+            logger.warning("SynthesisEngine.build_report failed: %s", e)
+
+    return revised_proposals, synthesis_summary
 
 
 def _merge_proposals(
@@ -620,3 +734,45 @@ def _merge_proposals(
     merged = [p for p in original if _get_author(p) not in revised_authors]
     merged.extend(revised)
     return merged
+
+
+def _compute_convergence_delta(
+    baseline: List[Proposal],
+    revised: List[Proposal],
+) -> float:
+    """Compute mean fractional content change between baseline and revised proposals.
+
+    Uses word-level Jaccard distance as a lightweight, NaN-safe proxy for
+    semantic change. Returns a float in [0.0, 1.0]:
+      - 0.0 → proposals unchanged (fully converged)
+      - 1.0 → proposals completely different (maximum divergence)
+
+    Safe against:
+    - Empty proposal lists (returns 0.0)
+    - Proposals with no matching author in baseline (skipped)
+    - Empty content strings (ZeroDivision avoided via max(..., 1))
+    - NaN (only arithmetic on ints, no float division by zero)
+    """
+    if not baseline or not revised:
+        return 0.0
+
+    baseline_by_author = {_get_author(p): p.content for p in baseline}
+    deltas: List[float] = []
+
+    for p in revised:
+        author = _get_author(p)
+        orig_content = baseline_by_author.get(author)
+        if orig_content is None:
+            # No baseline for this author — new philosopher, skip
+            continue
+
+        orig_words = set(orig_content.split())
+        new_words = set(p.content.split())
+        union_size = max(len(orig_words | new_words), 1)
+        intersection_size = len(orig_words & new_words)
+        # Jaccard distance: 1 - (intersection / union)
+        deltas.append(1.0 - intersection_size / union_size)
+
+    if not deltas:
+        return 0.0
+    return sum(deltas) / len(deltas)
