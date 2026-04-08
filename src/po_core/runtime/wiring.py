@@ -40,6 +40,11 @@ from po_core.ports.wethics_gate import WethicsGatePort
 from po_core.runtime.settings import Settings
 
 
+def _strict_philosopher_startup_enabled() -> bool:
+    raw = os.getenv("PO_STRICT_PHILOSOPHER_STARTUP", "true").strip().lower()
+    return raw not in {"0", "false", "no"}
+
+
 @dataclass(frozen=True)
 class WiredSystem:
     """
@@ -309,6 +314,13 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             required_roles=selected_roles,
         )
 
+    strict_startup = _strict_philosopher_startup_enabled()
+    normal_selection = registry.select(SafetyMode.NORMAL)
+    loaded_philosophers, _load_errors = registry.load(
+        normal_selection.selected_ids,
+        strict_enabled=strict_startup,
+    )
+
     return WiredSystem(
         memory_read=mem,
         memory_write=mem,
@@ -326,7 +338,7 @@ def build_system(*, memory: object, settings: Settings) -> WiredSystem:
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
+        philosophers=loaded_philosophers,  # Backward compat
         aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
         aggregator_shadow=aggregator_shadow,
         settings=settings,
@@ -469,6 +481,13 @@ def build_default_system(settings: Settings | None = None) -> WiredSystem:
             required_roles=selected_roles,
         )
 
+    strict_startup = _strict_philosopher_startup_enabled()
+    normal_selection = registry.select(SafetyMode.NORMAL)
+    loaded_philosophers, _load_errors = registry.load(
+        normal_selection.selected_ids,
+        strict_enabled=strict_startup,
+    )
+
     return WiredSystem(
         memory_read=mem,
         memory_write=mem,
@@ -486,7 +505,7 @@ def build_default_system(settings: Settings | None = None) -> WiredSystem:
             intention=PolicyIntentionGate(policies=default_intention_policies()),
             action=PolicyActionGate(policies=default_action_policies()),
         ),
-        philosophers=registry.select_and_load(SafetyMode.NORMAL),  # Backward compat
+        philosophers=loaded_philosophers,  # Backward compat
         aggregator=ParetoAggregator(mode_config=safety_config, config=pareto_cfg),
         aggregator_shadow=aggregator_shadow,
         settings=settings,

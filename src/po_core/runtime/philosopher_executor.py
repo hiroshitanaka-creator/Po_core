@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import multiprocessing
 import os
+import queue as queue_module
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass
@@ -89,6 +90,14 @@ def _soft_timeout_error(timeout_s: float, mode: str) -> str:
 
 def _hard_timeout_error(timeout_s: float) -> str:
     return f"Hard timeout after {timeout_s}s"
+
+
+def _child_crash_error(exit_code: int | None) -> str:
+    return f"Child process crashed (exit_code={exit_code})"
+
+
+def _bootstrap_failure_error(exc: Exception) -> str:
+    return f"Worker bootstrap failure: {type(exc).__name__}: {exc}"
 
 
 def _build_execution_result(
@@ -182,7 +191,20 @@ def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> 
     import pickle
 
     pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
-    outcome = run_one_philosopher(job)
+    try:
+        outcome = run_one_philosopher(job)
+    except Exception as exc:
+        queue.put(
+            ExecOutcome(
+                proposals=[],
+                n=0,
+                timed_out=False,
+                error=_bootstrap_failure_error(exc),
+                latency_ms=0,
+                philosopher_id=pid,
+            )
+        )
+        return
     try:
         queue.put(outcome)
     except (pickle.PicklingError, TypeError, AttributeError) as exc:
@@ -212,7 +234,9 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     )
     try:
         outcome = queue.get(timeout=job.timeout_s + bootstrap_grace_s)
-    except Exception:
+    except queue_module.Empty:
+        proc.join(timeout=0.01)
+        exit_code = proc.exitcode
         proc.terminate()
         proc.join(timeout=1.0)
         if proc.is_alive():
@@ -220,9 +244,19 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
             proc.join(timeout=1.0)
         elapsed_ms = int((perf_counter() - start) * 1000)
         queue.close()
+        if exit_code not in (None, 0):
+            return ExecOutcome(
+                [], 0, False, _child_crash_error(exit_code), elapsed_ms, pid
+            )
         return ExecOutcome(
             [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
         )
+    except (OSError, EOFError) as exc:
+        proc.terminate()
+        proc.join(timeout=1.0)
+        elapsed_ms = int((perf_counter() - start) * 1000)
+        queue.close()
+        return ExecOutcome([], 0, False, _bootstrap_failure_error(exc), elapsed_ms, pid)
 
     proc.join(timeout=1.0)
     if proc.is_alive():

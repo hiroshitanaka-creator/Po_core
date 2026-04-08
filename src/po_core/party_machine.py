@@ -60,6 +60,7 @@ from rich.panel import Panel
 
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
+from po_core.philosophers.manifest import get_public_philosopher_specs
 from po_core.philosopher_process import SerializedJob, _supports_budget_kwarg
 from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
 from po_core.runtime.philosopher_executor import ExecutionResult as _ExecutionResult
@@ -552,8 +553,8 @@ async def async_run_philosophers(
 # Best 4-philosopher combinations (from RQ1)
 OPTIMAL_4_COMBOS: Dict[PhilosophicalTheme, List[List[str]]] = {
     PhilosophicalTheme.ETHICS: [
-        ["kant", "mill", "levinas", "confucius"],
-        ["aristotle", "kant", "rawls", "levinas"],
+        ["kant", "spinoza", "levinas", "confucius"],
+        ["aristotle", "kant", "plato", "levinas"],
         ["confucius", "dewey", "levinas", "arendt"],
     ],
     PhilosophicalTheme.EXISTENCE: [
@@ -567,14 +568,14 @@ OPTIMAL_4_COMBOS: Dict[PhilosophicalTheme, List[List[str]]] = {
         ["confucius", "dewey", "wittgenstein", "derrida"],
     ],
     PhilosophicalTheme.POLITICS: [
-        ["aristotle", "rawls", "arendt", "confucius"],
-        ["mill", "rawls", "arendt", "dewey"],
-        ["aristotle", "mill", "arendt", "levinas"],
+        ["aristotle", "plato", "arendt", "confucius"],
+        ["spinoza", "plato", "arendt", "dewey"],
+        ["aristotle", "spinoza", "arendt", "levinas"],
     ],
     PhilosophicalTheme.FREEDOM: [
-        ["sartre", "mill", "dewey", "nietzsche"],
-        ["kierkegaard", "mill", "arendt", "dewey"],
-        ["sartre", "rawls", "dewey", "levinas"],
+        ["sartre", "spinoza", "dewey", "nietzsche"],
+        ["kierkegaard", "spinoza", "arendt", "dewey"],
+        ["sartre", "plato", "dewey", "levinas"],
     ],
     PhilosophicalTheme.CONSCIOUSNESS: [
         ["heidegger", "merleau_ponty", "jung", "lacan"],
@@ -589,17 +590,17 @@ HIGH_TENSION_PAIRS: List[Tuple[str, str]] = [
     ("aristotle", "derrida"),  # Essentialism vs. Deconstruction
     ("confucius", "sartre"),  # Harmony vs. Radical Freedom
     ("heidegger", "dewey"),  # Being vs. Pragmatism
-    ("mill", "kierkegaard"),  # Utilitarianism vs. Existentialism
-    ("rawls", "deleuze"),  # Justice vs. Difference
+    ("spinoza", "kierkegaard"),  # Rationalism vs. Existentialism
+    ("plato", "deleuze"),  # Ideal Forms vs. Difference
     ("levinas", "nietzsche"),  # Ethics of Other vs. Self-Overcoming
 ]
 
 # Philosopher compatibility clusters
 HARMONIOUS_CLUSTERS: Dict[str, List[str]] = {
     "continental": ["heidegger", "sartre", "kierkegaard", "merleau_ponty", "levinas"],
-    "analytic": ["wittgenstein", "dewey", "peirce", "mill"],
+    "analytic": ["wittgenstein", "dewey", "peirce", "spinoza"],
     "eastern": ["confucius", "zhuangzi", "watsuji", "wabi_sabi"],
-    "political": ["aristotle", "rawls", "arendt", "mill", "dewey"],
+    "political": ["aristotle", "plato", "arendt", "spinoza", "dewey"],
     "psychoanalytic": ["jung", "lacan", "nietzsche"],
     "postmodern": ["derrida", "deleuze", "badiou", "lacan"],
 }
@@ -620,28 +621,7 @@ class PhilosopherPartyMachine:
         """Initialize the party machine."""
         self.verbose = verbose
         self.available_philosophers = [
-            "aristotle",
-            "kant",
-            "mill",
-            "confucius",
-            "dewey",
-            "heidegger",
-            "sartre",
-            "kierkegaard",
-            "merleau_ponty",
-            "levinas",
-            "rawls",
-            "arendt",
-            "peirce",
-            "wittgenstein",
-            "derrida",
-            "deleuze",
-            "badiou",
-            "jung",
-            "watsuji",
-            "zhuangzi",
-            "wabi_sabi",
-            "lacan",
+            spec.philosopher_id for spec in get_public_philosopher_specs()
         ]
 
     def suggest_party(
@@ -922,6 +902,29 @@ class PhilosopherPartyMachine:
 # ============================================================================
 # Factory Functions
 # ============================================================================
+
+
+def _validate_party_machine_roster() -> None:
+    canonical_ids = {spec.philosopher_id for spec in get_public_philosopher_specs()}
+    referenced_ids = set()
+    for combos in OPTIMAL_4_COMBOS.values():
+        for combo in combos:
+            referenced_ids.update(combo)
+    for p1, p2 in HIGH_TENSION_PAIRS:
+        referenced_ids.add(p1)
+        referenced_ids.add(p2)
+    for cluster in HARMONIOUS_CLUSTERS.values():
+        referenced_ids.update(cluster)
+
+    invalid_ids = sorted(referenced_ids - canonical_ids)
+    if invalid_ids:
+        raise ValueError(
+            "Party machine roster drift detected; unknown philosopher IDs: "
+            f"{invalid_ids}"
+        )
+
+
+_validate_party_machine_roster()
 
 
 def create_party(theme: str, mood: str = "balanced") -> PartyConfig:

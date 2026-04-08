@@ -19,6 +19,7 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core import __version__
 from po_core.app.ethics_engine import (
     build_ethics_summary,
     get_rules_fired,
@@ -37,10 +38,10 @@ from po_core.app.values_clarifier import (
     needs_values_clarification,
 )
 
-_POCORE_VERSION = "1.0.0"
+_POCORE_VERSION = __version__
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
-_GENERATOR_VERSION = "1.0.0"
+_GENERATOR_VERSION = __version__
 
 
 def _map_values_to_principles(values: List[str]) -> List[str]:
