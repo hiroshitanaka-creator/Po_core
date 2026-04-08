@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import logging
 import os
 import random
 import traceback
@@ -42,6 +43,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from time import perf_counter
 from typing import TYPE_CHECKING, Dict, List, Mapping, Optional, Sequence, Tuple
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from po_core.domain.context import Context
@@ -167,8 +170,8 @@ def run_philosophers(
                 axis_spec={"axes": ["ethics", "risk", "evidence"]},
                 settings={"max_critiques_per_philosopher": 2},
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("Deliberation failed: %s", e, exc_info=True)
 
     return proposals, results
 
