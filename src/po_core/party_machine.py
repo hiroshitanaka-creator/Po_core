@@ -225,9 +225,15 @@ class AsyncPartyMachine:
         await self.aclose()
 
     async def aclose(self) -> None:
-        """Gracefully shut down the internal executor."""
+        """Gracefully shut down the internal executor.
+
+        ``cancel_futures=True`` cancels all *pending* (not yet running) futures
+        immediately, preventing zombie threads from accumulating under high load
+        or short timeout conditions.  Already-running threads are still awaited
+        via ``wait=True`` so in-flight philosophers complete cleanly.
+        """
         if self._executor is not None:
-            self._executor.shutdown(wait=True, cancel_futures=False)
+            self._executor.shutdown(wait=True, cancel_futures=True)
             self._executor = None
 
     # ── Execution ─────────────────────────────────────────────────────
