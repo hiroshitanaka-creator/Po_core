@@ -41,3 +41,28 @@ def test_load_collects_error_for_disabled_spec_import_failure() -> None:
     assert len(errors) == 1
     assert errors[0].philosopher_id == "disabled_broken"
     assert errors[0].error == "ModuleNotFoundError"
+
+
+def test_loading_policy_is_fail_fast_for_enabled_specs() -> None:
+    """Regression guard for current runtime behavior.
+
+    Registry docs describe error collection, but enabled specs currently raise
+    RuntimeError immediately. This test captures the actual policy explicitly.
+    """
+    registry = PhilosopherRegistry(
+        specs=[
+            PhilosopherSpec(
+                philosopher_id="enabled_broken_2",
+                module="po_core.philosophers.__missing_enabled_2__",
+                symbol="Missing",
+                enabled=True,
+            )
+        ],
+        cache_instances=False,
+    )
+
+    try:
+        registry.load(["enabled_broken_2"])
+        assert False, "RuntimeError was not raised"
+    except RuntimeError as exc:
+        assert "failed_to_load_enabled_philosopher:enabled_broken_2" in str(exc)

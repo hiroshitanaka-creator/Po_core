@@ -106,3 +106,28 @@ def test_legacy_generate_matches_rest_auth_response_shape() -> None:
     assert rest_response.status_code == 401
     assert rest_response.json() == {"detail": "Invalid or missing API key"}
     assert rest_response.headers["www-authenticate"] == "ApiKey"
+
+
+def test_legacy_generate_honors_configured_api_key_header_like_rest(
+    legacy_api_module, monkeypatch
+) -> None:
+    api = legacy_api_module(skip_auth=False, api_key="secret")
+    monkeypatch.setattr(
+        api,
+        "_legacy_api_settings",
+        APISettings(skip_auth=False, api_key="secret", api_key_header="X-Custom-Key"),
+    )
+
+    async def _fake_async_run(user_input: str, *, philosophers=None):
+        return _FakeResponse(ok=True)
+
+    monkeypatch.setattr(api, "async_run", _fake_async_run)
+
+    with TestClient(api.app) as client:
+        response = client.post(
+            "/generate",
+            json={"user_input": "hello"},
+            headers={"X-Custom-Key": "secret"},
+        )
+
+    assert response.status_code == 200
