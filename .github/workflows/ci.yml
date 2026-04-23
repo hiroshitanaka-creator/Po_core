@@ -31,8 +31,24 @@ jobs:
         run: black --check src tests
       - name: Check import sorting with isort
         run: isort --check-only src tests
-      - name: Type check with mypy
-        run: mypy src/po_core/domain/ src/po_core/experiments/ src/po_core/app/ src/po_core/ports/
+      - name: Type check with mypy (core + runtime + safety)
+        run: >-
+          mypy
+          src/po_core/domain/
+          src/po_core/experiments/
+          src/po_core/app/
+          src/po_core/ports/
+          src/po_core/runtime/
+          src/po_core/safety/
+      # Phase-2 expansion (tensors, philosophers) is tracked below as an
+      # informational (non-blocking) lint so drift becomes visible before it
+      # is enforced.
+      - name: Type check with mypy (tensors + philosophers — informational)
+        continue-on-error: true
+        run: >-
+          mypy
+          src/po_core/tensors/
+          src/po_core/philosophers/
 
   must-pass-tests:
     runs-on: ubuntu-latest
@@ -109,6 +125,31 @@ jobs:
           pip install bandit pip-audit
       - name: Security check with bandit
         run: bandit -r src/ scripts/ -c pyproject.toml -ll
+      - name: Release lock reproducibility check
+        # When a release lock file is committed, ensure it still matches the
+        # declared runtime dependencies.  Non-release builds skip this step
+        # gracefully so day-to-day development is unaffected.
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f requirements-release.lock ]; then
+            python -m pip install --upgrade pip
+            pip install pip-tools
+            tmpfile=$(mktemp)
+            pip-compile \
+              --generate-hashes \
+              --output-file="${tmpfile}" \
+              --resolver=backtracking \
+              --strip-extras \
+              --quiet \
+              requirements.txt
+            # Strip pip-compile header (contains timestamps) before diffing.
+            diff <(grep -v '^#' requirements-release.lock | sort) \
+                 <(grep -v '^#' "${tmpfile}" | sort) \
+              || (echo '::error::requirements-release.lock is out of date. Run tools/generate_release_lock.sh and commit the result.' && exit 1)
+          else
+            echo 'No requirements-release.lock committed; skipping reproducibility check.'
+          fi
       - name: Dependency vulnerability audit across base and optional extras
         shell: bash
         run: |

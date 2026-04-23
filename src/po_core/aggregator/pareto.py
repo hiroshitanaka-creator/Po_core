@@ -109,7 +109,9 @@ def _freedom_pressure_from_extra(p: Proposal, tensors: TensorSnapshot) -> float:
     if fp_str:
         try:
             return float(fp_str)
-        except Exception:
+        except (TypeError, ValueError):
+            # Stored value was not numeric; fall through to tensor fallback.
+            # nosec B110 — narrow expected parse failure, intentional fallthrough.
             pass
     # fallback to tensors
     v = tensors.metrics.get("freedom_pressure")

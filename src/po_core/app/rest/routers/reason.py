@@ -9,11 +9,13 @@ import asyncio
 import functools
 import json
 import logging
+import threading
 import time
 import uuid
 from collections import defaultdict, deque
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from typing import Any, AsyncGenerator, Dict, TypedDict
+from typing import Any, AsyncGenerator, Callable, Dict, Optional, TypedDict, TypeVar
 
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket
 from fastapi.exceptions import WebSocketException
@@ -24,9 +26,9 @@ from po_core.app.api import run as po_run
 from po_core.app.rest.auth import (
     evaluate_auth_policy,
     extract_api_key_from_header_map,
-    require_api_key,
 )
 from po_core.app.rest.config import APISettings, get_api_settings, is_rate_limit_enabled
+from po_core.app.rest.scopes import Scope, evaluate_scope_policy, require_scope
 from po_core.app.rest.models import (
     PhilosopherContribution,
     ReasonRequest,
@@ -48,6 +50,72 @@ router = APIRouter(tags=["reason"])
 _WS_WINDOW_SECONDS = 60.0
 _WS_LOG_RETENTION_SECONDS = _WS_WINDOW_SECONDS * 2
 _ws_rate_log: dict[str, deque[float]] = defaultdict(deque)
+
+# -----------------------------------------------------------------------------
+# Bounded executor + semaphore for the synchronous /v1/reason endpoint.
+#
+# ``run_in_executor(None, ...)`` previously targeted the loop's default
+# executor (``min(32, cpu_count() * 5)`` threads) — which meant that under
+# load with short request timeouts, a burst of requests could keep spawning
+# background workers even after the client had disconnected.  We now use an
+# explicit ``ThreadPoolExecutor`` sized by ``settings.reason_sync_max_workers``
+# and gate submissions through an ``asyncio.Semaphore`` so that at most N
+# reasoning jobs are in flight at any time.  ``active_worker_count`` exposes
+# the gauge that load tests assert does not grow after timeout.
+# -----------------------------------------------------------------------------
+
+_sync_executor: Optional[ThreadPoolExecutor] = None
+_sync_semaphore: Optional[asyncio.Semaphore] = None
+_sync_max_workers: int = 0
+_sync_setup_lock = threading.Lock()
+_sync_active_workers: int = 0
+_sync_active_lock = threading.Lock()
+
+
+def _configure_sync_executor(max_workers: int) -> tuple[ThreadPoolExecutor, asyncio.Semaphore]:
+    """Ensure a pool of exactly *max_workers* threads is live.
+
+    Rebuilds the pool when ``max_workers`` changes (e.g. a test swaps settings)
+    and guarantees that the returned semaphore matches the pool size.
+    """
+    global _sync_executor, _sync_semaphore, _sync_max_workers
+
+    with _sync_setup_lock:
+        if (
+            _sync_executor is None
+            or _sync_semaphore is None
+            or _sync_max_workers != max_workers
+        ):
+            if _sync_executor is not None:
+                _sync_executor.shutdown(wait=False, cancel_futures=True)
+            _sync_executor = ThreadPoolExecutor(
+                max_workers=max_workers,
+                thread_name_prefix="po_reason_sync",
+            )
+            _sync_semaphore = asyncio.Semaphore(max_workers)
+            _sync_max_workers = max_workers
+        return _sync_executor, _sync_semaphore
+
+
+def _sync_active_worker_count() -> int:
+    """Expose current in-flight /v1/reason worker count for observability."""
+    with _sync_active_lock:
+        return _sync_active_workers
+
+
+_GaugeT = TypeVar("_GaugeT")
+
+
+def _with_sync_worker_gauge(call: Callable[[], _GaugeT]) -> _GaugeT:
+    global _sync_active_workers
+
+    with _sync_active_lock:
+        _sync_active_workers += 1
+    try:
+        return call()
+    finally:
+        with _sync_active_lock:
+            _sync_active_workers -= 1
 
 
 def _client_host(client: Any) -> str:
@@ -457,20 +525,32 @@ def _fallback_summary(result: dict) -> tuple[bool, list[str]]:
 async def reason(
     body: ReasonRequest,
     request: Request,
-    _: None = Depends(require_api_key),
+    _: None = Depends(require_scope(Scope.REASON_WRITE)),
 ) -> ReasonResponse:
-    """Synchronous reasoning endpoint (non-blocking: offloaded to thread pool)."""
+    """Synchronous reasoning endpoint (non-blocking: offloaded to thread pool).
+
+    The reasoning pipeline is offloaded to an explicit bounded
+    ``ThreadPoolExecutor`` of size ``settings.reason_sync_max_workers`` and
+    gated by an ``asyncio.Semaphore`` of the same size.  This prevents
+    runaway worker growth under bursty load with short request timeouts.
+    """
     api_settings = get_api_settings()
     t0 = time.perf_counter()
 
     loop = asyncio.get_running_loop()
+    executor, semaphore = _configure_sync_executor(api_settings.reason_sync_max_workers)
+
+    call = functools.partial(_run_reasoning, body, api_settings)
+    # Wrap the target in the active-worker gauge so that tests / load probes
+    # can assert that the count does NOT grow after a request timeout.
+    gauged_call = functools.partial(_with_sync_worker_gauge, call)
+
     try:
-        session_id, result, tracer = await asyncio.wait_for(
-            loop.run_in_executor(
-                None, functools.partial(_run_reasoning, body, api_settings)
-            ),
-            timeout=api_settings.request_timeout_s,
-        )
+        async with semaphore:
+            session_id, result, tracer = await asyncio.wait_for(
+                loop.run_in_executor(executor, gauged_call),
+                timeout=api_settings.request_timeout_s,
+            )
     except asyncio.TimeoutError as exc:
         raise HTTPException(
             status_code=504, detail="reasoning request timed out"
@@ -647,7 +727,7 @@ async def _stream_reasoning_chunks(
 async def reason_stream(
     body: ReasonRequest,
     request: Request,
-    _: None = Depends(require_api_key),
+    _: None = Depends(require_scope(Scope.REASON_WRITE)),
 ) -> StreamingResponse:
     """Streaming reasoning endpoint (SSE)."""
     from po_core.app.rest.config import get_api_settings
@@ -670,16 +750,25 @@ async def reason_ws(websocket: WebSocket) -> None:
 
     api_settings = get_api_settings()
 
-    auth_decision = evaluate_auth_policy(
-        skip_auth=api_settings.skip_auth,
-        configured_api_key=api_settings.api_key,
-        presented_api_key=_resolve_ws_auth_key(
-            websocket, allow_query_api_key=api_settings.ws_allow_query_api_key
-        ),
+    presented_ws_key = _resolve_ws_auth_key(
+        websocket, allow_query_api_key=api_settings.ws_allow_query_api_key
     )
-    if not auth_decision.allowed:
-        await websocket.close(code=1008, reason=auth_decision.message)
-        return
+    # Scope-aware policy: falls back to legacy single-key policy when no
+    # scoped keys are configured.
+    scope_decision = evaluate_scope_policy(
+        settings=api_settings,
+        presented_api_key=presented_ws_key,
+        scope=Scope.REASON_WRITE,
+    )
+    if not scope_decision.allowed:
+        auth_decision = evaluate_auth_policy(
+            skip_auth=api_settings.skip_auth,
+            configured_api_key=api_settings.api_key,
+            presented_api_key=presented_ws_key,
+        )
+        if not auth_decision.allowed:
+            await websocket.close(code=1008, reason=scope_decision.message)
+            return
 
     if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute, api_settings):
         await websocket.close(code=1008, reason="Rate limit exceeded")

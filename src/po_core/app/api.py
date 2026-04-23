@@ -255,13 +255,29 @@ _DEPRECATION_HEADER = (
 )
 
 
+def _legacy_generate_disabled() -> bool:
+    """Return True when the deployment has explicitly disabled /generate.
+
+    The legacy endpoint remains reachable by default as an explicit
+    backward-compatibility shim for existing clients.  Deployments that want
+    to ensure /generate is gone (for example, because they have already
+    migrated to ``po_core.app.rest``) can set
+    ``PO_DISABLE_LEGACY_GENERATE=true`` — the route will then return HTTP
+    410 Gone.  The switch itself is temporary; /generate will be removed
+    outright in v2.0.0.
+    """
+    flag = os.getenv("PO_DISABLE_LEGACY_GENERATE", "false").strip().lower()
+    return flag in {"1", "true", "yes", "on"}
+
+
 @app.post(
     "/generate",
     deprecated=True,
     summary="[DEPRECATED] Generate philosophical response",
     description=(
         "**DEPRECATED** — Use `POST /v1/reason` on the canonical REST server instead. "
-        "This endpoint will be removed in v2.0.0."
+        "Explicit compat shim; set `PO_DISABLE_LEGACY_GENERATE=true` to return "
+        "HTTP 410 Gone for new deployments.  The route will be removed in v2.0.0."
     ),
 )
 async def generate(
@@ -269,6 +285,21 @@ async def generate(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> Response:
+    if _legacy_generate_disabled():
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=(
+                "POST /generate is disabled by this deployment.  Migrate to "
+                "POST /v1/reason via po_core.app.rest.server:create_app.  "
+                "The route will be removed outright in v2.0.0."
+            ),
+            headers={
+                "Deprecation": "true",
+                "Sunset": "v2.0.0",
+                "Link": _DEPRECATION_HEADER,
+            },
+        )
+
     _ensure_api_key(
         settings=_legacy_api_settings,
         x_api_key=x_api_key,

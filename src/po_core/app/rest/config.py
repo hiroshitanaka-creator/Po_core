@@ -48,6 +48,38 @@ class APISettings(BaseSettings):
     skip_auth: bool = False  # Set True for local dev / testing
     ws_allow_query_api_key: bool = False
 
+    # Scope-based API keys.  Each setting is a comma-separated list of keys
+    # authorised for that scope.  When any scope key is configured, the global
+    # ``api_key`` is no longer granted every scope implicitly — it only gets
+    # the scopes it is explicitly listed under.  If every scope setting is
+    # empty, behaviour falls back to the global ``api_key`` which is treated
+    # as if it had all scopes (backwards-compatible single-key deployments).
+    api_keys_reason_write: str = Field(
+        default="",
+        validation_alias=AliasChoices("PO_API_KEYS_REASON_WRITE"),
+        description="Comma-separated API keys with scope reason:write.",
+    )
+    api_keys_trace_read: str = Field(
+        default="",
+        validation_alias=AliasChoices("PO_API_KEYS_TRACE_READ"),
+        description="Comma-separated API keys with scope trace:read.",
+    )
+    api_keys_review_write: str = Field(
+        default="",
+        validation_alias=AliasChoices("PO_API_KEYS_REVIEW_WRITE"),
+        description="Comma-separated API keys with scope review:write.",
+    )
+    # When true, redact PII-like payload fields and internal tracebacks from
+    # /v1/trace responses and review comments before returning them to clients.
+    redact_trace_responses: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("PO_REDACT_TRACE_RESPONSES"),
+        description=(
+            "Redact PII / internal tracebacks from trace payloads and redact "
+            "review comments before returning to the client."
+        ),
+    )
+
     # CORS — comma-separated list of allowed origins.
     # Default is local-only for safer public-package behavior.
     # Use "*" only for short-lived local development when you intentionally want permissive CORS.
@@ -61,6 +93,22 @@ class APISettings(BaseSettings):
     rate_limit_per_minute: int = 60
     trust_proxy_headers: bool = False
     request_timeout_s: float = 30.0
+
+    # Bounded worker pool for the synchronous /v1/reason endpoint.  The
+    # endpoint offloads the blocking pipeline to this executor and gates
+    # submissions through an ``asyncio.Semaphore`` so the number of concurrent
+    # in-flight reasoning jobs cannot exceed the pool size.  Before this the
+    # endpoint used ``run_in_executor(None, ...)`` which dispatches onto the
+    # default loop executor (typically ``min(32, cpu_count * 5)`` threads) —
+    # enough that a burst of requests with short timeouts would keep growing
+    # active workers even after the client hung up.  See
+    # ``tests/test_reason_request_validation.py`` for regression coverage.
+    reason_sync_max_workers: int = Field(
+        default=4,
+        ge=1,
+        le=64,
+        validation_alias=AliasChoices("PO_REASON_SYNC_MAX_WORKERS"),
+    )
 
     # Po_core engine
     enable_solarwill: bool = True

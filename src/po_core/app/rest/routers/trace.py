@@ -6,13 +6,15 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from po_core.app.rest.auth import require_api_key
+from po_core.app.rest.config import APISettings, get_api_settings
 from po_core.app.rest.models import (
     TraceEventOut,
     TraceHistoryItem,
     TraceHistoryResponse,
     TraceResponse,
 )
+from po_core.app.rest.redaction import redact_payload
+from po_core.app.rest.scopes import Scope, require_scope
 from po_core.app.rest.store import TraceHistorySummary, TraceStore, get_trace_store
 
 router = APIRouter(tags=["trace"])
@@ -26,7 +28,7 @@ router = APIRouter(tags=["trace"])
 )
 async def get_trace_history(
     limit: int = Query(default=50, ge=1, le=500),
-    _: None = Depends(require_api_key),
+    _: None = Depends(require_scope(Scope.TRACE_READ)),
     store: TraceStore = Depends(get_trace_store),
 ) -> TraceHistoryResponse:
     """Return recent trace session summaries in descending recency order."""
@@ -54,8 +56,9 @@ async def get_trace_history(
 )
 async def get_trace(
     session_id: str,
-    _: None = Depends(require_api_key),
+    _: None = Depends(require_scope(Scope.TRACE_READ)),
     store: TraceStore = Depends(get_trace_store),
+    settings: APISettings = Depends(get_api_settings),
 ) -> TraceResponse:
     """Return trace events for the given session_id."""
     events = store.get(session_id)
@@ -65,15 +68,20 @@ async def get_trace(
             detail=f"No trace found for session_id={session_id!r}",
         )
 
-    out_events = [
-        TraceEventOut(
-            event_type=e.event_type,
-            occurred_at=e.occurred_at,
-            correlation_id=e.correlation_id,
-            payload=dict(e.payload),
+    should_redact = bool(settings.redact_trace_responses)
+    out_events: list[TraceEventOut] = []
+    for e in events:
+        payload = dict(e.payload)
+        if should_redact:
+            payload = redact_payload(payload)
+        out_events.append(
+            TraceEventOut(
+                event_type=e.event_type,
+                occurred_at=e.occurred_at,
+                correlation_id=e.correlation_id,
+                payload=payload,
+            )
         )
-        for e in events
-    ]
     return TraceResponse(
         session_id=session_id,
         event_count=len(out_events),
