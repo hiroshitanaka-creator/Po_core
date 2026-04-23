@@ -253,6 +253,27 @@ class TestSafetyModeTransitions:
         assert mode == "normal"
 
 
+def test_explanation_emit_failure_is_observable(monkeypatch):
+    """Explanation build failure must emit ExplanationEmitFailed (no silent swallow)."""
+    from po_core import ensemble as ensemble_module
+
+    def _raise(*args, **kwargs):
+        raise RuntimeError("synthetic explanation failure")
+
+    monkeypatch.setattr(ensemble_module, "build_explanation_from_verdict", _raise)
+
+    deps, tracer, _ = _build_deps(freedom_pressure=0.35)  # triggers non-ALLOW intention
+    run_turn(_make_ctx("Potentially risky input"), deps)
+
+    failed_events = [e for e in tracer.events if e.event_type == "ExplanationEmitFailed"]
+    assert len(failed_events) == 1
+    payload = failed_events[0].payload
+    assert payload["stage"] == "intention"
+    assert payload["decision"] == "revise"
+    assert payload["error_type"] == "RuntimeError"
+    assert "synthetic explanation failure" in payload["error_message"]
+
+
 # ══════════════════════════════════════════════════════════════════════════
 # 3. Degradation Paths
 # ══════════════════════════════════════════════════════════════════════════
