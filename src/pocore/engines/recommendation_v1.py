@@ -17,6 +17,19 @@ def _has_profile(features: Optional[Dict[str, Any]], profile: str) -> bool:
     return isinstance(features, dict) and features.get("scenario_profile") == profile
 
 
+def _resolve_recommended_option_id(options: List[Dict[str, Any]]) -> str:
+    option_ids = [
+        str(opt.get("option_id"))
+        for opt in options
+        if isinstance(opt, dict) and isinstance(opt.get("option_id"), str)
+    ]
+    if "opt_1" in option_ids:
+        return "opt_1"
+    if option_ids:
+        return option_ids[0]
+    return "opt_1"
+
+
 def arbitrate_recommendation(
     case: Dict[str, Any],
     *,
@@ -24,13 +37,20 @@ def arbitrate_recommendation(
     features: Optional[Dict[str, Any]],
     options: List[Dict[str, Any]],
 ) -> Tuple[Dict[str, Any], str]:
-    """Produce recommendation payload with deterministic arbitration code."""
+    """Produce recommendation payload with deterministic arbitration code.
+
+    Contract:
+    - Recommendation arbitration is primarily feature-driven.
+    - When status is ``recommended``, ``recommended_option_id`` is resolved
+      from the provided ``options`` set deterministically.
+    """
+    recommended_option_id = _resolve_recommended_option_id(options)
 
     if _has_profile(features, PROFILE_CASE_001):
         return (
             {
                 "status": "recommended",
-                "recommended_option_id": "opt_1",
+                "recommended_option_id": recommended_option_id,
                 "reason": (
                     "重要不明点が残ったまま転職を断言するより、"
                     "期限付きで情報収集し基準で決断する方が誠実で後悔を減らしやすい。"
@@ -83,7 +103,7 @@ def arbitrate_recommendation(
         return (
             {
                 "status": "recommended",
-                "recommended_option_id": "opt_1",
+                "recommended_option_id": recommended_option_id,
                 "reason": (
                     "制約が矛盾している状態では、どの案も破綻しやすい。"
                     "まず制約を再設計してから進めるべき。"
@@ -116,7 +136,7 @@ def arbitrate_recommendation(
         return (
             {
                 "status": "recommended",
-                "recommended_option_id": "opt_1",
+                "recommended_option_id": recommended_option_id,
                 "reason": "期限が近いため、低リスクな案で前進しつつ不明点を並行して潰す。",
                 "counter": "不明点が残るため、見積もりや期待値にズレが出る。",
                 "alternatives": [
@@ -133,7 +153,7 @@ def arbitrate_recommendation(
     return (
         {
             "status": "recommended",
-            "recommended_option_id": "opt_1",
+            "recommended_option_id": recommended_option_id,
             "reason": "害を抑えつつ前進できるため。",
             "counter": "遅いと感じる可能性がある。",
             "alternatives": [

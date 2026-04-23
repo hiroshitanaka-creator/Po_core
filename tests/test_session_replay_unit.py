@@ -5,6 +5,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+import yaml
+
+from pocore.runner import run_session_replay
+
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "session_replay.py"
 CASE_PATH = ROOT / "scenarios" / "case_002.yaml"
@@ -56,3 +61,56 @@ def test_session_replay_is_deterministic(tmp_path: Path) -> None:
     second = _run_replay(tmp_path, "run2")
 
     assert first == second
+
+
+def _write_case_and_answers(
+    tmp_path: Path, *, patch_ops: list[dict[str, object]]
+) -> tuple[Path, Path]:
+    case = {
+        "case_id": "case_replay_001",
+        "title": "session replay invalid patch",
+        "problem": "test",
+        "constraints": [],
+        "values": ["stability"],
+    }
+    answers = {"case_ref": "case_replay_001", "patch": patch_ops}
+    answers.update(
+        {
+            "version": "1.0",
+            "answers": [
+                {
+                    "question_id": "q1",
+                    "answer_text": "stub",
+                    "applied_patch_paths": [str(patch_ops[0]["path"])],
+                }
+            ],
+        }
+    )
+
+    case_path = tmp_path / "case.yaml"
+    answers_path = tmp_path / "answers.yaml"
+    case_path.write_text(yaml.safe_dump(case, allow_unicode=True), encoding="utf-8")
+    answers_path.write_text(
+        yaml.safe_dump(answers, allow_unicode=True), encoding="utf-8"
+    )
+    return case_path, answers_path
+
+
+def test_run_session_replay_rejects_unknown_patch_operation(tmp_path: Path) -> None:
+    case_path, answers_path = _write_case_and_answers(
+        tmp_path,
+        patch_ops=[{"op": "copy", "path": "/values/0", "value": "x"}],
+    )
+
+    with pytest.raises(ValueError, match="Unsupported patch operation"):
+        run_session_replay(case_path, answers_path)
+
+
+def test_run_session_replay_rejects_out_of_range_list_index(tmp_path: Path) -> None:
+    case_path, answers_path = _write_case_and_answers(
+        tmp_path,
+        patch_ops=[{"op": "replace", "path": "/values/9", "value": "x"}],
+    )
+
+    with pytest.raises(ValueError, match="List replace index out of range"):
+        run_session_replay(case_path, answers_path)

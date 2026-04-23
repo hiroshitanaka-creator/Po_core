@@ -15,6 +15,34 @@ Po_core includes a comprehensive safety system designed to:
 
 ---
 
+## Runtime Deployment Guardrails (P0)
+
+These rules are mandatory for production operations and are based on current
+runtime behavior in the REST layer.
+
+### 1) `PO_TRUST_PROXY_HEADERS` must be enabled only behind a trusted proxy
+
+- Default is `false` and should remain `false` unless your deployment is
+  behind a reverse proxy/load balancer you control.
+- When `true`, rate limiting uses forwarded client IP information. If enabled
+  on a directly exposed service, spoofed headers can weaken per-IP controls.
+- Operational rule:
+  - Public direct exposure: **must be `PO_TRUST_PROXY_HEADERS=false`**
+  - Trusted ingress (Nginx/ALB/Envoy etc.): may be `true` with strict header
+    sanitization at the proxy.
+
+### 2) `PO_WS_ALLOW_QUERY_API_KEY` is forbidden by default
+
+- Default is `false` and should stay `false` in all long-lived environments.
+- Query-string API keys are easier to leak (logs, browser history, referer-like
+  traces, monitoring tools).
+- Operational rule:
+  - Production/staging: **must be `PO_WS_ALLOW_QUERY_API_KEY=false`**
+  - Short-lived local troubleshooting only: temporary `true` is allowed with
+    explicit expiration and key rotation after use.
+
+---
+
 ## Architecture
 
 The safety system consists of three layers:

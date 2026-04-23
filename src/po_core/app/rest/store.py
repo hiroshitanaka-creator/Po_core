@@ -251,12 +251,21 @@ class SQLiteTraceStore(TraceStore):
     def _evict_if_needed(self, conn: sqlite3.Connection, max_sessions: int) -> None:
         if max_sessions <= 0:
             return
-        rows = conn.execute("""
+        row = conn.execute("SELECT COUNT(1) AS n FROM trace_sessions").fetchone()
+        session_count = int(row["n"]) if row and row["n"] is not None else 0
+        excess = session_count - max_sessions
+        if excess <= 0:
+            return
+        stale_rows = conn.execute(
+            """
             SELECT session_id
             FROM trace_sessions
-            ORDER BY updated_at DESC
-            """).fetchall()
-        stale_session_ids = [row["session_id"] for row in rows[max_sessions:]]
+            ORDER BY updated_at ASC
+            LIMIT ?
+            """,
+            (excess,),
+        ).fetchall()
+        stale_session_ids = [row["session_id"] for row in stale_rows]
         if stale_session_ids:
             conn.executemany(
                 "DELETE FROM trace_events WHERE session_id = ?",
