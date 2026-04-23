@@ -6,7 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from po_core.app.rest.auth import require_api_key
+from po_core.app.rest.scopes import Scope, require_scope
 from po_core.app.rest.store import get_trace_store
 from po_core.axis.preferences import parse_weights_str
 from po_core.viewer.preference_view import apply_preference_view
@@ -32,7 +32,7 @@ async def get_tradeoff_map(
             "'safety:0.5,benefit:0.3,feasibility:0.2'"
         ),
     ),
-    _: None = Depends(require_api_key),
+    _: None = Depends(require_scope(Scope.TRACE_READ)),
     store: dict = Depends(get_trace_store),
 ) -> dict[str, Any]:
     """Return trade-off map generated from trace events for ``session_id``."""

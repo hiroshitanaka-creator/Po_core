@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import multiprocessing
 import os
+import pickle
+import queue as queue_mod
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
+    Any,
     Dict,
     List,
     Mapping,
@@ -16,10 +20,13 @@ from typing import (
     Protocol,
     Sequence,
     Tuple,
+    cast,
 )
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import ExecOutcome, SerializedJob, run_one_philosopher
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from po_core.domain.context import Context
@@ -89,6 +96,23 @@ def _soft_timeout_error(timeout_s: float, mode: str) -> str:
 
 def _hard_timeout_error(timeout_s: float) -> str:
     return f"Hard timeout after {timeout_s}s"
+
+
+# Distinct error codes for subprocess failure classification.  These are
+# deliberately kept free of the word "timeout" so that downstream consumers
+# (observability, tests, alerting) can distinguish bootstrap / IPC / exit
+# failures from genuine timeouts.  The shape is
+# ``{code}: {detail}`` so both a machine-readable prefix and a human-readable
+# tail are retained for logs and traces.
+ERROR_CODE_CHILD_BOOTSTRAP_FAILED = "child_bootstrap_failed"
+ERROR_CODE_CHILD_EXITED = "child_exited_before_result"
+ERROR_CODE_IPC_QUEUE_EOF = "ipc_queue_eof"
+ERROR_CODE_IPC_SERIALIZATION_FAILED = "ipc_serialization_failed"
+ERROR_CODE_IPC_UNKNOWN = "ipc_unknown_failure"
+
+
+def _format_subprocess_error(code: str, detail: str) -> str:
+    return f"{code}: {detail}"
 
 
 def _build_execution_result(
@@ -179,31 +203,128 @@ def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> 
     (e.g. circular reference, custom TensorSnapshot).  In that case, an error
     ExecOutcome is queued instead of silently crashing the child process.
     """
-    import pickle
-
     pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
     outcome = run_one_philosopher(job)
     try:
         queue.put(outcome)
     except (pickle.PicklingError, TypeError, AttributeError) as exc:
-        # Outcome is not serializable — queue a stripped-down error outcome instead
+        # Outcome is not serializable — queue a stripped-down error outcome instead.
         error_outcome = ExecOutcome(
             proposals=[],
             n=0,
             timed_out=False,
-            error=f"IPC serialize error (PicklingError) for {pid}: {type(exc).__name__}: {exc}",
+            error=_format_subprocess_error(
+                ERROR_CODE_IPC_SERIALIZATION_FAILED,
+                f"failed to serialize outcome for {pid}: "
+                f"{type(exc).__name__}: {exc}",
+            ),
             latency_ms=outcome.latency_ms,
             philosopher_id=pid,
         )
         queue.put(error_outcome)
 
 
+def _terminate_process(proc: object) -> None:
+    """Best-effort cooperative then forceful termination of a subprocess handle."""
+    try:
+        proc.terminate()  # type: ignore[attr-defined]
+    except Exception as exc:
+        logger.debug("terminate() failed on subprocess handle: %s", exc)
+    try:
+        proc.join(timeout=1.0)  # type: ignore[attr-defined]
+    except Exception as exc:
+        logger.debug("join() failed on subprocess handle: %s", exc)
+    try:
+        if proc.is_alive():  # type: ignore[attr-defined]
+            proc.kill()  # type: ignore[attr-defined]
+            proc.join(timeout=1.0)  # type: ignore[attr-defined]
+    except Exception as exc:
+        logger.debug("kill() failed on subprocess handle: %s", exc)
+
+
+def _close_queue(queue: object) -> None:
+    try:
+        queue.close()  # type: ignore[attr-defined]
+    except Exception as exc:
+        logger.debug("queue.close() failed: %s", exc)
+
+
+def _classify_subprocess_get_failure(
+    exc: BaseException, proc: object
+) -> tuple[str, str]:
+    """Classify a failure raised by ``queue.get`` into (error_code, detail).
+
+    - ``queue.Empty``            → hard timeout (caller supplies timeout string).
+    - ``EOFError``/``BrokenPipeError`` + dead process with exitcode !=0
+                                  → child exited before posting (bootstrap / crash).
+    - ``EOFError``/``BrokenPipeError`` otherwise
+                                  → ipc queue EOF.
+    - ``pickle.UnpicklingError``  → IPC deserialization failure.
+    - anything else               → unknown IPC failure.
+    """
+    if isinstance(exc, queue_mod.Empty):
+        # The caller is responsible for turning this into a hard-timeout
+        # message; we return a sentinel here.
+        return ("__timeout__", str(exc))
+
+    exitcode = getattr(proc, "exitcode", None)
+    alive = False
+    try:
+        alive = bool(proc.is_alive())  # type: ignore[attr-defined]
+    except Exception:
+        alive = False
+
+    if isinstance(exc, (EOFError, BrokenPipeError)):
+        if not alive and exitcode not in (None, 0):
+            detail = (
+                f"child exited with code {exitcode} before posting outcome "
+                f"({type(exc).__name__}: {exc})"
+            )
+            return (ERROR_CODE_CHILD_BOOTSTRAP_FAILED, detail)
+        if not alive and exitcode == 0:
+            detail = (
+                f"child exited cleanly without posting outcome "
+                f"({type(exc).__name__}: {exc})"
+            )
+            return (ERROR_CODE_CHILD_EXITED, detail)
+        return (
+            ERROR_CODE_IPC_QUEUE_EOF,
+            f"queue closed before outcome arrived ({type(exc).__name__}: {exc})",
+        )
+
+    if isinstance(exc, pickle.UnpicklingError):
+        return (
+            ERROR_CODE_IPC_SERIALIZATION_FAILED,
+            f"failed to deserialize outcome from child ({type(exc).__name__}: {exc})",
+        )
+
+    # OSError (closed pipes, spawn failures) — treat as child crash if dead.
+    if isinstance(exc, OSError):
+        if not alive and exitcode not in (None, 0):
+            return (
+                ERROR_CODE_CHILD_BOOTSTRAP_FAILED,
+                f"child exited with code {exitcode} before posting outcome "
+                f"({type(exc).__name__}: {exc})",
+            )
+        return (
+            ERROR_CODE_IPC_UNKNOWN,
+            f"os-level IPC failure ({type(exc).__name__}: {exc})",
+        )
+
+    return (
+        ERROR_CODE_IPC_UNKNOWN,
+        f"unexpected IPC failure ({type(exc).__name__}: {exc})",
+    )
+
+
 def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
     start = perf_counter()
-    ctx = multiprocessing.get_context(
-        "fork" if "fork" in multiprocessing.get_all_start_methods() else "spawn"
-    )
+    method = "fork" if "fork" in multiprocessing.get_all_start_methods() else "spawn"
+    # ``get_context`` returns ``BaseContext`` whose type stubs do not expose
+    # ``Process``/``Queue`` despite the concrete contexts (Spawn/ForkContext)
+    # defining them.  Cast through Any so mypy accepts the factory calls.
+    ctx = cast(Any, multiprocessing.get_context(method))
     queue = ctx.Queue(maxsize=1)
     proc = ctx.Process(target=_process_worker, args=(job, queue))
     proc.start()
@@ -212,38 +333,96 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     )
     try:
         outcome = queue.get(timeout=job.timeout_s + bootstrap_grace_s)
-    except Exception:
-        proc.terminate()
-        proc.join(timeout=1.0)
-        if proc.is_alive():
-            proc.kill()
-            proc.join(timeout=1.0)
+    except queue_mod.Empty:
+        # Genuine timeout: child is still running (or has not yet posted).
+        _terminate_process(proc)
         elapsed_ms = int((perf_counter() - start) * 1000)
-        queue.close()
+        _close_queue(queue)
         return ExecOutcome(
             [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
+        )
+    except (
+        EOFError,
+        BrokenPipeError,
+        OSError,
+        pickle.UnpicklingError,
+    ) as exc:
+        # Child crash / bootstrap failure / IPC serialization failure — NOT a
+        # timeout.  Classify with a distinct error code so observability does
+        # not collapse these into the timeout bucket.
+        code, detail = _classify_subprocess_get_failure(exc, proc)
+        _terminate_process(proc)
+        elapsed_ms = int((perf_counter() - start) * 1000)
+        _close_queue(queue)
+        if code == "__timeout__":
+            return ExecOutcome(
+                [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
+            )
+        logger.warning(
+            "Subprocess philosopher execution failed without timeout",
+            extra={
+                "philosopher_id": pid,
+                "error_code": code,
+                "detail": detail,
+            },
+        )
+        return ExecOutcome(
+            [], 0, False, _format_subprocess_error(code, detail), elapsed_ms, pid
+        )
+    except Exception as exc:
+        # Unknown IPC-level failure: surface as structured error, not timeout.
+        code, detail = _classify_subprocess_get_failure(exc, proc)
+        _terminate_process(proc)
+        elapsed_ms = int((perf_counter() - start) * 1000)
+        _close_queue(queue)
+        logger.warning(
+            "Subprocess philosopher execution failed with unknown IPC error",
+            extra={
+                "philosopher_id": pid,
+                "error_code": code,
+                "detail": detail,
+            },
+        )
+        return ExecOutcome(
+            [], 0, False, _format_subprocess_error(code, detail), elapsed_ms, pid
         )
 
     proc.join(timeout=1.0)
     if proc.is_alive():
-        proc.terminate()
-        proc.join(timeout=1.0)
+        _terminate_process(proc)
     elapsed_ms = int((perf_counter() - start) * 1000)
-    queue.close()
+    _close_queue(queue)
     if isinstance(outcome, ExecOutcome):
         if outcome.latency_ms > job.timeout_s * 1000:
             return ExecOutcome(
                 [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
             )
         return outcome
-    return ExecOutcome([], 0, False, "Worker returned invalid outcome", elapsed_ms, pid)
+    return ExecOutcome(
+        [],
+        0,
+        False,
+        _format_subprocess_error(
+            ERROR_CODE_IPC_UNKNOWN,
+            f"worker returned invalid outcome type: {type(outcome).__name__}",
+        ),
+        elapsed_ms,
+        pid,
+    )
 
 
 class ThreadPhilosopherExecutor:
     def __init__(self, config: ExecutorConfig) -> None:
         self._config = config
 
-    def run(self, philosophers, ctx, intent, tensors, memory):
+    def run(
+        self,
+        philosophers: Sequence["PhilosopherProtocol"],
+        ctx: "Context",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> Tuple[List["Proposal"], List[RunResult]]:
         return _run_sync_jobs(
             philosophers=philosophers,
             ctx=ctx,
@@ -259,7 +438,14 @@ class ProcessPhilosopherExecutor:
     def __init__(self, config: ExecutorConfig) -> None:
         self._config = config
 
-    def run(self, philosophers, ctx, intent, tensors, memory):
+    def run(
+        self,
+        philosophers: Sequence["PhilosopherProtocol"],
+        ctx: "Context",
+        intent: "Intent",
+        tensors: "TensorSnapshot",
+        memory: "MemorySnapshot",
+    ) -> Tuple[List["Proposal"], List[RunResult]]:
         return _run_sync_jobs(
             philosophers=philosophers,
             ctx=ctx,
@@ -361,10 +547,25 @@ def _run_sync_jobs(
     return proposals, results
 
 
+_VALID_EXECUTOR_MODES = frozenset({"process", "thread"})
+
+
 def build_executor(config: ExecutorConfig) -> PhilosopherExecutor:
-    if config.mode == "process":
+    """Build the philosopher executor for the given ``config.mode``.
+
+    Unknown modes are rejected with ``ValueError`` (fail-closed) — previously
+    any unrecognised mode silently fell back to the cooperative thread
+    executor, which hides deployment misconfiguration.
+    """
+    mode = config.mode
+    if mode == "process":
         return ProcessPhilosopherExecutor(config)
-    return ThreadPhilosopherExecutor(config)
+    if mode == "thread":
+        return ThreadPhilosopherExecutor(config)
+    raise ValueError(
+        f"Unknown philosopher execution mode: {mode!r}. "
+        f"Expected one of {sorted(_VALID_EXECUTOR_MODES)}."
+    )
 
 
 async def run_in_process_async(

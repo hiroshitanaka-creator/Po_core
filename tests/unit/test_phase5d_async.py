@@ -139,7 +139,13 @@ async def test_async_run_philosophers_exception_isolated():
 @pytest.mark.phase5
 @pytest.mark.asyncio
 async def test_async_run_philosophers_timeout(monkeypatch):
-    """Slow philosopher is marked timed_out; not counted in proposals."""
+    """Slow philosopher is marked timed_out; not counted in proposals.
+
+    Explicitly pins ``execution_mode="thread"`` because this test asserts the
+    cooperative "Soft timeout" contract.  Runtime defaults now use process
+    mode (fail-closed) so the thread-specific timeout message must be opted
+    into via the keyword argument.
+    """
     from po_core.party_machine import async_run_philosophers
 
     proposals, results = await async_run_philosophers(
@@ -150,6 +156,7 @@ async def test_async_run_philosophers_timeout(monkeypatch):
         _StubArg("memory"),
         max_workers=2,
         timeout_s=0.1,  # 100 ms timeout → _SlowPhilosopher (5 s) will time out
+        execution_mode="thread",
     )
 
     assert len(results) == 1

@@ -37,7 +37,11 @@ services:
       - PO_API_KEY=${PO_API_KEY:-}
       - PO_SKIP_AUTH=${PO_SKIP_AUTH:-false}
       - PO_WS_ALLOW_QUERY_API_KEY=${PO_WS_ALLOW_QUERY_API_KEY:-false}
-      - PO_CORS_ORIGINS=${PO_CORS_ORIGINS:-*}
+      # Default: localhost-only CORS allowlist — matches the Python default in
+      # po_core.app.rest.config.APISettings.cors_origins.
+      # Set PO_CORS_ORIGINS explicitly for your deployment (never leave it as
+      # "*" in production).
+      - PO_CORS_ORIGINS=${PO_CORS_ORIGINS:-http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000}
       - PO_RATE_LIMIT_PER_MINUTE=${PO_RATE_LIMIT_PER_MINUTE:-60}
       - PO_TRUST_PROXY_HEADERS=${PO_TRUST_PROXY_HEADERS:-false}
       - PO_ENABLE_SOLARWILL=${PO_ENABLE_SOLARWILL:-true}

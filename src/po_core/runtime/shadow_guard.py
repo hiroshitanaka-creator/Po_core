@@ -14,6 +14,7 @@ Key Features:
 from __future__ import annotations
 
 import json
+import logging
 import os
 import time
 from dataclasses import dataclass
@@ -23,6 +24,8 @@ from po_core.domain.context import Context
 from po_core.domain.proposal import Proposal
 from po_core.domain.trace_event import TraceEvent
 
+logger = logging.getLogger(__name__)
+
 
 def _as_dict(x: Any) -> dict:
     return dict(x) if isinstance(x, Mapping) else {}
@@ -31,7 +34,7 @@ def _as_dict(x: Any) -> dict:
 def _to_float(x: Any) -> Optional[float]:
     try:
         return float(x)
-    except Exception:
+    except (TypeError, ValueError):
         return None
 
 
@@ -116,7 +119,15 @@ class FileShadowGuardStore(ShadowGuardStore):
         try:
             with open(self._path, "r", encoding="utf-8") as f:
                 return dict(json.load(f))
-        except Exception:
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            logger.warning(
+                "ShadowGuard state load failed; returning empty state",
+                extra={
+                    "path": self._path,
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                },
+            )
             return None
 
     def save(self, data: Mapping[str, Any]) -> None:
@@ -210,9 +221,16 @@ class ShadowGuard:
     def _save(self, st: ShadowGuardState) -> None:
         try:
             self._store.save(self._serialize(st))
-        except Exception:
-            # Never crash main due to shadow state save failure (shadow is auxiliary)
-            pass
+        except Exception as exc:
+            # Never crash main due to shadow state save failure (shadow is
+            # auxiliary), but structured logging replaces silent swallowing.
+            logger.warning(
+                "ShadowGuard state save failed; continuing without persistence",
+                extra={
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                },
+            )
 
     # ---- Events ----
 

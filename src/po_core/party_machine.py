@@ -145,9 +145,15 @@ def run_philosophers(
     max_workers: int,
     timeout_s: float,
     limit_per_philosopher: int = 1,
-    execution_mode: str = "thread",
+    execution_mode: str = "process",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
-    """Execute philosophers with deterministic result ordering."""
+    """Execute philosophers with deterministic result ordering.
+
+    The default ``execution_mode`` is ``"process"`` because thread mode cannot
+    hard-cancel a blocking philosopher and is therefore not fail-closed under
+    timeout.  Callers that intentionally want cooperative timeouts must opt in
+    explicitly by passing ``execution_mode="thread"``.
+    """
     limit = max(0, min(limit_per_philosopher, 5))
     executor = build_executor(
         ExecutorConfig(
@@ -204,7 +210,7 @@ class AsyncPartyMachine:
         *,
         max_workers: int = 8,
         timeout_s: float = 5.0,
-        execution_mode: str = "thread",
+        execution_mode: str = "process",
     ) -> None:
         self._max_workers = max_workers
         self._timeout_s = timeout_s
@@ -505,7 +511,7 @@ async def async_run_philosophers(
     timeout_s: float,
     limit_per_philosopher: int = 1,
     tracer: Optional["TracePort"] = None,
-    execution_mode: str = "thread",
+    execution_mode: str = "process",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
 

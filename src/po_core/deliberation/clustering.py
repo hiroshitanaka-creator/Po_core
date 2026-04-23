@@ -159,8 +159,10 @@ class PositionClusterer:
                     best_k = k
                     best_labels = labels
 
-            except Exception:
-                # sklearn not available or clustering failed → skip this k
+            except Exception:  # nosec B112 — skip this k when sklearn fails or missing
+                # sklearn not available or clustering failed → skip this k.
+                # Narrow catch is impractical because sklearn raises many
+                # distinct subclasses; the loop merely tries the next k.
                 continue
 
         if best_labels is None:

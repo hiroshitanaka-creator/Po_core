@@ -603,7 +603,24 @@ def _run_phase_post(
     # Default behavior is unchanged; report is only surfaced when requested.
     try:
         synthesis_report = _build_synthesis_report(proposals)
-    except Exception:
+    except Exception as exc:
+        logger.exception(
+            "Synthesis report construction failed",
+            extra={
+                "request_id": ctx.request_id,
+                "error_type": type(exc).__name__,
+            },
+        )
+        tracer.emit(
+            TraceEvent.now(
+                "SynthesisReportFailed",
+                ctx.request_id,
+                {
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                },
+            )
+        )
         synthesis_report = {}
 
     emit_synthesis_report_built(
@@ -706,8 +723,24 @@ def _run_phase_post(
                     shadow_candidate=candidate_shadow,
                     shadow_final=final_shadow,
                 )
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.exception(
+                "Shadow Pareto A/B evaluation failed",
+                extra={
+                    "request_id": ctx.request_id,
+                    "error_type": type(exc).__name__,
+                },
+            )
+            tracer.emit(
+                TraceEvent.now(
+                    "ShadowParetoFailed",
+                    ctx.request_id,
+                    {
+                        "error_type": type(exc).__name__,
+                        "error_message": str(exc),
+                    },
+                )
+            )
 
     # 10. Persist decision summary (main only)
     deps.memory_write.append(
@@ -916,8 +949,33 @@ def _evaluate_candidate(
                     explanation.to_dict(),
                 )
             )
-        except Exception:
-            pass  # Explanation failure must not break pipeline
+        except Exception as exc:
+            # Explanation failure must not break the pipeline, but silent
+            # swallowing hides observability gaps — emit a structured failure
+            # event so downstream consumers can detect and alert on it.
+            logger.exception(
+                "Failed to emit ExplanationEmitted for action gate verdict",
+                extra={
+                    "request_id": ctx.request_id,
+                    "stage": "action",
+                    "variant": variant,
+                    "decision": v.decision.value,
+                    "error_type": type(exc).__name__,
+                },
+            )
+            tracer.emit(
+                TraceEvent.now(
+                    "ExplanationEmitFailed",
+                    ctx.request_id,
+                    {
+                        "stage": "action",
+                        "variant": variant,
+                        "decision": v.decision.value,
+                        "error_type": type(exc).__name__,
+                        "error_message": str(exc),
+                    },
+                )
+            )
 
     if v.decision == Decision.ALLOW:
         # 正常経路：候補がそのまま最終
