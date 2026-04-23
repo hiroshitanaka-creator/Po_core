@@ -8,7 +8,8 @@ from fastapi.testclient import TestClient
 from po_core.app.rest.config import APISettings
 from po_core.app.rest.review_store import SQLiteReviewStore
 from po_core.app.rest.server import create_app
-from po_core.app.rest.store import SQLiteTraceStore
+from po_core.app.rest.store import InMemoryTraceStore, SQLiteTraceStore
+from po_core.domain.trace_event import TraceEvent
 
 EXPECTED_STARTUP_MESSAGE = (
     "Startup aborted: workers > 1 is not supported with sqlite storage backends. "
@@ -70,3 +71,39 @@ def test_review_store_applies_sqlite_pragmas(tmp_path) -> None:
 
     assert journal_mode.lower() == "wal"
     assert busy_timeout == 5000
+
+
+def test_sqlite_trace_store_append_persists_incrementally(tmp_path) -> None:
+    store = SQLiteTraceStore(str(tmp_path / "trace_store.sqlite3"))
+    session_id = "s-append"
+    first = TraceEvent.now("EventA", session_id, {"n": 1})
+    second = TraceEvent.now("EventB", session_id, {"n": 2})
+
+    store.append(session_id, first)
+    store.append(session_id, second)
+
+    events = store.get(session_id)
+    assert events is not None
+    assert [e.event_type for e in events] == ["EventA", "EventB"]
+    assert [e.payload["n"] for e in events] == [1, 2]
+
+    with store._connect() as conn:
+        cnt = conn.execute(
+            "SELECT COUNT(*) FROM trace_events WHERE session_id = ?",
+            (session_id,),
+        ).fetchone()[0]
+    assert cnt == 2
+
+
+def test_inmemory_trace_store_append_keeps_existing_events() -> None:
+    store = InMemoryTraceStore()
+    session_id = "mem-append"
+    first = TraceEvent.now("EventA", session_id, {"n": 1})
+    second = TraceEvent.now("EventB", session_id, {"n": 2})
+
+    store.append(session_id, first)
+    store.append(session_id, second)
+
+    events = store.get(session_id)
+    assert events is not None
+    assert [e.event_type for e in events] == ["EventA", "EventB"]

@@ -34,6 +34,10 @@ class TraceStore(ABC):
         """Persist trace events for a session."""
 
     @abstractmethod
+    def append(self, session_id: str, event: TraceEvent) -> None:
+        """Append a single trace event for a session."""
+
+    @abstractmethod
     def history(self, limit: int = 50) -> List[TraceHistorySummary]:
         """Return recent session summaries sorted by newest first."""
 
@@ -68,6 +72,11 @@ class InMemoryTraceStore(TraceStore):
         while len(self._sessions) > settings.max_trace_sessions:
             stale_id, _ = self._sessions.popitem(last=False)
             self._store.pop(stale_id, None)
+
+    def append(self, session_id: str, event: TraceEvent) -> None:
+        events = list(self._store.get(session_id, []))
+        events.append(event)
+        self.save(session_id, events)
 
     def history(self, limit: int = 50) -> List[TraceHistorySummary]:
         items = list(self._sessions.items())[-limit:]
@@ -202,6 +211,43 @@ class SQLiteTraceStore(TraceStore):
                 self._evict_if_needed(conn, settings.max_trace_sessions)
                 conn.commit()
 
+    def append(self, session_id: str, event: TraceEvent) -> None:
+        settings = get_api_settings()
+        with self._lock:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT MAX(event_idx) AS max_event_idx FROM trace_events WHERE session_id = ?",
+                    (session_id,),
+                ).fetchone()
+                max_event_idx = (
+                    int(row["max_event_idx"])
+                    if row and row["max_event_idx"] is not None
+                    else -1
+                )
+                next_idx = max_event_idx + 1
+
+                conn.execute(
+                    "INSERT OR REPLACE INTO trace_sessions(session_id, updated_at) VALUES (?, ?)",
+                    (session_id, event.occurred_at.isoformat()),
+                )
+                conn.execute(
+                    """
+                    INSERT INTO trace_events (
+                        session_id, event_idx, event_type, occurred_at, correlation_id, payload_json
+                    ) VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        session_id,
+                        next_idx,
+                        event.event_type,
+                        event.occurred_at.isoformat(),
+                        event.correlation_id,
+                        json.dumps(dict(event.payload), ensure_ascii=False, sort_keys=True),
+                    ),
+                )
+                self._evict_if_needed(conn, settings.max_trace_sessions)
+                conn.commit()
+
     def _evict_if_needed(self, conn: sqlite3.Connection, max_sessions: int) -> None:
         if max_sessions <= 0:
             return
@@ -291,6 +337,4 @@ def save_trace(session_id: str, events: List[TraceEvent]) -> None:
 
 def append_trace_event(session_id: str, event: TraceEvent) -> None:
     """Append a single trace event to an existing session."""
-    store = get_trace_store()
-    existing = store.get(session_id) or []
-    store.save(session_id, existing + [event])
+    get_trace_store().append(session_id, event)
