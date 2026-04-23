@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hmac
 from dataclasses import dataclass
 from typing import Mapping
 
@@ -49,7 +50,7 @@ def evaluate_auth_policy(
         )
 
     provided = (presented_api_key or "").strip()
-    if provided != expected:
+    if not hmac.compare_digest(provided, expected):
         return AuthDecision(
             allowed=False,
             is_misconfigured=False,
