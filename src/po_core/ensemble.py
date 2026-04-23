@@ -7,6 +7,7 @@ Use ``po_core.app.api.run()`` or ``PoSelf.generate()`` instead.
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
@@ -52,6 +53,7 @@ from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.trace.synthesis_report_events import emit_synthesis_report_built
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
+logger = logging.getLogger(__name__)
 
 
 PHILOSOPHER_REGISTRY: Dict[str, type[Philosopher]] = {
@@ -302,8 +304,28 @@ def _run_phase_pre(
                     intent_explanation.to_dict(),
                 )
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.exception(
+                "Failed to emit ExplanationEmitted for intention gate verdict",
+                extra={
+                    "request_id": ctx.request_id,
+                    "stage": "intention",
+                    "decision": v1.decision.value,
+                    "error_type": type(exc).__name__,
+                },
+            )
+            tracer.emit(
+                TraceEvent.now(
+                    "ExplanationEmitFailed",
+                    ctx.request_id,
+                    {
+                        "stage": "intention",
+                        "decision": v1.decision.value,
+                        "error_type": type(exc).__name__,
+                        "error_message": str(exc),
+                    },
+                )
+            )
 
     if v1.decision != Decision.ALLOW:
         fallback = compose_fallback(ctx, v1, stage="intention")
