@@ -173,8 +173,8 @@ class ReasonResponse(BaseModel):
         default_factory=TensorSnapshot,
         description="Tensor metrics computed during this turn.",
     )
-    safety_mode: str = Field(
-        default="NORMAL",
+    safety_mode: Optional[str] = Field(
+        default=None,
         description="SafetyMode active during this turn (NORMAL/WARN/CRITICAL).",
     )
     processing_time_ms: float = Field(

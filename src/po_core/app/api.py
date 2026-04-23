@@ -35,13 +35,13 @@ from __future__ import annotations
 import os
 import uuid
 import warnings
+import inspect
 
-from fastapi import FastAPI, Header, HTTPException, Response, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Header, HTTPException, Response, status
 from pydantic import BaseModel, ConfigDict
 
 from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_headers
-from po_core.app.rest.config import APISettings, parse_cors_origins
+from po_core.app.rest.config import APISettings, get_api_settings
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -212,8 +212,6 @@ async def async_run(
     return await async_run_turn(ctx, deps)
 
 
-_legacy_api_settings = APISettings()
-
 # ---------------------------------------------------------------------------
 # DEPRECATED legacy FastAPI surface.
 #
@@ -232,23 +230,9 @@ warnings.warn(
     stacklevel=1,
 )
 
-app = FastAPI(
-    title="Po_core Legacy Compatibility API [DEPRECATED]",
-    description=(
-        "**DEPRECATED** — Use `po_core.app.rest.server:create_app` for new deployments. "
-        "This surface will be removed in v2.0.0."
-    ),
-    deprecated=True,
-)
+from po_core.app.rest.server import create_app as _create_rest_app
 
-_cors_origins = parse_cors_origins(_legacy_api_settings.cors_origins)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=_cors_origins != ["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = _create_rest_app(APISettings())
 
 _DEPRECATION_HEADER = (
     "POST /generate is deprecated. Use POST /v1/reason via po_core.app.rest."
@@ -269,13 +253,17 @@ async def generate(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> Response:
+    settings = get_api_settings()
     _ensure_api_key(
-        settings=_legacy_api_settings,
+        settings=settings,
         x_api_key=x_api_key,
         authorization=authorization,
     )
     try:
-        result = await async_run(payload.user_input, philosophers=payload.philosophers)
+        kwargs: dict[str, object] = {"philosophers": payload.philosophers}
+        if "settings" in inspect.signature(async_run).parameters:
+            kwargs["settings"] = Settings.from_api_settings(settings)
+        result = await async_run(payload.user_input, **kwargs)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
@@ -284,7 +272,11 @@ async def generate(
     return Response(
         content=json.dumps(result),
         media_type="application/json",
-        headers={"Deprecation": "true", "Sunset": "v2.0.0", "Link": _DEPRECATION_HEADER},
+        headers={
+            "Deprecation": "true",
+            "Sunset": "v2.0.0",
+            "Link": _DEPRECATION_HEADER,
+        },
     )
 
 

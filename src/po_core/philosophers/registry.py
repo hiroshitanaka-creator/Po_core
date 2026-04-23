@@ -221,13 +221,14 @@ class PhilosopherRegistry:
         )
 
     def load(
-        self, selected_ids: Sequence[str]
+        self, selected_ids: Sequence[str], *, strict_enabled: bool = True
     ) -> Tuple[List[PhilosopherProtocol], List[LoadError]]:
         """
         選抜された哲学者をロード（エラー回収付き）。
 
-        39人になるとimportミスが必ず出る。
-        なのでloadは落とさず"エラー回収"する。
+        enabled philosopher のロード失敗は既定で fail-fast する。
+        introspection/testing 等の非厳格用途では strict_enabled=False で
+        エラー回収モードに切り替えられる。
 
         Args:
             selected_ids: 選抜されたphilosopher_idのリスト
@@ -266,7 +267,7 @@ class PhilosopherRegistry:
                 if self._cache:
                     self._instances[pid] = ph
             except Exception as e:
-                if spec.enabled:
+                if spec.enabled and strict_enabled:
                     raise RuntimeError(
                         f"failed_to_load_enabled_philosopher:{pid}"
                     ) from e
