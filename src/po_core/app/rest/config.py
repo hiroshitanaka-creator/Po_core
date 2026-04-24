@@ -49,11 +49,13 @@ class APISettings(BaseSettings):
     ws_allow_query_api_key: bool = False
 
     # Scope-based API keys.  Each setting is a comma-separated list of keys
-    # authorised for that scope.  When any scope key is configured, the global
-    # ``api_key`` is no longer granted every scope implicitly — it only gets
-    # the scopes it is explicitly listed under.  If every scope setting is
-    # empty, behaviour falls back to the global ``api_key`` which is treated
-    # as if it had all scopes (backwards-compatible single-key deployments).
+    # authorised for that scope.  When any scope key is configured ("scope-key
+    # mode"), scope separation is enforced and the global ``api_key`` is NOT
+    # an implicit super-key — to keep using the global key, list it under
+    # each scope's env var explicitly.  If every scope setting is empty
+    # ("single-key mode"), behaviour falls back to the global ``api_key``
+    # which is accepted for every scope (backwards-compatible single-key
+    # deployments).  See ``po_core.app.rest.scopes`` for the full policy.
     api_keys_reason_write: str = Field(
         default="",
         validation_alias=AliasChoices("PO_API_KEYS_REASON_WRITE"),
