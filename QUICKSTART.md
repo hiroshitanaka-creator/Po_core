@@ -9,8 +9,8 @@ Po_coreの哲学駆動型AIシステムをすぐに試せるガイドです。
 git clone https://github.com/hiroshitanaka-creator/Po_core.git
 cd Po_core
 
-# 最新の公開済み public version 1.0.2 を install
-pip install "po-core-flyingpig==1.0.2"
+# 公開済み public version 1.0.3 を install
+pip install "po-core-flyingpig==1.0.3"
 ```
 
 ## 🚀 リリース成果物の作成（maintainer向け）
@@ -26,7 +26,7 @@ python -m build
 twine check dist/*
 ```
 
-> Repository target version は `1.0.3` ですが、latest published public version は引き続き `1.0.2` です。現時点で repo 内に固定できている public PyPI evidence は `docs/release/pypi_publication_v1.0.2.md` のみで、`1.0.3` の publication / workflow / clean install/import/smoke は pending です。
+> Repository target version は `1.0.3` で、latest published public version も `1.0.3` です。公開証跡は `docs/release/pypi_publication_v1.0.3.md` / `docs/release/testpypi_publish_log_v1.0.3.md` / `docs/release/smoke_verification_v1.0.3.md` に固定されています。workflow URL と full deps smoke は引き続き pending です。
 
 ## 🔐 REST ランタイム既定値
 
@@ -56,7 +56,7 @@ print(bool(res.text), res.consensus_leader)
 PY
 ```
 
-期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。なおこの install 例は latest published public version `1.0.2` 向けです。`1.0.3` は repository target version ですが、post-publish smoke transcript はまだ `docs/release/smoke_verification_v1.0.3.md` に未固定です。
+期待結果: install/import が成功し、最後の行で `True` とリーダー名が出力されること。install 例は latest published public version `1.0.3` に整合しています。
 
 ## ⚡ 30秒で試す
 
@@ -298,7 +298,7 @@ response = po.generate("この言葉の意味は何か？")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # または開発モードでインストール
-pip install "po-core-flyingpig==1.0.2"
+pip install "po-core-flyingpig==1.0.3"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
@@ -341,7 +341,7 @@ open http://localhost:8000/docs
 ### ローカルで起動する
 
 ```bash
-pip install "po-core-flyingpig==1.0.2"
+pip install "po-core-flyingpig==1.0.3"
 
 # 推奨: 開発でも認証を有効化したまま試す
 export PO_API_KEY=dev-secret-key
