@@ -23,10 +23,7 @@ from fastapi.responses import StreamingResponse
 
 from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
-from po_core.app.rest.auth import (
-    evaluate_auth_policy,
-    extract_api_key_from_header_map,
-)
+from po_core.app.rest.auth import extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, get_api_settings, is_rate_limit_enabled
 from po_core.app.rest.scopes import Scope, evaluate_scope_policy, require_scope
 from po_core.app.rest.models import (
@@ -36,6 +33,7 @@ from po_core.app.rest.models import (
     TensorSnapshot,
 )
 from po_core.app.rest.rate_limit import _extract_forwarded_ip, limiter
+from po_core.app.rest.redaction import redact_payload
 from po_core.app.rest.review_store import enqueue_review
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import APISettingsLike, Settings
@@ -627,6 +625,7 @@ async def _stream_reasoning_chunks(
     session_id = body.session_id or str(uuid.uuid4())
     yield {"chunk_type": "started", "payload": {"session_id": session_id}}
 
+    should_redact = bool(getattr(api_settings, "redact_trace_responses", True))
     queue: asyncio.Queue = asyncio.Queue()
     _DONE = object()
     tracer = InMemoryTracer()
@@ -665,12 +664,15 @@ async def _stream_reasoning_chunks(
             item = await queue.get()
             if item is _DONE:
                 break
+            event_payload = dict(item.payload)
+            if should_redact:
+                event_payload = redact_payload(event_payload)
             yield {
                 "chunk_type": "event",
                 "payload": {
                     "event_type": item.event_type,
                     "occurred_at": item.occurred_at.isoformat(),
-                    "payload": dict(item.payload),
+                    "payload": event_payload,
                 },
             }
 
@@ -753,22 +755,19 @@ async def reason_ws(websocket: WebSocket) -> None:
     presented_ws_key = _resolve_ws_auth_key(
         websocket, allow_query_api_key=api_settings.ws_allow_query_api_key
     )
-    # Scope-aware policy: falls back to legacy single-key policy when no
-    # scoped keys are configured.
+    # Scope-aware policy: ``evaluate_scope_policy`` already handles both
+    # single-key mode (global ``PO_API_KEY`` accepted for every scope) and
+    # scope-key mode (only keys listed under the scope env var accepted).
+    # The previous fallback to ``evaluate_auth_policy`` re-accepted the
+    # global key in scope-key mode and defeated scope segmentation.
     scope_decision = evaluate_scope_policy(
         settings=api_settings,
         presented_api_key=presented_ws_key,
         scope=Scope.REASON_WRITE,
     )
     if not scope_decision.allowed:
-        auth_decision = evaluate_auth_policy(
-            skip_auth=api_settings.skip_auth,
-            configured_api_key=api_settings.api_key,
-            presented_api_key=presented_ws_key,
-        )
-        if not auth_decision.allowed:
-            await websocket.close(code=1008, reason=scope_decision.message)
-            return
+        await websocket.close(code=1008, reason=scope_decision.message)
+        return
 
     if _is_ws_rate_limited(websocket, api_settings.rate_limit_per_minute, api_settings):
         await websocket.close(code=1008, reason="Rate limit exceeded")

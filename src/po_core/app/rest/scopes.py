@@ -1,16 +1,25 @@
 """Scope-based authorization for REST endpoints.
 
-The global ``PO_API_KEY`` remains a backwards-compatible super-key that grants
-every scope.  In addition, per-scope keys can be configured via the environment
-so that a separate key is required for:
+Per-scope API keys can be configured via the environment so that a separate
+key is required for each surface:
 
 - ``reason:write``  — POST /v1/reason, POST /v1/reason/stream, WS /v1/ws/reason
 - ``trace:read``    — GET /v1/trace/*, GET /v1/tradeoff-map/*
 - ``review:write``  — POST /v1/review/{id}/decision, GET /v1/review/pending
 
-If a scope-specific env var is set, requests to that endpoint accept EITHER
-the global ``api_key`` (if configured) OR any of the scope-specific keys.
-If none is configured, the endpoint falls back to the standard global key.
+Two operating modes:
+
+1. **Single-key mode** — no per-scope env var is set anywhere.  The global
+   ``PO_API_KEY`` acts as a single shared key that grants every scope.  This
+   is the backwards-compatible default for deployments that have not opted
+   into scoped keys.
+
+2. **Scope-key mode** — at least one ``PO_API_KEYS_<SCOPE>`` env var is set.
+   Scope separation is enforced: a request is allowed iff the presented key
+   is listed under that endpoint's scope env var.  The global ``PO_API_KEY``
+   is **not** an implicit super-key in this mode — to keep using it, list it
+   under each scope it should grant.  This prevents a leaked global key from
+   trivially defeating scope segmentation.
 """
 
 from __future__ import annotations
@@ -82,10 +91,12 @@ def evaluate_scope_policy(
       1. ``skip_auth=True`` always allows (dev override).
       2. If neither the global key nor any scope key is configured, startup
          validation has already failed — but defensively we reject here too.
-      3. If *no* scope key is configured for any scope, fall back to the
-         standard global-key policy (backwards-compatible single-key mode).
-      4. Otherwise, accept the request if the presented key equals either
-         the global key *or* any key listed under the requested scope.
+      3. **Single-key mode** (no scope key configured anywhere): accept iff
+         the presented key matches the global ``api_key``.
+      4. **Scope-key mode** (any scope env var set): the global key is no
+         longer an implicit super-key.  Accept iff the presented key matches
+         a key explicitly listed under the requested scope.  To keep using
+         the global key, operators must list it under each scope's env var.
     """
     if settings.skip_auth:
         return ScopeAuthDecision(
@@ -94,8 +105,9 @@ def evaluate_scope_policy(
 
     global_key = settings.api_key.strip()
     scope_keys = _scope_keys(settings, scope)
+    scope_mode = _any_scope_configured(settings)
 
-    if not global_key and not _any_scope_configured(settings):
+    if not global_key and not scope_mode:
         return ScopeAuthDecision(
             allowed=False,
             is_misconfigured=True,
@@ -113,15 +125,24 @@ def evaluate_scope_policy(
             message="Invalid or missing API key",
         )
 
-    # Global key: only honour it if it is set AND either (a) no scope-specific
-    # keys have been configured at all (single-key mode) or (b) the global key
-    # is present — we still treat the global key as an implicit super-key so
-    # that existing single-key deployments keep working.
-    if global_key and hmac.compare_digest(provided, global_key):
+    if not scope_mode:
+        # Single-key mode: the global key is the only accepted credential
+        # and acts as the implicit super-key for every scope.  This preserves
+        # backwards compatibility for deployments that have not opted into
+        # scope segmentation.
+        if global_key and hmac.compare_digest(provided, global_key):
+            return ScopeAuthDecision(
+                allowed=True, is_misconfigured=False, message="Authorized (global)"
+            )
         return ScopeAuthDecision(
-            allowed=True, is_misconfigured=False, message="Authorized (global)"
+            allowed=False,
+            is_misconfigured=False,
+            message="Invalid or missing API key",
         )
 
+    # Scope-key mode: scope separation is enforced.  The global key is NOT a
+    # super-key here; it is only accepted if it is also listed under the
+    # requested scope's env var (in which case _match_any handles it below).
     if scope_keys and _match_any(provided, scope_keys):
         return ScopeAuthDecision(
             allowed=True,
