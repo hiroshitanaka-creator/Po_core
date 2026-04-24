@@ -187,6 +187,10 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "PO_CORS_ORIGINS=*" in quickstart_en
     assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_ja
     assert "PO_ALLOW_UNSAFE_THREAD_EXECUTION=true" in quickstart_en
+    assert 'po-core-flyingpig==1.0.2' not in quickstart_ja
+    assert 'po-core-flyingpig==1.0.2' not in quickstart_en
+    assert 'latest published public version remains `1.0.2`' not in quickstart_en
+    assert 'latest published public version は引き続き `1.0.2`' not in quickstart_ja
     assert "43 integrated runtime personas" not in readme
     assert "43 integrated runtime personas" not in quickstart_en
     assert "43の統合済みランタイム・ペルソナ" not in quickstart_ja

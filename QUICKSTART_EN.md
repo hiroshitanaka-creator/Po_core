@@ -6,14 +6,14 @@ A quick guide to get started with Po_core's philosophy-driven AI system.
 
 ```bash
 # Install the published PyPI package
-pip install "po-core-flyingpig==1.0.2"
+pip install "po-core-flyingpig==1.0.3"
 ```
 
 
 
 ## 📦 Published package status
 
-Repository target version is `1.0.3`, while the latest published public version remains `1.0.2`. Today the repo evidences public PyPI publication only for `1.0.2` via `docs/release/pypi_publication_v1.0.2.md`; `1.0.3` publication, workflow-run URLs, and clean post-publish smoke transcripts remain out of bounds until operator-supplied evidence is recorded.
+Repository target version is `1.0.3`, and the latest published public version is also `1.0.3`. Publication evidence is fixed in `docs/release/pypi_publication_v1.0.3.md`, `docs/release/testpypi_publish_log_v1.0.3.md`, and `docs/release/smoke_verification_v1.0.3.md`; workflow-run URL(s) and full-deps smoke transcripts remain pending.
 
 ## 🔐 REST runtime defaults
 
@@ -261,7 +261,7 @@ response = po.generate("What does this word mean?")
 export PYTHONPATH=/path/to/Po_core/src:$PYTHONPATH
 
 # Or install in development mode
-pip install "po-core-flyingpig==1.0.2"
+pip install "po-core-flyingpig==1.0.3"
 ```
 
 ### ImportError: No module named 'click' or 'rich'
@@ -296,7 +296,7 @@ open http://localhost:8000/docs
 ### Start Locally
 
 ```bash
-pip install "po-core-flyingpig==1.0.2"
+pip install "po-core-flyingpig==1.0.3"
 export PO_API_KEY=dev-secret-key
 
 python -m po_core.app.rest

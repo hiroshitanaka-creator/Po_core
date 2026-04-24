@@ -40,9 +40,7 @@
 ## Remaining Evidence Gaps (post-publication)
 
 1. GitHub Actions workflow run URL(s) for `1.0.3` TestPyPI and PyPI runs — not yet fixed in-repo (GitHub API rate-limited 2026-03-22).
-2. Full deps install transcript (`pip install po-core-flyingpig==1.0.3` with all deps) — not completed this session (torch/CUDA deps are large).
-3. Clean-environment import transcript (`python -c "import po_core; print(po_core.__version__)"`) — pending full deps install.
-4. `scripts/release_smoke.py --check-entrypoints` transcript in clean post-publish venv — pending.
+2. Full deps install/import/runtime-smoke transcript in a clean post-publish environment (`pip install po-core-flyingpig==1.0.3` + import + `scripts/release_smoke.py --check-entrypoints`) — not completed this session (torch/CUDA deps are large).
 
 ## Notes
 
@@ -55,7 +53,7 @@
 Post-release follow-up (all publication steps complete):
 
 - Record GitHub Actions workflow run URL(s) for the successful `publish-testpypi` and `publish-pypi` runs once GitHub API rate limit resets or a token is available — update `docs/release/testpypi_publish_log_v1.0.3.md` and `docs/release/pypi_publication_v1.0.3.md`.
-- Complete full deps install (`pip install po-core-flyingpig==1.0.3`) and record clean import + runtime smoke transcript — update `docs/release/smoke_verification_v1.0.3.md` post-publish section.
+- Complete full deps install (`pip install po-core-flyingpig==1.0.3`) and record clean import + runtime smoke transcript (consolidated) — update `docs/release/smoke_verification_v1.0.3.md` post-publish section.
 - Stage 2 planning: v1.1.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
 
 ## Completed
@@ -68,4 +66,4 @@ Post-release follow-up (all publication steps complete):
 - 2026-03-21: prompt SSOT を再整合し、draft prompt docs/template から `defer` を除去して runtime action contract と一致させた。
 - 2026-03-21: public truth realignment として、42-philosopher canonical count / dummy helper semantics / `/v1/philosophers` public manifest filtering を docs・metadata・tests・REST router へ同期した.
 - 2026-03-21: runtime safety hardening として、REST server の execution mode default を `process` に変更し、unsafe `thread` mode は `PO_ALLOW_UNSAFE_THREAD_EXECUTION=true` を伴う開発時以外で拒否するようにした。
-- 2026-03-21: `scripts/release_smoke.py --check-entrypoints` が、import 済み checkout とは別物の stale site-packages metadata (`po-core-flyingpig==1.0.2`) を checkout 検証時の version mismatch と誤判定しないよう修正した。これは local/main checkout validation に対する false release blocker 修正である。
+- 2026-03-21: `scripts/release_smoke.py --check-entrypoints` が、import 済み checkout とは別物の stale site-packages metadata を checkout 検証時の version mismatch と誤判定しないよう修正した。これは local/main checkout validation に対する false release blocker 修正である。
