@@ -479,6 +479,12 @@ SPECS: List[PhilosopherSpec] = [
 DUMMY_PHILOSOPHER_ID = "dummy"
 PUBLIC_PHILOSOPHER_COUNT = 42
 
+def resolve_philosopher_id(ph: object) -> str:
+    """Return the stable identity string for *ph*.  See philosophers/identity.py."""
+    from po_core.philosophers.identity import resolve_philosopher_id as _resolve
+
+    return _resolve(ph)
+
 
 def get_enabled_specs() -> List[PhilosopherSpec]:
     """Return all enabled internal runtime specs, including helper slots."""
