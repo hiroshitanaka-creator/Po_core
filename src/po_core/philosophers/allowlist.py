@@ -19,10 +19,10 @@ class AllowlistRegistry:
         self._wrapped = wrapped
         self._allowlist: set[str] = set(allowlist)
 
-    def select(self, mode: Any) -> Any:
+    def select(self, mode: Any, **kwargs: Any) -> Any:
         from po_core.philosophers.registry import Selection
 
-        sel = self._wrapped.select(mode)
+        sel = self._wrapped.select(mode, **kwargs)
         filtered_ids = [pid for pid in sel.selected_ids if pid in self._allowlist]
         if not filtered_ids:
             raise ValueError(

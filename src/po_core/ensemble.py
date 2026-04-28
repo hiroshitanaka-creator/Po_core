@@ -52,8 +52,54 @@ from po_core.trace.decision_events import (
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.trace.synthesis_report_events import emit_synthesis_report_built
+from po_core.philosophers.tags import (
+    TAG_CLARIFY,
+    TAG_COMPLIANCE,
+    TAG_CREATIVE,
+    TAG_CRITIC,
+    TAG_PLANNER,
+    TAG_REDTEAM,
+)
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
+
+# Scenario-sensitive routing table for non-default scenario types.
+# Each entry maps scenario_type → (preferred_tags, scenario_limit).
+#
+# preferred_tags: overrides SelectionPlan.require_tags for the first-pass slot
+#   fill, guaranteeing the right archetypes appear in the roster.
+# scenario_limit: tighter roster cap needed because NORMAL mode's budget equals
+#   the total cost of all 42 philosophers — without a limit the preferred_tags
+#   would be absorbed and all 42 would still be selected.
+#
+# Tag semantics
+# ─────────────
+# values_clarification  → clarify + creative + compliance:
+#   clarify     → confucius (risk=0, weight=1.5) — question-generating, values-
+#                 exploring contemplative voice
+#   creative    → zhuangzi (risk=1, weight=1.0) — analogical, divergent thinking
+#   compliance  → kant (risk=0) fills the third slot — normative grounding
+#
+# conflicting_constraints → critic + redteam + planner:
+#   critic      → kant (risk=0) — structural critique, contradiction detection
+#   redteam     → nietzsche (risk=2) — adversarial revaluation, exposes hidden
+#                 assumptions behind each constraint
+#   planner     → marcus_aurelius (risk=0) fills the third slot — pragmatic
+#                 decomposition
+#
+# With limit=3 the required-tag phase exhausts all slots, ensuring confucius
+# is NOT in the conflicting_constraints roster (it has no critic/redteam/planner
+# tags).  This guarantees a different Pareto winner and non-identical content.
+_SCENARIO_ROUTING: Dict[str, tuple] = {
+    "values_clarification": (
+        (TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE),
+        3,
+    ),
+    "conflicting_constraints": (
+        (TAG_CRITIC, TAG_REDTEAM, TAG_PLANNER),
+        3,
+    ),
+}
 logger = logging.getLogger(__name__)
 
 
@@ -247,7 +293,9 @@ def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[
 
 
 def _run_phase_pre(
-    ctx: DomainContext, deps: "EnsembleDeps"
+    ctx: DomainContext,
+    deps: "EnsembleDeps",
+    case_signals: Optional[CaseSignals] = None,
 ) -> Union["_PhasePreResult", Dict[str, Any]]:
     """
     Pipeline phases 1-5: memory → tensors → intent → intention gate →
@@ -377,7 +425,23 @@ def _run_phase_pre(
         }
 
     # 5. Select philosophers based on SafetyMode (編成)
-    sel = deps.registry.select(mode)
+    # When CaseSignals carries a non-default scenario_type, steer first-pass
+    # tag requirements AND apply a tighter roster limit so that the preferred-tag
+    # archetypes are not diluted by the full NORMAL budget (which equals the
+    # total cost of all 42 philosophers and would otherwise admit everyone).
+    scenario_type = (
+        case_signals.scenario_type
+        if case_signals is not None
+        else "general"
+    )
+    _routing = _SCENARIO_ROUTING.get(scenario_type)
+    preferred_tags: Optional[tuple] = _routing[0] if _routing else None
+    limit_override: Optional[int] = _routing[1] if _routing else None
+    sel = deps.registry.select(
+        mode,
+        preferred_tags=preferred_tags,
+        limit_override=limit_override,
+    )
     max_workers, timeout_s = _get_swarm_params(mode, deps.settings)
     tracer.emit(
         TraceEvent.now(
@@ -390,6 +454,8 @@ def _run_phase_pre(
                 "covered_tags": sel.covered_tags,
                 "ids": sel.selected_ids,
                 "workers": max_workers,
+                "scenario_type": scenario_type,
+                "preferred_tags": list(preferred_tags) if preferred_tags else None,
             },
         )
     )
@@ -1084,7 +1150,7 @@ def run_turn(
     Returns:
         Result dictionary with status, proposal, or verdict
     """
-    pre = _run_phase_pre(ctx, deps)
+    pre = _run_phase_pre(ctx, deps, case_signals=case_signals)
     if isinstance(pre, dict):
         return pre  # Early exit (intention gate blocked)
 
@@ -1129,7 +1195,7 @@ async def async_run_turn(
     Returns:
         Result dictionary with status, proposal, or verdict
     """
-    pre = _run_phase_pre(ctx, deps)
+    pre = _run_phase_pre(ctx, deps, case_signals=case_signals)
     if isinstance(pre, dict):
         return pre  # Early exit (intention gate blocked)
 

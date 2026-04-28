@@ -1,7 +1,7 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-28 (RT-GAP-001 resolved, RT-GAP-003 resolved, RT-GAP-004 → xfail)  
+Last updated: 2026-04-28 (RT-GAP-001, RT-GAP-002, RT-GAP-003 resolved; RT-GAP-004 xfail)  
 Branch: `claude/implement-po-core-AVsEx`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
@@ -96,10 +96,10 @@ These tests expose where the **production pipeline itself** falls short, indepen
 
 | Test | Status | Notes |
 |---|---|---|
-| `test_at009_and_at010_content_differs` | ❌ **FAIL** | **RT-GAP-002** — open gap (deferred); see below |
-| `test_run_output_conforms_to_output_schema_v1` | ⚠️ **XFAIL** | RT-GAP-004 documented as `xfail(strict=True)` — expected failure while gap persists; XPASS would alert to update matrix |
+| `test_at009_and_at010_content_differs` | ✅ | RT-GAP-002 **resolved** — `_SCENARIO_ROUTING` in `ensemble.py` steers different philosopher sets per scenario type; AT-009 → Confucius, AT-010 → Nietzsche |
+| `test_run_output_conforms_to_output_schema_v1` | ⚠️ **XFAIL** | RT-GAP-004 — `xfail(strict=True)` while `po_core.run()` does not natively return `output_schema_v1` shape; XPASS signals completion |
 
-**Runtime total: 20 pass / 1 fail (RT-GAP-002) / 1 xfail (RT-GAP-004)**
+**Runtime total: 21 pass / 0 fail / 1 xfail (RT-GAP-004)**
 
 ### Gap catalogue
 
@@ -184,25 +184,36 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 7 | 0 | 1 (PyPI publish) |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run()) | 20 | **1** (RT-GAP-002) | 0 (+1 xfail RT-GAP-004) |
+| Runtime acceptance (po_core.run()) | 21 | 0 | 0 (+1 xfail: RT-GAP-004) |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 11 | 0 | 1 (PyPI publish) |
 | Governance | 7 | 0 | 0 |
-| **Total** | **107** | **1** | **2** |
+| **Total** | **108** | **0** | **2** (+1 xfail: RT-GAP-004) |
 
-### Open gaps blocking v1.0 pipeline completeness
+### Open xfail gap
 
-**RT-GAP-002** (sole remaining open gap): AT-009 and AT-010 produce byte-identical
-`proposal.content` because the pipeline always selects the same philosopher set
-regardless of scenario type. Resolving this requires scenario-sensitive philosopher
-routing in `PhilosopherSelect` / `IntentionGate` using `CaseSignals.scenario_type`
-(e.g. `"values_clarification"` prioritises different philosophers than `"conflicting_constraints"`).
+**RT-GAP-004** (`xfail(strict=True)` — architectural bridge gap):
+`po_core.run()` does not natively return `output_schema_v1` shape; the
+`output_adapter.adapt_to_schema()` bridge is required. Will remain until the
+pipeline layer is extended to return schema-compliant output natively.
 
-**RT-GAP-001 and RT-GAP-003 resolved** (2026-04-28):  
-The `CaseSignals` domain object (`src/po_core/domain/case_signals.py`) now carries
-semantic signals from the structured case YAML into `run_turn` via `_apply_case_signals()` 
-in `ensemble.py`. The fix lives entirely in the pipeline layer; `output_adapter.py` is unchanged.
+### Resolved gaps
+
+**RT-GAP-001** ✅ (resolved 2026-04-28): `CaseSignals(values_present=False)` +
+`_apply_case_signals()` in `ensemble.py` overrides `action_type` to `'clarify'`.
+
+**RT-GAP-002** ✅ (resolved 2026-04-28): `_SCENARIO_ROUTING` in `ensemble.py` maps
+`scenario_type` → `(preferred_tags, limit_override)` fed to `registry.select()`.
+`values_clarification` → `(clarify+creative+compliance, 3)` → [confucius, zhuangzi, kant]
+→ Pareto winner: Confucius.
+`conflicting_constraints` → `(critic+redteam+planner, 3)` → [kant, nietzsche,
+marcus_aurelius] → Pareto winner: Nietzsche.
+Trace evidence: `PhilosophersSelected` event now carries `scenario_type` and
+`preferred_tags` fields.
+
+**RT-GAP-003** ✅ (resolved 2026-04-28): `CaseSignals(has_constraint_conflict=True)` +
+`_apply_case_signals()` injects `constraint_conflict=True` into result dict.
 
 ### Open item not blocking correctness
 
