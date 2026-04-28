@@ -344,3 +344,9 @@ class TestRunCaseSchemaConformance:
     def test_at010_uncertainty_high(self, run_case_at010: dict[str, Any]) -> None:
         """AT-010 (conflicting constraints) → uncertainty.overall_level == 'high'."""
         assert run_case_at010["uncertainty"]["overall_level"] == "high"
+
+    def test_run_case_at001_deterministic_created_at(
+        self, run_case_at001: dict[str, Any]
+    ) -> None:
+        """seed=42 + no case["now"] → fixed timestamp "2026-03-03T00:00:00Z"."""
+        assert run_case_at001["meta"]["created_at"] == "2026-03-03T00:00:00Z"

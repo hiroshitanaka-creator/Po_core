@@ -47,9 +47,9 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 | RT-GAP-001 | ✅ RESOLVED | `CaseSignals(values_present=False)` + `_apply_case_signals()` in `ensemble.py` overrides `action_type` to `'clarify'` for empty-values input. |
 | RT-GAP-002 | ✅ RESOLVED | `_SCENARIO_ROUTING` in `ensemble.py` routes each `scenario_type` to a different `(preferred_tags, limit_override)` pair; AT-009 → Confucius, AT-010 → Nietzsche — distinct Pareto winners, non-identical `proposal.content`. |
 | RT-GAP-003 | ✅ RESOLVED | `CaseSignals(has_constraint_conflict=True)` + `_apply_case_signals()` injects `constraint_conflict=True` into result dict for conflicting-constraints input. |
-| RT-GAP-004 | ⚠️ XFAIL | `po_core.run()` does not natively return `output_schema_v1` shape. `xfail(strict=True)` in test suite. See `docs/design/rt_gap_004_run_case_proposal.md` for the proposed `run_case()` resolution path. |
+| RT-GAP-004 | ✅ RESOLVED | `run_case(case: dict)` added to `po_core.app.api` and exported from `po_core`. Wraps `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. xfail removed from test suite. |
 
-**completion_matrix.md totals: 110 pass / 0 fail / 0 not-yet (+1 xfail: RT-GAP-004)**
+**completion_matrix.md totals: 117 pass / 0 fail / 0 not-yet**
 
 ## Remaining Evidence Gaps (post-publication)
 
@@ -68,11 +68,11 @@ All evidence gaps are now closed:
 
 Post-release follow-up:
 
-- RT-GAP-004: implement `run_case(case: dict)` API so `po_core` can natively return `output_schema_v1`-conformant output without the `output_adapter` bridge. Design note: `docs/design/rt_gap_004_run_case_proposal.md`.
 - Stage 2 planning: v1.1.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
 
 ## Completed
 
+- 2026-04-28: RT-GAP-004 resolved. `run_case(case: dict)` + `async_run_case` added to `po_core.app.api`, exported from `po_core.__init__`. Uses `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. `_case_metadata()` matches StubComposer determinism contract (seed is not None → `"2026-03-03T00:00:00Z"`). `TestRunCaseSchemaConformance` (7 tests) added; xfail removed. `docs/status.md` + `docs/completion_matrix.md` updated. Session: `claude/implement-rt-gap-004`.
 - 2026-04-28: Runtime acceptance gaps closed on `main`. RT-GAP-001/002/003 resolved via `CaseSignals` + `_SCENARIO_ROUTING` in pipeline layer. RT-GAP-004 documented as `xfail(strict=True)`; design note at `docs/design/rt_gap_004_run_case_proposal.md`. PyPI release evidence closed: clean full-deps install/import/CLI smoke transcript recorded in `docs/release/smoke_verification_v1.0.3.md`. `completion_matrix.md` updated to 110 pass / 0 fail / 0 not-yet. `docs/status.md` updated to reflect closures. Session: `docs/runtime-acceptance-closure`.
 - 2026-03-22: `1.0.3` PyPI and TestPyPI publication confirmed via public API. `docs/release/pypi_publication_v1.0.3.md` and `docs/release/testpypi_publish_log_v1.0.3.md` created. `docs/release/smoke_verification_v1.0.3.md` updated to post-publish evidence state. `docs/status.md` updated: Latest published public version → `1.0.3`, External publish status → `1.0.3 published on PyPI`. Session: claude/fix-pypi-1.0.3-evidence-1F5kR.
 - 2026-03-22 (post-fix closure): Phase-G audit closure completed. All 3 Phase-F P1 blockers resolved: `publish.yml` now uses `pytest tests/ -v -m "not slow"` (benchmark failures no longer block CI publish), `src/pocore/runner.py` now resolves schemas via `po_core.schemas.resource_path()` (valid in wheel install), `pyproject.toml` license is SPDX inline string. Bandit Medium reduced from 3 to 2 (pickle.loads nosec B301 added). All P2 docs/version findings resolved. Release readiness 24/24, schema/golden 103/103, import_graph violations=0/cycles=0, twine check PASSED. Current publish blocker count: 0. See `audit/phase_g_closure_report.md` and `audit/finding_resolution_matrix.md`.

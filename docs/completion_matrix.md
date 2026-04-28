@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-28 (RT-GAP-001–004 resolved; PyPI release evidence complete)  
-Source: `main @ 741354c`
+Source: `claude/implement-rt-gap-004 @ 074f4ce`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 

@@ -229,18 +229,19 @@ async def async_run(
 
 
 def _case_metadata(
-    case: dict, seed: int, now: str | None
+    case: dict, seed: int | None, now: str | None
 ) -> tuple[str, str, str]:
     """Return (now_str, run_id, input_digest) for run_case variants."""
     if now is not None:
         now_str = now
     else:
         case_now = case.get("now")
-        now_str = (
-            case_now.strip()
-            if isinstance(case_now, str) and case_now.strip()
-            else dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
+        if isinstance(case_now, str) and case_now.strip():
+            now_str = case_now.strip()
+        elif seed is not None:
+            now_str = "2026-03-03T00:00:00Z"
+        else:
+            now_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     case_id = str(case.get("case_id", "case_unknown"))
     run_id = str(
         uuid.UUID(
@@ -303,8 +304,8 @@ def run_case(
         run_id=run_id,
         digest=input_digest,
         now=now_str,
-        seed=seed,
-        deterministic=True,
+        seed=seed if seed is not None else 0,
+        deterministic=(seed is not None),
     )
 
 
@@ -340,8 +341,8 @@ async def async_run_case(
         run_id=run_id,
         digest=input_digest,
         now=now_str,
-        seed=seed,
-        deterministic=True,
+        seed=seed if seed is not None else 0,
+        deterministic=(seed is not None),
     )
 
 
