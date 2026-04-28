@@ -105,5 +105,76 @@ Evidence recorded by session `claude/fix-pypi-1.0.3-evidence-1F5kR` on 2026-03-2
 - [ ] TestPyPI workflow run URL: **pending** (GitHub API rate-limited)
 - [ ] PyPI workflow run URL: **pending** (GitHub API rate-limited)
 - [ ] Clean-environment full deps install transcript: **pending** (large deps not completed)
-- [ ] Clean-environment import transcript: **pending** (requires full deps)
+- [x] Clean-environment full deps install transcript: **completed 2026-04-28** (see below)
+- [x] Clean-environment import transcript: **completed 2026-04-28** (see below)
 - [ ] Clean-environment `release_smoke.py --check-entrypoints` transcript: **pending**
+- [ ] TestPyPI workflow run URL: **not retrievable** — no `list_workflow_runs` endpoint available in session tooling; PyPI JSON API serves as proof of publication
+- [ ] PyPI workflow run URL: **not retrievable** — same as above; see `docs/release/pypi_publication_v1.0.3.md`
+
+---
+
+## Full-dependencies post-publish smoke (2026-04-28)
+
+Environment: Python 3.11.15, clean venv `/tmp/po_smoke_venv`, timestamp 2026-04-28T12:44:13Z.
+
+### Install
+
+```
+$ python -m venv /tmp/po_smoke_venv
+$ pip install po-core-flyingpig==1.0.3
+Collecting po-core-flyingpig==1.0.3
+  Using cached po_core_flyingpig-1.0.3-py3-none-any.whl.metadata (43 kB)
+...
+Successfully installed Flask-3.1.3 anyio-4.13.0 contourpy-1.3.3 cuda-bindings-13.2.0
+dash-4.1.0 deprecated-1.3.1 fastapi-0.136.1 httpcore-1.0.9 httpx-0.28.1
+huggingface-hub-1.12.0 importlib-metadata-9.0.0 jinja2-3.1.6 jsonschema-4.26.0
+jsonschema-specifications-2025.9.1 limits-5.8.0 markdown-it-py-4.0.0
+matplotlib-3.10.9 nvidia-cudnn-cu13-9.19.0.56 nvidia-cusolver-12.0.4.66
+pandas-3.0.2 po-core-flyingpig-1.0.3 pydantic-2.13.3 pydantic-settings-2.14.0
+rich-15.0.0 scikit-learn-1.8.0 sentence-transformers-5.4.1 slowapi-0.1.9
+starlette-1.0.0 tokenizers-0.22.2 torch-2.11.0 transformers-5.6.2 typer-0.25.0
+watchfiles-1.1.1
+```
+
+### Import check
+
+```
+$ python -c "import po_core; print(po_core.__version__)"
+1.0.3
+```
+
+### CLI smoke
+
+```
+$ po-core version
+1.0.3
+
+$ po-core status
+Project Status
+  Version        : 1.0.3
+  Philosophers   : 42
+Philosophical Framework
+  SolarWill axiom : do not distort survival structures
+  SafetyModes     : NORMAL / WARN / CRITICAL
+Documentation
+  Specs  : docs/spec/
+  ADRs   : docs/adr/
+```
+
+### Checklist
+
+| Check | Result |
+|-------|--------|
+| `pip install po-core-flyingpig==1.0.3` (full deps) | ✅ |
+| `import po_core; print(__version__)` → `1.0.3` | ✅ |
+| `po-core version` → `1.0.3` | ✅ |
+| `po-core status` → version=1.0.3, philosophers=42 | ✅ |
+
+### GitHub Actions workflow run URL
+
+The `publish.yml` workflow run URL for the 1.0.3 release is not retrievable via
+the MCP tools available in this session (no `list_workflow_runs` endpoint). The
+PyPI JSON API (`https://pypi.org/pypi/po-core-flyingpig/1.0.3/json`) and the
+TestPyPI JSON API (`https://test.pypi.org/pypi/po-core-flyingpig/1.0.3/json`)
+confirm publication. See `docs/release/pypi_publication_v1.0.3.md` for full
+API-confirmed evidence.
