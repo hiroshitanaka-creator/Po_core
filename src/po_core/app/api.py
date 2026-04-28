@@ -32,6 +32,9 @@ Architecture:
 
 from __future__ import annotations
 
+import datetime as dt
+import hashlib
+import json
 import os
 import uuid
 import warnings
@@ -42,7 +45,7 @@ from pydantic import BaseModel, ConfigDict
 
 from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, parse_cors_origins
-from po_core.domain.case_signals import CaseSignals
+from po_core.domain.case_signals import CaseSignals, from_case_dict
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -222,6 +225,127 @@ async def async_run(
     return await async_run_turn(ctx, deps, case_signals=case_signals)
 
 
+# ── run_case / async_run_case ─────────────────────────────────────────────────
+
+
+def _case_metadata(
+    case: dict, seed: int | None, now: str | None
+) -> tuple[str, str, str]:
+    """Return (now_str, run_id, input_digest) for run_case variants."""
+    if now is not None:
+        now_str = now
+    else:
+        case_now = case.get("now")
+        if isinstance(case_now, str) and case_now.strip():
+            now_str = case_now.strip()
+        elif seed is not None:
+            now_str = "2026-03-03T00:00:00Z"
+        else:
+            now_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    case_id = str(case.get("case_id", "case_unknown"))
+    run_id = str(
+        uuid.UUID(
+            int=int(hashlib.sha256(f"{case_id}:{seed}".encode()).hexdigest(), 16)
+            % (2**128)
+        )
+    )
+    input_digest = hashlib.sha256(
+        json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
+    ).hexdigest()
+    return now_str, run_id, input_digest
+
+
+def run_case(
+    case: dict,
+    *,
+    settings: Settings | None = None,
+    philosophers: list[str] | None = None,
+    memory_backend: object | None = None,
+    tracer: TracePort | None = None,
+    seed: int | None = 42,
+    now: str | None = None,
+) -> dict:
+    """Run the deliberation pipeline for a structured case dict.
+
+    Returns a dict conforming to output_schema_v1.json, closing RT-GAP-004.
+    ``run(user_input: str)`` is unchanged for plain-text callers.
+
+    Args:
+        case: Structured case dict (title, problem, values, constraints, …).
+              See docs/spec/input_schema_v1.json.
+        settings: Optional Settings override; falls back to env defaults.
+        philosophers: Optional allowlist of philosopher IDs.
+        memory_backend: Optional external memory backend.
+        tracer: Optional trace collector.
+        seed: Seed for deterministic run_id derivation (default 42).
+        now: ISO-8601 UTC timestamp override for trace timestamps.
+
+    Returns:
+        Dict conforming to output_schema_v1.json.
+    """
+    from po_core.app.output_adapter import adapt_to_schema, build_user_input
+
+    now_str, run_id, input_digest = _case_metadata(case, seed, now)
+    user_input = build_user_input(case)
+    signals = from_case_dict(case)
+
+    run_result = run(
+        user_input,
+        case_signals=signals,
+        settings=settings,
+        philosophers=philosophers,
+        memory_backend=memory_backend,
+        tracer=tracer,
+    )
+
+    return adapt_to_schema(
+        case,
+        run_result,
+        run_id=run_id,
+        digest=input_digest,
+        now=now_str,
+        seed=seed if seed is not None else 0,
+        deterministic=(seed is not None),
+    )
+
+
+async def async_run_case(
+    case: dict,
+    *,
+    settings: Settings | None = None,
+    philosophers: list[str] | None = None,
+    memory_backend: object | None = None,
+    tracer: TracePort | None = None,
+    seed: int | None = 42,
+    now: str | None = None,
+) -> dict:
+    """Async variant of ``run_case()`` — delegates to ``async_run()``."""
+    from po_core.app.output_adapter import adapt_to_schema, build_user_input
+
+    now_str, run_id, input_digest = _case_metadata(case, seed, now)
+    user_input = build_user_input(case)
+    signals = from_case_dict(case)
+
+    run_result = await async_run(
+        user_input,
+        case_signals=signals,
+        settings=settings,
+        philosophers=philosophers,
+        memory_backend=memory_backend,
+        tracer=tracer,
+    )
+
+    return adapt_to_schema(
+        case,
+        run_result,
+        run_id=run_id,
+        digest=input_digest,
+        now=now_str,
+        seed=seed if seed is not None else 0,
+        deterministic=(seed is not None),
+    )
+
+
 _legacy_api_settings = APISettings()
 
 # ---------------------------------------------------------------------------
@@ -324,4 +448,4 @@ async def generate(
     )
 
 
-__all__ = ["run", "async_run", "app"]
+__all__ = ["run", "async_run", "run_case", "async_run_case", "app"]
