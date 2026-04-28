@@ -19,7 +19,7 @@ Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 | Golden files carry `"pocore_version": "1.0.3"` | `tests/acceptance/scenarios/at_*_expected.json` | ✅ | 13 files updated |
 | `test_release_readiness.py` passes | CI `must-pass-tests` | ✅ | |
 | Pre-publish smoke docs exist | `docs/release/smoke_verification_v1.0.3.md` | ✅ | |
-| PyPI publish workflow | `.github/workflows/publish.yml` | 🔲 | OIDC workflow ready; manual trigger not yet executed (milestone 5-F) |
+| PyPI publish (po-core-flyingpig 1.0.3) | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ⚠️ | Published 2026-03-22T15:10:30 UTC (confirmed via PyPI JSON API); missing in-repo evidence: workflow run URL and post-publish install/smoke transcript |
 
 ---
 
@@ -160,7 +160,7 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Installed-artifact smoke (wheel + sdist × 3 Pythons) | CI `installed-artifact-smoke` | ✅ | |
 | Docker multi-stage build | `Dockerfile` + `docker-compose.yml` | ✅ | |
 | `requirements-release.lock` reproducibility | CI `security` job (conditional) | ✅ | Skipped when no lock file committed |
-| **PyPI publish (po-core-flyingpig 1.0.3)** | `publish.yml` OIDC workflow | 🔲 | Milestone 5-F; workflow validated, publish not yet triggered |
+| **PyPI publish (po-core-flyingpig 1.0.3)** | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ⚠️ | Published 2026-03-22T15:10:30 UTC; missing in-repo evidence: workflow run URL and post-publish install/smoke transcript |
 
 ---
 
@@ -182,14 +182,14 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 
 | Gate | Pass | Fail | Not yet |
 |---|---|---|---|
-| Release evidence | 7 | 0 | 1 (PyPI publish) |
+| Release evidence | 7 | 0 | 0 (+1 ⚠️ partial: PyPI publish evidence incomplete) |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
 | Runtime acceptance (po_core.run()) | 21 | 0 | 0 (+1 xfail: RT-GAP-004) |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
-| Packaging | 11 | 0 | 1 (PyPI publish) |
+| Packaging | 11 | 0 | 0 (+1 ⚠️ partial: PyPI publish evidence incomplete) |
 | Governance | 7 | 0 | 0 |
-| **Total** | **108** | **0** | **2** (+1 xfail: RT-GAP-004) |
+| **Total** | **108** | **0** | **0** (+2 ⚠️ partial: PyPI evidence; +1 xfail: RT-GAP-004) |
 
 ### Open xfail gap
 
@@ -217,6 +217,9 @@ Trace evidence: `PhilosophersSelected` event now carries `scenario_type` and
 
 ### Open item not blocking correctness
 
-PyPI publish (milestone 5-F) is a procedural gate, not a functional one.
-The package builds and installs cleanly; only the manual trigger of
-`publish.yml` is outstanding.
+`po-core-flyingpig 1.0.3` is published on PyPI (confirmed 2026-03-22T15:10:30 UTC
+via PyPI JSON API; see `docs/release/pypi_publication_v1.0.3.md`).  Two in-repo
+evidence artefacts are still missing:
+- GitHub Actions workflow run URL for the 1.0.3 TestPyPI + PyPI runs
+- Post-publish install/smoke transcript (`pip install po-core-flyingpig==1.0.3`
+  + import + `scripts/release_smoke.py --check-entrypoints` in a clean env)
