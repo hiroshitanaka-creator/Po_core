@@ -16,13 +16,16 @@ resolved.  The completion_matrix.md records current pass/fail status.
 
 Gap catalogue (as of 2026-04-28)
 ---------------------------------
-RT-GAP-001  pipeline always returns action_type='answer'; values-clarification
-            signal is not surfaced by run_turn even when values=[]
-RT-GAP-002  AT-009 and AT-010 produce byte-identical proposal content despite
-            representing distinct scenario types
-RT-GAP-003  run() output carries no constraint-conflict signal for AT-010
-RT-GAP-004  po_core.run() output shape does not conform to output_schema_v1;
-            the StubComposer/output_adapter layer is required to bridge it
+RT-GAP-001  RESOLVED — CaseSignals(values_present=False) + _apply_case_signals()
+            overrides proposal.action_type to 'clarify' in ensemble.py.
+RT-GAP-002  RESOLVED — _SCENARIO_ROUTING in ensemble.py maps scenario_type to
+            (preferred_tags, limit_override) fed to registry.select(); distinct
+            philosopher sets produce non-identical Pareto winners per scenario.
+RT-GAP-003  RESOLVED — CaseSignals(has_constraint_conflict=True) +
+            _apply_case_signals() injects constraint_conflict=True into result.
+RT-GAP-004  OPEN (xfail) — po_core.run() output shape does not conform to
+            output_schema_v1; the StubComposer/output_adapter layer bridges it.
+            Will remain until the pipeline natively returns schema-compliant output.
 
 Markers
 -------

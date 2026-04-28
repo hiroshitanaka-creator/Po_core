@@ -87,9 +87,13 @@ DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 #   planner     → marcus_aurelius (risk=0) fills the third slot — pragmatic
 #                 decomposition
 #
-# With limit=3 the required-tag phase exhausts all slots, ensuring confucius
-# is NOT in the conflicting_constraints roster (it has no critic/redteam/planner
-# tags).  This guarantees a different Pareto winner and non-identical content.
+# With limit=3 the required-tag phase exhausts all slots.  In NORMAL mode
+# (max_risk=2, budget=80) confucius is excluded from the conflicting_constraints
+# roster because it carries no critic/redteam/planner tags, so the Pareto
+# winner differs between scenarios.  In WARN/CRITICAL mode redteam philosophers
+# (risk=2) are filtered out before selection; the roster will differ from the
+# NORMAL prediction above, but the scenario_type signal and preferred_tags are
+# still forwarded to the registry for whatever selection it can satisfy.
 _SCENARIO_ROUTING: Dict[str, tuple] = {
     "values_clarification": (
         (TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE),
