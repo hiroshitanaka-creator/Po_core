@@ -68,7 +68,7 @@ All evidence gaps are now closed:
 
 Post-release follow-up:
 
-- RT-GAP-004: implement `run_case(case: dict)` API so `po_core` can natively return `output_schema_v1`-conformant output without the `output_adapter` bridge. Design note: `docs/design/rt_gap_004_run_case_proposal.md`.
+- RT-GAP-004: implement `run_case(case: dict)` API so `po_core` can expose an `output_schema_v1`-conformant public entry point while preserving `run(user_input: str)`. The first implementation should use `build_user_input` + `from_case_dict` + `run`/`async_run` + `adapt_to_schema`. Design note: `docs/design/rt_gap_004_run_case_proposal.md`.
 - Stage 2 planning: v1.1.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
 
 ## Completed
