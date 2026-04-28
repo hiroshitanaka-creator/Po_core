@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-28 (RT-GAP-001, RT-GAP-002, RT-GAP-003 resolved; RT-GAP-004 xfail)  
-Branch: `claude/implement-po-core-AVsEx`
+Branch: `main` @ `741354c`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
