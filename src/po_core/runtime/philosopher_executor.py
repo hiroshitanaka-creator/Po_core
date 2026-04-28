@@ -25,6 +25,7 @@ from typing import (
 
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import ExecOutcome, SerializedJob, run_one_philosopher
+from po_core.philosophers.identity import resolve_philosopher_id
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +179,7 @@ def _run_one_in_thread(
     limit_per_philosopher: int,
     timeout_s: float,
 ) -> ExecOutcome:
-    pid = getattr(ph, "name", ph.__class__.__name__)
+    pid = resolve_philosopher_id(ph)
     start = perf_counter()
     outcome = run_one_philosopher(
         SerializedJob(
@@ -203,7 +204,7 @@ def _process_worker(job: SerializedJob, queue: multiprocessing.queues.Queue) -> 
     (e.g. circular reference, custom TensorSnapshot).  In that case, an error
     ExecOutcome is queued instead of silently crashing the child process.
     """
-    pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
+    pid = resolve_philosopher_id(job.philosopher)
     outcome = run_one_philosopher(job)
     try:
         queue.put(outcome)
@@ -318,7 +319,7 @@ def _classify_subprocess_get_failure(
 
 
 def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
-    pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
+    pid = resolve_philosopher_id(job.philosopher)
     start = perf_counter()
     method = "fork" if "fork" in multiprocessing.get_all_start_methods() else "spawn"
     # ``get_context`` returns ``BaseContext`` whose type stubs do not expose
@@ -393,10 +394,6 @@ def _run_one_in_subprocess(job: SerializedJob) -> ExecOutcome:
     elapsed_ms = int((perf_counter() - start) * 1000)
     _close_queue(queue)
     if isinstance(outcome, ExecOutcome):
-        if outcome.latency_ms > job.timeout_s * 1000:
-            return ExecOutcome(
-                [], 0, True, _hard_timeout_error(job.timeout_s), elapsed_ms, pid
-            )
         return outcome
     return ExecOutcome(
         [],
@@ -506,7 +503,7 @@ def _run_sync_jobs(
                 )
 
         for idx, ph in enumerate(philosophers):
-            pid = getattr(ph, "name", ph.__class__.__name__)
+            pid = resolve_philosopher_id(ph)
             try:
                 outcome = futures[idx].result(
                     timeout=None if runner == "process" else config.timeout_s + 0.05

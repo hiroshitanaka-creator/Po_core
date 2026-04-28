@@ -36,8 +36,7 @@ from po_core.app.values_clarifier import (
     build_values_clarification_questions,
     needs_values_clarification,
 )
-
-_POCORE_VERSION = "1.0.0"
+from po_core import __version__ as _POCORE_VERSION
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "1.0.0"

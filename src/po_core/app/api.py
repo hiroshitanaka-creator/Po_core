@@ -36,11 +36,11 @@ import os
 import uuid
 import warnings
 
-from fastapi import FastAPI, Header, HTTPException, Response, status
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 
-from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_headers
+from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, parse_cors_origins
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
@@ -51,18 +51,25 @@ from po_core.runtime.settings import Settings
 from po_core.runtime.wiring import build_default_system, build_system
 
 
-def _ensure_api_key(
-    settings: APISettings,
-    x_api_key: str | None,
-    authorization: str | None,
-) -> None:
+def _resolve_presented_key(settings: APISettings, request: Request) -> str | None:
+    key = extract_api_key_from_header_map(
+        request.headers, configured_header_name=settings.api_key_header
+    )
+    if key:
+        return key
+    auth = request.headers.get("Authorization") or request.headers.get("authorization")
+    if auth:
+        scheme, _, token = auth.partition(" ")
+        if scheme.lower() == "bearer" and token.strip():
+            return token.strip()
+    return None
+
+
+def _ensure_api_key(settings: APISettings, request: Request) -> None:
     decision = evaluate_auth_policy(
         skip_auth=settings.skip_auth,
         configured_api_key=settings.api_key,
-        presented_api_key=extract_api_key_from_headers(
-            x_api_key=x_api_key,
-            authorization=authorization,
-        ),
+        presented_api_key=_resolve_presented_key(settings, request),
     )
     if decision.allowed:
         return
@@ -282,8 +289,7 @@ def _legacy_generate_disabled() -> bool:
 )
 async def generate(
     payload: GenerateRequest,
-    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
-    authorization: str | None = Header(default=None, alias="Authorization"),
+    request: Request,
 ) -> Response:
     if _legacy_generate_disabled():
         raise HTTPException(
@@ -300,11 +306,7 @@ async def generate(
             },
         )
 
-    _ensure_api_key(
-        settings=_legacy_api_settings,
-        x_api_key=x_api_key,
-        authorization=authorization,
-    )
+    _ensure_api_key(_legacy_api_settings, request)
     try:
         result = await async_run(payload.user_input, philosophers=payload.philosophers)
     except ValueError as exc:

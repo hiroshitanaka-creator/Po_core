@@ -62,6 +62,7 @@ from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import SerializedJob, _supports_budget_kwarg
 from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
+from po_core.philosophers.identity import resolve_philosopher_id
 from po_core.runtime.philosopher_executor import ExecutionResult as _ExecutionResult
 from po_core.runtime.philosopher_executor import (
     ExecutorConfig,
@@ -145,14 +146,12 @@ def run_philosophers(
     max_workers: int,
     timeout_s: float,
     limit_per_philosopher: int = 1,
-    execution_mode: str = "process",
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Execute philosophers with deterministic result ordering.
 
-    The default ``execution_mode`` is ``"process"`` because thread mode cannot
-    hard-cancel a blocking philosopher and is therefore not fail-closed under
-    timeout.  Callers that intentionally want cooperative timeouts must opt in
-    explicitly by passing ``execution_mode="thread"``.
+    The default ``execution_mode`` is ``"thread"`` for cooperative soft timeouts.
+    Pass ``execution_mode="process"`` explicitly for hard-cancel isolation.
     """
     limit = max(0, min(limit_per_philosopher, 5))
     executor = build_executor(
@@ -293,7 +292,7 @@ class AsyncPartyMachine:
         immediately after the philosopher finishes (success or failure), enabling
         real-time SSE streaming of per-philosopher results.
         """
-        pid = getattr(ph, "name", ph.__class__.__name__)
+        pid = resolve_philosopher_id(ph)
         t0 = perf_counter()
         budget = ExecutionBudget(timeout_s=self._timeout_s)
         supports_async_budget = _supports_budget_kwarg(
@@ -412,7 +411,8 @@ class AsyncPartyMachine:
                     "PhilosopherCompleted",
                     ctx.request_id,
                     {
-                        "name": pid,
+                        "philosopher_id": pid,
+                        "name": getattr(ph, "name", pid),
                         "n": n_out,
                         "latency_ms": dt_out,
                         "ok": result.ok,
@@ -458,7 +458,7 @@ class AsyncPartyMachine:
         raw_results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for ph, outcome in zip(philosophers, raw_results):
-            pid = getattr(ph, "name", ph.__class__.__name__)
+            pid = resolve_philosopher_id(ph)
             if isinstance(outcome, Exception):
                 results.append(
                     _build_execution_result(
@@ -511,7 +511,7 @@ async def async_run_philosophers(
     timeout_s: float,
     limit_per_philosopher: int = 1,
     tracer: Optional["TracePort"] = None,
-    execution_mode: str = "process",
+    execution_mode: str = "thread",
 ) -> Tuple[List["Proposal"], List[RunResult]]:
     """Async-native philosopher execution — delegates to AsyncPartyMachine.
 

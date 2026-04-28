@@ -7,6 +7,7 @@ from time import perf_counter
 from typing import TYPE_CHECKING, Mapping
 
 from po_core.domain.keys import AUTHOR, PO_CORE
+from po_core.philosophers.identity import resolve_philosopher_id
 from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
 
 if TYPE_CHECKING:
@@ -80,7 +81,7 @@ def _embed_author_proposal(
 
 
 def run_one_philosopher(job: SerializedJob) -> ExecOutcome:
-    pid = getattr(job.philosopher, "name", job.philosopher.__class__.__name__)
+    pid = resolve_philosopher_id(job.philosopher)
     t0 = perf_counter()
     budget = ExecutionBudget(timeout_s=job.timeout_s)
     supports_budget = _supports_budget_kwarg(getattr(job.philosopher, "propose"))

@@ -4,7 +4,7 @@
   "expected": {
     "meta": {
       "schema_version": "1.0",
-      "pocore_version": "1.0.0",
+      "pocore_version": "1.0.3",
       "run_id": "c23ad049-4f8f-e4e5-c276-61df6ee3feee",
       "seed": 42,
       "deterministic": true,

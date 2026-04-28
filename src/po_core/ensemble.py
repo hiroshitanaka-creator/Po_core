@@ -211,16 +211,21 @@ def _run_deliberation_protocol_v1(
 
 
 def _proposal_author_key(proposal: Any) -> str:
-    """Resolve proposal author key for normalization with legacy fallback."""
-    extra = (
-        proposal.extra if isinstance(getattr(proposal, "extra", None), Mapping) else {}
-    )
-    pc = extra.get(PO_CORE, {}) if isinstance(extra, Mapping) else {}
-    if isinstance(pc, Mapping):
-        author = str(pc.get(AUTHOR, ""))
-        if author:
-            return author
-    return str(extra.get("philosopher", ""))
+    """Resolve proposal author key: _po_core.author → extra["philosopher"] → ""."""
+    try:
+        extra = getattr(proposal, "extra", None)
+        extra = extra if isinstance(extra, Mapping) else {}
+        pc = extra.get(PO_CORE) if isinstance(extra, Mapping) else None
+        if isinstance(pc, Mapping):
+            author = pc.get(AUTHOR)
+            if isinstance(author, str) and author:
+                return author
+        philosopher = extra.get("philosopher") if isinstance(extra, Mapping) else None
+        if isinstance(philosopher, str) and philosopher:
+            return philosopher
+    except Exception:
+        pass
+    return ""
 
 
 def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[Any]]:
@@ -471,8 +476,25 @@ def _run_phase_post(
 
     # Emit trace events for each philosopher execution result
     for run_result in run_results:
+        matched_proposal = next(
+            (
+                p
+                for p in raw_proposals
+                if isinstance(p, DomainProposal)
+                and _proposal_author_key(p) == run_result.philosopher_id
+            ),
+            None,
+        )
+        _display_name: str
+        if matched_proposal is not None:
+            _mp_extra = getattr(matched_proposal, "extra", None)
+            _mp_extra = _mp_extra if isinstance(_mp_extra, Mapping) else {}
+            _display_name = _mp_extra.get("philosopher") or run_result.philosopher_id
+        else:
+            _display_name = run_result.philosopher_id
         payload: Dict[str, Any] = {
-            "name": run_result.philosopher_id,
+            "philosopher_id": run_result.philosopher_id,
+            "name": _display_name,
             "n": run_result.n,
             "timed_out": run_result.timed_out,
             "error": "" if run_result.error is None else run_result.error[:200],
@@ -480,17 +502,6 @@ def _run_phase_post(
                 -1 if run_result.latency_ms is None else run_result.latency_ms
             ),
         }
-
-        matched_proposal = next(
-            (
-                p
-                for p in raw_proposals
-                if isinstance(p, DomainProposal)
-                and str((p.extra or {}).get("philosopher") or "")
-                == run_result.philosopher_id
-            ),
-            None,
-        )
         payload.update(_extract_llm_route(matched_proposal))
 
         tracer.emit(TraceEvent.now("PhilosopherResult", ctx.request_id, payload))

@@ -232,7 +232,7 @@ class _FinalizedReasonPayload(TypedDict):
     session_id: str
     status: str
     response: str
-    safety_mode: str
+    safety_mode: Optional[str]
     processing_time_ms: float
     philosophers: list[dict[str, Any]]
     tensors: dict[str, Any]
@@ -440,7 +440,7 @@ def _persist_and_finalize_result(
         "session_id": session_id,
         "status": _normalize_status(str(result.get("status") or "")),
         "response": _extract_response_text(result),
-        "safety_mode": str(result.get("safety_mode", "NORMAL")),
+        "safety_mode": result.get("safety_mode"),
         "processing_time_ms": round(elapsed_ms, 2),
         "philosophers": [p.model_dump() for p in _extract_philosophers(result)],
         "tensors": _extract_tensors(result).model_dump(),
@@ -576,7 +576,7 @@ async def reason(
             for item in response_payload["philosophers"]
         ],
         tensors=TensorSnapshot.model_validate(response_payload["tensors"]),
-        safety_mode=response_payload["safety_mode"],
+        safety_mode=response_payload["safety_mode"] or "NORMAL",
         processing_time_ms=response_payload["processing_time_ms"],
         created_at=datetime.now(timezone.utc),
         degraded=response_payload["degraded"],

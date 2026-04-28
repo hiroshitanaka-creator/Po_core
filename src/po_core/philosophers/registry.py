@@ -262,6 +262,10 @@ class PhilosopherRegistry:
                         f"{pid} does not implement PhilosopherProtocol "
                         f"(missing propose() or info)"
                     )
+                try:
+                    ph.philosopher_id = spec.philosopher_id  # type: ignore[attr-defined]
+                except (AttributeError, TypeError):
+                    pass  # frozen or slot-restricted; resolver will use module path
                 out.append(ph)
                 if self._cache:
                     self._instances[pid] = ph
