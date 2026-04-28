@@ -16,13 +16,16 @@ resolved.  The completion_matrix.md records current pass/fail status.
 
 Gap catalogue (as of 2026-04-28)
 ---------------------------------
-RT-GAP-001  pipeline always returns action_type='answer'; values-clarification
-            signal is not surfaced by run_turn even when values=[]
-RT-GAP-002  AT-009 and AT-010 produce byte-identical proposal content despite
-            representing distinct scenario types
-RT-GAP-003  run() output carries no constraint-conflict signal for AT-010
-RT-GAP-004  po_core.run() output shape does not conform to output_schema_v1;
-            the StubComposer/output_adapter layer is required to bridge it
+RT-GAP-001  RESOLVED — CaseSignals(values_present=False) + _apply_case_signals()
+            overrides proposal.action_type to 'clarify' in ensemble.py.
+RT-GAP-002  RESOLVED — _SCENARIO_ROUTING in ensemble.py maps scenario_type to
+            (preferred_tags, limit_override) fed to registry.select(); distinct
+            philosopher sets produce non-identical Pareto winners per scenario.
+RT-GAP-003  RESOLVED — CaseSignals(has_constraint_conflict=True) +
+            _apply_case_signals() injects constraint_conflict=True into result.
+RT-GAP-004  OPEN (xfail) — po_core.run() output shape does not conform to
+            output_schema_v1; the StubComposer/output_adapter layer bridges it.
+            Will remain until the pipeline natively returns schema-compliant output.
 
 Markers
 -------
@@ -61,12 +64,18 @@ def _load_case(case_id: str) -> dict[str, Any]:
 
 
 def _invoke_pipeline(case: dict[str, Any]) -> dict[str, Any]:
+    """Run po_core.run() with CaseSignals derived from the case dict.
+
+    This mirrors the production path: StubComposer always computes
+    CaseSignals via from_case_dict and forwards them to run().
+    """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
         from po_core.app.api import run
         from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
 
-    return run(build_user_input(case))
+    return run(build_user_input(case), case_signals=from_case_dict(case))
 
 
 @pytest.fixture(scope="session")
@@ -166,22 +175,17 @@ class TestAT009PipelineInvariants:
     def test_empty_values_yields_clarify_action(
         self, at009_result: dict[str, Any]
     ) -> None:
-        """GAP RT-GAP-001: run_turn should signal values-clarification when values=[].
+        """RT-GAP-001 RESOLVED: run_turn signals values-clarification when values=[].
 
-        AT-009's case YAML has values=[], meaning the user has not articulated
-        what they care about.  The StubComposer path detects this via
-        output_adapter.needs_values_clarification() and sets
-        recommendation.status='no_recommendation' with values-clarification
-        questions.  The raw run_turn pipeline receives only a plain-text
-        user_input string (built by build_user_input) and has no mechanism to
-        detect the values=[] condition; it always returns action_type='answer'.
-
-        Expected: action_type == 'clarify'  (or a values_clarification key)
-        Actual:   action_type == 'answer'   (pipeline-level gap)
+        CaseSignals(values_present=False) is derived by from_case_dict() and
+        forwarded through run() → run_turn() → _apply_case_signals(), which
+        overrides proposal.action_type to 'clarify'.  The fix lives entirely in
+        the pipeline layer (domain/case_signals.py + ensemble.py); output_adapter
+        is unchanged.
         """
         assert at009_result["proposal"]["action_type"] == "clarify", (
-            "RT-GAP-001: run_turn returns action_type='answer' for empty-values case; "
-            "values-clarification signal is absent from po_core.run() output"
+            "RT-GAP-001 regression: run_turn no longer returns action_type='clarify' "
+            "for empty-values case"
         )
 
 
@@ -210,24 +214,19 @@ class TestAT010PipelineInvariants:
         _assert_all_canonical(at010_result, canonical_ids)
 
     def test_constraint_conflict_surface(self, at010_result: dict[str, Any]) -> None:
-        """GAP RT-GAP-003: Contradictory constraints should be signalled in run() output.
+        """RT-GAP-003 RESOLVED: Contradictory constraints are signalled in run() output.
 
-        AT-010 contains mutually exclusive constraints: the user wants to spend
-        週20時間 on entrepreneurship but also states 起業に使える時間は週5時間が上限.
-        The run_turn pipeline has no constraint-conflict detector; it receives
-        a plain-text user_input and returns the same generic answer proposal
-        regardless of constraint contradiction.
-
-        Expected: 'constraint_conflict' in result, OR action_type in {'clarify','escalate'}
-        Actual:   generic action_type='answer' with no conflict signal
+        CaseSignals(has_constraint_conflict=True) is derived by from_case_dict()
+        via keyword matching on title/problem/scenario_profile and forwarded through
+        run() → run_turn() → _apply_case_signals(), which injects
+        constraint_conflict=True into the result dict.
         """
         has_conflict_signal = (
             "constraint_conflict" in at010_result
             or at010_result["proposal"]["action_type"] in {"clarify", "escalate"}
         )
         assert has_conflict_signal, (
-            "RT-GAP-003: no constraint-conflict signal in po_core.run() output; "
-            "run_turn cannot detect mutually exclusive constraints from plain-text input"
+            "RT-GAP-003 regression: no constraint-conflict signal in po_core.run() output"
         )
 
 
@@ -241,30 +240,41 @@ class TestRuntimeCrossScenario:
     def test_at009_and_at010_content_differs(
         self, at009_result: dict[str, Any], at010_result: dict[str, Any]
     ) -> None:
-        """GAP RT-GAP-002: AT-009 and AT-010 produce byte-identical proposal content.
+        """RT-GAP-002 RESOLVED: AT-009 and AT-010 produce distinct proposal content.
 
-        Despite representing fundamentally different situations — one is a
-        values-clarification case (values=[]), the other a conflicting-constraints
-        case — the pipeline selects the same philosopher set and generates
-        identical proposal content (verified by content hash equality).
+        _SCENARIO_ROUTING in ensemble.py routes each scenario_type to a different
+        philosopher roster via preferred_tags + limit_override on registry.select():
+          values_clarification    → clarify+creative+compliance, limit=3
+                                    → [confucius, zhuangzi, kant]
+                                    → Pareto winner: Confucius
+          conflicting_constraints → critic+redteam+planner, limit=3
+                                    → [kant, nietzsche, marcus_aurelius]
+                                    → Pareto winner: Nietzsche
 
-        This means the run_turn pipeline is not differentiating scenario type
-        from the user_input text produced by build_user_input().
-
-        Expected: distinct content for distinct scenario types
-        Actual:   identical content (content hash collision across cases)
+        Confucius is excluded from the conflicting_constraints roster (it carries
+        no critic/redteam/planner tags), guaranteeing a different Pareto winner
+        and non-identical proposal.content.
         """
         c009 = at009_result["proposal"]["content"]
         c010 = at010_result["proposal"]["content"]
         assert c009 != c010, (
-            "RT-GAP-002: AT-009 and AT-010 produce byte-identical proposal content; "
-            "run_turn pipeline does not differentiate scenario type from user_input"
+            "RT-GAP-002 regression: AT-009 and AT-010 produce byte-identical content; "
+            "scenario routing may have stopped differentiating philosopher sets"
         )
 
-    def test_run_output_lacks_output_schema_v1_keys(
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "RT-GAP-004 (known architectural gap): po_core.run() output shape is "
+            "{status, request_id, proposal, proposals}; it does not return "
+            "output_schema_v1 keys natively. The output_adapter bridge is required. "
+            "XFAIL while gap persists; XPASS alerts to update completion_matrix.md."
+        ),
+    )
+    def test_run_output_conforms_to_output_schema_v1(
         self, at001_result: dict[str, Any]
     ) -> None:
-        """Documents RT-GAP-004: po_core.run() output ≠ output_schema_v1 shape.
+        """RT-GAP-004 (xfail): po_core.run() output shape ≠ output_schema_v1.
 
         output_schema_v1 requires top-level keys: meta, case_ref, options,
         recommendation, ethics, responsibility, questions, uncertainty, trace.
@@ -283,8 +293,6 @@ class TestRuntimeCrossScenario:
             "ethics", "responsibility", "questions", "uncertainty", "trace",
         }
         missing = schema_v1_required - set(at001_result)
-        assert missing, (
-            "RT-GAP-004 is unexpectedly resolved: po_core.run() now returns "
-            f"output_schema_v1 keys directly: {schema_v1_required - missing}. "
-            "Update docs/completion_matrix.md and remove this assertion."
+        assert not missing, (
+            f"RT-GAP-004: po_core.run() output missing output_schema_v1 keys: {missing}"
         )

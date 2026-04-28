@@ -24,7 +24,7 @@ def test_run_turn_uses_injected_execution_mode_over_env(monkeypatch):
     monkeypatch.setattr(
         ensemble_mod,
         "_run_phase_pre",
-        lambda ctx, deps: _PhasePreResult(
+        lambda ctx, deps, **kw: _PhasePreResult(
             memory=None,
             tensors=None,
             intent=None,
@@ -60,7 +60,7 @@ def test_async_run_turn_uses_injected_execution_mode_over_env(monkeypatch):
     monkeypatch.setattr(
         ensemble_mod,
         "_run_phase_pre",
-        lambda ctx, deps: _PhasePreResult(
+        lambda ctx, deps, **kw: _PhasePreResult(
             memory=None,
             tensors=None,
             intent=None,

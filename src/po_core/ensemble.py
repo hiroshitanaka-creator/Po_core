@@ -10,12 +10,13 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
 
 from po_core import philosophers
 from po_core.axis.scoring import score_text_with_debug
 from po_core.axis.spec import load_axis_spec
 from po_core.deliberation.protocol import run_deliberation
+from po_core.domain.case_signals import CaseSignals
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.keys import (
     AUTHOR,
@@ -51,8 +52,58 @@ from po_core.trace.decision_events import (
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.trace.synthesis_report_events import emit_synthesis_report_built
+from po_core.philosophers.tags import (
+    TAG_CLARIFY,
+    TAG_COMPLIANCE,
+    TAG_CREATIVE,
+    TAG_CRITIC,
+    TAG_PLANNER,
+    TAG_REDTEAM,
+)
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
+
+# Scenario-sensitive routing table for non-default scenario types.
+# Each entry maps scenario_type → (preferred_tags, scenario_limit).
+#
+# preferred_tags: overrides SelectionPlan.require_tags for the first-pass slot
+#   fill, guaranteeing the right archetypes appear in the roster.
+# scenario_limit: tighter roster cap needed because NORMAL mode's budget equals
+#   the total cost of all 42 philosophers — without a limit the preferred_tags
+#   would be absorbed and all 42 would still be selected.
+#
+# Tag semantics
+# ─────────────
+# values_clarification  → clarify + creative + compliance:
+#   clarify     → confucius (risk=0, weight=1.5) — question-generating, values-
+#                 exploring contemplative voice
+#   creative    → zhuangzi (risk=1, weight=1.0) — analogical, divergent thinking
+#   compliance  → kant (risk=0) fills the third slot — normative grounding
+#
+# conflicting_constraints → critic + redteam + planner:
+#   critic      → kant (risk=0) — structural critique, contradiction detection
+#   redteam     → nietzsche (risk=2) — adversarial revaluation, exposes hidden
+#                 assumptions behind each constraint
+#   planner     → marcus_aurelius (risk=0) fills the third slot — pragmatic
+#                 decomposition
+#
+# With limit=3 the required-tag phase exhausts all slots.  In NORMAL mode
+# (max_risk=2, budget=80) confucius is excluded from the conflicting_constraints
+# roster because it carries no critic/redteam/planner tags, so the Pareto
+# winner differs between scenarios.  In WARN/CRITICAL mode redteam philosophers
+# (risk=2) are filtered out before selection; the roster will differ from the
+# NORMAL prediction above, but the scenario_type signal and preferred_tags are
+# still forwarded to the registry for whatever selection it can satisfy.
+_SCENARIO_ROUTING: Dict[str, tuple] = {
+    "values_clarification": (
+        (TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE),
+        3,
+    ),
+    "conflicting_constraints": (
+        (TAG_CRITIC, TAG_REDTEAM, TAG_PLANNER),
+        3,
+    ),
+}
 logger = logging.getLogger(__name__)
 
 
@@ -246,7 +297,9 @@ def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[
 
 
 def _run_phase_pre(
-    ctx: DomainContext, deps: "EnsembleDeps"
+    ctx: DomainContext,
+    deps: "EnsembleDeps",
+    case_signals: Optional[CaseSignals] = None,
 ) -> Union["_PhasePreResult", Dict[str, Any]]:
     """
     Pipeline phases 1-5: memory → tensors → intent → intention gate →
@@ -376,7 +429,23 @@ def _run_phase_pre(
         }
 
     # 5. Select philosophers based on SafetyMode (編成)
-    sel = deps.registry.select(mode)
+    # When CaseSignals carries a non-default scenario_type, steer first-pass
+    # tag requirements AND apply a tighter roster limit so that the preferred-tag
+    # archetypes are not diluted by the full NORMAL budget (which equals the
+    # total cost of all 42 philosophers and would otherwise admit everyone).
+    scenario_type = (
+        case_signals.scenario_type
+        if case_signals is not None
+        else "general"
+    )
+    _routing = _SCENARIO_ROUTING.get(scenario_type)
+    preferred_tags: Optional[tuple] = _routing[0] if _routing else None
+    limit_override: Optional[int] = _routing[1] if _routing else None
+    sel = deps.registry.select(
+        mode,
+        preferred_tags=preferred_tags,
+        limit_override=limit_override,
+    )
     max_workers, timeout_s = _get_swarm_params(mode, deps.settings)
     tracer.emit(
         TraceEvent.now(
@@ -389,6 +458,8 @@ def _run_phase_pre(
                 "covered_tags": sel.covered_tags,
                 "ids": sel.selected_ids,
                 "workers": max_workers,
+                "scenario_type": scenario_type,
+                "preferred_tags": list(preferred_tags) if preferred_tags else None,
             },
         )
     )
@@ -1035,7 +1106,27 @@ def _evaluate_candidate(
     return fb, True
 
 
-def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
+def _apply_case_signals(result: Dict[str, Any], signals: CaseSignals) -> Dict[str, Any]:
+    """Overlay CaseSignals semantics onto the run_turn result dict.
+
+    Only modifies the result when signals indicate a non-default case:
+    - values_present=False → primary proposal action_type overridden to 'clarify'
+    - has_constraint_conflict=True → 'constraint_conflict': True added to result
+    """
+    proposal = result.get("proposal")
+    if isinstance(proposal, dict) and not signals.values_present:
+        result = {**result, "proposal": {**proposal, "action_type": "clarify"}}
+    if signals.has_constraint_conflict:
+        result = {**result, "constraint_conflict": True}
+    return result
+
+
+def run_turn(
+    ctx: DomainContext,
+    deps: EnsembleDeps,
+    *,
+    case_signals: Optional[CaseSignals] = None,
+) -> Dict[str, Any]:
     """
     Run a single turn through the full pipeline (synchronous).
 
@@ -1054,11 +1145,16 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     Args:
         ctx: Request context
         deps: Injected dependencies
+        case_signals: Optional structured semantic signals from the calling
+            layer (e.g. StubComposer).  When provided, the result dict is
+            post-processed to surface values-clarification and
+            constraint-conflict signals that the pipeline cannot infer from
+            plain-text user_input alone.
 
     Returns:
         Result dictionary with status, proposal, or verdict
     """
-    pre = _run_phase_pre(ctx, deps)
+    pre = _run_phase_pre(ctx, deps, case_signals=case_signals)
     if isinstance(pre, dict):
         return pre  # Early exit (intention gate blocked)
 
@@ -1072,10 +1168,18 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         timeout_s=pre.timeout_s,
         execution_mode=deps.settings.philosopher_execution_mode,
     )
-    return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    if case_signals is not None:
+        result = _apply_case_signals(result, case_signals)
+    return result
 
 
-async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
+async def async_run_turn(
+    ctx: DomainContext,
+    deps: EnsembleDeps,
+    *,
+    case_signals: Optional[CaseSignals] = None,
+) -> Dict[str, Any]:
     """
     Async version of run_turn.
 
@@ -1090,11 +1194,12 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
     Args:
         ctx: Request context
         deps: Injected dependencies
+        case_signals: Optional structured semantic signals; see ``run_turn``.
 
     Returns:
         Result dictionary with status, proposal, or verdict
     """
-    pre = _run_phase_pre(ctx, deps)
+    pre = _run_phase_pre(ctx, deps, case_signals=case_signals)
     if isinstance(pre, dict):
         return pre  # Early exit (intention gate blocked)
 
@@ -1109,7 +1214,10 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
         tracer=deps.tracer,
         execution_mode=deps.settings.philosopher_execution_mode,
     )
-    return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    if case_signals is not None:
+        result = _apply_case_signals(result, case_signals)
+    return result
 
 
 __all__ = [

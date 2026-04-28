@@ -1,7 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Branch: `main` (`2f058c0`)
+Last updated: 2026-04-28 (RT-GAP-001, RT-GAP-002, RT-GAP-003 resolved; RT-GAP-004 xfail)  
+Branch: `claude/implement-po-core-AVsEx`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -18,7 +19,7 @@ Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 | Golden files carry `"pocore_version": "1.0.3"` | `tests/acceptance/scenarios/at_*_expected.json` | ✅ | 13 files updated |
 | `test_release_readiness.py` passes | CI `must-pass-tests` | ✅ | |
 | Pre-publish smoke docs exist | `docs/release/smoke_verification_v1.0.3.md` | ✅ | |
-| PyPI publish workflow | `.github/workflows/publish.yml` | 🔲 | OIDC workflow ready; manual trigger not yet executed (milestone 5-F) |
+| PyPI publish (po-core-flyingpig 1.0.3) | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ⚠️ | Published 2026-03-22T15:10:30 UTC (confirmed via PyPI JSON API); missing in-repo evidence: workflow run URL and post-publish install/smoke transcript |
 
 ---
 
@@ -78,7 +79,7 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_proposal_content_nonempty` | ✅ | |
 | `test_proposals_list_nonempty` | ✅ | |
 | `test_all_philosopher_ids_canonical` | ✅ | |
-| `test_empty_values_yields_clarify_action` | ❌ **FAIL** | **RT-GAP-001** — see below |
+| `test_empty_values_yields_clarify_action` | ✅ | RT-GAP-001 **resolved** — `CaseSignals(values_present=False)` causes `_apply_case_signals` to set `action_type='clarify'` |
 
 ### AT-010 (制約の矛盾 — conflicting constraints)
 
@@ -89,25 +90,25 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_proposal_content_nonempty` | ✅ | |
 | `test_proposals_list_nonempty` | ✅ | |
 | `test_all_philosopher_ids_canonical` | ✅ | |
-| `test_constraint_conflict_surface` | ❌ **FAIL** | **RT-GAP-003** — see below |
+| `test_constraint_conflict_surface` | ✅ | RT-GAP-003 **resolved** — `CaseSignals(has_constraint_conflict=True)` causes `_apply_case_signals` to add `constraint_conflict=True` to result |
 
 ### Cross-scenario
 
 | Test | Status | Notes |
 |---|---|---|
-| `test_at009_and_at010_content_differs` | ❌ **FAIL** | **RT-GAP-002** — see below |
-| `test_run_output_lacks_output_schema_v1_keys` | ✅ | Documents RT-GAP-004 (assertion inverted: passes while gap exists) |
+| `test_at009_and_at010_content_differs` | ✅ | RT-GAP-002 **resolved** — `_SCENARIO_ROUTING` in `ensemble.py` steers different philosopher sets per scenario type; AT-009 → Confucius, AT-010 → Nietzsche |
+| `test_run_output_conforms_to_output_schema_v1` | ⚠️ **XFAIL** | RT-GAP-004 — `xfail(strict=True)` while `po_core.run()` does not natively return `output_schema_v1` shape; XPASS signals completion |
 
-**Runtime total: 19 pass / 3 fail**
+**Runtime total: 21 pass / 0 fail / 1 xfail (RT-GAP-004)**
 
 ### Gap catalogue
 
-| ID | Description | Affected cases |
-|---|---|---|
-| **RT-GAP-001** | `run_turn` always returns `action_type='answer'`; values-clarification signal (`'clarify'`) is absent from pipeline output even when `values=[]`. The detection and `no_recommendation` path live entirely in `output_adapter.needs_values_clarification()`, not in `run_turn`. | AT-009 |
-| **RT-GAP-002** | AT-009 and AT-010 produce byte-identical `proposal.content`. The pipeline selects the same philosophers (spinoza, jung, deleuze, appiah, heidegger) and returns the same Dogen passage regardless of whether the input encodes empty values or contradictory constraints. | AT-009, AT-010 |
-| **RT-GAP-003** | No constraint-conflict signal in `run()` output for AT-010. The mutually exclusive constraints (週20h起業 + 週5h上限) pass through `run_turn` without detection; `action_type` is always `'answer'`. | AT-010 |
-| **RT-GAP-004** | `po_core.run()` returns `{status, request_id, proposal, proposals}`; it does not return the `output_schema_v1` shape (`meta`, `options`, `recommendation`, `ethics`, `responsibility`, `questions`, `uncertainty`, `trace`). The `output_adapter.adapt_to_schema()` bridge uses case-level metadata — not pipeline content — to populate most structural fields. The philosophical reasoning fills only `options[0].description`. | All |
+| ID | Description | Status | Affected cases |
+|---|---|---|---|
+| **RT-GAP-001** | `run_turn` always returns `action_type='answer'`; values-clarification signal (`'clarify'`) is absent from pipeline output even when `values=[]`. | ✅ **RESOLVED** — `CaseSignals` domain object + `_apply_case_signals()` in `ensemble.py` overrides `action_type` to `'clarify'` when `values_present=False`. Fix lives in pipeline layer; `output_adapter.py` unchanged. | AT-009 |
+| **RT-GAP-002** | AT-009 and AT-010 produce byte-identical `proposal.content`. The pipeline selects the same philosophers and returns identical content regardless of whether the input encodes empty values or contradictory constraints. | ✅ **RESOLVED** — `_SCENARIO_ROUTING` in `ensemble.py` routes each `scenario_type` to a different `(preferred_tags, limit_override)` pair fed to `registry.select()`. `conflicting_constraints` uses critic/redteam/planner tags, which excludes Confucius from the roster (NORMAL mode), guaranteeing a different Pareto winner. | AT-009, AT-010 |
+| **RT-GAP-003** | No constraint-conflict signal in `run()` output for AT-010. The mutually exclusive constraints (週20h起業 + 週5h上限) pass through `run_turn` without detection; `action_type` is always `'answer'`. | ✅ **RESOLVED** — `CaseSignals(has_constraint_conflict=True)` causes `_apply_case_signals()` to inject `constraint_conflict=True` into result dict. `from_case_dict()` detects conflict via keyword matching and `scenario_profile` extension field. | AT-010 |
+| **RT-GAP-004** | `po_core.run()` returns `{status, request_id, proposal, proposals}`; it does not return the `output_schema_v1` shape (`meta`, `options`, `recommendation`, `ethics`, `responsibility`, `questions`, `uncertainty`, `trace`). The `output_adapter.adapt_to_schema()` bridge uses case-level metadata — not pipeline content — to populate most structural fields. The philosophical reasoning fills only `options[0].description`. | ⚠️ **XFAIL** — documented as `xfail(strict=True)` in test suite. Expected to fail while architectural gap persists; XPASS would flag readiness to remove adapter bridge. | All |
 
 ---
 
@@ -159,7 +160,7 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Installed-artifact smoke (wheel + sdist × 3 Pythons) | CI `installed-artifact-smoke` | ✅ | |
 | Docker multi-stage build | `Dockerfile` + `docker-compose.yml` | ✅ | |
 | `requirements-release.lock` reproducibility | CI `security` job (conditional) | ✅ | Skipped when no lock file committed |
-| **PyPI publish (po-core-flyingpig 1.0.3)** | `publish.yml` OIDC workflow | 🔲 | Milestone 5-F; workflow validated, publish not yet triggered |
+| **PyPI publish (po-core-flyingpig 1.0.3)** | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ⚠️ | Published 2026-03-22T15:10:30 UTC; missing in-repo evidence: workflow run URL and post-publish install/smoke transcript |
 
 ---
 
@@ -181,29 +182,44 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 
 | Gate | Pass | Fail | Not yet |
 |---|---|---|---|
-| Release evidence | 7 | 0 | 1 (PyPI publish) |
+| Release evidence | 7 | 0 | 0 (+1 ⚠️ partial: PyPI publish evidence incomplete) |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run()) | 19 | **3** | 0 |
+| Runtime acceptance (po_core.run()) | 21 | 0 | 0 (+1 xfail: RT-GAP-004) |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
-| Packaging | 11 | 0 | 1 (PyPI publish) |
+| Packaging | 11 | 0 | 0 (+1 ⚠️ partial: PyPI publish evidence incomplete) |
 | Governance | 7 | 0 | 0 |
-| **Total** | **106** | **3** | **2** |
+| **Total** | **108** | **0** | **0** (+2 ⚠️ partial: PyPI evidence; +1 xfail: RT-GAP-004) |
 
-### Open gaps blocking v1.0 pipeline completeness
+### Open xfail gap
 
-The three failing runtime acceptance tests map to a single architectural root cause:
-`run_turn` has no structured understanding of case semantics (values presence,
-constraint contradictions). Semantic classification currently happens entirely in
-`output_adapter.py` using raw case-dict fields, bypassing the philosophical
-pipeline.
+**RT-GAP-004** (`xfail(strict=True)` — architectural bridge gap):
+`po_core.run()` does not natively return `output_schema_v1` shape; the
+`output_adapter.adapt_to_schema()` bridge is required. Will remain until the
+pipeline layer is extended to return schema-compliant output natively.
 
-Resolving these gaps requires extending `run_turn` to accept or infer structured
-case metadata, or routing semantic pre-classification into the `IntentionGate`
-layer so the pipeline can return differentiated `action_type` signals.
+### Resolved gaps
+
+**RT-GAP-001** ✅ (resolved 2026-04-28): `CaseSignals(values_present=False)` +
+`_apply_case_signals()` in `ensemble.py` overrides `action_type` to `'clarify'`.
+
+**RT-GAP-002** ✅ (resolved 2026-04-28): `_SCENARIO_ROUTING` in `ensemble.py` maps
+`scenario_type` → `(preferred_tags, limit_override)` fed to `registry.select()`.
+`values_clarification` → `(clarify+creative+compliance, 3)` → [confucius, zhuangzi, kant]
+→ Pareto winner: Confucius.
+`conflicting_constraints` → `(critic+redteam+planner, 3)` → [kant, nietzsche,
+marcus_aurelius] → Pareto winner: Nietzsche.
+Trace evidence: `PhilosophersSelected` event now carries `scenario_type` and
+`preferred_tags` fields.
+
+**RT-GAP-003** ✅ (resolved 2026-04-28): `CaseSignals(has_constraint_conflict=True)` +
+`_apply_case_signals()` injects `constraint_conflict=True` into result dict.
 
 ### Open item not blocking correctness
 
-PyPI publish (milestone 5-F) is a procedural gate, not a functional one.
-The package builds and installs cleanly; only the manual trigger of
-`publish.yml` is outstanding.
+`po-core-flyingpig 1.0.3` is published on PyPI (confirmed 2026-03-22T15:10:30 UTC
+via PyPI JSON API; see `docs/release/pypi_publication_v1.0.3.md`).  Two in-repo
+evidence artefacts are still missing:
+- GitHub Actions workflow run URL for the 1.0.3 TestPyPI + PyPI runs
+- Post-publish install/smoke transcript (`pip install po-core-flyingpig==1.0.3`
+  + import + `scripts/release_smoke.py --check-entrypoints` in a clean env)

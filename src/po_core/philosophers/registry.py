@@ -36,6 +36,7 @@ from po_core.philosophers.tags import (
     TAG_COMPLIANCE,
     TAG_CREATIVE,
     TAG_CRITIC,
+    TAG_GENERAL,
     TAG_PLANNER,
     TAG_REDTEAM,
 )
@@ -147,7 +148,13 @@ class PhilosopherRegistry:
                 ),
             }
 
-    def select(self, mode: SafetyMode) -> Selection:
+    def select(
+        self,
+        mode: SafetyMode,
+        *,
+        preferred_tags: Optional[Tuple[str, ...]] = None,
+        limit_override: Optional[int] = None,
+    ) -> Selection:
         """
         SafetyModeに応じて哲学者を編成。
 
@@ -156,11 +163,22 @@ class PhilosopherRegistry:
 
         Args:
             mode: SafetyMode
+            preferred_tags: When provided, overrides the plan's require_tags so
+                that scenario-sensitive callers can steer which philosopher archetypes
+                are prioritised.  Other plan constraints are unchanged unless
+                limit_override is also given.
+            limit_override: When provided, overrides the plan's limit.  Used by
+                scenario-sensitive routing when the normal budget would otherwise
+                admit all philosophers regardless of preferred_tags.
 
         Returns:
             Selection with selected_ids, cost_total, covered_tags
         """
         plan = self._plans.get(mode, self._plans[SafetyMode.WARN])
+        effective_require_tags: Tuple[str, ...] = (
+            preferred_tags if preferred_tags is not None else plan.require_tags
+        )
+        effective_limit = limit_override if limit_override is not None else plan.limit
 
         candidates = [
             s for s in self._specs if s.enabled and s.risk_level <= plan.max_risk
@@ -181,12 +199,12 @@ class PhilosopherRegistry:
         covered: set[str] = set()
 
         def can_take(s: PhilosopherSpec) -> bool:
-            return (len(selected) < plan.limit) and (
+            return (len(selected) < effective_limit) and (
                 cost_total + s.cost <= plan.cost_budget
             )
 
         # 1) 必須タグを満たす（すでにcoveredならスキップ）
-        for tag in plan.require_tags:
+        for tag in effective_require_tags:
             if tag in covered:
                 continue
             pick = None
@@ -210,7 +228,7 @@ class PhilosopherRegistry:
             selected.append(s)
             cost_total += s.cost
             covered.update(s.tags)
-            if len(selected) >= plan.limit:
+            if len(selected) >= effective_limit:
                 break
 
         return Selection(
