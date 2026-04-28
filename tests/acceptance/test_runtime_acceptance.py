@@ -23,9 +23,11 @@ RT-GAP-002  RESOLVED — _SCENARIO_ROUTING in ensemble.py maps scenario_type to
             philosopher sets produce non-identical Pareto winners per scenario.
 RT-GAP-003  RESOLVED — CaseSignals(has_constraint_conflict=True) +
             _apply_case_signals() injects constraint_conflict=True into result.
-RT-GAP-004  OPEN (xfail) — po_core.run() output shape does not conform to
-            output_schema_v1; the StubComposer/output_adapter layer bridges it.
-            Will remain until the pipeline natively returns schema-compliant output.
+RT-GAP-004  RESOLVED — run_case(case: dict) added to po_core.app.api; wraps
+            run_turn + adapt_to_schema and returns output_schema_v1-compliant
+            output.  po_core.run(user_input: str) is unchanged.  See
+            TestRunCaseSchemaConformance for pass-through validation tests and
+            docs/design/rt_gap_004_run_case_proposal.md for design rationale.
 
 Markers
 -------
@@ -91,6 +93,30 @@ def at009_result() -> dict[str, Any]:
 @pytest.fixture(scope="session")
 def at010_result() -> dict[str, Any]:
     return _invoke_pipeline(_load_case("case_010"))
+
+
+@pytest.fixture(scope="session")
+def run_case_at001() -> dict[str, Any]:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        from po_core.app.api import run_case
+    return run_case(_load_case("case_001"))
+
+
+@pytest.fixture(scope="session")
+def run_case_at009() -> dict[str, Any]:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        from po_core.app.api import run_case
+    return run_case(_load_case("case_009"))
+
+
+@pytest.fixture(scope="session")
+def run_case_at010() -> dict[str, Any]:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        from po_core.app.api import run_case
+    return run_case(_load_case("case_010"))
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -262,37 +288,59 @@ class TestRuntimeCrossScenario:
             "scenario routing may have stopped differentiating philosopher sets"
         )
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "RT-GAP-004 (known architectural gap): po_core.run() output shape is "
-            "{status, request_id, proposal, proposals}; it does not return "
-            "output_schema_v1 keys natively. The output_adapter bridge is required. "
-            "XFAIL while gap persists; XPASS alerts to update completion_matrix.md."
-        ),
-    )
     def test_run_output_conforms_to_output_schema_v1(
-        self, at001_result: dict[str, Any]
+        self,
+        run_case_at001: dict[str, Any],
+        validate_output_schema: Any,
     ) -> None:
-        """RT-GAP-004 (xfail): po_core.run() output shape ≠ output_schema_v1.
+        """RT-GAP-004 RESOLVED: run_case(case) returns output_schema_v1-compliant output.
 
-        output_schema_v1 requires top-level keys: meta, case_ref, options,
-        recommendation, ethics, responsibility, questions, uncertainty, trace.
-        po_core.run() returns only: status, request_id, proposal, proposals.
+        po_core.run_case(case: dict) wraps run_turn + adapt_to_schema and returns a
+        dict with all output_schema_v1 keys.  po_core.run(user_input: str) is
+        unchanged — it still returns the raw pipeline dict for plain-text callers.
 
-        The output_adapter (adapt_to_schema) bridges this gap by using case
-        metadata to construct most structural fields independently of pipeline
-        content.  The pipeline's philosophical reasoning populates only
-        options[0].description in the final schema-compliant output.
-
-        This test ASSERTS the gap exists and will fail once the pipeline is
-        extended to return schema-compliant output natively.
+        Design note: docs/design/rt_gap_004_run_case_proposal.md.
         """
-        schema_v1_required = {
-            "meta", "case_ref", "options", "recommendation",
-            "ethics", "responsibility", "questions", "uncertainty", "trace",
-        }
-        missing = schema_v1_required - set(at001_result)
-        assert not missing, (
-            f"RT-GAP-004: po_core.run() output missing output_schema_v1 keys: {missing}"
-        )
+        validate_output_schema(run_case_at001, "RT-GAP-004/run_case/AT-001")
+
+
+# ── RT-GAP-004: run_case() schema conformance ─────────────────────────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestRunCaseSchemaConformance:
+    """RT-GAP-004 RESOLVED: run_case(case) passes full output_schema_v1 validation.
+
+    These tests exercise all three canonical scenario types (full-values,
+    empty-values, conflicting-constraints) and also verify that the pipeline's
+    philosophical reasoning propagates through options[0].description.
+    """
+
+    def test_at001_conforms_to_output_schema_v1(
+        self, run_case_at001: dict[str, Any], validate_output_schema: Any
+    ) -> None:
+        validate_output_schema(run_case_at001, "run_case/AT-001")
+
+    def test_at009_conforms_to_output_schema_v1(
+        self, run_case_at009: dict[str, Any], validate_output_schema: Any
+    ) -> None:
+        validate_output_schema(run_case_at009, "run_case/AT-009")
+
+    def test_at010_conforms_to_output_schema_v1(
+        self, run_case_at010: dict[str, Any], validate_output_schema: Any
+    ) -> None:
+        validate_output_schema(run_case_at010, "run_case/AT-010")
+
+    def test_philosophical_content_in_options(
+        self, run_case_at001: dict[str, Any]
+    ) -> None:
+        """Pipeline proposal.content propagates into options[0].description."""
+        assert run_case_at001["options"][0]["description"].strip()
+
+    def test_at009_questions_nonempty(self, run_case_at009: dict[str, Any]) -> None:
+        """AT-009 (values=[]) → values-clarification questions are generated."""
+        assert run_case_at009["questions"], "expected non-empty questions for empty-values case"
+
+    def test_at010_uncertainty_high(self, run_case_at010: dict[str, Any]) -> None:
+        """AT-010 (conflicting constraints) → uncertainty.overall_level == 'high'."""
+        assert run_case_at010["uncertainty"]["overall_level"] == "high"

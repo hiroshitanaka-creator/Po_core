@@ -23,6 +23,12 @@ def run(*args, **kwargs):
     return _run(*args, **kwargs)
 
 
+def run_case(*args, **kwargs):
+    from po_core.app.api import run_case as _run_case
+
+    return _run_case(*args, **kwargs)
+
+
 # ── Legacy exports (backward compat) ──
 from po_core.ensemble import PHILOSOPHER_REGISTRY
 from po_core.po_self import PoSelf, PoSelfResponse
@@ -32,6 +38,7 @@ __all__ = [
     "__version__",
     # Modern API (recommended)
     "run",
+    "run_case",
     # Registry
     "PHILOSOPHER_REGISTRY",
     # Tracing
