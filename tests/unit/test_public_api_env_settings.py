@@ -39,7 +39,7 @@ def test_public_run_uses_settings_from_env_when_settings_is_none(
         _stub_system.settings = settings
         return _stub_system
 
-    def _fake_run_turn(ctx, deps):
+    def _fake_run_turn(ctx, deps, **kwargs):
         return {
             "status": "ok",
             "philosophers_max_normal": deps.settings.philosophers_max_normal,
@@ -66,7 +66,7 @@ def test_public_run_supports_philosopher_allowlist(monkeypatch, _stub_system):
         _stub_system.settings = settings
         return _stub_system
 
-    def _fake_run_turn(ctx, deps):
+    def _fake_run_turn(ctx, deps, **kwargs):
         return {
             "status": "ok",
             "registry_type": type(deps.registry).__name__,
@@ -97,7 +97,7 @@ async def test_public_async_run_uses_settings_from_env_when_settings_is_none(
         _stub_system.settings = settings
         return _stub_system
 
-    async def _fake_async_run_turn(ctx, deps):
+    async def _fake_async_run_turn(ctx, deps, **kwargs):
         return {
             "status": "ok",
             "philosophers_max_warn": deps.settings.philosophers_max_warn,
