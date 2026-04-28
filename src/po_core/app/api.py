@@ -42,6 +42,7 @@ from pydantic import BaseModel, ConfigDict
 
 from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, parse_cors_origins
+from po_core.domain.case_signals import CaseSignals
 from po_core.domain.context import Context
 from po_core.ensemble import EnsembleDeps, async_run_turn, run_turn
 from po_core.philosophers.allowlist import AllowlistRegistry
@@ -95,6 +96,7 @@ class GenerateRequest(BaseModel):
 def run(
     user_input: str,
     *,
+    case_signals: CaseSignals | None = None,
     philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     settings: Settings | None = None,
@@ -153,12 +155,13 @@ def run(
     )
 
     # Run the full pipeline
-    return run_turn(ctx, deps)
+    return run_turn(ctx, deps, case_signals=case_signals)
 
 
 async def async_run(
     user_input: str,
     *,
+    case_signals: CaseSignals | None = None,
     philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     settings: Settings | None = None,
@@ -216,7 +219,7 @@ async def async_run(
         deliberation_engine=getattr(system, "deliberation_engine", None),
     )
 
-    return await async_run_turn(ctx, deps)
+    return await async_run_turn(ctx, deps, case_signals=case_signals)
 
 
 _legacy_api_settings = APISettings()

@@ -117,6 +117,7 @@ class StubComposer:
         """
         from po_core.app.api import run as _po_run
         from po_core.app.output_adapter import adapt_to_schema, build_user_input
+        from po_core.domain.case_signals import from_case_dict as _build_signals
 
         case_now = case.get("now")
         if isinstance(case_now, str) and case_now.strip():
@@ -145,9 +146,9 @@ class StubComposer:
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
-        # Run the philosophical pipeline
+        # Run the philosophical pipeline with structured case signals
         user_input = build_user_input(case)
-        run_result = _po_run(user_input)
+        run_result = _po_run(user_input, case_signals=_build_signals(case))
 
         # Adapt to output_schema_v1
         return adapt_to_schema(

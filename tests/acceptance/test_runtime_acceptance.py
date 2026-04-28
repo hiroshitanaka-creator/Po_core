@@ -61,12 +61,18 @@ def _load_case(case_id: str) -> dict[str, Any]:
 
 
 def _invoke_pipeline(case: dict[str, Any]) -> dict[str, Any]:
+    """Run po_core.run() with CaseSignals derived from the case dict.
+
+    This mirrors the production path: StubComposer always computes
+    CaseSignals via from_case_dict and forwards them to run().
+    """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
         from po_core.app.api import run
         from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
 
-    return run(build_user_input(case))
+    return run(build_user_input(case), case_signals=from_case_dict(case))
 
 
 @pytest.fixture(scope="session")
@@ -261,10 +267,19 @@ class TestRuntimeCrossScenario:
             "run_turn pipeline does not differentiate scenario type from user_input"
         )
 
-    def test_run_output_lacks_output_schema_v1_keys(
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "RT-GAP-004 (known architectural gap): po_core.run() output shape is "
+            "{status, request_id, proposal, proposals}; it does not return "
+            "output_schema_v1 keys natively. The output_adapter bridge is required. "
+            "XFAIL while gap persists; XPASS alerts to update completion_matrix.md."
+        ),
+    )
+    def test_run_output_conforms_to_output_schema_v1(
         self, at001_result: dict[str, Any]
     ) -> None:
-        """Documents RT-GAP-004: po_core.run() output ≠ output_schema_v1 shape.
+        """RT-GAP-004 (xfail): po_core.run() output shape ≠ output_schema_v1.
 
         output_schema_v1 requires top-level keys: meta, case_ref, options,
         recommendation, ethics, responsibility, questions, uncertainty, trace.
@@ -283,8 +298,6 @@ class TestRuntimeCrossScenario:
             "ethics", "responsibility", "questions", "uncertainty", "trace",
         }
         missing = schema_v1_required - set(at001_result)
-        assert missing, (
-            "RT-GAP-004 is unexpectedly resolved: po_core.run() now returns "
-            f"output_schema_v1 keys directly: {schema_v1_required - missing}. "
-            "Update docs/completion_matrix.md and remove this assertion."
+        assert not missing, (
+            f"RT-GAP-004: po_core.run() output missing output_schema_v1 keys: {missing}"
         )

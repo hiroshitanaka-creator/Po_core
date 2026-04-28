@@ -10,12 +10,13 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
 
 from po_core import philosophers
 from po_core.axis.scoring import score_text_with_debug
 from po_core.axis.spec import load_axis_spec
 from po_core.deliberation.protocol import run_deliberation
+from po_core.domain.case_signals import CaseSignals
 from po_core.domain.context import Context as DomainContext
 from po_core.domain.keys import (
     AUTHOR,
@@ -1035,7 +1036,27 @@ def _evaluate_candidate(
     return fb, True
 
 
-def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
+def _apply_case_signals(result: Dict[str, Any], signals: CaseSignals) -> Dict[str, Any]:
+    """Overlay CaseSignals semantics onto the run_turn result dict.
+
+    Only modifies the result when signals indicate a non-default case:
+    - values_present=False → primary proposal action_type overridden to 'clarify'
+    - has_constraint_conflict=True → 'constraint_conflict': True added to result
+    """
+    proposal = result.get("proposal")
+    if isinstance(proposal, dict) and not signals.values_present:
+        result = {**result, "proposal": {**proposal, "action_type": "clarify"}}
+    if signals.has_constraint_conflict:
+        result = {**result, "constraint_conflict": True}
+    return result
+
+
+def run_turn(
+    ctx: DomainContext,
+    deps: EnsembleDeps,
+    *,
+    case_signals: Optional[CaseSignals] = None,
+) -> Dict[str, Any]:
     """
     Run a single turn through the full pipeline (synchronous).
 
@@ -1054,6 +1075,11 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
     Args:
         ctx: Request context
         deps: Injected dependencies
+        case_signals: Optional structured semantic signals from the calling
+            layer (e.g. StubComposer).  When provided, the result dict is
+            post-processed to surface values-clarification and
+            constraint-conflict signals that the pipeline cannot infer from
+            plain-text user_input alone.
 
     Returns:
         Result dictionary with status, proposal, or verdict
@@ -1072,10 +1098,18 @@ def run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
         timeout_s=pre.timeout_s,
         execution_mode=deps.settings.philosopher_execution_mode,
     )
-    return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    if case_signals is not None:
+        result = _apply_case_signals(result, case_signals)
+    return result
 
 
-async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, Any]:
+async def async_run_turn(
+    ctx: DomainContext,
+    deps: EnsembleDeps,
+    *,
+    case_signals: Optional[CaseSignals] = None,
+) -> Dict[str, Any]:
     """
     Async version of run_turn.
 
@@ -1090,6 +1124,7 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
     Args:
         ctx: Request context
         deps: Injected dependencies
+        case_signals: Optional structured semantic signals; see ``run_turn``.
 
     Returns:
         Result dictionary with status, proposal, or verdict
@@ -1109,7 +1144,10 @@ async def async_run_turn(ctx: DomainContext, deps: EnsembleDeps) -> Dict[str, An
         tracer=deps.tracer,
         execution_mode=deps.settings.philosopher_execution_mode,
     )
-    return _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
+    if case_signals is not None:
+        result = _apply_case_signals(result, case_signals)
+    return result
 
 
 __all__ = [

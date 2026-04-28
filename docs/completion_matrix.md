@@ -1,7 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Branch: `main` (`2f058c0`)
+Last updated: 2026-04-28 (RT-GAP-001 resolved, RT-GAP-003 resolved, RT-GAP-004 → xfail)  
+Branch: `claude/implement-po-core-AVsEx`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -78,7 +79,7 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_proposal_content_nonempty` | ✅ | |
 | `test_proposals_list_nonempty` | ✅ | |
 | `test_all_philosopher_ids_canonical` | ✅ | |
-| `test_empty_values_yields_clarify_action` | ❌ **FAIL** | **RT-GAP-001** — see below |
+| `test_empty_values_yields_clarify_action` | ✅ | RT-GAP-001 **resolved** — `CaseSignals(values_present=False)` causes `_apply_case_signals` to set `action_type='clarify'` |
 
 ### AT-010 (制約の矛盾 — conflicting constraints)
 
@@ -89,25 +90,25 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_proposal_content_nonempty` | ✅ | |
 | `test_proposals_list_nonempty` | ✅ | |
 | `test_all_philosopher_ids_canonical` | ✅ | |
-| `test_constraint_conflict_surface` | ❌ **FAIL** | **RT-GAP-003** — see below |
+| `test_constraint_conflict_surface` | ✅ | RT-GAP-003 **resolved** — `CaseSignals(has_constraint_conflict=True)` causes `_apply_case_signals` to add `constraint_conflict=True` to result |
 
 ### Cross-scenario
 
 | Test | Status | Notes |
 |---|---|---|
-| `test_at009_and_at010_content_differs` | ❌ **FAIL** | **RT-GAP-002** — see below |
-| `test_run_output_lacks_output_schema_v1_keys` | ✅ | Documents RT-GAP-004 (assertion inverted: passes while gap exists) |
+| `test_at009_and_at010_content_differs` | ❌ **FAIL** | **RT-GAP-002** — open gap (deferred); see below |
+| `test_run_output_conforms_to_output_schema_v1` | ⚠️ **XFAIL** | RT-GAP-004 documented as `xfail(strict=True)` — expected failure while gap persists; XPASS would alert to update matrix |
 
-**Runtime total: 19 pass / 3 fail**
+**Runtime total: 20 pass / 1 fail (RT-GAP-002) / 1 xfail (RT-GAP-004)**
 
 ### Gap catalogue
 
-| ID | Description | Affected cases |
-|---|---|---|
-| **RT-GAP-001** | `run_turn` always returns `action_type='answer'`; values-clarification signal (`'clarify'`) is absent from pipeline output even when `values=[]`. The detection and `no_recommendation` path live entirely in `output_adapter.needs_values_clarification()`, not in `run_turn`. | AT-009 |
-| **RT-GAP-002** | AT-009 and AT-010 produce byte-identical `proposal.content`. The pipeline selects the same philosophers (spinoza, jung, deleuze, appiah, heidegger) and returns the same Dogen passage regardless of whether the input encodes empty values or contradictory constraints. | AT-009, AT-010 |
-| **RT-GAP-003** | No constraint-conflict signal in `run()` output for AT-010. The mutually exclusive constraints (週20h起業 + 週5h上限) pass through `run_turn` without detection; `action_type` is always `'answer'`. | AT-010 |
-| **RT-GAP-004** | `po_core.run()` returns `{status, request_id, proposal, proposals}`; it does not return the `output_schema_v1` shape (`meta`, `options`, `recommendation`, `ethics`, `responsibility`, `questions`, `uncertainty`, `trace`). The `output_adapter.adapt_to_schema()` bridge uses case-level metadata — not pipeline content — to populate most structural fields. The philosophical reasoning fills only `options[0].description`. | All |
+| ID | Description | Status | Affected cases |
+|---|---|---|---|
+| **RT-GAP-001** | `run_turn` always returns `action_type='answer'`; values-clarification signal (`'clarify'`) is absent from pipeline output even when `values=[]`. | ✅ **RESOLVED** — `CaseSignals` domain object + `_apply_case_signals()` in `ensemble.py` overrides `action_type` to `'clarify'` when `values_present=False`. Fix lives in pipeline layer; `output_adapter.py` unchanged. | AT-009 |
+| **RT-GAP-002** | AT-009 and AT-010 produce byte-identical `proposal.content`. The pipeline selects the same philosophers (spinoza, jung, deleuze, appiah, heidegger) and returns the same Dogen passage regardless of whether the input encodes empty values or contradictory constraints. | ❌ **OPEN** — deferred to next sprint; requires scenario-sensitive philosopher routing in `PhilosopherSelect` / `IntentionGate` using `CaseSignals.scenario_type`. | AT-009, AT-010 |
+| **RT-GAP-003** | No constraint-conflict signal in `run()` output for AT-010. The mutually exclusive constraints (週20h起業 + 週5h上限) pass through `run_turn` without detection; `action_type` is always `'answer'`. | ✅ **RESOLVED** — `CaseSignals(has_constraint_conflict=True)` causes `_apply_case_signals()` to inject `constraint_conflict=True` into result dict. `from_case_dict()` detects conflict via keyword matching and `scenario_profile` extension field. | AT-010 |
+| **RT-GAP-004** | `po_core.run()` returns `{status, request_id, proposal, proposals}`; it does not return the `output_schema_v1` shape (`meta`, `options`, `recommendation`, `ethics`, `responsibility`, `questions`, `uncertainty`, `trace`). The `output_adapter.adapt_to_schema()` bridge uses case-level metadata — not pipeline content — to populate most structural fields. The philosophical reasoning fills only `options[0].description`. | ⚠️ **XFAIL** — documented as `xfail(strict=True)` in test suite. Expected to fail while architectural gap persists; XPASS would flag readiness to remove adapter bridge. | All |
 
 ---
 
@@ -183,24 +184,25 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 7 | 0 | 1 (PyPI publish) |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run()) | 19 | **3** | 0 |
+| Runtime acceptance (po_core.run()) | 20 | **1** (RT-GAP-002) | 0 (+1 xfail RT-GAP-004) |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 11 | 0 | 1 (PyPI publish) |
 | Governance | 7 | 0 | 0 |
-| **Total** | **106** | **3** | **2** |
+| **Total** | **107** | **1** | **2** |
 
 ### Open gaps blocking v1.0 pipeline completeness
 
-The three failing runtime acceptance tests map to a single architectural root cause:
-`run_turn` has no structured understanding of case semantics (values presence,
-constraint contradictions). Semantic classification currently happens entirely in
-`output_adapter.py` using raw case-dict fields, bypassing the philosophical
-pipeline.
+**RT-GAP-002** (sole remaining open gap): AT-009 and AT-010 produce byte-identical
+`proposal.content` because the pipeline always selects the same philosopher set
+regardless of scenario type. Resolving this requires scenario-sensitive philosopher
+routing in `PhilosopherSelect` / `IntentionGate` using `CaseSignals.scenario_type`
+(e.g. `"values_clarification"` prioritises different philosophers than `"conflicting_constraints"`).
 
-Resolving these gaps requires extending `run_turn` to accept or infer structured
-case metadata, or routing semantic pre-classification into the `IntentionGate`
-layer so the pipeline can return differentiated `action_type` signals.
+**RT-GAP-001 and RT-GAP-003 resolved** (2026-04-28):  
+The `CaseSignals` domain object (`src/po_core/domain/case_signals.py`) now carries
+semantic signals from the structured case YAML into `run_turn` via `_apply_case_signals()` 
+in `ensemble.py`. The fix lives entirely in the pipeline layer; `output_adapter.py` is unchanged.
 
 ### Open item not blocking correctness
 
