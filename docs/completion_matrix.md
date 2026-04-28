@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-28 (RT-GAP-001–003 resolved; RT-GAP-004 xfail; PyPI release evidence complete)  
-Branch: `main` @ `741354c`
+Source: `main @ 741354c`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
