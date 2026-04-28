@@ -262,7 +262,7 @@ def run_case(
     philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     tracer: TracePort | None = None,
-    seed: int = 42,
+    seed: int | None = 42,
     now: str | None = None,
 ) -> dict:
     """Run the deliberation pipeline for a structured case dict.
@@ -316,7 +316,7 @@ async def async_run_case(
     philosophers: list[str] | None = None,
     memory_backend: object | None = None,
     tracer: TracePort | None = None,
-    seed: int = 42,
+    seed: int | None = 42,
     now: str | None = None,
 ) -> dict:
     """Async variant of ``run_case()`` — delegates to ``async_run()``."""

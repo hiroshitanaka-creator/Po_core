@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-28 (RT-GAP-001–004 resolved; PyPI release evidence complete)  
-Source: `claude/implement-rt-gap-004 @ 074f4ce`
+Source: `claude/implement-rt-gap-004 @ 77bd26f`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -98,9 +98,9 @@ These tests expose where the **production pipeline itself** falls short, indepen
 |---|---|---|
 | `test_at009_and_at010_content_differs` | ✅ | RT-GAP-002 **resolved** — `_SCENARIO_ROUTING` in `ensemble.py` steers different philosopher sets per scenario type; AT-009 → Confucius, AT-010 → Nietzsche |
 | `test_run_output_conforms_to_output_schema_v1` | ✅ | RT-GAP-004 **resolved** — `run_case(case)` passes full `output_schema_v1` jsonschema validation; `xfail` marker removed |
-| `TestRunCaseSchemaConformance` (6 tests) | ✅ | AT-001/AT-009/AT-010 schema conformance + semantic signal checks |
+| `TestRunCaseSchemaConformance` (7 tests) | ✅ | AT-001/AT-009/AT-010 schema conformance + semantic signal checks + deterministic `created_at` |
 
-**Runtime total: 28 pass / 0 fail / 0 xfail**
+**Runtime total: 29 pass / 0 fail / 0 xfail**
 
 ### Gap catalogue
 
@@ -185,12 +185,12 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 28 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 29 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 12 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **117** | **0** | **0** |
+| **Total** | **118** | **0** | **0** |
 
 ### Resolved gaps
 
