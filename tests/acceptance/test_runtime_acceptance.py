@@ -548,3 +548,99 @@ class TestParetoWinnerTraceContract:
             f"AggregateCompleted proposal_id ({ev.payload['proposal_id']!r}) diverges "
             f"from final returned proposal ({final_pid!r})"
         )
+
+
+# ── AGG-TR-2: Pareto winner score explainability ──────────────────────────────
+
+_OBJECTIVE_KEYS = frozenset(
+    {"safety", "freedom", "explain", "brevity", "coherence", "emergence"}
+)
+
+
+@pytest.mark.runtime_acceptance
+class TestParetoWinnerScoreExplainability:
+    """AGG-TR-2: The Pareto winner score must be fully recomputable from trace payload.
+
+    ParetoWinnerSelected now carries winner["scores"] (6D objective vector),
+    winner["weighted_score"] (precomputed dot product), and weights (mode-specific
+    multipliers).  These three fields together are sufficient to explain why the
+    winner was selected over other Pareto-front proposals.
+    """
+
+    @staticmethod
+    def _get_pareto_events(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        winner_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        front_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoFrontComputed"), None
+        )
+        return winner_ev, front_ev
+
+    def test_pareto_winner_score_recomputable_from_trace(self) -> None:
+        """AGG-TR-2: weighted_score must equal dot(scores, weights) within tolerance."""
+        winner_ev, _ = self._get_pareto_events("case_001")
+        assert winner_ev is not None, "ParetoWinnerSelected event not found"
+
+        p = winner_ev.payload
+        scores = p["winner"]["scores"]
+        weights = p["weights"]
+
+        recomputed = sum(
+            scores.get(k, 0.0) * weights.get(k, 0.0) for k in _OBJECTIVE_KEYS
+        )
+        assert recomputed > 0, (
+            f"Recomputed weighted score is {recomputed!r} — expected > 0. "
+            f"scores={scores}, weights={weights}"
+        )
+
+        assert "weighted_score" in p["winner"], (
+            "winner payload missing 'weighted_score' key — add it to ParetoAggregator"
+        )
+        stored = p["winner"]["weighted_score"]
+        assert abs(stored - recomputed) < 1e-4, (
+            f"stored weighted_score ({stored!r}) diverges from recomputed "
+            f"({recomputed!r}) by more than 1e-4"
+        )
+
+    def test_pareto_front_rows_include_scores_for_all_objectives(self) -> None:
+        """AGG-TR-2: Every front row must include all 6 objective score keys."""
+        _, front_ev = self._get_pareto_events("case_001")
+        assert front_ev is not None, "ParetoFrontComputed event not found"
+
+        front = front_ev.payload.get("front", [])
+        assert front, "ParetoFrontComputed front list is empty"
+
+        for row in front:
+            row_scores = row.get("scores", {})
+            missing = _OBJECTIVE_KEYS - set(row_scores)
+            assert not missing, (
+                f"Front row {row.get('proposal_id')!r} scores missing keys: {missing}"
+            )
+
+    def test_pareto_winner_scores_include_all_objectives(self) -> None:
+        """AGG-TR-2: winner['scores'] must include all 6 objective keys."""
+        winner_ev, _ = self._get_pareto_events("case_001")
+        assert winner_ev is not None, "ParetoWinnerSelected event not found"
+
+        w_scores = winner_ev.payload["winner"]["scores"]
+        missing = _OBJECTIVE_KEYS - set(w_scores)
+        assert not missing, (
+            f"winner['scores'] missing objective keys: {missing}"
+        )
