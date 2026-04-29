@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-29 (AGG-TR-2 Pareto score explainability added; runtime total 37→40)  
-Source: `feat/agg-tr-1-pareto-trace-contract`
+Source: `feat/agg-tr-1-pareto-trace-contract @ 3949e14`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
