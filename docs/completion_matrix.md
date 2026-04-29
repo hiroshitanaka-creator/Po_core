@@ -99,9 +99,9 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_at009_and_at010_content_differs` | ✅ | RT-GAP-002 **resolved** — `_SCENARIO_ROUTING` in `ensemble.py` steers different philosopher sets per scenario type; AT-009 → Confucius, AT-010 → Nietzsche |
 | `test_run_output_conforms_to_output_schema_v1` | ✅ | RT-GAP-004 **resolved** — `run_case(case)` passes full `output_schema_v1` jsonschema validation; `xfail` marker removed |
 | `TestRunCaseSchemaConformance` (7 tests) | ✅ | AT-001/AT-009/AT-010 schema conformance + semantic signal checks + deterministic `created_at` |
-| `TestCaseSignalsTraceVisibility` (4 tests) | ✅ | TR-1: `CaseSignalsApplied` event emitted for AT-009 and AT-010; payload validates scenario_type, action_type_before/after, constraint_conflict_added, applied_changes |
+| `TestCaseSignalsTraceVisibility` (5 tests) | ✅ | TR-1: `CaseSignalsApplied` emitted for AT-009/AT-010 with full payload; suppressed for AT-001 (no mutation) |
 
-**Runtime total: 33 pass / 0 fail / 0 xfail**
+**Runtime total: 34 pass / 0 fail / 0 xfail**
 
 ### Gap catalogue
 
@@ -186,12 +186,12 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 33 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 34 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 12 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **122** | **0** | **0** |
+| **Total** | **123** | **0** | **0** |
 
 ### Resolved gaps
 

@@ -49,7 +49,7 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 | RT-GAP-003 | ✅ RESOLVED | `CaseSignals(has_constraint_conflict=True)` + `_apply_case_signals()` injects `constraint_conflict=True` into result dict for conflicting-constraints input. |
 | RT-GAP-004 | ✅ RESOLVED | `run_case(case: dict)` added to `po_core.app.api` and exported from `po_core`. Wraps `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. xfail removed from test suite. |
 
-**completion_matrix.md totals: 122 pass / 0 fail / 0 not-yet**
+**completion_matrix.md totals: 123 pass / 0 fail / 0 not-yet**
 
 ## Remaining Evidence Gaps (post-publication)
 
@@ -72,7 +72,7 @@ Post-release follow-up:
 
 ## Completed
 
-- 2026-04-29: TR-1 resolved. `CaseSignalsApplied` TraceEvent added to `run_turn` and `async_run_turn`. Emitted after `_apply_case_signals()` when `case_signals` is not None. Payload: `values_present`, `has_constraint_conflict`, `scenario_type`, `action_type_before`, `action_type_after`, `constraint_conflict_added`, `applied_changes`. `_apply_case_signals()` refactored to return `(result, changes)`. `TestCaseSignalsTraceVisibility` (4 tests) added; all pass. `completion_matrix.md` runtime 29→33, total 118→122. Session: `feat/case-signals-trace`.
+- 2026-04-29: TR-1 resolved. `CaseSignalsApplied` TraceEvent added to `run_turn` and `async_run_turn`. Emitted only when `_apply_case_signals()` makes at least one mutation (`if _changes:`). Payload: `values_present`, `has_constraint_conflict`, `scenario_type`, `action_type_before`, `action_type_after`, `constraint_conflict_added`, `applied_changes`. `_apply_case_signals()` refactored to return `(result, changes)`. `TestCaseSignalsTraceVisibility` (5 tests) added: AT-009/AT-010 positive + AT-001 negative (no event when no mutation). `completion_matrix.md` runtime 29→34, total 118→123. Session: `feat/case-signals-trace`.
 - 2026-04-28: RT-GAP-004 resolved. `run_case(case: dict)` + `async_run_case` added to `po_core.app.api`, exported from `po_core.__init__`. Uses `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. `_case_metadata()` matches StubComposer determinism contract (seed is not None → `"2026-03-03T00:00:00Z"`). `TestRunCaseSchemaConformance` (7 tests) added; xfail removed. `docs/status.md` + `docs/completion_matrix.md` updated. Session: `claude/implement-rt-gap-004`.
 - 2026-04-28: Runtime acceptance gaps closed on `main`. RT-GAP-001/002/003 resolved via `CaseSignals` + `_SCENARIO_ROUTING` in pipeline layer. RT-GAP-004 documented as `xfail(strict=True)`; design note at `docs/design/rt_gap_004_run_case_proposal.md`. PyPI release evidence closed: clean full-deps install/import/CLI smoke transcript recorded in `docs/release/smoke_verification_v1.0.3.md`. `completion_matrix.md` updated to 110 pass / 0 fail / 0 not-yet. `docs/status.md` updated to reflect closures. Session: `docs/runtime-acceptance-closure`.
 - 2026-03-22: `1.0.3` PyPI and TestPyPI publication confirmed via public API. `docs/release/pypi_publication_v1.0.3.md` and `docs/release/testpypi_publish_log_v1.0.3.md` created. `docs/release/smoke_verification_v1.0.3.md` updated to post-publish evidence state. `docs/status.md` updated: Latest published public version → `1.0.3`, External publish status → `1.0.3 published on PyPI`. Session: claude/fix-pypi-1.0.3-evidence-1F5kR.

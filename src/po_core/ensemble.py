@@ -1183,21 +1183,22 @@ def run_turn(
     if case_signals is not None:
         _action_type_before = (result.get("proposal") or {}).get("action_type", "")
         result, _changes = _apply_case_signals(result, case_signals)
-        deps.tracer.emit(
-            TraceEvent.now(
-                "CaseSignalsApplied",
-                ctx.request_id,
-                {
-                    "values_present": case_signals.values_present,
-                    "has_constraint_conflict": case_signals.has_constraint_conflict,
-                    "scenario_type": case_signals.scenario_type,
-                    "action_type_before": _action_type_before,
-                    "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
-                    "constraint_conflict_added": case_signals.has_constraint_conflict,
-                    "applied_changes": _changes,
-                },
+        if _changes:
+            deps.tracer.emit(
+                TraceEvent.now(
+                    "CaseSignalsApplied",
+                    ctx.request_id,
+                    {
+                        "values_present": case_signals.values_present,
+                        "has_constraint_conflict": case_signals.has_constraint_conflict,
+                        "scenario_type": case_signals.scenario_type,
+                        "action_type_before": _action_type_before,
+                        "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                        "constraint_conflict_added": case_signals.has_constraint_conflict,
+                        "applied_changes": _changes,
+                    },
+                )
             )
-        )
     return result
 
 
@@ -1245,21 +1246,22 @@ async def async_run_turn(
     if case_signals is not None:
         _action_type_before = (result.get("proposal") or {}).get("action_type", "")
         result, _changes = _apply_case_signals(result, case_signals)
-        deps.tracer.emit(
-            TraceEvent.now(
-                "CaseSignalsApplied",
-                ctx.request_id,
-                {
-                    "values_present": case_signals.values_present,
-                    "has_constraint_conflict": case_signals.has_constraint_conflict,
-                    "scenario_type": case_signals.scenario_type,
-                    "action_type_before": _action_type_before,
-                    "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
-                    "constraint_conflict_added": case_signals.has_constraint_conflict,
-                    "applied_changes": _changes,
-                },
+        if _changes:
+            deps.tracer.emit(
+                TraceEvent.now(
+                    "CaseSignalsApplied",
+                    ctx.request_id,
+                    {
+                        "values_present": case_signals.values_present,
+                        "has_constraint_conflict": case_signals.has_constraint_conflict,
+                        "scenario_type": case_signals.scenario_type,
+                        "action_type_before": _action_type_before,
+                        "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                        "constraint_conflict_added": case_signals.has_constraint_conflict,
+                        "applied_changes": _changes,
+                    },
+                )
             )
-        )
     return result
 
 

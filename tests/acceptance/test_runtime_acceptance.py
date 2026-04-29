@@ -439,3 +439,19 @@ class TestCaseSignalsTraceVisibility:
         assert p["has_constraint_conflict"] is True
         assert p["constraint_conflict_added"] is True
         assert "constraint_conflict:true" in p["applied_changes"]
+
+    def test_at001_no_case_signals_event_when_no_mutation(self) -> None:
+        """TR-1/AT-001: CaseSignalsApplied must NOT be emitted when no mutation is made.
+
+        case_001 has a full values list and no constraint conflict, so
+        _apply_case_signals() produces no changes.  The event must be
+        suppressed — emitting it with applied_changes=[] would be misleading.
+        """
+        result, tracer = self._run_with_tracer("case_001")
+
+        assert result["proposal"]["action_type"] == "answer"
+        event_types = [e.event_type for e in tracer.events]
+        assert "CaseSignalsApplied" not in event_types, (
+            f"CaseSignalsApplied was emitted for a no-mutation case. "
+            f"All events: {event_types}"
+        )
