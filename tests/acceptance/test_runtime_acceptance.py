@@ -808,3 +808,261 @@ class TestParetoSafetyModeWeights:
                 f"NORMAL mode emergence weight must be > 0; got {front_weights['emergence']}. "
                 "Check that pareto_table.yaml wires emergence: 0.10 for the normal entry."
             )
+
+
+# ── AGG-TR-4: ActionGate / final decision trace contract ─────────────────────
+
+
+class _FakeRejectParetoGate:
+    """Fake WethicsGatePort for AGG-TR-4 override test.
+
+    judge_intent: always ALLOW (pass the intention gate).
+    judge_action: REJECT if the proposal carries PARETO_DEBUG in its _po_core
+                  namespace (i.e. the Pareto-aggregated candidate); otherwise ALLOW.
+
+    This rejects only the ActionGate call for the Pareto winner while letting
+    per-philosopher pre-screening calls and the fallback pass through.  The
+    PARETO_DEBUG key is embedded by ParetoAggregator and is absent from:
+      - individual philosopher proposals during pre-screening, and
+      - compose_fallback() proposals.
+    """
+
+    def judge_intent(self, ctx, intent, tensors, memory):
+        from po_core.domain.safety_verdict import SafetyVerdict
+
+        return SafetyVerdict.allow(rule_ids=["WG.TEST.ALLOW"])
+
+    def judge_action(self, ctx, intent, proposal, tensors, memory):
+        from typing import Mapping
+
+        from po_core.domain.keys import PARETO_DEBUG, PO_CORE
+        from po_core.domain.safety_verdict import SafetyVerdict
+
+        extra = dict(proposal.extra) if isinstance(proposal.extra, Mapping) else {}
+        pc = extra.get(PO_CORE, {})
+        if PARETO_DEBUG in pc:
+            return SafetyVerdict.reject(
+                rule_ids=["WG.TEST.OVERRIDE.001"],
+                reasons=["test: Pareto winner rejected by fake gate"],
+            )
+        return SafetyVerdict.allow(rule_ids=["WG.TEST.ALLOW"])
+
+
+@pytest.mark.runtime_acceptance
+class TestActionGateTraceContract:
+    """AGG-TR-4: The Pareto winner → final decision transition must be trace-auditable.
+
+    Two paths:
+      1. Normal path (ActionGate ALLOW): ParetoWinnerSelected, AggregateCompleted,
+         DecisionEmitted all reference the same proposal_id, and DecisionEmitted
+         carries degraded=False, origin="pareto".
+      2. Override path (ActionGate REJECT): SafetyOverrideApplied carries the
+         original Pareto winner in 'from' and the fallback in 'to'. DecisionEmitted
+         carries degraded=True, origin="pareto_fallback", candidate=Pareto winner,
+         final=fallback, gate.rule_ids present.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            result = run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return result, tracer
+
+    @staticmethod
+    def _run_with_fake_gate(case_id: str):
+        """Run run_turn with a fake gate that rejects the Pareto-aggregated candidate."""
+        import uuid
+        import warnings
+
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.domain.context import Context
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.wiring import build_default_system
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            system = build_default_system()
+
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=build_user_input(case),
+            meta={"entry": "test"},
+        )
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=system.tensor_engine,
+            solarwill=system.solarwill,
+            gate=_FakeRejectParetoGate(),
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=None,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=None,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
+        )
+        result = run_turn(ctx, deps, case_signals=from_case_dict(case))
+        return result, tracer
+
+    def test_final_decision_trace_links_pareto_winner_when_allowed(self) -> None:
+        """AGG-TR-4/normal: ParetoWinnerSelected → AggregateCompleted → DecisionEmitted
+        must all reference the same proposal_id, and DecisionEmitted must confirm
+        the ActionGate allowed the Pareto winner unchanged.
+        """
+        result, tracer = self._run_with_tracer("case_001")
+        final_pid = result["proposal"]["proposal_id"]
+
+        pareto_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        agg_ev = next(
+            (e for e in tracer.events if e.event_type == "AggregateCompleted"), None
+        )
+        dec_ev = next(
+            (
+                e
+                for e in tracer.events
+                if e.event_type == "DecisionEmitted"
+                and e.payload.get("variant") == "main"
+                and not e.payload.get("degraded", True)
+            ),
+            None,
+        )
+
+        assert pareto_ev is not None, (
+            f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
+        )
+        assert agg_ev is not None, (
+            f"AggregateCompleted not found. Events: {[e.event_type for e in tracer.events]}"
+        )
+        assert dec_ev is not None, (
+            f"DecisionEmitted(variant=main, degraded=False) not found. "
+            f"Events: {[(e.event_type, e.payload.get('degraded'), e.payload.get('variant')) for e in tracer.events if 'Decision' in e.event_type]}"
+        )
+
+        # Full chain: all three events agree on proposal_id
+        pareto_pid = pareto_ev.payload["winner"]["proposal_id"]
+        agg_pid = agg_ev.payload["proposal_id"]
+        dec_final_pid = dec_ev.payload["final"]["proposal_id"]
+
+        assert pareto_pid == agg_pid, (
+            f"ParetoWinnerSelected.winner.proposal_id ({pareto_pid!r}) != "
+            f"AggregateCompleted.proposal_id ({agg_pid!r})"
+        )
+        assert agg_pid == final_pid, (
+            f"AggregateCompleted.proposal_id ({agg_pid!r}) != "
+            f"result.proposal.proposal_id ({final_pid!r})"
+        )
+        assert dec_final_pid == final_pid, (
+            f"DecisionEmitted.final.proposal_id ({dec_final_pid!r}) != "
+            f"result.proposal.proposal_id ({final_pid!r})"
+        )
+
+        # Gate metadata
+        assert dec_ev.payload["origin"] == "pareto", (
+            f"DecisionEmitted.origin must be 'pareto' for normal path; "
+            f"got {dec_ev.payload['origin']!r}"
+        )
+        assert dec_ev.payload["degraded"] is False, (
+            "DecisionEmitted.degraded must be False when ActionGate allows Pareto winner"
+        )
+
+    def test_actiongate_override_trace_auditable(self) -> None:
+        """AGG-TR-4/override: When ActionGate rejects the Pareto winner, the trace must
+        contain SafetyOverrideApplied (from=Pareto winner, to=fallback) and
+        DecisionEmitted(degraded=True) linking original candidate to final fallback.
+        """
+        result, tracer = self._run_with_fake_gate("case_001")
+
+        override_ev = next(
+            (e for e in tracer.events if e.event_type == "SafetyOverrideApplied"), None
+        )
+        dec_ev = next(
+            (
+                e
+                for e in tracer.events
+                if e.event_type == "DecisionEmitted"
+                and e.payload.get("variant") == "main"
+                and e.payload.get("degraded", False)
+            ),
+            None,
+        )
+
+        assert override_ev is not None, (
+            f"SafetyOverrideApplied not found after gate rejection. "
+            f"Events: {[e.event_type for e in tracer.events]}"
+        )
+        assert dec_ev is not None, (
+            f"DecisionEmitted(degraded=True) not found after gate rejection. "
+            f"Events: {[(e.event_type, e.payload.get('degraded')) for e in tracer.events if 'Decision' in e.event_type]}"
+        )
+
+        # SafetyOverrideApplied: from=Pareto winner, to=fallback
+        ov_p = override_ev.payload
+        assert "from" in ov_p, f"SafetyOverrideApplied missing 'from' key: {ov_p.keys()}"
+        assert "to" in ov_p, f"SafetyOverrideApplied missing 'to' key: {ov_p.keys()}"
+        assert "gate" in ov_p, f"SafetyOverrideApplied missing 'gate' key: {ov_p.keys()}"
+
+        original_pid = ov_p["from"]["proposal_id"]
+        fallback_pid = ov_p["to"]["proposal_id"]
+        assert original_pid != fallback_pid, (
+            "SafetyOverrideApplied.from and .to must have different proposal_ids"
+        )
+
+        # Gate details: rule_ids and decision must be present
+        gate = ov_p["gate"]
+        assert gate.get("decision") not in (None, "allow"), (
+            f"SafetyOverrideApplied gate.decision must be non-allow; got {gate.get('decision')!r}"
+        )
+        assert gate.get("rule_ids"), (
+            f"SafetyOverrideApplied gate.rule_ids must be non-empty; got {gate.get('rule_ids')!r}"
+        )
+
+        # DecisionEmitted: degraded=True, candidate=original Pareto winner
+        dp = dec_ev.payload
+        assert dp["degraded"] is True, "DecisionEmitted.degraded must be True for override path"
+        assert dp["origin"] in ("pareto_fallback", "safety_fallback", "pareto_shadow_fallback"), (
+            f"DecisionEmitted.origin unexpected for override path: {dp['origin']!r}"
+        )
+
+        candidate_in_dec = dp.get("candidate") or {}
+        assert candidate_in_dec.get("proposal_id") == original_pid, (
+            f"DecisionEmitted.candidate.proposal_id ({candidate_in_dec.get('proposal_id')!r}) "
+            f"must equal SafetyOverrideApplied.from.proposal_id ({original_pid!r})"
+        )
+
+        final_in_dec = dp.get("final") or {}
+        assert final_in_dec.get("proposal_id") == fallback_pid, (
+            f"DecisionEmitted.final.proposal_id ({final_in_dec.get('proposal_id')!r}) "
+            f"must equal SafetyOverrideApplied.to.proposal_id ({fallback_pid!r})"
+        )
+        assert final_in_dec.get("action_type"), (
+            "DecisionEmitted.final.action_type must be present"
+        )
+
+        # Fallback is the actual pipeline output when gate rejects Pareto winner
+        assert result["proposal"]["proposal_id"] == fallback_pid, (
+            f"result.proposal.proposal_id ({result['proposal']['proposal_id']!r}) "
+            f"must equal the fallback proposal_id ({fallback_pid!r})"
+        )
