@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-29 (MODE-TR-1 SafetyMode inference trace contract added; runtime total 45→48)  
-Source: `feat/mode-tr-1-safetymode-inference-trace @ HEAD`
+Source: `feat/mode-tr-1-safetymode-inference-trace @ 9da60a1`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
