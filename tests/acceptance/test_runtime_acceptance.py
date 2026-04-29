@@ -644,3 +644,149 @@ class TestParetoWinnerScoreExplainability:
         assert not missing, (
             f"winner['scores'] missing objective keys: {missing}"
         )
+
+
+# ── AGG-TR-3: SafetyMode-dependent Pareto weights trace contract ──────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestParetoSafetyModeWeights:
+    """AGG-TR-3: Pareto weights differ by SafetyMode and are visible in production trace.
+
+    ParetoAggregator._get_weights() returns mode-specific multipliers drawn from
+    ParetoConfig.weights_by_mode.  This class proves:
+      1. NORMAL / WARN / CRITICAL weights are mutually distinct.
+      2. CRITICAL prioritises safety (largest weight) and suppresses freedom /
+         emergence (both 0.0).
+      3. Production run() emits both ParetoFrontComputed and ParetoWinnerSelected
+         with identical, consistent weights and mode fields.
+    """
+
+    @staticmethod
+    def _make_aggregator():
+        from po_core.aggregator.pareto import ParetoAggregator
+        from po_core.domain.pareto_config import ParetoConfig
+        from po_core.domain.safety_mode import SafetyModeConfig
+
+        return ParetoAggregator(
+            mode_config=SafetyModeConfig(),
+            config=ParetoConfig.defaults(),
+        )
+
+    def test_pareto_weights_differ_by_safety_mode(self) -> None:
+        """AGG-TR-3: NORMAL, WARN, and CRITICAL produce three distinct weight dicts."""
+        from po_core.domain.safety_mode import SafetyMode
+
+        agg = self._make_aggregator()
+        normal_w = dict(agg._get_weights(SafetyMode.NORMAL))
+        warn_w = dict(agg._get_weights(SafetyMode.WARN))
+        critical_w = dict(agg._get_weights(SafetyMode.CRITICAL))
+
+        assert normal_w != warn_w, (
+            "NORMAL and WARN weights are identical — SafetyMode degradation has no effect"
+        )
+        assert warn_w != critical_w, (
+            "WARN and CRITICAL weights are identical — SafetyMode degradation has no effect"
+        )
+        assert normal_w != critical_w, (
+            "NORMAL and CRITICAL weights are identical — SafetyMode degradation has no effect"
+        )
+
+        # NORMAL should reward freedom and emergence (deliberation incentives)
+        assert normal_w.get("freedom", 0.0) > 0.0, (
+            f"NORMAL freedom weight must be > 0; got {normal_w}"
+        )
+        assert normal_w.get("emergence", 0.0) > 0.0, (
+            f"NORMAL emergence weight must be > 0; got {normal_w}"
+        )
+
+        # WARN sits between NORMAL and CRITICAL: safety escalates monotonically
+        assert warn_w.get("safety", 0.0) > normal_w.get("safety", 0.0), (
+            "WARN safety weight must exceed NORMAL safety weight"
+        )
+        assert critical_w.get("safety", 0.0) > warn_w.get("safety", 0.0), (
+            "CRITICAL safety weight must exceed WARN safety weight"
+        )
+
+    def test_critical_mode_weights_prioritize_safety(self) -> None:
+        """AGG-TR-3: CRITICAL weights must put safety first and suppress freedom/emergence."""
+        from po_core.domain.safety_mode import SafetyMode
+
+        agg = self._make_aggregator()
+        normal_w = dict(agg._get_weights(SafetyMode.NORMAL))
+        critical_w = dict(agg._get_weights(SafetyMode.CRITICAL))
+
+        # safety is the largest weight in CRITICAL mode
+        safety_val = critical_w.get("safety", 0.0)
+        assert all(
+            safety_val >= v for v in critical_w.values()
+        ), (
+            f"CRITICAL safety ({safety_val}) is not the largest weight in {critical_w}"
+        )
+
+        # freedom must be 0.0 or strictly less than NORMAL
+        assert critical_w.get("freedom", 0.0) == 0.0 or (
+            critical_w.get("freedom", 0.0) < normal_w.get("freedom", 0.0)
+        ), (
+            f"CRITICAL freedom ({critical_w.get('freedom')}) must be 0.0 or "
+            f"less than NORMAL freedom ({normal_w.get('freedom')})"
+        )
+
+        # emergence must be 0.0 or strictly less than NORMAL
+        assert critical_w.get("emergence", 0.0) == 0.0 or (
+            critical_w.get("emergence", 0.0) < normal_w.get("emergence", 0.0)
+        ), (
+            f"CRITICAL emergence ({critical_w.get('emergence')}) must be 0.0 or "
+            f"less than NORMAL emergence ({normal_w.get('emergence')})"
+        )
+
+    def test_pareto_trace_records_safety_mode_and_weights_consistently(self) -> None:
+        """AGG-TR-3: ParetoFrontComputed and ParetoWinnerSelected must carry matching
+        mode, weights, and freedom_pressure fields in a production run().
+        """
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case("case_001")
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+
+        front_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoFrontComputed"), None
+        )
+        winner_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+
+        assert front_ev is not None, (
+            f"ParetoFrontComputed not found. Events: {[e.event_type for e in tracer.events]}"
+        )
+        assert winner_ev is not None, (
+            f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
+        )
+
+        fp = front_ev.payload
+        wp = winner_ev.payload
+
+        for key in ("mode", "weights", "freedom_pressure"):
+            assert key in fp, f"ParetoFrontComputed payload missing {key!r}: {fp.keys()}"
+            assert key in wp, f"ParetoWinnerSelected payload missing {key!r}: {wp.keys()}"
+
+        assert fp["weights"] == wp["weights"], (
+            f"ParetoFrontComputed.weights ({fp['weights']}) != "
+            f"ParetoWinnerSelected.weights ({wp['weights']})"
+        )
+        assert fp["mode"] == wp["mode"], (
+            f"ParetoFrontComputed.mode ({fp['mode']!r}) != "
+            f"ParetoWinnerSelected.mode ({wp['mode']!r})"
+        )
