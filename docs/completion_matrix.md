@@ -166,6 +166,7 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Docker multi-stage build | `Dockerfile` + `docker-compose.yml` | ✅ | |
 | `requirements-release.lock` reproducibility | CI `security` job (conditional) | ✅ | Skipped when no lock file committed |
 | **PyPI publish (po-core-flyingpig 1.0.3)** | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ✅ | Published 2026-03-22T15:10:30 UTC; post-publish install/import/CLI smoke completed 2026-04-28 (see `smoke_verification_v1.0.3.md`); workflow run URL not retrievable via available tooling — PyPI JSON API is proof |
+| Packaged `pareto_table.yaml` emergence weights | `test_pareto_table_loader.py::test_packaged_pareto_table_emergence_weights` | ✅ | AGG-TR-3: NORMAL=0.10, WARN=0.05, CRITICAL=0.00, UNKNOWN inherits WARN |
 
 ---
 
@@ -192,9 +193,9 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Runtime acceptance (po_core.run() + run_case()) | 43 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
-| Packaging | 12 | 0 | 0 |
+| Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **132** | **0** | **0** |
+| **Total** | **133** | **0** | **0** |
 
 ### Resolved gaps
 

@@ -167,3 +167,40 @@ def test_pareto_config_defaults_has_source():
 
     cfg = ParetoConfig.defaults()
     assert cfg.source == "defaults"
+
+
+def test_packaged_pareto_table_emergence_weights():
+    """Packaged pareto_table.yaml must include emergence weights for all modes.
+
+    ParetoConfig.defaults() now sets emergence in-code, but the production
+    build_default_system() path loads via load_packaged_pareto_table().
+    If the YAML omits emergence, the runtime-loaded config silently returns
+    0.0 via the loader's float(m.get("emergence", 0.0)) fallback, which
+    contradicts defaults() and makes NORMAL mode ignore the deliberation
+    novelty objective entirely.
+    """
+    from po_core.domain.safety_mode import SafetyMode
+    from po_core.runtime.pareto_table import load_packaged_pareto_table
+
+    cfg = load_packaged_pareto_table()
+
+    normal = cfg.weights_by_mode[SafetyMode.NORMAL]
+    warn = cfg.weights_by_mode[SafetyMode.WARN]
+    critical = cfg.weights_by_mode[SafetyMode.CRITICAL]
+    unknown = cfg.weights_by_mode[SafetyMode.UNKNOWN]
+
+    assert normal.emergence == 0.10, (
+        f"Packaged NORMAL emergence must be 0.10; got {normal.emergence}. "
+        "Add 'emergence: 0.10' to the normal entry in pareto_table.yaml."
+    )
+    assert warn.emergence == 0.05, (
+        f"Packaged WARN emergence must be 0.05; got {warn.emergence}. "
+        "Add 'emergence: 0.05' to the warn entry in pareto_table.yaml."
+    )
+    assert critical.emergence == 0.00, (
+        f"Packaged CRITICAL emergence must be 0.00; got {critical.emergence}."
+    )
+    assert unknown.emergence == warn.emergence, (
+        f"Packaged UNKNOWN emergence must equal WARN emergence ({warn.emergence}); "
+        f"got {unknown.emergence}.  unknown inherits from warn in pareto_table.yaml."
+    )

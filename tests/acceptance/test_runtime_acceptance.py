@@ -790,3 +790,21 @@ class TestParetoSafetyModeWeights:
             f"ParetoFrontComputed.mode ({fp['mode']!r}) != "
             f"ParetoWinnerSelected.mode ({wp['mode']!r})"
         )
+
+        # Both payloads must expose the emergence weight so callers can reconstruct
+        # the selection rationale from the trace without access to source code.
+        front_weights = fp["weights"]
+        assert "emergence" in front_weights, (
+            f"ParetoFrontComputed.weights missing 'emergence' key: {front_weights}. "
+            "The packaged pareto_table.yaml must include emergence for all modes."
+        )
+        assert "emergence" in wp["weights"], (
+            f"ParetoWinnerSelected.weights missing 'emergence' key: {wp['weights']}."
+        )
+
+        # case_001 runs under low freedom_pressure → NORMAL mode, so emergence must be > 0
+        if fp["mode"] == "normal":
+            assert front_weights["emergence"] > 0.0, (
+                f"NORMAL mode emergence weight must be > 0; got {front_weights['emergence']}. "
+                "Check that pareto_table.yaml wires emergence: 0.10 for the normal entry."
+            )
