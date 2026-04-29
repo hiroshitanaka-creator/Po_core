@@ -63,7 +63,8 @@ pip install -e ".[dev]"
 | | |
 |---|---|
 | [Tutorial](./docs/TUTORIAL.md) | Step-by-step getting-started guide |
-| [Python API reference](#python-api) | `run()` / `PoSelf` / `PoSelfResponse` |
+| [Python API reference](#python-api) | `run()` / `run_case()` / `PoSelf` / `PoSelfResponse` |
+| [run_case API guide](./docs/RUN_CASE.md) | Structured case input → output_schema_v1 output |
 | [REST API](#rest-api) | FastAPI server + curl examples |
 | [Manifesto](./Po_core_Manifesto_When_Pigs_Fly.md) | Philosophy and motivation |
 | [Release state](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md) | Current version, evidence gaps, roadmap |
@@ -137,6 +138,8 @@ pip install -e ".[dev]"
 ---
 
 ## Python API
+
+Use `run_case(case: dict)` when you need output_schema_v1-conformant structured decision-support output. Use `run(user_input: str)` when you want the raw philosopher pipeline result.
 
 ### Simple API (Recommended)
 
