@@ -463,6 +463,7 @@ class ParetoAggregator(AggregatorPort):
             "proposal_id": best.proposal_id,
             "action_type": best.action_type,
             "scores": best_v.to_dict(),
+            "weighted_score": round(_weighted_score(best_v, w), 6),
             "content_len": len(best.content or ""),
             "content_hash": _hash10(best.content or ""),
         }

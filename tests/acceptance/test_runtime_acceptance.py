@@ -455,3 +455,192 @@ class TestCaseSignalsTraceVisibility:
             f"CaseSignalsApplied was emitted for a no-mutation case. "
             f"All events: {event_types}"
         )
+
+
+# ── AGG-TR-1: Pareto winner trace contract ───────────────────────────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestParetoWinnerTraceContract:
+    """AGG-TR-1: ParetoWinnerSelected trace must agree with the final returned proposal.
+
+    emit_pareto_debug_events() is tested in isolation.  This class tests the
+    production run() path end-to-end: the trace event must exist and its
+    winner.proposal_id must equal result["proposal"]["proposal_id"].
+
+    Also asserts that AggregateCompleted is present with the same proposal_id,
+    proving the aggregator result and the Pareto trace are consistent across
+    the full pipeline.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            result = run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return result, tracer
+
+    def test_pareto_winner_trace_matches_final_result(self) -> None:
+        """AGG-TR-1: ParetoWinnerSelected.winner.proposal_id == result.proposal.proposal_id."""
+        result, tracer = self._run_with_tracer("case_001")
+
+        final_pid = result["proposal"]["proposal_id"]
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        assert ev is not None, (
+            f"ParetoWinnerSelected event not found in trace. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        p = ev.payload
+        assert "winner" in p, f"ParetoWinnerSelected payload missing 'winner' key: {p}"
+        assert p["winner"]["proposal_id"] == final_pid, (
+            f"Pareto trace winner ({p['winner']['proposal_id']!r}) diverges from "
+            f"final returned proposal ({final_pid!r})"
+        )
+
+    def test_pareto_winner_payload_has_required_keys(self) -> None:
+        """AGG-TR-1: ParetoWinnerSelected payload must contain all required diagnostic keys."""
+        _, tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        assert ev is not None, "ParetoWinnerSelected event not found in trace"
+
+        p = ev.payload
+        for key in ("mode", "weights", "freedom_pressure", "winner"):
+            assert key in p, f"ParetoWinnerSelected payload missing key {key!r}: {p}"
+
+        w = p["winner"]
+        for key in ("proposal_id", "scores", "content_hash"):
+            assert key in w, f"ParetoWinnerSelected winner missing key {key!r}: {w}"
+
+    def test_aggregate_completed_matches_final_result(self) -> None:
+        """AGG-TR-1: AggregateCompleted.proposal_id must equal result.proposal.proposal_id."""
+        result, tracer = self._run_with_tracer("case_001")
+
+        final_pid = result["proposal"]["proposal_id"]
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "AggregateCompleted"), None
+        )
+        assert ev is not None, (
+            f"AggregateCompleted event not found in trace. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+        assert ev.payload["proposal_id"] == final_pid, (
+            f"AggregateCompleted proposal_id ({ev.payload['proposal_id']!r}) diverges "
+            f"from final returned proposal ({final_pid!r})"
+        )
+
+
+# ── AGG-TR-2: Pareto winner score explainability ──────────────────────────────
+
+_OBJECTIVE_KEYS = frozenset(
+    {"safety", "freedom", "explain", "brevity", "coherence", "emergence"}
+)
+
+
+@pytest.mark.runtime_acceptance
+class TestParetoWinnerScoreExplainability:
+    """AGG-TR-2: The Pareto winner score must be fully recomputable from trace payload.
+
+    ParetoWinnerSelected now carries winner["scores"] (6D objective vector),
+    winner["weighted_score"] (precomputed dot product), and weights (mode-specific
+    multipliers).  These three fields together are sufficient to explain why the
+    winner was selected over other Pareto-front proposals.
+    """
+
+    @staticmethod
+    def _get_pareto_events(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        winner_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        front_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoFrontComputed"), None
+        )
+        return winner_ev, front_ev
+
+    def test_pareto_winner_score_recomputable_from_trace(self) -> None:
+        """AGG-TR-2: weighted_score must equal dot(scores, weights) within tolerance."""
+        winner_ev, _ = self._get_pareto_events("case_001")
+        assert winner_ev is not None, "ParetoWinnerSelected event not found"
+
+        p = winner_ev.payload
+        scores = p["winner"]["scores"]
+        weights = p["weights"]
+
+        recomputed = sum(
+            scores.get(k, 0.0) * weights.get(k, 0.0) for k in _OBJECTIVE_KEYS
+        )
+        assert recomputed > 0, (
+            f"Recomputed weighted score is {recomputed!r} — expected > 0. "
+            f"scores={scores}, weights={weights}"
+        )
+
+        assert "weighted_score" in p["winner"], (
+            "winner payload missing 'weighted_score' key — add it to ParetoAggregator"
+        )
+        stored = p["winner"]["weighted_score"]
+        assert abs(stored - recomputed) < 1e-4, (
+            f"stored weighted_score ({stored!r}) diverges from recomputed "
+            f"({recomputed!r}) by more than 1e-4"
+        )
+
+    def test_pareto_front_rows_include_scores_for_all_objectives(self) -> None:
+        """AGG-TR-2: Every front row must include all 6 objective score keys."""
+        _, front_ev = self._get_pareto_events("case_001")
+        assert front_ev is not None, "ParetoFrontComputed event not found"
+
+        front = front_ev.payload.get("front", [])
+        assert front, "ParetoFrontComputed front list is empty"
+
+        for row in front:
+            row_scores = row.get("scores", {})
+            missing = _OBJECTIVE_KEYS - set(row_scores)
+            assert not missing, (
+                f"Front row {row.get('proposal_id')!r} scores missing keys: {missing}"
+            )
+
+    def test_pareto_winner_scores_include_all_objectives(self) -> None:
+        """AGG-TR-2: winner['scores'] must include all 6 objective keys."""
+        winner_ev, _ = self._get_pareto_events("case_001")
+        assert winner_ev is not None, "ParetoWinnerSelected event not found"
+
+        w_scores = winner_ev.payload["winner"]["scores"]
+        missing = _OBJECTIVE_KEYS - set(w_scores)
+        assert not missing, (
+            f"winner['scores'] missing objective keys: {missing}"
+        )

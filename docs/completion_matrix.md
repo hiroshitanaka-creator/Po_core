@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-29 (TR-1 CaseSignalsApplied trace event added; runtime total 29→34)  
-Source: `main @ bbe0320`
+Last updated: 2026-04-29 (AGG-TR-2 Pareto score explainability added; runtime total 37→40)  
+Source: `feat/agg-tr-1-pareto-trace-contract @ 3949e14`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -100,8 +100,10 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `test_run_output_conforms_to_output_schema_v1` | ✅ | RT-GAP-004 **resolved** — `run_case(case)` passes full `output_schema_v1` jsonschema validation; `xfail` marker removed |
 | `TestRunCaseSchemaConformance` (7 tests) | ✅ | AT-001/AT-009/AT-010 schema conformance + semantic signal checks + deterministic `created_at` |
 | `TestCaseSignalsTraceVisibility` (5 tests) | ✅ | TR-1: `CaseSignalsApplied` emitted for AT-009/AT-010 with full payload; suppressed for AT-001 (no mutation) |
+| `TestParetoWinnerTraceContract` (3 tests) | ✅ | AGG-TR-1: `ParetoWinnerSelected` event exists and `winner.proposal_id` matches final result; `AggregateCompleted` proposal_id matches; required payload keys present (mode, weights, freedom_pressure, winner, winner.scores, winner.content_hash) |
+| `TestParetoWinnerScoreExplainability` (3 tests) | ✅ | AGG-TR-2: `winner.weighted_score` recomputable from `scores × weights` within 1e-4; all 6 objective keys present in winner scores and each front row |
 
-**Runtime total: 34 pass / 0 fail / 0 xfail**
+**Runtime total: 40 pass / 0 fail / 0 xfail**
 
 ### Gap catalogue
 
@@ -186,12 +188,12 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 34 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 40 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 12 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **123** | **0** | **0** |
+| **Total** | **129** | **0** | **0** |
 
 ### Resolved gaps
 
