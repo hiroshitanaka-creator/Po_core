@@ -1066,3 +1066,161 @@ class TestActionGateTraceContract:
             f"result.proposal.proposal_id ({result['proposal']['proposal_id']!r}) "
             f"must equal the fallback proposal_id ({fallback_pid!r})"
         )
+
+
+# ── MODE-TR-1: SafetyMode inference trace contract ────────────────────────────
+
+_SAFETY_MODE_INFERRED_REQUIRED_KEYS = frozenset(
+    {
+        "mode",
+        "freedom_pressure",
+        "warn_threshold",
+        "critical_threshold",
+        "missing_mode",
+        "source_metric",
+        "reason",
+    }
+)
+
+
+@pytest.mark.runtime_acceptance
+class TestSafetyModeInferredTrace:
+    """MODE-TR-1: SafetyModeInferred event must explain why a SafetyMode was selected.
+
+    The pipeline infers SafetyMode from freedom_pressure tensors early in
+    _run_phase_pre.  Downstream events (PhilosophersSelected, ParetoFrontComputed,
+    ParetoWinnerSelected) all carry the mode value, but without the inference event
+    a trace consumer cannot reconstruct *why* that mode was chosen — i.e. the
+    raw metric value and the thresholds that were compared.
+
+    SafetyModeInferred fills that gap: it records the metric value, both
+    thresholds, the resulting mode, and a human-readable reason string.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return tracer
+
+    def test_safety_mode_inferred_event_present_in_runtime_trace(self) -> None:
+        """MODE-TR-1: SafetyModeInferred event must appear in trace with all required keys."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "SafetyModeInferred"), None
+        )
+        assert ev is not None, (
+            f"SafetyModeInferred event not found. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        missing = _SAFETY_MODE_INFERRED_REQUIRED_KEYS - set(ev.payload)
+        assert not missing, (
+            f"SafetyModeInferred payload missing keys: {missing}. "
+            f"Got: {set(ev.payload)}"
+        )
+
+    def test_safety_mode_inferred_matches_downstream_trace_modes(self) -> None:
+        """MODE-TR-1: SafetyModeInferred.mode must agree with PhilosophersSelected,
+        ParetoFrontComputed, and ParetoWinnerSelected mode fields.
+        """
+        tracer = self._run_with_tracer("case_001")
+
+        smi_ev = next(
+            (e for e in tracer.events if e.event_type == "SafetyModeInferred"), None
+        )
+        phil_ev = next(
+            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
+        )
+        front_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoFrontComputed"), None
+        )
+        winner_ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+
+        assert smi_ev is not None, "SafetyModeInferred event not found"
+        assert phil_ev is not None, "PhilosophersSelected event not found"
+        assert front_ev is not None, "ParetoFrontComputed event not found"
+        assert winner_ev is not None, "ParetoWinnerSelected event not found"
+
+        inferred_mode = smi_ev.payload["mode"]
+        for label, ev in (
+            ("PhilosophersSelected", phil_ev),
+            ("ParetoFrontComputed", front_ev),
+            ("ParetoWinnerSelected", winner_ev),
+        ):
+            downstream_mode = ev.payload.get("mode")
+            assert downstream_mode == inferred_mode, (
+                f"{label}.mode ({downstream_mode!r}) != "
+                f"SafetyModeInferred.mode ({inferred_mode!r})"
+            )
+
+    def test_safety_mode_inferred_threshold_reason_is_consistent(self) -> None:
+        """MODE-TR-1: The reason string must be consistent with the numeric values.
+
+        Given freedom_pressure, warn_threshold, critical_threshold, mode, and reason,
+        the reason must correctly reflect which branch of infer_safety_mode() fired.
+        """
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "SafetyModeInferred"), None
+        )
+        assert ev is not None, "SafetyModeInferred event not found"
+
+        p = ev.payload
+        fp = p["freedom_pressure"]  # float or None
+        warn = p["warn_threshold"]
+        crit = p["critical_threshold"]
+        mode = p["mode"]
+        reason = p["reason"]
+
+        if fp is None:
+            assert reason == "freedom_pressure_missing", (
+                f"freedom_pressure is None but reason is {reason!r}; "
+                "expected 'freedom_pressure_missing'"
+            )
+            assert mode == p["missing_mode"], (
+                f"freedom_pressure is None but mode ({mode!r}) != "
+                f"missing_mode ({p['missing_mode']!r})"
+            )
+        elif fp >= crit:
+            assert mode == "critical", (
+                f"freedom_pressure ({fp}) >= critical_threshold ({crit}) "
+                f"but mode is {mode!r} instead of 'critical'"
+            )
+            assert reason == "freedom_pressure >= critical_threshold", (
+                f"Unexpected reason for CRITICAL: {reason!r}"
+            )
+        elif fp >= warn:
+            assert mode == "warn", (
+                f"freedom_pressure ({fp}) in [warn={warn}, crit={crit}) "
+                f"but mode is {mode!r} instead of 'warn'"
+            )
+            assert reason == "warn_threshold <= freedom_pressure < critical_threshold", (
+                f"Unexpected reason for WARN: {reason!r}"
+            )
+        else:
+            assert mode == "normal", (
+                f"freedom_pressure ({fp}) < warn_threshold ({warn}) "
+                f"but mode is {mode!r} instead of 'normal'"
+            )
+            assert reason == "freedom_pressure < warn_threshold", (
+                f"Unexpected reason for NORMAL: {reason!r}"
+            )

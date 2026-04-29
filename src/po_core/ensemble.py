@@ -335,7 +335,32 @@ def _run_phase_pre(
         critical=deps.settings.freedom_pressure_critical,
         missing_mode=deps.settings.freedom_pressure_missing_mode,
     )
-    mode, _ = infer_safety_mode(tensors, safety_config)
+    mode, fp_value = infer_safety_mode(tensors, safety_config)
+
+    if fp_value is None:
+        _smi_reason = "freedom_pressure_missing"
+    elif fp_value >= safety_config.critical:
+        _smi_reason = "freedom_pressure >= critical_threshold"
+    elif fp_value >= safety_config.warn:
+        _smi_reason = "warn_threshold <= freedom_pressure < critical_threshold"
+    else:
+        _smi_reason = "freedom_pressure < warn_threshold"
+
+    tracer.emit(
+        TraceEvent.now(
+            "SafetyModeInferred",
+            ctx.request_id,
+            {
+                "mode": mode.value,
+                "freedom_pressure": fp_value,
+                "warn_threshold": safety_config.warn,
+                "critical_threshold": safety_config.critical,
+                "missing_mode": safety_config.missing_mode.value,
+                "source_metric": "freedom_pressure",
+                "reason": _smi_reason,
+            },
+        )
+    )
 
     # 3. SolarWill intent
     intent, will_meta = deps.solarwill.compute_intent(ctx, tensors, memory)
