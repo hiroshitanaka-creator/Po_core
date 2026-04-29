@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-29 (AGG-TR-4 ActionGate final decision trace contract added; runtime total 43→45)  
-Source: `feat/agg-tr-4-actiongate-trace @ d15a55c`
+Source: `main @ 973727b`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
