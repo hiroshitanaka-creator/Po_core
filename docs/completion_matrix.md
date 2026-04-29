@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-29 (AGG-TR-2 Pareto score explainability added; runtime total 37→40)  
-Source: `main @ 7b82276`
+Last updated: 2026-04-29 (AGG-TR-3 SafetyMode weights trace contract added; runtime total 40→43)  
+Source: `feat/agg-tr-3-safetymode-weights-trace @ 7f7a752`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -102,8 +102,9 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `TestCaseSignalsTraceVisibility` (5 tests) | ✅ | TR-1: `CaseSignalsApplied` emitted for AT-009/AT-010 with full payload; suppressed for AT-001 (no mutation) |
 | `TestParetoWinnerTraceContract` (3 tests) | ✅ | AGG-TR-1: `ParetoWinnerSelected` event exists and `winner.proposal_id` matches final result; `AggregateCompleted` proposal_id matches; required payload keys present (mode, weights, freedom_pressure, winner, winner.scores, winner.content_hash) |
 | `TestParetoWinnerScoreExplainability` (3 tests) | ✅ | AGG-TR-2: `winner.weighted_score` recomputable from `scores × weights` within 1e-4; all 6 objective keys present in winner scores and each front row |
+| `TestParetoSafetyModeWeights` (3 tests) | ✅ | AGG-TR-3: NORMAL/WARN/CRITICAL weights are mutually distinct; CRITICAL has largest safety and zero freedom/emergence; ParetoFrontComputed and ParetoWinnerSelected carry identical mode/weights in production run |
 
-**Runtime total: 40 pass / 0 fail / 0 xfail**
+**Runtime total: 43 pass / 0 fail / 0 xfail**
 
 ### Gap catalogue
 
@@ -165,6 +166,7 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Docker multi-stage build | `Dockerfile` + `docker-compose.yml` | ✅ | |
 | `requirements-release.lock` reproducibility | CI `security` job (conditional) | ✅ | Skipped when no lock file committed |
 | **PyPI publish (po-core-flyingpig 1.0.3)** | `docs/release/pypi_publication_v1.0.3.md`, PyPI JSON API | ✅ | Published 2026-03-22T15:10:30 UTC; post-publish install/import/CLI smoke completed 2026-04-28 (see `smoke_verification_v1.0.3.md`); workflow run URL not retrievable via available tooling — PyPI JSON API is proof |
+| Packaged `pareto_table.yaml` emergence weights | `test_pareto_table_loader.py::test_packaged_pareto_table_emergence_weights` | ✅ | AGG-TR-3: NORMAL=0.10, WARN=0.05, CRITICAL=0.00, UNKNOWN inherits WARN |
 
 ---
 
@@ -188,12 +190,12 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 40 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 43 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
-| Packaging | 12 | 0 | 0 |
+| Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **129** | **0** | **0** |
+| **Total** | **133** | **0** | **0** |
 
 ### Resolved gaps
 

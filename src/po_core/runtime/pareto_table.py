@@ -126,6 +126,7 @@ def _parse_pareto_table(raw: str, *, source: str) -> ParetoConfig:
             explain=float(m.get("explain", 0.0)),
             brevity=float(m.get("brevity", 0.0)),
             coherence=float(m.get("coherence", 0.0)),
+            emergence=float(m.get("emergence", 0.0)),
         )
 
     mix = _as_dict(tuning.get("explain_mix"))

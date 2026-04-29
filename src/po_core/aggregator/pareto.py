@@ -312,42 +312,6 @@ def pareto_front(vs: Sequence[ObjectiveVec]) -> List[int]:
     return front
 
 
-# ── Mode-based weights ──────────────────────────────────────────────────
-
-
-def _weights_for_mode(mode: SafetyMode) -> Mapping[str, float]:
-    """Weights for weighted-sum selection from Pareto front."""
-    if mode == SafetyMode.CRITICAL:
-        # CRITICAL: safety first; emergence suppressed (instability risk)
-        return {
-            "safety": 0.55,
-            "freedom": 0.00,
-            "explain": 0.20,
-            "brevity": 0.15,
-            "coherence": 0.30,
-            "emergence": 0.00,
-        }
-    if mode in (SafetyMode.WARN, SafetyMode.UNKNOWN):
-        # WARN: slight emergence bonus — novel synthesis preferred if safe
-        return {
-            "safety": 0.40,
-            "freedom": 0.10,
-            "explain": 0.20,
-            "brevity": 0.10,
-            "coherence": 0.25,
-            "emergence": 0.05,
-        }
-    # NORMAL: emergence rewarded — genuine novelty from deliberation is the goal
-    return {
-        "safety": 0.25,
-        "freedom": 0.25,
-        "explain": 0.20,
-        "brevity": 0.10,
-        "coherence": 0.10,
-        "emergence": 0.10,
-    }
-
-
 def _weighted_score(v: ObjectiveVec, w: Mapping[str, float]) -> float:
     return (
         v.safety * w.get("safety", 0.0)
@@ -372,7 +336,7 @@ class ParetoAggregator(AggregatorPort):
         w = self.config.weights_by_mode.get(mode)
         if w is None:
             w = self.config.weights_by_mode.get(
-                SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25)
+                SafetyMode.WARN, ParetoWeights(0.4, 0.1, 0.2, 0.15, 0.25, 0.05)
             )
         return w.to_dict()
 

@@ -27,6 +27,7 @@ class ParetoWeights:
     explain: float
     brevity: float
     coherence: float
+    emergence: float = 0.0  # deliberation novelty bonus; 0 suppresses emergence objective
 
     def to_dict(self) -> dict:
         return {
@@ -35,6 +36,7 @@ class ParetoWeights:
             "explain": self.explain,
             "brevity": self.brevity,
             "coherence": self.coherence,
+            "emergence": self.emergence,
         }
 
 
@@ -70,10 +72,10 @@ class ParetoConfig:
         """デフォルト設定（外部ファイルがない場合のフォールバック）"""
         return ParetoConfig(
             weights_by_mode={
-                SafetyMode.NORMAL: ParetoWeights(0.25, 0.30, 0.20, 0.10, 0.15),
-                SafetyMode.WARN: ParetoWeights(0.40, 0.10, 0.20, 0.15, 0.25),
-                SafetyMode.CRITICAL: ParetoWeights(0.55, 0.00, 0.20, 0.15, 0.30),
-                SafetyMode.UNKNOWN: ParetoWeights(0.40, 0.10, 0.20, 0.15, 0.25),
+                SafetyMode.NORMAL: ParetoWeights(0.25, 0.30, 0.20, 0.10, 0.15, 0.10),
+                SafetyMode.WARN: ParetoWeights(0.40, 0.10, 0.20, 0.15, 0.25, 0.05),
+                SafetyMode.CRITICAL: ParetoWeights(0.55, 0.00, 0.20, 0.15, 0.30, 0.00),
+                SafetyMode.UNKNOWN: ParetoWeights(0.40, 0.10, 0.20, 0.15, 0.25, 0.05),
             },
             tuning=ParetoTuning(),
             version=1,

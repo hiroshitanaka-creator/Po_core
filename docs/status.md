@@ -49,7 +49,7 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 | RT-GAP-003 | ✅ RESOLVED | `CaseSignals(has_constraint_conflict=True)` + `_apply_case_signals()` injects `constraint_conflict=True` into result dict for conflicting-constraints input. |
 | RT-GAP-004 | ✅ RESOLVED | `run_case(case: dict)` added to `po_core.app.api` and exported from `po_core`. Wraps `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. xfail removed from test suite. |
 
-**completion_matrix.md totals: 129 pass / 0 fail / 0 not-yet**
+**completion_matrix.md totals: 133 pass / 0 fail / 0 not-yet**
 
 ## Remaining Evidence Gaps (post-publication)
 
@@ -72,6 +72,7 @@ Post-release follow-up:
 
 ## Completed
 
+- 2026-04-29: AGG-TR-3 resolved. `ParetoWeights` in `domain/pareto_config.py` extended with `emergence: float = 0.0` field; `to_dict()` now includes emergence. `ParetoConfig.defaults()` updated: NORMAL emergence=0.10, WARN=0.05, CRITICAL=0.00. Dead `_weights_for_mode()` function removed from `aggregator/pareto.py`. `pareto_table.py` loader updated to read emergence from YAML (backward-compatible). Packaged `config/runtime/pareto_table.yaml` updated with emergence keys. `TestParetoSafetyModeWeights` (3 tests) added: NORMAL/WARN/CRITICAL weights mutually distinct, CRITICAL safety=max/freedom+emergence=0, ParetoFrontComputed and ParetoWinnerSelected carry matching mode/weights with emergence key present and nonzero in NORMAL mode. `test_packaged_pareto_table_emergence_weights` added to loader test suite. Runtime 40→43, packaging 12→13, total 129→133. Session: `feat/agg-tr-3-safetymode-weights-trace`.
 - 2026-04-29: AGG-TR-2 resolved. `weighted_score` added to `winner_payload` in `ParetoAggregator` (`aggregator/pareto.py`). `TestParetoWinnerScoreExplainability` (3 tests): score recomputable from `scores × weights` within 1e-4; all 6 objective keys in winner scores and front rows. Runtime 37→40, total 126→129. Session: `feat/agg-tr-1-pareto-trace-contract`.
 - 2026-04-29: AGG-TR-1 resolved. `ParetoWinnerSelected` payload missing `weights` key exposed and fixed in `trace/pareto_events.py`. `TestParetoWinnerTraceContract` (3 tests) added: winner trace matches final result, required payload keys present, `AggregateCompleted` proposal_id agrees. Runtime 34→37, total 123→126. Session: `feat/agg-tr-1-pareto-trace-contract`.
 - 2026-04-29: TR-1 resolved. `CaseSignalsApplied` TraceEvent added to `run_turn` and `async_run_turn`. Emitted only when `_apply_case_signals()` makes at least one mutation (`if _changes:`). Payload: `values_present`, `has_constraint_conflict`, `scenario_type`, `action_type_before`, `action_type_after`, `constraint_conflict_added`, `applied_changes`. `_apply_case_signals()` refactored to return `(result, changes)`. `TestCaseSignalsTraceVisibility` (5 tests) added: AT-009/AT-010 positive + AT-001 negative (no event when no mutation). `completion_matrix.md` runtime 29→34, total 118→123. Session: `feat/case-signals-trace`.
