@@ -350,3 +350,108 @@ class TestRunCaseSchemaConformance:
     ) -> None:
         """seed=42 + no case["now"] → fixed timestamp "2026-03-03T00:00:00Z"."""
         assert run_case_at001["meta"]["created_at"] == "2026-03-03T00:00:00Z"
+
+
+# ── TR-1: CaseSignals trace visibility ───────────────────────────────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestCaseSignalsTraceVisibility:
+    """TR-1: CaseSignals mutations must emit a CaseSignalsApplied TraceEvent.
+
+    _apply_case_signals() currently mutates the run_turn result dict silently:
+      - values_present=False  → action_type overridden to 'clarify'
+      - has_constraint_conflict=True → constraint_conflict=True injected
+
+    These audit-relevant mutations must appear in the trace so that callers
+    can observe why the output changed from the raw pipeline result.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            result = run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return result, tracer
+
+    def test_at009_case_signals_event_emitted(self) -> None:
+        """TR-1/AT-009: CaseSignalsApplied event must appear in trace for empty-values case."""
+        _, tracer = self._run_with_tracer("case_009")
+        event_types = [e.event_type for e in tracer.events]
+        assert any("CaseSignals" in t for t in event_types), (
+            f"No CaseSignals trace event found. Emitted events: {event_types}\n"
+            "The action_type='clarify' override by _apply_case_signals() is "
+            "currently invisible in the trace."
+        )
+
+    def test_at009_case_signals_event_payload(self) -> None:
+        """TR-1/AT-009: CaseSignalsApplied payload must document the action_type override."""
+        result, tracer = self._run_with_tracer("case_009")
+
+        assert result["proposal"]["action_type"] == "clarify"
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "CaseSignalsApplied"), None
+        )
+        assert ev is not None, "CaseSignalsApplied event not found in trace"
+
+        p = ev.payload
+        assert p["scenario_type"] == "values_clarification"
+        assert p["values_present"] is False
+        assert p["action_type_before"] == "answer"
+        assert p["action_type_after"] == "clarify"
+        assert "action_type:answer->clarify" in p["applied_changes"]
+
+    def test_at010_case_signals_event_emitted(self) -> None:
+        """TR-1/AT-010: CaseSignalsApplied event must appear in trace for conflicting-constraints case."""
+        _, tracer = self._run_with_tracer("case_010")
+        event_types = [e.event_type for e in tracer.events]
+        assert any("CaseSignals" in t for t in event_types), (
+            f"No CaseSignals trace event found. Emitted events: {event_types}\n"
+            "The constraint_conflict injection by _apply_case_signals() is "
+            "currently invisible in the trace."
+        )
+
+    def test_at010_case_signals_event_payload(self) -> None:
+        """TR-1/AT-010: CaseSignalsApplied payload must document the constraint_conflict injection."""
+        _, tracer = self._run_with_tracer("case_010")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "CaseSignalsApplied"), None
+        )
+        assert ev is not None, "CaseSignalsApplied event not found in trace"
+
+        p = ev.payload
+        assert p["scenario_type"] == "conflicting_constraints"
+        assert p["has_constraint_conflict"] is True
+        assert p["constraint_conflict_added"] is True
+        assert "constraint_conflict:true" in p["applied_changes"]
+
+    def test_at001_no_case_signals_event_when_no_mutation(self) -> None:
+        """TR-1/AT-001: CaseSignalsApplied must NOT be emitted when no mutation is made.
+
+        case_001 has a full values list and no constraint conflict, so
+        _apply_case_signals() produces no changes.  The event must be
+        suppressed — emitting it with applied_changes=[] would be misleading.
+        """
+        result, tracer = self._run_with_tracer("case_001")
+
+        assert result["proposal"]["action_type"] == "answer"
+        event_types = [e.event_type for e in tracer.events]
+        assert "CaseSignalsApplied" not in event_types, (
+            f"CaseSignalsApplied was emitted for a no-mutation case. "
+            f"All events: {event_types}"
+        )
