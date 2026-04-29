@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-29 (AGG-TR-3 SafetyMode weights trace contract added; runtime total 40→43)  
-Source: `feat/agg-tr-3-safetymode-weights-trace @ HEAD`
+Source: `feat/agg-tr-3-safetymode-weights-trace @ 7f7a752`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
