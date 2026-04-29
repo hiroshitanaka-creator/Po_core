@@ -1106,19 +1106,30 @@ def _evaluate_candidate(
     return fb, True
 
 
-def _apply_case_signals(result: Dict[str, Any], signals: CaseSignals) -> Dict[str, Any]:
+def _apply_case_signals(
+    result: Dict[str, Any],
+    signals: CaseSignals,
+) -> tuple[Dict[str, Any], list[str]]:
     """Overlay CaseSignals semantics onto the run_turn result dict.
 
     Only modifies the result when signals indicate a non-default case:
     - values_present=False → primary proposal action_type overridden to 'clarify'
     - has_constraint_conflict=True → 'constraint_conflict': True added to result
+
+    Returns:
+        (modified_result, applied_changes) where applied_changes is a list of
+        human-readable descriptions of mutations made (empty when no mutation).
     """
+    changes: list[str] = []
     proposal = result.get("proposal")
     if isinstance(proposal, dict) and not signals.values_present:
+        before = proposal.get("action_type", "")
         result = {**result, "proposal": {**proposal, "action_type": "clarify"}}
+        changes.append(f"action_type:{before}->clarify")
     if signals.has_constraint_conflict:
         result = {**result, "constraint_conflict": True}
-    return result
+        changes.append("constraint_conflict:true")
+    return result, changes
 
 
 def run_turn(
@@ -1170,7 +1181,23 @@ def run_turn(
     )
     result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
     if case_signals is not None:
-        result = _apply_case_signals(result, case_signals)
+        _action_type_before = (result.get("proposal") or {}).get("action_type", "")
+        result, _changes = _apply_case_signals(result, case_signals)
+        deps.tracer.emit(
+            TraceEvent.now(
+                "CaseSignalsApplied",
+                ctx.request_id,
+                {
+                    "values_present": case_signals.values_present,
+                    "has_constraint_conflict": case_signals.has_constraint_conflict,
+                    "scenario_type": case_signals.scenario_type,
+                    "action_type_before": _action_type_before,
+                    "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                    "constraint_conflict_added": case_signals.has_constraint_conflict,
+                    "applied_changes": _changes,
+                },
+            )
+        )
     return result
 
 
@@ -1216,7 +1243,23 @@ async def async_run_turn(
     )
     result = _run_phase_post(ctx, deps, pre, ph_proposals, run_results)
     if case_signals is not None:
-        result = _apply_case_signals(result, case_signals)
+        _action_type_before = (result.get("proposal") or {}).get("action_type", "")
+        result, _changes = _apply_case_signals(result, case_signals)
+        deps.tracer.emit(
+            TraceEvent.now(
+                "CaseSignalsApplied",
+                ctx.request_id,
+                {
+                    "values_present": case_signals.values_present,
+                    "has_constraint_conflict": case_signals.has_constraint_conflict,
+                    "scenario_type": case_signals.scenario_type,
+                    "action_type_before": _action_type_before,
+                    "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                    "constraint_conflict_added": case_signals.has_constraint_conflict,
+                    "applied_changes": _changes,
+                },
+            )
+        )
     return result
 
 
