@@ -455,3 +455,96 @@ class TestCaseSignalsTraceVisibility:
             f"CaseSignalsApplied was emitted for a no-mutation case. "
             f"All events: {event_types}"
         )
+
+
+# ── AGG-TR-1: Pareto winner trace contract ───────────────────────────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestParetoWinnerTraceContract:
+    """AGG-TR-1: ParetoWinnerSelected trace must agree with the final returned proposal.
+
+    emit_pareto_debug_events() is tested in isolation.  This class tests the
+    production run() path end-to-end: the trace event must exist and its
+    winner.proposal_id must equal result["proposal"]["proposal_id"].
+
+    Also asserts that AggregateCompleted is present with the same proposal_id,
+    proving the aggregator result and the Pareto trace are consistent across
+    the full pipeline.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            result = run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return result, tracer
+
+    def test_pareto_winner_trace_matches_final_result(self) -> None:
+        """AGG-TR-1: ParetoWinnerSelected.winner.proposal_id == result.proposal.proposal_id."""
+        result, tracer = self._run_with_tracer("case_001")
+
+        final_pid = result["proposal"]["proposal_id"]
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        assert ev is not None, (
+            f"ParetoWinnerSelected event not found in trace. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        p = ev.payload
+        assert "winner" in p, f"ParetoWinnerSelected payload missing 'winner' key: {p}"
+        assert p["winner"]["proposal_id"] == final_pid, (
+            f"Pareto trace winner ({p['winner']['proposal_id']!r}) diverges from "
+            f"final returned proposal ({final_pid!r})"
+        )
+
+    def test_pareto_winner_payload_has_required_keys(self) -> None:
+        """AGG-TR-1: ParetoWinnerSelected payload must contain all required diagnostic keys."""
+        _, tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
+        )
+        assert ev is not None, "ParetoWinnerSelected event not found in trace"
+
+        p = ev.payload
+        for key in ("mode", "weights", "freedom_pressure", "winner"):
+            assert key in p, f"ParetoWinnerSelected payload missing key {key!r}: {p}"
+
+        w = p["winner"]
+        for key in ("proposal_id", "scores", "content_hash"):
+            assert key in w, f"ParetoWinnerSelected winner missing key {key!r}: {w}"
+
+    def test_aggregate_completed_matches_final_result(self) -> None:
+        """AGG-TR-1: AggregateCompleted.proposal_id must equal result.proposal.proposal_id."""
+        result, tracer = self._run_with_tracer("case_001")
+
+        final_pid = result["proposal"]["proposal_id"]
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "AggregateCompleted"), None
+        )
+        assert ev is not None, (
+            f"AggregateCompleted event not found in trace. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+        assert ev.payload["proposal_id"] == final_pid, (
+            f"AggregateCompleted proposal_id ({ev.payload['proposal_id']!r}) diverges "
+            f"from final returned proposal ({final_pid!r})"
+        )

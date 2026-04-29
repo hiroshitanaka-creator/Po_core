@@ -111,7 +111,7 @@ def emit_pareto_debug_events(
         TraceEvent.now(
             "ParetoWinnerSelected",
             ctx.request_id,
-            {**base, WINNER: winner_payload},
+            {**base, WEIGHTS: weights, WINNER: winner_payload},
         )
     )
 
