@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-29 (TR-1 CaseSignalsApplied trace event added; runtime total 29→33)  
-Source: `feat/case-signals-trace`
+Last updated: 2026-04-29 (TR-1 CaseSignalsApplied trace event added; runtime total 29→34)  
+Source: `main @ bbe0320`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
