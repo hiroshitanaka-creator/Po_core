@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (MODE-TR-2 SafetyModeInferred branch coverage added; unit total +7)  
-Source: `feat/mode-tr-2-safetymode-branch-coverage @ HEAD`
+Source: `feat/mode-tr-2-safetymode-branch-coverage @ eac71a7`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
