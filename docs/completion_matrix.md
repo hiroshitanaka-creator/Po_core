@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (SEL-TR-1 philosopher selection rationale trace contract added; runtime total +4)  
-Source: `feat/sel-tr-1-philosopher-selection-trace @ bb13a32`
+Source: `main @ a2a536f`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
