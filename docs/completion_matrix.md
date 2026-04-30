@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-29 (MODE-TR-1 SafetyMode inference trace contract added; runtime total 45→48)  
-Source: `feat/mode-tr-1-safetymode-inference-trace @ 9da60a1`
+Last updated: 2026-04-30 (MODE-TR-2 SafetyModeInferred branch coverage added; unit total +7)  
+Source: `feat/mode-tr-2-safetymode-branch-coverage @ HEAD`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -108,6 +108,23 @@ These tests expose where the **production pipeline itself** falls short, indepen
 
 **Runtime total: 48 pass / 0 fail / 0 xfail**
 
+### MODE-TR-2: SafetyModeInferred branch coverage
+
+Tests in `tests/unit/test_safety_mode_inferred_branches.py`.  
+Entry: `_build_safety_mode_inferred_payload(mode, fp_value, config)` (pure function extracted from `ensemble.py`).
+
+| Test | Status | Notes |
+|---|---|---|
+| `TestSafetyModeInferredBranches::test_missing_freedom_pressure` | ✅ | fp=None → mode=missing_mode, reason="freedom_pressure_missing" |
+| `TestSafetyModeInferredBranches::test_normal_branch` | ✅ | fp=0.10 < warn=0.30 → mode="normal", correct reason |
+| `TestSafetyModeInferredBranches::test_warn_branch` | ✅ | fp=0.40 in [0.30, 0.50) → mode="warn", correct reason |
+| `TestSafetyModeInferredBranches::test_critical_branch` | ✅ | fp=0.70 >= crit=0.50 → mode="critical", correct reason |
+| `TestSafetyModeInferredBoundaries::test_warn_boundary_exact` | ✅ | fp==warn exactly → mode="warn" (>= wins) |
+| `TestSafetyModeInferredBoundaries::test_critical_boundary_exact` | ✅ | fp==critical exactly → mode="critical" |
+| `TestSafetyModeInferredBoundaries::test_custom_missing_mode_warn` | ✅ | missing_mode=WARN reflected in payload |
+
+**Unit total (branch coverage): 7 pass / 0 fail**
+
 ### Gap catalogue
 
 | ID | Description | Status | Affected cases |
@@ -197,7 +214,8 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Safety | 9 | 0 | 0 |
 | Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **138** | **0** | **0** |
+| Unit (branch coverage) | 7 | 0 | 0 |
+| **Total** | **145** | **0** | **0** |
 
 ### Resolved gaps
 

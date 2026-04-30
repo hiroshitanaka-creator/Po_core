@@ -296,6 +296,34 @@ def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[
     return primaries, secondaries
 
 
+def _build_safety_mode_inferred_payload(
+    mode: SafetyMode,
+    fp_value: "Optional[float]",
+    config: SafetyModeConfig,
+) -> dict:
+    """Build the SafetyModeInferred trace payload.
+
+    Pure function; called from _run_phase_pre and testable in isolation.
+    """
+    if fp_value is None:
+        reason = "freedom_pressure_missing"
+    elif fp_value >= config.critical:
+        reason = "freedom_pressure >= critical_threshold"
+    elif fp_value >= config.warn:
+        reason = "warn_threshold <= freedom_pressure < critical_threshold"
+    else:
+        reason = "freedom_pressure < warn_threshold"
+    return {
+        "mode": mode.value,
+        "freedom_pressure": fp_value,
+        "warn_threshold": config.warn,
+        "critical_threshold": config.critical,
+        "missing_mode": config.missing_mode.value,
+        "source_metric": "freedom_pressure",
+        "reason": reason,
+    }
+
+
 def _run_phase_pre(
     ctx: DomainContext,
     deps: "EnsembleDeps",
@@ -337,28 +365,11 @@ def _run_phase_pre(
     )
     mode, fp_value = infer_safety_mode(tensors, safety_config)
 
-    if fp_value is None:
-        _smi_reason = "freedom_pressure_missing"
-    elif fp_value >= safety_config.critical:
-        _smi_reason = "freedom_pressure >= critical_threshold"
-    elif fp_value >= safety_config.warn:
-        _smi_reason = "warn_threshold <= freedom_pressure < critical_threshold"
-    else:
-        _smi_reason = "freedom_pressure < warn_threshold"
-
     tracer.emit(
         TraceEvent.now(
             "SafetyModeInferred",
             ctx.request_id,
-            {
-                "mode": mode.value,
-                "freedom_pressure": fp_value,
-                "warn_threshold": safety_config.warn,
-                "critical_threshold": safety_config.critical,
-                "missing_mode": safety_config.missing_mode.value,
-                "source_metric": "freedom_pressure",
-                "reason": _smi_reason,
-            },
+            _build_safety_mode_inferred_payload(mode, fp_value, safety_config),
         )
     )
 
