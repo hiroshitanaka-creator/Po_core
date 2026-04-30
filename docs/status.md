@@ -9,18 +9,22 @@
 ## Current Release State
 
 - Repository target version: `1.1.0`
-- Latest published public version: `1.0.3`
+- Latest published public version: `1.0.3` (PyPI production — pending `1.1.0` production publish)
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
-- TestPyPI evidence in-repo: `docs/release/testpypi_publish_log_v1.0.3.md`
+- TestPyPI evidence in-repo (v1.0.3): `docs/release/testpypi_publish_log_v1.0.3.md`
+- TestPyPI evidence in-repo (v1.1.0): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38)
+- TestPyPI workflow run (v1.1.0): https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205 (Success, 18m 38s, SHA `c94a390`, `main`)
 - Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22; full-deps smoke transcript appended 2026-04-28)
 - v1.1.0 candidate handoff: `docs/release/release_candidate_handoff_v1.1.0.md`
-- v1.1.0 smoke evidence: `docs/release/smoke_verification_v1.1.0.md` (pending — not yet published)
+- v1.1.0 RC verification: `docs/release/release_candidate_verification_v1.1.0.md` — all 6 steps ✅ (2026-04-30)
 - External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
-- PyPI publication for `1.1.0`: pending — not yet uploaded.
+- External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI** — https://test.pypi.org/project/po-core-flyingpig/1.1.0/
+- PyPI publication for `1.1.0`: **pending** — production PyPI publish not yet uploaded (TestPyPI only).
 - PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
-- Pending evidence (v1.1.0): Record GitHub Actions workflow run URL(s); record clean import + runtime smoke transcript post-publish.
+- TestPyPI upload timestamp (v1.1.0): `2026-04-30T05:51:03` UTC (confirmed via TestPyPI JSON API)
+- Pending evidence (v1.1.0): PyPI production publish + post-publish smoke transcript (TestPyPI install smoke blocked by host_not_allowed in this environment; JSON API + RC Step 6 wheel smoke serve as substitute evidence).
 
 ## Canonical public wording
 
@@ -82,6 +86,7 @@ Stage 2 planning (after publish):
 
 ## Completed
 
+- 2026-04-30: TestPyPI publish confirmed for v1.1.0. Workflow run #38 (`https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205`) succeeded (18m 38s, SHA `c94a390`, `main`). TestPyPI JSON API confirms upload at `2026-04-30T05:51:03 UTC`. Evidence: `docs/release/testpypi_publish_log_v1.1.0.md`. Direct `pip install` from `test-files.pythonhosted.org` blocked in this environment (`host_not_allowed`); JSON API + RC Step 6 wheel smoke serve as substitute evidence. PyPI production publish is the next step (pending decision).
 - 2026-04-30: RELEASE-CANDIDATE-VERIFY-1 complete (v1.1.0). All 6 local RC verification steps passed: version check (1.1.0), build artifacts (wheel + sdist), twine check (both PASSED), release readiness tests (24/24), dev-checkout smoke (`run_status=ok`), clean venv wheel install smoke (`dist_version=1.1.0`, all CLI entrypoints resolved from wheel). Evidence doc: `docs/release/release_candidate_verification_v1.1.0.md`. TestPyPI publish is the next step (pending workflow trigger). Template: `docs/release/templates/testpypi_publish_log_template_v1.1.0.md`.
 - 2026-04-30: Black formatting baseline restored. Ran `black .` on pre-existing formatting violations so `black --check .` passes cleanly. Formatting-only; no behavior, version, publish, tag, or release changes. This unblocks release/v1.1.0-prep without mixing formatting into the release-prep PR.
 - 2026-04-30: Engine trace audit closure (STATUS-SYNC-1). All engine trace contracts are now documented, sample-validated, and test-locked. `docs/ENGINE_TRACE_CONTRACT.md` covers all emitted events end-to-end: `TensorComputed` (metric_status per-metric provenance), `SafetyModeInferred` (7-field mode inference record), `PhilosophersSelected` (full selection rationale incl. limit/require_tags/preferred_tags/max_risk/cost_budget), Pareto events (`ConflictSummaryComputed` / `ParetoFrontComputed` / `ParetoWinnerSelected` with 6-objective weights, weighted_score formula), `AggregateCompleted`, `DecisionEmitted` (ProposalFingerprint + VerdictSummary), `SafetyOverrideApplied`, `CaseSignalsApplied`. `docs/viewer/sample_trace.json` aligned to current contract. 8 sample-trace contract tests added (`tests/unit/test_sample_trace_contract.py`, pure JSON parse). `completion_matrix.md` total: **164 pass / 0 fail / 0 not-yet**.
