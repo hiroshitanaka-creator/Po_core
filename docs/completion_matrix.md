@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (TRACE-VIEW-1: sample_trace.json aligned with ENGINE_TRACE_CONTRACT; viewer README added; 8 unit tests added; unit total 7→15, overall 156→164)  
-Source: `main @ e24cf74`
+Source: `release/v1.1.0-prep @ 7afd043`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
