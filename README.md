@@ -110,7 +110,7 @@ For full source layout and component detail → [Architecture docs](./02_archite
 
 ## Release State
 
-Version `1.0.3` is published on PyPI. Package classifiers declare `Development Status :: 4 - Beta`.
+Repository target version is `1.1.0`; `1.0.3` is the latest published on PyPI. Package classifiers declare `Development Status :: 4 - Beta`.
 
 For the complete evidence record, evidence gaps, and roadmap: **[docs/status.md](https://github.com/hiroshitanaka-creator/Po_core/blob/main/docs/status.md)**
 

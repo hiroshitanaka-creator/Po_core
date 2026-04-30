@@ -13,7 +13,7 @@ pip install "po-core-flyingpig==1.0.3"
 
 ## 📦 Published package status
 
-Repository target version is `1.0.3`, and the latest published public version is also `1.0.3`. Publication evidence is fixed in `docs/release/pypi_publication_v1.0.3.md`, `docs/release/testpypi_publish_log_v1.0.3.md`, and `docs/release/smoke_verification_v1.0.3.md`; workflow-run URL(s) and full-deps smoke transcripts remain pending.
+Repository target version is `1.1.0`; the latest published public version is `1.0.3`. Publication evidence for `1.0.3` is fixed in `docs/release/pypi_publication_v1.0.3.md`, `docs/release/testpypi_publish_log_v1.0.3.md`, and `docs/release/smoke_verification_v1.0.3.md`. `1.1.0` publish is pending.
 
 ## 🔐 REST runtime defaults
 

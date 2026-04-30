@@ -8,16 +8,19 @@
 
 ## Current Release State
 
-- Repository target version: `1.0.3`
+- Repository target version: `1.1.0`
 - Latest published public version: `1.0.3`
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
 - TestPyPI evidence in-repo: `docs/release/testpypi_publish_log_v1.0.3.md`
 - Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22; full-deps smoke transcript appended 2026-04-28)
-- External publish status: **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
-- PyPI upload timestamp: `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
-- TestPyPI upload timestamp: `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
-- Pending evidence: GitHub Actions workflow run URL(s) — not retrievable via available MCP tooling (no `list_workflow_runs` endpoint); PyPI JSON API serves as proof of publication. No other evidence gaps remain.
+- v1.1.0 candidate handoff: `docs/release/release_candidate_handoff_v1.1.0.md`
+- v1.1.0 smoke evidence: `docs/release/smoke_verification_v1.1.0.md` (pending — not yet published)
+- External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
+- PyPI publication for `1.1.0`: pending — not yet uploaded.
+- PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
+- TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
+- Pending evidence (v1.1.0): Record GitHub Actions workflow run URL(s); record clean import + runtime smoke transcript post-publish.
 
 ## Canonical public wording
 
@@ -28,7 +31,7 @@
 ## Release Readiness Facts
 
 - `pyproject.toml` は version を `po_core.__version__` から動的読込する。
-- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.0.3` を repository target version として扱う。
+- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.1.0` を repository target version として扱う。
 - Release workflow (`.github/workflows/publish.yml`) は same-SHA TestPyPI prerequisite を含む strict gate を維持している。
 - `docs/release/pypi_publication_v1.0.3.md` により `1.0.3` の public PyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
 - `docs/release/testpypi_publish_log_v1.0.3.md` により `1.0.3` の TestPyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
@@ -66,9 +69,16 @@ All evidence gaps are now closed:
 
 ## Next
 
-Post-release follow-up:
+v1.1.0 publish tasks:
 
-- Stage 2 planning: v1.1.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
+- Record GitHub Actions workflow run URL(s) for the v1.1.0 publish run.
+- record clean import + runtime smoke transcript in a fresh venv post-publish.
+- Update `docs/release/smoke_verification_v1.1.0.md` from "pending" to confirmed evidence.
+- Update `docs/status.md`: Latest published public version → `1.1.0`; External publish status → confirmed.
+
+Stage 2 planning (after publish):
+
+- Stage 2 planning: v1.2.x feature work, ecosystem expansion (see ROADMAP_FINAL_FORM.md).
 
 ## Completed
 

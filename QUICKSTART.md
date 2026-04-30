@@ -26,7 +26,7 @@ python -m build
 twine check dist/*
 ```
 
-> Repository target version は `1.0.3` で、latest published public version も `1.0.3` です。公開証跡は `docs/release/pypi_publication_v1.0.3.md` / `docs/release/testpypi_publish_log_v1.0.3.md` / `docs/release/smoke_verification_v1.0.3.md` に固定されています。workflow URL と full deps smoke は引き続き pending です。
+> Repository target version は `1.1.0` で、latest published public version は `1.0.3` です。公開証跡は `docs/release/pypi_publication_v1.0.3.md` / `docs/release/testpypi_publish_log_v1.0.3.md` / `docs/release/smoke_verification_v1.0.3.md` に固定されています。`1.1.0` の publish は pending です。
 
 ## 🔐 REST ランタイム既定値
 
