@@ -94,6 +94,13 @@ DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 # (risk=2) are filtered out before selection; the roster will differ from the
 # NORMAL prediction above, but the scenario_type signal and preferred_tags are
 # still forwarded to the registry for whatever selection it can satisfy.
+_EXPECTED_TENSOR_METRICS: tuple = (
+    "freedom_pressure",
+    "semantic_delta",
+    "blocked_tensor",
+    "interaction_tensor",
+)
+
 _SCENARIO_ROUTING: Dict[str, tuple] = {
     "values_clarification": (
         (TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE),
@@ -349,11 +356,33 @@ def _run_phase_pre(
 
     # 2. Tensor computation
     tensors = deps.tensors.compute(ctx, memory)
+    _metric_status: Dict[str, Any] = {}
+    for _mname in _EXPECTED_TENSOR_METRICS:
+        _mv = tensors.metrics.get(_mname)
+        if isinstance(_mv, (int, float)):
+            _tv = tensors.values.get(_mname)
+            _metric_status[_mname] = {
+                "status": "computed",
+                "source": _tv.source if _tv is not None else "unknown",
+            }
+        else:
+            _metric_status[_mname] = {"status": "missing", "source": None}
+    for _mname in tensors.metrics:
+        if _mname not in _metric_status:
+            _tv = tensors.values.get(_mname)
+            _metric_status[_mname] = {
+                "status": "computed",
+                "source": _tv.source if _tv is not None else "unknown",
+            }
     tracer.emit(
         TraceEvent.now(
             "TensorComputed",
             ctx.request_id,
-            {"metrics": dict(tensors.metrics), "version": tensors.version},
+            {
+                "metrics": dict(tensors.metrics),
+                "version": tensors.version,
+                "metric_status": _metric_status,
+            },
         )
     )
 

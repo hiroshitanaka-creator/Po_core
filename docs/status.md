@@ -49,7 +49,7 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 | RT-GAP-003 | ✅ RESOLVED | `CaseSignals(has_constraint_conflict=True)` + `_apply_case_signals()` injects `constraint_conflict=True` into result dict for conflicting-constraints input. |
 | RT-GAP-004 | ✅ RESOLVED | `run_case(case: dict)` added to `po_core.app.api` and exported from `po_core`. Wraps `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. xfail removed from test suite. |
 
-**completion_matrix.md totals: 152 pass / 0 fail / 0 not-yet**
+**completion_matrix.md totals: 155 pass / 0 fail / 0 not-yet**
 
 ## Remaining Evidence Gaps (post-publication)
 
@@ -72,6 +72,7 @@ Post-release follow-up:
 
 ## Completed
 
+- 2026-04-30: TENSOR-TR-2 resolved. `TensorEngine.compute()` extended to populate `TensorSnapshot.values` with `TensorValue(source=fn.__module__)` for each metric function. `TensorComputed` trace payload extended with `metric_status`: for each expected metric, records `{"status": "computed"|"missing", "source": "..."}`. Extra computed metrics beyond the 4 expected are also covered. `TestTensorComputedStatusTrace` (3 tests): metric_status present with valid status strings; all metrics keys covered; fake engine omitting `semantic_delta` → `metric_status["semantic_delta"]["status"] == "missing"`. Runtime 55→58, total 152→155. Session: `feat/tensor-tr-2-tensor-metric-status`.
 - 2026-04-30: TENSOR-TR-1 resolved. No production code changes required — TensorComputed payload already carries `metrics` (freedom_pressure, semantic_delta, blocked_tensor, interaction_tensor) and `version`. `TestTensorComputedTrace` (3 tests) added: payload has all 4 required metric keys + version; SafetyModeInferred.freedom_pressure == TensorComputed.metrics["freedom_pressure"] within 1e-9; all metric values are int/float or None. Runtime 52→55, total 149→152. Session: `feat/tensor-tr-1-tensor-computed-trace`.
 - 2026-04-30: SEL-TR-1 resolved. `Selection` dataclass extended with `max_risk`, `cost_budget`, `limit` (effective), and `require_tags` (effective) — populated from `SelectionPlan` and the effective values computed in `registry.select()`. `PhilosophersSelected` payload extended with all six rationale keys: `max_risk`, `cost_budget`, `limit_override`, `preferred_tags`, `limit`, `require_tags`. `AllowlistRegistry.select()` and test helpers updated. `TestPhilosopherSelectionRationale` (4 tests) added: case_001 verifies limit_override=None/preferred_tags=None with non-None effective values; AT-009 verifies limit==limit_override==3 and require_tags==preferred_tags; AT-010 same; distinct rosters confirmed. Runtime 48→52, total 145→149. Session: `feat/sel-tr-1-philosopher-selection-trace`.
 - 2026-04-30: MODE-TR-2 resolved. `_build_safety_mode_inferred_payload(mode, fp_value, config)` extracted as a pure function from `_run_phase_pre` in `ensemble.py`; inline reason block replaced with a call to the helper. `tests/unit/test_safety_mode_inferred_branches.py` created: 7 tests covering all 4 branches (missing/normal/warn/critical) and 3 boundary/config cases. Tests run in 0.08s (no pipeline). Unit gate added to summary: 7 pass. Total 138→145. Session: `feat/mode-tr-2-safetymode-branch-coverage`.
