@@ -112,7 +112,7 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     published_version = TARGET_PUBLIC_VERSION
     status_doc = _read("docs/status.md")
 
-    assert version == "1.0.3"
+    assert version == "1.1.0"
     assert published_version == "1.0.3"
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc

@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-30
+
+### Added
+- feat(api): export `run_case(case: dict)` and `async_run_case()` from the top-level `po_core` package; returns `output_schema_v1`-conformant result (RT-GAP-004).
+- feat(ensemble): `CaseSignals` + `_SCENARIO_ROUTING` for scenario-aware philosopher selection — routes `values_clarification` and `conflicting_constraints` to dedicated `(preferred_tags, limit_override)` pairs (RT-GAP-001/002/003).
+- feat(trace): `SafetyModeInferred` event emitted immediately after `infer_safety_mode()` — 7-field payload covering mode, thresholds, source_metric, and reason (MODE-TR-1/2).
+- feat(trace): `CaseSignalsApplied` event emitted when `_apply_case_signals()` mutates the result dict — records `action_type_before/after` and `applied_changes` list (TR-1).
+- feat(trace): `PhilosophersSelected` payload extended with 7 selection-rationale fields: `scenario_type`, `preferred_tags`, `limit_override`, `limit`, `require_tags`, `max_risk`, `cost_budget` (SEL-TR-1).
+- feat(trace): `ParetoWinnerSelected` payload gains top-level `weights` dict and `winner.weighted_score` (6 sig. fig., recomputable within 1e-4) (AGG-TR-1/2).
+- feat(domain): `ParetoWeights.emergence` field — NORMAL=0.10, WARN=0.05, CRITICAL=0.00; all six objectives now appear in every Pareto scores dict (AGG-TR-3).
+- feat(tensors): `TensorComputed` payload gains `metric_status` — per-metric provenance dict covering all 4 expected metrics with `"computed"`/`"missing"` status and source (TENSOR-TR-1/2).
+- feat(tensors): `TensorEngine.compute()` populates `TensorSnapshot.values` with `TensorValue(source=module_name)` for each metric function (TENSOR-TR-2).
+- docs: `docs/ENGINE_TRACE_CONTRACT.md` — full field-level spec for all trace events (normal-path + override-path sequences, `weighted_score` recomputation formula, known non-goals).
+- docs: `docs/viewer/README.md` — normal path, override path, conditional events, key field changes, `weighted_score` verification arithmetic.
+- docs: `docs/viewer/sample_trace.json` updated — aligned to contract: metrics dict, metric_status, SafetyModeInferred, PhilosophersSelected rationale, ParetoFrontComputed emergence, ParetoWinnerSelected weights+weighted_score (TRACE-VIEW-1).
+
+### Tests
+- test(acceptance): 45 new acceptance tests in `tests/acceptance/test_runtime_acceptance.py` (TestRunCaseSchemaConformance, TestCaseSignalsTraceVisibility, TestParetoWinnerTraceContract, TestParetoWinnerScoreExplainability, TestParetoSafetyModeWeights, TestActionGateTraceContract, TestSafetyModeInferredTrace, TestPhilosopherSelectionRationale, TestTensorComputedTrace, TestTensorComputedStatusTrace).
+- test(unit): `tests/unit/test_safety_mode_inferred_branches.py` — 7 tests covering all 4 branches and 3 boundary/config cases (pure function, 0.08s).
+- test(unit): `tests/unit/test_sample_trace_contract.py` — 8 tests asserting sample_trace.json alignment with ENGINE_TRACE_CONTRACT (pure JSON parse, 0.06s).
+- Completion matrix: **164 pass / 0 fail / 0 not-yet** (was 110 at v1.0.3 close).
+
 ## [1.0.3] - 2026-03-22
 
 ### Added
