@@ -14,7 +14,8 @@
 |-------|-------|
 | Date | 2026-04-30 |
 | Branch | `main` |
-| Head commit | `5c4bd7f` (docs: update completion_matrix Source to main @ 3d1d657) |
+| Verified tree commit | `5c4bd7f` (docs: update completion_matrix Source to main @ 3d1d657) |
+| Evidence document commit | `254afd5` (docs(release): add release_candidate_verification_v1.1.0.md) |
 | Release commit | `3d1d657` (release: prepare v1.1.0 — PR #548 squash merge) |
 | Python | 3.11.15 |
 | Verified by | Claude Code (RELEASE-CANDIDATE-VERIFY-1) |
