@@ -30,10 +30,7 @@ from typing import Awaitable, Callable, Iterable
 
 from fastapi import Depends, HTTPException, Request, status
 
-from po_core.app.rest.auth import (
-    evaluate_auth_policy,
-    extract_api_key_from_header_map,
-)
+from po_core.app.rest.auth import evaluate_auth_policy, extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, get_api_settings
 
 

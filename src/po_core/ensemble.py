@@ -45,6 +45,14 @@ from po_core.party_machine import RunResult, async_run_philosophers, run_philoso
 from po_core.philosophers.allowlist import AllowlistRegistry
 from po_core.philosophers.base import Philosopher, PhilosopherProtocol
 from po_core.philosophers.registry import PhilosopherRegistry
+from po_core.philosophers.tags import (
+    TAG_CLARIFY,
+    TAG_COMPLIANCE,
+    TAG_CREATIVE,
+    TAG_CRITIC,
+    TAG_PLANNER,
+    TAG_REDTEAM,
+)
 from po_core.ports.aggregator import AggregatorPort
 from po_core.ports.memory_read import MemoryReadPort
 from po_core.ports.memory_write import MemoryRecord, MemoryWritePort
@@ -63,14 +71,6 @@ from po_core.trace.decision_events import (
 )
 from po_core.trace.pareto_events import emit_pareto_debug_events
 from po_core.trace.synthesis_report_events import emit_synthesis_report_built
-from po_core.philosophers.tags import (
-    TAG_CLARIFY,
-    TAG_COMPLIANCE,
-    TAG_CREATIVE,
-    TAG_CRITIC,
-    TAG_PLANNER,
-    TAG_REDTEAM,
-)
 
 DEFAULT_PHILOSOPHERS: List[str] = ["aristotle", "confucius", "wittgenstein"]
 
