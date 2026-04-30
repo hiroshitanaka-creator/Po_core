@@ -1,9 +1,10 @@
 {
   "request_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
-  "n_events": 51,
+  "n_events": 52,
   "event_types": [
     "MemorySnapshotted",
     "TensorComputed",
+    "SafetyModeInferred",
     "IntentGenerated",
     "SafetyJudged:Intention",
     "PhilosophersSelected",
@@ -370,13 +371,33 @@
       "occurred_at": "2026-02-20T10:03:16.714137+00:00",
       "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
       "payload": {
-        "metrics": [
-          "freedom_pressure",
-          "semantic_delta",
-          "blocked_tensor",
-          "interaction_tensor"
-        ],
-        "version": "v1"
+        "metrics": {
+          "freedom_pressure": 0.0898,
+          "semantic_delta": 0.62,
+          "blocked_tensor": 0.77,
+          "interaction_tensor": 0.15
+        },
+        "version": "v1",
+        "metric_status": {
+          "freedom_pressure": {"status": "computed", "source": "freedom_pressure"},
+          "semantic_delta":   {"status": "computed", "source": "semantic_delta"},
+          "blocked_tensor":   {"status": "computed", "source": "blocked_tensor"},
+          "interaction_tensor": {"status": "computed", "source": "interaction_tensor"}
+        }
+      }
+    },
+    {
+      "event_type": "SafetyModeInferred",
+      "occurred_at": "2026-02-20T10:03:16.714150+00:00",
+      "correlation_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666",
+      "payload": {
+        "mode": "normal",
+        "freedom_pressure": 0.0898,
+        "warn_threshold": 0.30,
+        "critical_threshold": 0.50,
+        "missing_mode": "warn",
+        "source_metric": "freedom_pressure",
+        "reason": "freedom_pressure < warn_threshold"
       }
     },
     {
@@ -459,7 +480,14 @@
           "badiou",
           "butler"
         ],
-        "workers": 12
+        "workers": 12,
+        "scenario_type": "general",
+        "preferred_tags": null,
+        "limit_override": null,
+        "max_risk": 2,
+        "cost_budget": 80,
+        "limit": 42,
+        "require_tags": ["planner", "critic", "compliance", "creative", "redteam"]
       }
     },
     {
@@ -993,7 +1021,8 @@
           "freedom": 0.3,
           "explain": 0.2,
           "brevity": 0.1,
-          "coherence": 0.15
+          "coherence": 0.15,
+          "emergence": 0.10
         },
         "front_size": 16,
         "front": [
@@ -1005,7 +1034,8 @@
               "freedom": 0.9102,
               "explain": 0.5373,
               "brevity": 0.973,
-              "coherence": 0.02230908599642111
+              "coherence": 0.02230908599642111,
+              "emergence": 0.0
             },
             "content_len": 54,
             "content_hash": "0ac314ad1f"
@@ -1018,7 +1048,8 @@
               "freedom": 0.9102,
               "explain": 0.5373,
               "brevity": 0.8009999999999999,
-              "coherence": 0.08840309531527428
+              "coherence": 0.08840309531527428,
+              "emergence": 0.0
             },
             "content_len": 398,
             "content_hash": "cc6d2d0d46"
@@ -1031,7 +1062,8 @@
               "freedom": 0.9102,
               "explain": 0.4475,
               "brevity": 0.97,
-              "coherence": 0.048530622250286384
+              "coherence": 0.048530622250286384,
+              "emergence": 0.0
             },
             "content_len": 60,
             "content_hash": "0d383d6640"
@@ -1044,7 +1076,8 @@
               "freedom": 0.9102,
               "explain": 0.53345,
               "brevity": 0.959,
-              "coherence": 0.03746732974004356
+              "coherence": 0.03746732974004356,
+              "emergence": 0.0
             },
             "content_len": 82,
             "content_hash": "ee81ac9bd7"
@@ -1057,7 +1090,8 @@
               "freedom": 0.9102,
               "explain": 0.5345,
               "brevity": 0.802,
-              "coherence": 0.08221820502647409
+              "coherence": 0.08221820502647409,
+              "emergence": 0.0
             },
             "content_len": 396,
             "content_hash": "3b93b1d751"
@@ -1070,7 +1104,8 @@
               "freedom": 0.9102,
               "explain": 0.5324,
               "brevity": 0.741,
-              "coherence": 0.11573145367609194
+              "coherence": 0.11573145367609194,
+              "emergence": 0.0
             },
             "content_len": 518,
             "content_hash": "4440a10bf4"
@@ -1083,7 +1118,8 @@
               "freedom": 0.9102,
               "explain": 0.54045,
               "brevity": 0.7135,
-              "coherence": 0.10991696086711891
+              "coherence": 0.10991696086711891,
+              "emergence": 0.0
             },
             "content_len": 573,
             "content_hash": "a2dc14312c"
@@ -1096,7 +1132,8 @@
               "freedom": 0.9102,
               "explain": 0.53905,
               "brevity": 0.7110000000000001,
-              "coherence": 0.11811876841108304
+              "coherence": 0.11811876841108304,
+              "emergence": 0.0
             },
             "content_len": 578,
             "content_hash": "c04993c4ac"
@@ -1109,7 +1146,8 @@
               "freedom": 0.9102,
               "explain": 0.53905,
               "brevity": 0.773,
-              "coherence": 0.10448765213418403
+              "coherence": 0.10448765213418403,
+              "emergence": 0.0
             },
             "content_len": 454,
             "content_hash": "ab1d24879c"
@@ -1122,7 +1160,8 @@
               "freedom": 0.9102,
               "explain": 0.53905,
               "brevity": 0.9615,
-              "coherence": 0.022494453858570986
+              "coherence": 0.022494453858570986,
+              "emergence": 0.0
             },
             "content_len": 77,
             "content_hash": "cf608e7841"
@@ -1135,7 +1174,8 @@
               "freedom": 0.9102,
               "explain": 0.5373,
               "brevity": 0.7675,
-              "coherence": 0.10893277030302856
+              "coherence": 0.10893277030302856,
+              "emergence": 0.0
             },
             "content_len": 465,
             "content_hash": "e992ba0f12"
@@ -1148,7 +1188,8 @@
               "freedom": 0.9102,
               "explain": 0.538,
               "brevity": 0.8,
-              "coherence": 0.09010849812440906
+              "coherence": 0.09010849812440906,
+              "emergence": 0.0
             },
             "content_len": 400,
             "content_hash": "a64b77b2c1"
@@ -1161,7 +1202,8 @@
               "freedom": 0.9102,
               "explain": 0.53835,
               "brevity": 0.785,
-              "coherence": 0.10073727652981616
+              "coherence": 0.10073727652981616,
+              "emergence": 0.0
             },
             "content_len": 430,
             "content_hash": "fefb511c29"
@@ -1174,7 +1216,8 @@
               "freedom": 0.9102,
               "explain": 0.53765,
               "brevity": 0.6990000000000001,
-              "coherence": 0.1204224300456424
+              "coherence": 0.1204224300456424,
+              "emergence": 0.0
             },
             "content_len": 602,
             "content_hash": "ea16b34b79"
@@ -1187,7 +1230,8 @@
               "freedom": 0.9102,
               "explain": 0.53905,
               "brevity": 0.7545,
-              "coherence": 0.10728669262833698
+              "coherence": 0.10728669262833698,
+              "emergence": 0.0
             },
             "content_len": 491,
             "content_hash": "2d55fe26f1"
@@ -1200,7 +1244,8 @@
               "freedom": 0.9102,
               "explain": 0.53975,
               "brevity": 0.7935,
-              "coherence": 0.09961041425611185
+              "coherence": 0.09961041425611185,
+              "emergence": 0.0
             },
             "content_len": 413,
             "content_hash": "58001c7fea"
@@ -1218,6 +1263,14 @@
         "freedom_pressure": "0.0898",
         "config_version": "1",
         "config_source": "file:02_architecture/philosophy/pareto_table.yaml",
+        "weights": {
+          "safety": 0.25,
+          "freedom": 0.3,
+          "explain": 0.2,
+          "brevity": 0.1,
+          "coherence": 0.15,
+          "emergence": 0.10
+        },
         "winner": {
           "proposal_id": "d3cd17fa-a1fe-4bbc-908a-0479c7124666:Dogen Zenji (\u9053\u5143\u7985\u5e2b):0",
           "action_type": "answer",
@@ -1226,8 +1279,10 @@
             "freedom": 0.9102,
             "explain": 0.53345,
             "brevity": 0.959,
-            "coherence": 0.03746732974004356
+            "coherence": 0.03746732974004356,
+            "emergence": 0.0
           },
+          "weighted_score": 0.73127,
           "content_len": 82,
           "content_hash": "ee81ac9bd7"
         }
