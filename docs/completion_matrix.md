@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (TENSOR-TR-2 TensorComputed metric status/fallback contract added; runtime total +3)  
-Source: `feat/tensor-tr-2-tensor-metric-status @ HEAD`
+Source: `feat/tensor-tr-2-tensor-metric-status @ 9da90a2`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
