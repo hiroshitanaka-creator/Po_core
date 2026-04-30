@@ -287,6 +287,7 @@ Po_core's Pareto weights are config-driven (`pareto_table.yaml`) and fully exter
 | [docs/spec/output_schema_v1.json](./docs/spec/output_schema_v1.json) | JSON Schema — contract for all structured output |
 | [docs/spec/test_cases.md](./docs/spec/test_cases.md) | 10 acceptance tests (AT-001〜AT-010) |
 | [docs/spec/traceability.md](./docs/spec/traceability.md) | Traceability matrix |
+| [docs/ENGINE_TRACE_CONTRACT.md](./docs/ENGINE_TRACE_CONTRACT.md) | Engine trace event contract (TensorComputed, SafetyModeInferred, Pareto events, DecisionEmitted) |
 | [docs/SAFETY.md](./docs/SAFETY.md) | W-ethics safety system |
 | [docs/TUTORIAL.md](./docs/TUTORIAL.md) | Getting started guide |
 | [docs/VISUALIZATION_GUIDE.md](./docs/VISUALIZATION_GUIDE.md) | Tension maps and pressure display |
