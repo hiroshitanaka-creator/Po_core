@@ -129,7 +129,9 @@ def validate_body(body: str, changed_files: list[str]) -> list[str]:
         marker = "実行ログ（コマンドと結果）:"
         log_text = test_section.split(marker, 1)[1] if marker in test_section else ""
         if not _has_non_placeholder_line(log_text):
-            failures.append("Missing section content: Test Report / 実行ログ（コマンドと結果）")
+            failures.append(
+                "Missing section content: Test Report / 実行ログ（コマンドと結果）"
+            )
 
     impact_section = extract_section(body, "Impact / Rollback")
     if not impact_section:
@@ -140,7 +142,9 @@ def validate_body(body: str, changed_files: list[str]) -> list[str]:
         if is_placeholder(impact_scope):
             failures.append("Missing section content: Impact / Rollback / 影響範囲")
         if is_placeholder(rollback):
-            failures.append("Missing section content: Impact / Rollback / ロールバック手順")
+            failures.append(
+                "Missing section content: Impact / Rollback / ロールバック手順"
+            )
 
     if requires_status_update(changed_files) and "docs/status.md" not in changed_files:
         failures.append("docs/status.md must be updated for code-affecting changes")

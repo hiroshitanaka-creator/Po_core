@@ -61,8 +61,8 @@ from rich.panel import Panel
 from po_core.deliberation.protocol import run_deliberation
 from po_core.domain.keys import AUTHOR, PO_CORE
 from po_core.philosopher_process import SerializedJob, _supports_budget_kwarg
-from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
 from po_core.philosophers.identity import resolve_philosopher_id
+from po_core.runtime.execution_budget import ExecutionBudget, ExecutionBudgetExceeded
 from po_core.runtime.philosopher_executor import ExecutionResult as _ExecutionResult
 from po_core.runtime.philosopher_executor import (
     ExecutorConfig,

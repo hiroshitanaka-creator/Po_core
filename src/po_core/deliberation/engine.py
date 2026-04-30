@@ -69,7 +69,9 @@ class DeliberationResult:
     emergence_signals: List[EmergenceSignal] = field(default_factory=list)
     influence_weights: Dict[str, InfluenceWeight] = field(default_factory=dict)
     cluster_result: Optional[ClusterResult] = None  # Phase 6-C1
-    errors: List[str] = field(default_factory=list)  # Non-fatal errors during deliberation
+    errors: List[str] = field(
+        default_factory=list
+    )  # Non-fatal errors during deliberation
 
     @property
     def n_rounds(self) -> int:

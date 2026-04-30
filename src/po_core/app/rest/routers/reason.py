@@ -25,7 +25,6 @@ from po_core.app.api import async_run as po_async_run
 from po_core.app.api import run as po_run
 from po_core.app.rest.auth import extract_api_key_from_header_map
 from po_core.app.rest.config import APISettings, get_api_settings, is_rate_limit_enabled
-from po_core.app.rest.scopes import Scope, evaluate_scope_policy, require_scope
 from po_core.app.rest.models import (
     PhilosopherContribution,
     ReasonRequest,
@@ -35,6 +34,7 @@ from po_core.app.rest.models import (
 from po_core.app.rest.rate_limit import _extract_forwarded_ip, limiter
 from po_core.app.rest.redaction import redact_payload
 from po_core.app.rest.review_store import enqueue_review
+from po_core.app.rest.scopes import Scope, evaluate_scope_policy, require_scope
 from po_core.app.rest.store import save_trace
 from po_core.runtime.settings import APISettingsLike, Settings
 from po_core.trace.in_memory import InMemoryTracer
@@ -70,7 +70,9 @@ _sync_active_workers: int = 0
 _sync_active_lock = threading.Lock()
 
 
-def _configure_sync_executor(max_workers: int) -> tuple[ThreadPoolExecutor, asyncio.Semaphore]:
+def _configure_sync_executor(
+    max_workers: int,
+) -> tuple[ThreadPoolExecutor, asyncio.Semaphore]:
     """Ensure a pool of exactly *max_workers* threads is live.
 
     Rebuilds the pool when ``max_workers`` changes (e.g. a test swaps settings)

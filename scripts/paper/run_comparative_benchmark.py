@@ -96,7 +96,9 @@ def _load_profiles(repo_root: Path) -> list[SystemProfile]:
 def _to_result_rows(profiles: list[SystemProfile]) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
     for profile in profiles:
-        axis_scores = {axis: round(profile.metrics.get(axis, 0.0) * 100.0, 2) for axis in AXES}
+        axis_scores = {
+            axis: round(profile.metrics.get(axis, 0.0) * 100.0, 2) for axis in AXES
+        }
         overall = round(sum(axis_scores.values()) / len(AXES), 2)
         rows.append(
             {
@@ -173,7 +175,9 @@ def _result_digest(rows: list[dict[str, object]]) -> str:
     return hashlib.sha256(normalized).hexdigest()
 
 
-def run(repo_root: Path, output_dir: Path, created_at: str, seed: int) -> dict[str, object]:
+def run(
+    repo_root: Path, output_dir: Path, created_at: str, seed: int
+) -> dict[str, object]:
     profiles = _load_profiles(repo_root)
     rows = _to_result_rows(profiles)
 
@@ -198,7 +202,9 @@ def run(repo_root: Path, output_dir: Path, created_at: str, seed: int) -> dict[s
     table_md = _render_markdown_table(rows)
     (output_dir / "comparative_table.md").write_text(table_md, encoding="utf-8")
 
-    with (output_dir / "comparative_table.csv").open("w", newline="", encoding="utf-8") as f:
+    with (output_dir / "comparative_table.csv").open(
+        "w", newline="", encoding="utf-8"
+    ) as f:
         writer = csv.writer(f)
         writer.writerow(["system_id", "label", *AXES, "overall"])
         for row in rows:
@@ -224,7 +230,9 @@ def run(repo_root: Path, output_dir: Path, created_at: str, seed: int) -> dict[s
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run deterministic comparative benchmark")
+    parser = argparse.ArgumentParser(
+        description="Run deterministic comparative benchmark"
+    )
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--output-dir", default="docs/paper/benchmarks/results")
     parser.add_argument("--created-at", default=DEFAULT_TIMESTAMP)
@@ -233,7 +241,12 @@ def main() -> None:
 
     repo_root = Path(args.repo_root).resolve()
     output_dir = (repo_root / args.output_dir).resolve()
-    run(repo_root=repo_root, output_dir=output_dir, created_at=args.created_at, seed=args.seed)
+    run(
+        repo_root=repo_root,
+        output_dir=output_dir,
+        created_at=args.created_at,
+        seed=args.seed,
+    )
 
 
 if __name__ == "__main__":

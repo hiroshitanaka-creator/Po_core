@@ -11,7 +11,6 @@ import subprocess
 import sys
 from typing import List
 
-
 EXTERNAL_COMMANDS: List[List[str]] = [
     ["pytest", "-q", "tests/test_input_schema.py"],
     ["pytest", "-q", "tests/test_output_schema.py"],
@@ -29,7 +28,9 @@ def build_commands(profile: str) -> List[List[str]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run reproducibility checks for Phase 25")
+    parser = argparse.ArgumentParser(
+        description="Run reproducibility checks for Phase 25"
+    )
     parser.add_argument(
         "--profile",
         choices=["external", "full"],

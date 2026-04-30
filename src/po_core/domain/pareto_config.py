@@ -27,7 +27,9 @@ class ParetoWeights:
     explain: float
     brevity: float
     coherence: float
-    emergence: float = 0.0  # deliberation novelty bonus; 0 suppresses emergence objective
+    emergence: float = (
+        0.0  # deliberation novelty bonus; 0 suppresses emergence objective
+    )
 
     def to_dict(self) -> dict:
         return {

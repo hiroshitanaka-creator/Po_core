@@ -22,7 +22,6 @@ if str(SRC_DIR) not in sys.path:
 from pocore.orchestrator import run_case
 from pocore.utils import to_json_compatible
 
-
 DEFAULT_NOW = "2026-02-22T00:00:00Z"
 
 
@@ -164,7 +163,9 @@ def _remove_op(doc: Any, path: str) -> Any:
     return doc
 
 
-def apply_rfc6902_patch(document: Dict[str, Any], patch_ops: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+def apply_rfc6902_patch(
+    document: Dict[str, Any], patch_ops: Sequence[Dict[str, Any]]
+) -> Dict[str, Any]:
     """Apply RFC6902 patch operations to document and return patched copy."""
     doc: Any = copy.deepcopy(document)
 
@@ -198,13 +199,13 @@ def apply_rfc6902_patch(document: Dict[str, Any], patch_ops: Sequence[Dict[str, 
     return doc
 
 
-
-
 def _coerce_answers_payload(payload: Any, *, case_path: Path) -> Any:
     """Backward-compatible coercion for legacy patch-only answers payload."""
     if not isinstance(payload, dict):
         return payload
-    has_required = all(k in payload for k in ("version", "case_ref", "answers", "patch"))
+    has_required = all(
+        k in payload for k in ("version", "case_ref", "answers", "patch")
+    )
     if has_required:
         return payload
     if isinstance(payload.get("patch"), list):
@@ -227,6 +228,7 @@ def _coerce_answers_payload(payload: Any, *, case_path: Path) -> Any:
         }
     return payload
 
+
 def _normalize_answers_payload(payload: Any) -> List[Dict[str, Any]]:
     if isinstance(payload, list):
         patch = payload
@@ -236,7 +238,9 @@ def _normalize_answers_payload(payload: Any) -> List[Dict[str, Any]]:
         elif isinstance(payload.get("operations"), list):
             patch = payload["operations"]
         else:
-            raise ValueError("answers JSON must include list field 'patch' or 'operations'")
+            raise ValueError(
+                "answers JSON must include list field 'patch' or 'operations'"
+            )
     else:
         raise TypeError("answers JSON must be an object or an array")
 
@@ -291,8 +295,16 @@ def _json_text(data: Any) -> str:
 def _render_key_points(before: Dict[str, Any], after: Dict[str, Any]) -> str:
     rec_before = before.get("recommendation")
     rec_after = after.get("recommendation")
-    q_before = len(before.get("questions", [])) if isinstance(before.get("questions"), list) else 0
-    q_after = len(after.get("questions", [])) if isinstance(after.get("questions"), list) else 0
+    q_before = (
+        len(before.get("questions", []))
+        if isinstance(before.get("questions"), list)
+        else 0
+    )
+    q_after = (
+        len(after.get("questions", []))
+        if isinstance(after.get("questions"), list)
+        else 0
+    )
 
     return "\n".join(
         [
@@ -378,7 +390,9 @@ def replay_session(
 
     _validate_or_raise(input_validator, case, label=f"Input case {case_path.name}")
 
-    answers_schema_path = _repo_root() / "docs" / "spec" / "session_answers_schema_v1.json"
+    answers_schema_path = (
+        _repo_root() / "docs" / "spec" / "session_answers_schema_v1.json"
+    )
     if answers_schema_path.exists() and isinstance(answers_payload, dict):
         has_v1_envelope = all(
             key in answers_payload for key in ("version", "case_ref", "answers")
@@ -395,7 +409,9 @@ def replay_session(
     patched_case = apply_rfc6902_patch(case, patch_ops)
     _validate_or_raise(input_validator, patched_case, label="Patched input case")
 
-    before_output = run_case(case, case_path=case_path, seed=seed, now=now, deterministic=True)
+    before_output = run_case(
+        case, case_path=case_path, seed=seed, now=now, deterministic=True
+    )
     replay_output = run_case(
         patched_case,
         case_path=case_path,
@@ -439,7 +455,9 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--case", required=True, help="Path to case YAML file.")
     parser.add_argument("--answers", required=True, help="Path to answers JSON file.")
-    parser.add_argument("--now", default=DEFAULT_NOW, help="Injected deterministic timestamp.")
+    parser.add_argument(
+        "--now", default=DEFAULT_NOW, help="Injected deterministic timestamp."
+    )
     parser.add_argument("--seed", type=int, default=0, help="Deterministic seed.")
     parser.add_argument(
         "--out-dir",

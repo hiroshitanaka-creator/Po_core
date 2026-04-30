@@ -5,7 +5,6 @@ import hashlib
 import json
 from pathlib import Path
 
-
 DEFAULT_TIMESTAMP = "2026-02-22T00:00:00Z"
 DEFAULT_SEED = 0
 
@@ -19,7 +18,9 @@ def _scenario_digest(paths: list[Path]) -> str:
 
 
 def _payload_digest(payload: dict) -> str:
-    normalized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    normalized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     return hashlib.sha256(normalized).hexdigest()
 
 
@@ -46,9 +47,13 @@ def build_snapshot(repo_root: Path, created_at: str, seed: int) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate deterministic experiment snapshot")
+    parser = argparse.ArgumentParser(
+        description="Generate deterministic experiment snapshot"
+    )
     parser.add_argument("--repo-root", default=".")
-    parser.add_argument("--output", default="docs/paper/experiments/results_latest.json")
+    parser.add_argument(
+        "--output", default="docs/paper/experiments/results_latest.json"
+    )
     parser.add_argument("--created-at", default=DEFAULT_TIMESTAMP)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     args = parser.parse_args()
@@ -57,8 +62,12 @@ def main() -> None:
     output = (repo_root / args.output).resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    payload = build_snapshot(repo_root=repo_root, created_at=args.created_at, seed=args.seed)
-    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    payload = build_snapshot(
+        repo_root=repo_root, created_at=args.created_at, seed=args.seed
+    )
+    output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 if __name__ == "__main__":

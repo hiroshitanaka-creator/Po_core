@@ -71,7 +71,9 @@ def _load_inputs(paths: list[str]) -> list[str]:
         suffix = path.suffix.lower()
 
         if suffix == ".txt":
-            lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines()]
+            lines = [
+                line.strip() for line in path.read_text(encoding="utf-8").splitlines()
+            ]
             loaded.extend(line for line in lines if line)
             continue
 
@@ -82,7 +84,9 @@ def _load_inputs(paths: list[str]) -> list[str]:
                 try:
                     import yaml
                 except ImportError as exc:  # pragma: no cover
-                    raise RuntimeError("PyYAML is required to load .yaml/.yml inputs") from exc
+                    raise RuntimeError(
+                        "PyYAML is required to load .yaml/.yml inputs"
+                    ) from exc
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
 
             if isinstance(data, list):
@@ -93,7 +97,9 @@ def _load_inputs(paths: list[str]) -> list[str]:
                 else:
                     loaded.append(_parse_input_item(data))
             else:
-                raise ValueError(f"Unsupported input document type in {path}: {type(data)}")
+                raise ValueError(
+                    f"Unsupported input document type in {path}: {type(data)}"
+                )
             continue
 
         raise ValueError(f"Unsupported input file extension: {path}")
@@ -187,11 +193,24 @@ def _print_human_readable(
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate emergence with/without deliberation")
-    parser.add_argument("--inputs", nargs="*", default=[], help="Input files (.txt/.json/.yaml/.yml)")
-    parser.add_argument("--baseline-rounds", type=int, default=1, help="Deliberation rounds for baseline")
-    parser.add_argument("--with-rounds", type=int, default=3, help="Deliberation rounds for variant")
-    parser.add_argument("--output-json", default="", help="Optional path to save JSON report")
+    parser = argparse.ArgumentParser(
+        description="Evaluate emergence with/without deliberation"
+    )
+    parser.add_argument(
+        "--inputs", nargs="*", default=[], help="Input files (.txt/.json/.yaml/.yml)"
+    )
+    parser.add_argument(
+        "--baseline-rounds",
+        type=int,
+        default=1,
+        help="Deliberation rounds for baseline",
+    )
+    parser.add_argument(
+        "--with-rounds", type=int, default=3, help="Deliberation rounds for variant"
+    )
+    parser.add_argument(
+        "--output-json", default="", help="Optional path to save JSON report"
+    )
     return parser.parse_args()
 
 
@@ -204,7 +223,9 @@ def main() -> int:
 
     for idx, user_input in enumerate(inputs, start=1):
         case_id = f"case_{idx:03d}"
-        baseline_rows.append(_run_case(case_id, user_input, rounds=args.baseline_rounds))
+        baseline_rows.append(
+            _run_case(case_id, user_input, rounds=args.baseline_rounds)
+        )
         with_rows.append(_run_case(case_id, user_input, rounds=args.with_rounds))
 
     baseline_agg = _aggregate(baseline_rows)

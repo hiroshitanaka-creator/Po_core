@@ -19,6 +19,7 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Dict, List
 
+from po_core import __version__ as _POCORE_VERSION
 from po_core.app.ethics_engine import (
     build_ethics_summary,
     get_rules_fired,
@@ -36,7 +37,7 @@ from po_core.app.values_clarifier import (
     build_values_clarification_questions,
     needs_values_clarification,
 )
-from po_core import __version__ as _POCORE_VERSION
+
 _SCHEMA_VERSION = "1.0"
 _GENERATOR_NAME = "po_core.ensemble.run_turn"
 _GENERATOR_VERSION = "1.0.0"

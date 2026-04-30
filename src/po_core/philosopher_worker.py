@@ -10,6 +10,7 @@ Security posture:
 - Input is strict JSON payload with philosopher_id + serializable snapshots.
 - Philosopher instance is reconstructed in-worker from registry metadata.
 """
+
 from __future__ import annotations
 
 import json

@@ -86,8 +86,12 @@ def main() -> int:
         dest="cases",
         help="Target case name (e.g. case_001, case_001.yaml, case_001_expected.json). Repeatable.",
     )
-    parser.add_argument("--all", action="store_true", help="Target all scenarios/case_*.yaml.")
-    parser.add_argument("--seed", type=int, default=0, help="Deterministic seed (default: 0).")
+    parser.add_argument(
+        "--all", action="store_true", help="Target all scenarios/case_*.yaml."
+    )
+    parser.add_argument(
+        "--seed", type=int, default=0, help="Deterministic seed (default: 0)."
+    )
     parser.add_argument(
         "--now",
         default="2026-02-22T00:00:00Z",
@@ -119,7 +123,10 @@ def main() -> int:
         expected_path = _expected_path(case_name)
 
         if not yaml_path.exists():
-            print(f"[ERROR] Missing scenario YAML: {yaml_path.relative_to(ROOT)}", file=sys.stderr)
+            print(
+                f"[ERROR] Missing scenario YAML: {yaml_path.relative_to(ROOT)}",
+                file=sys.stderr,
+            )
             return 2
 
         actual = run_case_file(

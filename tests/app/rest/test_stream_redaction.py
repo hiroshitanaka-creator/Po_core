@@ -119,9 +119,9 @@ def test_sse_stream_redacts_sensitive_trace_payload_by_default(tmp_path) -> None
     event_chunk = _first_event_chunk(chunks)
     inner = event_chunk["payload"]["payload"]
     for key in ("api_key", "authorization", "password", "token"):
-        assert inner[key] == REDACTED_PLACEHOLDER, (
-            f"expected {key} to be redacted, got {inner[key]!r}"
-        )
+        assert (
+            inner[key] == REDACTED_PLACEHOLDER
+        ), f"expected {key} to be redacted, got {inner[key]!r}"
     assert REDACTED_PLACEHOLDER in inner["message"]
 
 

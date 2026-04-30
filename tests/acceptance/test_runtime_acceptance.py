@@ -45,7 +45,14 @@ import yaml
 
 _SCENARIOS_DIR = Path(__file__).resolve().parents[2] / "scenarios"
 _REQUIRED_PROPOSAL_KEYS = frozenset(
-    {"action_type", "content", "confidence", "proposal_id", "assumption_tags", "risk_tags"}
+    {
+        "action_type",
+        "content",
+        "confidence",
+        "proposal_id",
+        "assumption_tags",
+        "risk_tags",
+    }
 )
 
 
@@ -127,7 +134,9 @@ def _assert_proposal_shape(result: dict[str, Any]) -> None:
     assert not missing, f"proposal missing required keys: {missing}"
 
 
-def _assert_all_canonical(result: dict[str, Any], canonical_ids: frozenset[str]) -> None:
+def _assert_all_canonical(
+    result: dict[str, Any], canonical_ids: frozenset[str]
+) -> None:
     bad = [
         p["philosopher_id"]
         for p in result["proposals"]
@@ -247,13 +256,12 @@ class TestAT010PipelineInvariants:
         run() → run_turn() → _apply_case_signals(), which injects
         constraint_conflict=True into the result dict.
         """
-        has_conflict_signal = (
-            "constraint_conflict" in at010_result
-            or at010_result["proposal"]["action_type"] in {"clarify", "escalate"}
-        )
-        assert has_conflict_signal, (
-            "RT-GAP-003 regression: no constraint-conflict signal in po_core.run() output"
-        )
+        has_conflict_signal = "constraint_conflict" in at010_result or at010_result[
+            "proposal"
+        ]["action_type"] in {"clarify", "escalate"}
+        assert (
+            has_conflict_signal
+        ), "RT-GAP-003 regression: no constraint-conflict signal in po_core.run() output"
 
 
 # ── Cross-scenario invariants ─────────────────────────────────────────────────
@@ -339,7 +347,9 @@ class TestRunCaseSchemaConformance:
 
     def test_at009_questions_nonempty(self, run_case_at009: dict[str, Any]) -> None:
         """AT-009 (values=[]) → values-clarification questions are generated."""
-        assert run_case_at009["questions"], "expected non-empty questions for empty-values case"
+        assert run_case_at009[
+            "questions"
+        ], "expected non-empty questions for empty-values case"
 
     def test_at010_uncertainty_high(self, run_case_at010: dict[str, Any]) -> None:
         """AT-010 (conflicting constraints) → uncertainty.overall_level == 'high'."""
@@ -610,9 +620,9 @@ class TestParetoWinnerScoreExplainability:
             f"scores={scores}, weights={weights}"
         )
 
-        assert "weighted_score" in p["winner"], (
-            "winner payload missing 'weighted_score' key — add it to ParetoAggregator"
-        )
+        assert (
+            "weighted_score" in p["winner"]
+        ), "winner payload missing 'weighted_score' key — add it to ParetoAggregator"
         stored = p["winner"]["weighted_score"]
         assert abs(stored - recomputed) < 1e-4, (
             f"stored weighted_score ({stored!r}) diverges from recomputed "
@@ -630,9 +640,9 @@ class TestParetoWinnerScoreExplainability:
         for row in front:
             row_scores = row.get("scores", {})
             missing = _OBJECTIVE_KEYS - set(row_scores)
-            assert not missing, (
-                f"Front row {row.get('proposal_id')!r} scores missing keys: {missing}"
-            )
+            assert (
+                not missing
+            ), f"Front row {row.get('proposal_id')!r} scores missing keys: {missing}"
 
     def test_pareto_winner_scores_include_all_objectives(self) -> None:
         """AGG-TR-2: winner['scores'] must include all 6 objective keys."""
@@ -641,9 +651,7 @@ class TestParetoWinnerScoreExplainability:
 
         w_scores = winner_ev.payload["winner"]["scores"]
         missing = _OBJECTIVE_KEYS - set(w_scores)
-        assert not missing, (
-            f"winner['scores'] missing objective keys: {missing}"
-        )
+        assert not missing, f"winner['scores'] missing objective keys: {missing}"
 
 
 # ── AGG-TR-3: SafetyMode-dependent Pareto weights trace contract ──────────────
@@ -682,31 +690,31 @@ class TestParetoSafetyModeWeights:
         warn_w = dict(agg._get_weights(SafetyMode.WARN))
         critical_w = dict(agg._get_weights(SafetyMode.CRITICAL))
 
-        assert normal_w != warn_w, (
-            "NORMAL and WARN weights are identical — SafetyMode degradation has no effect"
-        )
-        assert warn_w != critical_w, (
-            "WARN and CRITICAL weights are identical — SafetyMode degradation has no effect"
-        )
-        assert normal_w != critical_w, (
-            "NORMAL and CRITICAL weights are identical — SafetyMode degradation has no effect"
-        )
+        assert (
+            normal_w != warn_w
+        ), "NORMAL and WARN weights are identical — SafetyMode degradation has no effect"
+        assert (
+            warn_w != critical_w
+        ), "WARN and CRITICAL weights are identical — SafetyMode degradation has no effect"
+        assert (
+            normal_w != critical_w
+        ), "NORMAL and CRITICAL weights are identical — SafetyMode degradation has no effect"
 
         # NORMAL should reward freedom and emergence (deliberation incentives)
-        assert normal_w.get("freedom", 0.0) > 0.0, (
-            f"NORMAL freedom weight must be > 0; got {normal_w}"
-        )
-        assert normal_w.get("emergence", 0.0) > 0.0, (
-            f"NORMAL emergence weight must be > 0; got {normal_w}"
-        )
+        assert (
+            normal_w.get("freedom", 0.0) > 0.0
+        ), f"NORMAL freedom weight must be > 0; got {normal_w}"
+        assert (
+            normal_w.get("emergence", 0.0) > 0.0
+        ), f"NORMAL emergence weight must be > 0; got {normal_w}"
 
         # WARN sits between NORMAL and CRITICAL: safety escalates monotonically
-        assert warn_w.get("safety", 0.0) > normal_w.get("safety", 0.0), (
-            "WARN safety weight must exceed NORMAL safety weight"
-        )
-        assert critical_w.get("safety", 0.0) > warn_w.get("safety", 0.0), (
-            "CRITICAL safety weight must exceed WARN safety weight"
-        )
+        assert warn_w.get("safety", 0.0) > normal_w.get(
+            "safety", 0.0
+        ), "WARN safety weight must exceed NORMAL safety weight"
+        assert critical_w.get("safety", 0.0) > warn_w.get(
+            "safety", 0.0
+        ), "CRITICAL safety weight must exceed WARN safety weight"
 
     def test_critical_mode_weights_prioritize_safety(self) -> None:
         """AGG-TR-3: CRITICAL weights must put safety first and suppress freedom/emergence."""
@@ -720,9 +728,7 @@ class TestParetoSafetyModeWeights:
         safety_val = critical_w.get("safety", 0.0)
         assert all(
             safety_val >= v for v in critical_w.values()
-        ), (
-            f"CRITICAL safety ({safety_val}) is not the largest weight in {critical_w}"
-        )
+        ), f"CRITICAL safety ({safety_val}) is not the largest weight in {critical_w}"
 
         # freedom must be 0.0 or strictly less than NORMAL
         assert critical_w.get("freedom", 0.0) == 0.0 or (
@@ -768,19 +774,23 @@ class TestParetoSafetyModeWeights:
             (e for e in tracer.events if e.event_type == "ParetoWinnerSelected"), None
         )
 
-        assert front_ev is not None, (
-            f"ParetoFrontComputed not found. Events: {[e.event_type for e in tracer.events]}"
-        )
-        assert winner_ev is not None, (
-            f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
-        )
+        assert (
+            front_ev is not None
+        ), f"ParetoFrontComputed not found. Events: {[e.event_type for e in tracer.events]}"
+        assert (
+            winner_ev is not None
+        ), f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
 
         fp = front_ev.payload
         wp = winner_ev.payload
 
         for key in ("mode", "weights", "freedom_pressure"):
-            assert key in fp, f"ParetoFrontComputed payload missing {key!r}: {fp.keys()}"
-            assert key in wp, f"ParetoWinnerSelected payload missing {key!r}: {wp.keys()}"
+            assert (
+                key in fp
+            ), f"ParetoFrontComputed payload missing {key!r}: {fp.keys()}"
+            assert (
+                key in wp
+            ), f"ParetoWinnerSelected payload missing {key!r}: {wp.keys()}"
 
         assert fp["weights"] == wp["weights"], (
             f"ParetoFrontComputed.weights ({fp['weights']}) != "
@@ -798,9 +808,9 @@ class TestParetoSafetyModeWeights:
             f"ParetoFrontComputed.weights missing 'emergence' key: {front_weights}. "
             "The packaged pareto_table.yaml must include emergence for all modes."
         )
-        assert "emergence" in wp["weights"], (
-            f"ParetoWinnerSelected.weights missing 'emergence' key: {wp['weights']}."
-        )
+        assert (
+            "emergence" in wp["weights"]
+        ), f"ParetoWinnerSelected.weights missing 'emergence' key: {wp['weights']}."
 
         # case_001 runs under low freedom_pressure → NORMAL mode, so emergence must be > 0
         if fp["mode"] == "normal":
@@ -950,12 +960,12 @@ class TestActionGateTraceContract:
             None,
         )
 
-        assert pareto_ev is not None, (
-            f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
-        )
-        assert agg_ev is not None, (
-            f"AggregateCompleted not found. Events: {[e.event_type for e in tracer.events]}"
-        )
+        assert (
+            pareto_ev is not None
+        ), f"ParetoWinnerSelected not found. Events: {[e.event_type for e in tracer.events]}"
+        assert (
+            agg_ev is not None
+        ), f"AggregateCompleted not found. Events: {[e.event_type for e in tracer.events]}"
         assert dec_ev is not None, (
             f"DecisionEmitted(variant=main, degraded=False) not found. "
             f"Events: {[(e.event_type, e.payload.get('degraded'), e.payload.get('variant')) for e in tracer.events if 'Decision' in e.event_type]}"
@@ -984,9 +994,9 @@ class TestActionGateTraceContract:
             f"DecisionEmitted.origin must be 'pareto' for normal path; "
             f"got {dec_ev.payload['origin']!r}"
         )
-        assert dec_ev.payload["degraded"] is False, (
-            "DecisionEmitted.degraded must be False when ActionGate allows Pareto winner"
-        )
+        assert (
+            dec_ev.payload["degraded"] is False
+        ), "DecisionEmitted.degraded must be False when ActionGate allows Pareto winner"
 
     def test_actiongate_override_trace_auditable(self) -> None:
         """AGG-TR-4/override: When ActionGate rejects the Pareto winner, the trace must
@@ -1020,31 +1030,40 @@ class TestActionGateTraceContract:
 
         # SafetyOverrideApplied: from=Pareto winner, to=fallback
         ov_p = override_ev.payload
-        assert "from" in ov_p, f"SafetyOverrideApplied missing 'from' key: {ov_p.keys()}"
+        assert (
+            "from" in ov_p
+        ), f"SafetyOverrideApplied missing 'from' key: {ov_p.keys()}"
         assert "to" in ov_p, f"SafetyOverrideApplied missing 'to' key: {ov_p.keys()}"
-        assert "gate" in ov_p, f"SafetyOverrideApplied missing 'gate' key: {ov_p.keys()}"
+        assert (
+            "gate" in ov_p
+        ), f"SafetyOverrideApplied missing 'gate' key: {ov_p.keys()}"
 
         original_pid = ov_p["from"]["proposal_id"]
         fallback_pid = ov_p["to"]["proposal_id"]
-        assert original_pid != fallback_pid, (
-            "SafetyOverrideApplied.from and .to must have different proposal_ids"
-        )
+        assert (
+            original_pid != fallback_pid
+        ), "SafetyOverrideApplied.from and .to must have different proposal_ids"
 
         # Gate details: rule_ids and decision must be present
         gate = ov_p["gate"]
-        assert gate.get("decision") not in (None, "allow"), (
-            f"SafetyOverrideApplied gate.decision must be non-allow; got {gate.get('decision')!r}"
-        )
-        assert gate.get("rule_ids"), (
-            f"SafetyOverrideApplied gate.rule_ids must be non-empty; got {gate.get('rule_ids')!r}"
-        )
+        assert gate.get("decision") not in (
+            None,
+            "allow",
+        ), f"SafetyOverrideApplied gate.decision must be non-allow; got {gate.get('decision')!r}"
+        assert gate.get(
+            "rule_ids"
+        ), f"SafetyOverrideApplied gate.rule_ids must be non-empty; got {gate.get('rule_ids')!r}"
 
         # DecisionEmitted: degraded=True, candidate=original Pareto winner
         dp = dec_ev.payload
-        assert dp["degraded"] is True, "DecisionEmitted.degraded must be True for override path"
-        assert dp["origin"] in ("pareto_fallback", "safety_fallback", "pareto_shadow_fallback"), (
-            f"DecisionEmitted.origin unexpected for override path: {dp['origin']!r}"
-        )
+        assert (
+            dp["degraded"] is True
+        ), "DecisionEmitted.degraded must be True for override path"
+        assert dp["origin"] in (
+            "pareto_fallback",
+            "safety_fallback",
+            "pareto_shadow_fallback",
+        ), f"DecisionEmitted.origin unexpected for override path: {dp['origin']!r}"
 
         candidate_in_dec = dp.get("candidate") or {}
         assert candidate_in_dec.get("proposal_id") == original_pid, (
@@ -1057,9 +1076,9 @@ class TestActionGateTraceContract:
             f"DecisionEmitted.final.proposal_id ({final_in_dec.get('proposal_id')!r}) "
             f"must equal SafetyOverrideApplied.to.proposal_id ({fallback_pid!r})"
         )
-        assert final_in_dec.get("action_type"), (
-            "DecisionEmitted.final.action_type must be present"
-        )
+        assert final_in_dec.get(
+            "action_type"
+        ), "DecisionEmitted.final.action_type must be present"
 
         # Fallback is the actual pipeline output when gate rejects Pareto winner
         assert result["proposal"]["proposal_id"] == fallback_pid, (
@@ -1205,25 +1224,25 @@ class TestSafetyModeInferredTrace:
                 f"freedom_pressure ({fp}) >= critical_threshold ({crit}) "
                 f"but mode is {mode!r} instead of 'critical'"
             )
-            assert reason == "freedom_pressure >= critical_threshold", (
-                f"Unexpected reason for CRITICAL: {reason!r}"
-            )
+            assert (
+                reason == "freedom_pressure >= critical_threshold"
+            ), f"Unexpected reason for CRITICAL: {reason!r}"
         elif fp >= warn:
             assert mode == "warn", (
                 f"freedom_pressure ({fp}) in [warn={warn}, crit={crit}) "
                 f"but mode is {mode!r} instead of 'warn'"
             )
-            assert reason == "warn_threshold <= freedom_pressure < critical_threshold", (
-                f"Unexpected reason for WARN: {reason!r}"
-            )
+            assert (
+                reason == "warn_threshold <= freedom_pressure < critical_threshold"
+            ), f"Unexpected reason for WARN: {reason!r}"
         else:
             assert mode == "normal", (
                 f"freedom_pressure ({fp}) < warn_threshold ({warn}) "
                 f"but mode is {mode!r} instead of 'normal'"
             )
-            assert reason == "freedom_pressure < warn_threshold", (
-                f"Unexpected reason for NORMAL: {reason!r}"
-            )
+            assert (
+                reason == "freedom_pressure < warn_threshold"
+            ), f"Unexpected reason for NORMAL: {reason!r}"
 
 
 # ── SEL-TR-1: Philosopher selection rationale ─────────────────────────────────
@@ -1295,18 +1314,14 @@ class TestPhilosopherSelectionRationale:
 
         # case_001 is a plain general case — no scenario routing override.
         p = ev.payload
-        assert p["limit_override"] is None, (
-            f"case_001 has no scenario routing; limit_override should be None, got {p['limit_override']!r}"
-        )
-        assert p["preferred_tags"] is None, (
-            f"case_001 has no scenario routing; preferred_tags should be None, got {p['preferred_tags']!r}"
-        )
-        assert p["limit"] is not None, (
-            "limit (effective) must not be None"
-        )
-        assert p["require_tags"], (
-            "require_tags (effective) must be non-empty"
-        )
+        assert (
+            p["limit_override"] is None
+        ), f"case_001 has no scenario routing; limit_override should be None, got {p['limit_override']!r}"
+        assert (
+            p["preferred_tags"] is None
+        ), f"case_001 has no scenario routing; preferred_tags should be None, got {p['preferred_tags']!r}"
+        assert p["limit"] is not None, "limit (effective) must not be None"
+        assert p["require_tags"], "require_tags (effective) must be non-empty"
 
     def test_values_clarification_selection_records_effective_constraints(self) -> None:
         """SEL-TR-1: AT-009 (values_clarification) → effective limit and require_tags agree with override."""
@@ -1318,20 +1333,22 @@ class TestPhilosopherSelectionRationale:
 
         expected_tags = [TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE]
 
-        assert p["limit_override"] == 3, (
-            f"AT-009 limit_override: expected 3; got {p['limit_override']!r}"
-        )
-        assert p["limit"] == 3, (
-            f"AT-009 effective limit: expected 3; got {p['limit']!r}"
-        )
-        assert p["preferred_tags"] == expected_tags, (
-            f"AT-009 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
-        )
-        assert p["require_tags"] == expected_tags, (
-            f"AT-009 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
-        )
+        assert (
+            p["limit_override"] == 3
+        ), f"AT-009 limit_override: expected 3; got {p['limit_override']!r}"
+        assert (
+            p["limit"] == 3
+        ), f"AT-009 effective limit: expected 3; got {p['limit']!r}"
+        assert (
+            p["preferred_tags"] == expected_tags
+        ), f"AT-009 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
+        assert (
+            p["require_tags"] == expected_tags
+        ), f"AT-009 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
 
-    def test_conflicting_constraints_selection_records_effective_constraints(self) -> None:
+    def test_conflicting_constraints_selection_records_effective_constraints(
+        self,
+    ) -> None:
         """SEL-TR-1: AT-010 (conflicting_constraints) → effective limit and require_tags agree with override."""
         from po_core.philosophers.tags import TAG_CRITIC, TAG_PLANNER, TAG_REDTEAM
 
@@ -1341,18 +1358,18 @@ class TestPhilosopherSelectionRationale:
 
         expected_tags = [TAG_CRITIC, TAG_REDTEAM, TAG_PLANNER]
 
-        assert p["limit_override"] == 3, (
-            f"AT-010 limit_override: expected 3; got {p['limit_override']!r}"
-        )
-        assert p["limit"] == 3, (
-            f"AT-010 effective limit: expected 3; got {p['limit']!r}"
-        )
-        assert p["preferred_tags"] == expected_tags, (
-            f"AT-010 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
-        )
-        assert p["require_tags"] == expected_tags, (
-            f"AT-010 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
-        )
+        assert (
+            p["limit_override"] == 3
+        ), f"AT-010 limit_override: expected 3; got {p['limit_override']!r}"
+        assert (
+            p["limit"] == 3
+        ), f"AT-010 effective limit: expected 3; got {p['limit']!r}"
+        assert (
+            p["preferred_tags"] == expected_tags
+        ), f"AT-010 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
+        assert (
+            p["require_tags"] == expected_tags
+        ), f"AT-010 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
 
     def test_scenario_routing_selects_distinct_rosters(self) -> None:
         """SEL-TR-1: AT-009 and AT-010 must produce distinct philosopher rosters in trace."""
@@ -1415,9 +1432,7 @@ class TestTensorComputedTrace:
         """TENSOR-TR-1: TensorComputed must carry all expected metrics and a version."""
         tracer = self._run_with_tracer("case_001")
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, (
             f"TensorComputed event not found. "
             f"Emitted events: {[e.event_type for e in tracer.events]}"
@@ -1471,9 +1486,7 @@ class TestTensorComputedTrace:
         """TENSOR-TR-1: Every metric in TensorComputed.metrics must be int, float, or None."""
         tracer = self._run_with_tracer("case_001")
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, "TensorComputed event not found"
 
         non_numeric = {
@@ -1485,6 +1498,7 @@ class TestTensorComputedTrace:
             f"TensorComputed.metrics contains non-numeric, non-None values: {non_numeric}. "
             "Each metric must be a number (int/float) or None if the metric could not be computed."
         )
+
 
 # ── TENSOR-TR-2: Tensor metric missing/fallback trace contract ────────────────
 
@@ -1522,9 +1536,7 @@ class TestTensorComputedStatusTrace:
         """TENSOR-TR-2: TensorComputed payload must contain metric_status for each required metric."""
         tracer = self._run_with_tracer("case_001")
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, (
             f"TensorComputed event not found. "
             f"Emitted events: {[e.event_type for e in tracer.events]}"
@@ -1543,9 +1555,9 @@ class TestTensorComputedStatusTrace:
         )
 
         for name, entry in ms.items():
-            assert "status" in entry, (
-                f"metric_status[{name!r}] must have a 'status' key. Got: {entry}"
-            )
+            assert (
+                "status" in entry
+            ), f"metric_status[{name!r}] must have a 'status' key. Got: {entry}"
             assert entry["status"] in {"computed", "fallback", "missing", "failed"}, (
                 f"metric_status[{name!r}]['status'] must be one of "
                 "computed/fallback/missing/failed. "
@@ -1556,9 +1568,7 @@ class TestTensorComputedStatusTrace:
         """TENSOR-TR-2: metric_status must cover every key in TensorComputed.metrics plus required set."""
         tracer = self._run_with_tracer("case_001")
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, "TensorComputed event not found"
 
         metrics = ev.payload.get("metrics", {})
@@ -1566,16 +1576,16 @@ class TestTensorComputedStatusTrace:
 
         # Every key in metrics must appear in metric_status
         uncovered = set(metrics) - set(ms)
-        assert not uncovered, (
-            f"TensorComputed.metrics keys {uncovered!r} have no entry in metric_status."
-        )
+        assert (
+            not uncovered
+        ), f"TensorComputed.metrics keys {uncovered!r} have no entry in metric_status."
 
         # All 4 required metrics must appear in metric_status regardless of whether
         # they were computed (status may be "missing" if the engine omitted them)
         missing_required = _TENSOR_REQUIRED_METRICS - set(ms)
-        assert not missing_required, (
-            f"Required metrics {missing_required!r} are absent from metric_status entirely."
-        )
+        assert (
+            not missing_required
+        ), f"Required metrics {missing_required!r} are absent from metric_status entirely."
 
     def test_missing_metric_status_is_explicit(self) -> None:
         """TENSOR-TR-2: When an expected metric is absent, metric_status must mark it 'missing'."""
@@ -1635,16 +1645,14 @@ class TestTensorComputedStatusTrace:
         )
         run_turn(ctx, deps, case_signals=from_case_dict(case))
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, "TensorComputed event not found"
 
         ms = ev.payload.get("metric_status", {})
 
-        assert "semantic_delta" in ms, (
-            "metric_status must include 'semantic_delta' even when the engine omits it."
-        )
+        assert (
+            "semantic_delta" in ms
+        ), "metric_status must include 'semantic_delta' even when the engine omits it."
         assert ms["semantic_delta"]["status"] == "missing", (
             f"metric_status['semantic_delta']['status'] should be 'missing' when the "
             f"engine omits the metric; got {ms['semantic_delta']['status']!r}"
@@ -1716,23 +1724,26 @@ class TestTensorComputedStatusTrace:
         )
         run_turn(ctx, deps, case_signals=from_case_dict(case))
 
-        ev = next(
-            (e for e in tracer.events if e.event_type == "TensorComputed"), None
-        )
+        ev = next((e for e in tracer.events if e.event_type == "TensorComputed"), None)
         assert ev is not None, "TensorComputed event not found"
 
         ms = ev.payload.get("metric_status", {})
 
-        assert "custom_metric" in ms, (
-            "metric_status must include 'custom_metric' because it appeared in TensorComputed.metrics."
-        )
+        assert (
+            "custom_metric" in ms
+        ), "metric_status must include 'custom_metric' because it appeared in TensorComputed.metrics."
         assert ms["custom_metric"]["status"] == "missing", (
             f"An extra metric with a None value must be marked 'missing', "
             f"not 'computed'. Got: {ms['custom_metric']['status']!r}"
         )
 
         # Confirm all expected metrics with numeric values are still marked computed
-        for name in ("freedom_pressure", "semantic_delta", "blocked_tensor", "interaction_tensor"):
+        for name in (
+            "freedom_pressure",
+            "semantic_delta",
+            "blocked_tensor",
+            "interaction_tensor",
+        ):
             assert ms[name]["status"] == "computed", (
                 f"metric_status[{name!r}]['status'] should be 'computed'; "
                 f"got {ms[name]['status']!r}"
