@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (TENSOR-TR-1 TensorComputed metric provenance added; runtime total +3)  
-Source: `feat/tensor-tr-1-tensor-computed-trace @ 8d62d5f`
+Source: `main @ 9f35eb6`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
