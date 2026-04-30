@@ -39,6 +39,8 @@ class AllowlistRegistry:
             covered_tags=sel.covered_tags,
             max_risk=sel.max_risk,
             cost_budget=sel.cost_budget,
+            limit=sel.limit,
+            require_tags=sel.require_tags,
         )
 
     def load(self, selected_ids: Any) -> Any:

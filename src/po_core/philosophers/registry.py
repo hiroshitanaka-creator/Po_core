@@ -52,6 +52,8 @@ class Selection:
     covered_tags: List[str]
     max_risk: int
     cost_budget: int
+    limit: int
+    require_tags: Tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -240,6 +242,8 @@ class PhilosopherRegistry:
             covered_tags=sorted(list(covered)),
             max_risk=plan.max_risk,
             cost_budget=plan.cost_budget,
+            limit=effective_limit,
+            require_tags=effective_require_tags,
         )
 
     def load(

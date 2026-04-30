@@ -499,6 +499,8 @@ def _run_phase_pre(
                 "limit_override": limit_override,
                 "max_risk": sel.max_risk,
                 "cost_budget": sel.cost_budget,
+                "limit": sel.limit,
+                "require_tags": list(sel.require_tags),
             },
         )
     )

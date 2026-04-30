@@ -1228,18 +1228,27 @@ class TestSafetyModeInferredTrace:
 
 # ── SEL-TR-1: Philosopher selection rationale ─────────────────────────────────
 
-_SEL_TR_1_RATIONALE_KEYS = frozenset({"max_risk", "cost_budget", "limit_override", "preferred_tags"})
+_SEL_TR_1_RATIONALE_KEYS = frozenset(
+    {
+        "max_risk",
+        "cost_budget",
+        "limit_override",
+        "preferred_tags",
+        "limit",
+        "require_tags",
+    }
+)
 
 
 @pytest.mark.runtime_acceptance
 class TestPhilosopherSelectionRationale:
     """SEL-TR-1: Philosopher selection rationale must be trace-auditable.
 
-    PhilosophersSelected payload must record the selection constraints
-    (max_risk, cost_budget, limit_override, preferred_tags) so a trace
-    consumer can reconstruct *why* a given roster was chosen — not just
-    which philosophers appeared, but which SafetyMode constraints and
-    scenario overrides governed the selection.
+    PhilosophersSelected payload must record both the raw override inputs
+    (limit_override, preferred_tags) and the effective constraints that
+    registry.select() actually applied (limit, require_tags, max_risk,
+    cost_budget).  A trace consumer must be able to reconstruct *why* a
+    given roster was chosen without inspecting internal plan state.
     """
 
     @staticmethod
@@ -1262,10 +1271,8 @@ class TestPhilosopherSelectionRationale:
             )
         return tracer
 
-    def test_philosophers_selected_payload_has_selection_rationale(self) -> None:
-        """SEL-TR-1: PhilosophersSelected must include all selection-rationale keys."""
-        tracer = self._run_with_tracer("case_001")
-
+    @staticmethod
+    def _get_phil_event(tracer):
         ev = next(
             (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
         )
@@ -1273,6 +1280,12 @@ class TestPhilosopherSelectionRationale:
             f"PhilosophersSelected event not found. "
             f"Emitted events: {[e.event_type for e in tracer.events]}"
         )
+        return ev
+
+    def test_philosophers_selected_payload_has_selection_rationale(self) -> None:
+        """SEL-TR-1: PhilosophersSelected must include all selection-rationale keys."""
+        tracer = self._run_with_tracer("case_001")
+        ev = self._get_phil_event(tracer)
 
         missing = _SEL_TR_1_RATIONALE_KEYS - set(ev.payload)
         assert not missing, (
@@ -1280,44 +1293,65 @@ class TestPhilosopherSelectionRationale:
             f"Got: {set(ev.payload)}"
         )
 
-    def test_values_clarification_selection_records_preferred_tags(self) -> None:
-        """SEL-TR-1: AT-009 (values_clarification) → preferred_tags and limit_override recorded."""
+        # case_001 is a plain general case — no scenario routing override.
+        p = ev.payload
+        assert p["limit_override"] is None, (
+            f"case_001 has no scenario routing; limit_override should be None, got {p['limit_override']!r}"
+        )
+        assert p["preferred_tags"] is None, (
+            f"case_001 has no scenario routing; preferred_tags should be None, got {p['preferred_tags']!r}"
+        )
+        assert p["limit"] is not None, (
+            "limit (effective) must not be None"
+        )
+        assert p["require_tags"], (
+            "require_tags (effective) must be non-empty"
+        )
+
+    def test_values_clarification_selection_records_effective_constraints(self) -> None:
+        """SEL-TR-1: AT-009 (values_clarification) → effective limit and require_tags agree with override."""
         from po_core.philosophers.tags import TAG_CLARIFY, TAG_COMPLIANCE, TAG_CREATIVE
 
         tracer = self._run_with_tracer("case_009")
-
-        ev = next(
-            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
-        )
-        assert ev is not None, "PhilosophersSelected event not found"
+        ev = self._get_phil_event(tracer)
+        p = ev.payload
 
         expected_tags = [TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE]
-        assert ev.payload["preferred_tags"] == expected_tags, (
-            f"AT-009 preferred_tags: expected {expected_tags!r}; "
-            f"got {ev.payload['preferred_tags']!r}"
+
+        assert p["limit_override"] == 3, (
+            f"AT-009 limit_override: expected 3; got {p['limit_override']!r}"
         )
-        assert ev.payload["limit_override"] == 3, (
-            f"AT-009 limit_override: expected 3; got {ev.payload['limit_override']!r}"
+        assert p["limit"] == 3, (
+            f"AT-009 effective limit: expected 3; got {p['limit']!r}"
+        )
+        assert p["preferred_tags"] == expected_tags, (
+            f"AT-009 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
+        )
+        assert p["require_tags"] == expected_tags, (
+            f"AT-009 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
         )
 
-    def test_conflicting_constraints_selection_records_preferred_tags(self) -> None:
-        """SEL-TR-1: AT-010 (conflicting_constraints) → preferred_tags and limit_override recorded."""
+    def test_conflicting_constraints_selection_records_effective_constraints(self) -> None:
+        """SEL-TR-1: AT-010 (conflicting_constraints) → effective limit and require_tags agree with override."""
         from po_core.philosophers.tags import TAG_CRITIC, TAG_PLANNER, TAG_REDTEAM
 
         tracer = self._run_with_tracer("case_010")
-
-        ev = next(
-            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
-        )
-        assert ev is not None, "PhilosophersSelected event not found"
+        ev = self._get_phil_event(tracer)
+        p = ev.payload
 
         expected_tags = [TAG_CRITIC, TAG_REDTEAM, TAG_PLANNER]
-        assert ev.payload["preferred_tags"] == expected_tags, (
-            f"AT-010 preferred_tags: expected {expected_tags!r}; "
-            f"got {ev.payload['preferred_tags']!r}"
+
+        assert p["limit_override"] == 3, (
+            f"AT-010 limit_override: expected 3; got {p['limit_override']!r}"
         )
-        assert ev.payload["limit_override"] == 3, (
-            f"AT-010 limit_override: expected 3; got {ev.payload['limit_override']!r}"
+        assert p["limit"] == 3, (
+            f"AT-010 effective limit: expected 3; got {p['limit']!r}"
+        )
+        assert p["preferred_tags"] == expected_tags, (
+            f"AT-010 preferred_tags: expected {expected_tags!r}; got {p['preferred_tags']!r}"
+        )
+        assert p["require_tags"] == expected_tags, (
+            f"AT-010 effective require_tags: expected {expected_tags!r}; got {p['require_tags']!r}"
         )
 
     def test_scenario_routing_selects_distinct_rosters(self) -> None:
@@ -1325,14 +1359,8 @@ class TestPhilosopherSelectionRationale:
         tracer_009 = self._run_with_tracer("case_009")
         tracer_010 = self._run_with_tracer("case_010")
 
-        ev_009 = next(
-            (e for e in tracer_009.events if e.event_type == "PhilosophersSelected"), None
-        )
-        ev_010 = next(
-            (e for e in tracer_010.events if e.event_type == "PhilosophersSelected"), None
-        )
-        assert ev_009 is not None, "PhilosophersSelected not found for case_009"
-        assert ev_010 is not None, "PhilosophersSelected not found for case_010"
+        ev_009 = self._get_phil_event(tracer_009)
+        ev_010 = self._get_phil_event(tracer_010)
 
         ids_009 = set(ev_009.payload["ids"])
         ids_010 = set(ev_010.payload["ids"])
