@@ -4,7 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-
 PDF_HEADER = b"%PDF-1.4\n"
 
 
@@ -30,7 +29,9 @@ def _render_single_page_pdf(lines: list[str]) -> bytes:
     objects.append(
         b"3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj\n"
     )
-    objects.append(b"4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n")
+    objects.append(
+        b"4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n"
+    )
     objects.append(
         f"5 0 obj << /Length {len(stream)} >> stream\n".encode("utf-8")
         + stream
@@ -74,7 +75,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build deterministic paper PDF")
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--paper", default="docs/paper/paper.md")
-    parser.add_argument("--experiments", default="docs/paper/experiments/results_latest.json")
+    parser.add_argument(
+        "--experiments", default="docs/paper/experiments/results_latest.json"
+    )
     parser.add_argument("--compiled", default="docs/paper/build/paper_compiled.md")
     parser.add_argument("--pdf", default="docs/paper/po_core_paper.pdf")
     args = parser.parse_args()
@@ -88,7 +91,9 @@ def main() -> None:
     paper_source = paper_path.read_text(encoding="utf-8")
     experiment_payload = json.loads(experiments_path.read_text(encoding="utf-8"))
 
-    compiled = build_compiled_markdown(paper_source=paper_source, experiment_payload=experiment_payload)
+    compiled = build_compiled_markdown(
+        paper_source=paper_source, experiment_payload=experiment_payload
+    )
     compiled_path.parent.mkdir(parents=True, exist_ok=True)
     compiled_path.write_text(compiled, encoding="utf-8")
 

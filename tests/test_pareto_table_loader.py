@@ -197,9 +197,9 @@ def test_packaged_pareto_table_emergence_weights():
         f"Packaged WARN emergence must be 0.05; got {warn.emergence}. "
         "Add 'emergence: 0.05' to the warn entry in pareto_table.yaml."
     )
-    assert critical.emergence == 0.00, (
-        f"Packaged CRITICAL emergence must be 0.00; got {critical.emergence}."
-    )
+    assert (
+        critical.emergence == 0.00
+    ), f"Packaged CRITICAL emergence must be 0.00; got {critical.emergence}."
     assert unknown.emergence == warn.emergence, (
         f"Packaged UNKNOWN emergence must equal WARN emergence ({warn.emergence}); "
         f"got {unknown.emergence}.  unknown inherits from warn in pareto_table.yaml."

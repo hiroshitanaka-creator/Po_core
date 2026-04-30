@@ -93,4 +93,6 @@ def test_resolve_philosopher_id_priority_order() -> None:
     assert resolve_philosopher_id(ph) in canonical_ids
 
     # Priority 3: .name for test doubles outside po_core.philosophers.*
-    assert resolve_philosopher_id(_TestDouble(name="external-double")) == "external-double"
+    assert (
+        resolve_philosopher_id(_TestDouble(name="external-double")) == "external-double"
+    )

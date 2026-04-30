@@ -26,7 +26,9 @@ def _snapshot(**metrics) -> TensorSnapshot:
     return TensorSnapshot(metrics=metrics, version="test")
 
 
-def _infer_and_build(snapshot: TensorSnapshot, config: SafetyModeConfig = _DEFAULT_CFG) -> dict:
+def _infer_and_build(
+    snapshot: TensorSnapshot, config: SafetyModeConfig = _DEFAULT_CFG
+) -> dict:
     mode, fp_value = infer_safety_mode(snapshot, config)
     return _build_safety_mode_inferred_payload(mode, fp_value, config)
 
@@ -38,12 +40,12 @@ class TestSafetyModeInferredBranches:
         """Branch: freedom_pressure metric absent → missing_mode, reason='freedom_pressure_missing'."""
         payload = _infer_and_build(_snapshot())  # no freedom_pressure key
 
-        assert payload["mode"] == _DEFAULT_CFG.missing_mode.value, (
-            f"Expected mode={_DEFAULT_CFG.missing_mode.value!r}; got {payload['mode']!r}"
-        )
-        assert payload["reason"] == "freedom_pressure_missing", (
-            f"Expected reason='freedom_pressure_missing'; got {payload['reason']!r}"
-        )
+        assert (
+            payload["mode"] == _DEFAULT_CFG.missing_mode.value
+        ), f"Expected mode={_DEFAULT_CFG.missing_mode.value!r}; got {payload['mode']!r}"
+        assert (
+            payload["reason"] == "freedom_pressure_missing"
+        ), f"Expected reason='freedom_pressure_missing'; got {payload['reason']!r}"
         assert payload["freedom_pressure"] is None
         assert payload["source_metric"] == "freedom_pressure"
         assert payload["warn_threshold"] == _DEFAULT_CFG.warn
@@ -55,12 +57,12 @@ class TestSafetyModeInferredBranches:
         fp = 0.10  # below warn=0.30
         payload = _infer_and_build(_snapshot(freedom_pressure=fp))
 
-        assert payload["mode"] == "normal", (
-            f"fp={fp} < warn={_DEFAULT_CFG.warn}: expected mode='normal'; got {payload['mode']!r}"
-        )
-        assert payload["reason"] == "freedom_pressure < warn_threshold", (
-            f"Unexpected reason: {payload['reason']!r}"
-        )
+        assert (
+            payload["mode"] == "normal"
+        ), f"fp={fp} < warn={_DEFAULT_CFG.warn}: expected mode='normal'; got {payload['mode']!r}"
+        assert (
+            payload["reason"] == "freedom_pressure < warn_threshold"
+        ), f"Unexpected reason: {payload['reason']!r}"
         assert payload["freedom_pressure"] == pytest.approx(fp)
 
     def test_warn_branch(self) -> None:
@@ -72,9 +74,10 @@ class TestSafetyModeInferredBranches:
             f"fp={fp} in [warn={_DEFAULT_CFG.warn}, crit={_DEFAULT_CFG.critical}): "
             f"expected mode='warn'; got {payload['mode']!r}"
         )
-        assert payload["reason"] == "warn_threshold <= freedom_pressure < critical_threshold", (
-            f"Unexpected reason: {payload['reason']!r}"
-        )
+        assert (
+            payload["reason"]
+            == "warn_threshold <= freedom_pressure < critical_threshold"
+        ), f"Unexpected reason: {payload['reason']!r}"
         assert payload["freedom_pressure"] == pytest.approx(fp)
 
     def test_critical_branch(self) -> None:
@@ -86,9 +89,9 @@ class TestSafetyModeInferredBranches:
             f"fp={fp} >= critical={_DEFAULT_CFG.critical}: "
             f"expected mode='critical'; got {payload['mode']!r}"
         )
-        assert payload["reason"] == "freedom_pressure >= critical_threshold", (
-            f"Unexpected reason: {payload['reason']!r}"
-        )
+        assert (
+            payload["reason"] == "freedom_pressure >= critical_threshold"
+        ), f"Unexpected reason: {payload['reason']!r}"
         assert payload["freedom_pressure"] == pytest.approx(fp)
 
 
@@ -101,7 +104,10 @@ class TestSafetyModeInferredBoundaries:
         payload = _infer_and_build(_snapshot(freedom_pressure=fp))
 
         assert payload["mode"] == "warn"
-        assert payload["reason"] == "warn_threshold <= freedom_pressure < critical_threshold"
+        assert (
+            payload["reason"]
+            == "warn_threshold <= freedom_pressure < critical_threshold"
+        )
 
     def test_critical_boundary_exact(self) -> None:
         """fp == critical_threshold exactly → mode='critical'."""

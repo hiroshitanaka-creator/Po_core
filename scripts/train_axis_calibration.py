@@ -49,7 +49,9 @@ def _iter_jsonl(path: Path) -> Iterable[Dict[str, object]]:
         yield json.loads(line)
 
 
-def _load_dataset(dataset_path: Path) -> Tuple[List[List[float]], Dict[str, List[float]]]:
+def _load_dataset(
+    dataset_path: Path,
+) -> Tuple[List[List[float]], Dict[str, List[float]]]:
     x_rows: List[List[float]] = []
     y_rows: Dict[str, List[float]] = {dim: [] for dim in DIMS}
 
@@ -77,7 +79,9 @@ def _load_dataset(dataset_path: Path) -> Tuple[List[List[float]], Dict[str, List
     return x_rows, y_rows
 
 
-def _fit_ridge_numpy(x_rows: List[List[float]], y: List[float], alpha: float) -> Tuple[float, List[float]]:
+def _fit_ridge_numpy(
+    x_rows: List[List[float]], y: List[float], alpha: float
+) -> Tuple[float, List[float]]:
     assert np is not None
     x = np.array(x_rows, dtype=np.float64)
     y_vec = np.array(y, dtype=np.float64)
@@ -95,13 +99,17 @@ def _fit_ridge_numpy(x_rows: List[List[float]], y: List[float], alpha: float) ->
     return float(coeff[0]), [float(v) for v in coeff[1:]]
 
 
-def _fit_ridge_fallback(x_rows: List[List[float]], y: List[float], alpha: float) -> Tuple[float, List[float]]:
+def _fit_ridge_fallback(
+    x_rows: List[List[float]], y: List[float], alpha: float
+) -> Tuple[float, List[float]]:
     # 最小依存 fallback: バイアスのみを推定（安全側）
     mean = sum(y) / max(len(y), 1)
     return float(mean), [0.0 for _ in x_rows[0]]
 
 
-def _fit_ridge(x_rows: List[List[float]], y: List[float], alpha: float) -> Tuple[float, List[float]]:
+def _fit_ridge(
+    x_rows: List[List[float]], y: List[float], alpha: float
+) -> Tuple[float, List[float]]:
     if np is None:
         return _fit_ridge_fallback(x_rows, y, alpha)
     return _fit_ridge_numpy(x_rows, y, alpha)
@@ -133,7 +141,9 @@ def train(dataset_path: Path, output_path: Path, alpha: float) -> Dict[str, obje
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", required=True, help="Path to JSONL training dataset")
+    parser.add_argument(
+        "--dataset", required=True, help="Path to JSONL training dataset"
+    )
     parser.add_argument(
         "--output",
         default="calibration/params_v1.json",

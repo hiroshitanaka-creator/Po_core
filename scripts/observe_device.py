@@ -33,9 +33,7 @@ def _short_summary(report: Dict[str, Any] | None) -> None:
                 mean = entry.get("mean")
                 variance = entry.get("variance")
                 samples = entry.get("samples")
-                print(
-                    f"- {axis}: mean={mean}, variance={variance}, samples={samples}"
-                )
+                print(f"- {axis}: mean={mean}, variance={variance}, samples={samples}")
 
     if isinstance(disagreements, list):
         print("\n[disagreements summary]")

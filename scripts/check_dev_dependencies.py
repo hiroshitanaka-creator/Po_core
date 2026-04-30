@@ -14,7 +14,11 @@ PYPROJECT_FILE = ROOT / "pyproject.toml"
 
 def _canonical_dev_dependencies() -> list[str]:
     lines = CANONICAL_DEV_FILE.read_text(encoding="utf-8").splitlines()
-    return [line.strip() for line in lines if line.strip() and not line.lstrip().startswith("#")]
+    return [
+        line.strip()
+        for line in lines
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
 
 
 def main() -> None:

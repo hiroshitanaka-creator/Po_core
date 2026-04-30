@@ -76,9 +76,9 @@ class TestSampleTraceContract:
         )
         ms = payload["metric_status"]
         missing = _TENSOR_REQUIRED_METRICS - set(ms)
-        assert not missing, (
-            f"TensorComputed.metric_status is missing entries for: {missing}"
-        )
+        assert (
+            not missing
+        ), f"TensorComputed.metric_status is missing entries for: {missing}"
 
     def test_tensor_computed_metrics_is_dict(self, events_by_type: dict) -> None:
         """TensorComputed.metrics must be a dict of name→float, not a list."""
@@ -89,31 +89,52 @@ class TestSampleTraceContract:
             "Update docs/viewer/sample_trace.json."
         )
         for name, value in metrics.items():
-            assert isinstance(value, (int, float)), (
-                f"TensorComputed.metrics[{name!r}] must be numeric, got {type(value).__name__}"
-            )
+            assert isinstance(
+                value, (int, float)
+            ), f"TensorComputed.metrics[{name!r}] must be numeric, got {type(value).__name__}"
 
-    def test_safety_mode_inferred_has_required_fields(self, events_by_type: dict) -> None:
+    def test_safety_mode_inferred_has_required_fields(
+        self, events_by_type: dict
+    ) -> None:
         """SafetyModeInferred must have all 7 required fields."""
         smi = events_by_type.get("SafetyModeInferred")
-        assert smi is not None, "SafetyModeInferred event not found in sample_trace.json"
-
-        required = {"mode", "freedom_pressure", "warn_threshold", "critical_threshold",
-                    "missing_mode", "source_metric", "reason"}
-        missing = required - set(smi["payload"])
-        assert not missing, (
-            f"SafetyModeInferred payload missing fields: {missing}"
-        )
-
-    def test_philosophers_selected_has_selection_rationale(self, events_by_type: dict) -> None:
-        """PhilosophersSelected must have all selection-rationale fields."""
-        ps = events_by_type.get("PhilosophersSelected")
-        assert ps is not None, "PhilosophersSelected event not found in sample_trace.json"
+        assert (
+            smi is not None
+        ), "SafetyModeInferred event not found in sample_trace.json"
 
         required = {
-            "mode", "scenario_type", "preferred_tags", "require_tags",
-            "limit_override", "limit", "max_risk", "cost_budget",
-            "cost_total", "ids", "covered_tags",
+            "mode",
+            "freedom_pressure",
+            "warn_threshold",
+            "critical_threshold",
+            "missing_mode",
+            "source_metric",
+            "reason",
+        }
+        missing = required - set(smi["payload"])
+        assert not missing, f"SafetyModeInferred payload missing fields: {missing}"
+
+    def test_philosophers_selected_has_selection_rationale(
+        self, events_by_type: dict
+    ) -> None:
+        """PhilosophersSelected must have all selection-rationale fields."""
+        ps = events_by_type.get("PhilosophersSelected")
+        assert (
+            ps is not None
+        ), "PhilosophersSelected event not found in sample_trace.json"
+
+        required = {
+            "mode",
+            "scenario_type",
+            "preferred_tags",
+            "require_tags",
+            "limit_override",
+            "limit",
+            "max_risk",
+            "cost_budget",
+            "cost_total",
+            "ids",
+            "covered_tags",
         }
         missing = required - set(ps["payload"])
         assert not missing, (
@@ -121,10 +142,14 @@ class TestSampleTraceContract:
             "Update docs/viewer/sample_trace.json."
         )
 
-    def test_pareto_winner_selected_has_weighted_score(self, events_by_type: dict) -> None:
+    def test_pareto_winner_selected_has_weighted_score(
+        self, events_by_type: dict
+    ) -> None:
         """ParetoWinnerSelected.winner must contain weighted_score."""
         pw = events_by_type.get("ParetoWinnerSelected")
-        assert pw is not None, "ParetoWinnerSelected event not found in sample_trace.json"
+        assert (
+            pw is not None
+        ), "ParetoWinnerSelected event not found in sample_trace.json"
 
         winner = pw["payload"].get("winner", {})
         assert "weighted_score" in winner, (
@@ -139,18 +164,27 @@ class TestSampleTraceContract:
     def test_pareto_winner_selected_has_weights(self, events_by_type: dict) -> None:
         """ParetoWinnerSelected payload must have top-level weights dict."""
         pw = events_by_type.get("ParetoWinnerSelected")
-        assert pw is not None, "ParetoWinnerSelected event not found in sample_trace.json"
+        assert (
+            pw is not None
+        ), "ParetoWinnerSelected event not found in sample_trace.json"
 
         payload = pw["payload"]
-        assert "weights" in payload, (
-            "ParetoWinnerSelected payload must have top-level 'weights' key."
-        )
+        assert (
+            "weights" in payload
+        ), "ParetoWinnerSelected payload must have top-level 'weights' key."
         weights = payload["weights"]
-        required_objectives = {"safety", "freedom", "explain", "brevity", "coherence", "emergence"}
+        required_objectives = {
+            "safety",
+            "freedom",
+            "explain",
+            "brevity",
+            "coherence",
+            "emergence",
+        }
         missing = required_objectives - set(weights)
-        assert not missing, (
-            f"ParetoWinnerSelected.weights is missing objectives: {missing}"
-        )
+        assert (
+            not missing
+        ), f"ParetoWinnerSelected.weights is missing objectives: {missing}"
 
     def test_decision_emitted_has_final(self, events_by_type: dict) -> None:
         """DecisionEmitted payload must contain 'final' fingerprint."""
@@ -163,8 +197,12 @@ class TestSampleTraceContract:
             "Update docs/viewer/sample_trace.json."
         )
         final = payload["final"]
-        required = {"proposal_id", "action_type", "confidence", "content_len", "content_hash"}
+        required = {
+            "proposal_id",
+            "action_type",
+            "confidence",
+            "content_len",
+            "content_hash",
+        }
         missing = required - set(final)
-        assert not missing, (
-            f"DecisionEmitted.final missing fields: {missing}"
-        )
+        assert not missing, f"DecisionEmitted.final missing fields: {missing}"

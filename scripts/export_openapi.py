@@ -7,7 +7,6 @@ from pathlib import Path
 
 from po_core.app.rest.server import create_app
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_PATH = REPO_ROOT / "docs/openapi/po_core.openapi.json"
 

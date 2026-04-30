@@ -265,7 +265,9 @@ def test_explanation_emit_failure_is_observable(monkeypatch):
     deps, tracer, _ = _build_deps(freedom_pressure=0.35)  # triggers non-ALLOW intention
     run_turn(_make_ctx("Potentially risky input"), deps)
 
-    failed_events = [e for e in tracer.events if e.event_type == "ExplanationEmitFailed"]
+    failed_events = [
+        e for e in tracer.events if e.event_type == "ExplanationEmitFailed"
+    ]
     assert len(failed_events) == 1
     payload = failed_events[0].payload
     assert payload["stage"] == "intention"

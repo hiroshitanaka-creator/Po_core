@@ -143,9 +143,9 @@ def test_scope_mode_no_cross_scope_leakage() -> None:
         decision = evaluate_scope_policy(
             settings=settings, presented_api_key=REASON_KEY, scope=wrong_scope
         )
-        assert decision.allowed is False, (
-            f"reason key leaked into {wrong_scope} — scope segmentation broken"
-        )
+        assert (
+            decision.allowed is False
+        ), f"reason key leaked into {wrong_scope} — scope segmentation broken"
 
 
 def test_scope_mode_rejects_global_key_for_unconfigured_scope() -> None:

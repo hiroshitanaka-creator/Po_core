@@ -242,7 +242,9 @@ class SQLiteTraceStore(TraceStore):
                         event.event_type,
                         event.occurred_at.isoformat(),
                         event.correlation_id,
-                        json.dumps(dict(event.payload), ensure_ascii=False, sort_keys=True),
+                        json.dumps(
+                            dict(event.payload), ensure_ascii=False, sort_keys=True
+                        ),
                     ),
                 )
                 self._evict_if_needed(conn, settings.max_trace_sessions)

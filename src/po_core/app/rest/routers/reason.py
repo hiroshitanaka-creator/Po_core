@@ -70,7 +70,9 @@ _sync_active_workers: int = 0
 _sync_active_lock = threading.Lock()
 
 
-def _configure_sync_executor(max_workers: int) -> tuple[ThreadPoolExecutor, asyncio.Semaphore]:
+def _configure_sync_executor(
+    max_workers: int,
+) -> tuple[ThreadPoolExecutor, asyncio.Semaphore]:
     """Ensure a pool of exactly *max_workers* threads is live.
 
     Rebuilds the pool when ``max_workers`` changes (e.g. a test swaps settings)

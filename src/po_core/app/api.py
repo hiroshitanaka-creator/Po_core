@@ -444,7 +444,11 @@ async def generate(
     return Response(
         content=json.dumps(result),
         media_type="application/json",
-        headers={"Deprecation": "true", "Sunset": "v2.0.0", "Link": _DEPRECATION_HEADER},
+        headers={
+            "Deprecation": "true",
+            "Sunset": "v2.0.0",
+            "Link": _DEPRECATION_HEADER,
+        },
     )
 
 

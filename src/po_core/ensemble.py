@@ -10,7 +10,18 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, NamedTuple, Optional, Sequence, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Mapping,
+    NamedTuple,
+    Optional,
+    Sequence,
+    Union,
+    cast,
+)
 
 from po_core import philosophers
 from po_core.axis.scoring import score_text_with_debug
@@ -115,6 +126,7 @@ def _tensor_metric_status_entry(
             "source": tv.source if tv is not None else "unknown",
         }
     return {"status": "missing", "source": None}
+
 
 _SCENARIO_ROUTING: Dict[str, tuple] = {
     "values_clarification": (
@@ -506,9 +518,7 @@ def _run_phase_pre(
     # archetypes are not diluted by the full NORMAL budget (which equals the
     # total cost of all 42 philosophers and would otherwise admit everyone).
     scenario_type = (
-        case_signals.scenario_type
-        if case_signals is not None
-        else "general"
+        case_signals.scenario_type if case_signals is not None else "general"
     )
     _routing = _SCENARIO_ROUTING.get(scenario_type)
     preferred_tags: Optional[tuple] = _routing[0] if _routing else None
@@ -531,7 +541,9 @@ def _run_phase_pre(
                 "ids": sel.selected_ids,
                 "workers": max_workers,
                 "scenario_type": scenario_type,
-                "preferred_tags": list(sel.preferred_tags) if sel.preferred_tags else None,
+                "preferred_tags": (
+                    list(sel.preferred_tags) if sel.preferred_tags else None
+                ),
                 "limit_override": sel.limit_override,
                 "max_risk": sel.max_risk,
                 "cost_budget": sel.cost_budget,
@@ -1270,7 +1282,9 @@ def run_turn(
                         "has_constraint_conflict": case_signals.has_constraint_conflict,
                         "scenario_type": case_signals.scenario_type,
                         "action_type_before": _action_type_before,
-                        "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                        "action_type_after": (result.get("proposal") or {}).get(
+                            "action_type", ""
+                        ),
                         "constraint_conflict_added": case_signals.has_constraint_conflict,
                         "applied_changes": _changes,
                     },
@@ -1333,7 +1347,9 @@ async def async_run_turn(
                         "has_constraint_conflict": case_signals.has_constraint_conflict,
                         "scenario_type": case_signals.scenario_type,
                         "action_type_before": _action_type_before,
-                        "action_type_after": (result.get("proposal") or {}).get("action_type", ""),
+                        "action_type_after": (result.get("proposal") or {}).get(
+                            "action_type", ""
+                        ),
                         "constraint_conflict_added": case_signals.has_constraint_conflict,
                         "applied_changes": _changes,
                     },

@@ -71,7 +71,9 @@ def main() -> int:
         print(f"Traceability Matrix: {report['traceability_path']}")
         print(f"Acceptance golden dir: {report['golden_dir']}")
         print(f"Covered AT IDs ({len(covered)}): {', '.join(covered) or '(none)'}")
-        print(f"Uncovered AT IDs ({len(uncovered)}): {', '.join(uncovered) or '(none)'}")
+        print(
+            f"Uncovered AT IDs ({len(uncovered)}): {', '.join(uncovered) or '(none)'}"
+        )
         print(
             f"Threshold: covered_count >= {args.min_at} -> {'PASS' if report['threshold_passed'] else 'FAIL'}"
         )

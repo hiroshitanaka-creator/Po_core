@@ -152,7 +152,9 @@ def main() -> None:
     import argparse
     import json
 
-    parser = argparse.ArgumentParser(description="Run Po_core Experimental tests with Claude")
+    parser = argparse.ArgumentParser(
+        description="Run Po_core Experimental tests with Claude"
+    )
     parser.add_argument(
         "--question",
         "-q",

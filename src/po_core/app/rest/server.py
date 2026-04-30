@@ -133,6 +133,7 @@ def create_app(settings: APISettings | None = None) -> FastAPI:
         set_api_settings(settings)
         from po_core.app.rest.store import reset_trace_store
         from po_core.app.rest.review_store import reset_review_store
+
         reset_trace_store()
         reset_review_store()
     settings = get_api_settings()

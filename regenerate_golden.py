@@ -22,7 +22,9 @@ def regenerate(yaml_path: Path, *, seed: int, now: str, deterministic: bool) -> 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("cases", nargs="+", type=Path, help="Path(s) to scenario yaml files")
+    parser.add_argument(
+        "cases", nargs="+", type=Path, help="Path(s) to scenario yaml files"
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--now", default="2026-02-22T00:00:00Z")
     parser.add_argument("--deterministic", action="store_true", default=True)

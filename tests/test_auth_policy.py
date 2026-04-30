@@ -22,4 +22,3 @@ def test_evaluate_auth_policy_uses_compare_digest(monkeypatch) -> None:
     assert decision.is_misconfigured is False
     assert decision.message == "Invalid or missing API key"
     assert calls == [("wrong", "secret")]
-

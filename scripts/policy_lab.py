@@ -166,8 +166,6 @@ def _planning_rules_summary(
     }
 
 
-
-
 def _rule_pack_summary(
     records: Sequence[Dict[str, Any]],
     *,
@@ -207,7 +205,9 @@ def _rule_pack_summary(
     }
 
 
-def _rule_pack_delta(*, baseline: Dict[str, Any], variant: Dict[str, Any]) -> Dict[str, Any]:
+def _rule_pack_delta(
+    *, baseline: Dict[str, Any], variant: Dict[str, Any]
+) -> Dict[str, Any]:
     baseline_by_rule = {
         row.get("rule_id"): row
         for row in baseline.get("rule_case_counts", [])
@@ -235,6 +235,7 @@ def _rule_pack_delta(*, baseline: Dict[str, Any], variant: Dict[str, Any]) -> Di
         "pack": variant.get("pack"),
         "rule_deltas": rows,
     }
+
 
 def _load_traceability_index(path: Path) -> Dict[str, Dict[str, set[str]]]:
     def _requirement_aliases(req_id: str) -> set[str]:
@@ -319,7 +320,9 @@ def _diff_case(
         impacted.update(trace_idx.get("question_id", {}).get(question_id, set()))
 
     if changed_fields:
-        impacted.update(trace_idx.get("module", {}).get("src/pocore/policy_v1.py", set()))
+        impacted.update(
+            trace_idx.get("module", {}).get("src/pocore/policy_v1.py", set())
+        )
         impacted.update(
             trace_idx.get("module", {}).get(
                 "src/pocore/engines/recommendation_v1.py", set()
@@ -354,7 +357,9 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
 
     if args.compare_baseline:
         for case_path in scenario_files:
-            out = run_case_file(case_path, seed=args.seed, now=args.now, deterministic=True)
+            out = run_case_file(
+                case_path, seed=args.seed, now=args.now, deterministic=True
+            )
             baseline_records[case_path.name] = _case_record(case_path, out)
 
     with temporary_policy_override(
@@ -362,10 +367,14 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
         time_pressure_days=args.time_pressure_days,
     ) as active_snapshot:
         for case_path in scenario_files:
-            out = run_case_file(case_path, seed=args.seed, now=args.now, deterministic=True)
+            out = run_case_file(
+                case_path, seed=args.seed, now=args.now, deterministic=True
+            )
             variant_records[case_path.name] = _case_record(case_path, out)
             if not variant_records[case_path.name]["policy_snapshot"]:
-                variant_records[case_path.name]["policy_snapshot"] = active_snapshot.to_dict()
+                variant_records[case_path.name][
+                    "policy_snapshot"
+                ] = active_snapshot.to_dict()
 
     result: Dict[str, Any] = {
         "meta": {
@@ -386,7 +395,9 @@ def run_policy_lab(args: argparse.Namespace) -> Dict[str, Any]:
     }
 
     if args.compare_baseline:
-        trace_idx = _load_traceability_index(Path("docs/traceability/traceability_v1.yaml"))
+        trace_idx = _load_traceability_index(
+            Path("docs/traceability/traceability_v1.yaml")
+        )
         diffs = [
             _diff_case(baseline_records[name], variant_records[name], trace_idx)
             for name in sorted(variant_records)
@@ -513,7 +524,9 @@ def _render_markdown(report: Dict[str, Any]) -> str:
 
         for key in ("values_pack", "conflict_pack"):
             pack_block = summary.get(key, {})
-            variant = pack_block.get("variant", {}) if isinstance(pack_block, dict) else {}
+            variant = (
+                pack_block.get("variant", {}) if isinstance(pack_block, dict) else {}
+            )
             lines.append(f"### {key.replace('_', ' ').title()} rule frequency")
             for row in variant.get("rule_case_counts", []):
                 lines.append(
@@ -525,7 +538,9 @@ def _render_markdown(report: Dict[str, Any]) -> str:
 
             delta = pack_block.get("delta") if isinstance(pack_block, dict) else None
             delta_summary = (
-                pack_block.get("delta_summary") if isinstance(pack_block, dict) else None
+                pack_block.get("delta_summary")
+                if isinstance(pack_block, dict)
+                else None
             )
             if isinstance(delta, dict) and delta.get("rule_deltas"):
                 lines.append(
