@@ -54,6 +54,8 @@ class Selection:
     cost_budget: int
     limit: int
     require_tags: Tuple[str, ...]
+    limit_override: Optional[int]
+    preferred_tags: Optional[Tuple[str, ...]]
 
 
 @dataclass(frozen=True)
@@ -244,6 +246,8 @@ class PhilosopherRegistry:
             cost_budget=plan.cost_budget,
             limit=effective_limit,
             require_tags=effective_require_tags,
+            limit_override=limit_override,
+            preferred_tags=preferred_tags,
         )
 
     def load(

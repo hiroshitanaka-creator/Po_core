@@ -34,6 +34,8 @@ def _make_selection(ids: list[str]) -> Selection:
         cost_budget=80,
         limit=42,
         require_tags=("planner", "critic", "compliance", "creative", "redteam"),
+        limit_override=None,
+        preferred_tags=None,
     )
 
 
@@ -167,6 +169,8 @@ class TestPoSelfGeneratePhilosophersParam:
             cost_budget=80,
             limit=42,
             require_tags=("planner", "critic", "compliance", "creative", "redteam"),
+            limit_override=None,
+            preferred_tags=None,
         )
         mock_sys.registry.select.return_value = mock_sel
         mock_sys.registry.load.return_value = ([], [])
