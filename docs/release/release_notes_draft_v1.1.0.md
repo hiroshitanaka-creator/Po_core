@@ -2,7 +2,7 @@
 
 Status: **DRAFT** — version not yet bumped; no PyPI publish initiated.  
 Base: `v1.0.3` (published 2026-03-22)  
-Branch state: `main @ 5938c40` (2026-04-30)  
+Draft prepared from `main @ 5938c40` (2026-04-30)  
 SemVer rationale: minor bump — backward-compatible new functionality
 (new public API entry point, new trace events, new audit fields).
 
@@ -11,8 +11,10 @@ SemVer rationale: minor bump — backward-compatible new functionality
 ## Summary
 
 v1.1.0 delivers a structured output API, a complete engine trace audit
-contract, and 54 new test cases.  All changes are backward-compatible:
+contract, and 53 new tests.  All changes are backward-compatible:
 existing `po_core.run()` callers are unaffected.
+
+Completion matrix pass count increased from 110 to 164 (164 pass / 0 fail / 0 not-yet).
 
 ---
 
@@ -59,8 +61,8 @@ they check for absence of new keys.
 
 ### `TensorComputed` — metric provenance  (TENSOR-TR-1, TENSOR-TR-2)
 
-`TensorComputed.metrics` is now a `dict[str, float]` (previously a list of
-names).  A new `metric_status` field records per-metric provenance:
+`TensorComputed.metrics` is documented and sample-validated as
+`dict[str, float]`.  A new `metric_status` field records per-metric provenance:
 
 ```json
 "metric_status": {
@@ -192,16 +194,19 @@ list of `applied_changes`.  Not emitted when no mutation occurs.
 | Change | Impact |
 |---|---|
 | `run()` return shape | **Unchanged** |
-| `TensorComputed.metrics` | **Breaking change in sample** — was list of names, now dict of float values. Consumers reading `metrics` as a list will break. (Sample-only breakage; production callers were not documented to rely on list format.) |
+| `TensorComputed.metrics` | **Viewer sample alignment only** — older `docs/viewer/sample_trace.json` represented `metrics` as a list of names; the current engine trace contract defines it as `dict[str, float]`, and the sample now matches. Runtime `run()` and `run_case()` return shapes are unchanged. Consumers of the sample file or custom trace viewers that assumed the old list shape should update their parsers. |
 | New trace event `SafetyModeInferred` | Additive — consumers ignoring unknown events are unaffected |
 | New fields in `PhilosophersSelected` | Additive |
 | New fields in `ParetoWinnerSelected` (`weights`, `winner.weighted_score`) | Additive |
 | `ParetoWeights.emergence` | Additive — existing `to_dict()` callers gain one new key |
 | `run_case()` / `async_run_case()` | New export — no existing code affected |
 
-**Notable**: `TensorComputed.metrics` changed from a list of names to a
-`dict[str, float]`.  Any consumer that iterated over `metrics` as a list
-must be updated.  The viewer's `sample_trace.json` has been updated.
+**Note**: older versions of `docs/viewer/sample_trace.json` represented
+`TensorComputed.metrics` as a list of metric names.  The sample has been
+updated to match the contract (`dict[str, float]`).  Consumers of that
+sample file or custom trace viewers that assumed the old list shape should
+update their parsers.  Production `run()` and `run_case()` return shapes
+are unchanged.
 
 ---
 
