@@ -50,6 +50,8 @@ class Selection:
     selected_ids: List[str]
     cost_total: int
     covered_tags: List[str]
+    max_risk: int
+    cost_budget: int
 
 
 @dataclass(frozen=True)
@@ -236,6 +238,8 @@ class PhilosopherRegistry:
             selected_ids=[s.philosopher_id for s in selected],
             cost_total=cost_total,
             covered_tags=sorted(list(covered)),
+            max_risk=plan.max_risk,
+            cost_budget=plan.cost_budget,
         )
 
     def load(

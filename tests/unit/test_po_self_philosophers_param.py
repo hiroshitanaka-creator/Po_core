@@ -30,6 +30,8 @@ def _make_selection(ids: list[str]) -> Selection:
         selected_ids=ids,
         cost_total=len(ids) * 2,
         covered_tags=["planner", "critic", "compliance"],
+        max_risk=2,
+        cost_budget=80,
     )
 
 
@@ -159,6 +161,8 @@ class TestPoSelfGeneratePhilosophersParam:
             selected_ids=list(selected_ids),
             cost_total=len(selected_ids) * 2,
             covered_tags=["planner"],
+            max_risk=2,
+            cost_budget=80,
         )
         mock_sys.registry.select.return_value = mock_sel
         mock_sys.registry.load.return_value = ([], [])

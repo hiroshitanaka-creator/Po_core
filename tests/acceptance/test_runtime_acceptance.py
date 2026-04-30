@@ -1224,3 +1224,121 @@ class TestSafetyModeInferredTrace:
             assert reason == "freedom_pressure < warn_threshold", (
                 f"Unexpected reason for NORMAL: {reason!r}"
             )
+
+
+# ── SEL-TR-1: Philosopher selection rationale ─────────────────────────────────
+
+_SEL_TR_1_RATIONALE_KEYS = frozenset({"max_risk", "cost_budget", "limit_override", "preferred_tags"})
+
+
+@pytest.mark.runtime_acceptance
+class TestPhilosopherSelectionRationale:
+    """SEL-TR-1: Philosopher selection rationale must be trace-auditable.
+
+    PhilosophersSelected payload must record the selection constraints
+    (max_risk, cost_budget, limit_override, preferred_tags) so a trace
+    consumer can reconstruct *why* a given roster was chosen — not just
+    which philosophers appeared, but which SafetyMode constraints and
+    scenario overrides governed the selection.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return tracer
+
+    def test_philosophers_selected_payload_has_selection_rationale(self) -> None:
+        """SEL-TR-1: PhilosophersSelected must include all selection-rationale keys."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
+        )
+        assert ev is not None, (
+            f"PhilosophersSelected event not found. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        missing = _SEL_TR_1_RATIONALE_KEYS - set(ev.payload)
+        assert not missing, (
+            f"PhilosophersSelected payload missing rationale keys: {missing}. "
+            f"Got: {set(ev.payload)}"
+        )
+
+    def test_values_clarification_selection_records_preferred_tags(self) -> None:
+        """SEL-TR-1: AT-009 (values_clarification) → preferred_tags and limit_override recorded."""
+        from po_core.philosophers.tags import TAG_CLARIFY, TAG_COMPLIANCE, TAG_CREATIVE
+
+        tracer = self._run_with_tracer("case_009")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
+        )
+        assert ev is not None, "PhilosophersSelected event not found"
+
+        expected_tags = [TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE]
+        assert ev.payload["preferred_tags"] == expected_tags, (
+            f"AT-009 preferred_tags: expected {expected_tags!r}; "
+            f"got {ev.payload['preferred_tags']!r}"
+        )
+        assert ev.payload["limit_override"] == 3, (
+            f"AT-009 limit_override: expected 3; got {ev.payload['limit_override']!r}"
+        )
+
+    def test_conflicting_constraints_selection_records_preferred_tags(self) -> None:
+        """SEL-TR-1: AT-010 (conflicting_constraints) → preferred_tags and limit_override recorded."""
+        from po_core.philosophers.tags import TAG_CRITIC, TAG_PLANNER, TAG_REDTEAM
+
+        tracer = self._run_with_tracer("case_010")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "PhilosophersSelected"), None
+        )
+        assert ev is not None, "PhilosophersSelected event not found"
+
+        expected_tags = [TAG_CRITIC, TAG_REDTEAM, TAG_PLANNER]
+        assert ev.payload["preferred_tags"] == expected_tags, (
+            f"AT-010 preferred_tags: expected {expected_tags!r}; "
+            f"got {ev.payload['preferred_tags']!r}"
+        )
+        assert ev.payload["limit_override"] == 3, (
+            f"AT-010 limit_override: expected 3; got {ev.payload['limit_override']!r}"
+        )
+
+    def test_scenario_routing_selects_distinct_rosters(self) -> None:
+        """SEL-TR-1: AT-009 and AT-010 must produce distinct philosopher rosters in trace."""
+        tracer_009 = self._run_with_tracer("case_009")
+        tracer_010 = self._run_with_tracer("case_010")
+
+        ev_009 = next(
+            (e for e in tracer_009.events if e.event_type == "PhilosophersSelected"), None
+        )
+        ev_010 = next(
+            (e for e in tracer_010.events if e.event_type == "PhilosophersSelected"), None
+        )
+        assert ev_009 is not None, "PhilosophersSelected not found for case_009"
+        assert ev_010 is not None, "PhilosophersSelected not found for case_010"
+
+        ids_009 = set(ev_009.payload["ids"])
+        ids_010 = set(ev_010.payload["ids"])
+
+        assert ids_009 != ids_010, (
+            f"SEL-TR-1: AT-009 and AT-010 rosters are identical; "
+            f"expected distinct selections driven by _SCENARIO_ROUTING. "
+            f"Got: {sorted(ids_009)!r}"
+        )

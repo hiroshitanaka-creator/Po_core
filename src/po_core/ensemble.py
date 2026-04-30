@@ -496,6 +496,9 @@ def _run_phase_pre(
                 "workers": max_workers,
                 "scenario_type": scenario_type,
                 "preferred_tags": list(preferred_tags) if preferred_tags else None,
+                "limit_override": limit_override,
+                "max_risk": sel.max_risk,
+                "cost_budget": sel.cost_budget,
             },
         )
     )
