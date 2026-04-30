@@ -51,14 +51,22 @@ class TensorEngine:
 
     def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
         """Compute tensors from context and memory."""
-        values: Dict[str, float] = {}
+        float_values: Dict[str, float] = {}
+        tensor_values: Dict[str, TensorValue] = {}
         for fn in self._metrics:
             k, v = fn(ctx, memory)
-            values[k] = float(v)
+            float_v = float(v)
+            float_values[k] = float_v
+            tensor_values[k] = TensorValue(
+                name=k,
+                value=float_v,
+                source=getattr(fn, "__module__", "unknown").split(".")[-1],
+            )
 
         return TensorSnapshot(
             computed_at=datetime.now(timezone.utc),
-            metrics=values,
+            metrics=float_values,
+            values=tensor_values,
             version="v1",
         )
 

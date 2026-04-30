@@ -1485,3 +1485,255 @@ class TestTensorComputedTrace:
             f"TensorComputed.metrics contains non-numeric, non-None values: {non_numeric}. "
             "Each metric must be a number (int/float) or None if the metric could not be computed."
         )
+
+# ── TENSOR-TR-2: Tensor metric missing/fallback trace contract ────────────────
+
+
+@pytest.mark.runtime_acceptance
+class TestTensorComputedStatusTrace:
+    """TENSOR-TR-2: TensorComputed must make per-metric status explicitly auditable.
+
+    TensorComputed.metric_status must cover every expected metric and mark each
+    as "computed", "fallback", "missing", or "failed" so downstream consumers
+    can distinguish normal computation from degraded or absent metrics.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return tracer
+
+    def test_tensor_computed_metric_status_present(self) -> None:
+        """TENSOR-TR-2: TensorComputed payload must contain metric_status for each required metric."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, (
+            f"TensorComputed event not found. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        assert "metric_status" in ev.payload, (
+            "TensorComputed payload must contain 'metric_status'. "
+            f"Got keys: {set(ev.payload)}"
+        )
+
+        ms = ev.payload["metric_status"]
+        missing_keys = _TENSOR_REQUIRED_METRICS - set(ms)
+        assert not missing_keys, (
+            f"metric_status is missing entries for required metrics: {missing_keys}. "
+            f"Got: {set(ms)}"
+        )
+
+        for name, entry in ms.items():
+            assert "status" in entry, (
+                f"metric_status[{name!r}] must have a 'status' key. Got: {entry}"
+            )
+            assert entry["status"] in {"computed", "fallback", "missing", "failed"}, (
+                f"metric_status[{name!r}]['status'] must be one of "
+                "computed/fallback/missing/failed. "
+                f"Got: {entry['status']!r}"
+            )
+
+    def test_tensor_computed_metric_status_covers_all_metrics(self) -> None:
+        """TENSOR-TR-2: metric_status must cover every key in TensorComputed.metrics plus required set."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, "TensorComputed event not found"
+
+        metrics = ev.payload.get("metrics", {})
+        ms = ev.payload.get("metric_status", {})
+
+        # Every key in metrics must appear in metric_status
+        uncovered = set(metrics) - set(ms)
+        assert not uncovered, (
+            f"TensorComputed.metrics keys {uncovered!r} have no entry in metric_status."
+        )
+
+        # All 4 required metrics must appear in metric_status regardless of whether
+        # they were computed (status may be "missing" if the engine omitted them)
+        missing_required = _TENSOR_REQUIRED_METRICS - set(ms)
+        assert not missing_required, (
+            f"Required metrics {missing_required!r} are absent from metric_status entirely."
+        )
+
+    def test_missing_metric_status_is_explicit(self) -> None:
+        """TENSOR-TR-2: When an expected metric is absent, metric_status must mark it 'missing'."""
+        import dataclasses
+        import uuid
+        import warnings
+
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.domain.context import Context
+        from po_core.domain.memory_snapshot import MemorySnapshot
+        from po_core.domain.tensor_snapshot import TensorSnapshot
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.wiring import build_default_system
+        from po_core.trace.in_memory import InMemoryTracer
+
+        class _FakeMissingMetricEngine:
+            """Returns all expected metrics except semantic_delta."""
+
+            def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
+                return TensorSnapshot(
+                    metrics={
+                        "freedom_pressure": 0.10,
+                        "blocked_tensor": 0.05,
+                        "interaction_tensor": 0.00,
+                        # semantic_delta intentionally absent
+                    },
+                    version="v1",
+                )
+
+        case = _load_case("case_001")
+        tracer = InMemoryTracer()
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            system = build_default_system()
+
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=build_user_input(case),
+            meta={"entry": "test"},
+        )
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=_FakeMissingMetricEngine(),
+            solarwill=system.solarwill,
+            gate=system.gate,
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=None,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=None,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
+        )
+        run_turn(ctx, deps, case_signals=from_case_dict(case))
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, "TensorComputed event not found"
+
+        ms = ev.payload.get("metric_status", {})
+
+        assert "semantic_delta" in ms, (
+            "metric_status must include 'semantic_delta' even when the engine omits it."
+        )
+        assert ms["semantic_delta"]["status"] == "missing", (
+            f"metric_status['semantic_delta']['status'] should be 'missing' when the "
+            f"engine omits the metric; got {ms['semantic_delta']['status']!r}"
+        )
+
+        # Confirm the metrics that were provided are still marked computed
+        for name in ("freedom_pressure", "blocked_tensor", "interaction_tensor"):
+            assert ms[name]["status"] == "computed", (
+                f"metric_status[{name!r}]['status'] should be 'computed'; "
+                f"got {ms[name]['status']!r}"
+            )
+
+    def test_extra_metric_none_value_is_marked_missing(self) -> None:
+        """TENSOR-TR-2: Extra metrics with non-numeric values must be marked 'missing', not 'computed'."""
+        import dataclasses
+        import uuid
+        import warnings
+
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.domain.context import Context
+        from po_core.domain.memory_snapshot import MemorySnapshot
+        from po_core.domain.tensor_snapshot import TensorSnapshot
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.wiring import build_default_system
+        from po_core.trace.in_memory import InMemoryTracer
+
+        class _FakeExtraNoneMetricEngine:
+            """Returns all expected metrics plus an extra key whose value is None."""
+
+            def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
+                return TensorSnapshot(
+                    metrics={
+                        "freedom_pressure": 0.40,
+                        "semantic_delta": 0.30,
+                        "blocked_tensor": 0.20,
+                        "interaction_tensor": 0.10,
+                        "custom_metric": None,  # type: ignore[arg-type]  # extra, non-numeric
+                    },
+                    version="v1",
+                )
+
+        case = _load_case("case_001")
+        tracer = InMemoryTracer()
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            system = build_default_system()
+
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=build_user_input(case),
+            meta={"entry": "test"},
+        )
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=_FakeExtraNoneMetricEngine(),
+            solarwill=system.solarwill,
+            gate=system.gate,
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=None,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=None,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
+        )
+        run_turn(ctx, deps, case_signals=from_case_dict(case))
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, "TensorComputed event not found"
+
+        ms = ev.payload.get("metric_status", {})
+
+        assert "custom_metric" in ms, (
+            "metric_status must include 'custom_metric' because it appeared in TensorComputed.metrics."
+        )
+        assert ms["custom_metric"]["status"] == "missing", (
+            f"An extra metric with a None value must be marked 'missing', "
+            f"not 'computed'. Got: {ms['custom_metric']['status']!r}"
+        )
+
+        # Confirm all expected metrics with numeric values are still marked computed
+        for name in ("freedom_pressure", "semantic_delta", "blocked_tensor", "interaction_tensor"):
+            assert ms[name]["status"] == "computed", (
+                f"metric_status[{name!r}]['status'] should be 'computed'; "
+                f"got {ms[name]['status']!r}"
+            )
