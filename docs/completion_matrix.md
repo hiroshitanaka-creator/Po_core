@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-29 (AGG-TR-4 ActionGate final decision trace contract added; runtime total 43→45)  
-Source: `main @ 973727b`
+Last updated: 2026-04-30 (MODE-TR-2 SafetyModeInferred branch coverage added; unit total +7)  
+Source: `feat/mode-tr-2-safetymode-branch-coverage @ eac71a7`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -104,8 +104,26 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `TestParetoWinnerScoreExplainability` (3 tests) | ✅ | AGG-TR-2: `winner.weighted_score` recomputable from `scores × weights` within 1e-4; all 6 objective keys present in winner scores and each front row |
 | `TestParetoSafetyModeWeights` (3 tests) | ✅ | AGG-TR-3: NORMAL/WARN/CRITICAL weights are mutually distinct; CRITICAL has largest safety and zero freedom/emergence; ParetoFrontComputed and ParetoWinnerSelected carry identical mode/weights in production run |
 | `TestActionGateTraceContract` (2 tests) | ✅ | AGG-TR-4: Normal path — ParetoWinnerSelected → AggregateCompleted → DecisionEmitted(degraded=False, origin="pareto") all share same proposal_id; Override path — fake gate rejects Pareto winner → SafetyOverrideApplied(from=winner, to=fallback) + DecisionEmitted(degraded=True, candidate=winner, final=fallback) |
+| `TestSafetyModeInferredTrace` (3 tests) | ✅ | MODE-TR-1: SafetyModeInferred event present with all 7 required keys; mode agrees with PhilosophersSelected / ParetoFrontComputed / ParetoWinnerSelected; reason string is numerically consistent with freedom_pressure vs. thresholds |
 
-**Runtime total: 45 pass / 0 fail / 0 xfail**
+**Runtime total: 48 pass / 0 fail / 0 xfail**
+
+### MODE-TR-2: SafetyModeInferred branch coverage
+
+Tests in `tests/unit/test_safety_mode_inferred_branches.py`.  
+Entry: `_build_safety_mode_inferred_payload(mode, fp_value, config)` (pure function extracted from `ensemble.py`).
+
+| Test | Status | Notes |
+|---|---|---|
+| `TestSafetyModeInferredBranches::test_missing_freedom_pressure` | ✅ | fp=None → mode=missing_mode, reason="freedom_pressure_missing" |
+| `TestSafetyModeInferredBranches::test_normal_branch` | ✅ | fp=0.10 < warn=0.30 → mode="normal", correct reason |
+| `TestSafetyModeInferredBranches::test_warn_branch` | ✅ | fp=0.40 in [0.30, 0.50) → mode="warn", correct reason |
+| `TestSafetyModeInferredBranches::test_critical_branch` | ✅ | fp=0.70 >= crit=0.50 → mode="critical", correct reason |
+| `TestSafetyModeInferredBoundaries::test_warn_boundary_exact` | ✅ | fp==warn exactly → mode="warn" (>= wins) |
+| `TestSafetyModeInferredBoundaries::test_critical_boundary_exact` | ✅ | fp==critical exactly → mode="critical" |
+| `TestSafetyModeInferredBoundaries::test_custom_missing_mode_warn` | ✅ | missing_mode=WARN reflected in payload |
+
+**Unit total (branch coverage): 7 pass / 0 fail**
 
 ### Gap catalogue
 
@@ -191,12 +209,13 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 45 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 48 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
-| **Total** | **135** | **0** | **0** |
+| Unit (branch coverage) | 7 | 0 | 0 |
+| **Total** | **145** | **0** | **0** |
 
 ### Resolved gaps
 

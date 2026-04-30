@@ -296,6 +296,34 @@ def _normalize_primary_proposals(proposals: List[Any]) -> tuple[List[Any], List[
     return primaries, secondaries
 
 
+def _build_safety_mode_inferred_payload(
+    mode: SafetyMode,
+    fp_value: "Optional[float]",
+    config: SafetyModeConfig,
+) -> dict:
+    """Build the SafetyModeInferred trace payload.
+
+    Pure function; called from _run_phase_pre and testable in isolation.
+    """
+    if fp_value is None:
+        reason = "freedom_pressure_missing"
+    elif fp_value >= config.critical:
+        reason = "freedom_pressure >= critical_threshold"
+    elif fp_value >= config.warn:
+        reason = "warn_threshold <= freedom_pressure < critical_threshold"
+    else:
+        reason = "freedom_pressure < warn_threshold"
+    return {
+        "mode": mode.value,
+        "freedom_pressure": fp_value,
+        "warn_threshold": config.warn,
+        "critical_threshold": config.critical,
+        "missing_mode": config.missing_mode.value,
+        "source_metric": "freedom_pressure",
+        "reason": reason,
+    }
+
+
 def _run_phase_pre(
     ctx: DomainContext,
     deps: "EnsembleDeps",
@@ -335,7 +363,15 @@ def _run_phase_pre(
         critical=deps.settings.freedom_pressure_critical,
         missing_mode=deps.settings.freedom_pressure_missing_mode,
     )
-    mode, _ = infer_safety_mode(tensors, safety_config)
+    mode, fp_value = infer_safety_mode(tensors, safety_config)
+
+    tracer.emit(
+        TraceEvent.now(
+            "SafetyModeInferred",
+            ctx.request_id,
+            _build_safety_mode_inferred_payload(mode, fp_value, safety_config),
+        )
+    )
 
     # 3. SolarWill intent
     intent, will_meta = deps.solarwill.compute_intent(ctx, tensors, memory)
