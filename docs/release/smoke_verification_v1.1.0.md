@@ -1,4 +1,6 @@
-# Smoke Verification Evidence for v1.1.0
+# Smoke Verification Placeholder for v1.1.0
+
+> ⚠️ **PRE-PUBLISH PLACEHOLDER — this is not evidence.** All fields are pending actual publication.
 
 - Version: `1.1.0`
 - Evidence status: **pre-publish placeholder** — pending actual publish

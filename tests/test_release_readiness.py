@@ -116,7 +116,10 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     assert published_version == "1.0.3"
     assert f"Repository target version: `{version}`" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
-    assert f"`{version}` published on PyPI" in status_doc
+    # v1.1.0 is not yet published — assert honest pre-publish state
+    assert f"PyPI publication for `{version}`" in status_doc
+    assert "not yet uploaded" in status_doc
+    assert f"`{version}` published on PyPI" not in status_doc  # guard against false claims
     assert "Remaining Evidence Gaps" in status_doc
 
 

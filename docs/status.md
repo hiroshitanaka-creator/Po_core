@@ -17,7 +17,7 @@
 - v1.1.0 candidate handoff: `docs/release/release_candidate_handoff_v1.1.0.md`
 - v1.1.0 smoke evidence: `docs/release/smoke_verification_v1.1.0.md` (pending — not yet published)
 - External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
-- External publish status (v1.1.0): `1.1.0` published on PyPI — ⏳ pending (not yet uploaded)
+- PyPI publication for `1.1.0`: pending — not yet uploaded.
 - PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
 - Pending evidence (v1.1.0): Record GitHub Actions workflow run URL(s); record clean import + runtime smoke transcript post-publish.
