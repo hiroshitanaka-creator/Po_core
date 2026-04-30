@@ -1370,3 +1370,118 @@ class TestPhilosopherSelectionRationale:
             f"expected distinct selections driven by _SCENARIO_ROUTING. "
             f"Got: {sorted(ids_009)!r}"
         )
+
+
+# ── TENSOR-TR-1: TensorComputed metric provenance ─────────────────────────────
+
+_TENSOR_REQUIRED_METRICS = frozenset(
+    {"freedom_pressure", "semantic_delta", "blocked_tensor", "interaction_tensor"}
+)
+
+
+@pytest.mark.runtime_acceptance
+class TestTensorComputedTrace:
+    """TENSOR-TR-1: TensorComputed payload must be auditable.
+
+    TensorComputed is the earliest substantive trace event — it records the raw
+    metric values that drive SafetyMode inference, philosopher selection, and
+    Pareto scoring.  A trace consumer must be able to confirm that
+    SafetyModeInferred.freedom_pressure derives directly from
+    TensorComputed.metrics["freedom_pressure"] and that every expected metric
+    is present and numeric.
+    """
+
+    @staticmethod
+    def _run_with_tracer(case_id: str):
+        import warnings
+
+        from po_core.app.api import run
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.trace.in_memory import InMemoryTracer
+
+        case = _load_case(case_id)
+        tracer = InMemoryTracer()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            run(
+                build_user_input(case),
+                case_signals=from_case_dict(case),
+                tracer=tracer,
+            )
+        return tracer
+
+    def test_tensor_computed_payload_has_required_metrics(self) -> None:
+        """TENSOR-TR-1: TensorComputed must carry all expected metrics and a version."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, (
+            f"TensorComputed event not found. "
+            f"Emitted events: {[e.event_type for e in tracer.events]}"
+        )
+
+        assert "metrics" in ev.payload, "TensorComputed payload must contain 'metrics'"
+        assert "version" in ev.payload, "TensorComputed payload must contain 'version'"
+
+        missing = _TENSOR_REQUIRED_METRICS - set(ev.payload["metrics"])
+        assert not missing, (
+            f"TensorComputed.metrics missing expected keys: {missing}. "
+            f"Got: {set(ev.payload['metrics'])}"
+        )
+
+    def test_safety_mode_freedom_pressure_matches_tensor_computed_metric(self) -> None:
+        """TENSOR-TR-1: SafetyModeInferred.freedom_pressure must equal TensorComputed.metrics['freedom_pressure']."""
+        tracer = self._run_with_tracer("case_001")
+
+        tc_ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        smi_ev = next(
+            (e for e in tracer.events if e.event_type == "SafetyModeInferred"), None
+        )
+        assert tc_ev is not None, "TensorComputed event not found"
+        assert smi_ev is not None, "SafetyModeInferred event not found"
+
+        tc_fp = tc_ev.payload["metrics"].get("freedom_pressure")
+        smi_fp = smi_ev.payload["freedom_pressure"]
+
+        if smi_fp is None:
+            assert tc_fp is None, (
+                f"SafetyModeInferred.freedom_pressure is None (missing metric path) "
+                f"but TensorComputed.metrics['freedom_pressure'] = {tc_fp!r}; "
+                "they must agree on the missing-metric case."
+            )
+        else:
+            assert tc_fp is not None, (
+                f"SafetyModeInferred.freedom_pressure = {smi_fp} but "
+                "TensorComputed.metrics['freedom_pressure'] is absent or None."
+            )
+            assert abs(tc_fp - smi_fp) < 1e-9, (
+                f"SafetyModeInferred.freedom_pressure ({smi_fp}) != "
+                f"TensorComputed.metrics['freedom_pressure'] ({tc_fp}); "
+                "SafetyModeInferred must derive its value directly from the tensor snapshot."
+            )
+
+    def test_tensor_computed_metric_values_are_numeric_or_explicitly_missing(
+        self,
+    ) -> None:
+        """TENSOR-TR-1: Every metric in TensorComputed.metrics must be int, float, or None."""
+        tracer = self._run_with_tracer("case_001")
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, "TensorComputed event not found"
+
+        non_numeric = {
+            k: v
+            for k, v in ev.payload["metrics"].items()
+            if not isinstance(v, (int, float)) and v is not None
+        }
+        assert not non_numeric, (
+            f"TensorComputed.metrics contains non-numeric, non-None values: {non_numeric}. "
+            "Each metric must be a number (int/float) or None if the metric could not be computed."
+        )

@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-30 (SEL-TR-1 philosopher selection rationale trace contract added; runtime total +4)  
-Source: `main @ a2a536f`
+Last updated: 2026-04-30 (TENSOR-TR-1 TensorComputed metric provenance added; runtime total +3)  
+Source: `feat/tensor-tr-1-tensor-computed-trace @ 8d62d5f`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -106,8 +106,9 @@ These tests expose where the **production pipeline itself** falls short, indepen
 | `TestActionGateTraceContract` (2 tests) | ✅ | AGG-TR-4: Normal path — ParetoWinnerSelected → AggregateCompleted → DecisionEmitted(degraded=False, origin="pareto") all share same proposal_id; Override path — fake gate rejects Pareto winner → SafetyOverrideApplied(from=winner, to=fallback) + DecisionEmitted(degraded=True, candidate=winner, final=fallback) |
 | `TestSafetyModeInferredTrace` (3 tests) | ✅ | MODE-TR-1: SafetyModeInferred event present with all 7 required keys; mode agrees with PhilosophersSelected / ParetoFrontComputed / ParetoWinnerSelected; reason string is numerically consistent with freedom_pressure vs. thresholds |
 | `TestPhilosopherSelectionRationale` (4 tests) | ✅ | SEL-TR-1: PhilosophersSelected payload includes max_risk, cost_budget, limit_override, preferred_tags, limit (effective), require_tags (effective); case_001 has limit_override=None/preferred_tags=None but non-None limit and non-empty require_tags; AT-009 has limit==limit_override==3 and require_tags==preferred_tags==[clarify,creative,compliance]; AT-010 same for [critic,redteam,planner]; AT-009 and AT-010 produce distinct rosters |
+| `TestTensorComputedTrace` (3 tests) | ✅ | TENSOR-TR-1: TensorComputed payload contains metrics dict with freedom_pressure/semantic_delta/blocked_tensor/interaction_tensor and a version key; SafetyModeInferred.freedom_pressure == TensorComputed.metrics["freedom_pressure"] within 1e-9; all metric values are int/float or None |
 
-**Runtime total: 52 pass / 0 fail / 0 xfail**
+**Runtime total: 55 pass / 0 fail / 0 xfail**
 
 ### MODE-TR-2: SafetyModeInferred branch coverage
 
@@ -210,13 +211,13 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 |---|---|---|---|
 | Release evidence | 8 | 0 | 0 |
 | Contract acceptance (StubComposer) | 43 | 0 | 0 |
-| Runtime acceptance (po_core.run() + run_case()) | 52 | 0 | 0 |
+| Runtime acceptance (po_core.run() + run_case()) | 55 | 0 | 0 |
 | REST acceptance | 10 | 0 | 0 |
 | Safety | 9 | 0 | 0 |
 | Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
 | Unit (branch coverage) | 7 | 0 | 0 |
-| **Total** | **149** | **0** | **0** |
+| **Total** | **152** | **0** | **0** |
 
 ### Resolved gaps
 
