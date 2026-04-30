@@ -49,7 +49,7 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 | RT-GAP-003 | ✅ RESOLVED | `CaseSignals(has_constraint_conflict=True)` + `_apply_case_signals()` injects `constraint_conflict=True` into result dict for conflicting-constraints input. |
 | RT-GAP-004 | ✅ RESOLVED | `run_case(case: dict)` added to `po_core.app.api` and exported from `po_core`. Wraps `build_user_input` + `from_case_dict` + `run()` + `adapt_to_schema`; returns `output_schema_v1`-compliant dict. xfail removed from test suite. |
 
-**completion_matrix.md totals: 156 pass / 0 fail / 0 not-yet**
+**completion_matrix.md totals: 164 pass / 0 fail / 0 not-yet**
 
 ## Remaining Evidence Gaps (post-publication)
 
@@ -72,6 +72,7 @@ Post-release follow-up:
 
 ## Completed
 
+- 2026-04-30: TRACE-VIEW-1 resolved. `docs/viewer/sample_trace.json` aligned with ENGINE_TRACE_CONTRACT: `TensorComputed.metrics` converted from list to dict; `metric_status` added; `SafetyModeInferred` event inserted; `PhilosophersSelected` extended with 7 rationale fields; `ParetoFrontComputed` weights/scores gain `emergence`; `ParetoWinnerSelected` gains top-level `weights` and `winner.weighted_score`. `docs/viewer/README.md` created with normal-path, override-path, and conditional-event notes. `tests/unit/test_sample_trace_contract.py` added: 8 tests (pure JSON parse, 0.06s). Unit+sample total 7→15, overall 156→164. Session: `feat/trace-view-1-sample-trace-alignment`.
 - 2026-04-30: TENSOR-TR-2 consistency fix. `_tensor_metric_status_entry(name, value, tensor_values)` module-level helper extracted in `ensemble.py`; both the expected-metrics loop and the extra-metrics loop now use it uniformly, so extra metrics with None/non-numeric values are correctly marked "missing" instead of "computed". `TestTensorComputedStatusTrace` (4 tests): previous 3 tests retained; new test `test_extra_metric_none_value_is_marked_missing` — fake engine returning `"custom_metric": None` → `metric_status["custom_metric"]["status"] == "missing"`. Runtime 58→59, total 155→156. Session: `feat/tensor-tr-2-tensor-metric-status`.
 - 2026-04-30: TENSOR-TR-2 initial. `TensorEngine.compute()` extended to populate `TensorSnapshot.values` with `TensorValue(source=fn.__module__)` for each metric function. `TensorComputed` trace payload extended with `metric_status`: for each expected metric, records `{"status": "computed"|"missing", "source": "..."}`. Extra computed metrics beyond the 4 expected are also covered. `TestTensorComputedStatusTrace` (3 tests): metric_status present with valid status strings; all metrics keys covered; fake engine omitting `semantic_delta` → `metric_status["semantic_delta"]["status"] == "missing"`. Runtime 55→58, total 152→155. Session: `feat/tensor-tr-2-tensor-metric-status`.
 - 2026-04-30: TENSOR-TR-1 resolved. No production code changes required — TensorComputed payload already carries `metrics` (freedom_pressure, semantic_delta, blocked_tensor, interaction_tensor) and `version`. `TestTensorComputedTrace` (3 tests) added: payload has all 4 required metric keys + version; SafetyModeInferred.freedom_pressure == TensorComputed.metrics["freedom_pressure"] within 1e-9; all metric values are int/float or None. Runtime 52→55, total 149→152. Session: `feat/tensor-tr-1-tensor-computed-trace`.

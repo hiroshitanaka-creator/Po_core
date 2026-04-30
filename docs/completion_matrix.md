@@ -1,8 +1,8 @@
 # Completion Matrix — Po_core v1.0.3
 
 Audit date: 2026-04-28  
-Last updated: 2026-04-30 (TENSOR-TR-2 consistency fix: _tensor_metric_status_entry helper; extra-metric None test added; runtime total +4)  
-Source: `main @ 8890631`
+Last updated: 2026-04-30 (TRACE-VIEW-1: sample_trace.json aligned with ENGINE_TRACE_CONTRACT; viewer README added; 8 unit tests added; unit total 7→15, overall 156→164)  
+Source: `feat/trace-view-1-sample-trace-alignment @ 17fd275`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
@@ -128,6 +128,24 @@ Entry: `_build_safety_mode_inferred_payload(mode, fp_value, config)` (pure funct
 
 **Unit total (branch coverage): 7 pass / 0 fail**
 
+### TRACE-VIEW-1: sample_trace.json contract alignment
+
+Tests in `tests/unit/test_sample_trace_contract.py` (pure JSON file parse, no pipeline).  
+Entry: `docs/viewer/sample_trace.json` loaded and validated against ENGINE_TRACE_CONTRACT field shapes.
+
+| Test | Status | Notes |
+|---|---|---|
+| `test_required_event_types_present` | ✅ | All 8 required event types present in event_types list |
+| `test_tensor_computed_has_metric_status` | ✅ | metric_status key present; all 4 required metrics covered |
+| `test_tensor_computed_metrics_is_dict` | ✅ | metrics is dict[str, float], not list |
+| `test_safety_mode_inferred_has_required_fields` | ✅ | All 7 fields present (mode, freedom_pressure, warn/critical thresholds, missing_mode, source_metric, reason) |
+| `test_philosophers_selected_has_selection_rationale` | ✅ | All 11 rationale fields present incl. scenario_type, preferred_tags, require_tags, limit, limit_override, max_risk, cost_budget |
+| `test_pareto_winner_selected_has_weighted_score` | ✅ | winner.weighted_score present and numeric |
+| `test_pareto_winner_selected_has_weights` | ✅ | top-level weights dict with all 6 objectives incl. emergence |
+| `test_decision_emitted_has_final` | ✅ | final fingerprint present with proposal_id/action_type/confidence/content_len/content_hash |
+
+**Sample trace contract total: 8 pass / 0 fail**
+
 ### Gap catalogue
 
 | ID | Description | Status | Affected cases |
@@ -218,7 +236,8 @@ Tests across `tests/unit/test_rest_api.py`, `tests/test_reason_request_validatio
 | Packaging | 13 | 0 | 0 |
 | Governance | 7 | 0 | 0 |
 | Unit (branch coverage) | 7 | 0 | 0 |
-| **Total** | **156** | **0** | **0** |
+| Sample trace contract | 8 | 0 | 0 |
+| **Total** | **164** | **0** | **0** |
 
 ### Resolved gaps
 
