@@ -101,6 +101,21 @@ _EXPECTED_TENSOR_METRICS: tuple = (
     "interaction_tensor",
 )
 
+
+def _tensor_metric_status_entry(
+    name: str,
+    value: Any,
+    tensor_values: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Return the metric_status entry for a single tensor metric."""
+    if isinstance(value, (int, float)):
+        tv = tensor_values.get(name)
+        return {
+            "status": "computed",
+            "source": tv.source if tv is not None else "unknown",
+        }
+    return {"status": "missing", "source": None}
+
 _SCENARIO_ROUTING: Dict[str, tuple] = {
     "values_clarification": (
         (TAG_CLARIFY, TAG_CREATIVE, TAG_COMPLIANCE),
@@ -358,22 +373,14 @@ def _run_phase_pre(
     tensors = deps.tensors.compute(ctx, memory)
     _metric_status: Dict[str, Any] = {}
     for _mname in _EXPECTED_TENSOR_METRICS:
-        _mv = tensors.metrics.get(_mname)
-        if isinstance(_mv, (int, float)):
-            _tv = tensors.values.get(_mname)
-            _metric_status[_mname] = {
-                "status": "computed",
-                "source": _tv.source if _tv is not None else "unknown",
-            }
-        else:
-            _metric_status[_mname] = {"status": "missing", "source": None}
+        _metric_status[_mname] = _tensor_metric_status_entry(
+            _mname, tensors.metrics.get(_mname), tensors.values
+        )
     for _mname in tensors.metrics:
         if _mname not in _metric_status:
-            _tv = tensors.values.get(_mname)
-            _metric_status[_mname] = {
-                "status": "computed",
-                "source": _tv.source if _tv is not None else "unknown",
-            }
+            _metric_status[_mname] = _tensor_metric_status_entry(
+                _mname, tensors.metrics[_mname], tensors.values
+            )
     tracer.emit(
         TraceEvent.now(
             "TensorComputed",

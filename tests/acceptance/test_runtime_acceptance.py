@@ -1656,3 +1656,84 @@ class TestTensorComputedStatusTrace:
                 f"metric_status[{name!r}]['status'] should be 'computed'; "
                 f"got {ms[name]['status']!r}"
             )
+
+    def test_extra_metric_none_value_is_marked_missing(self) -> None:
+        """TENSOR-TR-2: Extra metrics with non-numeric values must be marked 'missing', not 'computed'."""
+        import dataclasses
+        import uuid
+        import warnings
+
+        from po_core.app.output_adapter import build_user_input
+        from po_core.domain.case_signals import from_case_dict
+        from po_core.domain.context import Context
+        from po_core.domain.memory_snapshot import MemorySnapshot
+        from po_core.domain.tensor_snapshot import TensorSnapshot
+        from po_core.ensemble import EnsembleDeps, run_turn
+        from po_core.runtime.wiring import build_default_system
+        from po_core.trace.in_memory import InMemoryTracer
+
+        class _FakeExtraNoneMetricEngine:
+            """Returns all expected metrics plus an extra key whose value is None."""
+
+            def compute(self, ctx: Context, memory: MemorySnapshot) -> TensorSnapshot:
+                return TensorSnapshot(
+                    metrics={
+                        "freedom_pressure": 0.40,
+                        "semantic_delta": 0.30,
+                        "blocked_tensor": 0.20,
+                        "interaction_tensor": 0.10,
+                        "custom_metric": None,  # type: ignore[arg-type]  # extra, non-numeric
+                    },
+                    version="v1",
+                )
+
+        case = _load_case("case_001")
+        tracer = InMemoryTracer()
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            system = build_default_system()
+
+        ctx = Context.now(
+            request_id=str(uuid.uuid4()),
+            user_input=build_user_input(case),
+            meta={"entry": "test"},
+        )
+        deps = EnsembleDeps(
+            memory_read=system.memory_read,
+            memory_write=system.memory_write,
+            tracer=tracer,
+            tensors=_FakeExtraNoneMetricEngine(),
+            solarwill=system.solarwill,
+            gate=system.gate,
+            philosophers=system.philosophers,
+            aggregator=system.aggregator,
+            aggregator_shadow=None,
+            registry=system.registry,
+            settings=system.settings,
+            shadow_guard=None,
+            deliberation_engine=getattr(system, "deliberation_engine", None),
+        )
+        run_turn(ctx, deps, case_signals=from_case_dict(case))
+
+        ev = next(
+            (e for e in tracer.events if e.event_type == "TensorComputed"), None
+        )
+        assert ev is not None, "TensorComputed event not found"
+
+        ms = ev.payload.get("metric_status", {})
+
+        assert "custom_metric" in ms, (
+            "metric_status must include 'custom_metric' because it appeared in TensorComputed.metrics."
+        )
+        assert ms["custom_metric"]["status"] == "missing", (
+            f"An extra metric with a None value must be marked 'missing', "
+            f"not 'computed'. Got: {ms['custom_metric']['status']!r}"
+        )
+
+        # Confirm all expected metrics with numeric values are still marked computed
+        for name in ("freedom_pressure", "semantic_delta", "blocked_tensor", "interaction_tensor"):
+            assert ms[name]["status"] == "computed", (
+                f"metric_status[{name!r}]['status'] should be 'computed'; "
+                f"got {ms[name]['status']!r}"
+            )
