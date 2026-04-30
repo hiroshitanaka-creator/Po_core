@@ -93,8 +93,8 @@ Emitted immediately after `infer_safety_mode()` in `_run_phase_pre`.
 {
   "mode": "normal",
   "freedom_pressure": 0.42,
-  "warn_threshold": 0.6,
-  "critical_threshold": 0.8,
+  "warn_threshold": 0.30,
+  "critical_threshold": 0.50,
   "missing_mode": "warn",
   "source_metric": "freedom_pressure",
   "reason": "freedom_pressure < warn_threshold"
@@ -107,8 +107,8 @@ Emitted immediately after `infer_safety_mode()` in `_run_phase_pre`.
 |---|---|---|
 | `mode` | `"normal"` \| `"warn"` \| `"critical"` | Inferred SafetyMode string value. |
 | `freedom_pressure` | `float \| null` | Value of the `freedom_pressure` metric; `null` when absent from tensor snapshot. |
-| `warn_threshold` | `float` | `Settings.freedom_pressure_warn` (default `0.6`). |
-| `critical_threshold` | `float` | `Settings.freedom_pressure_critical` (default `0.8`). |
+| `warn_threshold` | `float` | `Settings.freedom_pressure_warn` (default `0.30`). |
+| `critical_threshold` | `float` | `Settings.freedom_pressure_critical` (default `0.50`). |
 | `missing_mode` | `str` | Mode applied when `freedom_pressure` is absent (`Settings.freedom_pressure_missing_mode`). |
 | `source_metric` | `"freedom_pressure"` | Always `"freedom_pressure"` (the single driving metric). |
 | `reason` | `str` | One of four values (see below). |
@@ -436,9 +436,14 @@ This trace contract intentionally does **not**:
 - **Expose private chain-of-thought** — `ProposalFingerprint` carries only
   `content_hash` and `content_len`, never raw `content`.  This is a deliberate
   security boundary (`decision_events.py`, "SECURITY NOTE").
-- **Change `run()` or `run_case()` output shapes** — trace events are side-channel
-  audit data.  The return value of `po_core.run()` and `po_core.run_case()` is
-  governed exclusively by `output_schema_v1.json`.
+- **Change public return shapes** — trace events are side-channel audit data and
+  do not affect what `run()` or `run_case()` return.
+  - `po_core.run(user_input: str)` returns the raw runtime result:
+    `{status, request_id, proposal, proposals}`.
+  - `po_core.run_case(case: dict)` returns an `output_schema_v1`-conformant
+    structured result.
+  - `output_schema_v1.json` governs `run_case()` structured output, not raw
+    `run()` output.
 
 ---
 
