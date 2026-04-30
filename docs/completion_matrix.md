@@ -2,7 +2,7 @@
 
 Audit date: 2026-04-28  
 Last updated: 2026-04-30 (TENSOR-TR-2 consistency fix: _tensor_metric_status_entry helper; extra-metric None test added; runtime total +4)  
-Source: `feat/tensor-tr-2-tensor-metric-status @ 260e681`
+Source: `main @ d335438`
 
 Legend: ✅ PASS · ❌ FAIL (gap exposed) · ⚠️ PARTIAL · 🔲 NOT YET
 
