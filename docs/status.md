@@ -20,7 +20,7 @@
 - v1.1.0 RC verification: `docs/release/release_candidate_verification_v1.1.0.md` — all 6 steps ✅ (2026-04-30)
 - External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
 - External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI** — https://test.pypi.org/project/po-core-flyingpig/1.1.0/
-- PyPI publication for `1.1.0`: **pending** — production PyPI publish not yet executed (TestPyPI only).
+- PyPI publication for `1.1.0`: **pending** — production PyPI publish not yet uploaded (TestPyPI only).
 - PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
 - TestPyPI upload timestamp (v1.1.0): `2026-04-30T05:51:03` UTC (confirmed via TestPyPI JSON API)
