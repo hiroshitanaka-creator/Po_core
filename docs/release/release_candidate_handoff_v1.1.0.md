@@ -43,8 +43,8 @@ Do **not** claim any of the following for `1.1.0` until exact operator evidence 
 - [x] `tests/test_release_readiness.py` updated to expect `"1.1.0"`
 - [x] `docs/release/release_candidate_handoff_v1.1.0.md` (this file) exists
 - [x] `docs/release/smoke_verification_v1.1.0.md` exists (pending state)
-- [ ] CI green on `main` (`pytest tests/ -v -m "not slow"`)
-- [ ] Golden files regenerated after version bump
+- [x] CI green on `main` (`pytest tests/ -v -m "not slow"`) — 3973 passed @ `bb60897` (2026-05-14)
+- [x] Golden files regenerated — AT-001/007/008/009/011 updated in PR #552 after philosopher roster expansion (39→42)
 - [ ] TestPyPI publish and smoke
 - [ ] PyPI publish
 - [ ] Post-publish smoke (`scripts/release_smoke.py --check-entrypoints`)
