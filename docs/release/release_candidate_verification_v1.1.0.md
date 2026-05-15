@@ -201,3 +201,68 @@ All six CLI entrypoints (`po-core`, `po-self`, `po-trace`, `po-interactive`, `po
 - ❌ No GitHub Release created
 
 These actions are deferred to the operator publish runbook (`docs/operations/publish_playbook.md`).
+
+---
+
+## Appendix — Post-PR#552/#553 Re-verification (2026-05-14)
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-05-14 |
+| Branch | `main` |
+| Verified tree commit | `bb60897` (fix(schemas): import Traversable from importlib.resources.abc #553) |
+| PRs merged | #552 (acceptance golden update), #553 (Traversable import fix) |
+| Python | 3.11.15 (primary) / 3.13.12 (supplementary) |
+| Verified by | Claude Code (audit-v1.1.0-release) |
+
+### Context
+
+After the initial RC verification (2026-04-30), two fixes were merged:
+
+- **PR #552** — Regenerated acceptance golden files (AT-001/007/008/009/011) after philosopher roster expansion from 39 → 42 (Phase 7). Only `options[0].description` (philosopher proposal content) changed; all other fields were confirmed identical by code comparison.
+- **PR #553** — Changed `src/po_core/schemas/__init__.py` to import `Traversable` from `importlib.resources.abc` (Python 3.9+) instead of deprecated `importlib.abc`. Python 3.13 confirms the old path emits `DeprecationWarning: slated for removal in Python 3.14`.
+
+### Re-verification Results (Python 3.11.15, commit `bb60897`)
+
+| Command | Result |
+|---------|--------|
+| `pytest tests/ -v -m "not slow"` | ✅ **3973 passed**, 16 deselected (6m 28s) |
+| `pytest tests/acceptance/ -v -m acceptance` | ✅ 43 passed |
+| `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v` | ✅ 62 passed |
+| `pytest tests/test_release_readiness.py -v` | ✅ 24 passed |
+| `bandit -r src/ scripts/ -c pyproject.toml -ll` | ✅ No issues (CI gate PASS) |
+| `bandit -r src/ scripts/ -c pyproject.toml -l` | 2 Low B110 (`ensemble.py:311`, `tracer.py:237`); non-CI-gate |
+| `python -m build` | ✅ wheel + sdist produced |
+| `twine check dist/*` | ✅ PASSED |
+| `python scripts/release_smoke.py --check-entrypoints` | ✅ All entry points RC=0 |
+
+### Python 3.13.12 Supplementary Verification
+
+| Check | Result |
+|-------|--------|
+| `pytest tests/test_golden_e2e.py tests/test_input_schema.py -v` | ✅ **62 passed** |
+| `from importlib.resources.abc import Traversable` (post-PR#553 path) | ✅ OK — no DeprecationWarning |
+| `from importlib.abc import Traversable` (pre-PR#553 path) | ❌ `DeprecationWarning: slated for removal in Python 3.14` |
+| `-W error::DeprecationWarning` mode | ⚠️ 52 passed, 10 errors — errors caused by `src/pocore/` legacy shim DeprecationWarning, **unrelated to Traversable** |
+
+Note on 10 errors: `src/pocore/__init__.py` intentionally emits a DeprecationWarning at import (documented in CLAUDE.md: "test-only scaffold... will be deleted in a future release"). This is a separate, known issue, not introduced by PR #552 or #553.
+
+### Bandit Low Severity Detail (non-CI-gate)
+
+| # | Rule | File:Line | Note |
+|---|------|-----------|------|
+| 1 | B110 try_except_pass | `src/po_core/ensemble.py:311` | Silent fallback returning empty string for philosopher author extraction |
+| 2 | B110 try_except_pass | `src/po_core/trace/tracer.py:237` | Intentional swallow of PoTrace logging failures; comment present explaining rationale |
+
+Per `pyproject.toml` bandit policy: B110 is not globally skipped; intentional occurrences should carry `# nosec B110`. These two sites lack the annotation. Non-blocking for this release; tracked as next-PR candidate.
+
+### Python 3.14 Status
+
+Python 3.14 is not available in this environment. Python 3.13 proxy verification confirms the `importlib.resources.abc.Traversable` fix is correct and warning-free. Full test suite on Python 3.14 remains **unverified**.
+
+### Explicit Non-Actions (Appendix)
+
+- ❌ No PyPI publish
+- ❌ No git tag created
+- ❌ No GitHub Release created
+- ❌ No `pocore` shim DeprecationWarning suppressed (tracked separately)
