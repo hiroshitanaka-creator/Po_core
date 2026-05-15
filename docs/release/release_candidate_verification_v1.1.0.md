@@ -260,6 +260,10 @@ Per `pyproject.toml` bandit policy: B110 is not globally skipped; intentional oc
 
 Python 3.14 is not available in this environment. Python 3.13 proxy verification confirms the `importlib.resources.abc.Traversable` fix is correct and warning-free. Full test suite on Python 3.14 remains **unverified**.
 
+### TestPyPI Status Note
+
+TestPyPI publish itself is confirmed; the remaining unchecked item is TestPyPI install/smoke evidence, which was blocked by the environment's access to test-files.pythonhosted.org.
+
 ### Explicit Non-Actions (Appendix)
 
 - ❌ No PyPI publish
