@@ -75,7 +75,7 @@ All evidence gaps are now closed:
 
 v1.1.0 publish tasks (publish decision recorded 2026-05-18):
 
-- **[DECISION RECORDED]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (2026-05-18). SHA mismatch condition: operator must tag `c94a390` as `v1.1.0` (Path A, recommended) or handle TestPyPI re-run (Path B) before PyPI publish.
+- **[DECISION REVISED]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (2026-05-18, v2). Path A (tag `c94a390`) is NOT recommended: the `c94a390` wheel contains `from importlib.abc import Traversable` which is removed in Python 3.14; Python 3.14 is likely released by 2026-05 and `requires-python >=3.10` does not exclude it. **Recommended path: bump to `1.1.1`, run full TestPyPI → PyPI pipeline from current `main` (`e590752`, includes Traversable fix).**
 
 - Record GitHub Actions workflow run URL(s) for the v1.1.0 publish run.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
