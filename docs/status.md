@@ -73,7 +73,9 @@ All evidence gaps are now closed:
 
 ## Next
 
-v1.1.0 publish tasks:
+v1.1.0 publish tasks (publish decision recorded 2026-05-18):
+
+- **[DECISION RECORDED]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (2026-05-18). SHA mismatch condition: operator must tag `c94a390` as `v1.1.0` (Path A, recommended) or handle TestPyPI re-run (Path B) before PyPI publish.
 
 - Record GitHub Actions workflow run URL(s) for the v1.1.0 publish run.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
