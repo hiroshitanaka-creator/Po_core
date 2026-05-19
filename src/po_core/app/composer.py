@@ -118,6 +118,7 @@ class StubComposer:
         from po_core.app.api import run as _po_run
         from po_core.app.output_adapter import adapt_to_schema, build_user_input
         from po_core.domain.case_signals import from_case_dict as _build_signals
+        from po_core.runtime.settings import Settings
 
         case_now = case.get("now")
         if isinstance(case_now, str) and case_now.strip():
@@ -146,9 +147,52 @@ class StubComposer:
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
-        # Run the philosophical pipeline with structured case signals
-        user_input = build_user_input(case)
-        run_result = _po_run(user_input, case_signals=_build_signals(case))
+        # Pre-create Settings to trigger any lazy imports that consume global
+        # random at module-init time (e.g. rich.style.getrandbits).  This must
+        # happen before we set up the deterministic RNG context so import-time
+        # consumption never shifts the seeded sequence.
+        settings = Settings.from_env()
+
+        # Redirect all global random calls inside the pipeline to a local
+        # seeded Random instance.  This makes compose() deterministic
+        # regardless of any prior random consumption in the process
+        # (CI vs local, torch-installed vs not) and is non-destructive —
+        # the original callables are restored in the finally block.
+        # random.Random(seed) produces the same Mersenne-Twister sequence
+        # as random.seed(seed) so no golden-file regeneration is needed
+        # when switching between the two approaches.
+        _rng = random.Random(self.seed) if self.seed is not None else None
+        _REDIRECT = (
+            "choice",
+            "choices",
+            "shuffle",
+            "uniform",
+            "random",
+            "randint",
+            "gauss",
+            "sample",
+            "getrandbits",
+            "randrange",
+        )
+        _saved: dict[str, object] = {}
+        if _rng is not None:
+            for _name in _REDIRECT:
+                if hasattr(random, _name):
+                    _saved[_name] = getattr(random, _name)
+                    setattr(random, _name, getattr(_rng, _name))
+        try:
+            # Run the philosophical pipeline with structured case signals.
+            # Pass pre-created settings to avoid a second Settings.from_env()
+            # call inside api.run() which would shift the global random state.
+            user_input = build_user_input(case)
+            run_result = _po_run(
+                user_input,
+                case_signals=_build_signals(case),
+                settings=settings,
+            )
+        finally:
+            for _name, _orig in _saved.items():
+                setattr(random, _name, _orig)
 
         # Adapt to output_schema_v1
         return adapt_to_schema(

@@ -61,7 +61,9 @@ def _resolve_presented_key(settings: APISettings, request: Request) -> str | Non
     )
     if key:
         return key
-    auth = request.headers.get("Authorization") or request.headers.get("authorization")
+    auth: str | None = request.headers.get("Authorization") or request.headers.get(
+        "authorization"
+    )
     if auth:
         scheme, _, token = auth.partition(" ")
         if scheme.lower() == "bearer" and token.strip():
