@@ -163,8 +163,16 @@ class StubComposer:
         # when switching between the two approaches.
         _rng = random.Random(self.seed) if self.seed is not None else None
         _REDIRECT = (
-            "choice", "choices", "shuffle", "uniform", "random",
-            "randint", "gauss", "sample", "getrandbits", "randrange",
+            "choice",
+            "choices",
+            "shuffle",
+            "uniform",
+            "random",
+            "randint",
+            "gauss",
+            "sample",
+            "getrandbits",
+            "randrange",
         )
         _saved: dict[str, object] = {}
         if _rng is not None:
