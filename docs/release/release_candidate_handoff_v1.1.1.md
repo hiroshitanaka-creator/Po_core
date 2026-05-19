@@ -17,8 +17,10 @@ release candidate `1.1.1` without overstating publication status.
 ## 2. What v1.1.1 adds over v1.1.0
 
 - fix(schemas): import `Traversable` from `importlib.resources.abc` instead of the deprecated
-  `importlib.abc` path (PR #553). Prevents `ImportError` on Python 3.14.
-- Acceptance golden files updated for AT-001/007/008/009/011 after philosopher roster expansion (PR #552).
+  `importlib.abc` path. Prevents `ImportError` on Python 3.14.
+- fix(composer): seed global random state in `StubComposer.compose()` to make acceptance golden
+  tests deterministic across test execution orders.
+- Acceptance golden files regenerated for AT-001–AT-012 and session_001 under the fixed seed.
 - All changes are backward-compatible.
 
 ## 3. Why v1.1.0 was not published to PyPI
@@ -26,8 +28,10 @@ release candidate `1.1.1` without overstating publication status.
 `1.1.0` was published to TestPyPI (SHA `c94a390`, 2026-04-30) but NOT to PyPI production.
 The `c94a390` wheel contains `from importlib.abc import Traversable` which is removed in Python 3.14.
 Since `requires-python = ">=3.10"` does not exclude Python 3.14 installs, publishing that wheel
-would cause `ImportError` for Python 3.14 users. `1.1.1` from current `main` (`e590752`)
-includes the fix and is the correct production publish target. See `docs/release/release_decision_v1.1.0.md`.
+would cause `ImportError` for Python 3.14 users. `1.1.1` from PR #555 (merged into `main`)
+includes the fix and is the correct production publish target. Publish from the merge commit SHA
+after PR #555 is merged — do **not** use `e590752` (that commit has `__version__ = "1.1.0"`).
+See `docs/release/release_decision_v1.1.0.md`.
 
 ## 4. Pre-publish checklist
 
