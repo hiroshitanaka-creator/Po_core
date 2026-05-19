@@ -35,7 +35,7 @@
 ## Release Readiness Facts
 
 - `pyproject.toml` は version を `po_core.__version__` から動的読込する。
-- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.1.0` を repository target version として扱う。
+- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.1.1` を repository target version として扱う。
 - Release workflow (`.github/workflows/publish.yml`) は same-SHA TestPyPI prerequisite を含む strict gate を維持している。
 - `docs/release/pypi_publication_v1.0.3.md` により `1.0.3` の public PyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
 - `docs/release/testpypi_publish_log_v1.0.3.md` により `1.0.3` の TestPyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
@@ -79,7 +79,7 @@ v1.1.1 publish tasks (release-prep complete 2026-05-18):
 - Run `workflow_dispatch target=testpypi` from current `main` to publish `1.1.1` to TestPyPI.
 - Record GitHub Actions workflow run URL(s) for the v1.1.1 TestPyPI and PyPI publish runs.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
-- Create `docs/release/smoke_verification_v1.1.1.md` with confirmed post-publish evidence.
+- Update `docs/release/smoke_verification_v1.1.1.md` from pending placeholder to confirmed evidence (post-publish).
 - Update `docs/status.md`: Latest published public version → `1.1.1`; External publish status → confirmed.
 
 Stage 2 planning (after publish):
