@@ -147,22 +147,35 @@ class StubComposer:
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
-        # Pre-create Settings to warm up all lazy imports that consume global
+        # Pre-create Settings to trigger any lazy imports that consume global
         # random at module-init time (e.g. rich.style.getrandbits).  This must
-        # happen BEFORE random.seed() so import-time consumption does not shift
-        # the post-seed state between environments (CI vs local, torch vs no-torch).
+        # happen before we set up the deterministic RNG context so import-time
+        # consumption never shifts the seeded sequence.
         settings = Settings.from_env()
 
-        # Save and restore the global RNG so compose() is non-destructive.
-        # Seeding is scoped to the pipeline execution only.
-        saved_rng_state = random.getstate() if self.seed is not None else None
+        # Redirect all global random calls inside the pipeline to a local
+        # seeded Random instance.  This makes compose() deterministic
+        # regardless of any prior random consumption in the process
+        # (CI vs local, torch-installed vs not) and is non-destructive —
+        # the original callables are restored in the finally block.
+        # random.Random(seed) produces the same Mersenne-Twister sequence
+        # as random.seed(seed) so no golden-file regeneration is needed
+        # when switching between the two approaches.
+        _rng = random.Random(self.seed) if self.seed is not None else None
+        _REDIRECT = (
+            "choice", "choices", "shuffle", "uniform", "random",
+            "randint", "gauss", "sample", "getrandbits", "randrange",
+        )
+        _saved: dict[str, object] = {}
+        if _rng is not None:
+            for _name in _REDIRECT:
+                if hasattr(random, _name):
+                    _saved[_name] = getattr(random, _name)
+                    setattr(random, _name, getattr(_rng, _name))
         try:
-            if self.seed is not None:
-                random.seed(self.seed)
-
             # Run the philosophical pipeline with structured case signals.
             # Pass pre-created settings to avoid a second Settings.from_env()
-            # call inside api.run() which would shift the random state again.
+            # call inside api.run() which would shift the global random state.
             user_input = build_user_input(case)
             run_result = _po_run(
                 user_input,
@@ -170,8 +183,8 @@ class StubComposer:
                 settings=settings,
             )
         finally:
-            if saved_rng_state is not None:
-                random.setstate(saved_rng_state)
+            for _name, _orig in _saved.items():
+                setattr(random, _name, _orig)
 
         # Adapt to output_schema_v1
         return adapt_to_schema(

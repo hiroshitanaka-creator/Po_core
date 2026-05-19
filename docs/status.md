@@ -75,7 +75,7 @@ All evidence gaps are now closed:
 
 v1.1.1 publish tasks (release-prep complete 2026-05-18):
 
-- **[RELEASE DECISION]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (v2, 2026-05-18). `1.1.0` is TestPyPI-only and superseded. **Production publish target: `1.1.1` from current `main` (`e590752`, includes Traversable fix PR #553).**
+- **[RELEASE DECISION]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (v2, 2026-05-18). `1.1.0` is TestPyPI-only and superseded. **Production publish target: `1.1.1` from the merge commit of PR #555 into `main`. Do NOT use `e590752` (that commit has `__version__ = "1.1.0"`). See `docs/release/release_candidate_handoff_v1.1.1.md` for the correct publish SHA.**
 - Run `workflow_dispatch target=testpypi` from current `main` to publish `1.1.1` to TestPyPI.
 - Record GitHub Actions workflow run URL(s) for the v1.1.1 TestPyPI and PyPI publish runs.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
