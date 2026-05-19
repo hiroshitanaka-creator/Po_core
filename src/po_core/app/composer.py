@@ -118,6 +118,7 @@ class StubComposer:
         from po_core.app.api import run as _po_run
         from po_core.app.output_adapter import adapt_to_schema, build_user_input
         from po_core.domain.case_signals import from_case_dict as _build_signals
+        from po_core.runtime.settings import Settings
 
         case_now = case.get("now")
         if isinstance(case_now, str) and case_now.strip():
@@ -146,14 +147,31 @@ class StubComposer:
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
-        # Seed the global random state so the pipeline is deterministic regardless
-        # of what other tests ran before this call.
-        if self.seed is not None:
-            random.seed(self.seed)
+        # Pre-create Settings to warm up all lazy imports that consume global
+        # random at module-init time (e.g. rich.style.getrandbits).  This must
+        # happen BEFORE random.seed() so import-time consumption does not shift
+        # the post-seed state between environments (CI vs local, torch vs no-torch).
+        settings = Settings.from_env()
 
-        # Run the philosophical pipeline with structured case signals
-        user_input = build_user_input(case)
-        run_result = _po_run(user_input, case_signals=_build_signals(case))
+        # Save and restore the global RNG so compose() is non-destructive.
+        # Seeding is scoped to the pipeline execution only.
+        saved_rng_state = random.getstate() if self.seed is not None else None
+        try:
+            if self.seed is not None:
+                random.seed(self.seed)
+
+            # Run the philosophical pipeline with structured case signals.
+            # Pass pre-created settings to avoid a second Settings.from_env()
+            # call inside api.run() which would shift the random state again.
+            user_input = build_user_input(case)
+            run_result = _po_run(
+                user_input,
+                case_signals=_build_signals(case),
+                settings=settings,
+            )
+        finally:
+            if saved_rng_state is not None:
+                random.setstate(saved_rng_state)
 
         # Adapt to output_schema_v1
         return adapt_to_schema(
