@@ -8,23 +8,23 @@
 
 ## Current Release State
 
-- Repository target version: `1.1.0`
-- Latest published public version: `1.0.3` (PyPI production — pending `1.1.0` production publish)
+- Repository target version: `1.1.1`
+- Latest published public version: `1.0.3` (PyPI production — pending `1.1.1` production publish)
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
 - TestPyPI evidence in-repo (v1.0.3): `docs/release/testpypi_publish_log_v1.0.3.md`
-- TestPyPI evidence in-repo (v1.1.0): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38)
-- TestPyPI workflow run (v1.1.0): https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205 (Success, 18m 38s, SHA `c94a390`, `main`)
+- v1.1.0 status: TestPyPI confirmed (SHA `c94a390`, 2026-04-30T05:51:03 UTC, workflow run #38); PyPI production **NOT published**; **superseded by planned `1.1.1` production release** (Python 3.14 compatibility fix — `importlib.abc.Traversable` → `importlib.resources.abc.Traversable`, PR #553). Evidence: `docs/release/testpypi_publish_log_v1.1.0.md`. Decision: `docs/release/release_decision_v1.1.0.md`.
+- v1.1.0 RC verification: `docs/release/release_candidate_verification_v1.1.0.md` — all 6 steps ✅ (2026-04-30); re-verified at `bb60897` (2026-05-14)
+- v1.1.0 candidate handoff (historical): `docs/release/release_candidate_handoff_v1.1.0.md`
+- v1.1.1 candidate handoff: `docs/release/release_candidate_handoff_v1.1.1.md` (pre-publish placeholder)
 - Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22; full-deps smoke transcript appended 2026-04-28)
-- v1.1.0 candidate handoff: `docs/release/release_candidate_handoff_v1.1.0.md`
-- v1.1.0 RC verification: `docs/release/release_candidate_verification_v1.1.0.md` — all 6 steps ✅ (2026-04-30)
 - External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
-- External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI** — https://test.pypi.org/project/po-core-flyingpig/1.1.0/
-- PyPI publication for `1.1.0`: **pending** — production PyPI publish not yet uploaded (TestPyPI only).
+- External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI** (superseded) — https://test.pypi.org/project/po-core-flyingpig/1.1.0/
+- PyPI publication for `1.1.1`: **pending** — production PyPI publish not yet uploaded (TestPyPI publish for `1.1.1` not yet performed; requires version bump + full TestPyPI → PyPI pipeline).
 - PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
 - TestPyPI upload timestamp (v1.1.0): `2026-04-30T05:51:03` UTC (confirmed via TestPyPI JSON API)
-- Pending evidence (v1.1.0): PyPI production publish + post-publish smoke transcript (TestPyPI install smoke blocked by host_not_allowed in this environment; JSON API + RC Step 6 wheel smoke serve as substitute evidence).
+- Pending evidence (v1.1.1): TestPyPI publish + PyPI production publish + post-publish smoke transcript.
 
 ## Canonical public wording
 
@@ -73,14 +73,14 @@ All evidence gaps are now closed:
 
 ## Next
 
-v1.1.0 publish tasks (publish decision recorded 2026-05-18):
+v1.1.1 publish tasks (release-prep complete 2026-05-18):
 
-- **[DECISION REVISED]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (2026-05-18, v2). Path A (tag `c94a390`) is NOT recommended: the `c94a390` wheel contains `from importlib.abc import Traversable` which is removed in Python 3.14; Python 3.14 is likely released by 2026-05 and `requires-python >=3.10` does not exclude it. **Recommended path: bump to `1.1.1`, run full TestPyPI → PyPI pipeline from current `main` (`e590752`, includes Traversable fix).**
-
-- Record GitHub Actions workflow run URL(s) for the v1.1.0 publish run.
+- **[RELEASE DECISION]** `docs/release/release_decision_v1.1.0.md` — CONDITIONAL_GO (v2, 2026-05-18). `1.1.0` is TestPyPI-only and superseded. **Production publish target: `1.1.1` from current `main` (`e590752`, includes Traversable fix PR #553).**
+- Run `workflow_dispatch target=testpypi` from current `main` to publish `1.1.1` to TestPyPI.
+- Record GitHub Actions workflow run URL(s) for the v1.1.1 TestPyPI and PyPI publish runs.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
-- Update `docs/release/smoke_verification_v1.1.0.md` from "pending" to confirmed evidence.
-- Update `docs/status.md`: Latest published public version → `1.1.0`; External publish status → confirmed.
+- Create `docs/release/smoke_verification_v1.1.1.md` with confirmed post-publish evidence.
+- Update `docs/status.md`: Latest published public version → `1.1.1`; External publish status → confirmed.
 
 Stage 2 planning (after publish):
 

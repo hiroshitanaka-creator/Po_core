@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-05-18
+
+### Fixed
+- fix(schemas): import `Traversable` from `importlib.resources.abc` instead of the deprecated
+  `importlib.abc` path. Prevents `ImportError` on Python 3.14 where `importlib.abc.Traversable`
+  is removed. Affects `src/po_core/schemas/__init__.py` (PR #553).
+
+### Notes
+- `1.1.0` was published to TestPyPI (SHA `c94a390`, 2026-04-30) but was **not** published to PyPI
+  production. `1.1.1` supersedes `1.1.0` as the production publish target, incorporating the
+  Python 3.14 compatibility fix merged after the TestPyPI staging run.
+
 ## [1.1.0] - 2026-04-30
 
 ### Added
