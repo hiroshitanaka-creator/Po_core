@@ -146,6 +146,11 @@ class StubComposer:
             json.dumps(case, ensure_ascii=False, sort_keys=True).encode()
         ).hexdigest()
 
+        # Seed the global random state so the pipeline is deterministic regardless
+        # of what other tests ran before this call.
+        if self.seed is not None:
+            random.seed(self.seed)
+
         # Run the philosophical pipeline with structured case signals
         user_input = build_user_input(case)
         run_result = _po_run(user_input, case_signals=_build_signals(case))
