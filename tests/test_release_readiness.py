@@ -115,8 +115,14 @@ def test_release_state_split_is_explicit_and_honest() -> None:
     assert version == "1.1.1"
     assert published_version == "1.0.3"
     assert f"Repository target version: `{version}`" in status_doc
-    assert "TestPyPI evidence in-repo (v1.1.1): `docs/release/testpypi_publish_log_v1.1.0.md`" not in status_doc
-    assert "TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md`" in status_doc
+    assert (
+        "TestPyPI evidence in-repo (v1.1.1): `docs/release/testpypi_publish_log_v1.1.0.md`"
+        not in status_doc
+    )
+    assert (
+        "TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md`"
+        in status_doc
+    )
     assert "TestPyPI evidence in-repo (v1.1.1): pending" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
     # v1.1.1 is not yet published — assert honest pre-publish state
@@ -205,8 +211,14 @@ def test_release_docs_fail_closed_on_stale_wording() -> None:
     assert "43 integrated runtime personas" not in repo_structure
     assert "43 integrated runtime personas" not in status_doc
     assert f"Repository target version: `{version}`" in status_doc
-    assert "TestPyPI evidence in-repo (v1.1.1): `docs/release/testpypi_publish_log_v1.1.0.md`" not in status_doc
-    assert "TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md`" in status_doc
+    assert (
+        "TestPyPI evidence in-repo (v1.1.1): `docs/release/testpypi_publish_log_v1.1.0.md`"
+        not in status_doc
+    )
+    assert (
+        "TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md`"
+        in status_doc
+    )
     assert "TestPyPI evidence in-repo (v1.1.1): pending" in status_doc
     assert f"Latest published public version: `{published_version}`" in status_doc
     assert pypi_evidence_relpath in status_doc
