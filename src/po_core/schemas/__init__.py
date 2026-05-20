@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from importlib.resources.abc import Traversable
 from importlib.resources import files
+from importlib.resources.abc import Traversable
 from typing import Final
 
 PACKAGE_NAME: Final[str] = __name__
