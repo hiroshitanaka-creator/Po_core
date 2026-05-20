@@ -13,7 +13,8 @@
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
 - TestPyPI evidence in-repo (v1.0.3): `docs/release/testpypi_publish_log_v1.0.3.md`
-- TestPyPI evidence in-repo (v1.1.1): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38, historical; superseded target)
+- TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38; superseded by v1.1.1 target)
+- TestPyPI evidence in-repo (v1.1.1): pending — no `1.1.1` TestPyPI evidence recorded yet.
 - TestPyPI workflow run (v1.1.0 historical): https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205 (Success, 18m 38s, SHA `c94a390`, `main`)
 - Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22; full-deps smoke transcript appended 2026-04-28)
 - v1.1.1 candidate handoff: `docs/release/release_candidate_handoff_v1.1.1.md`
@@ -58,12 +59,20 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 
 **completion_matrix.md totals: 164 pass / 0 fail / 0 not-yet**
 
-## Remaining Evidence Gaps (post-publication)
+## Historical Evidence Gaps for v1.0.3 (post-publication)
 
 All evidence gaps are now closed:
 
 1. ~~GitHub Actions workflow run URL(s)~~ — not retrievable via available MCP tooling; PyPI JSON API is proof of publication.
 2. ~~Full deps install/import/smoke transcript~~ — completed 2026-04-28 in clean Python 3.11.15 venv; see `docs/release/smoke_verification_v1.0.3.md`.
+
+
+## Remaining Evidence Gaps for v1.1.1
+
+- RC verification for `1.1.1`: pending
+- TestPyPI evidence for `1.1.1`: pending
+- PyPI production publication evidence for `1.1.1`: pending
+- Post-publish smoke transcript for `1.1.1`: pending
 
 ## Notes
 

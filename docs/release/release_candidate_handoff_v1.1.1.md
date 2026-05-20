@@ -43,8 +43,18 @@ Do **not** claim any of the following for `1.1.1` until exact operator evidence 
 - [x] `tests/test_release_readiness.py` updated to expect `"1.1.1"`
 - [x] `docs/release/release_candidate_handoff_v1.1.1.md` (this file) exists
 - [x] `docs/release/smoke_verification_v1.1.1.md` exists (pending state)
-- [x] CI green on `main` (`pytest tests/ -v -m "not slow"`) — 3973 passed @ `bb60897` (2026-05-14)
+- [ ] Full CI green for v1.1.1 target commit — pending
+- [x] Historical inherited verification from v1.1.0 line: `pytest tests/ -v -m "not slow"` — 3973 passed @ `bb60897` (2026-05-14), not a substitute for v1.1.1 publish verification.
 - [x] Golden files regenerated — AT-001/007/008/009/011 updated in PR #552 after philosopher roster expansion (39→42)
 - [ ] TestPyPI publish and smoke
 - [ ] PyPI publish
 - [ ] Post-publish smoke (`scripts/release_smoke.py --check-entrypoints`)
+
+
+## 5. Known publish blockers (not merge blockers for this release-state-sync PR)
+
+- `python -m build`: pending in current environment/tooling
+- `twine check dist/*`: pending until build artifacts are available
+- `python scripts/release_smoke.py --check-entrypoints`: current run has a timeout at `po-core prompt smoke --format json` and must be resolved before publish
+
+These are **publish blockers** for promoting v1.1.1, but are not interpreted here as merge blockers for the state-sync documentation PR itself.
