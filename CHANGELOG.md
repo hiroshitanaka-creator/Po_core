@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-04-30
+## [1.1.1] - 2026-04-30
 
 ### Added
 - feat(api): export `run_case(case: dict)` and `async_run_case()` from the top-level `po_core` package; returns `output_schema_v1`-conformant result (RT-GAP-004).

@@ -8,23 +8,24 @@
 
 ## Current Release State
 
-- Repository target version: `1.1.0`
-- Latest published public version: `1.0.3` (PyPI production — pending `1.1.0` production publish)
+- Repository target version: `1.1.1`
+- Latest published public version: `1.0.3` (PyPI production — pending `1.1.1` production publish)
 - Package version SSOT: `src/po_core/__init__.py` の `__version__`
 - Public release evidence in-repo: `docs/release/pypi_publication_v1.0.3.md` fixes PyPI publication evidence for `1.0.3`
 - TestPyPI evidence in-repo (v1.0.3): `docs/release/testpypi_publish_log_v1.0.3.md`
-- TestPyPI evidence in-repo (v1.1.0): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38)
-- TestPyPI workflow run (v1.1.0): https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205 (Success, 18m 38s, SHA `c94a390`, `main`)
+- TestPyPI evidence in-repo (v1.1.0 historical): `docs/release/testpypi_publish_log_v1.1.0.md` — **published 2026-04-30T05:51:03 UTC** (confirmed via TestPyPI JSON API + workflow run #38; superseded by v1.1.1 target)
+- TestPyPI evidence in-repo (v1.1.1): pending — no `1.1.1` TestPyPI evidence recorded yet.
+- TestPyPI workflow run (v1.1.0 historical): https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205 (Success, 18m 38s, SHA `c94a390`, `main`)
 - Post-publish smoke evidence in-repo: `docs/release/smoke_verification_v1.0.3.md` (post-publish section updated 2026-03-22; full-deps smoke transcript appended 2026-04-28)
-- v1.1.0 candidate handoff: `docs/release/release_candidate_handoff_v1.1.0.md`
-- v1.1.0 RC verification: `docs/release/release_candidate_verification_v1.1.0.md` — all 6 steps ✅ (2026-04-30)
+- v1.1.1 candidate handoff: `docs/release/release_candidate_handoff_v1.1.1.md`
+- v1.1.1 RC verification: pending (new verification log not yet recorded)
 - External publish status (v1.0.3): **`1.0.3` published on PyPI** — https://pypi.org/project/po-core-flyingpig/1.0.3/
-- External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI** — https://test.pypi.org/project/po-core-flyingpig/1.1.0/
-- PyPI publication for `1.1.0`: **pending** — production PyPI publish not yet uploaded (TestPyPI only).
+- External publish status (v1.1.0 TestPyPI): **`1.1.0` published on TestPyPI only** — https://test.pypi.org/project/po-core-flyingpig/1.1.0/ (superseded by v1.1.1 target)
+- PyPI publication for `1.1.1`: **pending** — production PyPI publish not yet uploaded (pre-publish candidate; no `1.1.1` TestPyPI evidence recorded yet).
 - PyPI upload timestamp (v1.0.3): `2026-03-22T15:10:30` UTC (confirmed via PyPI JSON API)
 - TestPyPI upload timestamp (v1.0.3): `2026-03-22T13:44:50` UTC (confirmed via TestPyPI JSON API)
-- TestPyPI upload timestamp (v1.1.0): `2026-04-30T05:51:03` UTC (confirmed via TestPyPI JSON API)
-- Pending evidence (v1.1.0): PyPI production publish + post-publish smoke transcript (TestPyPI install smoke blocked by host_not_allowed in this environment; JSON API + RC Step 6 wheel smoke serve as substitute evidence).
+- TestPyPI upload timestamp (v1.1.0): `2026-04-30T05:51:03` UTC (confirmed via TestPyPI JSON API; historical)
+- Pending evidence (v1.1.1): RC verification log + TestPyPI publish evidence + PyPI production publish + post-publish smoke transcript.
 
 ## Canonical public wording
 
@@ -35,7 +36,7 @@
 ## Release Readiness Facts
 
 - `pyproject.toml` は version を `po_core.__version__` から動的読込する。
-- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.1.0` を repository target version として扱う。
+- README / QUICKSTART / QUICKSTART_EN / CHANGELOG / REPOSITORY_STRUCTURE / この `docs/status.md` は、`1.1.1` を repository target version として扱う。
 - Release workflow (`.github/workflows/publish.yml`) は same-SHA TestPyPI prerequisite を含む strict gate を維持している。
 - `docs/release/pypi_publication_v1.0.3.md` により `1.0.3` の public PyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
 - `docs/release/testpypi_publish_log_v1.0.3.md` により `1.0.3` の TestPyPI publication fact は repo 内へ固定されている（確認 2026-03-22）。
@@ -58,12 +59,20 @@ evaluated on `main @ fb6c672`.  See `docs/completion_matrix.md` for per-test det
 
 **completion_matrix.md totals: 164 pass / 0 fail / 0 not-yet**
 
-## Remaining Evidence Gaps (post-publication)
+## Historical Evidence Gaps for v1.0.3 (post-publication)
 
 All evidence gaps are now closed:
 
 1. ~~GitHub Actions workflow run URL(s)~~ — not retrievable via available MCP tooling; PyPI JSON API is proof of publication.
 2. ~~Full deps install/import/smoke transcript~~ — completed 2026-04-28 in clean Python 3.11.15 venv; see `docs/release/smoke_verification_v1.0.3.md`.
+
+
+## Remaining Evidence Gaps for v1.1.1
+
+- RC verification for `1.1.1`: pending
+- TestPyPI evidence for `1.1.1`: pending
+- PyPI production publication evidence for `1.1.1`: pending
+- Post-publish smoke transcript for `1.1.1`: pending
 
 ## Notes
 
@@ -73,12 +82,12 @@ All evidence gaps are now closed:
 
 ## Next
 
-v1.1.0 publish tasks:
+v1.1.1 publish tasks:
 
-- Record GitHub Actions workflow run URL(s) for the v1.1.0 publish run.
+- Record GitHub Actions workflow run URL(s) for the v1.1.1 publish run.
 - record clean import + runtime smoke transcript in a fresh venv post-publish.
-- Update `docs/release/smoke_verification_v1.1.0.md` from "pending" to confirmed evidence.
-- Update `docs/status.md`: Latest published public version → `1.1.0`; External publish status → confirmed.
+- Update `docs/release/smoke_verification_v1.1.1.md` from "pending" to confirmed evidence.
+- Update `docs/status.md`: Latest published public version → `1.1.1`; External publish status → confirmed.
 
 Stage 2 planning (after publish):
 
@@ -86,9 +95,9 @@ Stage 2 planning (after publish):
 
 ## Completed
 
-- 2026-04-30: TestPyPI publish confirmed for v1.1.0. Workflow run #38 (`https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205`) succeeded (18m 38s, SHA `c94a390`, `main`). TestPyPI JSON API confirms upload at `2026-04-30T05:51:03 UTC`. Evidence: `docs/release/testpypi_publish_log_v1.1.0.md`. Direct `pip install` from `test-files.pythonhosted.org` blocked in this environment (`host_not_allowed`); JSON API + RC Step 6 wheel smoke serve as substitute evidence. PyPI production publish is the next step (pending decision).
-- 2026-04-30: RELEASE-CANDIDATE-VERIFY-1 complete (v1.1.0). All 6 local RC verification steps passed: version check (1.1.0), build artifacts (wheel + sdist), twine check (both PASSED), release readiness tests (24/24), dev-checkout smoke (`run_status=ok`), clean venv wheel install smoke (`dist_version=1.1.0`, all CLI entrypoints resolved from wheel). Evidence doc: `docs/release/release_candidate_verification_v1.1.0.md`. TestPyPI publish is the next step (pending workflow trigger). Template: `docs/release/templates/testpypi_publish_log_template_v1.1.0.md`.
-- 2026-04-30: Black formatting baseline restored. Ran `black .` on pre-existing formatting violations so `black --check .` passes cleanly. Formatting-only; no behavior, version, publish, tag, or release changes. This unblocks release/v1.1.0-prep without mixing formatting into the release-prep PR.
+- 2026-04-30: TestPyPI publish confirmed for v1.1.0 (historical). Workflow run #38 (`https://github.com/hiroshitanaka-creator/Po_core/actions/runs/25149181205`) succeeded (18m 38s, SHA `c94a390`, `main`). TestPyPI JSON API confirms upload at `2026-04-30T05:51:03 UTC`. Evidence: `docs/release/testpypi_publish_log_v1.1.0.md`.
+- 2026-04-30: RELEASE-CANDIDATE-VERIFY-1 complete (v1.1.0 historical). All 6 local RC verification steps passed for v1.1.0. Evidence doc: `docs/release/release_candidate_verification_v1.1.0.md`.
+- 2026-04-30: Black formatting baseline restored. Ran `black .` on pre-existing formatting violations so `black --check .` passes cleanly. Formatting-only; no behavior, version, publish, tag, or release changes. This unblocks release/v1.1.1-prep without mixing formatting into the release-prep PR.
 - 2026-04-30: Engine trace audit closure (STATUS-SYNC-1). All engine trace contracts are now documented, sample-validated, and test-locked. `docs/ENGINE_TRACE_CONTRACT.md` covers all emitted events end-to-end: `TensorComputed` (metric_status per-metric provenance), `SafetyModeInferred` (7-field mode inference record), `PhilosophersSelected` (full selection rationale incl. limit/require_tags/preferred_tags/max_risk/cost_budget), Pareto events (`ConflictSummaryComputed` / `ParetoFrontComputed` / `ParetoWinnerSelected` with 6-objective weights, weighted_score formula), `AggregateCompleted`, `DecisionEmitted` (ProposalFingerprint + VerdictSummary), `SafetyOverrideApplied`, `CaseSignalsApplied`. `docs/viewer/sample_trace.json` aligned to current contract. 8 sample-trace contract tests added (`tests/unit/test_sample_trace_contract.py`, pure JSON parse). `completion_matrix.md` total: **164 pass / 0 fail / 0 not-yet**.
 - 2026-04-30: TRACE-VIEW-1 resolved. `docs/viewer/sample_trace.json` aligned with ENGINE_TRACE_CONTRACT: `TensorComputed.metrics` converted from list to dict; `metric_status` added; `SafetyModeInferred` event inserted; `PhilosophersSelected` extended with 7 rationale fields; `ParetoFrontComputed` weights/scores gain `emergence`; `ParetoWinnerSelected` gains top-level `weights` and `winner.weighted_score`. `docs/viewer/README.md` created with normal-path, override-path, and conditional-event notes. `tests/unit/test_sample_trace_contract.py` added: 8 tests (pure JSON parse, 0.06s). Unit+sample total 7→15, overall 156→164. Session: `feat/trace-view-1-sample-trace-alignment`.
 - 2026-04-30: TENSOR-TR-2 consistency fix. `_tensor_metric_status_entry(name, value, tensor_values)` module-level helper extracted in `ensemble.py`; both the expected-metrics loop and the extra-metrics loop now use it uniformly, so extra metrics with None/non-numeric values are correctly marked "missing" instead of "computed". `TestTensorComputedStatusTrace` (4 tests): previous 3 tests retained; new test `test_extra_metric_none_value_is_marked_missing` — fake engine returning `"custom_metric": None` → `metric_status["custom_metric"]["status"] == "missing"`. Runtime 58→59, total 155→156. Session: `feat/tensor-tr-2-tensor-metric-status`.

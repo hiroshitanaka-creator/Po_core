@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from importlib.resources.abc import Traversable
 from importlib.resources import files
-from typing import Final
+from typing import TYPE_CHECKING, Final
+
+if TYPE_CHECKING:
+    from importlib.abc import Traversable
 
 PACKAGE_NAME: Final[str] = __name__
 
