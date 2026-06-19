@@ -50,7 +50,10 @@ workflow_dispatch (target=pypi) from refs/heads/main
 
 ### Local Gate Status (from audit/phase_h_bandit_closure_report.md)
 
-All checks run against origin/main HEAD `d1c23fa` (bandit-fixed commit):
+Phase H rerun evidence was recorded on feature-branch HEAD `c5286230`. Current
+origin/main HEAD `d1c23fa` has not yet had an actual publish workflow run.
+Therefore Phase H demonstrates local gate readiness of the fix set, but not yet
+a real same-SHA publish execution on main.
 
 | Gate | Result |
 |------|--------|
